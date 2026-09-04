@@ -424,6 +424,7 @@ gtnotgood.torcherino.gui.wireless.global_label=Global
 gtnotgood.torcherino.gui.wireless.no_machines=No bound machines
 gtnotgood.torcherino.gui.wireless.uses_global=%s (global)
 gtnotgood.torcherino.gui.wireless.machine_summary=[%d/%d] %s\nPos: %d, %d, %d Dim: %d\nSpeed: %s
+gui.example.key=English text
 tile.AssemblyMatrixBlock.name=Assembly Matrix Block
 tile.AdvancedAssemblyMatrixBlock.name=Advanced Assembly Matrix Block
 tile.torcherino.name=Torcherino

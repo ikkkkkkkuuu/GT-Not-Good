@@ -424,6 +424,7 @@ gtnotgood.torcherino.gui.wireless.global_label=全局
 gtnotgood.torcherino.gui.wireless.no_machines=暂未绑定机器
 gtnotgood.torcherino.gui.wireless.uses_global=%s (全局)
 gtnotgood.torcherino.gui.wireless.machine_summary=[%d/%d] %s\n坐标: %d, %d, %d 维度: %d\n速度: %s
+gui.example.key=Chinese text
 tile.AssemblyMatrixBlock.name=装配矩阵方块
 tile.AdvancedAssemblyMatrixBlock.name=高级装配矩阵方块
 tile.torcherino.name=加速火把

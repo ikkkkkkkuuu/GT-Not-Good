@@ -11,6 +11,7 @@ import com.xyp.gtnotgood.common.mebridge.MEBridgeEventHandler;
 import com.xyp.gtnotgood.common.mebridge.MEWirelessLinkEventHandler;
 import com.xyp.gtnotgood.common.packet.NetWorkHandler;
 import com.xyp.gtnotgood.config.Config;
+import com.xyp.gtnotgood.config.MainConfig;
 import com.xyp.gtnotgood.loader.BlockLoader;
 import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
 import com.xyp.gtnotgood.loader.ItemsLoader;
@@ -35,6 +36,7 @@ public class CommonProxy {
     // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         Config.synchronizeConfiguration(event.getSuggestedConfigurationFile());
+        MainConfig.ensureLoaded();
 
         GTNotGood.channel = NetworkRegistry.INSTANCE.newSimpleChannel(GTNotGood.MODID);
         NetWorkHandler.registerAllMessage();

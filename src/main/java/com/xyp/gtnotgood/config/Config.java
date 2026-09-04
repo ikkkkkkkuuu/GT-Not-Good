@@ -20,9 +20,13 @@ public class Config {
     private static final String CATEGORY_TOOL_BELT = "Tool_Belt";
     private static final String CATEGORY_TORCHERINO = "Torcherino";
     private static final String CATEGORY_WIRELESS_MULTIBLOCK = "Wireless_Multiblock";
-    private static final File DEFAULT_CONFIG_FILE = new File(
+
+    private static final File DEFAULT_CONFIG_DIRECTORY = new File(
         System.getProperty("user.dir"),
-        "config/" + ModList.ModIds.GT_NOT_GOOD + ".cfg");
+        "config/" + "GTNOTGOOD");
+    private static final File DEFAULT_CONFIG_FILE = new File(
+        DEFAULT_CONFIG_DIRECTORY,
+        ModList.ModIds.GT_NOT_GOOD + ".cfg");
     private static boolean configLoaded = false;
     private static Configuration configuration;
     private static File configDirectory;
@@ -110,6 +114,19 @@ public class Config {
     }
 
     private static void loadConfiguration(File configFile) {
+        // 始终使用 config/GTNOTGOOD 作为本模组配置目录
+        File configDirectory = DEFAULT_CONFIG_DIRECTORY;
+
+        if (!configDirectory.exists()) {
+            if (!configDirectory.mkdirs() && !configDirectory.isDirectory()) {
+                throw new IllegalStateException("无法创建配置目录: " + configDirectory.getAbsolutePath());
+            }
+        }
+
+        // 不使用 Forge 传入的 configFile 路径，
+        // 而是强制将 GT-Not-Good.cfg 放到 config/GTNOTGOOD 下
+        File actualConfigFile = new File(configDirectory, ModList.ModIds.GT_NOT_GOOD + ".cfg");
+
         Configuration configuration = new Configuration(configFile);
         Config.configuration = configuration;
         Config.configDirectory = configFile.getParentFile();
