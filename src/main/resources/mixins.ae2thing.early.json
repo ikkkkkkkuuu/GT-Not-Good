@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8.5-GTNH",
+  "package": "com.xyp.gtnotgood.ae2thing.coremod.mixin",
+  "refmap": "mixins.gtnotgood.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "overwrites": {
+    "conformVisibility": true
+  },
+  "mixins": [],
+  "client": [],
+  "server": []
+}

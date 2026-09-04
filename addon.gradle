@@ -1,0 +1,127 @@
+def colorCodes = [
+    "BLACK": "\u00a70", "DARK_BLUE": "\u00a71", "DARK_GREEN": "\u00a72", "DARK_AQUA": "\u00a73",
+    "DARK_RED": "\u00a74", "DARK_PURPLE": "\u00a75", "GOLD": "\u00a76", "GRAY": "\u00a77",
+    "DARK_GRAY": "\u00a78", "BLUE": "\u00a79", "GREEN": "\u00a7a", "AQUA": "\u00a7b",
+    "RED": "\u00a7c", "LIGHT_PURPLE": "\u00a7d", "YELLOW": "\u00a7e", "WHITE": "\u00a7f",
+    "OBFUSCATED": "\u00a7k", "BOLD": "\u00a7l", "STRIKETHROUGH": "\u00a7m",
+    "UNDERLINE": "\u00a7n", "ITALIC": "\u00a7o", "RESET": "\u00a7r", "SPACE": " ", "NULL": ""
+]
+
+def replaceColors = { String text ->
+    text.replaceAll(/\{\\\\([A-Z_]+)\}/) { match, code -> colorCodes[code] ?: match }
+}
+
+def isValidFormat = { String str ->
+    try {
+        String.format(str, (Object[]) [])
+        true
+    } catch (Exception ignored) {
+        false
+    }
+}
+
+afterEvaluate {
+    tasks.register('preprocessLangInJavaFiles') {
+        group = 'language'
+        description = 'Extract translation strings from Java comments and generate lang files'
+
+        def javaSource = sourceSets.main.java
+        def langDir = file("src/main/resources/assets/${project.findProperty('modId')}/lang")
+
+        inputs.files(javaSource)
+        outputs.dir(langDir)
+
+        doLast {
+            Map<String, Map<String, String>> langs = ['en_US': [:]]
+            Set<String> keyOrder = [] as LinkedHashSet
+            String pendingKey = null
+
+            javaSource.each { file ->
+                file.getText('UTF-8').eachLine { line ->
+                    if (pendingKey != null) {
+                        def m = line =~ /\/\/\s*#\s*([a-z]{2}_[A-Z]{2})?\s+(.+)/
+                        if (m) {
+                            def lang = m.group(1) ?: 'en_US'
+                            def value = replaceColors(m.group(2))
+
+                            if (!langs.containsKey(lang)) {
+                                langs[lang] = [:]
+                            }
+                            if (langs[lang].containsKey(pendingKey) && langs[lang][pendingKey] != value) {
+                                logger.lifecycle("[lang override] '${pendingKey}' in ${file.name}: ${langs[lang][pendingKey]} -> ${value}")
+                            }
+                            if (!isValidFormat(value)) {
+                                logger.warn("[lang format error] '${pendingKey}' in ${file.name}: ${value}")
+                            }
+
+                            langs[lang][pendingKey] = value
+                            keyOrder.add(pendingKey)
+                        } else {
+                            pendingKey = null
+                        }
+                    }
+
+                    if (pendingKey == null) {
+                        def m = line =~ /\/\/\s*#tr\s+([a-zA-Z0-9._]+)\s*(.*)/
+                        if (m) {
+                            def key = m.group(1)
+                            def value = m.group(2)?.trim()
+                            if (value) {
+                                langs['en_US'][key] = replaceColors(value)
+                                keyOrder.add(key)
+                            } else {
+                                pendingKey = key
+                            }
+                        }
+                    }
+                }
+            }
+
+            def enKeys = langs['en_US'].keySet()
+            langs.each { langCode, map ->
+                if (langCode != 'en_US') {
+                    enKeys.each { key ->
+                        if (!map.containsKey(key)) {
+                            logger.warn("[missing lang] '${key}' is missing in ${langCode} (en_US=${langs['en_US'][key]})")
+                        }
+                    }
+                }
+            }
+
+            langDir.mkdirs()
+            langs.each { langCode, map ->
+                def outFile = new File(langDir, "${langCode}.lang")
+                outFile.withWriter('UTF-8') { writer ->
+                    keyOrder.each { key ->
+                        def value = map[key] ?: langs['en_US'][key]
+                        if (value != null) {
+                            writer.writeLine("${key}=${value}")
+                        }
+                    }
+                }
+            }
+
+            logger.lifecycle("Generated lang files in: ${langDir}")
+        }
+    }
+
+    tasks.processResources.dependsOn preprocessLangInJavaFiles
+
+    tasks.named('sourcesJar').configure {
+        dependsOn preprocessLangInJavaFiles
+    }
+}
+
+tasks.register('installPreCommitHook', Copy) {
+    group = 'development'
+    description = 'Install git pre-commit hook'
+    from 'scripts/pre-commit'
+    into '.git/hooks'
+    onlyIf { file('scripts/pre-commit').exists() }
+}
+
+tasks.register('uninstallPreCommitHook', Delete) {
+    group = 'development'
+    description = 'Remove git pre-commit hook'
+    delete '.git/hooks/pre-commit'
+}

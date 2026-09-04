@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.xyp.gtnotgood.mixins.early",
+  "refmap": "mixins.gtnotgood.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "Gregtech.BaseMetaTileEntityAccelerationMixin",
+    "Gregtech.BlockLeftClickDataStickMixin"
+  ],
+  "client": [],
+  "server": []
+}
