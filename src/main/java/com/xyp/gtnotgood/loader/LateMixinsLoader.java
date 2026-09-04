@@ -74,9 +74,9 @@ public class LateMixinsLoader implements ILateMixinLoader {
             addAll(
                 list,
                 "Accessor.Grade4WaterPurificationAccessor",
-                "TreatedWater.Grade1WaterPurificationAccessor",
-                "TreatedWater.Grade2WaterPurificationAccessor",
-                "TreatedWater.Grade3WaterPurificationAccessor",
+                "TreatedWater.Grade1WaterPurificationMixin",
+                "TreatedWater.Grade2WaterPurificationMixin",
+                "TreatedWater.Grade3WaterPurificationMixin",
                 "TreatedWater.Grade4WaterPurificationMixin",
                 "TreatedWater.Grade5WaterPurificationMixin",
                 "TreatedWater.Grade6WaterPurificationMixin",
