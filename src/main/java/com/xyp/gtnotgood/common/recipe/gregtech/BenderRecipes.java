@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.common.recipe.gregtech;
 
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
@@ -7,8 +9,6 @@ import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTRecipeBuilder;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 
 public class BenderRecipes {
 

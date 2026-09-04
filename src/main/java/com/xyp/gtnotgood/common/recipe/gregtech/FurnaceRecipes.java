@@ -1,11 +1,12 @@
 package com.xyp.gtnotgood.common.recipe.gregtech;
 
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
 import gregtech.api.util.GTModHandler;
 import gregtech.api.util.GTOreDictUnificator;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 
 public class FurnaceRecipes {
 
