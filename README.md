@@ -33,10 +33,21 @@ ME 网桥由发起端和接收端组成。
 ME 无线收发器
 可直接右键空气打开频率选择界面，然后直接 shift + 右键，相关 AE2 节点即可直接连接。实在是太超模啦
 
+### 🔌 ME无线二合一接口终端/ ME Wireless Dual Interface Terminal
+<p align="center">
+    <img src="README/me1.png" width="800">
+</p>
+
+<p align="center">
+    <img src="README/me2.png" width="800">
+</p>
+
+如图所示 是一个集成编码 库存 接口终端为一体的无线二合一接口终端
+自动填充nei配方时可直接在接口搜索栏里自动填入配方名称 
+优化过不会出现 搜索栏里是组装机 4  结果组装机 24排在比组装机 4更上面的情况
+可自动填充nei配方后 如果有和搜索栏相同的接口 直接会放入样板在里面
+
+先写到这
 
 
 
-
-// #tr gui.example.key
-// # English text
-// # zh_CN Chinese text

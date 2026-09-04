@@ -87,3 +87,6 @@ public class GTNotGood {
         proxy.serverStarting(event);
     }
 }
+// #tr gui.example.key
+// # English text
+// # zh_CN Chinese text
