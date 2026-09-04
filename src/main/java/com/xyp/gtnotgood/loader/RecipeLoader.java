@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.loader;
 
 import com.xyp.gtnotgood.common.recipe.gregtech.CraftingTableRecipes;
+import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.AssemblyFactoryRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.DimensionallyTranscendentPlasmaFusionComputerRecipes;
@@ -28,6 +29,7 @@ public class RecipeLoader {
      * as additional one-line loader calls.
      */
     public static void loadRecipes() {
+        FurnaceRecipes.loadRecipes();
         SingularityDataHubRecipes.loadRecipes();
         CraftingTableRecipes.loadRecipes();
         DimensionallyTranscendentPlasmaFusionComputerRecipes.loadRecipes();
