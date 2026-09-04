@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.loader;
 
+import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.CraftingTableRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
@@ -29,6 +30,7 @@ public class RecipeLoader {
      * as additional one-line loader calls.
      */
     public static void loadRecipes() {
+        BenderRecipes.loadRecipes();
         FurnaceRecipes.loadRecipes();
         SingularityDataHubRecipes.loadRecipes();
         CraftingTableRecipes.loadRecipes();
