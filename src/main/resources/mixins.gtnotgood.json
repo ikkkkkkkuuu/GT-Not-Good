@@ -6,6 +6,7 @@
   "refmap": "mixins.gtnotgood.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "minecraft.VanillaFurnaceMixin",
     "tcautores.GuiResearchBrowserMixin",
     "tcautores.GuiResearchTableMixin",
     "tcautores.NetHandlerPlayClientMixin"

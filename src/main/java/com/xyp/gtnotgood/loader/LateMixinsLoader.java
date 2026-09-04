@@ -77,6 +77,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "Gregtech.MixinMTEBasicMachineFacing",
                 "Gregtech.GTMachineLeftClickDataStickMixin",
                 "CutCorners.RecipeSpeedMixin",
+                "FurnaceBackendMixin",
                 "CutCorners.BasicMachineOutputMixin");
         }
         if (loadedMods.contains(ModList.ENDER_IO.getID())) {
