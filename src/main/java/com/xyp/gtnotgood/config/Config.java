@@ -127,9 +127,9 @@ public class Config {
         // 而是强制将 GT-Not-Good.cfg 放到 config/GTNOTGOOD 下
         File actualConfigFile = new File(configDirectory, ModList.ModIds.GT_NOT_GOOD + ".cfg");
 
-        Configuration configuration = new Configuration(configFile);
+        Configuration configuration = new Configuration(actualConfigFile);
         Config.configuration = configuration;
-        Config.configDirectory = configFile.getParentFile();
+        Config.configDirectory = configDirectory;
 
         greeting = configuration.getString("greeting", Configuration.CATEGORY_GENERAL, greeting, "How shall I greet?");
         configuration.addCustomCategoryComment(CATEGORY_CUT_CORNERS, "配方提速配置");
