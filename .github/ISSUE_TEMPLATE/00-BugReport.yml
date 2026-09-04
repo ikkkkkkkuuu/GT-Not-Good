@@ -1,79 +1,178 @@
-name: Report Bug
-description: "Report a crash, mod conflict, or any other type of bug."
+name: Bug 报告 / Bug Report
+description: 报告崩溃、功能异常、模组冲突或其他问题 / Report crashes, feature issues, mod conflicts, or other problems.
+title: "[Bug] "
 labels:
   - "bug"
-assignees: czqwq
+assignees: ikkkkkkuuu
+
 body:
   - type: input
     id: pack_version
     attributes:
-      label: Your Pack Version
-      description: What version of the pack are you playing? If you're using an ancient version maybe first try updating the pack. We usually fix hundreds of issues per release, so there is a good chance your problem have been fixed already in the latest version. There are also usually Dev releases inbetween Official releases that may not show up on other platforms.
-      placeholder: "Example: 2.1.1.0"
+      label: GTNH 版本 / GTNH Version
+      description: |
+        你正在使用的 GTNH 版本。
+        What version of GTNH are you using?
+
+        如果使用的是较旧版本，请先尝试更新到最新版本。
+        If you are using an old version, please try updating to the latest version first.
+      placeholder: "例如：2.7.4 / Example: 2.7.4"
     validations:
       required: true
+
   - type: input
     id: mod_version
     attributes:
-      label: Mod Version
-      description: What version of the mod are you using? Give an actual version number or jar name, not "latest". Speaking of which, if you are not on the latest jar, try updating first.
-      placeholder: "example: 3.4"
+      label: GT-Not-Good 版本 / GT-Not-Good Version
+      description: |
+        请填写实际版本号或 jar 文件名，不要填写“最新版”。
+        Please provide the actual version number or jar filename, not "latest".
+
+        如果不是最新版本，请先尝试更新。
+        If you are not using the latest version, please try updating first.
+      placeholder: "例如：1.0.0 / Example: 1.0.0"
     validations:
       required: true
+
   - type: textarea
     id: whatistheissue
     attributes:
-      label: Describe the Issue
-      description: Give a description of the issue, steps to reproduce the issue, as well as what you think the expected result should be.
-      placeholder: "Example: 1 Foo is crafted but no Bar is consumed. 1 Bar should be consumed."
+      label: 问题描述 / Describe the Issue
+      description: |
+        请详细描述问题、复现步骤、实际结果以及预期结果。
+        Please describe the issue, reproduction steps, actual result, and expected result.
+
+      placeholder: |
+        复现步骤 / Steps to reproduce:
+        1. 放置 XXX 机器 / Place XXX machine
+        2. 输入 XXX / Insert XXX
+        3. 点击 XXX / Click XXX
+
+        实际结果 / Actual result:
+        XXX
+
+        预期结果 / Expected result:
+        XXX
     validations:
       required: true
+
   - type: textarea
     id: conflict
     attributes:
-      label: Conflicting Mods
-      description: If this is a mod conflict, list the mods you think are causing the issue.
-      placeholder: "Example: Causes <insert feature> to break only if <insert modname> is installed"
+      label: 可能冲突的模组 / Conflicting Mods
+      description: |
+        如果你认为这是模组冲突，请列出可能导致问题的模组及版本。
+        If you think this is a mod conflict, list the mods that may be causing the issue and their versions.
+      placeholder: |
+        例如 / Example:
+
+        Mod A 1.2.3
+        Mod B 4.5.6
+
+        问题仅在安装 Mod A 后出现。
+        The issue only occurs when Mod A is installed.
     validations:
       required: false
+
   - type: dropdown
     id: java
     attributes:
-      label: Java Version
-      description: What Java version are you using? It's worth mentioning that if you play on Java9+ you should try update to latest minor release (e.g. prefer Java 17.0.6 over 17.0.2) of that version.
+      label: Java 版本 / Java Version
+      description: |
+        你正在使用哪个 Java 版本？
+        Which Java version are you using?
+
+        如果使用的是较新的 Java 版本，请确保已经更新到该大版本的最新小版本。
+        If you are using a newer Java version, make sure it is updated to the latest minor release.
       options:
         - Java 8
-        - Java 9
-        - Java 11
         - Java 17
-        - Java 19
-        - Java 20
         - Java 21
-        - Java 22
-        - Java 23
-        - Java 24
-        - Java 25
-        - Java 26
-        - Other versions in between
+        - 其他 / Other
     validations:
       required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 游戏环境 / Game Environment
+      description: |
+        请提供与你的问题相关的运行环境信息。
+        Please provide relevant information about your game environment.
+      placeholder: |
+        操作系统 / Operating System:
+        Windows 11
+
+        启动器 / Launcher:
+        Prism Launcher / MultiMC / HMCL / Other
+
+        游戏模式 / Game Mode:
+        单机 / Singleplayer
+        服务端 / Multiplayer Server
+
+        服务端类型 / Server Type:
+        本地服务端 / Local Server
+        Dedicated Server
+        Other
+
+        其他信息 / Other information:
+    validations:
+      required: false
+
   - type: textarea
     id: report
     attributes:
-      label: Crash Report / Log
-      description: "If no crash report is created, attach `logs/fml-client-latest.log` or `logs/fml-server-latest.log`, depending on if it's a dedicated server crash or a client crash. You can also type in additional info that you consider important."
-      placeholder: "Example: pastebin/something OR submit the file to github by dragging it to this textbox."
+      label: 崩溃报告 / 日志 / Crash Report / Log
+      description: |
+        如果发生崩溃，请提供完整的 Crash Report。
+        If the game crashes, please provide the complete Crash Report.
+
+        如果没有生成 Crash Report，请提供相关日志，例如：
+        If no Crash Report was generated, please provide the relevant log, for example:
+
+        logs/fml-client-latest.log
+        logs/fml-server-latest.log
+
+        你可以直接将文件拖入此文本框。
+        You can drag and drop the file directly into this textbox.
+      placeholder: |
+        请将日志粘贴到这里，
+        或直接拖入日志文件。
+
+        Paste the log here,
+        or drag and drop the log file here.
     validations:
       required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 截图 / 视频 / Screenshots / Video
+      description: |
+        如果问题可以通过截图或视频说明，请上传相关内容。
+        If screenshots or videos can help explain the issue, please upload them here.
+      placeholder: |
+        将截图或视频直接拖到这里。
+        Drag and drop screenshots or videos here.
+    validations:
+      required: false
+
   - type: checkboxes
     id: final
     attributes:
-      label: Final Checklist
-      description: Please mark them so we can better handle this report.
+      label: 最终检查 / Final Checklist
+      description: |
+        提交 Issue 前，请确认以下内容。
+        Please confirm the following before submitting the issue.
       options:
-        - label: "I have searched this issue tracker and there is nothing similar already. Posting on a closed issue saying the crash still exists will prompt us to investigate and reopen it once we confirm your report."
+        - label: "我已经搜索过 Issue，没有找到相同或类似的问题。 / I have searched the issue tracker and could not find a similar issue."
           required: true
-        - label: "I can reproduce this crash consistently by following the exact steps I described above."
-          required: false
-        - label: "I have asked other people and they confirm they also crash by following the exact steps I described above."
-          required: false
+
+        - label: "我已经确认自己使用的是最新版本，或者确认问题在最新版本中仍然存在。 / I have confirmed that I am using the latest version, or that the issue still exists in the latest version."
+          required: true
+
+        - label: "我已经提供了能够帮助开发者复现问题的必要信息。 / I have provided enough information to help developers reproduce the issue."
+          required: true
+
+        - label: "我已经阅读并同意遵守项目的 Issue 提交规范。 / I have read and agree to follow the project's issue submission guidelines."
+          required: true

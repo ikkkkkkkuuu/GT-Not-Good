@@ -1,58 +1,134 @@
-name: 'Request New Feature'
-description: Request a new feature.
+name: '功能请求 / Request New Feature'
+description: '请求添加新功能 / Request a new feature.'
+title: '[Feature] '
 labels:
-  - "Feature"
+  - 'Feature'
+
 body:
   - type: markdown
     attributes:
-      value: 'Examples of this category include: add a new item,add a new function
+      value: |
+        ### 功能请求 / Feature Request
 
-    Please note that if you want to change an existing feature, e.g. think something is too OP, you should use the Suggest a Change template instead.'
+        此类别适用于例如：添加新的机器、物品、配方、功能或游戏机制。
+
+        Examples of this category include: adding a new machine, item, recipe, function, or game mechanic.
+
+        > 如果你想修改现有功能，例如认为某个功能过强、过弱或体验不好，请不要使用此模板。
+        > If you want to change an existing feature, for example because you think it is too powerful, too weak, or has poor usability, please do not use this template.
+
+        请在提交前确认已经搜索过现有 Issue。
+        Please search existing issues before submitting.
+
   - type: input
     id: version
     attributes:
-      label: Your Pack Version
-      description: What version of the pack are you playing? If you're using an ancient version maybe first try updating the pack. We add new features all the time, so your feature may already be in the latest version. There are also usually Dev releases inbetween Official releases that may not show up on other platforms.
-      placeholder: "Example: 2.1.1.0"
+      label: GTNH 版本 / GTNH Version
+      description: |
+        你正在使用哪个版本的 GTNH？
+        What version of GTNH are you playing?
+
+        如果使用的是较旧版本，请先尝试更新到最新版本。
+        If you are using an old version, please try updating to the latest version first.
+
+        新功能可能已经在较新的版本中加入。
+        The feature you are requesting may already have been added in a newer version.
+      placeholder: "例如：2.7.4 / Example: 2.7.4"
     validations:
       required: true
+
   - type: input
     id: mod_version
     attributes:
-      label: Mod Version
-      description: What version of the mod are you using? Give an actual version number or jar name, not "latest". Speaking of which, if you are not on the latest jar, try updating first.
-      placeholder: "Example: 3.4"
+      label: GT-Not-Good 版本 / GT-Not-Good Version
+      description: |
+        请填写实际版本号或 jar 文件名，不要填写“最新版”。
+        Please provide the actual version number or jar filename, not "latest".
+
+        如果你不是最新版本，请先尝试更新。
+        If you are not using the latest version, please try updating first.
+      placeholder: "例如：1.0.0 / Example: 1.0.0"
     validations:
       required: true
+
   - type: textarea
     id: proposal
     attributes:
-      label: Your Proposal
-      description: What do you propose? Please describe it briefly in one or two sentence.
-      placeholder: "Example: Add a new chain function."
+      label: 功能提案 / Your Proposal
+      description: |
+        请简要描述你希望添加什么功能。
+        What feature would you like to see added?
+
+        请尽量在一到两句话内说明功能的核心内容。
+        Please try to describe the core idea in one or two sentences.
+      placeholder: |
+        例如：
+        添加一个新的无线数据终端，用于远程查看机器状态。
+
+        Example:
+        Add a new wireless data terminal for remotely viewing machine status.
     validations:
       required: true
+
   - type: textarea
     id: goal
     attributes:
-      label: Your Goal
-      description: Why is this feature needed?
-      placeholder: "Example: Old mode can't fill my heart."
+      label: 你的目的 / Your Goal
+      description: |
+        为什么需要这个功能？
+        Why is this feature needed?
+
+        请说明这个功能能够解决什么问题，或者能够改善什么体验。
+        Please explain what problem this feature would solve or what experience it would improve.
+      placeholder: |
+        例如：
+        目前查看远程机器状态需要跑到机器旁边，这个功能可以减少不必要的移动。
+
+        Example:
+        Currently, I need to travel to the machine to check its status.
+        This feature would reduce unnecessary movement.
     validations:
       required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: 实现建议 / Implementation Idea
+      description: |
+        如果你有具体的实现方案，可以在这里说明。
+        If you have a specific implementation idea, describe it here.
+
+        此项不是必须的。
+        This field is optional.
+      placeholder: |
+        例如：
+        可以复用现有的数据棒通信机制。
+
+        Example:
+        The existing Data Stick communication system could be reused.
+    validations:
+      required: false
+
   - type: checkboxes
     id: final
     attributes:
-      label: Final Checklist
-      description: Please mark them so we know you are serious with your suggestion.
+      label: 最终检查 / Final Checklist
+      description: |
+        请确认以下内容，以便我们更好地处理你的功能请求。
+        Please confirm the following so we can better handle your feature request.
       options:
-        - label: "I have searched this issue tracker and there is nothing similar already. Posting on a closed issue saying *I like this feature please reconsider adding it* will prompt us to investigate and reopen it once we confirm your report."
+
+        - label: "我已经搜索过 Issue，没有找到相同或类似的功能请求。 / I have searched this issue tracker and there is nothing similar already."
           required: true
-        - label: "I believe there is nothing similar in the pack already, or the existing solution isn't good enough."
+
+        - label: "我确认 GTNH 或 GT-Not-Good 中目前没有类似功能，或者现有方案无法满足我的需求。 / I believe there is nothing similar in GTNH or GT-Not-Good already, or the existing solution is not good enough."
           required: true
-        - label: "I understand this change request may not attract enough attention and thus not be implemented."
+
+        - label: "我理解这个功能请求可能因为关注度不足而不会被实现。 / I understand this feature request may not attract enough attention and therefore may not be implemented."
           required: true
-        - label: "I understand this change request may be rejected due to other community members thinking it's inappropriate."
+
+        - label: "我理解这个功能请求可能因为社区反馈或其他原因而被拒绝。 / I understand this feature request may be rejected due to community feedback or other reasons."
           required: true
-        - label: "I believe this feature would make the pack better."
+
+        - label: "我认为这个功能能够让 GT-Not-Good 变得更好。 / I believe this feature would make GT-Not-Good better."
           required: true
