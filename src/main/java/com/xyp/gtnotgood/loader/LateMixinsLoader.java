@@ -18,6 +18,24 @@ import com.xyp.gtnotgood.utils.enums.ModList;
 public class LateMixinsLoader implements ILateMixinLoader {
 
     /**
+     * Appends non-empty mixin names to the target list.
+     * <p>
+     * This helper exists so optional blocks can add several related mixins in one call while ignoring accidental null
+     * or
+     * empty entries.
+     *
+     * @param list       mutable mixin-name list returned from {@link #getMixins(Set)}
+     * @param mixinNames simple mixin class names to append
+     */
+    private static void addAll(List<String> list, String... mixinNames) {
+        for (String name : mixinNames) {
+            if (name != null && !name.isEmpty()) {
+                list.add(name);
+            }
+        }
+    }
+
+    /**
      * Returns the late mixin JSON config owned by this mod.
      *
      * @return mixin configuration resource name
@@ -61,6 +79,13 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "CutCorners.RecipeSpeedMixin",
                 "CutCorners.BasicMachineOutputMixin");
         }
+        if (loadedMods.contains(ModList.ENDER_IO.getID())) {
+            addAll(
+                list,
+                "EnderIO.MixinNetworkedInventory",
+                "EnderIO.MixinNetworkedInventory",
+                "EnderIO.MixinItemSoulVessel");
+        }
 
         if (loadedMods.contains(ModList.Forestry.getID())) {
             addAll(list, "Forestry.MixinBee", "Forestry.MixinMutationConditions", "Forestry.MixinBeeHomozygous");
@@ -89,23 +114,5 @@ public class LateMixinsLoader implements ILateMixinLoader {
         }
 
         return list;
-    }
-
-    /**
-     * Appends non-empty mixin names to the target list.
-     * <p>
-     * This helper exists so optional blocks can add several related mixins in one call while ignoring accidental null
-     * or
-     * empty entries.
-     *
-     * @param list       mutable mixin-name list returned from {@link #getMixins(Set)}
-     * @param mixinNames simple mixin class names to append
-     */
-    private static void addAll(List<String> list, String... mixinNames) {
-        for (String name : mixinNames) {
-            if (name != null && !name.isEmpty()) {
-                list.add(name);
-            }
-        }
     }
 }

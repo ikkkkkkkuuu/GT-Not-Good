@@ -17,6 +17,7 @@ public enum ModList {
     Forestry(ModIds.FORESTRY, Names.FORESTRY),
     GregTech(ModIds.GREGTECH, Names.GREGTECH),
     Thaumcraft(ModIds.THAUMCRAFT, Names.THAUMCRAFT),
+    ENDER_IO(ModIds.ENDER_IO, Names.ENDER_IO),
     WarpTheory(ModIds.WARP_THEORY, Names.WARP_THEORY);
 
     /**
@@ -31,6 +32,7 @@ public enum ModList {
         public static final String GREGTECH = "gregtech";
         public static final String THAUMCRAFT = "Thaumcraft";
         public static final String WARP_THEORY = "WarpTheory";
+        public static final String ENDER_IO = "EnderIO";
 
         private ModIds() {}
     }
@@ -47,6 +49,7 @@ public enum ModList {
         public static final String GREGTECH = "GregTech";
         public static final String THAUMCRAFT = "Thaumcraft";
         public static final String WARP_THEORY = "WarpTheory";
+        public static final String ENDER_IO = "Ender IO";
 
         private Names() {}
     }
