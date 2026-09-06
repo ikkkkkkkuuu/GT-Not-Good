@@ -10,9 +10,8 @@
 ### Current support version
 | GTNH Version | Start Version | Newest Support Version | Download | Maintenance status |
 |:------------:|:-------------:|:----------------------:|:--------:|:------------------:|
-| 2.9.0-beta2  | 1.0.0         | 1.0.1                  | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) | ✔️ |
+| 2.9.0-beta2  | 1.0.0         | 1.0.1                  | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) | ❌ |
 | 2.9.0-beta3  | 1.0.2         | 1.0.2                  | [![1.0.2](https://img.shields.io/badge/release-v1.0.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.2) | ✔️ |
-
 ### 🔌 ME 网桥 / ME Bridge
 <p align="center">
     <img src="README/mebe1.png" width="800">
