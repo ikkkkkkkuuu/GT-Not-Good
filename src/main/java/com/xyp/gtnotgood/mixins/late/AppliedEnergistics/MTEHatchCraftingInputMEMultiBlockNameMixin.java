@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -48,6 +49,7 @@ public abstract class MTEHatchCraftingInputMEMultiBlockNameMixin {
         gtnotgood$feedRecipeMap(aTileEntity);
     }
 
+    @Unique
     private void gtnotgood$feedRecipeMap(IGregTechTileEntity aTileEntity) {
         if (aTileEntity == null) return;
         RecipeMap<?> map = getRecipeMap();

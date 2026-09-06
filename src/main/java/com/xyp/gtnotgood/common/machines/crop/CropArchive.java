@@ -32,7 +32,7 @@ public class CropArchive {
     private final Map<String, ArchivedSeed> seeds = new LinkedHashMap<>();
 
     public boolean addSeed(ItemStack stack) {
-        ISeedData seedData = CropsNHUtils.getAnalyzedSeedData(stack);
+        ISeedData seedData = CropsNHUtils.getSeedData(stack, false, true);
         if (seedData == null || seedData.getCrop() == null || seedData.getStats() == null) return false;
         return unlockCrop(seedData.getCrop(), seedData.getStats());
     }

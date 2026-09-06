@@ -36,6 +36,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -92,7 +93,7 @@ import appeng.util.Platform;
 import appeng.util.ReadableNumberConverter;
 import appeng.util.ScheduledReason;
 import appeng.util.inv.MEInventoryCrafting;
-import gregtech.GTMod;
+import gregtech.GTLoggers;
 import gregtech.api.enums.Dyes;
 import gregtech.api.enums.GTValues;
 import gregtech.api.enums.ItemList;
@@ -160,7 +161,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
                         itemInventory.add(item);
                     }
                 } else {
-                    GTMod.GT_FML_LOGGER.warn(
+                    GTLoggers.GT_FML_LOGGER.warn(
                         "An error occurred while loading contents of ME Crafting Input Bus. This item has been voided: "
                             + tagItemStack);
                 }
@@ -174,7 +175,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
                         fluidInventory.add(fluid);
                     }
                 } else {
-                    GTMod.GT_FML_LOGGER.warn(
+                    GTLoggers.GT_FML_LOGGER.warn(
                         "An error occurred while loading contents of ME Crafting Input Bus. This fluid has been voided: "
                             + tagFluidStack);
                 }
@@ -692,8 +693,11 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             name.append(getLocalName());
         }
 
-        return name.append(this.getNameSuffix())
-            .toString();
+        IChatComponent suffix = this.getNameSuffix();
+        if (suffix != null) {
+            name.append(suffix.getUnformattedText());
+        }
+        return name.toString();
     }
 
     @Override
@@ -742,14 +746,17 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     }
 
     @Override
-    public String getNameSuffix() {
-        StringBuilder suffix = new StringBuilder();
+    public IChatComponent getNameSuffix() {
+        IChatComponent suffix = null;
 
         IGregTechTileEntity base = getBaseMetaTileEntity();
         if (base instanceof IInterfaceNameProvider nameProvider) {
-            String circuitSuffix = nameProvider.getInterfaceNameSuffix();
-            if (circuitSuffix != null) suffix.append(circuitSuffix);
+            suffix = nameProvider.getInterfaceNameSuffix();
         }
+
+        // The meta values below are plain numbers, so a literal component is enough — there is nothing for the client
+        // to localize, unlike the provider suffix above.
+        StringBuilder metaSuffix = new StringBuilder();
 
         // Manual slots hold non-consumed recipe inputs. Use their metadata just like
         // ghost circuits and the mold slot so the interface name matches NEI's
@@ -759,7 +766,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             ItemStack manualStack = mInventory[i];
             if (manualStack == null) continue;
             try {
-                suffix.append(String.format(Gregtech.machines.ghostCircuitSuffixFormat, manualStack.getItemDamage()));
+                metaSuffix
+                    .append(String.format(Gregtech.machines.ghostCircuitSuffixFormat, manualStack.getItemDamage()));
             } catch (IllegalFormatException ignored) {}
         }
 
@@ -769,11 +777,16 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         ItemStack mold = mInventory[SLOT_MOLD];
         if (mold != null) {
             try {
-                suffix.append(String.format(Gregtech.machines.ghostCircuitSuffixFormat, mold.getItemDamage()));
+                metaSuffix.append(String.format(Gregtech.machines.ghostCircuitSuffixFormat, mold.getItemDamage()));
             } catch (IllegalFormatException ignored) {}
         }
 
-        return suffix.toString();
+        if (metaSuffix.length() > 0) {
+            IChatComponent metaComponent = new ChatComponentText(metaSuffix.toString());
+            suffix = suffix == null ? metaComponent : suffix.appendSibling(metaComponent);
+        }
+
+        return suffix;
     }
 
     @Override
@@ -861,7 +874,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             if (pattern != null) {
                 internalInventory[patternSlot] = new PatternSlot<>(pattern, patternSlotNBT, this);
             } else {
-                GTMod.GT_FML_LOGGER.warn(
+                GTLoggers.GT_FML_LOGGER.warn(
                     "An error occurred while loading contents of ME Crafting Input Bus. This pattern has been voided: "
                         + patternSlotNBT);
             }
@@ -1168,7 +1181,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             if (slot == null) continue;
             ICraftingPatternDetails details = slot.getPatternDetails();
             if (details == null) {
-                GTMod.GT_FML_LOGGER.warn(
+                GTLoggers.GT_FML_LOGGER.warn(
                     "Found an invalid pattern at " + getBaseMetaTileEntity().getCoords()
                         + " in dim "
                         + getBaseMetaTileEntity().getWorld().provider.dimensionId);

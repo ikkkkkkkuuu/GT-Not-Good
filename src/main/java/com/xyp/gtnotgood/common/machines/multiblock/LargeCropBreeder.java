@@ -391,7 +391,7 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         ItemStack[] catalystSlots = getCatalystSlots();
         ArrayList<ICropCard> parentCards = new ArrayList<>(mutation.getParents());
         int[] catalystConsumption = CropMutationMachineRequirements
-            .canBreedIgnoringBlockUnder(mutation, parentCards, getBaseMetaTileEntity(), catalystSlots);
+            .canBreedIgnoringSubSoil(mutation, parentCards, getBaseMetaTileEntity(), catalystSlots);
         if (catalystConsumption == null) return null;
 
         ISeedStats outputStats = cropArchive.averageStats(mutation.getParents());
@@ -517,7 +517,7 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         boolean stateChanged = false;
         for (ItemStack stack : inputs) {
             if (stack == null) continue;
-            ISeedData seedData = CropsNHUtils.getAnalyzedSeedData(stack);
+            ISeedData seedData = CropsNHUtils.getSeedData(stack, false, true);
             if (seedData == null) continue;
 
             cropArchive.addSeed(stack);
@@ -627,7 +627,7 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         ArrayList<ItemStack> catalysts = new ArrayList<>();
         for (ItemStack stack : inputs) {
             if (stack == null) continue;
-            if (CropsNHUtils.getAnalyzedSeedData(stack) == null) catalysts.add(stack);
+            if (CropsNHUtils.getSeedData(stack, false, true) == null) catalysts.add(stack);
         }
         return catalysts.toArray(new ItemStack[0]);
     }

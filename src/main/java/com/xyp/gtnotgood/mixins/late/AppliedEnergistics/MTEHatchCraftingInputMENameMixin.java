@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.mixins.late.AppliedEnergistics;
 
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.StatCollector;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,7 +37,7 @@ public abstract class MTEHatchCraftingInputMENameMixin {
     public abstract boolean hasCustomName();
 
     @Shadow
-    public abstract String getNameSuffix();
+    public abstract IChatComponent getNameSuffix();
 
     /**
      * Untranslated name sent to the client. Prefer the recipe map's category key so the terminal translates it to the
@@ -55,7 +56,11 @@ public abstract class MTEHatchCraftingInputMENameMixin {
         RecipeMap<?> map = ((MTEHatchInputBus) (Object) this).mRecipeMap;
         if (hasCustomName() || map == null) return;
         String key = gtnotgood$recipeCategoryKey(map);
-        if (key != null) cir.setReturnValue(StatCollector.translateToLocal(key) + getNameSuffix());
+        if (key == null) return;
+        StringBuilder name = new StringBuilder(StatCollector.translateToLocal(key));
+        IChatComponent suffix = getNameSuffix();
+        if (suffix != null) name.append(suffix.getUnformattedText());
+        cir.setReturnValue(name.toString());
     }
 
     private static String gtnotgood$recipeCategoryKey(RecipeMap<?> map) {

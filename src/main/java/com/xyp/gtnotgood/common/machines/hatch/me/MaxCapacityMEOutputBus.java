@@ -17,6 +17,7 @@ import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.common.tileentities.machines.outputme.MTEHatchOutputBusME;
+import io.netty.buffer.ByteBuf;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 
@@ -138,14 +139,14 @@ public class MaxCapacityMEOutputBus extends MTEHatchOutputBusME {
     }
 
     @Override
-    public NBTTagCompound getDescriptionData() {
+    public void writeToStream(ByteBuf buffer) {
         forceMaxCapacity();
-        return super.getDescriptionData();
+        super.writeToStream(buffer);
     }
 
     @Override
-    public void onDescriptionPacket(NBTTagCompound data) {
-        super.onDescriptionPacket(data);
+    public void readFromStream(ByteBuf buffer) {
+        super.readFromStream(buffer);
         forceMaxCapacity();
     }
 
