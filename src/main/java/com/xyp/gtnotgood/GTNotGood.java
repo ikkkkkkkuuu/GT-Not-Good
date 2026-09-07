@@ -16,6 +16,15 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 /**
  * Main Forge mod entry point that delegates lifecycle events to sided proxies.
+ * <p>
+ * Note on the CropsNH ordering: the dependency string deliberately says {@code required-before:cropsnh} rather than
+ * {@code required-after}. CropsNH and Et Futurum Requiem both bundle MCLib 0.3.7.7, and MCLib's shared-state election
+ * keeps whichever copy registers first when the versions tie. CropsNH's relocated copy ships a minimized cglib that is
+ * missing {@code net.sf.cglib.proxy.NoOp}, so when it wins the tie every MCLib consumer dies during preInit. Combined
+ * with {@code after:etfuturum} this forces the transitive order etfuturum -> gtnotgood -> cropsnh, which makes Et
+ * Futurum's intact copy register first. Loading before CropsNH is safe because nothing in our preInit touches it, and
+ * the CropsNH items we need at init are registered during CropsNH's own preInit, which the FML phase barrier already
+ * guarantees. Remove this workaround once CropsNH ships a complete shaded cglib.
  */
 @Mod(
     modid = GTNotGood.MODID,
@@ -24,7 +33,7 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
     dependencies = "after:AWWayofTime;" + "required-after:Avaritia;"
         + "after:BloodArsenal;"
         + "required-after:Botania;"
-        + "required-after:cropsnh;"
+        + "required-before:cropsnh;"
         + "required-after:bartworks;"
         + "after:eternalsingularity;"
         + "after:etfuturum;"
