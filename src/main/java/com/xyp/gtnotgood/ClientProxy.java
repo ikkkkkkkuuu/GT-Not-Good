@@ -3,13 +3,16 @@ package com.xyp.gtnotgood;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.xyp.gtnotgood.client.mebridge.MEWirelessNodeRenderer;
+import com.xyp.gtnotgood.client.network.NetworkBlockRenderer;
 import com.xyp.gtnotgood.client.torcherino.WirelessTorcherinoBeamRenderer;
 import com.xyp.gtnotgood.common.gui.BlockIcons;
+import com.xyp.gtnotgood.common.network.BlockNetwork;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.utils.event.SubscribeEventClientUtils;
 import com.xyp.gtnotgood.utils.event.ToolBeltClientEvents;
 import com.xyp.gtnotgood.utils.keybind.KeyBindManager;
 
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -43,6 +46,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
+        BlockNetwork.cableRenderId = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(new NetworkBlockRenderer());
         KeyBindManager.registerAllKeyBinds();
         // Force load BlockIcons to register textures
         BlockIcons.values();

@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.loader;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 
 import com.xyp.gtnotgood.common.blocks.machine.AssemblyMatrixBlock;
 import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeReceiver;
@@ -8,6 +9,10 @@ import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeSender;
 import com.xyp.gtnotgood.common.blocks.mebridge.ItemBlockMEBridge;
 import com.xyp.gtnotgood.common.mebridge.TileMEBridgeReceiver;
 import com.xyp.gtnotgood.common.mebridge.TileMEBridgeSender;
+import com.xyp.gtnotgood.common.network.BlockNetwork;
+import com.xyp.gtnotgood.common.network.NetworkTopology;
+import com.xyp.gtnotgood.common.network.TileNetworkController;
+import com.xyp.gtnotgood.common.network.TileNetworkNode;
 import com.xyp.gtnotgood.common.torcherino.block.BlockTorcherino;
 import com.xyp.gtnotgood.common.torcherino.block.BlockWirelessTorcherino;
 import com.xyp.gtnotgood.common.torcherino.block.TorcherinoTileFactory;
@@ -21,6 +26,7 @@ import com.xyp.gtnotgood.common.torcherino.tile.TileTorcherino;
 import com.xyp.gtnotgood.common.torcherino.tile.TileWirelessTorcherino;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
+import com.xyp.gtnotgood.utils.enums.ModList;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -28,6 +34,21 @@ import cpw.mods.fml.common.registry.GameRegistry;
  * Registers ordinary Forge blocks and tile entities owned by GT Not Good.
  */
 public final class BlockLoader {
+
+    // #tr tile.network_controller.name
+    // # Programmable Network Controller
+    // # zh_CN 可编程网络控制器
+    public static final BlockNetwork networkController = new BlockNetwork(
+        BlockNetwork.CONTROLLER,
+        "network_controller");
+    // #tr tile.network_pipe.name
+    // # Network Cable
+    // # zh_CN 网络管道
+    public static final BlockNetwork networkPipe = new BlockNetwork(BlockNetwork.PIPE, "network_pipe");
+    // #tr tile.network_connector.name
+    // # Network Connector
+    // # zh_CN 网络连接器
+    public static final BlockNetwork networkConnector = new BlockNetwork(BlockNetwork.CONNECTOR, "network_connector");
 
     public static final BlockMEBridgeSender blockMEBridgeSender = new BlockMEBridgeSender();
     public static final BlockMEBridgeReceiver blockMEBridgeReceiver = new BlockMEBridgeReceiver();
@@ -136,6 +157,16 @@ public final class BlockLoader {
      * Registers all non-GregTech blocks and stores their item stacks for recipe and creative-tab use.
      */
     public static void registry() {
+        GameRegistry.registerBlock(networkController, "network_controller");
+        GameRegistry.registerBlock(networkPipe, "network_pipe");
+        GameRegistry.registerBlock(networkConnector, "network_connector");
+        GameRegistry.registerTileEntity(TileNetworkNode.class, ModList.GTNotGood.getResourcePath("network_node"));
+        GameRegistry
+            .registerTileEntity(TileNetworkController.class, ModList.GTNotGood.getResourcePath("network_controller"));
+        MinecraftForge.EVENT_BUS.register(new NetworkTopology.Events());
+        GTNGItemList.NetworkController.set(new ItemStack(networkController));
+        GTNGItemList.NetworkPipe.set(new ItemStack(networkPipe));
+        GTNGItemList.NetworkConnector.set(new ItemStack(networkConnector));
         GameRegistry.registerBlock(blockMEBridgeSender, ItemBlockMEBridge.class, "blockMEBridgeSender");
         GameRegistry.registerBlock(blockMEBridgeReceiver, ItemBlockMEBridge.class, "blockMEBridgeReceiver");
         GameRegistry.registerBlock(assemblyMatrixBlock, "AssemblyMatrixBlock");

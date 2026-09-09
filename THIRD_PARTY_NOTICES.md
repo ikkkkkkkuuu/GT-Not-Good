@@ -1,5 +1,13 @@
 # Third-Party Notices
 
+## XNet
+
+The programmable network block textures under `assets/gtnotgood/textures/blocks/network/` are copied from
+the sibling XNet-1.20 source tree (`assets/xnet/textures/block/`). The eight-channel controller concept is
+inspired by XNet. Networking, Minecraft 1.7.10 rendering and ModularUI2 screens are implemented for this addon.
+XNet is distributed under the MIT License. The original license is included in
+`src/main/resources/META-INF/licenses/XNet-MIT.txt`.
+
 ## MessTech
 
 The Assembly Factory controller, structure layout, crafting recipes, and Assembly Matrix textures are adapted from

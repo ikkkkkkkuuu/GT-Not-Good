@@ -125,3 +125,32 @@ tasks.register('uninstallPreCommitHook', Delete) {
     description = 'Remove git pre-commit hook'
     delete '.git/hooks/pre-commit'
 }
+
+tasks.register('networkRegression', JavaExec) {
+    group = 'verification'
+    description = 'Checks programmable network transfer bounds and persistence without launching a client.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.xyp.gtnotgood.common.network.NetworkRegressionChecks'
+}
+
+// Windows JDK 25 selectors can fail to connect through the default user temp path.
+// Child JVMs do not inherit the Gradle daemon's system properties.
+tasks.withType(JavaCompile).configureEach {
+    if (System.getProperty('os.name').startsWith('Windows')) {
+        def socketTemp = new File(System.getenv('SystemRoot') ?: 'C:/Windows', 'Temp').absolutePath
+        options.forkOptions.jvmArgs += '-Djdk.net.unixdomain.tmpdir=' + socketTemp
+    }
+}
+
+tasks.withType(JavaExec).configureEach {
+    if (System.getProperty('os.name').startsWith('Windows')) {
+        systemProperty 'jdk.net.unixdomain.tmpdir', new File(System.getenv('SystemRoot') ?: 'C:/Windows', 'Temp').absolutePath
+    }
+}
+
+tasks.withType(Test).configureEach {
+    if (System.getProperty('os.name').startsWith('Windows')) {
+        systemProperty 'jdk.net.unixdomain.tmpdir', new File(System.getenv('SystemRoot') ?: 'C:/Windows', 'Temp').absolutePath
+    }
+}

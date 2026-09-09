@@ -33,6 +33,10 @@ import gregtech.api.util.GTUtility;
  */
 public enum GTNGItemList implements IItemContainer {
 
+    NetworkController,
+    NetworkPipe,
+    NetworkConnector,
+
     VaultPortHatch,
     SingularityDataHub,
 
