@@ -150,6 +150,7 @@ tasks.withType(JavaExec).configureEach {
 }
 
 tasks.withType(Test).configureEach {
+    useJUnit()
     if (System.getProperty('os.name').startsWith('Windows')) {
         systemProperty 'jdk.net.unixdomain.tmpdir', new File(System.getenv('SystemRoot') ?: 'C:/Windows', 'Temp').absolutePath
     }

@@ -37,6 +37,7 @@
 dependencies {
     // MUI2 uses the pack's FastUtil at runtime; headless GUI lifecycle tests need it explicitly.
     testRuntimeOnly("it.unimi.dsi:fastutil:8.5.18")
+    testImplementation("junit:junit:4.13.2")
     testRuntimeOnly("org.joml:joml:1.10.8") { transitive = false }
     implementation("com.github.GTNewHorizons:AE2FluidCraft-Rework:1.5.106-gtnh:dev") {
         exclude group: "com.github.GTNewHorizons", module: "Applied-Energistics-2-Unofficial"
