@@ -388,12 +388,13 @@ gui.mebridge.teleport.unavailable=The target sender is unavailable.
 gui.mebridge.teleport.no_safe_location=No safe location was found near the target sender.
 gui.mebridge.teleport.success=Teleported to channel %s.
 gui.network.type_hint=Switching type clears rules. Drain buffered cargo first.
-gui.network.channel_priority=Channel priority
+gui.network.channel_priority=Priority
 gui.network.select_cell=Select a device/channel cell
 gui.network.create_connection=Create connection
 gui.network.remove_rule=Remove this channel connection. The physical device remains in the matrix.
 gui.network.item_unit=items
 gui.network.priority=Priority %s
+gui.network.interval_hint=Operation interval in ticks (1-1200). 20 ticks = 1 second at normal TPS.
 gui.network.blacklist=Blacklist
 gui.network.ore=OreDict
 gui.network.meta=Meta

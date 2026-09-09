@@ -32,8 +32,11 @@ public final class NetworkTransfer {
         for (Endpoint endpoint : controller.topology().endpoints) {
             NetworkRule rule = channel.rules.get(endpoint.key);
             if (rule == null || rule.mode == 0) continue;
-            if (rule.mode == 1) sources.add(endpoint);
-            else sinks.add(endpoint);
+            if (rule.mode == 1 && rule.due(
+                controller.getWorldObj()
+                    .getTotalWorldTime()))
+                sources.add(endpoint);
+            if (rule.mode == 2) sinks.add(endpoint);
         }
         if (sinks.isEmpty()) return false;
         // Stable sort retains the rotated order between destinations of equal priority.
@@ -54,6 +57,11 @@ public final class NetworkTransfer {
         }
         channel.cursor = (channel.cursor + 1) & 0x7fffffff;
         for (Endpoint sink : sinks) {
+            if (!channel.rules.get(sink.key)
+                .due(
+                    controller.getWorldObj()
+                        .getTotalWorldTime()))
+                continue;
             if (!channel.hasCargo() || !budget.spend()) break;
             if (deviceKey(sink).equals(channel.source)) continue;
             NetworkRule rule = channel.rules.get(sink.key);

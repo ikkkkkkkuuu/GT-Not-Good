@@ -157,6 +157,7 @@ public final class NetworkGui {
             Channel channel = controller.channels[selected[0]];
             if (channel.hasCargo()) return;
             channel.type = (channel.type + 1) % 3;
+            channel.interval = channel.type == 2 ? 1 : 20;
             channel.enabled = false;
             channel.rules.clear();
             controller.markDirty();
@@ -187,16 +188,16 @@ public final class NetworkGui {
             }).allowC2S();
         sync.syncValue("channel_priority", channelPriority);
         // #tr gui.network.channel_priority
-        // # Channel priority
-        // # zh_CN 频道优先级
-        panel.child(text(() -> tr("gui.network.channel_priority"), 244, 43, 90));
+        // # Priority
+        // # zh_CN 优先级
+        panel.child(text(() -> tr("gui.network.channel_priority"), 244, 43, 48));
         panel.child(
             new TextFieldWidget().value(channelPriority)
                 .formatAsInteger(true)
                 .numbersInt(-99, 99)
                 .autoUpdateOnChange(false)
-                .pos(340, 39)
-                .size(114, 18));
+                .pos(294, 39)
+                .size(34, 18));
         ParentWidget<?> rulePanel = new ParentWidget<>().size(470, 330)
             .setEnabledIf(w -> !field(selection, 1).isEmpty());
         panel.child(rulePanel);
@@ -313,25 +314,55 @@ public final class NetworkGui {
         // #tr gui.network.priority
         // # Priority %s
         // # zh_CN 优先级 %s
-        existingRulePanel.child(text(() -> tr("gui.network.priority", field(ruleState, 2)), 244, 127, 116));
+        existingRulePanel.child(text(() -> tr("gui.network.priority", field(ruleState, 2)), 244, 127, 52));
         existingRulePanel.child(
             button(
                 sync,
                 "priority_less",
                 () -> "-",
                 () -> edit.accept(value -> value.priority = Math.max(-99, value.priority - 1)),
-                388,
+                298,
                 123,
-                30));
+                18));
         existingRulePanel.child(
             button(
                 sync,
                 "priority_more",
                 () -> "+",
                 () -> edit.accept(value -> value.priority = Math.min(99, value.priority + 1)),
-                424,
+                320,
                 123,
-                30));
+                18));
+        com.cleanroommc.modularui.value.sync.IntSyncValue interval = new com.cleanroommc.modularui.value.sync.IntSyncValue(
+            () -> rule.get() == null ? 20 : rule.get().interval,
+            value -> {
+                if (controller.getWorldObj().isRemote) return;
+                edit.accept(current -> current.interval = Math.max(1, Math.min(1200, value)));
+                controller.markDirty();
+            }).allowC2S();
+        sync.syncValue("rule_interval", interval);
+        existingRulePanel.child(
+            new TextFieldWidget().value(interval)
+                .formatAsInteger(true)
+                .numbersInt(1, 1200)
+                .autoUpdateOnChange(false)
+                .pos(344, 124)
+                .size(36, 18)
+                .tooltip(t -> {
+                    // #tr gui.network.interval_hint
+                    // # Operation interval in ticks (1-1200). 20 ticks = 1 second at normal TPS.
+                    // # zh_CN 操作间隔（1至1200 tick）；正常TPS下20 tick为1秒。
+                    t.addLine(IKey.lang("gui.network.interval_hint"));
+                }));
+        existingRulePanel.child(text(() -> "t", 381, 128, 10));
+        existingRulePanel.child(button(sync, "every_tick", () -> "1t", () -> {
+            edit.accept(current -> current.interval = 1);
+            controller.markDirty();
+        }, 394, 123, 28));
+        existingRulePanel.child(button(sync, "every_second", () -> "1s", () -> {
+            edit.accept(current -> current.interval = 20);
+            controller.markDirty();
+        }, 426, 123, 28));
         ParentWidget<?> filterPanel = new ParentWidget<>().size(470, 330)
             .setEnabledIf(w -> integer(channelState, 0) != 2);
         existingRulePanel.child(filterPanel);

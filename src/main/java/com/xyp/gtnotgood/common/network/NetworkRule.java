@@ -11,6 +11,7 @@ import com.cleanroommc.modularui.utils.fluid.FluidInteractions;
 public final class NetworkRule {
 
     public int mode;
+    public int interval = 20;
     public int facing = -1;
     public int priority;
     public int rate = 64;
@@ -35,6 +36,11 @@ public final class NetworkRule {
     public net.minecraftforge.common.util.ForgeDirection face(NetworkTopology.Endpoint endpoint) {
         return facing >= 0 && facing < 6 ? net.minecraftforge.common.util.ForgeDirection.getOrientation(facing)
             : endpoint.direction.getOpposite();
+    }
+
+    /** Each endpoint schedules independently, including when the opposite end uses a different interval. */
+    public boolean due(long tick) {
+        return tick % Math.max(1, interval) == 0;
     }
 
     public boolean accepts(ItemStack stack) {
@@ -69,6 +75,7 @@ public final class NetworkRule {
 
     public void read(NBTTagCompound tag) {
         facing = tag.hasKey("facing") ? Math.max(-1, Math.min(5, tag.getInteger("facing"))) : -1;
+        interval = tag.hasKey("interval") ? Math.max(1, Math.min(1200, tag.getInteger("interval"))) : 20;
         mode = Math.max(0, Math.min(2, tag.getInteger("mode")));
         priority = Math.max(-99, Math.min(99, tag.getInteger("priority")));
         rate = Math.max(1, tag.getInteger("rate"));
@@ -90,6 +97,7 @@ public final class NetworkRule {
     public NBTTagCompound write() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("mode", mode);
+        tag.setInteger("interval", interval);
         tag.setInteger("facing", facing);
         tag.setInteger("priority", priority);
         tag.setInteger("rate", rate);

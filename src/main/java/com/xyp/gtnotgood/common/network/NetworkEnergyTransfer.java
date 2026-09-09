@@ -28,7 +28,10 @@ final class NetworkEnergyTransfer {
         for (Endpoint endpoint : controller.topology().endpoints) {
             NetworkRule rule = channel.rules.get(endpoint.key);
             if (rule == null || !(endpoint.target() instanceof IGregTechTileEntity)) continue;
-            if (rule.mode == 1) sources.add(endpoint);
+            if (rule.mode == 1 && rule.due(
+                controller.getWorldObj()
+                    .getTotalWorldTime()))
+                sources.add(endpoint);
             if (rule.mode == 2) sinks.add(endpoint);
         }
         if (sinks.isEmpty()) return false;
@@ -75,6 +78,11 @@ final class NetworkEnergyTransfer {
         }
         channel.cursor = (channel.cursor + 1) & Integer.MAX_VALUE;
         for (Endpoint sink : sinks) {
+            if (!channel.rules.get(sink.key)
+                .due(
+                    controller.getWorldObj()
+                        .getTotalWorldTime()))
+                continue;
             if (channel.energy == 0) break;
             if (deviceKey(sink).equals(channel.source)) continue;
             if (!(sink.target() instanceof IGregTechTileEntity target)) continue;

@@ -44,12 +44,16 @@ public final class NetworkRegressionChecks {
         check(rule.accepts(offered), "empty filters do not block transfer");
         rule.filters[17] = new ItemStack(item, 1, 3);
         rule.facing = 5;
+        rule.interval = 7;
         NBTTagCompound copiedRule = rule.write();
         NetworkRule pastedRule = new NetworkRule();
         pastedRule.read(copiedRule);
         check(
             pastedRule.facing == 5 && pastedRule.blacklist == rule.blacklist,
             "node copy preserves access face and filter mode");
+        check(
+            pastedRule.interval == 7 && pastedRule.due(14) && !pastedRule.due(20),
+            "node interval survives copying and schedules independently");
         pastedRule.facing = 2;
         check(rule.facing == 5, "pasted settings do not modify the original configuration");
         rule.blacklist = false;
@@ -75,6 +79,11 @@ public final class NetworkRegressionChecks {
         check(restored.type == 1 && restored.enabled && restored.interval == 40, "channel settings survive save");
         check(restored.rules.get("1:2:3:4").rate == 1, "endpoint rule survives save");
         check(restored.source.equals("4:5:6"), "source exclusion survives save");
+        for (int period : new int[] { 1, 7, 20, 1200 }) {
+            channel.interval = period;
+            restored.read(channel.write());
+            check(restored.interval == period, "custom tick interval survives save without rounding");
+        }
         System.out.println("Network regression checks passed: " + checks);
         NetworkGuiSyncChecks.run();
         NetworkEnergyChecks.run();

@@ -53,6 +53,7 @@ public class TileNetworkController extends TileNetworkNode {
         if (rule == null && create && data.rules.size() < 2048) {
             rule = new NetworkRule();
             rule.rate = data.type == 0 ? 64 : 1000;
+            rule.interval = data.type == 2 ? 1 : 20;
             data.rules.put(key, rule);
         }
         return rule;
@@ -61,7 +62,6 @@ public class TileNetworkController extends TileNetworkNode {
     @Override
     public void updateEntity() {
         if (worldObj.isRemote) return;
-        long tick = worldObj.getTotalWorldTime();
         if (topology().status != 0) return;
         Channel[] ordered = channels.clone();
         java.util.Arrays.sort(
@@ -70,7 +70,7 @@ public class TileNetworkController extends TileNetworkNode {
                 .reversed());
         java.util.Map<gregtech.api.interfaces.tileentity.IGregTechTileEntity, Long> energyDraw = new java.util.IdentityHashMap<>();
         for (Channel channel : ordered) {
-            if (channel.enabled && (channel.type == 2 || tick % channel.interval == 0)) {
+            if (channel.enabled) {
                 if (channel.type == 2 ? NetworkEnergyTransfer.tick(this, channel, energyDraw)
                     : NetworkTransfer.tick(this, channel)) markDirty();
             }
@@ -123,7 +123,8 @@ public class TileNetworkController extends TileNetworkNode {
             priority = Math.max(-99, Math.min(99, tag.getInteger("priority")));
             energy = type == 2 ? Math.max(0, tag.getLong("energy")) : 0;
             enabled = tag.getBoolean("enabled");
-            interval = Math.max(10, Math.min(200, tag.getInteger("interval") / 10 * 10));
+            interval = type == 2 && !tag.getBoolean("intervalConfigured") ? 1
+                : tag.hasKey("interval") ? Math.max(1, Math.min(1200, tag.getInteger("interval"))) : 20;
             name = tag.getString("name");
             if (name.length() > 24) name = name.substring(0, 24);
             item = tag.hasKey("item") ? ItemStack.loadItemStackFromNBT(tag.getCompoundTag("item")) : null;
@@ -140,6 +141,7 @@ public class TileNetworkController extends TileNetworkNode {
                 if (key.length() > 64) continue;
                 NetworkRule rule = new NetworkRule();
                 rule.read(entry);
+                if (!entry.hasKey("interval")) rule.interval = interval;
                 rules.put(key, rule);
             }
         }
@@ -151,6 +153,7 @@ public class TileNetworkController extends TileNetworkNode {
             tag.setLong("energy", energy);
             tag.setBoolean("enabled", enabled);
             tag.setInteger("interval", interval);
+            tag.setBoolean("intervalConfigured", true);
             tag.setString("name", name);
             tag.setString("source", source);
             if (item != null) {
