@@ -54,6 +54,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.xyp.gtnotgood.ae2thing.quickterminal.ITerminalVisibilityToggle;
 import com.xyp.gtnotgood.common.gui.modularui.hatch.SuperMTEHatchCraftingInputMEGui;
+import com.xyp.gtnotgood.common.machines.hatch.me.PatternMEOutput;
 import com.xyp.gtnotgood.common.utils.MoldDataManager;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
@@ -454,6 +455,26 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     @Deprecated
     public static final ItemStack[] CRIB_MOLDS = MoldDataManager.getMolds();
     private BaseActionSource requestSource = null;
+    private final PatternMEOutput meOutput = new PatternMEOutput(this);
+
+    /** Returns the independent item and fluid product caches shared with this hatch's mirrors. */
+    public PatternMEOutput getMEOutput() {
+        return meOutput;
+    }
+
+    /** Reuses the hatch's security action source when exporting products. */
+    public BaseActionSource getMEOutputActionSource() {
+        return getRequest();
+    }
+
+    /** Wakes controllers attached to the master or its mirrors after output space grows. */
+    public void notifyMEOutputSpaceChanged() {
+        notifyWatchers();
+        for (SuperMTEHatchCraftingInputSlave mirror : getProxyHatches()) {
+            mirror.notifyMEOutputSpaceChanged();
+        }
+    }
+
     private @Nullable AENetworkProxy gridProxy = null;
     private final List<SuperMTEHatchCraftingInputSlave> proxyHatches = new ArrayList<>();
 
@@ -516,6 +537,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         super.onPostTick(aBaseMetaTileEntity, aTimer);
 
         if (getBaseMetaTileEntity().isServerSide()) {
+            meOutput.tick(aTimer);
             if (needPatternSync && aTimer % 10 == 0) {
                 needPatternSync = !postMEPatternChange();
             }
@@ -841,6 +863,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     @Override
     public void saveNBTData(NBTTagCompound aNBT) {
         super.saveNBTData(aNBT);
+        meOutput.save(aNBT);
 
         // save internalInventory
         NBTTagList internalInventoryNBT = new NBTTagList();
@@ -864,6 +887,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     @Override
     public void loadNBTData(NBTTagCompound aNBT) {
         super.loadNBTData(aNBT);
+        meOutput.load(aNBT);
         // load internalInventory
         NBTTagList internalInventoryNBT = aNBT.getTagList("internalInventory", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < internalInventoryNBT.tagCount(); i++) {
@@ -1255,6 +1279,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     }
 
     public void refundAll(boolean shouldDrop) {
+        // Destruction may already have serialized products into the dropped machine item.
+        if (!shouldDrop) meOutput.flush();
         for (PatternSlot<SuperMTEHatchCraftingInputME> slot : internalInventory) {
             if (slot == null) continue;
             try {
@@ -1267,6 +1293,13 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         boolean ret = justHadNewItems;
         justHadNewItems = false;
         return ret;
+    }
+
+    /** Preserves buffered products on the dropped machine stack when picked up with a wrench. */
+    @Override
+    public void setItemNBT(NBTTagCompound tag) {
+        super.setItemNBT(tag);
+        meOutput.save(tag);
     }
 
     @Override
@@ -1409,14 +1442,17 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
     @Override
     public String[] getDescription() {
-        if (supportFluids) return GTSplit.splitLocalizedFormatted(
-            "gt.blockmachines.input_bus_crafting_me.desc",
-            TIER_COLORS[10] + VN[10],
-            StatCollector.translateToLocal("gt.blockmachines.input_bus_crafting_me.support_fluid.desc") + GTSplit.LB);
-        return GTSplit.splitLocalizedFormatted(
-            "gt.blockmachines.input_bus_crafting_me.desc",
-            TIER_COLORS[6] + VN[6],
-            StatCollector.translateToLocal("gt.blockmachines.input_bus_crafting_me.not_support_fluid.desc")
-                + GTSplit.LB);
+        if (supportFluids) return PatternMEOutput.describe(
+            GTSplit.splitLocalizedFormatted(
+                "gt.blockmachines.input_bus_crafting_me.desc",
+                TIER_COLORS[10] + VN[10],
+                StatCollector.translateToLocal("gt.blockmachines.input_bus_crafting_me.support_fluid.desc")
+                    + GTSplit.LB));
+        return PatternMEOutput.describe(
+            GTSplit.splitLocalizedFormatted(
+                "gt.blockmachines.input_bus_crafting_me.desc",
+                TIER_COLORS[6] + VN[6],
+                StatCollector.translateToLocal("gt.blockmachines.input_bus_crafting_me.not_support_fluid.desc")
+                    + GTSplit.LB));
     }
 }

@@ -35,6 +35,8 @@
  */
 // GTNH 2.9.0-beta-3: DreamAssemblerXXL/releases/manifests/2.9.0-beta-3.json
 dependencies {
+    // AE stack interface proxies resolve Minecraft client method signatures during headless output tests.
+    testRuntimeOnly("org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209") { transitive = false }
     // MUI2 uses the pack's FastUtil at runtime; headless GUI lifecycle tests need it explicitly.
     testRuntimeOnly("it.unimi.dsi:fastutil:8.5.18")
     testImplementation("junit:junit:4.13.2")

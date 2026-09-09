@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.gtnewhorizon.gtnhlib.item.ItemStackNBT;
+import com.xyp.gtnotgood.common.machines.hatch.me.PatternMEOutput;
 
 import gregtech.api.enums.GTValues;
 import gregtech.api.enums.ItemList;
@@ -152,6 +153,11 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
             getBaseMetaTileEntity().enableTicking();
         }
         return master;
+    }
+
+    /** Notifies this mirror's controllers when the shared ME output cache gains space. */
+    public void notifyMEOutputSpaceChanged() {
+        notifyWatchers();
     }
 
     @Override
@@ -374,7 +380,8 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
 
     @Override
     public String[] getDescription() {
-        return GTSplit
-            .splitLocalizedFormatted("gt.blockmachines.input_bus_crafting_slave.desc", TIER_COLORS[11] + VN[11]);
+        return PatternMEOutput.describe(
+            GTSplit
+                .splitLocalizedFormatted("gt.blockmachines.input_bus_crafting_slave.desc", TIER_COLORS[11] + VN[11]));
     }
 }

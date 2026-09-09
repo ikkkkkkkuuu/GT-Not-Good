@@ -22,7 +22,6 @@ import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-import com.xyp.gtnotgood.common.gui.modularui.GTNGGuiTextures;
 import com.xyp.gtnotgood.common.network.NetworkTopology.Endpoint;
 import com.xyp.gtnotgood.common.network.TileNetworkController.Channel;
 
@@ -41,24 +40,28 @@ public final class NetworkGui {
         int[] page = { 0 };
         String[] selectedKey = { "" };
         String[] search = { "" };
-        ModularPanel panel = ModularPanel.defaultPanel("programmable_network", 470, 330)
-            .background(GTNGGuiTextures.MODERN_BACKGROUND);
+        ModularPanel panel = ModularPanel.defaultPanel("programmable_network", 470, 380)
+            .background(NetworkGuiStyle.FRAME);
         panel.child(
             new ParentWidget<>().pos(4, 4)
-                .size(462, 322)
-                .background(new Rectangle().color(0xFF202632)));
+                .size(462, 372)
+                .background(new Rectangle().color(0xFF101820)));
         panel.child(
             new ParentWidget<>().pos(8, 8)
-                .size(224, 305)
-                .background(new Rectangle().color(0xFF303746)));
+                .size(224, 355)
+                .background(NetworkGuiStyle.PANEL));
         panel.child(
             new ParentWidget<>().pos(238, 8)
                 .size(224, 56)
-                .background(new Rectangle().color(0xFF303746)));
+                .background(NetworkGuiStyle.PANEL));
         panel.child(
             new ParentWidget<>().pos(238, 70)
-                .size(224, 146)
-                .background(new Rectangle().color(0xFF303746)));
+                .size(224, 190)
+                .background(NetworkGuiStyle.PANEL));
+        panel.child(
+            new ParentWidget<>().pos(254, 283)
+                .size(174, 84)
+                .background(NetworkGuiStyle.PANEL));
         StringSyncValue selection = read(sync, "selection", () -> selected[0] + ";" + selectedKey[0]);
         NetworkMatrixSelectionSync matrixSelection = new NetworkMatrixSelectionSync((key, channel) -> {
             if (controller.endpoint(key) == null) return;
@@ -80,18 +83,12 @@ public final class NetworkGui {
         panel.child(button(sync, "next", () -> ">", () -> page[0] = Math.min(191, page[0] + 1), 200, 11, 22));
         for (int i = 0; i < 8; i++) {
             final int index = i;
-            panel.child(
-                button(
-                    sync,
-                    "channel_" + i,
-                    () -> integer(selection, 0) == index ? "[" + (index + 1) + "]" : "" + (index + 1),
-                    () -> {
-                        selected[0] = index;
-                        selectedKey[0] = "";
-                    },
-                    MATRIX_X + CHANNEL_OFFSET + i * CHANNEL_PITCH,
-                    36,
-                    CHANNEL_WIDTH));
+            panel.child(button(sync, "channel_" + i, () -> "" + (index + 1), () -> {
+                selected[0] = index;
+                selectedKey[0] = "";
+            }, MATRIX_X + CHANNEL_OFFSET + i * CHANNEL_PITCH, 36, CHANNEL_WIDTH).onUpdateListener(
+                w -> w.background(integer(selection, 0) == index ? NetworkGuiStyle.SELECTED : NetworkGuiStyle.BUTTON),
+                true));
         }
         StringSyncValue topologyState = read(sync, "topology_state", () -> {
             NetworkTopology topology = controller.topology();
@@ -104,7 +101,7 @@ public final class NetworkGui {
                     + " / "
                     + field(topologyState, 2),
                 12,
-                316,
+                366,
                 218));
         StringSyncValue list = new StringSyncValue(() -> {
             java.util.List<Endpoint> endpoints = new java.util.ArrayList<>();
@@ -142,7 +139,7 @@ public final class NetworkGui {
         panel.child(
             new DynamicSyncedWidget<>().syncHandler(matrix)
                 .pos(MATRIX_X, 62)
-                .size(216, 246));
+                .size(216, 296));
 
         StringSyncValue channelState = read(sync, "channel_state", () -> {
             Channel channel = controller.channels[selected[0]];
@@ -198,8 +195,18 @@ public final class NetworkGui {
                 .autoUpdateOnChange(false)
                 .pos(294, 39)
                 .size(34, 18));
-        ParentWidget<?> rulePanel = new ParentWidget<>().size(470, 330)
+        ParentWidget<?> rulePanel = new ParentWidget<>().size(470, 380)
             .setEnabledIf(w -> !field(selection, 1).isEmpty());
+        // #tr gui.network.select_node_hint
+        // # Select a device cell on the left to configure its connection.
+        // # zh_CN 点击左侧设备交叉格，配置节点连接。
+        panel.child(
+            IKey.dynamic(() -> tr("gui.network.select_node_hint"))
+                .asWidget()
+                .pos(244, 101)
+                .size(210, 24)
+                .color(0xFFE7E9F2)
+                .setEnabledIf(w -> field(selection, 1).isEmpty()));
         panel.child(rulePanel);
         Supplier<NetworkRule> rule = () -> controller.rule(selected[0], selectedKey[0], false);
         Consumer<Consumer<NetworkRule>> edit = action -> {
@@ -240,9 +247,9 @@ public final class NetworkGui {
         rulePanel.child(
             text(
                 () -> field(ruleState, 7).isEmpty() ? tr("gui.network.select_cell") : field(ruleState, 7),
-                318,
+                244,
                 77,
-                112));
+                184));
         // #tr gui.network.create_connection
         // # Create connection
         // # zh_CN 创建连接
@@ -255,7 +262,7 @@ public final class NetworkGui {
                 244,
                 99,
                 100).setEnabledIf(w -> integer(ruleState, 8) == 0));
-        ParentWidget<?> existingRulePanel = new ParentWidget<>().size(470, 330)
+        ParentWidget<?> existingRulePanel = new ParentWidget<>().size(470, 380)
             .setEnabledIf(w -> integer(ruleState, 8) == 1);
         rulePanel.child(existingRulePanel);
         existingRulePanel.child(
@@ -264,9 +271,13 @@ public final class NetworkGui {
                 "access_face",
                 () -> accessFace(integer(ruleState, 9)),
                 () -> edit.accept(value -> value.facing = value.facing >= 5 ? -1 : value.facing + 1),
-                244,
-                73,
-                70));
+                354,
+                99,
+                100));
+        // #tr gui.network.access_face_label
+        // # Side
+        // # zh_CN 访问面
+        existingRulePanel.child(text(() -> tr("gui.network.access_face_label"), 310, 103, 40));
         existingRulePanel.child(button(sync, "remove_rule", () -> "X", () -> {
             controller.channels[selected[0]].rules.remove(selectedKey[0]);
             controller.markDirty();
@@ -299,7 +310,7 @@ public final class NetworkGui {
                 .formatAsInteger(true)
                 .numbersInt(1, Integer.MAX_VALUE)
                 .autoUpdateOnChange(false)
-                .pos(310, 100)
+                .pos(310, 124)
                 .size(114, 18));
         // #tr gui.network.item_unit
         // # items
@@ -309,30 +320,34 @@ public final class NetworkGui {
                 () -> integer(channelState, 0) == 0 ? tr("gui.network.item_unit")
                     : integer(channelState, 0) == 1 ? "L" : "EU",
                 430,
-                103,
+                127,
                 24));
-        // #tr gui.network.priority
-        // # Priority %s
-        // # zh_CN 优先级 %s
-        existingRulePanel.child(text(() -> tr("gui.network.priority", field(ruleState, 2)), 244, 127, 52));
+        // #tr gui.network.amount_label
+        // # Amount
+        // # zh_CN 单次数量
+        existingRulePanel.child(text(() -> tr("gui.network.amount_label"), 244, 127, 62));
+        // #tr gui.network.interval_label
+        // # Interval
+        // # zh_CN 操作间隔
+        existingRulePanel.child(text(() -> tr("gui.network.interval_label"), 244, 151, 62));
+        // #tr gui.network.node_priority
+        // # Priority
+        // # zh_CN 节点优先级
+        existingRulePanel.child(text(() -> tr("gui.network.node_priority"), 244, 175, 62));
+        com.cleanroommc.modularui.value.sync.IntSyncValue nodePriority = new com.cleanroommc.modularui.value.sync.IntSyncValue(
+            () -> rule.get() == null ? 0 : rule.get().priority,
+            value -> {
+                if (!controller.getWorldObj().isRemote)
+                    edit.accept(current -> current.priority = Math.max(-99, Math.min(99, value)));
+            }).allowC2S();
+        sync.syncValue("node_priority", nodePriority);
         existingRulePanel.child(
-            button(
-                sync,
-                "priority_less",
-                () -> "-",
-                () -> edit.accept(value -> value.priority = Math.max(-99, value.priority - 1)),
-                298,
-                123,
-                18));
-        existingRulePanel.child(
-            button(
-                sync,
-                "priority_more",
-                () -> "+",
-                () -> edit.accept(value -> value.priority = Math.min(99, value.priority + 1)),
-                320,
-                123,
-                18));
+            new TextFieldWidget().value(nodePriority)
+                .formatAsInteger(true)
+                .numbersInt(-99, 99)
+                .autoUpdateOnChange(false)
+                .pos(310, 172)
+                .size(62, 18));
         com.cleanroommc.modularui.value.sync.IntSyncValue interval = new com.cleanroommc.modularui.value.sync.IntSyncValue(
             () -> rule.get() == null ? 20 : rule.get().interval,
             value -> {
@@ -346,24 +361,24 @@ public final class NetworkGui {
                 .formatAsInteger(true)
                 .numbersInt(1, 1200)
                 .autoUpdateOnChange(false)
-                .pos(344, 124)
-                .size(36, 18)
+                .pos(310, 148)
+                .size(62, 18)
                 .tooltip(t -> {
                     // #tr gui.network.interval_hint
                     // # Operation interval in ticks (1-1200). 20 ticks = 1 second at normal TPS.
                     // # zh_CN 操作间隔（1至1200 tick）；正常TPS下20 tick为1秒。
                     t.addLine(IKey.lang("gui.network.interval_hint"));
                 }));
-        existingRulePanel.child(text(() -> "t", 381, 128, 10));
+        existingRulePanel.child(text(() -> "t", 377, 151, 10));
         existingRulePanel.child(button(sync, "every_tick", () -> "1t", () -> {
             edit.accept(current -> current.interval = 1);
             controller.markDirty();
-        }, 394, 123, 28));
+        }, 394, 147, 28));
         existingRulePanel.child(button(sync, "every_second", () -> "1s", () -> {
             edit.accept(current -> current.interval = 20);
             controller.markDirty();
-        }, 426, 123, 28));
-        ParentWidget<?> filterPanel = new ParentWidget<>().size(470, 330)
+        }, 426, 147, 28));
+        ParentWidget<?> filterPanel = new ParentWidget<>().size(470, 380)
             .setEnabledIf(w -> integer(channelState, 0) != 2);
         existingRulePanel.child(filterPanel);
         // #tr gui.network.blacklist
@@ -376,8 +391,8 @@ public final class NetworkGui {
                 () -> filterMode(integer(ruleState, 3)),
                 () -> edit.accept(value -> value.blacklist = !value.blacklist),
                 244,
-                148,
-                54));
+                196,
+                50));
         // #tr gui.network.ore
         // # OreDict
         // # zh_CN 矿辞
@@ -387,9 +402,9 @@ public final class NetworkGui {
                 "ore",
                 () -> flag(tr("gui.network.ore"), integer(ruleState, 6)),
                 () -> edit.accept(value -> value.matchOre = !value.matchOre),
-                302,
-                148,
-                46));
+                298,
+                196,
+                50).setEnabledIf(w -> integer(channelState, 0) == 0));
         // #tr gui.network.meta
         // # Meta
         // # zh_CN 元数据
@@ -400,17 +415,21 @@ public final class NetworkGui {
                 () -> flag(tr("gui.network.meta"), integer(ruleState, 4)),
                 () -> edit.accept(value -> value.matchMeta = !value.matchMeta),
                 352,
-                148,
-                54));
+                196,
+                50).setEnabledIf(w -> integer(channelState, 0) == 0));
         filterPanel.child(
             button(
                 sync,
                 "nbt",
                 () -> flag("NBT", integer(ruleState, 5)),
                 () -> edit.accept(value -> value.matchNbt = !value.matchNbt),
-                410,
-                148,
-                44));
+                406,
+                196,
+                50));
+        filterPanel.child(
+            new ParentWidget<>().pos(256, 218)
+                .size(170, 44)
+                .background(NetworkGuiStyle.EMPTY));
         NetworkFilterHandler filters = new NetworkFilterHandler(
             controller,
             () -> controller.channels[selected[0]].type == 0 ? rule.get() : null,
@@ -420,7 +439,7 @@ public final class NetworkGui {
                 new com.cleanroommc.modularui.widgets.slot.PhantomItemSlot()
                     .slot(new NetworkFilterSlot(filters, i).singletonSlotGroup())
                     .setEnabledIf(w -> integer(channelState, 0) == 0)
-                    .pos(260 + i % 9 * 18, 174 + i / 9 * 18));
+                    .pos(260 + i % 9 * 18, 222 + i / 9 * 18));
             com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler fluidSync = new com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler(
                 new NetworkFluidFilterTank(
                     controller,
@@ -431,7 +450,7 @@ public final class NetworkGui {
             filterPanel.child(
                 new com.cleanroommc.modularui.widgets.slot.FluidSlot().syncHandler(fluidSync)
                     .setEnabledIf(w -> integer(channelState, 0) == 1)
-                    .pos(260 + i % 9 * 18, 174 + i / 9 * 18)
+                    .pos(260 + i % 9 * 18, 222 + i / 9 * 18)
                     .size(18, 18));
         }
         String[] clipboardStatus = { "" };
@@ -448,7 +467,7 @@ public final class NetworkGui {
                 .getEntityData()
                 .setTag(clipboardKey, copy);
             clipboardStatus[0] = "copied";
-        }, 244, 216, 62));
+        }, 244, 264, 62));
         // #tr gui.network.paste_rule
         // # Paste
         // # zh_CN 粘贴配置
@@ -470,12 +489,12 @@ public final class NetworkGui {
             controller.channels[selected[0]].enabled = true;
             controller.markDirty();
             clipboardStatus[0] = "pasted";
-        }, 310, 216, 62));
+        }, 310, 264, 62));
         StringSyncValue clipboardMessage = read(sync, "clipboard_status", () -> clipboardStatus[0]);
-        existingRulePanel.child(text(() -> clipboardMessage(clipboardMessage.getValue()), 378, 221, 78));
+        existingRulePanel.child(text(() -> clipboardMessage(clipboardMessage.getValue()), 378, 269, 78));
         panel.child(
             SlotGroupWidget.playerInventory(true)
-                .pos(260, 239));
+                .pos(260, 289));
         return panel;
     }
 
@@ -500,7 +519,7 @@ public final class NetworkGui {
                 java.nio.charset.StandardCharsets.UTF_8);
             ParentWidget<?> row = new ParentWidget<>().size(208, 24)
                 .marginBottom(1)
-                .background(new Rectangle().color(0xFF383F4B));
+                .background(NetworkGuiStyle.PANEL);
             ItemStack device = NetworkDeviceDisplay.decode(fields[1]);
             if (device != null) {
                 row.child(
@@ -516,15 +535,21 @@ public final class NetworkGui {
                 row.child(
                     new ButtonWidget<>().pos(CHANNEL_OFFSET + i * CHANNEL_PITCH, 2)
                         .size(CHANNEL_WIDTH, 20)
-                        .background(GTNGGuiTextures.MODERN_BUTTON_COMPACT)
+                        .background(NetworkGuiStyle.BUTTON)
                         .overlay(IKey.dynamic(() -> {
                             String value = modes.charAt(channel) == '1' ? "E"
                                 : modes.charAt(channel) == '2' ? "I" : modes.charAt(channel) == '3' ? "-" : "";
-                            return integer(selection, 0) == channel && field(selection, 1).equals(key)
-                                ? "[" + value + "]"
-                                : value;
+                            return value;
                         })
-                            .color(0xFF151B25))
+                            .color(0xFFE6F1F4))
+                        .onUpdateListener(
+                            w -> w.background(
+                                integer(selection, 0) == channel && field(selection, 1).equals(key)
+                                    ? NetworkGuiStyle.SELECTED
+                                    : modes.charAt(channel) == '1' ? NetworkGuiStyle.EXTRACT
+                                        : modes.charAt(channel) == '2' ? NetworkGuiStyle.INSERT
+                                            : NetworkGuiStyle.EMPTY),
+                            true)
                         .onMousePressed(mouseButton -> {
                             matrixSelection.select(key, channel);
                             return true;
@@ -533,7 +558,7 @@ public final class NetworkGui {
             }
             rows.child(row);
         }
-        return new ListWidget<>().size(216, 246)
+        return new ListWidget<>().size(216, 296)
             .padding(0)
             .crossAxisAlignment(com.cleanroommc.modularui.utils.Alignment.CrossAxis.START)
             .child(rows);
@@ -585,11 +610,11 @@ public final class NetworkGui {
 
     public static ModularPanel connector(TileNetworkNode connector, PanelSyncManager sync) {
         ModularPanel panel = ModularPanel.defaultPanel("network_connector", 250, 200)
-            .background(GTNGGuiTextures.MODERN_BACKGROUND);
+            .background(NetworkGuiStyle.FRAME);
         panel.child(
             new ParentWidget<>().pos(4, 4)
                 .size(242, 192)
-                .background(new Rectangle().color(0xFF202632)));
+                .background(new Rectangle().color(0xFF101820)));
         // #tr gui.network.connector
         // # Network Connector
         // # zh_CN 网络连接器
@@ -635,10 +660,10 @@ public final class NetworkGui {
             () -> new InteractionSyncHandler().setOnMousePressed(mouse -> { if (!mouse.isClient()) action.run(); }));
         return new ButtonWidget<>().pos(x, y)
             .size(width, 20)
-            .background(GTNGGuiTextures.MODERN_BUTTON_COMPACT)
+            .background(NetworkGuiStyle.BUTTON)
             .overlay(
                 IKey.dynamic(label)
-                    .color(0xFF151B25))
+                    .color(0xFFE6F1F4))
             .syncHandler(handler);
     }
 
