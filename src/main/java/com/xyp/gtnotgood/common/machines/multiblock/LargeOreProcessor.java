@@ -39,7 +39,9 @@ import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.check.CheckRecipeResult;
 import gregtech.api.recipe.check.CheckRecipeResultRegistry;
 import gregtech.api.render.TextureFactory;
+import gregtech.api.structure.error.ErrorType;
 import gregtech.api.structure.error.StructureError;
+import gregtech.api.structure.error.StructureErrors;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
@@ -172,6 +174,8 @@ public class LargeOreProcessor extends GTNGMultiBlockBase<LargeOreProcessor> imp
             return;
         }
         checkCasingMin(errors, mCountCasing, 1);
+        if (mInputBusses.isEmpty()) errors.add(StructureErrors.hatchCount(ErrorType.TOO_FEW, InputBus, 0, 1));
+        if (mOutputBusses.isEmpty()) errors.add(StructureErrors.hatchCount(ErrorType.TOO_FEW, OutputBus, 0, 1));
     }
 
     @Override
@@ -489,9 +493,10 @@ public class LargeOreProcessor extends GTNGMultiBlockBase<LargeOreProcessor> imp
             // # zh_CN 无法处理的物品会转到输出总线
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeOreProcessor.4"))
             .beginStructureBlock(3, 2, 2, false)
-            .addInputBus("Any Input Bus", 1)
-            .addOutputBus("Any Output Bus", 1)
-            .addMaintenanceHatch("Any Maintenance Hatch", 1)
+            .addCasing("0+", "Any Large Ore Processor Casing", false)
+            .addInputBus("1+", "Any Input Bus", 1)
+            .addOutputBus("1+", "Any Output Bus", 1)
+            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", "Any Maintenance Hatch", 1)
             .toolTipFinisher();
         return tt;
     }

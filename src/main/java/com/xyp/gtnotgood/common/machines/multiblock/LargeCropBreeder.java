@@ -902,10 +902,10 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         tt.beginStructureBlock(5, 4, 3, false)
             .addController(controller)
             .addOtherStructurePart(glass, "A", 2)
-            .addInputBus(casing, 1)
-            .addOutputBus(casing, 1)
-            .addEnergyHatch(casing, 1)
-            .addMaintenanceHatch(casing, 1)
+            .addInputBus("1+", casing, 1)
+            .addOutputBus("1+", casing, 1)
+            .addEnergyHatch("1+", casing, 1)
+            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1)
             .addOtherStructurePart(seedBed, "C", 3)
             .toolTipFinisher();
         return tt;

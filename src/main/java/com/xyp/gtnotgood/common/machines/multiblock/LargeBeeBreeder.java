@@ -902,10 +902,10 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
         // # zh_CN 机器外壳
         String casing = StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_Casing");
         tt.beginStructureBlock(15, 17, 15, false)
-            .addInputBus(casing, 1)
-            .addOutputBus(casing, 1)
-            .addEnergyHatch(casing, 1)
-            .addMaintenanceHatch(casing, 1)
+            .addInputBus("1+", casing, 1)
+            .addOutputBus("1+", casing, 1)
+            .addEnergyHatch("1+", casing, 1)
+            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1)
             .toolTipFinisher();
         return tt;
     }

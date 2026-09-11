@@ -1075,11 +1075,14 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
             // #tr tooltip.gtnotgood.largeVoidMiner.casing
             // # Steel void miner casing
             // # zh_CN 脱氧钢机器外壳
-            .addInputBus(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
-            .addInputHatch(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
-            .addOutputBus(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
-            .addEnergyHatch(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
-            .addMaintenanceHatch(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
+            .addInputBus("0+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
+            .addInputHatch("0+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
+            .addOutputBus("1+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
+            .addEnergyHatch("1+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
+            .addMaintenanceHatch(
+                shouldCheckMaintenance() ? "1+" : "0+",
+                StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"),
+                1)
             .toolTipFinisher();
         return tt;
     }
