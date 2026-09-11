@@ -421,8 +421,13 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
             // #tr Tooltip_SingularityDataHub_Casing
             // # Any Vibration-Safe Casing
             // # zh_CN 任意抗震机械方块
+            .addCasing("10+", StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"), false)
             .addInputBus("0+", StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"), 1)
             .addInputHatch("0+", StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"), 1)
+            .addOtherStructurePart(
+                "1 " + StatCollector.translateToLocal("NameVaultPortHatch"),
+                StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"),
+                1)
             .toolTipFinisher();
         return tt;
     }

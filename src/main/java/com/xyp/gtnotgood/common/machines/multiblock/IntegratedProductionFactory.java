@@ -986,7 +986,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
             .addInfo(FactoryText.RECIPE_HELP.text())
             .beginStructureBlock(3, 3, 3, true)
             .addController("Front center")
-            .addCasing("1+", "Robust Tungstensteel Machine Casing", false)
+            .addCasing("25+", "Robust Tungstensteel Machine Casing", false)
             .addInputBus("0+", "Any casing", 1)
             .addInputHatch("0+", "Any casing", 1)
             .addOutputBus("0+", "Any casing", 1)
