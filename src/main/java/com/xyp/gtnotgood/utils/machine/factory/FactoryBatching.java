@@ -21,6 +21,15 @@ public final class FactoryBatching {
         return (int) Math.max(0L, Math.min(requested, room / perRecipe));
     }
 
+    /**
+     * Saturates desired buffer stock without reserving the entire configured parallel batch a second time.
+     * Actual output capacity is checked by recipeLimit, which can shrink an automatic batch to available space.
+     */
+    public static long bufferWatermark(long batch, long batches) {
+        if (batch <= 0 || batches <= 0) return 0;
+        return batch > Integer.MAX_VALUE / batches ? Integer.MAX_VALUE : batch * batches;
+    }
+
     /** Uses remaining per-tick energy headroom without multiplying an unbounded candidate count. */
     public static int powerLimit(int requested, long unitEUt, long availableEUt) {
         if (unitEUt <= 0) return Math.max(0, requested);

@@ -559,7 +559,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
             status = active > 0 ? FactoryText.RUNNING : FactoryText.INPUT;
             for (FactoryText reason : new FactoryText[] { FactoryText.POWER, FactoryText.LIMIT, FactoryText.HOST,
                 FactoryText.CATALYST_MISSING, FactoryText.BLOCKED }) {
-                if (nodeStatus.containsValue(reason)) {
+                if (nodeStatus.containsValue(reason) && (reason != FactoryText.BLOCKED || !running)) {
                     status = reason;
                     break;
                 }
@@ -828,20 +828,14 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                 if (output != null && stored.isItemEqual(output) && ItemStack.areItemStackTagsEqual(stored, output))
                     batch = saturatedAmountSum(batch, (long) output.stackSize * effectiveParallel(node));
             }
-            long watermark = batch == 0 ? 0
-                : Math.min(
-                    Integer.MAX_VALUE - batch,
-                    batches > Integer.MAX_VALUE / batch ? Integer.MAX_VALUE : batches * batch);
+            long watermark = FactoryBatching.bufferWatermark(batch, batches);
             if (stored.stackSize >= watermark || !internalItem(node.id, stored)) return true;
         }
         for (FluidStack stored : state.fluids) {
             long batch = 0;
             for (FluidStack output : entry.recipe.mFluidOutputs) if (output != null && stored.isFluidEqual(output))
                 batch = saturatedAmountSum(batch, (long) output.amount * effectiveParallel(node));
-            long watermark = batch == 0 ? 0
-                : Math.min(
-                    Integer.MAX_VALUE - batch,
-                    batches > Integer.MAX_VALUE / batch ? Integer.MAX_VALUE : batches * batch);
+            long watermark = FactoryBatching.bufferWatermark(batch, batches);
             if (stored.amount >= watermark || !internalFluid(node.id, stored)) return true;
         }
         return false;
@@ -872,6 +866,11 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     }
 
     /** Atomic bounded chunks preserve unsent amounts, including when ME or ordinary output storage is full. */
+    /**
+     * Offers each finished product at its actual size, allowing ME assemblies to receive large batches at once.
+     * Native transactions distribute partial acceptance across outputs; leftovers stay local and voiding is disabled.
+     * The per-tick budget limits product types rather than splitting huge amounts into thousands of tiny transfers.
+     */
     private void flushBuffers() {
         itemOutputBlocked = fluidOutputBlocked = false;
         int budget = 32;
@@ -881,17 +880,25 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                 if (stack.stackSize <= 0 || internalItem(entry.getKey(), stack)) continue;
                 if (--budget < 0) return;
                 ItemStack part = stack.copy();
-                int amount = part.stackSize = Math.min(stack.stackSize, stack.getMaxStackSize());
-                if (addOutputAtomic(part)) stack.stackSize -= amount;
-                else itemOutputBlocked = true;
+                gregtech.api.util.ItemEjectionHelper output = new gregtech.api.util.ItemEjectionHelper(
+                    getOutputBusses(),
+                    true);
+                output.ejectStack(part);
+                output.commit();
+                stack.stackSize = part.stackSize;
+                if (stack.stackSize > 0) itemOutputBlocked = true;
             }
             for (FluidStack stack : buffer.fluids) {
                 if (stack.amount <= 0 || internalFluid(entry.getKey(), stack)) continue;
                 if (--budget < 0) return;
                 FluidStack part = stack.copy();
-                int amount = part.amount = Math.min(stack.amount, 64000);
-                if (addOutputAtomic(part)) stack.amount -= amount;
-                else fluidOutputBlocked = true;
+                gregtech.api.util.FluidEjectionHelper output = new gregtech.api.util.FluidEjectionHelper(
+                    getOutputHatches(),
+                    true);
+                output.ejectStack(part);
+                output.commit();
+                stack.amount = part.amount;
+                if (stack.amount > 0) fluidOutputBlocked = true;
             }
             buffer.compact();
         }
