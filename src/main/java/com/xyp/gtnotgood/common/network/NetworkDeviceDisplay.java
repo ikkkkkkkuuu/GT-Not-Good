@@ -3,13 +3,13 @@ package com.xyp.gtnotgood.common.network;
 import java.io.IOException;
 import java.util.Base64;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 
@@ -25,14 +25,11 @@ final class NetworkDeviceDisplay {
             return gt.getMetaTileEntity()
                 .getStackForm(1);
         }
-        MovingObjectPosition hit = new MovingObjectPosition(
-            target.xCoord,
-            target.yCoord,
-            target.zCoord,
-            endpoint.side(),
-            Vec3.createVectorHelper(target.xCoord + 0.5, target.yCoord + 0.5, target.zCoord + 0.5));
-        return target.getBlockType()
-            .getPickBlock(hit, target.getWorldObj(), target.xCoord, target.yCoord, target.zCoord);
+        // Forge's pick-block implementation calls client-only Block.getItem/getDamageValue methods.
+        // The dedicated server strips those methods, although a single-player integrated server retains them.
+        Block block = target.getBlockType();
+        Item item = Item.getItemFromBlock(block);
+        return item == null ? null : new ItemStack(item, 1, block.damageDropped(target.getBlockMetadata()));
     }
 
     static String encode(NetworkTopology.Endpoint endpoint) {
