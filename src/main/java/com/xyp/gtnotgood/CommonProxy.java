@@ -40,6 +40,9 @@ public class CommonProxy {
 
         GTNotGood.channel = NetworkRegistry.INSTANCE.newSimpleChannel(GTNotGood.MODID);
         NetWorkHandler.registerAllMessage();
+        FMLCommonHandler.instance()
+            .bus()
+            .register(new com.xyp.gtnotgood.config.ServerConfigService());
 
         ItemsLoader.registry();
         BlockLoader.registry();
@@ -86,4 +89,7 @@ public class CommonProxy {
 
     // register server commands in this event handler (Remove if not needed)
     public void serverStarting(FMLServerStartingEvent event) {}
+
+    /** Receives a server settings reply on the client proxy; dedicated servers have no settings screen. */
+    public void receiveServerConfig(com.xyp.gtnotgood.common.packet.ServerConfigMessage message) {}
 }

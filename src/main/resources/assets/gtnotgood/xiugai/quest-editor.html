@@ -1,0 +1,4845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BetterQuesting - Quest Editor</title>
+<style>
+:root {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-tertiary: #0f3460;
+  --bg-card: #1e2a4a;
+  --bg-input: #0d1b3e;
+  --bg-hover: #253a6e;
+  --border-color: #2a3f6f;
+  --border-active: #4a7fff;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0b0cc;
+  --text-muted: #6a7a9a;
+  --accent: #4a7fff;
+  --accent-hover: #6a9fff;
+  --success: #4caf50;
+  --warning: #ff9800;
+  --danger: #f44336;
+  --danger-hover: #ff6659;
+  --tab-active: #4a7fff;
+  --scrollbar-bg: #0d1b3e;
+  --scrollbar-thumb: #2a3f6f;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input, textarea, .json-viewer, pre, code, #importLog {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-active); }
+
+/* Header */
+.header {
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border-color);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header h1 {
+  font-size: 20px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lang-switch {
+  display: flex;
+  background: var(--bg-input);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.lang-switch button {
+  padding: 6px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.lang-switch button.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Layout */
+.main-layout {
+  display: flex;
+  height: calc(100vh - 53px);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-header h3 {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.quest-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.quest-item {
+  padding: 10px 12px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quest-item:hover { background: var(--bg-hover); }
+
+.quest-item.active {
+  background: var(--bg-tertiary);
+  border-color: var(--accent);
+}
+
+.quest-item .q-icon {
+  width: 24px;
+  height: 24px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.quest-item .q-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.quest-item .q-name {
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.quest-item .q-id {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.sidebar-actions {
+  padding: 8px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: 6px;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 20px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.tab-btn.active { background: var(--accent); color: #fff; }
+
+/* Panels */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.card-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-header .collapse-icon {
+  transition: transform 0.2s;
+  color: var(--text-muted);
+}
+
+.card-header.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-body.collapsed {
+  display: none;
+}
+
+/* Form */
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.form-row:last-child { margin-bottom: 0; }
+
+.form-label {
+  width: 160px;
+  min-width: 160px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: right;
+  padding-right: 8px;
+}
+
+.form-control {
+  flex: 1;
+  min-width: 0;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+}
+
+textarea { resize: vertical; min-height: 60px; }
+
+select { cursor: pointer; }
+
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-success {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+}
+.btn-success:hover { opacity: 0.9; }
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  border-color: var(--danger);
+}
+.btn-danger:hover { background: var(--danger-hover); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-secondary);
+}
+.btn-outline:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* Item list */
+.item-list {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.item-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.item-list-body {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.item-entry {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  gap: 10px;
+  transition: background 0.15s;
+}
+
+.item-entry:last-child { border-bottom: none; }
+.item-entry:hover { background: var(--bg-hover); }
+
+.item-entry .item-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.item-entry .item-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-entry .item-name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.item-entry .item-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.item-entry .item-actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h3 { font-size: 16px; }
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.close-btn:hover { color: var(--text-primary); }
+
+/* JSON viewer */
+.json-viewer {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  max-height: 400px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* File actions */
+.file-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Tooltip */
+.help-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  font-size: 10px;
+  cursor: help;
+  position: relative;
+}
+
+.help-tip:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10;
+  color: var(--text-primary);
+  max-width: 300px;
+  white-space: normal;
+}
+
+/* Grid */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Badge */
+.badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.badge-info { background: var(--accent); color: #fff; }
+.badge-success { background: var(--success); color: #fff; }
+.badge-warning { background: var(--warning); color: #000; }
+
+/* Two-col layout for task/reward items */
+.two-col {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+}
+
+.two-col .col-list {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.two-col .col-list-header {
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.two-col .col-list-body {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.two-col .col-detail {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.two-col .col-detail-header {
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.two-col .col-detail-body {
+  padding: 16px;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.list-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.list-item:hover { background: var(--bg-hover); }
+.list-item.active { background: var(--bg-tertiary); border-left: 3px solid var(--accent); }
+.list-item:last-child { border-bottom: none; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .main-layout { flex-direction: column; }
+  .sidebar { width: 100%; min-width: 100%; max-height: 200px; border-right: none; border-bottom: 1px solid var(--border-color); }
+  .two-col { grid-template-columns: 1fr; }
+  .form-row { flex-direction: column; align-items: flex-start; }
+  .form-label { width: auto; text-align: left; padding-right: 0; }
+}
+
+/* Import/Export zone */
+.file-drop-zone {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+}
+
+.file-drop-zone:hover,
+.file-drop-zone.dragover {
+  border-color: var(--accent);
+  background: rgba(74, 127, 255, 0.05);
+}
+
+.form-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Logic/Visibility description badge */
+.logic-desc {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: help;
+  position: relative;
+  min-width: 40px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+/* Global tooltip — appended to body, never clipped by overflow:hidden parents */
+.global-tooltip {
+  display: none;
+  position: fixed;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-active);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  z-index: 1000;
+  color: var(--text-primary);
+  max-width: 520px;
+  white-space: normal;
+  line-height: 1.6;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  pointer-events: none;
+}
+.global-tooltip.show { display: block; }
+.global-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--border-active);
+}
+
+/* Notification */
+.notification {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background: var(--success);
+  color: #fff;
+  font-size: 13px;
+  z-index: 300;
+  animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+@keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+/* NESQL icon rendering */
+.nesql-icon {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  border-radius: 2px;
+}
+.nesql-icon-sm {
+  width: 24px;
+  height: 24px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+/* NESQL Picker Modal */
+.nesql-picker-search { display: flex; gap: 8px; margin-bottom: 12px; }
+.nesql-picker-status { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+.nesql-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 4px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 4px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+.nesql-picker-cell {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.nesql-picker-cell:hover {
+  border-color: var(--accent);
+  background: var(--bg-hover);
+}
+.nesql-picker-cell.selected {
+  border-color: var(--success);
+  background: rgba(76,175,80,0.15);
+}
+.nesql-picker-cell img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+}
+.nesql-picker-info {
+  margin-top: 12px;
+  padding: 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+}
+.nesql-picker-info img {
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+}
+.nesql-picker-info-text { flex: 1; font-size: 12px; }
+.nesql-picker-info-text .name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.nesql-picker-info-text .id { color: var(--text-muted); margin-top: 2px; }
+
+/* DB loading progress */
+.db-progress { width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.db-progress-bar { height: 100%; background: var(--accent); transition: width 0.3s; width: 0%; }
+.db-status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.db-status-badge.loaded { background: rgba(76,175,80,0.2); color: var(--success); }
+.db-status-badge.none { background: rgba(248,81,73,0.2); color: var(--danger); }
+
+/* Minecraft 格式化代码预览 */
+.mc-fmt-preview {
+  margin-top: 4px;
+  padding: 6px 10px;
+  background: #2b2b2b;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-family: 'Minecraft', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-height: 22px;
+  display: none;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
+}
+.mc-fmt-preview:not(:empty) { display: block; }
+.mc-fmt-preview .mc-obfuscated { animation: mcObfuscate 0.1s infinite; }
+@keyframes mcObfuscate {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- Global Tooltip -->
+<div id="globalTooltip" class="global-tooltip"></div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <h1>⚔ BetterQuesting Editor</h1>
+    <span style="color:var(--text-muted);font-size:12px" data-i18n="header.subtitle">Quest Data Editor for Minecraft 1.7.10</span>
+  </div>
+  <div class="header-right">
+    <div class="lang-switch">
+      <button id="langEn" onclick="setLang('en')" class="active">EN</button>
+      <button id="langZh" onclick="setLang('zh')">中文</button>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="importJSON()" data-i18n="btn.import">📂 Import JSON</button>
+    <button class="btn btn-success btn-sm" onclick="exportJSON()" data-i18n="btn.export">💾 Export JSON</button>
+    <button class="btn btn-outline btn-sm" onclick="openSettings()" title="Settings / 设置">⚙</button>
+  </div>
+</div>
+
+<!-- Main Layout -->
+<div class="main-layout">
+
+  <!-- Sidebar: Quest List -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h3 data-i18n="sidebar.quests">QUESTS</h3>
+      <span class="badge badge-info" id="questCount">0</span>
+    </div>
+    <div class="quest-list" id="questList">
+      <div class="empty-state">
+        <div class="icon">📋</div>
+        <p data-i18n="sidebar.empty">No quests. Click + to add one.</p>
+      </div>
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn btn-primary btn-sm" style="flex:1" onclick="addQuest()" data-i18n="btn.addQuest">+ New Quest</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteCurrentQuest()" data-i18n="btn.deleteQuest">🗑</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content" id="contentArea">
+    <!-- No quest selected state -->
+    <div class="empty-state" id="noQuestSelected">
+      <div class="icon">📜</div>
+      <p data-i18n="content.empty">Select or create a quest to start editing</p>
+    </div>
+
+    <!-- Quest Editor (hidden until a quest is selected) -->
+    <div id="questEditor" style="display:none">
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('basic')" data-i18n="tab.basic">Basic Info</button>
+        <button class="tab-btn" onclick="switchTab('tasks')" data-i18n="tab.tasks">Tasks</button>
+        <button class="tab-btn" onclick="switchTab('rewards')" data-i18n="tab.rewards">Rewards</button>
+        <button class="tab-btn" onclick="switchTab('prereqs')" data-i18n="tab.prereqs">Prerequisites</button>
+        <button class="tab-btn" onclick="switchTab('display')" data-i18n="tab.display">Display</button>
+        <button class="tab-btn" onclick="switchTab('advanced')" data-i18n="tab.advanced">Advanced</button>
+        <button class="tab-btn" onclick="switchTab('json')" data-i18n="tab.json">Raw JSON</button>
+      </div>
+
+      <!-- Tab: Basic Info -->
+      <div class="tab-panel active" id="panel-basic">
+        <div class="card">
+          <div class="card-header" onclick="toggleCard(this)">
+            <h3><span class="collapse-icon">▼</span> <span data-i18n="card.basicInfo">Basic Information</span></h3>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.name">Name</label>
+              <div class="form-control">
+                <input type="text" id="questName" onchange="updateField('name', this.value)" oninput="updateMcFmtPreview('questName','namePreview')" placeholder="Quest Name">
+                <div class="mc-fmt-preview" id="namePreview"></div>
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.desc">Description</label>
+              <div class="form-control">
+                <textarea id="questDesc" rows="3" onchange="updateField('desc', this.value)" oninput="updateMcFmtPreview('questDesc','descPreview')" placeholder="Quest description..."></textarea>
+                <div class="mc-fmt-preview" id="descPreview"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- UUID Card -->
+        <div class="card">
+          <div class="card-header" onclick="toggleCard(this)">
+            <h3><span class="collapse-icon">▼</span> <span data-i18n="uuid.label">Quest UUID</span></h3>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <label class="form-label" style="width:auto;min-width:auto">Mode</label>
+              <div class="form-control" style="display:flex;gap:12px;align-items:center">
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:13px">
+                  <input type="radio" name="uuidMode" value="auto" checked onchange="setUuidMode('auto')">
+                  <span data-i18n="uuid.auto">Auto-generate UUID</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:13px">
+                  <input type="radio" name="uuidMode" value="manual" onchange="setUuidMode('manual')">
+                  <span data-i18n="uuid.manual">Manual UUID input</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label">UUID</label>
+              <div class="form-control" style="display:flex;gap:6px">
+                <input type="text" id="questUuid" style="font-family:Consolas,monospace;font-size:12px" placeholder="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx" onchange="onUuidInput(this.value)">
+                <button class="btn btn-outline btn-sm" id="uuidRegenBtn" onclick="regenerateUuid()" data-i18n="uuid.regenerate" title="Regenerate">🔄</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:4px">
+              <div style="flex:1">
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px" data-i18n="uuid.high">High bits</div>
+                <div id="uuidHigh" style="font-family:Consolas,monospace;font-size:12px;color:var(--text-secondary);background:var(--bg-input);padding:4px 8px;border-radius:4px;border:1px solid var(--border-color);user-select:text">—</div>
+              </div>
+              <div style="flex:1">
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px" data-i18n="uuid.low">Low bits</div>
+                <div id="uuidLow" style="font-family:Consolas,monospace;font-size:12px;color:var(--text-secondary);background:var(--bg-input);padding:4px 8px;border-radius:4px;border:1px solid var(--border-color);user-select:text">—</div>
+              </div>
+              <div style="flex:1">
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px" data-i18n="uuid.encoded">Encoded</div>
+                <div id="uuidEncoded" style="font-family:Consolas,monospace;font-size:12px;color:var(--text-secondary);background:var(--bg-input);padding:4px 8px;border-radius:4px;border:1px solid var(--border-color);user-select:text">—</div>
+              </div>
+            </div>
+            <div style="margin-top:6px">
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">File Name</div>
+              <div id="uuidFileName" style="font-family:Consolas,monospace;font-size:12px;color:var(--text-secondary);background:var(--bg-input);padding:4px 8px;border-radius:4px;border:1px solid var(--border-color);user-select:text">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" onclick="toggleCard(this)">
+            <h3><span class="collapse-icon">▼</span> <span data-i18n="card.icon">Icon</span></h3>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.iconId">Item ID</label>
+              <div class="form-control">
+                <input type="text" id="iconId" onchange="updateIcon()" placeholder="minecraft:nether_star">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.iconCount">Count</label>
+              <div class="form-control">
+                <input type="number" id="iconCount" min="1" value="1" onchange="updateIcon()">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.iconMeta">Damage/Meta</label>
+              <div class="form-control">
+                <input type="number" id="iconMeta" min="0" value="0" onchange="updateIcon()">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.iconOreDict">OreDict</label>
+              <div class="form-control">
+                <input type="text" id="iconOreDict" onchange="updateIcon()" placeholder="">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.iconNbt">NBT (JSON)</label>
+              <div class="form-control">
+                <input type="text" id="iconNbt" onchange="updateIcon()" placeholder="{}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" onclick="toggleCard(this)">
+            <h3><span class="collapse-icon">▼</span> <span data-i18n="card.logic">Logic & Visibility</span></h3>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.taskLogic">Task Logic</label>
+              <div class="form-control">
+                <select id="taskLogic" onchange="updateField('taskLogic', this.value)">
+                  <option value="AND">AND</option>
+                  <option value="NAND">NAND</option>
+                  <option value="OR">OR</option>
+                  <option value="NOR">NOR</option>
+                  <option value="XOR">XOR</option>
+                  <option value="XNOR">XNOR</option>
+                </select>
+              </div>
+              <span class="logic-desc" id="taskLogicDesc"></span>
+            </div>
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.questLogic">Quest Logic</label>
+              <div class="form-control">
+                <select id="questLogic" onchange="updateField('questLogic', this.value)">
+                  <option value="AND">AND</option>
+                  <option value="NAND">NAND</option>
+                  <option value="OR">OR</option>
+                  <option value="NOR">NOR</option>
+                  <option value="XOR">XOR</option>
+                  <option value="XNOR">XNOR</option>
+                </select>
+              </div>
+              <span class="logic-desc" id="questLogicDesc"></span>
+            </div>
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.visibility">Visibility</label>
+              <div class="form-control">
+                <select id="visibility" onchange="updateField('visibility', this.value)">
+                  <option value="NORMAL">NORMAL</option>
+                  <option value="ALWAYS">ALWAYS</option>
+                  <option value="UNLOCKED">UNLOCKED</option>
+                  <option value="CHAIN">CHAIN</option>
+                  <option value="COMPLETED">COMPLETED</option>
+                  <option value="SECRET">SECRET</option>
+                  <option value="HIDDEN">HIDDEN</option>
+                </select>
+              </div>
+              <span class="logic-desc" id="visibilityDesc"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" onclick="toggleCard(this)">
+            <h3><span class="collapse-icon">▼</span> <span data-i18n="card.sound">Sounds</span></h3>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.soundUnlock">Unlock Sound</label>
+              <div class="form-control">
+                <input type="text" id="soundUnlock" value="random.click" onchange="updateField('soundUnlock', this.value)">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.soundUpdate">Update Sound</label>
+              <div class="form-control">
+                <input type="text" id="soundUpdate" value="random.levelup" onchange="updateField('soundUpdate', this.value)">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.soundComplete">Complete Sound</label>
+              <div class="form-control">
+                <input type="text" id="soundComplete" value="random.levelup" onchange="updateField('soundComplete', this.value)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Tasks -->
+      <div class="tab-panel" id="panel-tasks">
+        <div class="two-col">
+          <div class="col-list">
+            <div class="col-list-header">
+              <span data-i18n="tasks.list">Task List</span>
+              <button class="btn btn-primary btn-sm" onclick="showAddTaskModal()" data-i18n="btn.addTask">+ Add</button>
+            </div>
+            <div class="col-list-body" id="taskListPanel">
+              <div class="empty-state" style="padding:20px">
+                <p data-i18n="tasks.empty">No tasks added</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-detail">
+            <div class="col-detail-header">
+              <span data-i18n="tasks.detail" id="taskDetailTitle">Task Details</span>
+            </div>
+            <div class="col-detail-body" id="taskDetailPanel">
+              <div class="empty-state" style="padding:20px">
+                <p data-i18n="tasks.selectDetail">Select a task to edit</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Rewards -->
+      <div class="tab-panel" id="panel-rewards">
+        <div class="two-col">
+          <div class="col-list">
+            <div class="col-list-header">
+              <span data-i18n="rewards.list">Reward List</span>
+              <button class="btn btn-primary btn-sm" onclick="showAddRewardModal()" data-i18n="btn.addReward">+ Add</button>
+            </div>
+            <div class="col-list-body" id="rewardListPanel">
+              <div class="empty-state" style="padding:20px">
+                <p data-i18n="rewards.empty">No rewards added</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-detail">
+            <div class="col-detail-header">
+              <span data-i18n="rewards.detail" id="rewardDetailTitle">Reward Details</span>
+            </div>
+            <div class="col-detail-body" id="rewardDetailPanel">
+              <div class="empty-state" style="padding:20px">
+                <p data-i18n="rewards.selectDetail">Select a reward to edit</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Prerequisites -->
+      <div class="tab-panel" id="panel-prereqs">
+        <div class="card">
+          <div class="card-header">
+            <h3><span data-i18n="prereqs.title">Prerequisites</span></h3>
+            <button class="btn btn-primary btn-sm" onclick="addPrerequisite()" data-i18n="btn.addPrereq">+ Add</button>
+          </div>
+          <div class="card-body">
+            <div id="prereqList"></div>
+            <p style="margin-top:12px;font-size:12px;color:var(--text-muted)" data-i18n="prereqs.help">Enter quest UUIDs. The quest logic (AND/OR) determines how prerequisites are evaluated.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Display -->
+      <div class="tab-panel" id="panel-display">
+        <div class="card">
+          <div class="card-header" onclick="toggleCard(this)">
+            <h3><span class="collapse-icon">▼</span> <span data-i18n="card.questLine">Quest Line Entry</span></h3>
+          </div>
+          <div class="card-body">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label data-i18n="field.posX">Position X</label>
+                <input type="number" id="posX" value="0" onchange="updateField('posX', parseInt(this.value))">
+              </div>
+              <div class="form-group">
+                <label data-i18n="field.posY">Position Y</label>
+                <input type="number" id="posY" value="0" onchange="updateField('posY', parseInt(this.value))">
+              </div>
+              <div class="form-group">
+                <label data-i18n="field.sizeX">Size X</label>
+                <input type="number" id="sizeX" value="24" min="8" onchange="updateField('sizeX', parseInt(this.value))">
+              </div>
+              <div class="form-group">
+                <label data-i18n="field.sizeY">Size Y</label>
+                <input type="number" id="sizeY" value="24" min="8" onchange="updateField('sizeY', parseInt(this.value))">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" onclick="toggleCard(this)">
+            <h3><span class="collapse-icon">▼</span> <span data-i18n="card.bgImage">Background Image</span></h3>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.bgImage">Image Path</label>
+              <div class="form-control">
+                <input type="text" id="bgImage" onchange="updateField('bgImage', this.value)" placeholder="betterquesting:textures/gui/...">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.bgSize">Image Size</label>
+              <div class="form-control">
+                <input type="number" id="bgSize" value="256" min="1" onchange="updateField('bgSize', parseInt(this.value))">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Advanced -->
+      <div class="tab-panel" id="panel-advanced">
+        <div class="card">
+          <div class="card-header" onclick="toggleCard(this)">
+            <h3><span class="collapse-icon">▼</span> <span data-i18n="card.repeat">Repeat Settings</span></h3>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.repeatTime">Repeat Time (ticks)</label>
+              <div class="form-control">
+                <input type="number" id="repeatTime" value="-1" onchange="updateField('repeatTime', parseInt(this.value))">
+              </div>
+              <span class="help-tip" data-tip-en="-1 = no repeat. Positive value = cooldown in ticks (20 ticks = 1 second)" data-tip-zh="-1 = 不重复。正值 = 冷却时间(tick)，20 tick = 1秒">?</span>
+            </div>
+            <div class="form-row">
+              <label class="form-label" data-i18n="field.repeatRel">Relative Repeat</label>
+              <div class="form-control form-inline">
+                <input type="checkbox" id="repeatRel" checked onchange="updateField('repeatRel', this.checked)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" onclick="toggleCard(this)">
+            <h3><span class="collapse-icon">▼</span> <span data-i18n="card.flags">Flags</span></h3>
+          </div>
+          <div class="card-body">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label><input type="checkbox" id="flagLockedProgress" onchange="updateField('lockedProgress', this.checked)"> <span data-i18n="field.lockedProgress">Locked Progress</span></label>
+              </div>
+              <div class="form-group">
+                <label><input type="checkbox" id="flagAutoClaim" onchange="updateField('autoClaim', this.checked)"> <span data-i18n="field.autoClaim">Auto Claim</span></label>
+              </div>
+              <div class="form-group">
+                <label><input type="checkbox" id="flagSilent" onchange="updateField('silent', this.checked)"> <span data-i18n="field.silent">Silent</span></label>
+              </div>
+              <div class="form-group">
+                <label><input type="checkbox" id="flagMain" onchange="updateField('main', this.checked)"> <span data-i18n="field.main">Main Quest</span></label>
+              </div>
+              <div class="form-group">
+                <label><input type="checkbox" id="flagGlobal" onchange="updateField('global', this.checked)"> <span data-i18n="field.global">Global Quest</span></label>
+              </div>
+              <div class="form-group">
+                <label><input type="checkbox" id="flagGlobalShare" onchange="updateField('globalShare', this.checked)"> <span data-i18n="field.globalShare">Global Share</span></label>
+              </div>
+              <div class="form-group">
+                <label><input type="checkbox" id="flagSimultaneous" onchange="updateField('simultaneous', this.checked)"> <span data-i18n="field.simultaneous">Simultaneous</span></label>
+              </div>
+              <div class="form-group">
+                <label><input type="checkbox" id="flagPartyEnable" checked onchange="updateField('partyEnable', this.checked)"> <span data-i18n="field.partyEnable">Party Enable</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Raw JSON -->
+      <div class="tab-panel" id="panel-json">
+        <div class="card">
+          <div class="card-header">
+            <h3><span data-i18n="json.title">Raw Quest JSON</span></h3>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-outline btn-sm" onclick="copyJSON()" data-i18n="btn.copy">📋 Copy</button>
+              <button class="btn btn-primary btn-sm" onclick="applyRawJSON()" data-i18n="btn.apply">✓ Apply</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <textarea id="rawJsonEditor" style="min-height:400px;font-family:Consolas,monospace;font-size:12px;line-height:1.5"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal-overlay" id="addTaskModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 data-i18n="modal.addTask">Add Task</h3>
+      <button class="close-btn" onclick="closeModal('addTaskModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:12px;color:var(--text-secondary)" data-i18n="modal.selectTaskType">Select task type:</p>
+      <div id="taskTypeList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Reward Modal -->
+<div class="modal-overlay" id="addRewardModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 data-i18n="modal.addReward">Add Reward</h3>
+      <button class="close-btn" onclick="closeModal('addRewardModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:12px;color:var(--text-secondary)" data-i18n="modal.selectRewardType">Select reward type:</p>
+      <div id="rewardTypeList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Item Editor Modal -->
+<div class="modal-overlay" id="itemEditorModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 data-i18n="modal.editItem">Edit Item</h3>
+      <button class="close-btn" onclick="closeModal('itemEditorModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label class="form-label" data-i18n="field.itemId">Item ID</label>
+        <div class="form-control" style="display:flex;gap:6px">
+          <input type="text" id="modalItemId" placeholder="minecraft:diamond" style="flex:1">
+          <button class="btn btn-outline btn-sm nesql-btn" onclick="openNesqlSearch('item')" title="Search NESQL">🔍</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" data-i18n="field.itemCount">Count</label>
+        <div class="form-control">
+          <input type="number" id="modalItemCount" min="1" value="1">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" data-i18n="field.itemMeta">Damage/Meta</label>
+        <div class="form-control">
+          <input type="number" id="modalItemMeta" min="0" value="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" data-i18n="field.itemOreDict">OreDict</label>
+        <div class="form-control">
+          <input type="text" id="modalItemOreDict" placeholder="">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" data-i18n="field.itemNbt">NBT Tag (JSON)</label>
+        <div class="form-control">
+          <textarea id="modalItemNbt" rows="3" placeholder="{}"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('itemEditorModal')" data-i18n="btn.cancel">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmItemEdit()" data-i18n="btn.confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Fluid Editor Modal -->
+<div class="modal-overlay" id="fluidEditorModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 data-i18n="modal.editFluid">Edit Fluid</h3>
+      <button class="close-btn" onclick="closeModal('fluidEditorModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label class="form-label" data-i18n="fluidfield.fluidName">Fluid Name</label>
+        <div class="form-control" style="display:flex;gap:6px">
+          <input type="text" id="modalFluidName" placeholder="water" style="flex:1">
+          <button class="btn btn-outline btn-sm nesql-btn" onclick="openNesqlSearch('fluid')" title="Search NESQL">🔍</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" data-i18n="fluidfield.fluidAmount">Amount (mB)</label>
+        <div class="form-control">
+          <input type="number" id="modalFluidAmount" min="1" value="1000">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" data-i18n="fluidfield.fluidNbt">NBT Tag (JSON)</label>
+        <div class="form-control">
+          <textarea id="modalFluidNbt" rows="3" placeholder="{}"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('fluidEditorModal')" data-i18n="btn.cancel">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmFluidEdit()" data-i18n="btn.confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Block Editor Modal -->
+<div class="modal-overlay" id="blockEditorModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 data-i18n="modal.editBlock">Edit Block</h3>
+      <button class="close-btn" onclick="closeModal('blockEditorModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label class="form-label" data-i18n="taskfield.blockId">Block ID</label>
+        <div class="form-control" style="display:flex;gap:6px">
+          <input type="text" id="modalBlockId" placeholder="minecraft:stone" style="flex:1">
+          <button class="btn btn-outline btn-sm nesql-btn" onclick="openNesqlSearch('item')" title="Search NESQL">🔍</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" data-i18n="taskfield.blockMeta">Meta</label>
+        <div class="form-control">
+          <input type="number" id="modalBlockMeta" value="-1">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" data-i18n="taskfield.blockAmount">Amount</label>
+        <div class="form-control">
+          <input type="number" id="modalBlockAmount" min="1" value="1">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" data-i18n="taskfield.blockOreDict">OreDict</label>
+        <div class="form-control">
+          <input type="text" id="modalBlockOreDict" placeholder="">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" data-i18n="taskfield.blockNbt">NBT Tag (JSON)</label>
+        <div class="form-control">
+          <textarea id="modalBlockNbt" rows="3" placeholder="{}"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('blockEditorModal')" data-i18n="btn.cancel">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmBlockEdit()" data-i18n="btn.confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <h3 data-i18n="settings.title">Settings</h3>
+      <button class="close-btn" onclick="closeModal('settingsModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-header" style="cursor:default">
+          <h3>NESQL — <span data-i18n="settings.nesqlUrl">Server URL</span></h3>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <label class="form-label" data-i18n="settings.nesqlUrl">Server URL</label>
+            <div class="form-control">
+              <input type="text" id="settingsNesqlUrl" placeholder="http://localhost:32533" oninput="saveNesqlUrl()">
+            </div>
+          </div>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:4px" data-i18n="settings.nesqlHelp">Configure the NESQL server URL. The server provides item/fluid icons. Default port: 32533.</p>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:2px" data-i18n="settings.nesqlHelpPath">⚠ The server JAR must be started from the directory containing <code>nesql-repository/</code> (e.g. <code>.minecraft/nesql/</code>)</p>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <button class="btn btn-outline btn-sm" onclick="testNesqlConnection()" data-i18n="settings.testConnection">Test Connection</button>
+            <span id="nesqlConnectionStatus" style="font-size:12px"></span>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-header" style="cursor:default">
+          <h3>NESQL — <span data-i18n="settings.dbTitle">Database Index</span></h3>
+        </div>
+        <div class="card-body">
+          <p style="font-size:12px;color:var(--text-secondary);margin-bottom:8px" data-i18n="settings.dbHelp">Load the NESQL database to enable the item/fluid picker (search and browse). You can load a .script file or a pre-exported JSON index.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('nesqlScriptInput').click()">📄 <span data-i18n="settings.loadScript">Load .script</span></button>
+            <input type="file" id="nesqlScriptInput" accept=".script" style="display:none" onchange="loadNesqlScript(this)">
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('nesqlIndexInput').click()">📋 <span data-i18n="settings.loadIndex">Load JSON Index</span></button>
+            <input type="file" id="nesqlIndexInput" accept=".json" style="display:none" onchange="loadNesqlIndex(this)">
+            <button class="btn btn-outline btn-sm" onclick="exportNesqlIndex()" id="btnExportIndex" style="display:none">💾 <span data-i18n="settings.exportIndex">Export Index</span></button>
+          </div>
+          <div id="dbLoadProgress" class="db-progress" style="display:none"><div id="dbLoadProgressBar" class="db-progress-bar"></div></div>
+          <div id="dbLoadStatus" style="margin-top:8px;font-size:12px"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-header" style="cursor:default">
+          <h3 data-i18n="settings.dataTitle">Data</h3>
+        </div>
+        <div class="card-body">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+            <input type="checkbox" id="settingsPersist" onchange="togglePersist(this.checked)">
+            <span data-i18n="settings.persist">Persist changes (keep data after page refresh)</span>
+          </label>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:4px" data-i18n="settings.persistHelp">When enabled, quest data is saved to browser storage and restored on page load. Disabled by default.</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="closeModal('settingsModal')" data-i18n="btn.confirm">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- NESQL Item/Fluid Picker Modal -->
+<div class="modal-overlay" id="nesqlPickerModal">
+  <div class="modal" style="max-width:720px;max-height:90vh">
+    <div class="modal-header">
+      <h3 id="nesqlPickerTitle">Select Item</h3>
+      <button class="close-btn" onclick="closeModal('nesqlPickerModal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:12px 16px">
+      <div class="nesql-picker-search">
+        <input type="text" id="nesqlPickerSearch" placeholder="Search..." oninput="onNesqlPickerSearch()" style="flex:1">
+        <select id="nesqlPickerModFilter" onchange="onNesqlPickerSearch()" style="width:160px">
+          <option value="">All Mods</option>
+        </select>
+      </div>
+      <div class="nesql-picker-status" id="nesqlPickerStatus"></div>
+      <div class="nesql-picker-grid" id="nesqlPickerGrid"></div>
+      <div class="nesql-picker-info" id="nesqlPickerInfo" style="display:none">
+        <img id="nesqlPickerInfoImg" src="">
+        <div class="nesql-picker-info-text">
+          <div class="name" id="nesqlPickerInfoName">—</div>
+          <div class="id" id="nesqlPickerInfoId">—</div>
+          <div id="nesqlPickerInfoTooltip" style="display:none;margin-top:4px;font-size:11px;color:var(--text-muted);white-space:pre-wrap;max-height:60px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('nesqlPickerModal')" data-i18n="btn.cancel">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmNesqlPick()" data-i18n="btn.confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Page-level drop overlay -->
+<div id="pageDropOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(74,127,255,0.15);z-index:500;pointer-events:none;border:4px dashed var(--accent);">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:var(--accent);font-size:24px;font-weight:600;pointer-events:none;">
+    <div style="font-size:64px;margin-bottom:12px">📂</div>
+    <span data-i18n="import.pageDrop" id="pageDropText">Drop files or folder here to import</span>
+  </div>
+</div>
+
+<!-- Import Modal -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <h3 data-i18n="modal.import">Import Quest Data</h3>
+      <button class="close-btn" onclick="closeModal('importModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div class="file-drop-zone" id="dropZone" style="flex:1;padding:20px" onclick="document.getElementById('fileInput').click()">
+          <div style="font-size:28px;margin-bottom:6px">📄</div>
+          <p data-i18n="import.selectFiles" style="font-size:13px">Select JSON file(s)</p>
+          <input type="file" id="fileInput" accept=".json,.txt" multiple style="display:none" onchange="handleFileImport(this)">
+        </div>
+        <div class="file-drop-zone" style="flex:1;padding:20px" onclick="document.getElementById('folderInput').click()">
+          <div style="font-size:28px;margin-bottom:6px">📁</div>
+          <p data-i18n="import.selectFolder" style="font-size:13px">Select Folder (BQ Database)</p>
+          <input type="file" id="folderInput" webkitdirectory style="display:none" onchange="handleFolderImport(this)">
+        </div>
+      </div>
+      <div id="importLog" style="display:none;max-height:140px;overflow-y:auto;margin-bottom:12px;padding:8px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:6px;font-size:12px;font-family:Consolas,monospace;line-height:1.6"></div>
+      <p style="text-align:center;color:var(--text-muted);margin-bottom:12px" data-i18n="import.or">— or paste JSON below —</p>
+      <textarea id="importJsonText" rows="8" placeholder='{"questDatabase:9": {...}}'></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('importModal')" data-i18n="btn.cancel">Cancel</button>
+      <button class="btn btn-primary" onclick="doImport()" data-i18n="btn.importText">Import Text</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===========================================================
+// Internationalization (i18n)
+// ===========================================================
+const i18n = {
+  en: {
+    'header.subtitle': 'Quest Data Editor for Minecraft 1.7.10',
+    'btn.import': '📂 Import JSON',
+    'btn.export': '💾 Export JSON',
+    'sidebar.quests': 'QUESTS',
+    'sidebar.empty': 'No quests. Click + to add one.',
+    'btn.addQuest': '+ New Quest',
+    'btn.deleteQuest': '🗑',
+    'content.empty': 'Select or create a quest to start editing',
+    'tab.basic': 'Basic Info',
+    'tab.tasks': 'Tasks',
+    'tab.rewards': 'Rewards',
+    'tab.prereqs': 'Prerequisites',
+    'tab.display': 'Display',
+    'tab.advanced': 'Advanced',
+    'tab.json': 'Raw JSON',
+    'card.basicInfo': 'Basic Information',
+    'card.icon': 'Icon',
+    'card.logic': 'Logic & Visibility',
+    'card.sound': 'Sounds',
+    'card.repeat': 'Repeat Settings',
+    'card.flags': 'Flags',
+    'card.questLine': 'Quest Line Entry',
+    'card.bgImage': 'Background Image',
+    'field.name': 'Name',
+    'field.desc': 'Description',
+    'field.iconId': 'Item ID',
+    'field.iconCount': 'Count',
+    'field.iconMeta': 'Damage/Meta',
+    'field.iconOreDict': 'OreDict',
+    'field.iconNbt': 'NBT (JSON)',
+    'field.taskLogic': 'Task Logic',
+    'field.questLogic': 'Quest Logic',
+    'field.visibility': 'Visibility',
+    'logic.AND': 'AND',
+    'logic.AND.desc': 'All conditions must be met (logical AND)',
+    'logic.NAND': 'NAND',
+    'logic.NAND.desc': 'Not all conditions met — at least one must fail (NOT AND)',
+    'logic.OR': 'OR',
+    'logic.OR.desc': 'Any one condition is sufficient (logical OR)',
+    'logic.NOR': 'NOR',
+    'logic.NOR.desc': 'No conditions may be met — all must fail (NOT OR)',
+    'logic.XOR': 'XOR',
+    'logic.XOR.desc': 'Exactly one condition must be met (exclusive OR)',
+    'logic.XNOR': 'XNOR',
+    'logic.XNOR.desc': 'All or none must be met — not exactly one (NOT XOR)',
+    'vis.NORMAL': 'Normal',
+    'vis.NORMAL.desc': 'Visible when prerequisites are unlocked',
+    'vis.ALWAYS': 'Always',
+    'vis.ALWAYS.desc': 'Always visible regardless of prerequisites',
+    'vis.UNLOCKED': 'Unlocked',
+    'vis.UNLOCKED.desc': 'Visible only when prerequisites are completed',
+    'vis.CHAIN': 'Chain',
+    'vis.CHAIN.desc': 'Visible only if the immediate prerequisite before it is completed',
+    'vis.COMPLETED': 'Completed',
+    'vis.COMPLETED.desc': 'Visible only after this quest is completed',
+    'vis.SECRET': 'Secret',
+    'vis.SECRET.desc': 'Like UNLOCKED but hidden in browse mode — only shown after unlocking',
+    'vis.HIDDEN': 'Hidden',
+    'vis.HIDDEN.desc': 'Never visible in the quest book UI',
+    'uuid.auto': 'Auto-generate UUID',
+    'uuid.manual': 'Manual UUID input',
+    'uuid.label': 'Quest UUID',
+    'uuid.high': 'High bits',
+    'uuid.low': 'Low bits',
+    'uuid.encoded': 'Encoded',
+    'uuid.invalid': 'Invalid UUID format, auto-corrected',
+    'uuid.regenerate': 'Regenerate',
+    'field.soundUnlock': 'Unlock Sound',
+    'field.soundUpdate': 'Update Sound',
+    'field.soundComplete': 'Complete Sound',
+    'field.repeatTime': 'Repeat Time (ticks)',
+    'field.repeatRel': 'Relative Repeat',
+    'field.lockedProgress': 'Locked Progress',
+    'field.autoClaim': 'Auto Claim',
+    'field.silent': 'Silent',
+    'field.main': 'Main Quest',
+    'field.global': 'Global Quest',
+    'field.globalShare': 'Global Share',
+    'field.simultaneous': 'Simultaneous',
+    'field.partyEnable': 'Party Enable',
+    'field.posX': 'Position X',
+    'field.posY': 'Position Y',
+    'field.sizeX': 'Size X',
+    'field.sizeY': 'Size Y',
+    'field.bgImage': 'Image Path',
+    'field.bgSize': 'Image Size',
+    'tasks.list': 'Task List',
+    'tasks.empty': 'No tasks added',
+    'tasks.detail': 'Task Details',
+    'tasks.selectDetail': 'Select a task to edit',
+    'rewards.list': 'Reward List',
+    'rewards.empty': 'No rewards added',
+    'rewards.detail': 'Reward Details',
+    'rewards.selectDetail': 'Select a reward to edit',
+    'prereqs.title': 'Prerequisites',
+    'prereqs.help': 'Enter quest IDs. The quest logic (AND/OR) determines how prerequisites are evaluated.',
+    'json.title': 'Raw Quest JSON',
+    'btn.copy': '📋 Copy',
+    'btn.apply': '✓ Apply',
+    'btn.addTask': '+ Add',
+    'btn.addReward': '+ Add',
+    'btn.addPrereq': '+ Add',
+    'btn.cancel': 'Cancel',
+    'btn.confirm': 'Confirm',
+    'btn.delete': 'Delete',
+    'btn.addItem': '+ Add Item',
+    'btn.editItem': 'Edit',
+    'modal.addTask': 'Add Task',
+    'modal.addReward': 'Add Reward',
+    'modal.editItem': 'Edit Item',
+    'modal.import': 'Import Quest Data',
+    'modal.selectTaskType': 'Select task type:',
+    'modal.selectRewardType': 'Select reward type:',
+    'import.drop': 'Click or drag JSON file here',
+    'import.selectFiles': 'Select JSON file(s)',
+    'import.selectFolder': 'Select Folder (BQ Database)',
+    'import.pageDrop': 'Drop files or folder here to import',
+    'import.or': '— or paste JSON below —',
+    'btn.importText': 'Import Text',
+    'import.log.readingFiles': 'Reading files...',
+    'import.log.foundQuests': 'Found %d quest(s)',
+    'import.log.foundQuestLines': 'Found QuestLinesOrder.txt',
+    'import.log.parsedQuest': 'Parsed quest: %s',
+    'import.log.skippedFile': 'Skipped: %s',
+    'import.log.done': 'Import complete: %d quest(s) loaded',
+    'import.log.error': 'Error: %s',
+    'import.log.legacy': 'Detected legacy single-file format',
+    'import.log.multiFile': 'Detected multi-file database format',
+    'import.log.folderFiles': 'Found %d file(s) in folder',
+    'field.itemId': 'Item ID',
+    'field.itemCount': 'Count',
+    'field.itemMeta': 'Damage/Meta',
+    'field.itemOreDict': 'OreDict',
+    'field.itemNbt': 'NBT Tag (JSON)',
+    'notify.exported': 'Quest data exported successfully!',
+    'notify.imported': 'Quest data imported successfully!',
+    'notify.copied': 'JSON copied to clipboard!',
+    'notify.applied': 'Raw JSON applied!',
+    'notify.questAdded': 'New quest added',
+    'notify.questDeleted': 'Quest deleted',
+    // Task types
+    'task.retrieval': 'Retrieval Task',
+    'task.optional_retrieval': 'Optional Task',
+    'task.crafting': 'Crafting Task',
+    'task.hunt': 'Mob Hunt Task',
+    'task.scoreboard': 'Scoreboard Task',
+    'task.location': 'Location Task',
+    'task.fluid': 'Fluid Task',
+    'task.meeting': 'Meeting Task',
+    'task.xp': 'Experience Task',
+    'task.block_break': 'Break Block Task',
+    'task.checkbox': 'Checkbox Task',
+    'task.interact_item': 'Item Interaction Task',
+    'task.interact_entity': 'Entity Interaction Task',
+    // Task fields
+    'taskfield.partialMatch': 'Partial Match',
+    'taskfield.ignoreNBT': 'Ignore NBT',
+    'taskfield.consume': 'Consume',
+    'taskfield.groupDetect': 'Group Detect',
+    'taskfield.autoConsume': 'Auto Consume',
+    'taskfield.requiredItems': 'Required Items',
+    'taskfield.allowCraft': 'Allow Craft',
+    'taskfield.allowSmelt': 'Allow Smelt',
+    'taskfield.allowAnvil': 'Allow Anvil',
+    'taskfield.idName': 'Entity ID',
+    'taskfield.required': 'Required Amount',
+    'taskfield.subtypes': 'Include Subtypes',
+    'taskfield.damageType': 'Damage Type',
+    'taskfield.targetNBT': 'Target NBT',
+    'taskfield.name': 'Location Name',
+    'taskfield.structure': 'Structure',
+    'taskfield.biome': 'Biome ID',
+    'taskfield.x': 'X',
+    'taskfield.y': 'Y',
+    'taskfield.z': 'Z',
+    'taskfield.dim': 'Dimension',
+    'taskfield.range': 'Range',
+    'taskfield.visible': 'Visible',
+    'taskfield.hideInfo': 'Hide Info',
+    'taskfield.invert': 'Invert',
+    'taskfield.taxiCab': 'Taxi Cab Distance',
+    'taskfield.amount': 'Amount',
+    'taskfield.levels': 'Use Levels',
+    'taskfield.requiredFluids': 'Required Fluids',
+    'taskfield.scoreName': 'Score Name',
+    'taskfield.scoreDisp': 'Display Name',
+    'taskfield.type': 'Type',
+    'taskfield.target': 'Target Value',
+    'taskfield.conversion': 'Conversion',
+    'taskfield.suffix': 'Suffix',
+    'taskfield.operation': 'Operation',
+    'taskfield.onInteract': 'On Right Click',
+    'taskfield.onHit': 'On Attack',
+    'taskfield.targetItem': 'Target Item',
+    'taskfield.targetBlock': 'Target Block',
+    'taskfield.blockTypes': 'Block Types',
+    'taskfield.blockId': 'Block ID',
+    'taskfield.blockMeta': 'Block Meta',
+    'taskfield.blockAmount': 'Amount',
+    'taskfield.blockNbt': 'Block NBT',
+    'taskfield.blockOreDict': 'OreDict',
+    'taskfield.entityID': 'Entity ID',
+    'taskfield.entitySubtypes': 'Entity Subtypes',
+    'taskfield.ignoreEntityNBT': 'Ignore Entity NBT',
+    'taskfield.ignoreItemNBT': 'Ignore Item NBT',
+    'taskfield.partialItemMatch': 'Partial Item Match',
+    'taskfield.entityNBT': 'Entity NBT',
+    // Reward types
+    'reward.item': 'Item Reward',
+    'reward.xp': 'Experience Reward',
+    'reward.command': 'Command Reward',
+    'reward.scoreboard': 'Scoreboard Reward',
+    'reward.choice': 'Choice Reward',
+    'reward.questcompletion': 'Quest Completion Reward',
+    // Reward fields
+    'rewardfield.items': 'Reward Items',
+    'rewardfield.choices': 'Choice Items',
+    'rewardfield.amount': 'Amount',
+    'rewardfield.levels': 'Use Levels',
+    'rewardfield.command': 'Command',
+    'rewardfield.hideCmd': 'Hide Command',
+    'rewardfield.viaPlayer': 'Via Player',
+    'rewardfield.score': 'Score Name',
+    'rewardfield.type': 'Score Type',
+    'rewardfield.value': 'Value',
+    'rewardfield.relative': 'Relative',
+    'rewardfield.questId': 'Quest ID (UUID)',
+    // Fluid fields
+    'fluidfield.fluidName': 'Fluid Name',
+    'fluidfield.fluidAmount': 'Amount (mB)',
+    'fluidfield.fluidNbt': 'Fluid NBT',
+    'btn.addFluid': '+ Add Fluid',
+    'btn.addBlock': '+ Add Block',
+    // Modal titles
+    'modal.editFluid': 'Edit Fluid',
+    'modal.editBlock': 'Edit Block',
+    // Settings
+    'settings.title': 'Settings',
+    'settings.nesqlUrl': 'Server URL',
+    'settings.nesqlHelp': 'Configure the NESQL server URL. The server provides item/fluid icons. Default port: 32533.',
+    'settings.nesqlHelpPath': '⚠ The server JAR must be started from the directory containing nesql-repository/ (e.g. .minecraft/nesql/)',
+    'settings.testConnection': 'Test Connection',
+    'settings.connected': '✓ Connected',
+    'settings.disconnected': '✗ Cannot connect',
+    'settings.testing': 'Testing...',
+    'settings.dbTitle': 'Database Index',
+    'settings.dbHelp': 'Load the NESQL database to enable the item/fluid picker (search and browse). You can load a .script file or a pre-exported JSON index.',
+    'settings.loadScript': 'Load .script',
+    'settings.loadIndex': 'Load JSON Index',
+    'settings.exportIndex': 'Export Index',
+    'settings.dataTitle': 'Data',
+    'settings.persist': 'Persist changes (keep data after page refresh)',
+    'settings.persistHelp': 'When enabled, quest data is saved to browser storage and restored on page load. Disabled by default.',
+  },
+  zh: {
+    'header.subtitle': 'Minecraft 1.7.10 任务数据编辑器',
+    'btn.import': '📂 导入 JSON',
+    'btn.export': '💾 导出 JSON',
+    'sidebar.quests': '任务列表',
+    'sidebar.empty': '暂无任务，点击 + 添加',
+    'btn.addQuest': '+ 新建任务',
+    'btn.deleteQuest': '🗑',
+    'content.empty': '选择或创建一个任务以开始编辑',
+    'tab.basic': '基本信息',
+    'tab.tasks': '任务目标',
+    'tab.rewards': '任务奖励',
+    'tab.prereqs': '前置任务',
+    'tab.display': '显示设置',
+    'tab.advanced': '高级选项',
+    'tab.json': '原始 JSON',
+    'card.basicInfo': '基本信息',
+    'card.icon': '图标',
+    'card.logic': '逻辑与可见性',
+    'card.sound': '音效设置',
+    'card.repeat': '重复设置',
+    'card.flags': '标志选项',
+    'card.questLine': '任务线条目',
+    'card.bgImage': '背景图片',
+    'field.name': '名称',
+    'field.desc': '描述',
+    'field.iconId': '物品注册ID',
+    'field.iconCount': '数量',
+    'field.iconMeta': '元数据/损害值',
+    'field.iconOreDict': '矿物词典',
+    'field.iconNbt': 'NBT (JSON)',
+    'field.taskLogic': '任务逻辑',
+    'field.questLogic': '解锁逻辑',
+    'field.visibility': '可见性',
+    'logic.AND': '与 (AND)',
+    'logic.AND.desc': '所有条件都必须满足（逻辑与）',
+    'logic.NAND': '与非 (NAND)',
+    'logic.NAND.desc': '不能全部满足——至少一个条件必须不满足（非与）',
+    'logic.OR': '或 (OR)',
+    'logic.OR.desc': '满足任意一个条件即可（逻辑或）',
+    'logic.NOR': '或非 (NOR)',
+    'logic.NOR.desc': '所有条件都不能满足——全部必须失败（非或）',
+    'logic.XOR': '异或 (XOR)',
+    'logic.XOR.desc': '恰好一个条件必须满足（异或）',
+    'logic.XNOR': '同或 (XNOR)',
+    'logic.XNOR.desc': '全部满足或全部不满足——不能只有一个满足（非异或）',
+    'vis.NORMAL': '普通',
+    'vis.NORMAL.desc': '前置任务解锁时可见',
+    'vis.ALWAYS': '始终可见',
+    'vis.ALWAYS.desc': '无论前置任务状态如何始终可见',
+    'vis.UNLOCKED': '解锁后可见',
+    'vis.UNLOCKED.desc': '仅在前置任务完成后可见',
+    'vis.CHAIN': '链式',
+    'vis.CHAIN.desc': '仅当直接前置任务完成后才可见',
+    'vis.COMPLETED': '完成后可见',
+    'vis.COMPLETED.desc': '仅在此任务完成后才可见',
+    'vis.SECRET': '秘密',
+    'vis.SECRET.desc': '类似"解锁后可见"，但在浏览模式下隐藏——解锁后才显示',
+    'vis.HIDDEN': '隐藏',
+    'vis.HIDDEN.desc': '在任务书界面中永不可见',
+    'uuid.auto': '自动生成 UUID',
+    'uuid.manual': '手动输入 UUID',
+    'uuid.label': '任务 UUID',
+    'uuid.high': '高位',
+    'uuid.low': '低位',
+    'uuid.encoded': '编码',
+    'uuid.invalid': 'UUID 格式不合法，已自动修正',
+    'uuid.regenerate': '重新生成',
+    'field.soundUnlock': '解锁音效',
+    'field.soundUpdate': '更新音效',
+    'field.soundComplete': '完成音效',
+    'field.repeatTime': '重复时间(tick)',
+    'field.repeatRel': '相对重复',
+    'field.lockedProgress': '锁定进度',
+    'field.autoClaim': '自动领取',
+    'field.silent': '静默模式',
+    'field.main': '主要任务',
+    'field.global': '全局任务',
+    'field.globalShare': '全局共享',
+    'field.simultaneous': '同步任务',
+    'field.partyEnable': '启用队伍',
+    'field.posX': 'X 坐标',
+    'field.posY': 'Y 坐标',
+    'field.sizeX': 'X 尺寸',
+    'field.sizeY': 'Y 尺寸',
+    'field.bgImage': '图片路径',
+    'field.bgSize': '图片尺寸',
+    'tasks.list': '任务目标列表',
+    'tasks.empty': '暂无任务目标',
+    'tasks.detail': '任务目标详情',
+    'tasks.selectDetail': '选择一个任务目标以编辑',
+    'rewards.list': '奖励列表',
+    'rewards.empty': '暂无奖励',
+    'rewards.detail': '奖励详情',
+    'rewards.selectDetail': '选择一个奖励以编辑',
+    'prereqs.title': '前置任务',
+    'prereqs.help': '输入任务ID。解锁逻辑(AND/OR)决定前置任务的判定方式。',
+    'json.title': '原始任务 JSON',
+    'btn.copy': '📋 复制',
+    'btn.apply': '✓ 应用',
+    'btn.addTask': '+ 添加',
+    'btn.addReward': '+ 添加',
+    'btn.addPrereq': '+ 添加',
+    'btn.cancel': '取消',
+    'btn.confirm': '确认',
+    'btn.delete': '删除',
+    'btn.addItem': '+ 添加物品',
+    'btn.editItem': '编辑',
+    'modal.addTask': '添加任务目标',
+    'modal.addReward': '添加奖励',
+    'modal.editItem': '编辑物品',
+    'modal.import': '导入任务数据',
+    'modal.selectTaskType': '选择任务目标类型：',
+    'modal.selectRewardType': '选择奖励类型：',
+    'import.drop': '点击或拖拽 JSON 文件到此处',
+    'import.selectFiles': '选择 JSON 文件（可多选）',
+    'import.selectFolder': '选择文件夹（BQ数据库）',
+    'import.pageDrop': '拖放文件或文件夹到此处以导入',
+    'import.or': '— 或在下方粘贴 JSON —',
+    'btn.importText': '导入文本',
+    'import.log.readingFiles': '正在读取文件...',
+    'import.log.foundQuests': '发现 %d 个任务',
+    'import.log.foundQuestLines': '发现 QuestLinesOrder.txt',
+    'import.log.parsedQuest': '已解析任务: %s',
+    'import.log.skippedFile': '已跳过: %s',
+    'import.log.done': '导入完成: 已加载 %d 个任务',
+    'import.log.error': '错误: %s',
+    'import.log.legacy': '检测到旧版单文件格式',
+    'import.log.multiFile': '检测到多文件数据库格式',
+    'import.log.folderFiles': '在文件夹中发现 %d 个文件',
+    'field.itemId': '物品注册ID',
+    'field.itemCount': '数量',
+    'field.itemMeta': '元数据/损害值',
+    'field.itemOreDict': '矿物词典',
+    'field.itemNbt': 'NBT标签 (JSON)',
+    'notify.exported': '任务数据导出成功！',
+    'notify.imported': '任务数据导入成功！',
+    'notify.copied': 'JSON已复制到剪贴板！',
+    'notify.applied': '原始JSON已应用！',
+    'notify.questAdded': '已添加新任务',
+    'notify.questDeleted': '任务已删除',
+    'task.retrieval': '物品检索任务',
+    'task.optional_retrieval': '可选检索任务',
+    'task.crafting': '合成任务',
+    'task.hunt': '击杀任务',
+    'task.scoreboard': '记分板任务',
+    'task.location': '到达地点任务',
+    'task.fluid': '流体任务',
+    'task.meeting': '会见NPC任务',
+    'task.xp': '经验任务',
+    'task.block_break': '破坏方块任务',
+    'task.checkbox': '复选框任务',
+    'task.interact_item': '物品交互任务',
+    'task.interact_entity': '实体交互任务',
+    'taskfield.partialMatch': '部分匹配',
+    'taskfield.ignoreNBT': '忽略NBT',
+    'taskfield.consume': '消耗物品',
+    'taskfield.groupDetect': '队伍检测',
+    'taskfield.autoConsume': '自动消耗',
+    'taskfield.requiredItems': '所需物品',
+    'taskfield.allowCraft': '允许合成',
+    'taskfield.allowSmelt': '允许冶炼',
+    'taskfield.allowAnvil': '允许铁砧',
+    'taskfield.idName': '实体ID',
+    'taskfield.required': '需要数量',
+    'taskfield.subtypes': '包括子类型',
+    'taskfield.damageType': '伤害类型',
+    'taskfield.targetNBT': '目标NBT',
+    'taskfield.name': '位置名称',
+    'taskfield.structure': '结构',
+    'taskfield.biome': '生物群系ID',
+    'taskfield.x': 'X',
+    'taskfield.y': 'Y',
+    'taskfield.z': 'Z',
+    'taskfield.dim': '维度',
+    'taskfield.range': '范围',
+    'taskfield.visible': '可见',
+    'taskfield.hideInfo': '隐藏信息',
+    'taskfield.invert': '反转',
+    'taskfield.taxiCab': '曼哈顿距离',
+    'taskfield.amount': '数量',
+    'taskfield.levels': '按等级',
+    'taskfield.requiredFluids': '所需流体',
+    'taskfield.scoreName': '分数名称',
+    'taskfield.scoreDisp': '显示名称',
+    'taskfield.type': '类型',
+    'taskfield.target': '目标值',
+    'taskfield.conversion': '转换因子',
+    'taskfield.suffix': '后缀',
+    'taskfield.operation': '操作',
+    'taskfield.onInteract': '右键交互',
+    'taskfield.onHit': '攻击交互',
+    'taskfield.targetItem': '目标物品',
+    'taskfield.targetBlock': '目标方块',
+    'taskfield.blockTypes': '方块类型',
+    'taskfield.blockId': '方块ID',
+    'taskfield.blockMeta': '方块元数据',
+    'taskfield.blockAmount': '数量',
+    'taskfield.blockNbt': '方块NBT',
+    'taskfield.blockOreDict': '矿物词典',
+    'taskfield.entityID': '实体ID',
+    'taskfield.entitySubtypes': '实体子类型',
+    'taskfield.ignoreEntityNBT': '忽略实体NBT',
+    'taskfield.ignoreItemNBT': '忽略物品NBT',
+    'taskfield.partialItemMatch': '部分物品匹配',
+    'taskfield.entityNBT': '实体NBT',
+    'reward.item': '物品奖励',
+    'reward.xp': '经验奖励',
+    'reward.command': '命令奖励',
+    'reward.scoreboard': '记分板奖励',
+    'reward.choice': '选择奖励',
+    'reward.questcompletion': '完成任务奖励',
+    'rewardfield.items': '奖励物品',
+    'rewardfield.choices': '可选物品',
+    'rewardfield.amount': '数量',
+    'rewardfield.levels': '按等级',
+    'rewardfield.command': '命令',
+    'rewardfield.hideCmd': '隐藏命令',
+    'rewardfield.viaPlayer': '以玩家执行',
+    'rewardfield.score': '分数名称',
+    'rewardfield.type': '分数类型',
+    'rewardfield.value': '值',
+    'rewardfield.relative': '相对增加',
+    'rewardfield.questId': '任务ID (UUID)',
+    'fluidfield.fluidName': '流体名称',
+    'fluidfield.fluidAmount': '数量 (mB)',
+    'fluidfield.fluidNbt': '流体NBT',
+    'btn.addFluid': '+ 添加流体',
+    'btn.addBlock': '+ 添加方块',
+    // 模态框标题
+    'modal.editFluid': '编辑流体',
+    'modal.editBlock': '编辑方块',
+    // 设置
+    'settings.title': '设置',
+    'settings.nesqlUrl': '服务器地址',
+    'settings.nesqlHelp': '配置 NESQL 服务器地址，用于提供物品/流体图标。默认端口：32533。',
+    'settings.nesqlHelpPath': '⚠ 服务器 JAR 必须从包含 nesql-repository/ 的目录启动（如 .minecraft/nesql/）',
+    'settings.testConnection': '测试连接',
+    'settings.connected': '✓ 已连接',
+    'settings.disconnected': '✗ 无法连接',
+    'settings.testing': '测试中...',
+    'settings.dbTitle': '数据库索引',
+    'settings.dbHelp': '加载 NESQL 数据库以启用物品/流体选择器（搜索和浏览）。可加载 .script 文件或预导出的 JSON 索引。',
+    'settings.loadScript': '加载 .script',
+    'settings.loadIndex': '加载 JSON 索引',
+    'settings.exportIndex': '导出索引',
+    'settings.dataTitle': '数据',
+    'settings.persist': '保留更改（刷新页面后保留数据）',
+    'settings.persistHelp': '启用后，任务数据将保存到浏览器存储中，页面刷新后自动恢复。默认不启用。',
+  }
+};
+
+let currentLang = 'en';
+let quests = [];
+let currentQuestIndex = -1;
+let currentTaskIndex = -1;
+let currentRewardIndex = -1;
+let itemEditCallback = null;
+let fluidEditCallback = null;
+let blockEditCallback = null;
+
+// ===========================================================
+// Persist (保留更改)
+// ===========================================================
+function isPersistEnabled() {
+  return localStorage.getItem('bqe_persist') === '1';
+}
+function togglePersist(enabled) {
+  localStorage.setItem('bqe_persist', enabled ? '1' : '0');
+  if (enabled) {
+    persistData();
+  } else {
+    localStorage.removeItem('bqe_questData');
+  }
+}
+function persistData() {
+  if (!isPersistEnabled()) return;
+  try {
+    const data = {
+      quests: quests,
+      importedQuestLines: typeof importedQuestLines !== 'undefined' ? importedQuestLines : [],
+      importedQuestLinesOrder: typeof importedQuestLinesOrder !== 'undefined' ? importedQuestLinesOrder : [],
+      currentQuestIndex: currentQuestIndex
+    };
+    localStorage.setItem('bqe_questData', JSON.stringify(data));
+  } catch (e) { console.warn('persistData failed', e); }
+}
+function loadPersistedData() {
+  if (!isPersistEnabled()) return false;
+  try {
+    const raw = localStorage.getItem('bqe_questData');
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (data.quests && Array.isArray(data.quests) && data.quests.length > 0) {
+      quests = data.quests;
+      if (data.importedQuestLines) importedQuestLines = data.importedQuestLines;
+      if (data.importedQuestLinesOrder) importedQuestLinesOrder = data.importedQuestLinesOrder;
+      renderQuestList();
+      if (data.currentQuestIndex >= 0 && data.currentQuestIndex < quests.length) {
+        selectQuest(data.currentQuestIndex);
+      } else if (quests.length > 0) {
+        selectQuest(0);
+      }
+      return true;
+    }
+  } catch (e) { console.warn('loadPersistedData failed', e); }
+  return false;
+}
+
+// ===========================================================
+// Language
+// ===========================================================
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('bqe_lang', lang);
+  document.getElementById('langEn').classList.toggle('active', lang === 'en');
+  document.getElementById('langZh').classList.toggle('active', lang === 'zh');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (i18n[lang][key]) {
+      if (el.tagName === 'INPUT' && el.type !== 'checkbox') {
+        // skip
+      } else {
+        el.textContent = i18n[lang][key];
+      }
+    }
+  });
+  // Update help tips
+  document.querySelectorAll('.help-tip').forEach(el => {
+    const tip = el.getAttribute('data-tip-' + lang);
+    if (tip) el.setAttribute('data-tip', tip);
+  });
+  // Re-render current view
+  renderQuestList();
+  if (currentQuestIndex >= 0) {
+    renderTaskList();
+    renderRewardList();
+    updateLogicDescs();
+  }
+}
+
+function t(key) {
+  return i18n[currentLang][key] || key;
+}
+
+// ===========================================================
+// Quest Data Model
+// ===========================================================
+function createDefaultQuest() {
+  const uuid = generateUUID();
+  return {
+    name: 'New Quest',
+    desc: '',
+    uuid: uuid,
+    uuidMode: 'auto',
+    icon: { id: 'minecraft:nether_star', Count: 1, Damage: 0, OreDict: '', tag: null },
+    taskLogic: 'AND',
+    questLogic: 'AND',
+    visibility: 'NORMAL',
+    soundUnlock: 'random.click',
+    soundUpdate: 'random.levelup',
+    soundComplete: 'random.levelup',
+    repeatTime: -1,
+    repeatRel: true,
+    lockedProgress: false,
+    autoClaim: false,
+    silent: false,
+    main: false,
+    global: false,
+    globalShare: false,
+    simultaneous: false,
+    partyEnable: true,
+    posX: 0,
+    posY: 0,
+    sizeX: 24,
+    sizeY: 24,
+    bgImage: '',
+    bgSize: 256,
+    tasks: [],
+    rewards: [],
+    preRequisites: []
+  };
+}
+
+// ===========================================================
+// Task Templates
+// ===========================================================
+const taskTypes = {
+  'bq_standard:retrieval': {
+    nameKey: 'task.retrieval',
+    icon: '📦',
+    defaults: { partialMatch: true, ignoreNBT: true, consume: false, groupDetect: false, autoConsume: false, requiredItems: [] }
+  },
+  'bq_standard:optional_retrieval': {
+    nameKey: 'task.optional_retrieval',
+    icon: '📦',
+    defaults: { partialMatch: true, ignoreNBT: true, consume: false, groupDetect: false, autoConsume: false, requiredItems: [] }
+  },
+  'bq_standard:crafting': {
+    nameKey: 'task.crafting',
+    icon: '🔨',
+    defaults: { partialMatch: true, ignoreNBT: true, allowCraft: true, allowSmelt: true, allowAnvil: false, requiredItems: [] }
+  },
+  'bq_standard:hunt': {
+    nameKey: 'task.hunt',
+    icon: '⚔',
+    defaults: { idName: 'Zombie', required: 1, subtypes: true, ignoreNBT: true, damageType: '', targetNBT: '{}' }
+  },
+  'bq_standard:location': {
+    nameKey: 'task.location',
+    icon: '📍',
+    defaults: { name: 'New Location', structure: '', biome: -1, x: 0, y: 0, z: 0, dim: 0, range: -1, visible: false, hideInfo: false, invert: false, taxiCab: false }
+  },
+  'bq_standard:fluid': {
+    nameKey: 'task.fluid',
+    icon: '💧',
+    defaults: { ignoreNBT: true, consume: true, groupDetect: false, autoConsume: false, requiredFluids: [] }
+  },
+  'bq_standard:meeting': {
+    nameKey: 'task.meeting',
+    icon: '🧑',
+    defaults: { idName: 'Villager', range: 4, amount: 1, subtypes: true, ignoreNBT: true, targetNBT: '{}' }
+  },
+  'bq_standard:xp': {
+    nameKey: 'task.xp',
+    icon: '✨',
+    defaults: { amount: 30, levels: true, consume: true }
+  },
+  'bq_standard:block_break': {
+    nameKey: 'task.block_break',
+    icon: '⛏',
+    defaults: { blockTypes: [] }
+  },
+  'bq_standard:checkbox': {
+    nameKey: 'task.checkbox',
+    icon: '☑',
+    defaults: {}
+  },
+  'bq_standard:scoreboard': {
+    nameKey: 'task.scoreboard',
+    icon: '📊',
+    defaults: { scoreName: 'Score', scoreDisp: 'Score', type: 'dummy', target: 1, conversion: 1.0, suffix: '', operation: 'MORE_OR_EQUAL' }
+  },
+  'bq_standard:interact_item': {
+    nameKey: 'task.interact_item',
+    icon: '👆',
+    defaults: {
+      targetItem: { id: 'minecraft:air', Count: 1, Damage: 0, OreDict: '', tag: null },
+      targetBlock: { blockID: '', meta: -1, nbt: '{}', oreDict: '' },
+      partialMatch: true, ignoreNBT: true, onInteract: true, onHit: false, required: 1
+    }
+  },
+  'bq_standard:interact_entity': {
+    nameKey: 'task.interact_entity',
+    icon: '🤝',
+    defaults: {
+      targetItem: { id: 'minecraft:air', Count: 1, Damage: 0, OreDict: '', tag: null },
+      entityID: 'Villager', entityNBT: '{}', entitySubtypes: true,
+      ignoreEntityNBT: true, ignoreItemNBT: false, partialItemMatch: true,
+      onInteract: true, onHit: false, required: 1
+    }
+  }
+};
+
+const rewardTypes = {
+  'bq_standard:item': {
+    nameKey: 'reward.item',
+    icon: '🎁',
+    defaults: { items: [] }
+  },
+  'bq_standard:xp': {
+    nameKey: 'reward.xp',
+    icon: '✨',
+    defaults: { amount: 1, levels: true }
+  },
+  'bq_standard:command': {
+    nameKey: 'reward.command',
+    icon: '⌨',
+    defaults: { command: '/say VAR_NAME Claimed a reward', hideCmd: false, viaPlayer: false }
+  },
+  'bq_standard:scoreboard': {
+    nameKey: 'reward.scoreboard',
+    icon: '📊',
+    defaults: { score: 'Reputation', type: 'dummy', value: 1, relative: true }
+  },
+  'bq_standard:choice': {
+    nameKey: 'reward.choice',
+    icon: '🎲',
+    defaults: { choices: [] }
+  },
+  'bq_standard:quest_completion': {
+    nameKey: 'reward.questcompletion',
+    icon: '✅',
+    defaults: { questId: '' }
+  }
+};
+
+// ===========================================================
+// Render Quest List
+// ===========================================================
+function renderQuestList() {
+  const container = document.getElementById('questList');
+  document.getElementById('questCount').textContent = quests.length;
+  if (quests.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="icon">📋</div><p>${t('sidebar.empty')}</p></div>`;
+    return;
+  }
+  container.innerHTML = quests.map((q, i) => {
+    const name = q.name || 'Unnamed';
+    const rendered = renderMcFormatted(name);
+    const nameHtml = rendered ? rendered : escapeHtml(name);
+    return `
+    <div class="quest-item ${i === currentQuestIndex ? 'active' : ''}" onclick="selectQuest(${i})">
+      <div class="q-icon">📜</div>
+      <div class="q-info">
+        <div class="q-name">${nameHtml}</div>
+        <div class="q-id">#${i}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===========================================================
+// Quest Selection / Editing
+// ===========================================================
+function selectQuest(index) {
+  currentQuestIndex = index;
+  currentTaskIndex = -1;
+  currentRewardIndex = -1;
+  renderQuestList();
+  loadQuestToEditor();
+  document.getElementById('noQuestSelected').style.display = 'none';
+  document.getElementById('questEditor').style.display = 'block';
+}
+
+function loadQuestToEditor() {
+  const q = quests[currentQuestIndex];
+  if (!q) return;
+  document.getElementById('questName').value = q.name || '';
+  document.getElementById('questDesc').value = q.desc || '';
+  document.getElementById('iconId').value = q.icon?.id || 'minecraft:nether_star';
+  document.getElementById('iconCount').value = q.icon?.Count || 1;
+  document.getElementById('iconMeta').value = q.icon?.Damage || 0;
+  document.getElementById('iconOreDict').value = q.icon?.OreDict || '';
+  document.getElementById('iconNbt').value = q.icon?.tag ? JSON.stringify(q.icon.tag) : '';
+  document.getElementById('taskLogic').value = q.taskLogic || 'AND';
+  document.getElementById('questLogic').value = q.questLogic || 'AND';
+  document.getElementById('visibility').value = q.visibility || 'NORMAL';
+  document.getElementById('soundUnlock').value = q.soundUnlock || '';
+  document.getElementById('soundUpdate').value = q.soundUpdate || '';
+  document.getElementById('soundComplete').value = q.soundComplete || '';
+  document.getElementById('repeatTime').value = q.repeatTime ?? -1;
+  document.getElementById('repeatRel').checked = q.repeatRel ?? true;
+  document.getElementById('flagLockedProgress').checked = q.lockedProgress ?? false;
+  document.getElementById('flagAutoClaim').checked = q.autoClaim ?? false;
+  document.getElementById('flagSilent').checked = q.silent ?? false;
+  document.getElementById('flagMain').checked = q.main ?? false;
+  document.getElementById('flagGlobal').checked = q.global ?? false;
+  document.getElementById('flagGlobalShare').checked = q.globalShare ?? false;
+  document.getElementById('flagSimultaneous').checked = q.simultaneous ?? false;
+  document.getElementById('flagPartyEnable').checked = q.partyEnable ?? true;
+  document.getElementById('posX').value = q.posX ?? 0;
+  document.getElementById('posY').value = q.posY ?? 0;
+  document.getElementById('sizeX').value = q.sizeX ?? 24;
+  document.getElementById('sizeY').value = q.sizeY ?? 24;
+  document.getElementById('bgImage').value = q.bgImage || '';
+  document.getElementById('bgSize').value = q.bgSize ?? 256;
+  renderTaskList();
+  renderRewardList();
+  renderPrereqList();
+  updateLogicDescs();
+  updateUuidDisplay();
+  updateRawJSON();
+  // 刷新格式化代码预览
+  updateMcFmtPreview('questName', 'namePreview');
+  updateMcFmtPreview('questDesc', 'descPreview');
+}
+
+function updateField(field, value) {
+  if (currentQuestIndex < 0) return;
+  quests[currentQuestIndex][field] = value;
+  if (field === 'name') {
+    renderQuestList();
+    updateUuidFileName();
+  }
+  if (field === 'taskLogic' || field === 'questLogic' || field === 'visibility') updateLogicDescs();
+  updateRawJSON();
+  persistData();
+}
+
+// ===========================================================
+// Minecraft 格式化代码渲染（Java版 §0-§f, §k-§o, §r）
+// ===========================================================
+const MC_COLORS = {
+  '0': '#000000', '1': '#0000AA', '2': '#00AA00', '3': '#00AAAA',
+  '4': '#AA0000', '5': '#AA00AA', '6': '#FFAA00', '7': '#AAAAAA',
+  '8': '#555555', '9': '#5555FF', 'a': '#55FF55', 'b': '#55FFFF',
+  'c': '#FF5555', 'd': '#FF55FF', 'e': '#FFFF55', 'f': '#FFFFFF'
+};
+
+function renderMcFormatted(text) {
+  if (!text) return '';
+  // 支持 § 和 \u00A7 两种写法
+  const normalized = text.replace(/\\u00[Aa]7/g, '§');
+  if (!normalized.includes('§')) return '';
+
+  let html = '';
+  let color = null;
+  let bold = false, italic = false, underline = false, strikethrough = false, obfuscated = false;
+  let i = 0;
+
+  while (i < normalized.length) {
+    if (normalized[i] === '§' && i + 1 < normalized.length) {
+      const code = normalized[i + 1].toLowerCase();
+      if (MC_COLORS[code] !== undefined) {
+        color = MC_COLORS[code];
+        bold = false; italic = false; underline = false; strikethrough = false; obfuscated = false;
+      } else if (code === 'l') { bold = true; }
+      else if (code === 'o') { italic = true; }
+      else if (code === 'n') { underline = true; }
+      else if (code === 'm') { strikethrough = true; }
+      else if (code === 'k') { obfuscated = true; }
+      else if (code === 'r') {
+        color = null; bold = false; italic = false; underline = false; strikethrough = false; obfuscated = false;
+      }
+      i += 2;
+      continue;
+    }
+
+    // 构建当前字符的 style
+    let styles = [];
+    if (color) styles.push(`color:${color}`);
+    if (bold) styles.push('font-weight:bold');
+    if (italic) styles.push('font-style:italic');
+    let textDeco = [];
+    if (underline) textDeco.push('underline');
+    if (strikethrough) textDeco.push('line-through');
+    if (textDeco.length) styles.push(`text-decoration:${textDeco.join(' ')}`);
+
+    const cls = obfuscated ? ' class="mc-obfuscated"' : '';
+    const styleAttr = styles.length ? ` style="${styles.join(';')}"` : '';
+    const ch = normalized[i] === '<' ? '&lt;' : normalized[i] === '>' ? '&gt;' : normalized[i] === '&' ? '&amp;' : normalized[i] === '\n' ? '<br>' : normalized[i];
+    html += `<span${cls}${styleAttr}>${ch}</span>`;
+    i++;
+  }
+  return html;
+}
+
+function updateMcFmtPreview(inputId, previewId) {
+  const val = document.getElementById(inputId).value;
+  const el = document.getElementById(previewId);
+  const rendered = renderMcFormatted(val);
+  el.innerHTML = rendered;
+  el.style.display = rendered ? 'block' : 'none';
+}
+
+// Update logic/visibility description badges
+function updateLogicDescs() {
+  const tl = document.getElementById('taskLogic').value;
+  const ql = document.getElementById('questLogic').value;
+  const vis = document.getElementById('visibility').value;
+
+  const tlDesc = document.getElementById('taskLogicDesc');
+  const qlDesc = document.getElementById('questLogicDesc');
+  const visDesc = document.getElementById('visibilityDesc');
+
+  if (tlDesc) { tlDesc.textContent = t('logic.' + tl); tlDesc.setAttribute('data-tooltip', t('logic.' + tl + '.desc')); }
+  if (qlDesc) { qlDesc.textContent = t('logic.' + ql); qlDesc.setAttribute('data-tooltip', t('logic.' + ql + '.desc')); }
+  if (visDesc) { visDesc.textContent = t('vis.' + vis); visDesc.setAttribute('data-tooltip', t('vis.' + vis + '.desc')); }
+}
+
+function updateIcon() {
+  if (currentQuestIndex < 0) return;
+  const q = quests[currentQuestIndex];
+  q.icon = {
+    id: document.getElementById('iconId').value || 'minecraft:nether_star',
+    Count: parseInt(document.getElementById('iconCount').value) || 1,
+    Damage: parseInt(document.getElementById('iconMeta').value) || 0,
+    OreDict: document.getElementById('iconOreDict').value || '',
+    tag: null
+  };
+  const nbtStr = document.getElementById('iconNbt').value.trim();
+  if (nbtStr) {
+    try { q.icon.tag = JSON.parse(nbtStr); } catch (e) { /* ignore parse errors */ }
+  }
+  updateRawJSON();
+}
+
+// ===========================================================
+// UUID Generation (mirrors BQ's UuidConverter.java)
+// ===========================================================
+function generateUUID() {
+  // Generate v4 UUID matching Java's UUID.randomUUID()
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
+function uuidToHighLow(uuid) {
+  // UUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  // High = first 8 bytes (most significant bits)
+  // Low = last 8 bytes (least significant bits)
+  const hex = uuid.replace(/-/g, '');
+  if (hex.length !== 32) return { high: 0n, low: 0n };
+  const high = BigInt('0x' + hex.substring(0, 16));
+  const low = BigInt('0x' + hex.substring(16, 32));
+  return { high, low };
+}
+
+function bigIntToSignedLong(val) {
+  // Convert unsigned BigInt to signed 64-bit like Java's long
+  if (val >= (1n << 63n)) val -= (1n << 64n);
+  return val;
+}
+
+// Base64-URL encode UUID bytes (matches UuidConverter.encodeUuid)
+function uuidToBase64(uuid) {
+  const hex = uuid.replace(/-/g, '');
+  if (hex.length !== 32) return '';
+  const bytes = new Uint8Array(16);
+  for (let i = 0; i < 16; i++) {
+    bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+  }
+  let binary = '';
+  bytes.forEach(b => binary += String.fromCharCode(b));
+  // Base64 encode then URL-safe
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_');
+}
+
+// Sanitize quest name for file name (matches BQ's buildFileName)
+function sanitizeQuestName(name) {
+  // Remove Minecraft formatting codes §X
+  let clean = name.replace(/§[0-9a-fk-or]/gi, '');
+  // Remove non-alphanumeric
+  clean = clean.replace(/[^a-zA-Z0-9]/g, '');
+  // Limit to 16 chars
+  if (clean.length > 16) clean = clean.substring(0, 16);
+  return clean;
+}
+
+function buildFileName(name, uuid) {
+  const sanitized = sanitizeQuestName(name);
+  const encoded = uuidToBase64(uuid);
+  return sanitized + '-' + encoded;
+}
+
+function isValidUUID(str) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+}
+
+function setUuidMode(mode) {
+  if (currentQuestIndex < 0) return;
+  quests[currentQuestIndex].uuidMode = mode;
+  const input = document.getElementById('questUuid');
+  const regenBtn = document.getElementById('uuidRegenBtn');
+  if (mode === 'auto') {
+    input.readOnly = true;
+    input.style.opacity = '0.7';
+    regenBtn.style.display = '';
+  } else {
+    input.readOnly = false;
+    input.style.opacity = '1';
+    regenBtn.style.display = 'none';
+  }
+  updateRawJSON();
+}
+
+function onUuidInput(val) {
+  if (currentQuestIndex < 0) return;
+  const q = quests[currentQuestIndex];
+  if (q.uuidMode !== 'manual') return;
+
+  if (isValidUUID(val)) {
+    q.uuid = val.toLowerCase();
+  } else {
+    // Auto-correct: generate a valid UUID
+    notify(t('uuid.invalid'));
+    q.uuid = generateUUID();
+  }
+  document.getElementById('questUuid').value = q.uuid;
+  updateUuidDisplay();
+  updateRawJSON();
+}
+
+function regenerateUuid() {
+  if (currentQuestIndex < 0) return;
+  const q = quests[currentQuestIndex];
+  q.uuid = generateUUID();
+  document.getElementById('questUuid').value = q.uuid;
+  updateUuidDisplay();
+  updateRawJSON();
+}
+
+function updateUuidDisplay() {
+  if (currentQuestIndex < 0) return;
+  const q = quests[currentQuestIndex];
+  if (!q.uuid) q.uuid = generateUUID();
+
+  document.getElementById('questUuid').value = q.uuid;
+  const { high, low } = uuidToHighLow(q.uuid);
+  document.getElementById('uuidHigh').textContent = bigIntToSignedLong(high).toString();
+  document.getElementById('uuidLow').textContent = bigIntToSignedLong(low).toString();
+  document.getElementById('uuidEncoded').textContent = uuidToBase64(q.uuid);
+  updateUuidFileName();
+
+  // Set mode radio
+  const mode = q.uuidMode || 'auto';
+  document.querySelectorAll('input[name="uuidMode"]').forEach(r => r.checked = r.value === mode);
+  setUuidMode(mode);
+}
+
+function updateUuidFileName() {
+  if (currentQuestIndex < 0) return;
+  const q = quests[currentQuestIndex];
+  if (!q.uuid) return;
+  const fn = buildFileName(q.name || '', q.uuid);
+  const el = document.getElementById('uuidFileName');
+  if (el) el.textContent = fn + '.json';
+}
+
+function addQuest() {
+  quests.push(createDefaultQuest());
+  selectQuest(quests.length - 1);
+  notify(t('notify.questAdded'));
+  persistData();
+}
+
+function deleteCurrentQuest() {
+  if (currentQuestIndex < 0) return;
+  if (!confirm(currentLang === 'zh' ? '确定删除此任务？' : 'Delete this quest?')) return;
+  quests.splice(currentQuestIndex, 1);
+  currentQuestIndex = -1;
+  renderQuestList();
+  document.getElementById('noQuestSelected').style.display = '';
+  document.getElementById('questEditor').style.display = 'none';
+  notify(t('notify.questDeleted'));
+  persistData();
+}
+
+// ===========================================================
+// Tabs
+// ===========================================================
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  if (tab === 'json') updateRawJSON();
+}
+
+function toggleCard(header) {
+  header.classList.toggle('collapsed');
+  header.nextElementSibling.classList.toggle('collapsed');
+}
+
+// ===========================================================
+// Task Editor
+// ===========================================================
+function renderTaskList() {
+  const q = quests[currentQuestIndex];
+  const container = document.getElementById('taskListPanel');
+  if (!q || !q.tasks || q.tasks.length === 0) {
+    container.innerHTML = `<div class="empty-state" style="padding:20px"><p>${t('tasks.empty')}</p></div>`;
+    return;
+  }
+  container.innerHTML = q.tasks.map((task, i) => {
+    const type = taskTypes[task.taskType];
+    const name = type ? t(type.nameKey) : task.taskType;
+    const icon = type ? type.icon : '❓';
+    return `<div class="list-item ${i === currentTaskIndex ? 'active' : ''}" onclick="selectTask(${i})">
+      <span>${icon} ${escapeHtml(name)}</span>
+      <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteTask(${i})" title="${t('btn.delete')}">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function selectTask(index) {
+  currentTaskIndex = index;
+  renderTaskList();
+  renderTaskDetail();
+}
+
+function deleteTask(index) {
+  quests[currentQuestIndex].tasks.splice(index, 1);
+  if (currentTaskIndex >= quests[currentQuestIndex].tasks.length) currentTaskIndex = -1;
+  renderTaskList();
+  renderTaskDetail();
+  updateRawJSON();
+}
+
+function showAddTaskModal() {
+  const container = document.getElementById('taskTypeList');
+  container.innerHTML = Object.entries(taskTypes).map(([key, type]) => `
+    <div class="list-item" onclick="addTask('${key}')">
+      <span>${type.icon} ${t(type.nameKey)}</span>
+      <span style="color:var(--text-muted);font-size:11px">${key}</span>
+    </div>
+  `).join('');
+  document.getElementById('addTaskModal').classList.add('show');
+}
+
+function addTask(typeKey) {
+  const type = taskTypes[typeKey];
+  const task = { taskType: typeKey, ...JSON.parse(JSON.stringify(type.defaults)) };
+  quests[currentQuestIndex].tasks.push(task);
+  closeModal('addTaskModal');
+  currentTaskIndex = quests[currentQuestIndex].tasks.length - 1;
+  renderTaskList();
+  renderTaskDetail();
+  updateRawJSON();
+  persistData();
+}
+
+function renderTaskDetail() {
+  const container = document.getElementById('taskDetailPanel');
+  if (currentTaskIndex < 0 || !quests[currentQuestIndex]?.tasks[currentTaskIndex]) {
+    container.innerHTML = `<div class="empty-state" style="padding:20px"><p>${t('tasks.selectDetail')}</p></div>`;
+    return;
+  }
+  const task = quests[currentQuestIndex].tasks[currentTaskIndex];
+  const typeKey = task.taskType;
+  let html = `<div style="margin-bottom:12px;color:var(--accent);font-weight:600">${taskTypes[typeKey]?.icon || '❓'} ${t(taskTypes[typeKey]?.nameKey || typeKey)}</div>`;
+
+  // Build fields based on task type
+  if (['bq_standard:retrieval', 'bq_standard:optional_retrieval'].includes(typeKey)) {
+    html += checkboxField('partialMatch', 'taskfield.partialMatch', task);
+    html += checkboxField('ignoreNBT', 'taskfield.ignoreNBT', task);
+    html += checkboxField('consume', 'taskfield.consume', task);
+    html += checkboxField('groupDetect', 'taskfield.groupDetect', task);
+    html += checkboxField('autoConsume', 'taskfield.autoConsume', task);
+    html += itemListField('requiredItems', 'taskfield.requiredItems', task);
+  } else if (typeKey === 'bq_standard:crafting') {
+    html += checkboxField('partialMatch', 'taskfield.partialMatch', task);
+    html += checkboxField('ignoreNBT', 'taskfield.ignoreNBT', task);
+    html += checkboxField('allowCraft', 'taskfield.allowCraft', task);
+    html += checkboxField('allowSmelt', 'taskfield.allowSmelt', task);
+    html += checkboxField('allowAnvil', 'taskfield.allowAnvil', task);
+    html += itemListField('requiredItems', 'taskfield.requiredItems', task);
+  } else if (typeKey === 'bq_standard:hunt') {
+    html += textField('idName', 'taskfield.idName', task);
+    html += numberField('required', 'taskfield.required', task);
+    html += checkboxField('subtypes', 'taskfield.subtypes', task);
+    html += checkboxField('ignoreNBT', 'taskfield.ignoreNBT', task);
+    html += textField('damageType', 'taskfield.damageType', task);
+    html += textareaField('targetNBT', 'taskfield.targetNBT', task);
+  } else if (typeKey === 'bq_standard:location') {
+    html += textField('name', 'taskfield.name', task);
+    html += textField('structure', 'taskfield.structure', task);
+    html += numberField('biome', 'taskfield.biome', task);
+    html += numberField('x', 'taskfield.x', task);
+    html += numberField('y', 'taskfield.y', task);
+    html += numberField('z', 'taskfield.z', task);
+    html += numberField('dim', 'taskfield.dim', task);
+    html += numberField('range', 'taskfield.range', task);
+    html += checkboxField('visible', 'taskfield.visible', task);
+    html += checkboxField('hideInfo', 'taskfield.hideInfo', task);
+    html += checkboxField('invert', 'taskfield.invert', task);
+    html += checkboxField('taxiCab', 'taskfield.taxiCab', task);
+  } else if (typeKey === 'bq_standard:fluid') {
+    html += checkboxField('ignoreNBT', 'taskfield.ignoreNBT', task);
+    html += checkboxField('consume', 'taskfield.consume', task);
+    html += checkboxField('groupDetect', 'taskfield.groupDetect', task);
+    html += checkboxField('autoConsume', 'taskfield.autoConsume', task);
+    html += fluidListField('requiredFluids', 'taskfield.requiredFluids', task);
+  } else if (typeKey === 'bq_standard:meeting') {
+    html += textField('idName', 'taskfield.idName', task);
+    html += numberField('range', 'taskfield.range', task);
+    html += numberField('amount', 'taskfield.amount', task);
+    html += checkboxField('subtypes', 'taskfield.subtypes', task);
+    html += checkboxField('ignoreNBT', 'taskfield.ignoreNBT', task);
+    html += textareaField('targetNBT', 'taskfield.targetNBT', task);
+  } else if (typeKey === 'bq_standard:xp') {
+    html += numberField('amount', 'taskfield.amount', task);
+    html += checkboxField('levels', 'taskfield.levels', task);
+    html += checkboxField('consume', 'taskfield.consume', task);
+  } else if (typeKey === 'bq_standard:block_break') {
+    html += blockListField('blockTypes', 'taskfield.blockTypes', task);
+  } else if (typeKey === 'bq_standard:checkbox') {
+    html += `<p style="color:var(--text-muted);font-size:13px">${currentLang === 'zh' ? '此任务无配置参数' : 'No configurable parameters'}</p>`;
+  } else if (typeKey === 'bq_standard:scoreboard') {
+    html += textField('scoreName', 'taskfield.scoreName', task);
+    html += textField('scoreDisp', 'taskfield.scoreDisp', task);
+    html += textField('type', 'taskfield.type', task);
+    html += numberField('target', 'taskfield.target', task);
+    html += numberField('conversion', 'taskfield.conversion', task, 'step="0.01"');
+    html += textField('suffix', 'taskfield.suffix', task);
+    html += selectField('operation', 'taskfield.operation', task, [
+      'MORE_OR_EQUAL', 'LESS_OR_EQUAL', 'EQUAL', 'NOT_EQUAL', 'MORE', 'LESS'
+    ]);
+  } else if (typeKey === 'bq_standard:interact_item') {
+    html += singleItemField('targetItem', 'taskfield.targetItem', task);
+    html += singleBlockField('targetBlock', 'taskfield.targetBlock', task);
+    html += checkboxField('partialMatch', 'taskfield.partialMatch', task);
+    html += checkboxField('ignoreNBT', 'taskfield.ignoreNBT', task);
+    html += checkboxField('onInteract', 'taskfield.onInteract', task);
+    html += checkboxField('onHit', 'taskfield.onHit', task);
+    html += numberField('required', 'taskfield.required', task);
+  } else if (typeKey === 'bq_standard:interact_entity') {
+    html += singleItemField('targetItem', 'taskfield.targetItem', task);
+    html += textField('entityID', 'taskfield.entityID', task);
+    html += textareaField('entityNBT', 'taskfield.entityNBT', task);
+    html += checkboxField('entitySubtypes', 'taskfield.entitySubtypes', task);
+    html += checkboxField('ignoreEntityNBT', 'taskfield.ignoreEntityNBT', task);
+    html += checkboxField('ignoreItemNBT', 'taskfield.ignoreItemNBT', task);
+    html += checkboxField('partialItemMatch', 'taskfield.partialItemMatch', task);
+    html += checkboxField('onInteract', 'taskfield.onInteract', task);
+    html += checkboxField('onHit', 'taskfield.onHit', task);
+    html += numberField('required', 'taskfield.required', task);
+  }
+
+  container.innerHTML = html;
+}
+
+// ===========================================================
+// Reward Editor
+// ===========================================================
+function renderRewardList() {
+  const q = quests[currentQuestIndex];
+  const container = document.getElementById('rewardListPanel');
+  if (!q || !q.rewards || q.rewards.length === 0) {
+    container.innerHTML = `<div class="empty-state" style="padding:20px"><p>${t('rewards.empty')}</p></div>`;
+    return;
+  }
+  container.innerHTML = q.rewards.map((reward, i) => {
+    const type = rewardTypes[reward.rewardType];
+    const name = type ? t(type.nameKey) : reward.rewardType;
+    const icon = type ? type.icon : '❓';
+    return `<div class="list-item ${i === currentRewardIndex ? 'active' : ''}" onclick="selectReward(${i})">
+      <span>${icon} ${escapeHtml(name)}</span>
+      <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteReward(${i})" title="${t('btn.delete')}">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function selectReward(index) {
+  currentRewardIndex = index;
+  renderRewardList();
+  renderRewardDetail();
+}
+
+function deleteReward(index) {
+  quests[currentQuestIndex].rewards.splice(index, 1);
+  if (currentRewardIndex >= quests[currentQuestIndex].rewards.length) currentRewardIndex = -1;
+  renderRewardList();
+  renderRewardDetail();
+  updateRawJSON();
+}
+
+function showAddRewardModal() {
+  const container = document.getElementById('rewardTypeList');
+  container.innerHTML = Object.entries(rewardTypes).map(([key, type]) => `
+    <div class="list-item" onclick="addReward('${key}')">
+      <span>${type.icon} ${t(type.nameKey)}</span>
+      <span style="color:var(--text-muted);font-size:11px">${key}</span>
+    </div>
+  `).join('');
+  document.getElementById('addRewardModal').classList.add('show');
+}
+
+function addReward(typeKey) {
+  const type = rewardTypes[typeKey];
+  const reward = { rewardType: typeKey, ...JSON.parse(JSON.stringify(type.defaults)) };
+  quests[currentQuestIndex].rewards.push(reward);
+  closeModal('addRewardModal');
+  currentRewardIndex = quests[currentQuestIndex].rewards.length - 1;
+  renderRewardList();
+  renderRewardDetail();
+  updateRawJSON();
+  persistData();
+}
+
+function renderRewardDetail() {
+  const container = document.getElementById('rewardDetailPanel');
+  if (currentRewardIndex < 0 || !quests[currentQuestIndex]?.rewards[currentRewardIndex]) {
+    container.innerHTML = `<div class="empty-state" style="padding:20px"><p>${t('rewards.selectDetail')}</p></div>`;
+    return;
+  }
+  const reward = quests[currentQuestIndex].rewards[currentRewardIndex];
+  const typeKey = reward.rewardType;
+  let html = `<div style="margin-bottom:12px;color:var(--accent);font-weight:600">${rewardTypes[typeKey]?.icon || '❓'} ${t(rewardTypes[typeKey]?.nameKey || typeKey)}</div>`;
+
+  if (typeKey === 'bq_standard:item') {
+    html += itemListField('items', 'rewardfield.items', reward, 'reward');
+  } else if (typeKey === 'bq_standard:xp') {
+    html += numberFieldReward('amount', 'rewardfield.amount', reward);
+    html += checkboxFieldReward('levels', 'rewardfield.levels', reward);
+  } else if (typeKey === 'bq_standard:command') {
+    html += textFieldReward('command', 'rewardfield.command', reward);
+    html += checkboxFieldReward('hideCmd', 'rewardfield.hideCmd', reward);
+    html += checkboxFieldReward('viaPlayer', 'rewardfield.viaPlayer', reward);
+    html += `<p style="margin-top:8px;font-size:11px;color:var(--text-muted)">Variables: VAR_NAME (player name), VAR_UUID (player UUID)</p>`;
+  } else if (typeKey === 'bq_standard:scoreboard') {
+    html += textFieldReward('score', 'rewardfield.score', reward);
+    html += textFieldReward('type', 'rewardfield.type', reward);
+    html += numberFieldReward('value', 'rewardfield.value', reward);
+    html += checkboxFieldReward('relative', 'rewardfield.relative', reward);
+  } else if (typeKey === 'bq_standard:choice') {
+    html += itemListField('choices', 'rewardfield.choices', reward, 'reward');
+  } else if (typeKey === 'bq_standard:quest_completion') {
+    html += textFieldReward('questId', 'rewardfield.questId', reward);
+  }
+
+  container.innerHTML = html;
+}
+
+// ===========================================================
+// Prerequisites
+// ===========================================================
+function renderPrereqList() {
+  const q = quests[currentQuestIndex];
+  const container = document.getElementById('prereqList');
+  if (!q || !q.preRequisites || q.preRequisites.length === 0) {
+    container.innerHTML = `<p style="color:var(--text-muted);">${currentLang === 'zh' ? '暂无前置任务' : 'No prerequisites'}</p>`;
+    return;
+  }
+  container.innerHTML = q.preRequisites.map((pr, i) => `
+    <div class="form-row" style="margin-bottom:6px">
+      <div class="form-control form-inline">
+        <input type="text" value="${escapeHtml(pr.id || pr)}" onchange="updatePrereq(${i}, 'id', this.value)" placeholder="Quest ID / UUID" style="flex:1">
+        <select onchange="updatePrereq(${i}, 'type', this.value)" style="width:130px">
+          <option value="NORMAL" ${(pr.type||'NORMAL')==='NORMAL'?'selected':''}>Normal</option>
+          <option value="IMPLICIT" ${pr.type==='IMPLICIT'?'selected':''}>Implicit</option>
+          <option value="HIDDEN" ${pr.type==='HIDDEN'?'selected':''}>Hidden</option>
+        </select>
+        <button class="btn btn-danger btn-sm" onclick="deletePrereq(${i})">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addPrerequisite() {
+  if (currentQuestIndex < 0) return;
+  if (!quests[currentQuestIndex].preRequisites) quests[currentQuestIndex].preRequisites = [];
+  quests[currentQuestIndex].preRequisites.push({ id: '', type: 'NORMAL' });
+  renderPrereqList();
+  updateRawJSON();
+}
+
+function updatePrereq(index, field, value) {
+  const pr = quests[currentQuestIndex].preRequisites[index];
+  if (typeof pr === 'string') {
+    quests[currentQuestIndex].preRequisites[index] = { id: pr, type: 'NORMAL' };
+  }
+  quests[currentQuestIndex].preRequisites[index][field] = value;
+  updateRawJSON();
+}
+
+function deletePrereq(index) {
+  quests[currentQuestIndex].preRequisites.splice(index, 1);
+  renderPrereqList();
+  updateRawJSON();
+}
+
+// ===========================================================
+// Field Generators for Tasks
+// ===========================================================
+function textField(field, labelKey, obj) {
+  return `<div class="form-row"><label class="form-label">${t(labelKey)}</label>
+    <div class="form-control"><input type="text" value="${escapeHtml(String(obj[field]??''))}" onchange="updateTaskField('${field}', this.value)"></div></div>`;
+}
+
+function numberField(field, labelKey, obj, extra = '') {
+  return `<div class="form-row"><label class="form-label">${t(labelKey)}</label>
+    <div class="form-control"><input type="number" value="${obj[field]??0}" ${extra} onchange="updateTaskField('${field}', parseFloat(this.value))"></div></div>`;
+}
+
+function checkboxField(field, labelKey, obj) {
+  return `<div class="form-row"><label class="form-label">${t(labelKey)}</label>
+    <div class="form-control"><input type="checkbox" ${obj[field]?'checked':''} onchange="updateTaskField('${field}', this.checked)"></div></div>`;
+}
+
+function textareaField(field, labelKey, obj) {
+  return `<div class="form-row"><label class="form-label">${t(labelKey)}</label>
+    <div class="form-control"><textarea rows="3" onchange="updateTaskField('${field}', this.value)">${escapeHtml(String(obj[field]??'{}'))}</textarea></div></div>`;
+}
+
+function selectField(field, labelKey, obj, options) {
+  const opts = options.map(o => `<option value="${o}" ${obj[field]===o?'selected':''}>${o}</option>`).join('');
+  return `<div class="form-row"><label class="form-label">${t(labelKey)}</label>
+    <div class="form-control"><select onchange="updateTaskField('${field}', this.value)">${opts}</select></div></div>`;
+}
+
+function textFieldReward(field, labelKey, obj) {
+  return `<div class="form-row"><label class="form-label">${t(labelKey)}</label>
+    <div class="form-control"><input type="text" value="${escapeHtml(String(obj[field]??''))}" onchange="updateRewardField('${field}', this.value)"></div></div>`;
+}
+
+function numberFieldReward(field, labelKey, obj) {
+  return `<div class="form-row"><label class="form-label">${t(labelKey)}</label>
+    <div class="form-control"><input type="number" value="${obj[field]??0}" onchange="updateRewardField('${field}', parseFloat(this.value))"></div></div>`;
+}
+
+function checkboxFieldReward(field, labelKey, obj) {
+  return `<div class="form-row"><label class="form-label">${t(labelKey)}</label>
+    <div class="form-control"><input type="checkbox" ${obj[field]?'checked':''} onchange="updateRewardField('${field}', this.checked)"></div></div>`;
+}
+
+// Item list field
+function itemListField(field, labelKey, obj, context = 'task') {
+  const items = obj[field] || [];
+  let html = `<div style="margin-bottom:4px"><label class="form-label" style="width:auto;text-align:left;display:block;margin-bottom:8px">${t(labelKey)}</label>`;
+  html += `<div class="item-list"><div class="item-list-header"><span>${items.length} item(s)</span>
+    <button class="btn btn-primary btn-sm" onclick="addItemTo('${field}','${context}')">${t('btn.addItem')}</button></div>`;
+  html += `<div class="item-list-body">`;
+  items.forEach((item, i) => {
+    const _iurl = itemImageUrl(item.id, item.Damage);
+    html += `<div class="item-entry">
+      <div class="item-icon">${iconImgHtml(_iurl, '📦')}</div>
+      <div class="item-details">
+        <div class="item-name">${escapeHtml(item.id || 'unknown')}</div>
+        <div class="item-meta">x${item.Count||1} | Meta:${item.Damage||0}${item.OreDict ? ' | OD:'+item.OreDict : ''}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-outline btn-sm" onclick="editItemIn('${field}',${i},'${context}')">${t('btn.editItem')}</button>
+        <button class="btn btn-danger btn-sm" onclick="removeItemFrom('${field}',${i},'${context}')">✕</button>
+      </div>
+    </div>`;
+  });
+  html += `</div></div></div>`;
+  return html;
+}
+
+// Fluid list field
+function fluidListField(field, labelKey, obj) {
+  const fluids = obj[field] || [];
+  let html = `<div style="margin-bottom:4px"><label class="form-label" style="width:auto;text-align:left;display:block;margin-bottom:8px">${t(labelKey)}</label>`;
+  html += `<div class="item-list"><div class="item-list-header"><span>${fluids.length} fluid(s)</span>
+    <button class="btn btn-primary btn-sm" onclick="addFluidTo('${field}')">${t('btn.addFluid')}</button></div>`;
+  html += `<div class="item-list-body">`;
+  fluids.forEach((fluid, i) => {
+    const _furl = fluidImageUrl(fluid.FluidName);
+    html += `<div class="item-entry">
+      <div class="item-icon">${iconImgHtml(_furl, '💧')}</div>
+      <div class="item-details">
+        <div class="item-name">${escapeHtml(fluid.FluidName || 'water')}</div>
+        <div class="item-meta">${fluid.Amount || 1000} mB</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-outline btn-sm" onclick="editFluidIn('${field}',${i})">✏</button>
+        <button class="btn btn-danger btn-sm" onclick="removeFluidFrom('${field}',${i})">✕</button>
+      </div>
+    </div>`;
+  });
+  html += `</div></div></div>`;
+  return html;
+}
+
+// Block list field
+function blockListField(field, labelKey, obj) {
+  const blocks = obj[field] || [];
+  let html = `<div style="margin-bottom:4px"><label class="form-label" style="width:auto;text-align:left;display:block;margin-bottom:8px">${t(labelKey)}</label>`;
+  html += `<div class="item-list"><div class="item-list-header"><span>${blocks.length} block(s)</span>
+    <button class="btn btn-primary btn-sm" onclick="addBlockTo('${field}')">${t('btn.addBlock')}</button></div>`;
+  html += `<div class="item-list-body">`;
+  blocks.forEach((block, i) => {
+    const _burl = itemImageUrl(block.blockID, block.meta >= 0 ? block.meta : 0);
+    html += `<div class="item-entry">
+      <div class="item-icon">${iconImgHtml(_burl, '🧱')}</div>
+      <div class="item-details">
+        <div class="item-name">${escapeHtml(block.blockID || 'unknown')}</div>
+        <div class="item-meta">Meta:${block.meta??-1} | x${block.amount||1}${block.oreDict ? ' | OD:'+block.oreDict : ''}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-outline btn-sm" onclick="editBlockIn('${field}',${i})">✏</button>
+        <button class="btn btn-danger btn-sm" onclick="removeBlockFrom('${field}',${i})">✕</button>
+      </div>
+    </div>`;
+  });
+  html += `</div></div></div>`;
+  return html;
+}
+
+// Single item inline
+function singleItemField(field, labelKey, obj) {
+  const item = obj[field] || { id: 'minecraft:air', Count: 1, Damage: 0, OreDict: '' };
+  const _surl = itemImageUrl(item.id, item.Damage);
+  return `<div style="margin-bottom:12px;padding:8px;border:1px solid var(--border-color);border-radius:6px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-weight:500">${t(labelKey)}</span>
+      <button class="btn btn-outline btn-sm" onclick="editSingleItem('${field}')">${t('btn.editItem')}</button>
+    </div>
+    <div style="font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:6px">
+      ${iconImgHtml(_surl, '📦', 'sm')}
+      ${escapeHtml(item.id)} x${item.Count||1} | Meta:${item.Damage||0}${item.OreDict ? ' | OD:'+item.OreDict : ''}
+    </div>
+  </div>`;
+}
+
+function singleBlockField(field, labelKey, obj) {
+  const block = obj[field] || { blockID: '', meta: -1, nbt: '{}', oreDict: '' };
+  return `<div style="margin-bottom:12px;padding:8px;border:1px solid var(--border-color);border-radius:6px">
+    <div style="margin-bottom:6px;font-weight:500">${t(labelKey)}</div>
+    <div class="form-group" style="margin-bottom:6px">
+      <label style="font-size:11px">${t('taskfield.blockId')}</label>
+      <input type="text" value="${escapeHtml(block.blockID||'')}" onchange="updateTaskBlockField('${field}','blockID',this.value)" placeholder="minecraft:stone">
+    </div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label style="font-size:11px">${t('taskfield.blockMeta')}</label>
+        <input type="number" value="${block.meta??-1}" onchange="updateTaskBlockField('${field}','meta',parseInt(this.value))">
+      </div>
+      <div class="form-group">
+        <label style="font-size:11px">${t('taskfield.blockOreDict')}</label>
+        <input type="text" value="${escapeHtml(block.oreDict||'')}" onchange="updateTaskBlockField('${field}','oreDict',this.value)">
+      </div>
+    </div>
+  </div>`;
+}
+
+// ===========================================================
+// Task/Reward field updaters
+// ===========================================================
+function updateTaskField(field, value) {
+  if (currentQuestIndex < 0 || currentTaskIndex < 0) return;
+  quests[currentQuestIndex].tasks[currentTaskIndex][field] = value;
+  updateRawJSON();
+  persistData();
+}
+
+function updateRewardField(field, value) {
+  if (currentQuestIndex < 0 || currentRewardIndex < 0) return;
+  quests[currentQuestIndex].rewards[currentRewardIndex][field] = value;
+  updateRawJSON();
+  persistData();
+}
+
+function updateTaskBlockField(field, subField, value) {
+  if (currentQuestIndex < 0 || currentTaskIndex < 0) return;
+  const task = quests[currentQuestIndex].tasks[currentTaskIndex];
+  if (!task[field]) task[field] = { blockID: '', meta: -1, nbt: '{}', oreDict: '' };
+  task[field][subField] = value;
+  updateRawJSON();
+  persistData();
+}
+
+// ===========================================================
+// Item/Fluid/Block CRUD
+// ===========================================================
+function getItemParent(field, context) {
+  if (context === 'reward') return quests[currentQuestIndex].rewards[currentRewardIndex];
+  return quests[currentQuestIndex].tasks[currentTaskIndex];
+}
+
+function addItemTo(field, context) {
+  openItemEditor({ id: 'minecraft:stone', Count: 1, Damage: 0, OreDict: '', tag: null }, (item) => {
+    const parent = getItemParent(field, context);
+    if (!parent[field]) parent[field] = [];
+    parent[field].push(item);
+    if (context === 'reward') renderRewardDetail();
+    else renderTaskDetail();
+    updateRawJSON();
+  });
+}
+
+function editItemIn(field, index, context) {
+  const parent = getItemParent(field, context);
+  openItemEditor(parent[field][index], (item) => {
+    parent[field][index] = item;
+    if (context === 'reward') renderRewardDetail();
+    else renderTaskDetail();
+    updateRawJSON();
+  });
+}
+
+function removeItemFrom(field, index, context) {
+  const parent = getItemParent(field, context);
+  parent[field].splice(index, 1);
+  if (context === 'reward') renderRewardDetail();
+  else renderTaskDetail();
+  updateRawJSON();
+}
+
+function editSingleItem(field) {
+  const task = quests[currentQuestIndex].tasks[currentTaskIndex];
+  openItemEditor(task[field] || { id: 'minecraft:air', Count: 1, Damage: 0 }, (item) => {
+    task[field] = item;
+    renderTaskDetail();
+    updateRawJSON();
+  });
+}
+
+function addFluidTo(field) {
+  openFluidEditor({ FluidName: 'water', Amount: 1000 }, (fluid) => {
+    const task = quests[currentQuestIndex].tasks[currentTaskIndex];
+    if (!task[field]) task[field] = [];
+    task[field].push(fluid);
+    renderTaskDetail();
+    updateRawJSON();
+  });
+}
+
+function editFluidIn(field, index) {
+  const task = quests[currentQuestIndex].tasks[currentTaskIndex];
+  const fluid = task[field][index];
+  openFluidEditor(fluid, (updated) => {
+    task[field][index] = updated;
+    renderTaskDetail();
+    updateRawJSON();
+  });
+}
+
+function removeFluidFrom(field, index) {
+  quests[currentQuestIndex].tasks[currentTaskIndex][field].splice(index, 1);
+  renderTaskDetail();
+  updateRawJSON();
+}
+
+function addBlockTo(field) {
+  openBlockEditor({ blockID: 'minecraft:stone', meta: -1, amount: 1, oreDict: '', nbt: '{}' }, (block) => {
+    const task = quests[currentQuestIndex].tasks[currentTaskIndex];
+    if (!task[field]) task[field] = [];
+    task[field].push(block);
+    renderTaskDetail();
+    updateRawJSON();
+  });
+}
+
+function editBlockIn(field, index) {
+  const task = quests[currentQuestIndex].tasks[currentTaskIndex];
+  const block = task[field][index];
+  openBlockEditor(block, (updated) => {
+    task[field][index] = updated;
+    renderTaskDetail();
+    updateRawJSON();
+  });
+}
+
+function removeBlockFrom(field, index) {
+  quests[currentQuestIndex].tasks[currentTaskIndex][field].splice(index, 1);
+  renderTaskDetail();
+  updateRawJSON();
+}
+
+// ===========================================================
+// Item Editor Modal
+// ===========================================================
+function openItemEditor(item, callback) {
+  itemEditCallback = callback;
+  document.getElementById('modalItemId').value = item.id || 'minecraft:stone';
+  document.getElementById('modalItemCount').value = item.Count || 1;
+  document.getElementById('modalItemMeta').value = item.Damage || 0;
+  document.getElementById('modalItemOreDict').value = item.OreDict || '';
+  document.getElementById('modalItemNbt').value = item.tag ? JSON.stringify(item.tag, null, 2) : '';
+  updateNesqlButtons();
+  document.getElementById('itemEditorModal').classList.add('show');
+}
+
+function confirmItemEdit() {
+  if (!itemEditCallback) return;
+  const item = {
+    id: document.getElementById('modalItemId').value || 'minecraft:stone',
+    Count: parseInt(document.getElementById('modalItemCount').value) || 1,
+    Damage: parseInt(document.getElementById('modalItemMeta').value) || 0,
+    OreDict: document.getElementById('modalItemOreDict').value || '',
+    tag: null
+  };
+  const nbtStr = document.getElementById('modalItemNbt').value.trim();
+  if (nbtStr) {
+    try { item.tag = JSON.parse(nbtStr); } catch (e) {
+      alert(currentLang === 'zh' ? 'NBT JSON 格式错误' : 'Invalid NBT JSON format');
+      return;
+    }
+  }
+  itemEditCallback(item);
+  itemEditCallback = null;
+  closeModal('itemEditorModal');
+}
+
+// ===========================================================
+// Fluid Editor Modal
+// ===========================================================
+function openFluidEditor(fluid, callback) {
+  fluidEditCallback = callback;
+  document.getElementById('modalFluidName').value = fluid.FluidName || 'water';
+  document.getElementById('modalFluidAmount').value = fluid.Amount || 1000;
+  document.getElementById('modalFluidNbt').value = fluid.tag ? JSON.stringify(fluid.tag, null, 2) : '';
+  updateNesqlButtons();
+  document.getElementById('fluidEditorModal').classList.add('show');
+}
+
+function confirmFluidEdit() {
+  if (!fluidEditCallback) return;
+  const fluid = {
+    FluidName: document.getElementById('modalFluidName').value || 'water',
+    Amount: parseInt(document.getElementById('modalFluidAmount').value) || 1000,
+  };
+  const nbtStr = document.getElementById('modalFluidNbt').value.trim();
+  if (nbtStr) {
+    try { fluid.tag = JSON.parse(nbtStr); } catch (e) {
+      alert(currentLang === 'zh' ? 'NBT JSON 格式错误' : 'Invalid NBT JSON format');
+      return;
+    }
+  }
+  fluidEditCallback(fluid);
+  fluidEditCallback = null;
+  closeModal('fluidEditorModal');
+}
+
+// ===========================================================
+// Block Editor Modal
+// ===========================================================
+function openBlockEditor(block, callback) {
+  blockEditCallback = callback;
+  document.getElementById('modalBlockId').value = block.blockID || 'minecraft:stone';
+  document.getElementById('modalBlockMeta').value = block.meta ?? -1;
+  document.getElementById('modalBlockAmount').value = block.amount || 1;
+  document.getElementById('modalBlockOreDict').value = block.oreDict || '';
+  document.getElementById('modalBlockNbt').value = block.nbt && block.nbt !== '{}' ? (typeof block.nbt === 'object' ? JSON.stringify(block.nbt, null, 2) : block.nbt) : '';
+  updateNesqlButtons();
+  document.getElementById('blockEditorModal').classList.add('show');
+}
+
+function confirmBlockEdit() {
+  if (!blockEditCallback) return;
+  const block = {
+    blockID: document.getElementById('modalBlockId').value || 'minecraft:stone',
+    meta: parseInt(document.getElementById('modalBlockMeta').value),
+    amount: parseInt(document.getElementById('modalBlockAmount').value) || 1,
+    oreDict: document.getElementById('modalBlockOreDict').value || '',
+    nbt: '{}'
+  };
+  if (isNaN(block.meta)) block.meta = -1;
+  const nbtStr = document.getElementById('modalBlockNbt').value.trim();
+  if (nbtStr) {
+    try { JSON.parse(nbtStr); block.nbt = nbtStr; } catch (e) {
+      alert(currentLang === 'zh' ? 'NBT JSON 格式错误' : 'Invalid NBT JSON format');
+      return;
+    }
+  }
+  blockEditCallback(block);
+  blockEditCallback = null;
+  closeModal('blockEditorModal');
+}
+
+// ===========================================================
+// NESQL Integration
+// ===========================================================
+let nesqlItems = [];      // [{id, imageFilePath, modId, internalName, localizedName, itemDamage, nbt}, ...]
+let nesqlFluids = [];     // [{id, imageFilePath, modId, internalName, localizedName, nbt}, ...]
+let nesqlItemMap = null;  // Map: "modId:internalName~damage" → item object
+let nesqlFluidMap = null; // Map: "internalName" → fluid object
+let nesqlModIds = [];     // unique mod IDs
+let nesqlPickerCallback = null;
+let nesqlPickerType = '';
+let nesqlPickerSelected = null;
+
+function getNesqlUrl() {
+  return (localStorage.getItem('bqe_nesqlUrl') || '').replace(/\/+$/, '');
+}
+
+function saveNesqlUrl() {
+  const url = document.getElementById('settingsNesqlUrl').value.trim();
+  localStorage.setItem('bqe_nesqlUrl', url);
+}
+
+// 构建物品图标 URL（从 BQ 的 item id 格式如 "minecraft:stone" + damage）
+function itemImageUrl(itemId, damage) {
+  const base = getNesqlUrl();
+  if (!base || !itemId) return null;
+  const colonIdx = itemId.indexOf(':');
+  if (colonIdx < 0) return null;
+  const modId = itemId.substring(0, colonIdx);
+  const name = itemId.substring(colonIdx + 1);
+  // 优先从数据库查找精确的 imageFilePath
+  if (nesqlItemMap) {
+    const key = `${modId}:${name}~${damage || 0}`;
+    const it = nesqlItemMap.get(key);
+    if (it && it.imageFilePath) return `${base}/image/${it.imageFilePath}`;
+  }
+  return `${base}/image/item/${encodeURIComponent(modId)}/${encodeURIComponent(name)}~${damage || 0}.png`;
+}
+
+// 构建流体图标 URL
+function fluidImageUrl(fluidName) {
+  const base = getNesqlUrl();
+  if (!base || !fluidName) return null;
+  // 如果已加载数据库，从数据库查找精确路径
+  if (nesqlFluidMap && nesqlFluidMap.has(fluidName)) {
+    const f = nesqlFluidMap.get(fluidName);
+    if (f.imageFilePath) return `${base}/image/${f.imageFilePath}`;
+    return `${base}/image/fluid/${encodeURIComponent(f.modId)}/${encodeURIComponent(f.internalName)}.png`;
+  }
+  // 没有数据库时按常见模组尝试
+  return `${base}/image/fluid/minecraft/${encodeURIComponent(fluidName)}.png`;
+}
+
+// 构建图标 HTML：img + emoji fallback
+function iconImgHtml(url, fallbackEmoji, size) {
+  if (!url) return `<span style="font-size:${size === 'sm' ? '14' : '16'}px">${fallbackEmoji}</span>`;
+  const cls = size === 'sm' ? 'nesql-icon-sm' : 'nesql-icon';
+  return `<img src="${escapeHtml(url)}" class="${cls}" onerror="this.style.display='none';this.nextElementSibling.style.display=''">`
+    + `<span style="display:none;font-size:${size === 'sm' ? '14' : '16'}px">${fallbackEmoji}</span>`;
+}
+
+function hasNesqlDb() {
+  return nesqlItems.length > 0 || nesqlFluids.length > 0;
+}
+
+// 更新 NESQL 搜索按钮的 display
+function updateNesqlButtons() {
+  const hasDb = hasNesqlDb();
+  document.querySelectorAll('.nesql-btn').forEach(btn => {
+    btn.style.display = hasDb ? '' : 'none';
+  });
+  // 导出按钮
+  const exportBtn = document.getElementById('btnExportIndex');
+  if (exportBtn) exportBtn.style.display = hasDb ? '' : 'none';
+}
+
+// ===========================================================
+// NESQL Database Parsing (nesql-db.script)
+// ===========================================================
+// 解码 HSQLDB 的 \uXXXX Unicode 转义序列
+function decodeHsqlUnicode(str) {
+  if (!str || typeof str !== 'string' || !str.includes('\\u')) return str;
+  return str.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+}
+
+function parseScriptValues(valuesStr) {
+  const values = [];
+  let i = 0;
+  while (i < valuesStr.length) {
+    const ch = valuesStr[i];
+    if (ch === "'") {
+      let s = '';
+      i++;
+      while (i < valuesStr.length) {
+        if (valuesStr[i] === "'" && valuesStr[i + 1] === "'") { s += "'"; i += 2; }
+        else if (valuesStr[i] === "'") { i++; break; }
+        else { s += valuesStr[i]; i++; }
+      }
+      values.push(decodeHsqlUnicode(s));
+    } else if (ch === ',' || ch === ' ') {
+      i++;
+    } else if (valuesStr.substring(i, i + 4) === 'NULL') {
+      values.push(null); i += 4;
+    } else if (valuesStr.substring(i, i + 4) === 'TRUE') {
+      values.push(true); i += 4;
+    } else if (valuesStr.substring(i, i + 5) === 'FALSE') {
+      values.push(false); i += 5;
+    } else {
+      let num = '';
+      while (i < valuesStr.length && valuesStr[i] !== ',' && valuesStr[i] !== ')') {
+        num += valuesStr[i]; i++;
+      }
+      values.push(Number(num.trim()));
+    }
+  }
+  return values;
+}
+
+function parseCreateColumns(ddl) {
+  // 从 CREATE TABLE 语句中提取列名
+  const match = ddl.match(/\((.+)\)/s);
+  if (!match) return [];
+  const body = match[1];
+  const cols = [];
+  let depth = 0, token = '';
+  for (let i = 0; i < body.length; i++) {
+    if (body[i] === '(') depth++;
+    else if (body[i] === ')') depth--;
+    else if (body[i] === ',' && depth === 0) {
+      const name = token.trim().split(/\s+/)[0].toUpperCase();
+      if (name && name !== 'CONSTRAINT' && name !== 'PRIMARY' && name !== 'UNIQUE' && name !== 'FOREIGN') cols.push(name);
+      token = '';
+      continue;
+    }
+    token += body[i];
+  }
+  const last = token.trim().split(/\s+/)[0].toUpperCase();
+  if (last && last !== 'CONSTRAINT' && last !== 'PRIMARY' && last !== 'UNIQUE' && last !== 'FOREIGN') cols.push(last);
+  return cols;
+}
+
+async function loadNesqlScript(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+
+  const progressEl = document.getElementById('dbLoadProgress');
+  const barEl = document.getElementById('dbLoadProgressBar');
+  const statusEl = document.getElementById('dbLoadStatus');
+  progressEl.style.display = '';
+  barEl.style.width = '0%';
+  statusEl.innerHTML = currentLang === 'zh' ? '正在解析数据库...' : 'Parsing database...';
+
+  try {
+    const items = [];
+    const fluids = [];
+    let itemCols = null;
+    let fluidCols = null;
+    const totalSize = file.size;
+    let processed = 0;
+    let buffer = '';
+
+    const reader = file.stream().getReader();
+    const decoder = new TextDecoder('utf-8');
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      processed += value.length;
+      buffer += decoder.decode(value, { stream: true });
+
+      let lineEnd;
+      while ((lineEnd = buffer.indexOf('\n')) !== -1) {
+        const line = buffer.substring(0, lineEnd).trim();
+        buffer = buffer.substring(lineEnd + 1);
+
+        // CREATE TABLE 用 PUBLIC.ITEM(...) / PUBLIC.FLUID(...)
+        if (!itemCols && line.includes('PUBLIC.ITEM(')) {
+          itemCols = parseCreateColumns(line);
+        } else if (!fluidCols && line.includes('PUBLIC.FLUID(')) {
+          fluidCols = parseCreateColumns(line);
+        // INSERT 语句：INSERT INTO ITEM VALUES(...) 或 INSERT INTO FLUID VALUES(...)（无 PUBLIC 前缀）
+        } else if (line.startsWith('INSERT INTO ITEM ')) {
+          const vm = line.match(/VALUES\((.+)\)$/);
+          if (vm) {
+            const vals = parseScriptValues(vm[1]);
+            const obj = {};
+            (itemCols || ['ID','IMAGE_FILE_PATH','INTERNAL_NAME','ITEM_DAMAGE','ITEM_ID','LOCALIZED_NAME','MAX_DAMAGE','MAX_STACK_SIZE','MOD_ID','NBT','TOOLTIP','UNLOCALIZED_NAME']).forEach((c, ci) => obj[c] = vals[ci]);
+            items.push({
+              id: obj.ID, imageFilePath: obj.IMAGE_FILE_PATH, modId: obj.MOD_ID,
+              internalName: obj.INTERNAL_NAME, localizedName: obj.LOCALIZED_NAME,
+              itemDamage: obj.ITEM_DAMAGE ?? 0, nbt: obj.NBT || '',
+              tooltip: obj.TOOLTIP || ''
+            });
+          }
+        } else if (line.startsWith('INSERT INTO FLUID ')) {
+          const vm = line.match(/VALUES\((.+)\)$/);
+          if (vm) {
+            const vals = parseScriptValues(vm[1]);
+            const obj = {};
+            (fluidCols || ['ID','DENSITY','FLUID_ID','GASEOUS','IMAGE_FILE_PATH','INTERNAL_NAME','LOCALIZED_NAME','LUMINOSITY','MOD_ID','NBT','TEMPERATURE','UNLOCALIZED_NAME','VISCOSITY']).forEach((c, ci) => obj[c] = vals[ci]);
+            fluids.push({
+              id: obj.ID, imageFilePath: obj.IMAGE_FILE_PATH, modId: obj.MOD_ID,
+              internalName: obj.INTERNAL_NAME, localizedName: obj.LOCALIZED_NAME,
+              nbt: obj.NBT || ''
+            });
+          }
+        }
+      }
+      barEl.style.width = Math.round(processed / totalSize * 100) + '%';
+    }
+    // 处理剩余 buffer
+    if (buffer.trim()) {
+      const line = buffer.trim();
+      if (line.startsWith('INSERT INTO ITEM ')) {
+        const vm = line.match(/VALUES\((.+)\)$/);
+        if (vm) {
+          const vals = parseScriptValues(vm[1]);
+          const obj = {};
+          (itemCols || ['ID','IMAGE_FILE_PATH','INTERNAL_NAME','ITEM_DAMAGE','ITEM_ID','LOCALIZED_NAME','MAX_DAMAGE','MAX_STACK_SIZE','MOD_ID','NBT','TOOLTIP','UNLOCALIZED_NAME']).forEach((c, ci) => obj[c] = vals[ci]);
+          items.push({ id: obj.ID, imageFilePath: obj.IMAGE_FILE_PATH, modId: obj.MOD_ID, internalName: obj.INTERNAL_NAME, localizedName: obj.LOCALIZED_NAME, itemDamage: obj.ITEM_DAMAGE ?? 0, nbt: obj.NBT || '', tooltip: obj.TOOLTIP || '' });
+        }
+      } else if (line.startsWith('INSERT INTO FLUID ')) {
+        const vm = line.match(/VALUES\((.+)\)$/);
+        if (vm) {
+          const vals = parseScriptValues(vm[1]);
+          const obj = {};
+          (fluidCols || ['ID','DENSITY','FLUID_ID','GASEOUS','IMAGE_FILE_PATH','INTERNAL_NAME','LOCALIZED_NAME','LUMINOSITY','MOD_ID','NBT','TEMPERATURE','UNLOCALIZED_NAME','VISCOSITY']).forEach((c, ci) => obj[c] = vals[ci]);
+          fluids.push({ id: obj.ID, imageFilePath: obj.IMAGE_FILE_PATH, modId: obj.MOD_ID, internalName: obj.INTERNAL_NAME, localizedName: obj.LOCALIZED_NAME, nbt: obj.NBT || '' });
+        }
+      }
+    }
+
+    buildNesqlIndex(items, fluids);
+    barEl.style.width = '100%';
+    statusEl.innerHTML = `<span class="db-status-badge loaded">✓</span> ${nesqlItems.length} items, ${nesqlFluids.length} fluids`;
+    updateNesqlButtons();
+    saveNesqlToIDB();
+    // 刷新当前编辑器视图
+    if (currentQuestIndex >= 0) { renderTaskDetail(); renderRewardDetail(); }
+
+  } catch (e) {
+    statusEl.innerHTML = `<span style="color:var(--danger)">Error: ${escapeHtml(e.message)}</span>`;
+    progressEl.style.display = 'none';
+  }
+}
+
+function loadNesqlIndex(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+  const statusEl = document.getElementById('dbLoadStatus');
+  statusEl.innerHTML = currentLang === 'zh' ? '正在加载...' : 'Loading...';
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      buildNesqlIndex(data.items || [], data.fluids || []);
+      statusEl.innerHTML = `<span class="db-status-badge loaded">✓</span> ${nesqlItems.length} items, ${nesqlFluids.length} fluids`;
+      updateNesqlButtons();
+      saveNesqlToIDB();
+      if (currentQuestIndex >= 0) { renderTaskDetail(); renderRewardDetail(); }
+    } catch (err) {
+      statusEl.innerHTML = `<span style="color:var(--danger)">Invalid JSON: ${escapeHtml(err.message)}</span>`;
+    }
+  };
+  reader.readAsText(file);
+}
+
+function buildNesqlIndex(items, fluids) {
+  nesqlItems = items;
+  nesqlFluids = fluids;
+  nesqlItemMap = new Map();
+  nesqlFluidMap = new Map();
+  const modSet = new Set();
+
+  items.forEach(it => {
+    const key = `${it.modId}:${it.internalName}~${it.itemDamage}`;
+    nesqlItemMap.set(key, it);
+    modSet.add(it.modId);
+  });
+  fluids.forEach(fl => {
+    nesqlFluidMap.set(fl.internalName, fl);
+    modSet.add(fl.modId);
+  });
+  nesqlModIds = [...modSet].sort();
+}
+
+function exportNesqlIndex() {
+  if (!hasNesqlDb()) return;
+  const data = { items: nesqlItems, fluids: nesqlFluids };
+  const json = JSON.stringify(data);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'nesql-index.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  notify(currentLang === 'zh' ? 'NESQL 索引已导出' : 'NESQL index exported');
+}
+
+// ===========================================================
+// NESQL Picker
+// ===========================================================
+function openNesqlPicker(type, callback) {
+  if (!hasNesqlDb()) {
+    openSettings();
+    return;
+  }
+  nesqlPickerType = type;
+  nesqlPickerCallback = callback;
+  nesqlPickerSelected = null;
+
+  document.getElementById('nesqlPickerTitle').textContent =
+    type === 'fluid' ? (currentLang === 'zh' ? '选择流体' : 'Select Fluid') : (currentLang === 'zh' ? '选择物品' : 'Select Item');
+  document.getElementById('nesqlPickerSearch').value = '';
+  document.getElementById('nesqlPickerInfo').style.display = 'none';
+
+  // 填充 mod 过滤器
+  const modSelect = document.getElementById('nesqlPickerModFilter');
+  modSelect.innerHTML = `<option value="">${currentLang === 'zh' ? '全部模组' : 'All Mods'}</option>`;
+  nesqlModIds.forEach(m => {
+    modSelect.innerHTML += `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`;
+  });
+
+  onNesqlPickerSearch();
+  document.getElementById('nesqlPickerModal').classList.add('show');
+  document.getElementById('nesqlPickerSearch').focus();
+}
+
+let _nesqlSearchTimer = null;
+function onNesqlPickerSearch() {
+  clearTimeout(_nesqlSearchTimer);
+  _nesqlSearchTimer = setTimeout(renderNesqlPickerResults, 150);
+}
+
+function renderNesqlPickerResults() {
+  const query = (document.getElementById('nesqlPickerSearch').value || '').toLowerCase().trim();
+  const modFilter = document.getElementById('nesqlPickerModFilter').value;
+  const base = getNesqlUrl();
+  const grid = document.getElementById('nesqlPickerGrid');
+  const status = document.getElementById('nesqlPickerStatus');
+  const MAX = 200;
+
+  let source = nesqlPickerType === 'fluid' ? nesqlFluids : nesqlItems;
+
+  // 无搜索词且无模组过滤时，提示用户输入
+  if (!query && !modFilter) {
+    grid.innerHTML = '';
+    grid._results = [];
+    const total = source.length;
+    status.textContent = currentLang === 'zh'
+      ? `共 ${total} 个条目，请输入关键词搜索`
+      : `${total} entries total, type to search`;
+    return;
+  }
+
+  let results = source.filter(it => {
+    if (modFilter && it.modId !== modFilter) return false;
+    if (query) {
+      const ln = (it.localizedName || '').toLowerCase();
+      const iname = (it.internalName || '').toLowerCase();
+      const mid = (it.modId || '').toLowerCase();
+      return ln.includes(query) || iname.includes(query) || mid.includes(query);
+    }
+    return true;
+  });
+
+  const total = results.length;
+  const shown = results.slice(0, MAX);
+  status.textContent = total > MAX
+    ? (currentLang === 'zh' ? `显示前 ${MAX} / 共 ${total} 个结果，请缩小搜索范围` : `Showing ${MAX} of ${total} results, narrow your search`)
+    : (currentLang === 'zh' ? `${total} 个结果` : `${total} results`);
+
+  grid.innerHTML = shown.map((it, idx) => {
+    const imgPath = it.imageFilePath ? `${base}/image/${it.imageFilePath}` : '';
+    const tooltip = escapeHtml(`${it.localizedName || it.internalName}\n${it.modId}:${it.internalName}${it.itemDamage !== undefined ? ' #' + it.itemDamage : ''}`);
+    return `<div class="nesql-picker-cell" data-idx="${idx}" onclick="selectNesqlPickerItem(${idx})" title="${tooltip}">
+      ${imgPath ? `<img src="${escapeHtml(imgPath)}" onerror="this.parentElement.innerHTML='❓'">` : '❓'}
+    </div>`;
+  }).join('');
+
+  // 保存当前结果引用
+  grid._results = shown;
+}
+
+function selectNesqlPickerItem(idx) {
+  const grid = document.getElementById('nesqlPickerGrid');
+  const item = grid._results?.[idx];
+  if (!item) return;
+  nesqlPickerSelected = item;
+
+  // 高亮选中
+  grid.querySelectorAll('.nesql-picker-cell').forEach(c => c.classList.remove('selected'));
+  grid.querySelector(`[data-idx="${idx}"]`)?.classList.add('selected');
+
+  // 显示信息
+  const info = document.getElementById('nesqlPickerInfo');
+  info.style.display = 'flex';
+  const base = getNesqlUrl();
+  const imgUrl = item.imageFilePath ? `${base}/image/${item.imageFilePath}` : '';
+  document.getElementById('nesqlPickerInfoImg').src = imgUrl;
+  document.getElementById('nesqlPickerInfoImg').style.display = '';
+  document.getElementById('nesqlPickerInfoImg').onerror = function() { this.style.display = 'none'; };
+  document.getElementById('nesqlPickerInfoName').textContent = item.localizedName || item.internalName;
+  const idText = nesqlPickerType === 'fluid'
+    ? `${item.modId}:${item.internalName}${item.nbt ? ' [NBT]' : ''}`
+    : `${item.modId}:${item.internalName} #${item.itemDamage ?? 0}${item.nbt ? ' [NBT]' : ''}`;
+  document.getElementById('nesqlPickerInfoId').textContent = idText;
+  // tooltip 信息（如果有）
+  const tooltipEl = document.getElementById('nesqlPickerInfoTooltip');
+  if (tooltipEl) {
+    tooltipEl.textContent = item.tooltip ? item.tooltip.replace(/\\u000a/g, '\n') : '';
+    tooltipEl.style.display = item.tooltip ? '' : 'none';
+  }
+}
+
+function confirmNesqlPick() {
+  if (!nesqlPickerSelected || !nesqlPickerCallback) return;
+  nesqlPickerCallback(nesqlPickerSelected);
+  nesqlPickerCallback = null;
+  closeModal('nesqlPickerModal');
+}
+
+// 物品编辑模态框中的 NESQL 搜索按钮
+function openNesqlSearch(type) {
+  if (!hasNesqlDb()) {
+    openSettings();
+    return;
+  }
+  if (type === 'item') {
+    openNesqlPicker('item', (picked) => {
+      document.getElementById('modalItemId').value = picked.modId + ':' + picked.internalName;
+      document.getElementById('modalItemMeta').value = picked.itemDamage ?? 0;
+      if (picked.nbt) {
+        try { document.getElementById('modalItemNbt').value = picked.nbt; } catch(e) {}
+      }
+    });
+  } else if (type === 'fluid') {
+    openNesqlPicker('fluid', (picked) => {
+      document.getElementById('modalFluidName').value = picked.internalName;
+      if (picked.nbt) {
+        try { document.getElementById('modalFluidNbt').value = picked.nbt; } catch(e) {}
+      }
+    });
+  } else if (type === 'block') {
+    openNesqlPicker('item', (picked) => {
+      document.getElementById('modalBlockId').value = picked.modId + ':' + picked.internalName;
+      document.getElementById('modalBlockMeta').value = picked.itemDamage ?? 0;
+    });
+  }
+}
+
+function openSettings() {
+  document.getElementById('settingsNesqlUrl').value = getNesqlUrl();
+  document.getElementById('nesqlConnectionStatus').textContent = '';
+  // 恢复持久化复选框状态
+  document.getElementById('settingsPersist').checked = isPersistEnabled();
+  // 显示当前数据库状态
+  const statusEl = document.getElementById('dbLoadStatus');
+  if (hasNesqlDb()) {
+    statusEl.innerHTML = `<span class="db-status-badge loaded">✓</span> ${nesqlItems.length} items, ${nesqlFluids.length} fluids`;
+  } else {
+    statusEl.innerHTML = `<span class="db-status-badge none">${currentLang === 'zh' ? '未加载' : 'Not loaded'}</span>`;
+  }
+  document.getElementById('settingsModal').classList.add('show');
+}
+
+async function testNesqlConnection() {
+  const url = getNesqlUrl();
+  const status = document.getElementById('nesqlConnectionStatus');
+  if (!url) {
+    status.textContent = currentLang === 'zh' ? '请先输入地址' : 'Enter URL first';
+    status.style.color = 'var(--warning)';
+    return;
+  }
+  status.textContent = t('settings.testing');
+  status.style.color = 'var(--text-muted)';
+  // 用 img 加载测试——能绕过 CORS 限制并真正检测图片是否可访问
+  return new Promise(resolve => {
+    const img = new Image();
+    const timer = setTimeout(() => {
+      img.src = '';
+      // 超时后尝试 no-cors fetch 作为后备方案（至少测试服务器是否在线）
+      fetch(url + '/', { mode: 'no-cors', signal: AbortSignal.timeout(3000) })
+        .then(() => {
+          status.innerHTML = (currentLang === 'zh' ? '⚠ 服务器在线，但图标加载失败' : '⚠ Server online, but icons failed');
+          status.style.color = 'var(--warning)';
+          resolve(false);
+        })
+        .catch(() => {
+          status.textContent = t('settings.disconnected');
+          status.style.color = 'var(--danger)';
+          resolve(false);
+        });
+    }, 6000);
+    img.onload = () => {
+      clearTimeout(timer);
+      status.textContent = t('settings.connected');
+      status.style.color = 'var(--success)';
+      resolve(true);
+    };
+    img.onerror = () => {
+      clearTimeout(timer);
+      // 图像加载失败，可能是 404 或服务器未运行
+      fetch(url + '/', { mode: 'no-cors', signal: AbortSignal.timeout(3000) })
+        .then(() => {
+          status.innerHTML = (currentLang === 'zh'
+            ? '⚠ 服务器在线但图片返回 404。请确保从 nesql 目录启动服务器（含 nesql-repository/ 子目录）'
+            : '⚠ Server online but images returned 404. Make sure to start the server from the nesql directory (containing nesql-repository/)');
+          status.style.color = 'var(--warning)';
+          resolve(false);
+        })
+        .catch(() => {
+          status.textContent = t('settings.disconnected');
+          status.style.color = 'var(--danger)';
+          resolve(false);
+        });
+    };
+    // 尝试加载一个已知的 Minecraft 原版物品图标
+    img.src = url + '/image/item/minecraft/stone~0.png';
+  });
+}
+
+// ===========================================================
+// IndexedDB 持久化——自动记忆数据库
+// ===========================================================
+function openNesqlIDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('BQE_NESQL', 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains('index')) db.createObjectStore('index');
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function saveNesqlToIDB() {
+  try {
+    const db = await openNesqlIDB();
+    const tx = db.transaction('index', 'readwrite');
+    const store = tx.objectStore('index');
+    store.put({ items: nesqlItems, fluids: nesqlFluids, time: Date.now() }, 'data');
+    await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
+    db.close();
+  } catch (e) { console.warn('saveNesqlToIDB failed:', e); }
+}
+
+async function loadNesqlFromIDB() {
+  try {
+    const db = await openNesqlIDB();
+    const tx = db.transaction('index', 'readonly');
+    const store = tx.objectStore('index');
+    const req = store.get('data');
+    const data = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = rej; });
+    db.close();
+    if (data && data.items && data.items.length > 0) {
+      buildNesqlIndex(data.items, data.fluids || []);
+      updateNesqlButtons();
+      const ago = data.time ? (' (' + new Date(data.time).toLocaleString() + ')') : '';
+      console.log(`[NESQL] Auto-loaded from cache: ${nesqlItems.length} items, ${nesqlFluids.length} fluids${ago}`);
+      return true;
+    }
+    return false;
+  } catch (e) { console.warn('loadNesqlFromIDB failed:', e); return false; }
+}
+
+// ===========================================================
+// Raw JSON
+// ===========================================================
+function updateRawJSON() {
+  if (currentQuestIndex < 0) return;
+  const editor = document.getElementById('rawJsonEditor');
+  if (editor) {
+    editor.value = JSON.stringify(quests[currentQuestIndex], null, 2);
+  }
+}
+
+function copyJSON() {
+  const text = document.getElementById('rawJsonEditor').value;
+  navigator.clipboard.writeText(text).then(() => notify(t('notify.copied')));
+}
+
+function applyRawJSON() {
+  try {
+    const data = JSON.parse(document.getElementById('rawJsonEditor').value);
+    quests[currentQuestIndex] = data;
+    loadQuestToEditor();
+    renderQuestList();
+    notify(t('notify.applied'));
+    persistData();
+  } catch (e) {
+    alert(currentLang === 'zh' ? 'JSON 格式错误: ' + e.message : 'Invalid JSON: ' + e.message);
+  }
+}
+
+// ===========================================================
+// NBT JSON Key Stripping
+// ===========================================================
+// BQ uses NBT-typed keys like "name:8", "tasks:9", "properties:10"
+// This strips the type suffixes recursively so we can use normal key access
+function stripNbtKeys(obj) {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(stripNbtKeys);
+
+  const result = {};
+  for (const [key, value] of Object.entries(obj)) {
+    const cleanKey = key.replace(/:[0-9]+$/, '');
+    result[cleanKey] = stripNbtKeys(value);
+  }
+  return result;
+}
+
+// BQ NBT list format: {"0:10": {...}, "1:10": {...}} -> array (after key stripping: {"0": {...}, "1": {...}})
+function nbtListToArray(obj) {
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return obj;
+  const keys = Object.keys(obj);
+  if (keys.length === 0) return [];
+  const isNumericKeys = keys.every(k => /^\d+$/.test(k));
+  if (isNumericKeys) {
+    return keys.sort((a, b) => parseInt(a) - parseInt(b)).map(k => obj[k]);
+  }
+  return obj;
+}
+
+// ===========================================================
+// Import / Export
+// ===========================================================
+let importedQuestLines = [];
+let importedQuestLinesOrder = [];
+
+function importJSON() {
+  document.getElementById('importJsonText').value = '';
+  clearImportLog();
+  document.getElementById('importModal').classList.add('show');
+}
+
+function clearImportLog() {
+  const log = document.getElementById('importLog');
+  log.innerHTML = '';
+  log.style.display = 'none';
+}
+
+function appendImportLog(msg, type = 'info') {
+  const log = document.getElementById('importLog');
+  log.style.display = 'block';
+  const colors = { info: 'var(--text-secondary)', success: 'var(--success)', error: 'var(--danger)', warn: '#e67e22' };
+  log.innerHTML += `<div style="color:${colors[type]||colors.info}">${escapeHtml(msg)}</div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+function logf(key, ...args) {
+  let msg = t(key);
+  args.forEach(a => { msg = msg.replace('%d', a).replace('%s', a); });
+  return msg;
+}
+
+// Handle multiple file selection
+function handleFileImport(input) {
+  const files = input.files;
+  if (!files || files.length === 0) return;
+  clearImportLog();
+  processFiles(Array.from(files));
+}
+
+// Handle folder selection
+function handleFolderImport(input) {
+  const files = input.files;
+  if (!files || files.length === 0) return;
+  clearImportLog();
+  appendImportLog(logf('import.log.folderFiles', files.length));
+  processFiles(Array.from(files));
+}
+
+// Process dropped or selected files
+async function processFiles(fileList) {
+  appendImportLog(logf('import.log.readingFiles'));
+  const jsonFiles = [];
+  let questLinesOrderText = null;
+
+  const readPromises = fileList.map(file => {
+    return new Promise((resolve) => {
+      const filePath = file._fullPath || file.webkitRelativePath || file.name;
+      if (file.name === 'QuestLinesOrder.txt' || filePath.endsWith('QuestLinesOrder.txt')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          questLinesOrderText = e.target.result;
+          appendImportLog(logf('import.log.foundQuestLines'), 'success');
+          resolve();
+        };
+        reader.onerror = () => resolve();
+        reader.readAsText(file);
+        return;
+      }
+      if (!file.name.endsWith('.json')) { resolve(); return; }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          jsonFiles.push({ name: file.name, path: filePath, data });
+        } catch (err) {
+          appendImportLog(logf('import.log.skippedFile', file.name + ' (parse error)'), 'warn');
+        }
+        resolve();
+      };
+      reader.onerror = () => { appendImportLog(logf('import.log.skippedFile', file.name), 'warn'); resolve(); };
+      reader.readAsText(file);
+    });
+  });
+
+  await Promise.all(readPromises);
+
+  // Parse QuestLinesOrder.txt
+  if (questLinesOrderText) {
+    importedQuestLinesOrder = [];
+    questLinesOrderText.split('\n').forEach(line => {
+      line = line.trim();
+      if (!line) return;
+      const colonIdx = line.indexOf(':');
+      if (colonIdx > 0) {
+        importedQuestLinesOrder.push({
+          id: line.substring(0, colonIdx).trim(),
+          name: line.substring(colonIdx + 1).trim()
+        });
+      }
+    });
+  }
+
+  if (jsonFiles.length === 0) {
+    appendImportLog(logf('import.log.error', 'No JSON files found'), 'error');
+    return;
+  }
+
+  // Check if any file is legacy single-file format (has questDatabase key)
+  const legacyFile = jsonFiles.find(f => {
+    const stripped = stripNbtKeys(f.data);
+    return stripped.questDatabase !== undefined;
+  });
+
+  if (legacyFile) {
+    appendImportLog(logf('import.log.legacy'), 'info');
+    importFromParsedData(stripNbtKeys(legacyFile.data));
+  } else {
+    appendImportLog(logf('import.log.multiFile'), 'info');
+    importMultiFile(jsonFiles);
+  }
+}
+
+function importMultiFile(jsonFiles) {
+  let questCount = 0;
+  const questLineFiles = [];
+
+  for (const f of jsonFiles) {
+    const stripped = stripNbtKeys(f.data);
+
+    if (f.name === 'QuestSettings.json') {
+      appendImportLog(logf('import.log.skippedFile', f.name), 'info');
+      continue;
+    }
+
+    const isQuestLine = f.name === 'QuestLine.json' ||
+      stripped.questLineIDHigh !== undefined ||
+      (f.path && f.path.includes('QuestLines') && f.name === 'QuestLine.json');
+
+    if (isQuestLine) {
+      questLineFiles.push(stripped);
+      continue;
+    }
+
+    // QuestLineEntry files (have x, y, sizeX, sizeY + questIDHigh)
+    if (stripped.questIDHigh !== undefined && stripped.x !== undefined && stripped.sizeX !== undefined) {
+      continue;
+    }
+
+    // Quest files (have properties or tasks or rewards)
+    if (stripped.properties || stripped.tasks || stripped.rewards || stripped.preRequisites) {
+      try {
+        const q = parseQuestFromBQ(stripped);
+        if (stripped.questIDHigh !== undefined && stripped.questIDLow !== undefined) {
+          q._questIDHigh = stripped.questIDHigh;
+          q._questIDLow = stripped.questIDLow;
+        }
+        quests.push(q);
+        questCount++;
+        appendImportLog(logf('import.log.parsedQuest', q.name), 'success');
+      } catch (err) {
+        appendImportLog(logf('import.log.error', f.name + ': ' + err.message), 'error');
+      }
+      continue;
+    }
+
+    appendImportLog(logf('import.log.skippedFile', f.name), 'warn');
+  }
+
+  importedQuestLines = questLineFiles;
+  finishImport(questCount);
+}
+
+function importFromParsedData(data) {
+  let questCount = 0;
+
+  let db = data.questDatabase;
+  if (db && !Array.isArray(db)) db = nbtListToArray(db);
+  if (!db) db = [];
+  if (!Array.isArray(db)) db = Object.values(db);
+
+  for (const entry of db) {
+    try {
+      const q = parseQuestFromBQ(entry);
+      if (entry.questIDHigh !== undefined && entry.questIDLow !== undefined) {
+        q._questIDHigh = entry.questIDHigh;
+        q._questIDLow = entry.questIDLow;
+      }
+      quests.push(q);
+      questCount++;
+      appendImportLog(logf('import.log.parsedQuest', q.name), 'success');
+    } catch (err) {
+      appendImportLog(logf('import.log.error', err.message), 'error');
+    }
+  }
+
+  if (data.questLines) {
+    let ql = data.questLines;
+    if (!Array.isArray(ql)) ql = nbtListToArray(ql);
+    if (!Array.isArray(ql)) ql = Object.values(ql);
+    importedQuestLines = ql;
+  }
+
+  finishImport(questCount);
+}
+
+function finishImport(questCount) {
+  appendImportLog(logf('import.log.done', questCount), 'success');
+  renderQuestList();
+  if (quests.length > 0 && currentQuestIndex < 0) selectQuest(0);
+  notify(t('notify.imported'));
+  persistData();
+}
+
+// Import from text area
+function doImport() {
+  const text = document.getElementById('importJsonText').value.trim();
+  if (!text) return;
+  clearImportLog();
+  try {
+    const raw = JSON.parse(text);
+    const data = stripNbtKeys(raw);
+
+    if (data.questDatabase) {
+      importFromParsedData(data);
+    } else if (Array.isArray(data)) {
+      let count = 0;
+      data.forEach(entry => {
+        const q = parseQuestFromBQ(entry);
+        quests.push(q);
+        count++;
+        appendImportLog(logf('import.log.parsedQuest', q.name), 'success');
+      });
+      finishImport(count);
+    } else if (data.properties || data.tasks || data.rewards || data.name) {
+      const q = parseQuestFromBQ(data);
+      quests.push(q);
+      appendImportLog(logf('import.log.parsedQuest', q.name), 'success');
+      finishImport(1);
+    } else {
+      quests.push(data);
+      finishImport(1);
+    }
+    closeModal('importModal');
+  } catch (e) {
+    appendImportLog(logf('import.log.error', e.message), 'error');
+  }
+}
+
+// ===========================================================
+// BQ Quest Parser (handles NBT-stripped data)
+// ===========================================================
+function parseQuestFromBQ(entry) {
+  const q = createDefaultQuest();
+
+  const allProps = entry.properties || {};
+  const props = allProps.betterquesting || {};
+
+  // Basic info
+  q.name = gv(props, 'name') || gv(entry, 'name') || 'Imported Quest';
+  q.desc = gv(props, 'desc') || gv(entry, 'desc') || '';
+
+  // Icon
+  const icon = gv(props, 'icon');
+  if (icon && typeof icon === 'object') {
+    q.icon = parseItemStack(icon);
+  }
+
+  // Logic
+  q.taskLogic = gv(props, 'taskLogic') || gv(props, 'tasklogic') || 'AND';
+  q.questLogic = gv(props, 'questLogic') || gv(props, 'questlogic') || 'AND';
+  q.visibility = gv(props, 'visibility') || 'NORMAL';
+
+  // Sounds
+  q.soundUnlock = gv(props, 'snd_unlock') || 'random.click';
+  q.soundUpdate = gv(props, 'snd_update') || 'random.levelup';
+  q.soundComplete = gv(props, 'snd_complete') || 'random.levelup';
+
+  // Repeat
+  q.repeatTime = gvNum(props, 'repeat_time', gvNum(props, 'repeatTime', -1));
+  q.repeatRel = gvBool(props, 'repeat_relative', gvBool(props, 'repeatRelative', true));
+
+  // Flags
+  q.lockedProgress = gvBool(props, 'locked_progress', gvBool(props, 'lockedProgress', false));
+  q.autoClaim = gvBool(props, 'auto_claim', gvBool(props, 'autoClaim', false));
+  q.silent = gvBool(props, 'isSilent', gvBool(props, 'silent', false));
+  q.main = gvBool(props, 'isMain', gvBool(props, 'ismain', false));
+  q.global = gvBool(props, 'isGlobal', gvBool(props, 'isglobal', false));
+  q.globalShare = gvBool(props, 'globalShare', gvBool(props, 'global_share', false));
+  q.simultaneous = gvBool(props, 'simultaneous', false);
+  q.partyEnable = gvBool(props, 'partySingleReward', gvBool(props, 'party_enable', true));
+
+  // Tasks
+  let tasks = gv(entry, 'tasks');
+  if (tasks && !Array.isArray(tasks)) tasks = nbtListToArray(tasks);
+  if (!tasks) tasks = [];
+  if (!Array.isArray(tasks)) tasks = Object.values(tasks);
+
+  q.tasks = tasks.map(t => {
+    const taskType = gv(t, 'taskID') || gv(t, 'taskType') || 'unknown';
+    const task = { taskType };
+    for (const [k, v] of Object.entries(t)) {
+      if (['taskID', 'taskType', 'index'].includes(k)) continue;
+      if (k === 'requiredItems' || k === 'rewards' || k === 'choices') {
+        let items = v;
+        if (!Array.isArray(items)) items = nbtListToArray(items);
+        if (!Array.isArray(items)) items = Object.values(items || {});
+        task[k] = items.map(parseItemStack);
+      } else if (k === 'requiredFluids') {
+        let fluids = v;
+        if (!Array.isArray(fluids)) fluids = nbtListToArray(fluids);
+        if (!Array.isArray(fluids)) fluids = Object.values(fluids || {});
+        task[k] = fluids.map(f => ({
+          FluidName: gv(f, 'FluidName') || 'water',
+          Amount: gvNum(f, 'Amount', 1000)
+        }));
+      } else if (k === 'blockTypes' || k === 'blocks') {
+        let blocks = v;
+        if (!Array.isArray(blocks)) blocks = nbtListToArray(blocks);
+        if (!Array.isArray(blocks)) blocks = Object.values(blocks || {});
+        task.blockTypes = blocks.map(b => ({
+          blockID: gv(b, 'blockID') || '',
+          meta: gvNum(b, 'meta', -1),
+          amount: gvNum(b, 'amount', gvNum(b, 'n', 1)),
+          oreDict: gv(b, 'oreDict') || '',
+          nbt: gv(b, 'nbt') || '{}'
+        }));
+      } else if (k === 'targetNBT' || k === 'entityNBT') {
+        task[k] = typeof v === 'object' ? JSON.stringify(v) : String(v || '{}');
+      } else if (k === 'targetItem' || k === 'item') {
+        task.targetItem = parseItemStack(v);
+      } else if (k === 'targetBlock' || k === 'block') {
+        task.targetBlock = {
+          blockID: gv(v, 'blockID') || gv(v, 'b') || '',
+          meta: gvNum(v, 'meta', gvNum(v, 'm', -1)),
+          nbt: typeof gv(v, 'nbt') === 'object' ? JSON.stringify(gv(v, 'nbt')) : String(gv(v, 'nbt') || '{}'),
+          oreDict: gv(v, 'oreDict') || ''
+        };
+      } else {
+        const boolFields = ['partialMatch', 'ignoreNBT', 'ignoreNbt', 'consume', 'groupDetect', 'autoConsume',
+          'allowCraft', 'allowSmelt', 'allowAnvil', 'subtypes', 'visible', 'hideInfo', 'invert', 'taxiCab',
+          'levels', 'isLevels', 'onInteract', 'onHit', 'entitySubtypes', 'ignoreEntityNBT', 'ignoreItemNBT',
+          'partialItemMatch', 'allowCraftedFromStatistics'];
+        if (boolFields.includes(k)) {
+          task[k] = v === 1 || v === true;
+        } else {
+          task[k] = v;
+        }
+      }
+    }
+    if (task.isLevels !== undefined && task.levels === undefined) { task.levels = task.isLevels; delete task.isLevels; }
+    if (task.ignoreNbt !== undefined && task.ignoreNBT === undefined) { task.ignoreNBT = task.ignoreNbt; delete task.ignoreNbt; }
+    if (task.target !== undefined && task.idName === undefined && typeof task.target === 'string') { task.idName = task.target; delete task.target; }
+    return task;
+  });
+
+  // Rewards
+  let rewards = gv(entry, 'rewards');
+  if (rewards && !Array.isArray(rewards)) rewards = nbtListToArray(rewards);
+  if (!rewards) rewards = [];
+  if (!Array.isArray(rewards)) rewards = Object.values(rewards);
+
+  q.rewards = rewards.map(r => {
+    const rewardType = gv(r, 'rewardID') || gv(r, 'rewardType') || 'unknown';
+    const reward = { rewardType };
+    for (const [k, v] of Object.entries(r)) {
+      if (['rewardID', 'rewardType', 'index'].includes(k)) continue;
+      if (k === 'rewards' || k === 'items') {
+        let items = v;
+        if (!Array.isArray(items)) items = nbtListToArray(items);
+        if (!Array.isArray(items)) items = Object.values(items || {});
+        reward.items = items.map(parseItemStack);
+      } else if (k === 'choices') {
+        let items = v;
+        if (!Array.isArray(items)) items = nbtListToArray(items);
+        if (!Array.isArray(items)) items = Object.values(items || {});
+        reward.choices = items.map(parseItemStack);
+      } else {
+        const boolFields = ['hideCmd', 'hideCommand', 'viaPlayer', 'relative', 'isLevels', 'levels'];
+        if (boolFields.includes(k)) {
+          reward[k] = v === 1 || v === true;
+        } else {
+          reward[k] = v;
+        }
+      }
+    }
+    if (reward.hideCommand !== undefined && reward.hideCmd === undefined) { reward.hideCmd = reward.hideCommand; delete reward.hideCommand; }
+    if (reward.isLevels !== undefined && reward.levels === undefined) { reward.levels = reward.isLevels; delete reward.isLevels; }
+    return reward;
+  });
+
+  // Prerequisites
+  let prereqs = gv(entry, 'preRequisites');
+  if (prereqs && !Array.isArray(prereqs)) prereqs = nbtListToArray(prereqs);
+  if (!prereqs) prereqs = [];
+  if (!Array.isArray(prereqs)) prereqs = Object.values(prereqs);
+  q.preRequisites = prereqs.map(p => {
+    if (typeof p === 'object' && p !== null) {
+      return { id: gv(p, 'questIDHigh') !== undefined
+        ? `${gv(p, 'questIDHigh')}:${gv(p, 'questIDLow')}`
+        : String(gv(p, 'id') || p), type: gv(p, 'type') || 'NORMAL' };
+    }
+    return { id: String(p), type: 'NORMAL' };
+  });
+
+  // UUID - reconstruct from high/low or use existing
+  if (entry.uuid && isValidUUID(entry.uuid)) {
+    q.uuid = entry.uuid;
+    q.uuidMode = 'manual';
+  } else if (gv(entry, 'questIDHigh') !== undefined && gv(entry, 'questIDLow') !== undefined) {
+    try {
+      const high = BigInt(gv(entry, 'questIDHigh'));
+      const low = BigInt(gv(entry, 'questIDLow'));
+      // Convert signed longs to unsigned
+      const uHigh = high < 0n ? high + (1n << 64n) : high;
+      const uLow = low < 0n ? low + (1n << 64n) : low;
+      const hex = uHigh.toString(16).padStart(16, '0') + uLow.toString(16).padStart(16, '0');
+      q.uuid = hex.substring(0,8) + '-' + hex.substring(8,12) + '-' + hex.substring(12,16) + '-' + hex.substring(16,20) + '-' + hex.substring(20);
+      q.uuidMode = 'manual';
+    } catch (e) {
+      q.uuid = generateUUID();
+      q.uuidMode = 'auto';
+    }
+  } else {
+    q.uuid = generateUUID();
+    q.uuidMode = 'auto';
+  }
+
+  return q;
+}
+
+// Helper: get value from object
+function gv(obj, key) {
+  if (!obj) return undefined;
+  return obj[key];
+}
+
+function gvNum(obj, key, def) {
+  const v = gv(obj, key);
+  if (v === undefined || v === null) return def;
+  const n = Number(v);
+  return isNaN(n) ? def : n;
+}
+
+function gvBool(obj, key, def) {
+  const v = gv(obj, key);
+  if (v === undefined || v === null) return def;
+  if (v === 1 || v === true) return true;
+  if (v === 0 || v === false) return false;
+  return def;
+}
+
+// Parse BQ item stack format
+function parseItemStack(item) {
+  if (!item || typeof item !== 'object') return { id: 'minecraft:stone', Count: 1, Damage: 0, OreDict: '', tag: null };
+  return {
+    id: gv(item, 'id') || 'minecraft:stone',
+    Count: gvNum(item, 'Count', 1),
+    Damage: gvNum(item, 'Damage', 0),
+    OreDict: gv(item, 'OreDict') || '',
+    tag: gv(item, 'tag') || null
+  };
+}
+
+function exportJSON() {
+  const exportData = {
+    format: 'BetterQuesting-Editor',
+    version: 1,
+    questDatabase: quests.map((q, i) => {
+      const uuid = q.uuid || generateUUID();
+      const { high, low } = uuidToHighLow(uuid);
+      return {
+        questID: i,
+        questIDHigh: bigIntToSignedLong(high).toString(),
+        questIDLow: bigIntToSignedLong(low).toString(),
+        uuid: uuid,
+        properties: {
+          betterquesting: {
+            name: q.name,
+            desc: q.desc,
+            icon: q.icon,
+            tasklogic: q.taskLogic,
+            questlogic: q.questLogic,
+            visibility: q.visibility,
+            snd_unlock: q.soundUnlock,
+            snd_update: q.soundUpdate,
+            snd_complete: q.soundComplete,
+            repeat_time: q.repeatTime,
+            repeat_relative: q.repeatRel,
+            locked_progress: q.lockedProgress,
+            auto_claim: q.autoClaim,
+            silent: q.silent,
+            ismain: q.main,
+            isglobal: q.global,
+            global_share: q.globalShare,
+            simultaneous: q.simultaneous,
+            party_enable: q.partyEnable
+          }
+        },
+        tasks: (q.tasks || []).map((t, ti) => ({
+          index: ti,
+          taskID: t.taskType,
+          ...Object.fromEntries(Object.entries(t).filter(([k]) => k !== 'taskType'))
+        })),
+        rewards: (q.rewards || []).map((r, ri) => ({
+          index: ri,
+          rewardID: r.rewardType,
+          ...Object.fromEntries(Object.entries(r).filter(([k]) => k !== 'rewardType'))
+        })),
+        preRequisites: (q.preRequisites || []).map(p => typeof p === 'object' ? p.id : p),
+        questLineEntry: {
+          x: q.posX || 0,
+          y: q.posY || 0,
+          sizeX: q.sizeX || 24,
+          sizeY: q.sizeY || 24
+        }
+      };
+    })
+  };
+
+  const json = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'quests.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  notify(t('notify.exported'));
+}
+
+// ===========================================================
+// Utility
+// ===========================================================
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+// Close modal on overlay click
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal-overlay') && e.target.classList.contains('show')) {
+    e.target.classList.remove('show');
+  }
+});
+
+function notify(msg) {
+  const el = document.createElement('div');
+  el.className = 'notification';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ===========================================================
+// Global Tooltip (for .logic-desc badges)
+// ===========================================================
+const globalTooltip = document.getElementById('globalTooltip');
+document.addEventListener('mouseenter', (e) => {
+  const badge = e.target.closest('.logic-desc');
+  if (!badge) return;
+  const text = badge.getAttribute('data-tooltip');
+  if (!text) return;
+  globalTooltip.textContent = text;
+  globalTooltip.classList.add('show');
+  const rect = badge.getBoundingClientRect();
+  const ttRect = globalTooltip.getBoundingClientRect();
+  let left = rect.left + rect.width / 2 - ttRect.width / 2;
+  let top = rect.top - ttRect.height - 10;
+  // 防止超出左右边界
+  if (left < 8) left = 8;
+  if (left + ttRect.width > window.innerWidth - 8) left = window.innerWidth - ttRect.width - 8;
+  // 如果上方空间不足则显示在下方
+  if (top < 8) {
+    top = rect.bottom + 10;
+    globalTooltip.style.setProperty('--arrow', 'top');
+  }
+  globalTooltip.style.left = left + 'px';
+  globalTooltip.style.top = top + 'px';
+}, true);
+
+document.addEventListener('mouseleave', (e) => {
+  if (e.target.closest('.logic-desc')) {
+    globalTooltip.classList.remove('show');
+  }
+}, true);
+
+// ===========================================================
+// localStorage Persistence
+// ===========================================================
+function saveDescSize() {
+  const el = document.getElementById('questDesc');
+  if (el) {
+    localStorage.setItem('bqe_descWidth', el.style.width || '');
+    localStorage.setItem('bqe_descHeight', el.style.height || el.offsetHeight + 'px');
+  }
+}
+
+function restoreDescSize() {
+  const el = document.getElementById('questDesc');
+  if (!el) return;
+  const h = localStorage.getItem('bqe_descHeight');
+  if (h) el.style.height = h;
+}
+
+// 使用 ResizeObserver 监听描述框大小变化
+const descEl = document.getElementById('questDesc');
+if (descEl && typeof ResizeObserver !== 'undefined') {
+  let resizeTimer;
+  new ResizeObserver(() => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(saveDescSize, 300);
+  }).observe(descEl);
+}
+
+// ===========================================================
+// Drag & Drop - Page Level
+// ===========================================================
+let dragCounter = 0;
+const overlay = document.getElementById('pageDropOverlay');
+
+document.body.addEventListener('dragenter', (e) => {
+  e.preventDefault();
+  dragCounter++;
+  overlay.style.display = 'block';
+});
+
+document.body.addEventListener('dragleave', (e) => {
+  e.preventDefault();
+  dragCounter--;
+  if (dragCounter <= 0) {
+    dragCounter = 0;
+    overlay.style.display = 'none';
+  }
+});
+
+document.body.addEventListener('dragover', (e) => {
+  e.preventDefault();
+});
+
+document.body.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  dragCounter = 0;
+  overlay.style.display = 'none';
+
+  // 同步获取 fallback 文件列表（await 之后 dataTransfer 可能被清空）
+  const fallbackFiles = e.dataTransfer?.files ? Array.from(e.dataTransfer.files) : [];
+
+  // Open import modal to show progress log
+  document.getElementById('importJsonText').value = '';
+  clearImportLog();
+  document.getElementById('importModal').classList.add('show');
+
+  let fileList = [];
+
+  try {
+    const items = e.dataTransfer?.items;
+    if (items && items.length > 0) {
+      const entries = [];
+      for (let i = 0; i < items.length; i++) {
+        const entry = items[i].webkitGetAsEntry ? items[i].webkitGetAsEntry() : null;
+        if (entry) entries.push(entry);
+      }
+
+      if (entries.length > 0) {
+        const allFiles = [];
+        await readAllEntries(entries, allFiles);
+        if (allFiles.length > 0) {
+          fileList = allFiles;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Drop: webkitGetAsEntry failed, using fallback', err);
+  }
+
+  // Fallback: 使用同步获取的文件列表
+  if (fileList.length === 0 && fallbackFiles.length > 0) {
+    fileList = fallbackFiles;
+  }
+
+  if (fileList.length > 0) {
+    try {
+      await processFiles(fileList);
+    } catch (err) {
+      appendImportLog(logf('import.log.error', err.message), 'error');
+    }
+  } else {
+    appendImportLog(logf('import.log.error', 'No files detected in drop'), 'error');
+  }
+});
+
+// Recursively read directory entries from drag & drop
+async function readAllEntries(entries, result) {
+  for (const entry of entries) {
+    try {
+      if (entry.isFile) {
+        const file = await new Promise((resolve, reject) => entry.file(resolve, reject));
+        try { Object.defineProperty(file, 'webkitRelativePath', { value: entry.fullPath, writable: false }); } catch (_) { file._fullPath = entry.fullPath; }
+        result.push(file);
+      } else if (entry.isDirectory) {
+        const dirReader = entry.createReader();
+        const subEntries = await new Promise((resolve, reject) => {
+          const all = [];
+          const readBatch = () => {
+            dirReader.readEntries((batch) => {
+              if (batch.length === 0) resolve(all);
+              else { all.push(...batch); readBatch(); }
+            }, reject);
+          };
+          readBatch();
+        });
+        await readAllEntries(subEntries, result);
+      }
+    } catch (err) {
+      console.warn('readAllEntries: skip entry', entry.name, err);
+    }
+  }
+}
+
+// Modal drop zone
+const modalDropZone = document.getElementById('dropZone');
+if (modalDropZone) {
+  ['dragenter', 'dragover'].forEach(ev => {
+    modalDropZone.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); modalDropZone.classList.add('dragover'); });
+  });
+  ['dragleave'].forEach(ev => {
+    modalDropZone.addEventListener(ev, (e) => { e.stopPropagation(); modalDropZone.classList.remove('dragover'); });
+  });
+  modalDropZone.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    modalDropZone.classList.remove('dragover');
+    clearImportLog();
+
+    // 同步获取 fallback
+    const fallbackFiles = e.dataTransfer?.files ? Array.from(e.dataTransfer.files) : [];
+    let fileList = [];
+
+    try {
+      const items = e.dataTransfer?.items;
+      if (items && items.length > 0) {
+        const entries = [];
+        for (let i = 0; i < items.length; i++) {
+          const entry = items[i].webkitGetAsEntry ? items[i].webkitGetAsEntry() : null;
+          if (entry) entries.push(entry);
+        }
+        if (entries.length > 0) {
+          const allFiles = [];
+          await readAllEntries(entries, allFiles);
+          if (allFiles.length > 0) fileList = allFiles;
+        }
+      }
+    } catch (err) {
+      console.warn('DropZone: entry read failed', err);
+    }
+
+    if (fileList.length === 0) fileList = fallbackFiles;
+    if (fileList.length > 0) {
+      processFiles(fileList);
+    }
+  });
+}
+
+// ===========================================================
+// Keyboard shortcuts
+// ===========================================================
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 's') {
+    e.preventDefault();
+    exportJSON();
+  }
+  if (e.ctrlKey && e.key === 'n') {
+    e.preventDefault();
+    addQuest();
+  }
+});
+
+// ===========================================================
+// Init
+// ===========================================================
+// 从 localStorage 恢复持久化的任务数据
+loadPersistedData();
+renderQuestList();
+// 从 localStorage 恢复语言设置
+const savedLang = localStorage.getItem('bqe_lang');
+setLang(savedLang === 'zh' ? 'zh' : 'en');
+// 恢复描述框大小
+restoreDescSize();
+// 恢复 NESQL 按钮显隐
+updateNesqlButtons();
+// 自动从 IndexedDB 恢复上次导入的数据库
+loadNesqlFromIDB().then(loaded => {
+  if (loaded) updateNesqlButtons();
+});
+</script>
+
+</body>
+</html>

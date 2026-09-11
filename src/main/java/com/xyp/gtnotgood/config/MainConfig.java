@@ -52,6 +52,10 @@ public class MainConfig {
         File configFile = new File(Config.getConfigDirectory(), "main.cfg");
 
         configuration = new Configuration(configFile);
+        configuration.addCustomCategoryComment(CATEGORY_PURIFIED_EOH, "调整鸿蒙之眼的流体消耗和配方成功率。");
+        configuration.addCustomCategoryComment(CATEGORY_PURIFIED_FOG, "调整诸神之锻炉升级的材料和解锁条件。");
+        configuration.addCustomCategoryComment(CATEGORY_PURIFIED_COM, "控制黑洞压缩机是否锁定稳定性。");
+        configuration.addCustomCategoryComment(CATEGORY_PURIFIED_WATER, "调整各等级净化水机器的处理规则；仍需搭建正确的多方块结构。");
 
         GasInPut = configuration
             .getBoolean("GasInPut", CATEGORY_PURIFIED_EOH, GasInPut, "鸿蒙之眼配方流体输入控制，控制是否需要输入流体才会工作，开启后鸿蒙不需要流体输入即可工作");

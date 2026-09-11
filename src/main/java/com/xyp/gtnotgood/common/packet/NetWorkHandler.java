@@ -35,6 +35,8 @@ public final class NetWorkHandler {
         // 矿脉挖掘镐网络包
         // Vein Mining Pickaxe packets
         registerMessage(SyncVeinPickaxeNBT.class, SyncVeinPickaxeNBT.Handler.class, id++, Side.SERVER);
+        registerMessage(ServerConfigMessage.class, ServerConfigMessage.ServerHandler.class, id, Side.SERVER);
+        registerMessage(ServerConfigMessage.class, ServerConfigMessage.ClientHandler.class, id++, Side.CLIENT);
     }
 
     private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<REQ> messageClass,

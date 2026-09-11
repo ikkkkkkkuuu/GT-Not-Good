@@ -25,6 +25,12 @@ import cpw.mods.fml.common.network.NetworkRegistry;
  */
 public class ClientProxy extends CommonProxy {
 
+    @Override
+    public void receiveServerConfig(com.xyp.gtnotgood.common.packet.ServerConfigMessage message) {
+        net.minecraft.client.Minecraft.getMinecraft()
+            .func_152344_a(() -> com.xyp.gtnotgood.client.config.ServerSettingsScreen.receive(message));
+    }
+
     /**
      * Initializes client-only research automation after the shared config has
      * been loaded by {@link CommonProxy}.
@@ -61,6 +67,7 @@ public class ClientProxy extends CommonProxy {
             .bus()
             .register(clientUtils);
         MinecraftForge.EVENT_BUS.register(new MEWirelessNodeRenderer());
+        MinecraftForge.EVENT_BUS.register(new com.xyp.gtnotgood.client.nei.FactoryRecipeImport());
         if (Config.enableWirelessTorcherino) {
             MinecraftForge.EVENT_BUS.register(new WirelessTorcherinoBeamRenderer());
         }

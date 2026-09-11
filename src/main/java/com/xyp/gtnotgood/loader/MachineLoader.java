@@ -19,6 +19,7 @@ import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidMiner;
 import com.xyp.gtnotgood.common.machines.multiblock.SingularityDataHub;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.GTNGMachineID;
+import com.xyp.gtnotgood.utils.machine.factory.FactoryText;
 import com.xyp.gtnotgood.utils.text.AnimatedText;
 
 /**
@@ -38,6 +39,12 @@ public class MachineLoader {
      * and tooltip credit registration in one predictable place.
      */
     public static void registerMachines() {
+        GTNGItemList.IntegratedProductionFactory.set(
+            new com.xyp.gtnotgood.common.machines.multiblock.IntegratedProductionFactory(
+                GTNGMachineID.INTEGRATED_PRODUCTION_FACTORY.ID,
+                "IntegratedProductionFactory",
+                FactoryText.NAME.text()));
+        addItemTooltip(GTNGItemList.IntegratedProductionFactory.get(1), AnimatedText.GT_NOT_GOOD);
         // #tr NameLargeOreProcessor
         // # Large Ore Processor
         // # zh_CN 大型矿石处理器

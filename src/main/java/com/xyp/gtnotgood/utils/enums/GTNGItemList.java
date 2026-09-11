@@ -54,6 +54,7 @@ public enum GTNGItemList implements IItemContainer {
     LargeCropBreeder,
     DimensionallyTranscendentPlasmaFusionComputer,
     AssemblyFactory,
+    IntegratedProductionFactory,
     AssemblyMatrixBlock,
     AdvancedAssemblyMatrixBlock,
     Torcherino,
