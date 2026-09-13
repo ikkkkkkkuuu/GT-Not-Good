@@ -506,4 +506,13 @@ public class TileMEContainer extends TileMEBridgeBase
     public ModularPanel buildUI(PosGuiData data, PanelSyncManager sync, UISettings settings) {
         return MEContainerGui.build(this, sync);
     }
+
+    /** Actual block GUI entry point: applies the library font to layout, drawing and input together. */
+    @Override
+    @cpw.mods.fml.relauncher.SideOnly(cpw.mods.fml.relauncher.Side.CLIENT)
+    public com.cleanroommc.modularui.screen.ModularScreen createScreen(PosGuiData data, ModularPanel mainPanel) {
+        return new com.xyp.ldlib.integration.modularui.PixelFontModularScreen(
+            com.xyp.gtnotgood.utils.enums.ModList.ModIds.GT_NOT_GOOD,
+            mainPanel);
+    }
 }

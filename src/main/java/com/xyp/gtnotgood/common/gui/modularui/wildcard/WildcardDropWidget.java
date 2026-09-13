@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.cleanroommc.modularui.api.MCHelper;
 import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
@@ -36,7 +35,7 @@ public class WildcardDropWidget extends Widget<WildcardDropWidget>
         this.getter = getter;
         this.onDrop = onDrop;
         size(18);
-        background(GuiTextures.SLOT_ITEM);
+        background(WildcardPatternGui.THEME.slot);
     }
 
     @Override

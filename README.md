@@ -70,6 +70,32 @@ ME 无线收发器
 
 添加me容器 可以配置物品或流体 然后从连接的ae网络里抽取 同步显示数量  然后可以被外部访问抽取
 
+### 🔌 通量网络 / Flux Network
+
+<p align="center">
+    <img src="README/fl.png" width="800">
+</p>
+
+<p align="center">
+    <img src="README/fl1.png" width="800">
+</p>
+
+<p align="center">
+    <img src="README/fl2.png" width="800">
+</p>
+
+x
+
+如图所示 抄袭
+
+通量网络由发起端和接收端组成。
+- **发起端**：连接通量网络，并可在 GUI 中配置频率(可设置中文)。
+- **接收端**：通过GUI相同频率与发起端建立连接。
+- 支持跨维度连接。
+
+
+
+
 先写到这
 
 

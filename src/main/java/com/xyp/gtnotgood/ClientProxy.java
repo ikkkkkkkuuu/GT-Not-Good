@@ -52,8 +52,12 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
+        com.xyp.gtnotgood.client.gui.wildcard.WildcardPreviewCommand.register();
+        com.xyp.gtnotgood.client.gui.LibraryDemoCommand.register();
         BlockNetwork.cableRenderId = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(new NetworkBlockRenderer());
+        com.xyp.gtnotgood.common.flux.BlockFluxConnector.renderId = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(new com.xyp.gtnotgood.client.flux.FluxConnectorRenderer());
         KeyBindManager.registerAllKeyBinds();
         // Force load BlockIcons to register textures
         BlockIcons.values();

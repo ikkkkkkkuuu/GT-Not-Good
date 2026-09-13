@@ -78,7 +78,7 @@ public class WildcardPatternItem extends ItemEncodedPattern implements IGuiHolde
     @SideOnly(Side.CLIENT)
     public com.cleanroommc.modularui.screen.ModularScreen createScreen(PlayerInventoryGuiData data,
         ModularPanel mainPanel) {
-        return new com.cleanroommc.modularui.screen.ModularScreen(GTNotGood.MODID, mainPanel);
+        return new WildcardPatternGui(data.getSlotIndex()).createScreen(data, mainPanel);
     }
 
     @Override

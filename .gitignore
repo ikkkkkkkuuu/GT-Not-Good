@@ -35,4 +35,9 @@ addon.local.gradle.kts
 addon.late.local.gradle
 addon.late.local.gradle.kts
 layout.json
-/src/test/
+/src/test/**
+!/src/test/java/
+!/src/test/java/com/
+!/src/test/java/com/xyp/
+!/src/test/java/com/xyp/ldlib/
+!/src/test/java/com/xyp/ldlib/**

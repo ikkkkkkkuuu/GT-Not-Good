@@ -37,6 +37,19 @@ import cpw.mods.fml.common.registry.GameRegistry;
  */
 public final class BlockLoader {
 
+    // #tr tile.flux_plug.name
+    // # Flux Plug
+    // # zh_CN 通量插头
+    public static final com.xyp.gtnotgood.common.flux.BlockFluxConnector fluxPlug = new com.xyp.gtnotgood.common.flux.BlockFluxConnector(
+        true,
+        "flux_plug");
+    // #tr tile.flux_point.name
+    // # Flux Point
+    // # zh_CN 通量点
+    public static final com.xyp.gtnotgood.common.flux.BlockFluxConnector fluxPoint = new com.xyp.gtnotgood.common.flux.BlockFluxConnector(
+        false,
+        "flux_point");
+
     // #tr tile.network_controller.name
     // # Programmable Network Controller
     // # zh_CN 可编程网络控制器
@@ -160,6 +173,22 @@ public final class BlockLoader {
      * Registers all non-GregTech blocks and stores their item stacks for recipe and creative-tab use.
      */
     public static void registry() {
+        GameRegistry.registerBlock(fluxPlug, com.xyp.gtnotgood.common.flux.ItemBlockFluxConnector.class, "flux_plug");
+        GameRegistry.registerBlock(fluxPoint, com.xyp.gtnotgood.common.flux.ItemBlockFluxConnector.class, "flux_point");
+        GameRegistry.registerTileEntity(
+            com.xyp.gtnotgood.common.flux.TileFluxPlug.class,
+            ModList.GTNotGood.getResourcePath("flux_plug"));
+        GameRegistry.registerTileEntity(
+            com.xyp.gtnotgood.common.flux.TileFluxPoint.class,
+            ModList.GTNotGood.getResourcePath("flux_point"));
+        GTNGItemList.FluxPlug.set(new ItemStack(fluxPlug));
+        GTNGItemList.FluxPoint.set(new ItemStack(fluxPoint));
+        cpw.mods.fml.common.FMLCommonHandler.instance()
+            .bus()
+            .register(new com.xyp.gtnotgood.common.flux.FluxTransferScheduler());
+        net.minecraftforge.common.ForgeChunkManager.setForcedChunkLoadingCallback(
+            com.xyp.gtnotgood.GTNotGood.instance,
+            new com.xyp.gtnotgood.common.flux.FluxChunkLoading());
         GameRegistry.registerBlock(meContainer, ItemBlockMEBridge.class, "me_container");
         GameRegistry.registerTileEntity(TileMEContainer.class, ModList.GTNotGood.getResourcePath("me_container"));
         GTNGItemList.MEContainer.set(new ItemStack(meContainer));

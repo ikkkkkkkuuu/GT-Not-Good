@@ -36,6 +36,8 @@ public enum GTNGItemList implements IItemContainer {
     NetworkController,
     NetworkPipe,
     NetworkConnector,
+    FluxPlug,
+    FluxPoint,
 
     VaultPortHatch,
     SingularityDataHub,

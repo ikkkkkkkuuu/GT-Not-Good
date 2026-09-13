@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.common.compat.FluidDropCompat;
 
+import bartworks.system.material.Werkstoff;
 import gregtech.api.enums.FluidState;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
@@ -152,35 +153,109 @@ public final class WildcardMaterials {
         TOOL_HEAD,
         GEAR,
         FLUID,
-        GAS;
+        GAS,
+        POLYMER,
+        INGOT,
+        TOOL,
+        FLUID_PIPE;
+
+        /** Source-style display key; existing uppercase NBT enum names remain valid. */
+        public String displayName() {
+            if (this == METAL) return "ingot";
+            if (this == TOOL_HEAD) return "tool";
+            return name().toLowerCase(Locale.ROOT);
+        }
 
         public boolean test(Materials material) {
-            if (material == null) return false;
+            if (!isRealMaterial(material)) return false;
             switch (this) {
                 case DUST:
-                    return material.hasDustItems();
+                    return material.hasDustItems() || hasWerkstoffForm(material, OrePrefixes.dust);
                 case METAL:
-                    return material.hasMetalItems();
+                case INGOT:
+                    return material.hasMetalItems() || hasWerkstoffForm(material, OrePrefixes.ingot);
                 case GEM:
-                    return material.hasGemItems();
+                    return material.hasGemItems() || hasWerkstoffForm(material, OrePrefixes.gem);
                 case ORE:
-                    return material.hasOresItems();
+                    return material.hasOresItems() || hasWerkstoffForm(material, OrePrefixes.ore);
                 case CELL:
-                    return material.hasCell();
+                    return material.hasCell() || hasWerkstoffForm(material, OrePrefixes.cell);
                 case PLASMA:
                     return material.hasPlasma();
                 case TOOL_HEAD:
-                    return material.hasToolHeadItems();
+                case TOOL:
+                    return material.hasToolHeadItems() || hasWerkstoffForm(material, OrePrefixes.toolHeadHammer)
+                        || hasWerkstoffForm(material, OrePrefixes.toolHeadWrench)
+                        || hasWerkstoffForm(material, OrePrefixes.toolHeadSaw);
                 case GEAR:
-                    return material.hasGearItems();
+                    return material.hasGearItems() || hasWerkstoffForm(material, OrePrefixes.gearGt);
                 case FLUID:
                     return material.mFluid != null || material.mStandardMoltenFluid != null;
                 case GAS:
                     return material.mGas != null;
+                case POLYMER:
+                    return isPolymer(material);
+                case FLUID_PIPE:
+                    return hasFluidPipe(material);
                 default:
                     return false;
             }
         }
+    }
+
+    /**
+     * Resolves the original BartWorks material through its registered bridge identity. Bridge Materials do not
+     * copy all generation flags or SubTags; reading only their GT fields would lose those capabilities.
+     * Uses the existing name index without scanning the material registry on every filter evaluation.
+     *
+     * @param material GT material used by the expansion model
+     * @return the matching Werkstoff, or null for ordinary GT materials and unbound bridges
+     */
+    private static Werkstoff werkstoffOf(Materials material) {
+        if (!isRealMaterial(material)) return null;
+        Werkstoff werkstoff = Werkstoff.werkstoffVarNameHashMap.get(material.mName);
+        return werkstoff != null && werkstoff.getBridgeMaterial() == material ? werkstoff : null;
+    }
+
+    /** Queries BartWorks generation rules, including explicit prefix overrides. */
+    private static boolean hasWerkstoffForm(Materials material, OrePrefixes prefix) {
+        Werkstoff werkstoff = werkstoffOf(material);
+        return werkstoff != null && werkstoff.hasItemType(prefix);
+    }
+
+    /**
+     * GT5U has no GTCEu PolymerProperty. This compatibility list identifies known GT5U polymer materials;
+     * arbitrary addon polymers need an explicit mapping and cannot be inferred from COMPOUND or texture sets.
+     * NO_SMASHING is not used because it also includes paper and other non-polymer materials.
+     */
+    private static boolean isPolymer(Materials material) {
+        return material == Materials.Polyethylene || material == Materials.Polytetrafluoroethylene
+            || material == Materials.PolyvinylChloride
+            || material == Materials.Polybenzimidazole
+            || material == Materials.Polycaprolactam
+            || material == Materials.PolyphenyleneSulfide
+            || material == Materials.Polystyrene
+            || material == Materials.PolyvinylAcetate
+            || material == Materials.Polydimethylsiloxane
+            || material == Materials.Rubber
+            || material == Materials.RubberRaw
+            || material == Materials.RubberSilicone
+            || material == Materials.StyreneButadieneRubber
+            || material == Materials.RawStyreneButadieneRubber
+            || material == Materials.RadoxPolymer
+            || material == Materials.Kevlar
+            || material == Materials.PolyurethaneResin
+            || material == Materials.Epoxid
+            || material == Materials.EpoxidFiberReinforced;
+    }
+
+    /** Registered fluid-pipe forms are the GT5U equivalent of GTCEu's pipe property. */
+    private static boolean hasFluidPipe(Materials material) {
+        return makePrefixStack(OrePrefixes.pipeTiny, material, 1) != null
+            || makePrefixStack(OrePrefixes.pipeSmall, material, 1) != null
+            || makePrefixStack(OrePrefixes.pipeMedium, material, 1) != null
+            || makePrefixStack(OrePrefixes.pipeLarge, material, 1) != null
+            || makePrefixStack(OrePrefixes.pipeHuge, material, 1) != null;
     }
 
     /** 按名解析属性，找不到返回 null。 */
@@ -200,6 +275,7 @@ public final class WildcardMaterials {
         java.util.List<Property> result = new java.util.ArrayList<>();
         if (material == null) return result;
         for (Property property : Property.values()) {
+            if (property == Property.METAL || property == Property.TOOL_HEAD) continue;
             if (property.test(material)) result.add(property);
         }
         return result;
@@ -210,14 +286,17 @@ public final class WildcardMaterials {
         java.util.List<SubTag> result = new java.util.ArrayList<>();
         if (material == null) return result;
         for (SubTag tag : SubTag.sSubTags.values()) {
-            if (material.contains(tag)) result.add(tag);
+            if (hasSubTag(material, tag)) result.add(tag);
         }
         return result;
     }
 
     /** 材料是否带指定 SubTag。 */
     public static boolean hasSubTag(Materials material, SubTag tag) {
-        return material != null && tag != null && material.contains(tag);
+        if (!isRealMaterial(material) || tag == null) return false;
+        if (material.contains(tag)) return true;
+        Werkstoff werkstoff = werkstoffOf(material);
+        return werkstoff != null && werkstoff.contains(tag);
     }
 
     /** 按名解析 SubTag，找不到返回 null。 */
@@ -270,7 +349,8 @@ public final class WildcardMaterials {
     public static Map<String, Property> propertyChoices() {
         Map<String, Property> map = new LinkedHashMap<>();
         for (Property property : Property.values()) {
-            map.put(property.name(), property);
+            if (property == Property.METAL || property == Property.TOOL_HEAD) continue;
+            map.put(property.displayName(), property);
         }
         return map;
     }
