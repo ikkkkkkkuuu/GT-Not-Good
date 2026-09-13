@@ -41,3 +41,4 @@ layout.json
 !/src/test/java/com/xyp/
 !/src/test/java/com/xyp/ldlib/
 !/src/test/java/com/xyp/ldlib/**
+/src/test/

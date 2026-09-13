@@ -6,6 +6,8 @@ import com.cleanroommc.modularui.screen.ModularScreen;
 import com.xyp.ldlib.gui.texture.PixelFontScope;
 
 import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import me.eigenraven.lwjgl3ify.api.InputEvents;
 
 /**
@@ -13,6 +15,7 @@ import me.eigenraven.lwjgl3ify.api.InputEvents;
  * Covers layout, popup creation, drawing and text input because each can measure glyph widths.
  * The shared font state is restored after every callback, including failures, so other screens keep their font.
  */
+@SideOnly(Side.CLIENT)
 public final class PixelFontModularScreen extends ModularScreen {
 
     public PixelFontModularScreen(String owner, ModularPanel panel) {

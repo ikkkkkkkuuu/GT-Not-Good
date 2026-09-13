@@ -12,7 +12,6 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.StringValue;
@@ -90,12 +89,6 @@ public class WildcardPatternGui {
 
     public WildcardPatternGui(int slotIndex) {
         this.slotIndex = slotIndex;
-    }
-
-    public ModularScreen createScreen(PlayerInventoryGuiData data, ModularPanel mainPanel) {
-        return new com.xyp.ldlib.integration.modularui.PixelFontModularScreen(
-            com.xyp.gtnotgood.utils.enums.ModList.ModIds.GT_NOT_GOOD,
-            mainPanel);
     }
 
     public ModularPanel buildUI(PlayerInventoryGuiData data, PanelSyncManager syncManager, UISettings settings) {
