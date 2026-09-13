@@ -77,6 +77,14 @@ public class TileNetworkNode extends TileEntity implements IGuiHolder<PosGuiData
         tag.setInteger("networkFaces", enabledFaces);
     }
 
+    /** Writes portable connector settings only; default settings need no item NBT and remain stackable. */
+    NBTTagCompound connectorItemData() {
+        NBTTagCompound tag = new NBTTagCompound();
+        if (!name.isEmpty()) tag.setString("networkName", name);
+        if (enabledFaces != 63) tag.setInteger("networkFaces", enabledFaces);
+        return tag;
+    }
+
     @Override
     public ModularScreen createScreen(PosGuiData data, ModularPanel panel) {
         return new ModularScreen(ModList.GTNotGood.getID(), panel);

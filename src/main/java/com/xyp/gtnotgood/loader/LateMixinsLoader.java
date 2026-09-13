@@ -92,6 +92,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "EOH.EyeOfHarmonyGas",
                 "Accessor.EyeOfHarmonyAccessor",
                 "Gregtech.ModifySomeConfigs",
+                "Gregtech.GTMetaTools",
                 "Gregtech.MixinMTEBasicMachineFacing",
                 "Gregtech.GTMachineLeftClickDataStickMixin",
                 "CutCorners.RecipeSpeedMixin",
@@ -103,7 +104,8 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 list,
                 "EnderIO.MixinNetworkedInventory",
                 "EnderIO.MixinNetworkedInventory",
-                "EnderIO.MixinItemSoulVessel");
+                "EnderIO.MixinItemSoulVessel",
+                "EnderIO.MixinSoulVesselConfig");
         }
 
         if (loadedMods.contains(ModList.Forestry.getID())) {

@@ -15,6 +15,8 @@ public final class NetworkRule {
     public int facing = -1;
     public int priority;
     public int rate = 64;
+    /** Transient scan position prevents continuously refilled earlier slots from starving later item types. */
+    int extractionCursor;
     public boolean blacklist;
     public boolean matchMeta = true;
     public boolean matchNbt = true;

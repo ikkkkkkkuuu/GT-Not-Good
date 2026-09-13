@@ -123,11 +123,16 @@ public final class NetworkTransfer {
         NetworkRule rule = channel.rules.get(source.key);
         TileEntity target = source.target();
         if (channel.type == 0 && target instanceof IInventory inventory) {
-            for (int slot : slots(
+            int[] accessible = slots(
                 inventory,
                 rule.face(source)
-                    .ordinal())) {
+                    .ordinal());
+            int start = accessible.length == 0 ? 0 : Math.floorMod(rule.extractionCursor, accessible.length);
+            for (int offset = 0; offset < accessible.length; offset++) {
                 if (!budget.spend()) return false;
+                int index = (start + offset) % accessible.length;
+                int slot = accessible[index];
+                rule.extractionCursor = (index + 1) % accessible.length;
                 ItemStack stack = inventory.getStackInSlot(slot);
                 if (stack == null || stack.stackSize <= 0 || !rule.accepts(stack)) continue;
                 if (inventory instanceof ISidedInventory sided && !sided.canExtractItem(

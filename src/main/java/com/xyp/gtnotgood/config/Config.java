@@ -35,6 +35,8 @@ public class Config {
     public static boolean enableAlwaysDisplayRecipeOwner = true;
     public static boolean enableAlwaysDisplayWailaAverageNS = true;
     public static boolean enableAlwaysDisplayNEIOriginalVoltage = true;
+    /** Divides GregTech crafting wear; positive damage is rounded up to at least one. */
+    public static float gtToolsCraftingDurability = 100F;
     public static int recipeSpeedMode = 1;
     public static int recipeSpeedFixedDuration = 1;
     public static float recipeSpeedMultiplier = 0.1F;
@@ -135,7 +137,7 @@ public class Config {
         configuration.addCustomCategoryComment(CATEGORY_CUT_CORNERS, "配方提速配置");
         configuration.addCustomCategoryComment(CATEGORY_CROPSNH, "CropsNH 作物配置");
         configuration.addCustomCategoryComment(CATEGORY_FORESTRY, "Forestry 蜜蜂杂交配置");
-        configuration.addCustomCategoryComment(CATEGORY_GREGTECH, "GregTech 客户端显示配置");
+        configuration.addCustomCategoryComment(CATEGORY_GREGTECH, "GregTech 工具与客户端显示配置");
         configuration.addCustomCategoryComment(CATEGORY_THAUMCRAFT, "Thaumcraft 扭曲与研究配置");
         configuration.addCustomCategoryComment(CATEGORY_TOOL_BELT, "工具腰带的配置设置");
         configuration.addCustomCategoryComment(CATEGORY_TORCHERINO, "加速火把与无线加速火把配置");
@@ -332,6 +334,14 @@ public class Config {
 
         tcInfiniteVis = configuration
             .getBoolean("infiniteVis", CATEGORY_THAUMCRAFT, tcInfiniteVis, "开启后,从 vis 网络抽取魔力永远成功且不消耗节点存量。");
+
+        gtToolsCraftingDurability = configuration.getFloat(
+            "gtToolsCraftingDurability",
+            CATEGORY_GREGTECH,
+            gtToolsCraftingDurability,
+            1.0F,
+            Float.MAX_VALUE,
+            "GT 工具合成耐久消耗的除数。1 为原版,默认 100;正数消耗向上取整且至少为 1。不影响挖掘和攻击。");
 
         enableAlwaysDisplayRecipeOwner = configuration.getBoolean(
             "enableAlwaysDisplayRecipeOwner",

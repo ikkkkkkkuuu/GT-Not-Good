@@ -101,11 +101,18 @@ public class BlockNetwork extends Block {
         ArrayList<ItemStack> drops = new ArrayList<>();
         ItemStack stack = new ItemStack(this);
         if (world.getTileEntity(x, y, z) instanceof TileNetworkNode node && kind != PIPE) {
-            NBTTagCompound data = new NBTTagCompound();
-            node.writeToNBT(data);
-            stack.setTagCompound(new NBTTagCompound());
-            stack.getTagCompound()
-                .setTag("networkData", data);
+            NBTTagCompound data;
+            if (kind == CONNECTOR) {
+                data = node.connectorItemData();
+            } else {
+                data = new NBTTagCompound();
+                node.writeToNBT(data);
+            }
+            if (!data.hasNoTags()) {
+                stack.setTagCompound(new NBTTagCompound());
+                stack.getTagCompound()
+                    .setTag("networkData", data);
+            }
         }
         drops.add(stack);
         return drops;
