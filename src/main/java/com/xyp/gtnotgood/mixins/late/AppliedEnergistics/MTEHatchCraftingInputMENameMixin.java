@@ -1,6 +1,6 @@
 package com.xyp.gtnotgood.mixins.late.AppliedEnergistics;
 
-import net.minecraft.util.IChatComponent;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,9 +36,6 @@ public abstract class MTEHatchCraftingInputMENameMixin {
     @Shadow
     public abstract boolean hasCustomName();
 
-    @Shadow
-    public abstract IChatComponent getNameSuffix();
-
     /**
      * Untranslated name sent to the client. Prefer the recipe map's category key so the terminal translates it to the
      * recipe-category name; AE2 handles the client-side translation of this raw key.
@@ -51,16 +48,24 @@ public abstract class MTEHatchCraftingInputMENameMixin {
         if (key != null) cir.setReturnValue(key);
     }
 
-    @Inject(method = "getName", at = @At("HEAD"), cancellable = true)
+    /**
+     * Replaces only the original display-name prefix and preserves the suffix produced by GregTech.
+     * Older GT versions return String from getNameSuffix, while newer versions return IChatComponent;
+     * avoiding that method's descriptor lets both versions retain their native suffix handling.
+     */
+    @Inject(method = "getName", at = @At("RETURN"), cancellable = true)
     private void gtnotgood$nameFromRecipeMap(CallbackInfoReturnable<String> cir) {
         RecipeMap<?> map = ((MTEHatchInputBus) (Object) this).mRecipeMap;
         if (hasCustomName() || map == null) return;
         String key = gtnotgood$recipeCategoryKey(map);
         if (key == null) return;
-        StringBuilder name = new StringBuilder(StatCollector.translateToLocal(key));
-        IChatComponent suffix = getNameSuffix();
-        if (suffix != null) name.append(suffix.getUnformattedText());
-        cir.setReturnValue(name.toString());
+        MTEHatchCraftingInputME hatch = (MTEHatchCraftingInputME) (Object) this;
+        ItemStack icon = hatch.getCrafterIcon();
+        String prefix = icon == null ? hatch.getLocalName() : icon.getDisplayName();
+        String original = cir.getReturnValue();
+        if (original != null && original.startsWith(prefix)) {
+            cir.setReturnValue(StatCollector.translateToLocal(key) + original.substring(prefix.length()));
+        }
     }
 
     private static String gtnotgood$recipeCategoryKey(RecipeMap<?> map) {
