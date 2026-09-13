@@ -5,7 +5,11 @@ import java.util.function.Supplier;
 
 import net.minecraft.util.ResourceLocation;
 
-import com.xyp.ldlib.gui.texture.*;
+import com.xyp.ldlib.gui.texture.ColorBorderTexture;
+import com.xyp.ldlib.gui.texture.GuiTextureGroup;
+import com.xyp.ldlib.gui.texture.IGuiTexture;
+import com.xyp.ldlib.gui.texture.SpriteTexture;
+import com.xyp.ldlib.gui.texture.TextTexture;
 import com.xyp.ldlib.gui.ui.elements.Button;
 import com.xyp.ldlib.gui.ui.elements.ScrollerView;
 import com.xyp.ldlib.gui.ui.elements.TextField;

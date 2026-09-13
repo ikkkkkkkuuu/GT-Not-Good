@@ -6,7 +6,9 @@ import net.minecraft.util.ResourceLocation;
 
 import org.junit.Test;
 
-import com.xyp.ldlib.gui.fancy.*;
+import com.xyp.ldlib.gui.fancy.FancyMachineUIWidget;
+import com.xyp.ldlib.gui.fancy.IFancyUIProvider;
+import com.xyp.ldlib.gui.fancy.TabsWidget;
 import com.xyp.ldlib.gui.ui.style.ModernTheme;
 
 /** Regression coverage for cached Fancy pages and detached input ownership. */
