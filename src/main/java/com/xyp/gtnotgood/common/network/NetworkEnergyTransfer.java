@@ -35,8 +35,8 @@ final class NetworkEnergyTransfer {
             if (rule.mode == 2) sinks.add(endpoint);
         }
         if (sinks.isEmpty()) return false;
-        java.util.Collections.rotate(sinks, -(channel.cursor % sinks.size()));
-        sinks.sort(
+        if (channel.distribution != 2) java.util.Collections.rotate(sinks, -(channel.cursor % sinks.size()));
+        if (channel.distribution == 2) sinks.sort(
             Comparator.comparingInt((Endpoint e) -> channel.rules.get(e.key).priority)
                 .reversed());
         boolean changed = false;
@@ -76,22 +76,32 @@ final class NetworkEnergyTransfer {
                 break;
             }
         }
+        long[] demand = new long[sinks.size()];
+        for (int i = 0; i < sinks.size(); i++) {
+            Endpoint sink = sinks.get(i);
+            NetworkRule rule = channel.rules.get(sink.key);
+            if (!rule.due(
+                controller.getWorldObj()
+                    .getTotalWorldTime())
+                || deviceKey(sink).equals(channel.source)) continue;
+            if (!(sink.target() instanceof IGregTechTileEntity target)) continue;
+            demand[i] = capacity(target, rule.face(sink), rule.rate);
+            long voltage = target.getInputVoltage(), amperes = target.getInputAmperage();
+            if (voltage > 0 && amperes > 0 && amperes <= Long.MAX_VALUE / voltage)
+                demand[i] = Math.min(demand[i], voltage * amperes);
+        }
+        long[] allocations = NetworkDistribution.allocate(channel.energy, demand, channel.distribution);
         channel.cursor = (channel.cursor + 1) & Integer.MAX_VALUE;
-        for (Endpoint sink : sinks) {
-            if (!channel.rules.get(sink.key)
-                .due(
-                    controller.getWorldObj()
-                        .getTotalWorldTime()))
-                continue;
-            if (channel.energy == 0) break;
-            if (deviceKey(sink).equals(channel.source)) continue;
+        for (int i = 0; i < sinks.size(); i++) {
+            if (allocations[i] == 0) continue;
+            Endpoint sink = sinks.get(i);
             if (!(sink.target() instanceof IGregTechTileEntity target)) continue;
             long moved = deliver(
                 target,
                 channel.rules.get(sink.key)
                     .face(sink),
                 channel.energy,
-                channel.rules.get(sink.key).rate);
+                allocations[i]);
             if (moved > 0) {
                 channel.energy -= moved;
                 target.markDirty();

@@ -19,7 +19,6 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.DynamicSyncedWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
-import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.xyp.gtnotgood.common.network.NetworkTopology.Endpoint;
@@ -40,15 +39,15 @@ public final class NetworkGui {
         int[] page = { 0 };
         String[] selectedKey = { "" };
         String[] search = { "" };
-        ModularPanel panel = ModularPanel.defaultPanel("programmable_network", 470, 380)
+        ModularPanel panel = ModularPanel.defaultPanel("programmable_network", 470, 350)
             .background(NetworkGuiStyle.FRAME);
         panel.child(
             new ParentWidget<>().pos(4, 4)
-                .size(462, 372)
-                .background(new Rectangle().color(0xFF101820)));
+                .size(462, 342)
+                .background(new Rectangle().color(0xFFC6C6C6)));
         panel.child(
-            new ParentWidget<>().pos(8, 8)
-                .size(224, 355)
+            new ParentWidget<>().pos(8, 60)
+                .size(224, 272)
                 .background(NetworkGuiStyle.PANEL));
         panel.child(
             new ParentWidget<>().pos(238, 8)
@@ -56,11 +55,11 @@ public final class NetworkGui {
                 .background(NetworkGuiStyle.PANEL));
         panel.child(
             new ParentWidget<>().pos(238, 70)
-                .size(224, 190)
+                .size(224, 172)
                 .background(NetworkGuiStyle.PANEL));
         panel.child(
-            new ParentWidget<>().pos(254, 283)
-                .size(174, 84)
+            new ParentWidget<>().pos(238, 246)
+                .size(224, 98)
                 .background(NetworkGuiStyle.PANEL));
         StringSyncValue selection = read(sync, "selection", () -> selected[0] + ";" + selectedKey[0]);
         NetworkMatrixSelectionSync matrixSelection = new NetworkMatrixSelectionSync((key, channel) -> {
@@ -75,7 +74,9 @@ public final class NetworkGui {
         }).allowC2S();
         sync.syncValue("search", query);
         panel.child(
-            new TextFieldWidget().value(query)
+            new TextFieldWidget().background(NetworkGuiStyle.INPUT)
+                .setTextColor(0xFF101010)
+                .value(query)
                 .setMaxLength(32)
                 .pos(12, 12)
                 .size(158, 18));
@@ -90,19 +91,6 @@ public final class NetworkGui {
                 w -> w.background(integer(selection, 0) == index ? NetworkGuiStyle.SELECTED : NetworkGuiStyle.BUTTON),
                 true));
         }
-        StringSyncValue topologyState = read(sync, "topology_state", () -> {
-            NetworkTopology topology = controller.topology();
-            return topology.status + ";" + topology.nodes + ";" + topology.endpoints.size();
-        });
-        panel.child(
-            text(
-                () -> status(integer(topologyState, 0)) + "  "
-                    + field(topologyState, 1)
-                    + " / "
-                    + field(topologyState, 2),
-                12,
-                366,
-                218));
         StringSyncValue list = new StringSyncValue(() -> {
             java.util.List<Endpoint> endpoints = new java.util.ArrayList<>();
             String queryText = search[0].toLowerCase(java.util.Locale.ROOT);
@@ -139,7 +127,7 @@ public final class NetworkGui {
         panel.child(
             new DynamicSyncedWidget<>().syncHandler(matrix)
                 .pos(MATRIX_X, 62)
-                .size(216, 296));
+                .size(216, 264));
 
         StringSyncValue channelState = read(sync, "channel_state", () -> {
             Channel channel = controller.channels[selected[0]];
@@ -172,7 +160,9 @@ public final class NetworkGui {
         }).allowC2S();
         sync.syncValue("channel_name", name);
         panel.child(
-            new TextFieldWidget().value(name)
+            new TextFieldWidget().background(NetworkGuiStyle.INPUT)
+                .setTextColor(0xFF101010)
+                .value(name)
                 .setMaxLength(24)
                 .pos(304, 13)
                 .size(150, 18));
@@ -189,23 +179,35 @@ public final class NetworkGui {
         // # zh_CN 优先级
         panel.child(text(() -> tr("gui.network.channel_priority"), 244, 43, 48));
         panel.child(
-            new TextFieldWidget().value(channelPriority)
+            new TextFieldWidget().background(NetworkGuiStyle.INPUT)
+                .setTextColor(0xFF101010)
+                .value(channelPriority)
                 .formatAsInteger(true)
                 .numbersInt(-99, 99)
                 .autoUpdateOnChange(false)
                 .pos(294, 39)
                 .size(34, 18));
-        ParentWidget<?> rulePanel = new ParentWidget<>().size(470, 380)
+        StringSyncValue distribution = read(
+            sync,
+            "distribution",
+            () -> "" + controller.channels[selected[0]].distribution);
+        panel.child(button(sync, "distribution_mode", () -> distributionLabel(integer(distribution, 0)), () -> {
+            Channel channel = controller.channels[selected[0]];
+            channel.distribution = (channel.distribution + 1) % 3;
+            controller.markDirty();
+        }, 338, 38, 116));
+        ParentWidget<?> rulePanel = new ParentWidget<>().size(470, 350)
             .setEnabledIf(w -> !field(selection, 1).isEmpty());
         // #tr gui.network.select_node_hint
         // # Select a device cell on the left to configure its connection.
         // # zh_CN 点击左侧设备交叉格，配置节点连接。
         panel.child(
             IKey.dynamic(() -> tr("gui.network.select_node_hint"))
+                .shadow(false)
                 .asWidget()
                 .pos(244, 101)
                 .size(210, 24)
-                .color(0xFFE7E9F2)
+                .color(0xFF101010)
                 .setEnabledIf(w -> field(selection, 1).isEmpty()));
         panel.child(rulePanel);
         Supplier<NetworkRule> rule = () -> controller.rule(selected[0], selectedKey[0], false);
@@ -249,7 +251,7 @@ public final class NetworkGui {
                 () -> field(ruleState, 7).isEmpty() ? tr("gui.network.select_cell") : field(ruleState, 7),
                 244,
                 77,
-                184));
+                150));
         // #tr gui.network.create_connection
         // # Create connection
         // # zh_CN 创建连接
@@ -259,10 +261,10 @@ public final class NetworkGui {
                 "create_rule",
                 () -> tr("gui.network.create_connection"),
                 () -> { if (controller.rule(selected[0], selectedKey[0], true) != null) controller.markDirty(); },
-                244,
-                99,
+                304,
+                124,
                 100).setEnabledIf(w -> integer(ruleState, 8) == 0));
-        ParentWidget<?> existingRulePanel = new ParentWidget<>().size(470, 380)
+        ParentWidget<?> existingRulePanel = new ParentWidget<>().size(470, 350)
             .setEnabledIf(w -> integer(ruleState, 8) == 1);
         rulePanel.child(existingRulePanel);
         existingRulePanel.child(
@@ -272,21 +274,22 @@ public final class NetworkGui {
                 () -> accessFace(integer(ruleState, 9)),
                 () -> edit.accept(value -> value.facing = value.facing >= 5 ? -1 : value.facing + 1),
                 354,
-                99,
+                90,
                 100));
         // #tr gui.network.access_face_label
         // # Side
         // # zh_CN 访问面
-        existingRulePanel.child(text(() -> tr("gui.network.access_face_label"), 310, 103, 40));
+        existingRulePanel.child(text(() -> tr("gui.network.access_face_label"), 310, 94, 40));
         existingRulePanel.child(button(sync, "remove_rule", () -> "X", () -> {
             controller.channels[selected[0]].rules.remove(selectedKey[0]);
             controller.markDirty();
-        }, 436, 73, 18).tooltip(t -> {
-            // #tr gui.network.remove_rule
-            // # Remove this channel connection. The physical device remains in the matrix.
-            // # zh_CN 删除当前通道连接；物理设备仍保留在矩阵中。
-            t.addLine(IKey.lang("gui.network.remove_rule"));
-        }));
+        }, 436, 73, 18).size(18, 14)
+            .tooltip(t -> {
+                // #tr gui.network.remove_rule
+                // # Remove this channel connection. The physical device remains in the matrix.
+                // # zh_CN 删除当前通道连接；物理设备仍保留在矩阵中。
+                t.addLine(IKey.lang("gui.network.remove_rule"));
+            }));
         existingRulePanel.child(
             button(
                 sync,
@@ -294,7 +297,7 @@ public final class NetworkGui {
                 () -> mode(integer(ruleState, 0)),
                 () -> edit.accept(value -> value.mode = (value.mode + 1) % 3),
                 244,
-                99,
+                90,
                 58));
         com.cleanroommc.modularui.value.sync.IntSyncValue amount = new com.cleanroommc.modularui.value.sync.IntSyncValue(
             () -> {
@@ -306,11 +309,13 @@ public final class NetworkGui {
             }).allowC2S();
         sync.syncValue("transfer_amount", amount);
         existingRulePanel.child(
-            new TextFieldWidget().value(amount)
+            new TextFieldWidget().background(NetworkGuiStyle.INPUT)
+                .setTextColor(0xFF101010)
+                .value(amount)
                 .formatAsInteger(true)
                 .numbersInt(1, Integer.MAX_VALUE)
                 .autoUpdateOnChange(false)
-                .pos(310, 124)
+                .pos(310, 113)
                 .size(114, 18));
         // #tr gui.network.item_unit
         // # items
@@ -320,20 +325,20 @@ public final class NetworkGui {
                 () -> integer(channelState, 0) == 0 ? tr("gui.network.item_unit")
                     : integer(channelState, 0) == 1 ? "L" : "EU",
                 430,
-                127,
+                113,
                 24));
         // #tr gui.network.amount_label
         // # Amount
         // # zh_CN 单次数量
-        existingRulePanel.child(text(() -> tr("gui.network.amount_label"), 244, 127, 62));
+        existingRulePanel.child(text(() -> tr("gui.network.amount_label"), 244, 116, 62));
         // #tr gui.network.interval_label
         // # Interval
         // # zh_CN 操作间隔
-        existingRulePanel.child(text(() -> tr("gui.network.interval_label"), 244, 151, 62));
+        existingRulePanel.child(text(() -> tr("gui.network.interval_label"), 244, 138, 62));
         // #tr gui.network.node_priority
         // # Priority
         // # zh_CN 节点优先级
-        existingRulePanel.child(text(() -> tr("gui.network.node_priority"), 244, 175, 62));
+        existingRulePanel.child(text(() -> tr("gui.network.node_priority"), 244, 160, 62));
         com.cleanroommc.modularui.value.sync.IntSyncValue nodePriority = new com.cleanroommc.modularui.value.sync.IntSyncValue(
             () -> rule.get() == null ? 0 : rule.get().priority,
             value -> {
@@ -342,11 +347,13 @@ public final class NetworkGui {
             }).allowC2S();
         sync.syncValue("node_priority", nodePriority);
         existingRulePanel.child(
-            new TextFieldWidget().value(nodePriority)
+            new TextFieldWidget().background(NetworkGuiStyle.INPUT)
+                .setTextColor(0xFF101010)
+                .value(nodePriority)
                 .formatAsInteger(true)
-                .numbersInt(-99, 99)
+                .numbersInt(-99, 90)
                 .autoUpdateOnChange(false)
-                .pos(310, 172)
+                .pos(310, 157)
                 .size(62, 18));
         com.cleanroommc.modularui.value.sync.IntSyncValue interval = new com.cleanroommc.modularui.value.sync.IntSyncValue(
             () -> rule.get() == null ? 20 : rule.get().interval,
@@ -357,11 +364,13 @@ public final class NetworkGui {
             }).allowC2S();
         sync.syncValue("rule_interval", interval);
         existingRulePanel.child(
-            new TextFieldWidget().value(interval)
+            new TextFieldWidget().background(NetworkGuiStyle.INPUT)
+                .setTextColor(0xFF101010)
+                .value(interval)
                 .formatAsInteger(true)
                 .numbersInt(1, 1200)
                 .autoUpdateOnChange(false)
-                .pos(310, 148)
+                .pos(310, 135)
                 .size(62, 18)
                 .tooltip(t -> {
                     // #tr gui.network.interval_hint
@@ -369,16 +378,16 @@ public final class NetworkGui {
                     // # zh_CN 操作间隔（1至1200 tick）；正常TPS下20 tick为1秒。
                     t.addLine(IKey.lang("gui.network.interval_hint"));
                 }));
-        existingRulePanel.child(text(() -> "t", 377, 151, 10));
+        existingRulePanel.child(text(() -> "t", 377, 138, 10));
         existingRulePanel.child(button(sync, "every_tick", () -> "1t", () -> {
             edit.accept(current -> current.interval = 1);
             controller.markDirty();
-        }, 394, 147, 28));
+        }, 394, 134, 28));
         existingRulePanel.child(button(sync, "every_second", () -> "1s", () -> {
             edit.accept(current -> current.interval = 20);
             controller.markDirty();
-        }, 426, 147, 28));
-        ParentWidget<?> filterPanel = new ParentWidget<>().size(470, 380)
+        }, 426, 134, 28));
+        ParentWidget<?> filterPanel = new ParentWidget<>().size(470, 350)
             .setEnabledIf(w -> integer(channelState, 0) != 2);
         existingRulePanel.child(filterPanel);
         // #tr gui.network.blacklist
@@ -391,7 +400,7 @@ public final class NetworkGui {
                 () -> filterMode(integer(ruleState, 3)),
                 () -> edit.accept(value -> value.blacklist = !value.blacklist),
                 244,
-                196,
+                181,
                 50));
         // #tr gui.network.ore
         // # OreDict
@@ -403,7 +412,7 @@ public final class NetworkGui {
                 () -> flag(tr("gui.network.ore"), integer(ruleState, 6)),
                 () -> edit.accept(value -> value.matchOre = !value.matchOre),
                 298,
-                196,
+                181,
                 50).setEnabledIf(w -> integer(channelState, 0) == 0));
         // #tr gui.network.meta
         // # Meta
@@ -415,7 +424,7 @@ public final class NetworkGui {
                 () -> flag(tr("gui.network.meta"), integer(ruleState, 4)),
                 () -> edit.accept(value -> value.matchMeta = !value.matchMeta),
                 352,
-                196,
+                181,
                 50).setEnabledIf(w -> integer(channelState, 0) == 0));
         filterPanel.child(
             button(
@@ -424,11 +433,11 @@ public final class NetworkGui {
                 () -> flag("NBT", integer(ruleState, 5)),
                 () -> edit.accept(value -> value.matchNbt = !value.matchNbt),
                 406,
-                196,
+                181,
                 50));
         filterPanel.child(
-            new ParentWidget<>().pos(256, 218)
-                .size(170, 44)
+            new ParentWidget<>().pos(244, 203)
+                .size(216, 38)
                 .background(NetworkGuiStyle.EMPTY));
         NetworkFilterHandler filters = new NetworkFilterHandler(
             controller,
@@ -439,7 +448,9 @@ public final class NetworkGui {
                 new com.cleanroommc.modularui.widgets.slot.PhantomItemSlot()
                     .slot(new NetworkFilterSlot(filters, i).singletonSlotGroup())
                     .setEnabledIf(w -> integer(channelState, 0) == 0)
-                    .pos(260 + i % 9 * 18, 222 + i / 9 * 18));
+                    .background(NetworkGuiStyle.SLOT)
+                    .pos(244 + i % 9 * 24, 203 + i / 9 * 19)
+                    .size(24, 19));
             com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler fluidSync = new com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler(
                 new NetworkFluidFilterTank(
                     controller,
@@ -450,15 +461,16 @@ public final class NetworkGui {
             filterPanel.child(
                 new com.cleanroommc.modularui.widgets.slot.FluidSlot().syncHandler(fluidSync)
                     .setEnabledIf(w -> integer(channelState, 0) == 1)
-                    .pos(260 + i % 9 * 18, 222 + i / 9 * 18)
-                    .size(18, 18));
+                    .background(NetworkGuiStyle.SLOT)
+                    .pos(244 + i % 9 * 24, 203 + i / 9 * 19)
+                    .size(24, 19));
         }
         String[] clipboardStatus = { "" };
         String clipboardKey = com.xyp.gtnotgood.utils.enums.ModList.GTNotGood.getID() + ".networkRuleClipboard";
         // #tr gui.network.copy_rule
         // # Copy
         // # zh_CN 复制配置
-        existingRulePanel.child(button(sync, "copy_rule", () -> tr("gui.network.copy_rule"), () -> {
+        existingRulePanel.child(button(sync, "copy_rule", () -> "C", () -> {
             NetworkRule current = rule.get();
             if (current == null) return;
             net.minecraft.nbt.NBTTagCompound copy = current.write();
@@ -467,13 +479,12 @@ public final class NetworkGui {
                 .getEntityData()
                 .setTag(clipboardKey, copy);
             clipboardStatus[0] = "copied";
-        }, 244, 264, 62));
+        }, 392, 73, 18).size(18, 14)
+            .tooltip(t -> t.addLine(IKey.lang("gui.network.copy_rule"))));
         // #tr gui.network.paste_rule
         // # Paste
         // # zh_CN 粘贴配置
-        existingRulePanel.child(button(sync, "paste_rule", () -> tr("gui.network.paste_rule"), () -> {
-            NetworkRule current = rule.get();
-            if (current == null) return;
+        Runnable pasteRule = () -> {
             net.minecraft.nbt.NBTTagCompound playerData = sync.getPlayer()
                 .getEntityData();
             if (!playerData.hasKey(clipboardKey)) {
@@ -485,16 +496,33 @@ public final class NetworkGui {
                 clipboardStatus[0] = "type";
                 return;
             }
+            NetworkRule current = controller.rule(selected[0], selectedKey[0], true);
+            if (current == null) return;
             current.read((net.minecraft.nbt.NBTTagCompound) copy.copy());
             controller.channels[selected[0]].enabled = true;
             controller.markDirty();
             clipboardStatus[0] = "pasted";
-        }, 310, 264, 62));
+        };
+        existingRulePanel.child(
+            button(sync, "paste_rule", () -> "P", pasteRule, 414, 73, 18).size(18, 14)
+                .tooltip(t -> t.addLine(IKey.lang("gui.network.paste_rule"))));
+        rulePanel.child(
+            button(sync, "paste_new_rule", () -> tr("gui.network.paste_rule"), pasteRule, 304, 154, 100)
+                .setEnabledIf(w -> integer(ruleState, 8) == 0));
         StringSyncValue clipboardMessage = read(sync, "clipboard_status", () -> clipboardStatus[0]);
-        existingRulePanel.child(text(() -> clipboardMessage(clipboardMessage.getValue()), 378, 269, 78));
-        panel.child(
-            SlotGroupWidget.playerInventory(true)
-                .pos(260, 289));
+        rulePanel.child(
+            new ParentWidget<>().size(470, 350)
+                .setEnabledIf(w -> integer(ruleState, 8) == 0)
+                .child(text(() -> clipboardMessage(clipboardMessage.getValue()), 304, 183, 142)));
+        for (int i = 0; i < 36; i++) {
+            int column = i < 9 ? i : (i - 9) % 9;
+            int row = i < 9 ? 3 : (i - 9) / 9;
+            panel.child(
+                new com.cleanroommc.modularui.widgets.slot.ItemSlot().syncHandler("player", i)
+                    .background(NetworkGuiStyle.SLOT)
+                    .pos(242 + column * 24, 248 + row * 23 + (i < 9 ? 4 : 0))
+                    .size(24, 23));
+        }
         return panel;
     }
 
@@ -519,7 +547,10 @@ public final class NetworkGui {
                 java.nio.charset.StandardCharsets.UTF_8);
             ParentWidget<?> row = new ParentWidget<>().size(208, 24)
                 .marginBottom(1)
-                .background(NetworkGuiStyle.PANEL);
+                .background(
+                    (context, x, y, width, height, theme) -> {
+                        NetworkGuiStyle.DIVIDER.draw(context, x, y + height - 1, width, 1, theme);
+                    });
             ItemStack device = NetworkDeviceDisplay.decode(fields[1]);
             if (device != null) {
                 row.child(
@@ -536,19 +567,27 @@ public final class NetworkGui {
                     new ButtonWidget<>().pos(CHANNEL_OFFSET + i * CHANNEL_PITCH, 2)
                         .size(CHANNEL_WIDTH, 20)
                         .background(NetworkGuiStyle.BUTTON)
-                        .overlay(IKey.dynamic(() -> {
-                            String value = modes.charAt(channel) == '1' ? "E"
-                                : modes.charAt(channel) == '2' ? "I" : modes.charAt(channel) == '3' ? "-" : "";
-                            return value;
+                        .overlay((context, x, y, width, height, theme) -> {
+                            if (modes.charAt(channel) == '1') {
+                                com.xyp.gtnotgood.common.gui.modularui.GTNGGuiTextures.NETWORK_EXTRACT
+                                    .draw(context, x + (width - 13) / 2, y + (height - 10) / 2, 13, 10, theme);
+                            } else if (modes.charAt(channel) == '2') {
+                                com.xyp.gtnotgood.common.gui.modularui.GTNGGuiTextures.NETWORK_INSERT
+                                    .draw(context, x + (width - 13) / 2, y + (height - 10) / 2, 13, 10, theme);
+                            } else if (modes.charAt(channel) == '3') {
+                                IKey.str("-")
+                                    .shadow(false)
+                                    .color(0xFF101010)
+                                    .draw(context, x, y, width, height, theme);
+                            }
                         })
-                            .color(0xFFE6F1F4))
                         .onUpdateListener(
                             w -> w.background(
                                 integer(selection, 0) == channel && field(selection, 1).equals(key)
                                     ? NetworkGuiStyle.SELECTED
                                     : modes.charAt(channel) == '1' ? NetworkGuiStyle.EXTRACT
                                         : modes.charAt(channel) == '2' ? NetworkGuiStyle.INSERT
-                                            : NetworkGuiStyle.EMPTY),
+                                            : NetworkGuiStyle.BUTTON),
                             true)
                         .onMousePressed(mouseButton -> {
                             matrixSelection.select(key, channel);
@@ -558,7 +597,15 @@ public final class NetworkGui {
             }
             rows.child(row);
         }
-        return new ListWidget<>().size(216, 296)
+        return new ListWidget<>().size(216, 264)
+            .background(
+                (context, x, y, width, height, theme) -> NetworkGuiStyle.COLUMN.draw(
+                    context,
+                    x + CHANNEL_OFFSET + integer(selection, 0) * CHANNEL_PITCH,
+                    y,
+                    CHANNEL_WIDTH,
+                    height,
+                    theme))
             .padding(0)
             .crossAxisAlignment(com.cleanroommc.modularui.utils.Alignment.CrossAxis.START)
             .child(rows);
@@ -567,6 +614,21 @@ public final class NetworkGui {
     private static String deviceLabel(Endpoint endpoint) {
         if (endpoint == null || endpoint.target() == null) return "";
         return endpoint.connector.getName() + " " + NetworkDeviceDisplay.name(endpoint) + " " + endpoint.key;
+    }
+
+    private static String distributionLabel(int mode) {
+        // #tr gui.network.distribute_round_robin
+        // # Round robin
+        // # zh_CN 循环分配
+        if (mode == 0) return tr("gui.network.distribute_round_robin");
+        // #tr gui.network.distribute_even
+        // # Distribute evenly
+        // # zh_CN 平均分配
+        if (mode == 1) return tr("gui.network.distribute_even");
+        // #tr gui.network.distribute_priority
+        // # Priority fill
+        // # zh_CN 优先填满
+        return tr("gui.network.distribute_priority");
     }
 
     private static String filterMode(int state) {
@@ -614,7 +676,7 @@ public final class NetworkGui {
         panel.child(
             new ParentWidget<>().pos(4, 4)
                 .size(242, 192)
-                .background(new Rectangle().color(0xFF101820)));
+                .background(new Rectangle().color(0xFFC6C6C6)));
         // #tr gui.network.connector
         // # Network Connector
         // # zh_CN 网络连接器
@@ -622,7 +684,9 @@ public final class NetworkGui {
         StringSyncValue name = new StringSyncValue(connector::getName, connector::setName).allowC2S();
         sync.syncValue("name", name);
         panel.child(
-            new TextFieldWidget().value(name)
+            new TextFieldWidget().background(NetworkGuiStyle.INPUT)
+                .setTextColor(0xFF101010)
+                .value(name)
                 .setMaxLength(32)
                 .pos(10, 30)
                 .size(230, 18));
@@ -663,16 +727,18 @@ public final class NetworkGui {
             .background(NetworkGuiStyle.BUTTON)
             .overlay(
                 IKey.dynamic(label)
-                    .color(0xFFE6F1F4))
+                    .shadow(false)
+                    .color(0xFF101010))
             .syncHandler(handler);
     }
 
     private static IWidget text(Supplier<String> label, int x, int y, int width) {
         return IKey.dynamic(label)
+            .shadow(false)
             .asWidget()
             .pos(x, y)
             .size(width, 12)
-            .color(0xFFE7E9F2);
+            .color(0xFF101010);
     }
 
     private static String field(StringSyncValue value, int index) {

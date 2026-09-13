@@ -104,6 +104,7 @@ public class TileNetworkController extends TileNetworkNode {
 
         public int type;
         public int priority;
+        public int distribution;
         public long energy;
         public boolean enabled;
         public int interval = 20;
@@ -119,6 +120,7 @@ public class TileNetworkController extends TileNetworkNode {
         }
 
         public void read(NBTTagCompound tag) {
+            distribution = Math.max(0, Math.min(2, tag.getInteger("distribution")));
             type = Math.max(0, Math.min(2, tag.getInteger("type")));
             priority = Math.max(-99, Math.min(99, tag.getInteger("priority")));
             energy = type == 2 ? Math.max(0, tag.getLong("energy")) : 0;
@@ -149,6 +151,7 @@ public class TileNetworkController extends TileNetworkNode {
         public NBTTagCompound write() {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setInteger("type", type);
+            tag.setInteger("distribution", distribution);
             tag.setInteger("priority", priority);
             tag.setLong("energy", energy);
             tag.setBoolean("enabled", enabled);

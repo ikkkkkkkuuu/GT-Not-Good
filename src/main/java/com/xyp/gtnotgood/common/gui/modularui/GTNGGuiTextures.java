@@ -16,6 +16,24 @@ public final class GTNGGuiTextures {
     private static final String MODID = ModList.ModIds.GT_NOT_GOOD;
     private static final String BASE = RESOURCE_ROOT_ID + ":iconsets/";
 
+    /** Original XNet MIT-licensed panel and connection indicators, rendered through MUI2. */
+    public static final UITexture NETWORK_FRAME = UITexture.builder()
+        .location(MODID, "gui/network/sidegui")
+        .imageSize(256, 256)
+        .subAreaXYWH(0, 0, 90, 236)
+        .adaptable(2)
+        .build();
+    public static final UITexture NETWORK_INSERT = UITexture.builder()
+        .location(MODID, "gui/network/guielements")
+        .imageSize(256, 256)
+        .subAreaXYWH(0, 70, 13, 10)
+        .build();
+    public static final UITexture NETWORK_EXTRACT = UITexture.builder()
+        .location(MODID, "gui/network/guielements")
+        .imageSize(256, 256)
+        .subAreaXYWH(13, 70, 13, 10)
+        .build();
+
     public static final UITexture MODERN_BUTTON = UITexture.builder()
         .location(MODID, "gui/modernity/button")
         .imageSize(20, 20)

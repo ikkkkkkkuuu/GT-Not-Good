@@ -19,7 +19,7 @@ import com.xyp.gtnotgood.common.network.TileNetworkController.Channel;
 /**
  * Loaded-device routing using the 1.7.10 sided inventory and fluid contracts.
  * Extraction precedes insertion; a persisted channel buffer retains anything the destination declines.
- * One source batch per channel per operation bounds work and rotates fairly between extractors.
+ * Each item batch can span source slots and serve multiple destinations, within the configured rate and work budget.
  */
 public final class NetworkTransfer {
 
@@ -40,8 +40,8 @@ public final class NetworkTransfer {
         }
         if (sinks.isEmpty()) return false;
         // Stable sort retains the rotated order between destinations of equal priority.
-        if (!sinks.isEmpty()) java.util.Collections.rotate(sinks, -(channel.cursor % sinks.size()));
-        sinks.sort(
+        if (channel.distribution != 2) java.util.Collections.rotate(sinks, -(channel.cursor % sinks.size()));
+        if (channel.distribution == 2) sinks.sort(
             Comparator.comparingInt((Endpoint e) -> channel.rules.get(e.key).priority)
                 .reversed());
         boolean changed = false;
@@ -55,33 +55,58 @@ public final class NetworkTransfer {
                 }
             }
         }
-        channel.cursor = (channel.cursor + 1) & 0x7fffffff;
-        for (Endpoint sink : sinks) {
-            if (!channel.rules.get(sink.key)
-                .due(
-                    controller.getWorldObj()
-                        .getTotalWorldTime()))
-                continue;
-            if (!channel.hasCargo() || !budget.spend()) break;
-            if (deviceKey(sink).equals(channel.source)) continue;
+        long[] demand = new long[sinks.size()];
+        for (int i = 0; i < sinks.size(); i++) {
+            Endpoint sink = sinks.get(i);
             NetworkRule rule = channel.rules.get(sink.key);
+            if (!rule.due(
+                controller.getWorldObj()
+                    .getTotalWorldTime())
+                || deviceKey(sink).equals(channel.source)) continue;
+            if (!budget.spend()) break;
             TileEntity target = sink.target();
             if (channel.item != null && target instanceof IInventory inventory && rule.accepts(channel.item)) {
-                int moved = insert(
+                demand[i] = insert(
                     inventory,
                     rule.face(sink)
                         .ordinal(),
                     channel.item,
                     rule.rate,
+                    true,
+                    budget);
+            } else
+                if (channel.fluid != null && target instanceof IFluidHandler handler && rule.accepts(channel.fluid)) {
+                    FluidStack offer = channel.fluid.copy();
+                    offer.amount = Math.min(offer.amount, rule.rate);
+                    demand[i] = Math.max(0, Math.min(offer.amount, handler.fill(rule.face(sink), offer, false)));
+                }
+        }
+        long available = channel.item != null ? channel.item.stackSize
+            : channel.fluid != null ? channel.fluid.amount : 0;
+        long[] allocations = NetworkDistribution.allocate(available, demand, channel.distribution);
+        channel.cursor = (channel.cursor + 1) & Integer.MAX_VALUE;
+        for (int i = 0; i < sinks.size(); i++) {
+            if (allocations[i] == 0) continue;
+            if (!channel.hasCargo() || !budget.spend()) break;
+            Endpoint sink = sinks.get(i);
+            NetworkRule rule = channel.rules.get(sink.key);
+            TileEntity target = sink.target();
+            if (channel.item != null && target instanceof IInventory inventory) {
+                int moved = insert(
+                    inventory,
+                    rule.face(sink)
+                        .ordinal(),
+                    channel.item,
+                    (int) allocations[i],
                     false,
                     budget);
                 channel.item.stackSize -= moved;
                 if (channel.item.stackSize <= 0) channel.item = null;
                 if (moved > 0) changed = true;
             }
-            if (channel.fluid != null && target instanceof IFluidHandler handler && rule.accepts(channel.fluid)) {
+            if (channel.fluid != null && target instanceof IFluidHandler handler) {
                 FluidStack offer = channel.fluid.copy();
-                offer.amount = Math.min(offer.amount, rule.rate);
+                offer.amount = Math.min(offer.amount, (int) allocations[i]);
                 int moved = Math.max(0, Math.min(offer.amount, handler.fill(rule.face(sink), offer, true)));
                 channel.fluid.amount -= moved;
                 if (channel.fluid.amount <= 0) channel.fluid = null;
@@ -111,26 +136,35 @@ public final class NetworkTransfer {
                     rule.face(source)
                         .ordinal()))
                     continue;
-                int amount = Math.min(rule.rate, stack.stackSize);
+                int amount = rule.rate;
+                ItemStack offer = stack.copy();
+                offer.stackSize = amount;
                 int room = 0;
+                Set<String> countedDevices = new HashSet<>();
                 for (Endpoint sink : sinks) {
                     if (!budget.spend()) return false;
-                    if (deviceKey(sink).equals(deviceKey(source))) continue;
+                    if (deviceKey(sink).equals(deviceKey(source)) || !countedDevices.add(deviceKey(sink))) continue;
                     NetworkRule output = channel.rules.get(sink.key);
                     if (sink.target() instanceof IInventory destination && output.accepts(stack)) {
-                        room = insert(
+                        room += insert(
                             destination,
                             output.face(sink)
                                 .ordinal(),
-                            stack,
-                            Math.min(amount, output.rate),
+                            offer,
+                            Math.min(amount - room, output.rate),
                             true,
                             budget);
-                        if (room > 0) break;
+                        if (room >= amount) break;
                     }
                 }
                 if (room == 0) continue;
-                channel.item = inventory.decrStackSize(slot, Math.min(amount, room));
+                channel.item = collect(
+                    inventory,
+                    rule.face(source)
+                        .ordinal(),
+                    stack,
+                    Math.min(amount, room),
+                    budget);
                 if (channel.item == null || channel.item.stackSize <= 0) {
                     channel.item = null;
                     continue;
@@ -153,27 +187,56 @@ public final class NetworkTransfer {
             if (preview == null) preview = handler.drain(rule.face(source), rule.rate, false);
             if (preview == null || preview.amount <= 0 || !rule.accepts(preview)) return false;
             preview.amount = Math.min(preview.amount, rule.rate);
+            int room = 0;
+            Set<String> countedDevices = new HashSet<>();
             for (Endpoint sink : sinks) {
-                if (!budget.spend()) return false;
+                if (!budget.spend()) break;
                 if (deviceKey(sink).equals(deviceKey(source))) continue;
                 NetworkRule output = channel.rules.get(sink.key);
                 if (!(sink.target() instanceof IFluidHandler destination) || !output.accepts(preview)) continue;
+                if (!countedDevices.add(deviceKey(sink))) continue;
                 FluidStack offer = preview.copy();
-                offer.amount = Math.min(offer.amount, output.rate);
-                int room = destination.fill(output.face(sink), offer, false);
-                if (room <= 0) continue;
-                offer.amount = Math.min(room, offer.amount);
-                channel.fluid = handler.drain(rule.face(source), offer, true);
-                if (channel.fluid == null || channel.fluid.amount <= 0) {
-                    channel.fluid = null;
-                    return false;
-                }
-                channel.source = deviceKey(source);
-                target.markDirty();
-                return true;
+                offer.amount = Math.min(preview.amount - room, output.rate);
+                room += Math.max(0, Math.min(offer.amount, destination.fill(output.face(sink), offer, false)));
+                if (room >= preview.amount) break;
             }
+            if (room <= 0) return false;
+            preview.amount = room;
+            channel.fluid = handler.drain(rule.face(source), preview, true);
+            if (channel.fluid == null || channel.fluid.amount <= 0) {
+                channel.fluid = null;
+                return false;
+            }
+            channel.source = deviceKey(source);
+            target.markDirty();
+            return true;
         }
         return false;
+    }
+
+    /** Collects identical item/NBT stacks across slots without exceeding the source rate or sided permissions. */
+    static ItemStack collect(IInventory inventory, int side, ItemStack template, int limit) {
+        return collect(inventory, side, template, limit, new WorkBudget());
+    }
+
+    private static ItemStack collect(IInventory inventory, int side, ItemStack template, int limit, WorkBudget budget) {
+        ItemStack result = null;
+        int remaining = limit;
+        for (int slot : slots(inventory, side)) {
+            if (remaining <= 0 || !budget.spend()) break;
+            ItemStack stack = inventory.getStackInSlot(slot);
+            if (stack == null || stack.stackSize <= 0
+                || !stack.isItemEqual(template)
+                || !ItemStack.areItemStackTagsEqual(stack, template)) continue;
+            if (inventory instanceof ISidedInventory sided && !sided.canExtractItem(slot, stack, side)) continue;
+            ItemStack extracted = inventory.decrStackSize(slot, Math.min(remaining, stack.stackSize));
+            if (extracted == null || extracted.stackSize <= 0) continue;
+            if (result == null) result = extracted.copy();
+            else result.stackSize += extracted.stackSize;
+            remaining -= extracted.stackSize;
+        }
+        if (result != null) inventory.markDirty();
+        return result;
     }
 
     /** Returns actual or simulated accepted count without mutating the offered stack. */
