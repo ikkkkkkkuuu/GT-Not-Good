@@ -60,6 +60,14 @@ ME 无线收发器
 完全抄袭Xnet
 
 
+### 🔌 ME容器/ ME Container
+
+<p align="center">
+    <img src="README/me3.png" width="800">
+</p>
+
+添加me容器 可以配置物品或流体 然后从连接的ae网络里抽取 同步显示数量  然后可以被外部访问抽取
+
 先写到这
 
 

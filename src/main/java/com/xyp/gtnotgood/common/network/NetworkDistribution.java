@@ -6,8 +6,9 @@ final class NetworkDistribution {
     private NetworkDistribution() {}
 
     /**
-     * Allocates a batch in destination order: one recipient for rotation, max-min fairness for even mode,
-     * or sequential filling for priority mode. Integer remainders follow the caller's rotated order.
+     * Allocates a batch across destinations, using max-min fairness for even mode and sequential filling otherwise.
+     * The caller rotates destination order for round robin or sorts it for priority mode. A full destination must
+     * not stop the rest of a batch from reaching other destinations.
      */
     static long[] allocate(long available, long[] demand, int mode) {
         long[] result = new long[demand.length];
@@ -16,7 +17,6 @@ final class NetworkDistribution {
             for (int i = 0; i < demand.length && remaining > 0; i++) {
                 result[i] = Math.min(remaining, Math.max(0, demand[i]));
                 remaining -= result[i];
-                if (mode == 0 && result[i] > 0) break;
             }
             return result;
         }

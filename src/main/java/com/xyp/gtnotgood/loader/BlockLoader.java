@@ -9,6 +9,8 @@ import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeSender;
 import com.xyp.gtnotgood.common.blocks.mebridge.ItemBlockMEBridge;
 import com.xyp.gtnotgood.common.mebridge.TileMEBridgeReceiver;
 import com.xyp.gtnotgood.common.mebridge.TileMEBridgeSender;
+import com.xyp.gtnotgood.common.mecontainer.BlockMEContainer;
+import com.xyp.gtnotgood.common.mecontainer.TileMEContainer;
 import com.xyp.gtnotgood.common.network.BlockNetwork;
 import com.xyp.gtnotgood.common.network.NetworkTopology;
 import com.xyp.gtnotgood.common.network.TileNetworkController;
@@ -51,6 +53,7 @@ public final class BlockLoader {
     public static final BlockNetwork networkConnector = new BlockNetwork(BlockNetwork.CONNECTOR, "network_connector");
 
     public static final BlockMEBridgeSender blockMEBridgeSender = new BlockMEBridgeSender();
+    public static final BlockMEContainer meContainer = new BlockMEContainer();
     public static final BlockMEBridgeReceiver blockMEBridgeReceiver = new BlockMEBridgeReceiver();
     // #tr tile.AssemblyMatrixBlock.name
     // # Assembly Matrix Block
@@ -157,6 +160,9 @@ public final class BlockLoader {
      * Registers all non-GregTech blocks and stores their item stacks for recipe and creative-tab use.
      */
     public static void registry() {
+        GameRegistry.registerBlock(meContainer, ItemBlockMEBridge.class, "me_container");
+        GameRegistry.registerTileEntity(TileMEContainer.class, ModList.GTNotGood.getResourcePath("me_container"));
+        GTNGItemList.MEContainer.set(new ItemStack(meContainer));
         GameRegistry.registerBlock(networkController, "network_controller");
         GameRegistry.registerBlock(networkPipe, "network_pipe");
         GameRegistry.registerBlock(networkConnector, "network_connector");

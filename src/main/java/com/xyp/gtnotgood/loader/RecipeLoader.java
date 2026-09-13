@@ -10,6 +10,7 @@ import com.xyp.gtnotgood.common.recipe.machine.LargeBeeBreederRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCropBreederRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeVoidMinerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEBridgeRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.MEContainerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.NetworkRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SingularityDataHubRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SuperCraftingInputRecipes;
@@ -40,6 +41,7 @@ public class RecipeLoader {
         AssemblyFactoryRecipes.loadRecipes();
         OreProcessingRecipes.loadOreProcessingRecipes();
         MEBridgeRecipes.loadRecipes();
+        MEContainerRecipes.loadRecipes();
         WildcardPatternRecipes.loadRecipes();
         TorcherinoRecipes.loadRecipes();
         SuperCraftingInputRecipes.loadRecipes();
