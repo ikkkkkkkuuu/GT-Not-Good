@@ -1,0 +1,11 @@
+// Opt-in integration run: gradlew -I scripts/virtual-mold-qa.init.gradle runClient --no-configuration-cache
+// The QA mod creates a disposable world and exits after checks and GUI screenshots; it is never packaged.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('runClient').configure {
+        dependsOn root.tasks.named('testClasses')
+        classpath += root.sourceSets.test.output
+        systemProperty 'gtng.mold.qa', 'true'
+        args '--width', '1100', '--height', '740'
+    }
+}
