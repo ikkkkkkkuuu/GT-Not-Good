@@ -227,7 +227,8 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
                 direction,
                 terminal.isCraftingEncodingMode());
             if (replacement == null) continue;
-            replacement.setStackSize(terminal.isCraftingEncodingMode() ? 1 : current.getStackSize());
+            // Processing alternatives carry their own recipe quantity (e.g. water 37 mB, lubricant 9 mB).
+            if (terminal.isCraftingEncodingMode()) replacement.setStackSize(1);
             terminal.replaceRecipeIngredient(current, replacement);
             return true;
         }

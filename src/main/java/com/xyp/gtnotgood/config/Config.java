@@ -38,6 +38,8 @@ public class Config {
     public static boolean enableBrickedBlastFurnaceAutomation = true;
     /** Lets adjacent AE interfaces select a single-block machine's virtual circuit from processing patterns. */
     public static boolean enableAutomaticMachineCircuit = true;
+    /** Restores GregTech's normal cleanroom checks when true; recipes bypass them by default. */
+    public static boolean requireCleanroom = false;
     /** Divides GregTech crafting wear; positive damage is rounded up to at least one. */
     public static float gtToolsCraftingDurability = 100F;
     public static int recipeSpeedMode = 1;
@@ -132,6 +134,12 @@ public class Config {
             CATEGORY_GREGTECH,
             true,
             "ME接口和流体接口自动选择相邻GT单方块机器的虚拟电路。样板不写电路;同配方可续料,换电路须加工结束且输入清空;整批须装得下,歧义则等待。关闭恢复普通投料。");
+
+        requireCleanroom = configuration.getBoolean(
+            "requireCleanroom",
+            CATEGORY_GREGTECH,
+            false,
+            "是否要求配方满足超净间条件。默认关闭,所有使用GT超净间判定的配方免除超净间要求及洁净度损失;开启恢复原版判定。");
 
         wirelessCrossRecipeDurationTicks = configuration.getInt(
             "crossRecipeDurationTicks",

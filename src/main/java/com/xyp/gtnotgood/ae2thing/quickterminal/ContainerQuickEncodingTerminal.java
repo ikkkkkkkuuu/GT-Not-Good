@@ -1075,7 +1075,8 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             IAEStack<?> current = inputInventory.getAEStackInSlot(slot);
             if (!sameIngredientType(current, from)) continue;
             IAEStack<?> replacementStack = to.copy();
-            replacementStack.setStackSize(crafting ? 1 : current.getStackSize());
+            // Keep the selected NEI alternative's quantity in both local prediction and server application.
+            if (crafting) replacementStack.setStackSize(1);
             updateVirtualSlot(appeng.api.storage.StorageName.CRAFTING_INPUT, slot, replacementStack);
             changed = true;
         }

@@ -95,6 +95,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "EOH.EyeOfHarmonyGas",
                 "Accessor.EyeOfHarmonyAccessor",
                 "Gregtech.ModifySomeConfigs",
+                "Gregtech.CleanroomRequirementMixin",
                 "Gregtech.GTMetaTools",
                 "Gregtech.MixinMTEBasicMachineFacing",
                 "Gregtech.BasicMachineVirtualMoldMixin",
