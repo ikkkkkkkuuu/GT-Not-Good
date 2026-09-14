@@ -1073,21 +1073,19 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     protected boolean handleVirtualSlotClick(VirtualMESlot slot, int mouseButton) {
         IAEStack<?> monitorTarget = slot instanceof VirtualMEMonitorableSlot ? slot.getAEStack() : null;
         if (monitorTarget instanceof IAEItemStack item) monitorTarget = Platform.convertStack(item);
-        if (mouseButton == 0 && !isCtrlKeyDown()
-            && !isShiftKeyDown()
+        if (mouseButton == 0 && !isShiftKeyDown()
             && monitorTarget != null
             && monitorTarget.isFluid()
             && mc.thePlayer.inventory.getItemStack() == null) {
-            patternContainer.requestFillOneFluidUnit(new StorageFluidRequest(monitorTarget));
+            patternContainer.requestFillOneFluidUnit(new StorageFluidRequest(monitorTarget, isCtrlKeyDown()));
             suppressExtensionVanillaClick(mouseButton);
             return true;
         }
-        if (mouseButton == 1 && !isCtrlKeyDown()
-            && !isShiftKeyDown()
+        if (mouseButton == 1 && !isShiftKeyDown()
             && monitorTarget != null
             && monitorTarget.isFluid()
             && mc.thePlayer.inventory.getItemStack() == null) {
-            patternContainer.requestStoreOneFluidUnit(new StorageFluidRequest(monitorTarget));
+            patternContainer.requestStoreOneFluidUnit(new StorageFluidRequest(monitorTarget, isCtrlKeyDown()));
             suppressExtensionVanillaClick(mouseButton);
             return true;
         }

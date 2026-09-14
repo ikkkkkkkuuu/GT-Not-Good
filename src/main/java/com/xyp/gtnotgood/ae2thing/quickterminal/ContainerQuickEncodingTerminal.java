@@ -411,30 +411,60 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         EmptyFluidContainer empty = findEmptyFluidContainer(itemMonitor, fluidMonitor, fluid);
         if (empty == null) return;
 
+        IAEFluidStack full = fluid.copy();
+        full.setStackSize(empty.capacity);
+        ObjectLongPair<ItemStack> preview = fluid.getStackType()
+            .fillContainer(empty.item.copy(), full);
+        if (!isCompletelyFilled(preview, empty.capacity)) return;
+        int count = request.isFullStack() ? Math.min(
+            64,
+            Math.min(
+                empty.item.getMaxStackSize(),
+                preview.left()
+                    .getMaxStackSize()))
+            : 1;
+        for (int index = 0; index < count; index++) {
+            if (!fillFluidContainer(itemMonitor, fluidMonitor, fluid, empty)) break;
+        }
+        detectAndSendChanges();
+    }
+
+    /**
+     * Fills one container of the type selected at the start of the server-side batch. Each iteration checks available
+     * fluid, empty containers and player inventory space before extraction, restoring extracted resources on failure.
+     *
+     * @param itemMonitor  network supplying the empty container
+     * @param fluidMonitor network supplying the fluid
+     * @param fluid        selected fluid type
+     * @param empty        fixed container type and capacity for this batch
+     * @return true if one filled container was delivered; false to stop the batch
+     */
+    private boolean fillFluidContainer(IMEMonitor<IAEItemStack> itemMonitor, IMEMonitor<IAEFluidStack> fluidMonitor,
+        IAEFluidStack fluid, EmptyFluidContainer empty) {
         IAEFluidStack fluidRequest = fluid.copy();
         fluidRequest.setStackSize(empty.capacity);
         IAEFluidStack availableFluid = fluidMonitor.extractItems(fluidRequest, Actionable.SIMULATE, getActionSource());
-        if (availableFluid == null || availableFluid.getStackSize() < empty.capacity) return;
+        if (availableFluid == null || availableFluid.getStackSize() < empty.capacity) return false;
 
         IAEItemStack emptyRequest = empty.stack.copy();
         emptyRequest.setStackSize(1);
         IAEItemStack availableEmpty = itemMonitor.extractItems(emptyRequest, Actionable.SIMULATE, getActionSource());
-        if (availableEmpty == null || availableEmpty.getStackSize() < 1) return;
+        if (availableEmpty == null || availableEmpty.getStackSize() < 1) return false;
 
         ObjectLongPair<ItemStack> preview = fluid.getStackType()
             .fillContainer(empty.item.copy(), fluidRequest);
-        if (!isCompletelyFilled(preview, empty.capacity) || !canAcceptFilledContainer(preview.left())) return;
+        if (!isCompletelyFilled(preview, empty.capacity) || !canAcceptFilledContainer(preview.left())) return false;
 
         IAEItemStack extractedEmpty = Platform
             .poweredExtraction(getPowerSource(), itemMonitor, emptyRequest, getActionSource());
-        if (extractedEmpty == null || extractedEmpty.getStackSize() < 1) return;
+        if (extractedEmpty == null || extractedEmpty.getStackSize() < 1) return false;
 
         IAEFluidStack extractedFluid = Platform
             .poweredExtraction(getPowerSource(), fluidMonitor, fluidRequest, getActionSource());
         if (extractedFluid == null || extractedFluid.getStackSize() < empty.capacity) {
             restoreItem(itemMonitor, extractedEmpty);
             restoreFluid(fluidMonitor, extractedFluid);
-            return;
+            return false;
         }
 
         ItemStack extractedItem = extractedEmpty.getItemStack();
@@ -444,11 +474,11 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         if (!isCompletelyFilled(filled, empty.capacity)) {
             restoreItem(itemMonitor, extractedEmpty);
             restoreFluid(fluidMonitor, extractedFluid);
-            return;
+            return false;
         }
 
         giveFilledContainer(filled.left());
-        detectAndSendChanges();
+        return true;
     }
 
     private void storeOneFluidUnit(StorageFluidRequest request) {
@@ -461,6 +491,28 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         FilledFluidContainer filled = findFilledFluidContainer(fluid);
         if (filled == null) return;
 
+        ItemStack source = getPlayerInv().mainInventory[filled.inventorySlot];
+        int count = request.isFullStack() ? Math.min(64, Math.min(source.stackSize, source.getMaxStackSize())) : 1;
+        for (int index = 0; index < count; index++) {
+            if (!storeFluidContainer(itemMonitor, fluidMonitor, filled)) break;
+        }
+        detectAndSendChanges();
+    }
+
+    /**
+     * Drains one container from the inventory slot selected at the start of the server-side batch. The empty container
+     * and fluid both enter the network; rejected insertions are rolled back before the source stack is consumed.
+     *
+     * @param itemMonitor  network receiving the empty container
+     * @param fluidMonitor network receiving the fluid
+     * @param filled       selected inventory slot, container identity and contents
+     * @return true if one container was consumed; false to stop the batch
+     */
+    private boolean storeFluidContainer(IMEMonitor<IAEItemStack> itemMonitor, IMEMonitor<IAEFluidStack> fluidMonitor,
+        FilledFluidContainer filled) {
+        ItemStack current = getPlayerInv().mainInventory[filled.inventorySlot];
+        if (current == null || current.stackSize <= 0 || !Platform.isSameItemPrecise(current, filled.source))
+            return false;
         IAEItemStack emptyRequest = AEItemStack.create(filled.empty.copy());
         IAEFluidStack fluidRequest = filled.fluid.copy();
         if (emptyRequest == null
@@ -472,14 +524,14 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
                     fluidRequest.copy(),
                     getActionSource(),
                     Actionable.SIMULATE))) {
-            return;
+            return false;
         }
 
         IAEItemStack emptyLeftover = itemMonitor
             .injectItems(emptyRequest.copy(), Actionable.MODULATE, getActionSource());
         if (!canInsertAll(emptyLeftover)) {
             rollbackInserted(itemMonitor, emptyRequest, emptyLeftover);
-            return;
+            return false;
         }
 
         IAEFluidStack fluidLeftover = Platform
@@ -487,18 +539,18 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         if (!canInsertAll(fluidLeftover)) {
             rollbackInserted(itemMonitor, emptyRequest, null);
             rollbackInserted(fluidMonitor, fluidRequest, fluidLeftover);
-            return;
+            return false;
         }
 
         ItemStack source = getPlayerInv().mainInventory[filled.inventorySlot];
         if (source == null || !Platform.isSameItemPrecise(source, filled.source)) {
             rollbackInserted(itemMonitor, emptyRequest, null);
             rollbackInserted(fluidMonitor, fluidRequest, null);
-            return;
+            return false;
         }
         if (--source.stackSize <= 0) getPlayerInv().mainInventory[filled.inventorySlot] = null;
         getPlayerInv().markDirty();
-        detectAndSendChanges();
+        return true;
     }
 
     private void openFluidCraftAmount(StorageFluidRequest request) {
