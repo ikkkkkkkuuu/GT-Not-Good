@@ -94,6 +94,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "Gregtech.ModifySomeConfigs",
                 "Gregtech.GTMetaTools",
                 "Gregtech.MixinMTEBasicMachineFacing",
+                "Gregtech.MixinMTEBrickedBlastFurnace",
                 "CutCorners.RecipeSpeedMixin",
                 "CutCorners.FurnaceBackendMixin",
                 "CutCorners.BasicMachineOutputMixin");
