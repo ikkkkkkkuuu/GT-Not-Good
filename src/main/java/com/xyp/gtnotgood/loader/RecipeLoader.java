@@ -4,8 +4,6 @@ import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.CraftingTableRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
-import com.xyp.gtnotgood.common.recipe.machine.AssemblyFactoryRecipes;
-import com.xyp.gtnotgood.common.recipe.machine.DimensionallyTranscendentPlasmaFusionComputerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeBeeBreederRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCropBreederRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeVoidMinerRecipes;
@@ -14,7 +12,6 @@ import com.xyp.gtnotgood.common.recipe.machine.MEContainerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.NetworkRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SingularityDataHubRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SuperCraftingInputRecipes;
-import com.xyp.gtnotgood.common.recipe.machine.TorcherinoRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.WildcardPatternRecipes;
 
 /**
@@ -39,13 +36,10 @@ public class RecipeLoader {
         FurnaceRecipes.loadRecipes();
         SingularityDataHubRecipes.loadRecipes();
         CraftingTableRecipes.loadRecipes();
-        DimensionallyTranscendentPlasmaFusionComputerRecipes.loadRecipes();
-        AssemblyFactoryRecipes.loadRecipes();
         OreProcessingRecipes.loadOreProcessingRecipes();
         MEBridgeRecipes.loadRecipes();
         MEContainerRecipes.loadRecipes();
         WildcardPatternRecipes.loadRecipes();
-        TorcherinoRecipes.loadRecipes();
         SuperCraftingInputRecipes.loadRecipes();
         LargeVoidMinerRecipes.loadRecipes();
         LargeBeeBreederRecipes.loadRecipes();

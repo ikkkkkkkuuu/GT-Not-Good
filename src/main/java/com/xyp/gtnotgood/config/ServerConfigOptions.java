@@ -29,30 +29,6 @@ public final class ServerConfigOptions {
             "crossRecipeParallelLimit",
             "wirelessCrossRecipeParallelLimit",
             true);
-        add(
-            options,
-            false,
-            "Torcherino",
-            "gregTechAccelerationDiscount",
-            "torcherinoGregTechAccelerationDiscount",
-            true);
-        add(options, false, "Torcherino", "maxXRadius", "torcherinoMaxXRadius", false);
-        add(options, false, "Torcherino", "maxYRadius", "torcherinoMaxYRadius", false);
-        add(options, false, "Torcherino", "maxZRadius", "torcherinoMaxZRadius", false);
-        add(options, false, "Torcherino", "maxSpeedLevel", "torcherinoMaxSpeedLevel", false);
-        add(options, false, "Torcherino", "enableTickBudget", "torcherinoEnableTickBudget", true);
-        add(options, false, "Torcherino", "tickBudgetNanos", "torcherinoTickBudgetNanos", true);
-        add(options, false, "Torcherino", "enableStackingAcceleration", "torcherinoEnableStackingAcceleration", true);
-        add(options, false, "Torcherino", "enableOverlapDetection", "torcherinoEnableOverlapDetection", true);
-        add(options, false, "Torcherino", "enableWirelessTorcherino", "enableWirelessTorcherino", false);
-        add(options, false, "Torcherino", "wirelessTorcherinoRadius", "wirelessTorcherinoRadius", false);
-        add(
-            options,
-            false,
-            "Torcherino",
-            "wirelessTorcherinoMaxBoundMachines",
-            "wirelessTorcherinoMaxBoundMachines",
-            false);
         add(options, false, "CutCorners", "mode", "recipeSpeedMode", false);
         add(options, false, "CutCorners", "fixedDuration", "recipeSpeedFixedDuration", false);
         add(options, false, "CutCorners", "multiplier", "recipeSpeedMultiplier", false);

@@ -13,7 +13,6 @@ import com.xyp.gtnotgood.common.packet.NetWorkHandler;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.config.MainConfig;
 import com.xyp.gtnotgood.loader.BlockLoader;
-import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
 import com.xyp.gtnotgood.loader.ItemsLoader;
 import com.xyp.gtnotgood.loader.MachineLoader;
 import com.xyp.gtnotgood.loader.RecipeLoader;
@@ -80,7 +79,6 @@ public class CommonProxy {
             .interfaceTerminal()
             .register(SuperMTEHatchCraftingInputME.class);
         AE2Thing.postInit(event);
-        GTNGRecipeMaps.populateAssemblyFactoryAssemblyLineRecipes();
     }
 
     public void complete(FMLLoadCompleteEvent event) {

@@ -4,10 +4,8 @@ import net.minecraftforge.common.MinecraftForge;
 
 import com.xyp.gtnotgood.client.mebridge.MEWirelessNodeRenderer;
 import com.xyp.gtnotgood.client.network.NetworkBlockRenderer;
-import com.xyp.gtnotgood.client.torcherino.WirelessTorcherinoBeamRenderer;
 import com.xyp.gtnotgood.common.gui.BlockIcons;
 import com.xyp.gtnotgood.common.network.BlockNetwork;
-import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.utils.event.SubscribeEventClientUtils;
 import com.xyp.gtnotgood.utils.event.ToolBeltClientEvents;
 import com.xyp.gtnotgood.utils.keybind.KeyBindManager;
@@ -72,9 +70,6 @@ public class ClientProxy extends CommonProxy {
             .register(clientUtils);
         MinecraftForge.EVENT_BUS.register(new MEWirelessNodeRenderer());
         MinecraftForge.EVENT_BUS.register(new com.xyp.gtnotgood.client.nei.FactoryRecipeImport());
-        if (Config.enableWirelessTorcherino) {
-            MinecraftForge.EVENT_BUS.register(new WirelessTorcherinoBeamRenderer());
-        }
     }
 
     /**

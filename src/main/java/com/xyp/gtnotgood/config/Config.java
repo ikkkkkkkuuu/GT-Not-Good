@@ -18,7 +18,6 @@ public class Config {
     private static final String CATEGORY_GREGTECH = "GregTech";
     private static final String CATEGORY_THAUMCRAFT = "Thaumcraft";
     private static final String CATEGORY_TOOL_BELT = "Tool_Belt";
-    private static final String CATEGORY_TORCHERINO = "Torcherino";
     private static final String CATEGORY_WIRELESS_MULTIBLOCK = "Wireless_Multiblock";
 
     private static final File DEFAULT_CONFIG_DIRECTORY = new File(
@@ -70,30 +69,6 @@ public class Config {
     public static int wirelessCrossRecipeDurationTicks = 128;
     /** Maximum number of recipe matches processed in one wireless cross-recipe batch. */
     public static int wirelessCrossRecipeParallelLimit = 200;
-    /** Multiplier applied to Torcherino extra ticks when the target is a safely accelerated GregTech machine. */
-    public static float torcherinoGregTechAccelerationDiscount = 0.8F;
-    /** Maximum configurable X radius for ordinary area Torcherinos. */
-    public static int torcherinoMaxXRadius = 4;
-    /** Maximum configurable Y radius for ordinary area Torcherinos. */
-    public static int torcherinoMaxYRadius = 1;
-    /** Maximum configurable Z radius for ordinary area Torcherinos. */
-    public static int torcherinoMaxZRadius = 4;
-    /** Maximum GUI speed level before the block tier multiplier is applied. */
-    public static int torcherinoMaxSpeedLevel = 4;
-    /** Enables a per-position nanosecond budget while a Torcherino applies acceleration. */
-    public static boolean torcherinoEnableTickBudget = true;
-    /** Nanosecond budget used when Torcherino tick budgeting is enabled. */
-    public static long torcherinoTickBudgetNanos = 1000000L;
-    /** Allows multiple Torcherinos to accelerate the same position in the same world tick when enabled. */
-    public static boolean torcherinoEnableStackingAcceleration = false;
-    /** Prevents overlapping Torcherinos from accelerating a position more than once per world tick. */
-    public static boolean torcherinoEnableOverlapDetection = true;
-    /** Registers wireless Torcherinos and their Data Stick binding support when enabled. */
-    public static boolean enableWirelessTorcherino = true;
-    /** X/Z binding radius for wireless Torcherinos; the Y axis covers world height. */
-    public static int wirelessTorcherinoRadius = 8;
-    /** Maximum number of machines bound to one wireless Torcherino. */
-    public static int wirelessTorcherinoMaxBoundMachines = 64;
 
     // region VeinMiningPickaxe 配置
     public static class VeinMinerPickaxe {
@@ -140,7 +115,6 @@ public class Config {
         configuration.addCustomCategoryComment(CATEGORY_GREGTECH, "GregTech 工具与客户端显示配置");
         configuration.addCustomCategoryComment(CATEGORY_THAUMCRAFT, "Thaumcraft 扭曲与研究配置");
         configuration.addCustomCategoryComment(CATEGORY_TOOL_BELT, "工具腰带的配置设置");
-        configuration.addCustomCategoryComment(CATEGORY_TORCHERINO, "加速火把与无线加速火把配置");
         configuration.addCustomCategoryComment(CATEGORY_WIRELESS_MULTIBLOCK, "无线多方块跨配方并行配置");
 
         wirelessCrossRecipeDurationTicks = configuration.getInt(
@@ -158,79 +132,6 @@ public class Config {
             1,
             Integer.MAX_VALUE,
             "无线跨配方每批最多处理的配方数量。修改后重启游戏生效。");
-
-        torcherinoGregTechAccelerationDiscount = configuration.getFloat(
-            "gregTechAccelerationDiscount",
-            CATEGORY_TORCHERINO,
-            torcherinoGregTechAccelerationDiscount,
-            0.0F,
-            1.0F,
-            "加速 GregTech 机器进度时的折扣系数。0.8 表示请求 100 个额外 tick 时实际推进 80 tick。");
-
-        torcherinoMaxXRadius = configuration
-            .getInt("maxXRadius", CATEGORY_TORCHERINO, torcherinoMaxXRadius, 0, 16, "普通加速火把 X 轴最大半径。4 表示最大宽度 9 格。");
-
-        torcherinoMaxYRadius = configuration
-            .getInt("maxYRadius", CATEGORY_TORCHERINO, torcherinoMaxYRadius, 0, 8, "普通加速火把 Y 轴最大半径。1 表示最大高度 3 格。");
-
-        torcherinoMaxZRadius = configuration
-            .getInt("maxZRadius", CATEGORY_TORCHERINO, torcherinoMaxZRadius, 0, 16, "普通加速火把 Z 轴最大半径。4 表示最大长度 9 格。");
-
-        torcherinoMaxSpeedLevel = configuration.getInt(
-            "maxSpeedLevel",
-            CATEGORY_TORCHERINO,
-            torcherinoMaxSpeedLevel,
-            0,
-            32,
-            "火把界面的最大速度档位。实际额外 tick = 档位 x 方块等级倍率。");
-
-        torcherinoEnableTickBudget = configuration.getBoolean(
-            "enableTickBudget",
-            CATEGORY_TORCHERINO,
-            torcherinoEnableTickBudget,
-            "开启后,每个目标位置的加速会受到纳秒预算限制,避免极端设置卡死服务器。");
-
-        torcherinoTickBudgetNanos = configuration.getInt(
-            "tickBudgetNanos",
-            CATEGORY_TORCHERINO,
-            (int) torcherinoTickBudgetNanos,
-            100000,
-            100000000,
-            "加速单个目标位置时允许消耗的纳秒数。默认 1000000 = 1ms。");
-
-        torcherinoEnableStackingAcceleration = configuration.getBoolean(
-            "enableStackingAcceleration",
-            CATEGORY_TORCHERINO,
-            torcherinoEnableStackingAcceleration,
-            "开启后,多个火把可在同一 tick 叠加加速同一个目标。关闭时通常只保留覆盖目标的最高速度。");
-
-        torcherinoEnableOverlapDetection = configuration.getBoolean(
-            "enableOverlapDetection",
-            CATEGORY_TORCHERINO,
-            torcherinoEnableOverlapDetection,
-            "开启后,当叠加加速关闭时,同一世界 tick 内已被更高或相同速度加速的位置不会再次被低速火把处理。");
-
-        enableWirelessTorcherino = configuration.getBoolean(
-            "enableWirelessTorcherino",
-            CATEGORY_TORCHERINO,
-            enableWirelessTorcherino,
-            "开启后注册无线加速火把及其 GT 数据棒绑定功能。关闭后只保留普通加速火把。");
-
-        wirelessTorcherinoRadius = configuration.getInt(
-            "wirelessTorcherinoRadius",
-            CATEGORY_TORCHERINO,
-            wirelessTorcherinoRadius,
-            0,
-            16,
-            "无线加速火把 X/Z 绑定半径。Y 轴固定覆盖世界高度。8 表示 17x世界高度x17。");
-
-        wirelessTorcherinoMaxBoundMachines = configuration.getInt(
-            "wirelessTorcherinoMaxBoundMachines",
-            CATEGORY_TORCHERINO,
-            wirelessTorcherinoMaxBoundMachines,
-            1,
-            256,
-            "单个无线加速火把最多可绑定的机器数量。");
 
         recipeSpeedMode = configuration
             .getInt("mode", CATEGORY_CUT_CORNERS, recipeSpeedMode, 0, 2, "配方时长修改模式。0=不修改; 1=固定时长; 2=倍率缩短。");

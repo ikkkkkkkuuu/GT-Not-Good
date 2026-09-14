@@ -10,8 +10,6 @@ import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputSlave;
 import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputBus;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputHatch;
-import com.xyp.gtnotgood.common.machines.multiblock.AssemblyFactory;
-import com.xyp.gtnotgood.common.machines.multiblock.DimensionallyTranscendentPlasmaFusionComputer;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeBeeBreeder;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeCropBreeder;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeOreProcessor;
@@ -84,26 +82,6 @@ public class MachineLoader {
                 "LargeCropBreeder",
                 StatCollector.translateToLocal("NameLargeCropBreeder")));
         addItemTooltip(GTNGItemList.LargeCropBreeder.get(1), AnimatedText.GT_NOT_GOOD);
-
-        // #tr machine.gtnotgood.dtpf.name
-        // # Dimensionally Transcendent Plasma Fusion Computer
-        // # zh_CN 超维度等离子聚变堆
-        GTNGItemList.DimensionallyTranscendentPlasmaFusionComputer.set(
-            new DimensionallyTranscendentPlasmaFusionComputer(
-                GTNGMachineID.DIMENSIONALLY_TRANSCENDENT_PLASMA_FUSION_COMPUTER.ID,
-                "DimensionallyTranscendentPlasmaFusionComputer",
-                StatCollector.translateToLocal("machine.gtnotgood.dtpf.name")));
-        addItemTooltip(GTNGItemList.DimensionallyTranscendentPlasmaFusionComputer.get(1), AnimatedText.GT_NOT_GOOD);
-
-        // #tr machine.gtnotgood.assembly_factory.name
-        // # Assembly Factory
-        // # zh_CN 全能原初装配矩阵
-        GTNGItemList.AssemblyFactory.set(
-            new AssemblyFactory(
-                GTNGMachineID.ASSEMBLY_FACTORY.ID,
-                "AssemblyFactory",
-                StatCollector.translateToLocal("machine.gtnotgood.assembly_factory.name")));
-        addItemTooltip(GTNGItemList.AssemblyFactory.get(1), AnimatedText.GT_NOT_GOOD);
 
         // #tr NameMaxCapacityMEOutputBus
         // # Max Capacity ME Output Bus
