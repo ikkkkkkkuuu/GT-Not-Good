@@ -16,12 +16,14 @@ import appeng.container.implementations.ContainerPatternTermEx;
 import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.util.Platform;
 
+/** Applies NEI ingredient cycling to native pattern editor inventories on the server. */
 public class PatternTerminalMouseWheelLoader implements Runnable {
 
     /**
      * 把滚轮换料应用到样板编辑槽：把持有 {@code in} 的槽整体替换成 {@code out}。
      * {@code in}/{@code out} 可能是物品（{@link ItemStack}）也可能是流体（{@link FluidStack}，
      * 由客户端流体切换分支下发）。流体分支按流体类型比对槽内的 AE2FC 液滴，命中后换成目标流体液滴。
+     * 替换时使用 NEI 目标选项自己的数量和 NBT；不同切割流体的配方用量并不相同，不能沿用原槽数量。
      */
     private static void applySwap(IInventory inv, OrderStack<?> inOrder, OrderStack<?> outOrder) {
         Object inStack = inOrder.getStack();
@@ -31,7 +33,7 @@ public class PatternTerminalMouseWheelLoader implements Runnable {
                 FluidStack slotFluid = FluidDropCompat.getFluidStack(inv.getStackInSlot(i));
                 if (slotFluid != null && slotFluid.getFluid() == inFluid.getFluid()) {
                     // [液滴分类] 可迁原生：样板内容装载（滚轮换料切等价流体），不参与合成计算
-                    FluidStack replacement = new FluidStack(outFluid.getFluid(), slotFluid.amount);
+                    FluidStack replacement = outFluid.copy();
                     inv.setInventorySlotContents(i, FluidDropCompat.newStack(replacement));
                 }
             }

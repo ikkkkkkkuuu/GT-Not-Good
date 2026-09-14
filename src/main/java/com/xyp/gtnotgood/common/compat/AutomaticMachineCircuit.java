@@ -1,10 +1,13 @@
 package com.xyp.gtnotgood.common.compat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.minecraft.inventory.InventoryCrafting;
@@ -15,6 +18,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
+import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.config.Config;
 
 import appeng.api.networking.crafting.ICraftingPatternDetails;
@@ -33,7 +37,7 @@ import gregtech.common.items.ItemIntegratedCircuit;
 /**
  * Selects a virtual circuit from a complete AE processing pattern and accepts its resources atomically.
  * All calls run synchronously on the server. Repeated batches of one recipe can refill a working machine;
- * changing circuits requires an idle machine with empty inputs. Recipe definitions are assumed
+ * changing circuits or molds requires an idle machine with empty inputs. Recipe definitions are assumed
  * stable after pack startup, like the encoded pattern definitions cached by AE.
  */
 public final class AutomaticMachineCircuit {
@@ -43,6 +47,9 @@ public final class AutomaticMachineCircuit {
 
     /** Successful deliveries only; weak machine keys do not keep unloaded tiles alive. */
     private static final Map<MTEBasicMachine, Match> LAST_DELIVERIES = new WeakHashMap<>();
+
+    /** At most eight distinct diagnostic reports per loaded tile; ordinary busy/capacity retries remain silent. */
+    private static final Map<BaseMetaTileEntity, Set<String>> REPORTED_REJECTIONS = new WeakHashMap<>();
 
     private AutomaticMachineCircuit() {}
 
@@ -64,7 +71,7 @@ public final class AutomaticMachineCircuit {
      * A failed push leaves the circuit, input slots, tank and CPU table untouched. AE retries the complete batch.
      *
      * @param tile    receiving machine
-     * @param pattern full processing pattern; circuits must be omitted from its consumable inputs
+     * @param pattern processing pattern; virtual circuits and molds must be omitted from consumable inputs
      * @param table   actual resources supplied by AE, including native fluid stacks
      * @param side    receiving machine face
      * @return true only when every supplied resource has been inserted
@@ -119,16 +126,25 @@ public final class AutomaticMachineCircuit {
             } else return false;
         }
         Match selected = null;
-        for (Match candidate : matches(machine.getRecipeMap(), pattern)) {
+        List<Match> candidates = matches(machine.getRecipeMap(), pattern);
+        for (Match candidate : candidates) {
             if (candidate.recipe.mEUt > GTValues.V[machine.mTier] || matchingInputs(candidate, actual) == 0) continue;
-            if (selected != null && !sameCircuit(selected.circuit, candidate.circuit)) return false;
+            if (selected != null
+                && (!sameCircuit(selected.circuit, candidate.circuit) || !sameCircuit(selected.mold, candidate.mold)))
+                return reportRejection(tile, pattern, aeTable, "ambiguous-circuit-or-mold", candidates);
             selected = candidate;
         }
-        if (selected == null) return false;
+        if (selected == null) return reportRejection(
+            tile,
+            pattern,
+            aeTable,
+            candidates.isEmpty() ? "no-pattern-match" : "voltage-or-delivered-inputs",
+            candidates);
         if (!CircuitRefillPolicy.canAccept(
             machine.mMaxProgresstime > 0,
             !buffered.isEmpty(),
-            sameCircuit(machine.getStackInSlot(machine.getCircuitSlot()), selected.circuit),
+            sameCircuit(machine.getStackInSlot(machine.getCircuitSlot()), selected.circuit)
+                && sameCircuit(VirtualMachineMolds.get(machine), selected.mold),
             sameRecipe(LAST_DELIVERIES.get(machine), selected),
             buffered.isEmpty() || matchingInputs(selected, buffered) > 0)) return false;
 
@@ -147,13 +163,17 @@ public final class AutomaticMachineCircuit {
         ItemStack[] original = machine.mInventory.clone();
         ItemStack[] staged = machine.mInventory;
         ItemStack[] committed;
+        ItemStack originalMold = VirtualMachineMolds.get(machine);
         staged[machine.getCircuitSlot()] = selected.circuit == null ? null : selected.circuit.copy();
+        VirtualMachineMolds.set(machine, selected.mold);
         try {
             if (fluid != null && tile.fill(side, fluid, false) != fluid.amount) return false;
             for (ItemStack item : items) {
                 int remaining = item.stackSize;
+                boolean allowedSlot = false;
                 for (int slot = first; slot < first + machine.mInputSlotCount && remaining > 0; slot++) {
                     if (!tile.canInsertItem(slot, item, side.ordinal())) continue;
+                    allowedSlot = true;
                     ItemStack existing = staged[slot];
                     if (existing != null && existing.stackSize > 0 && !sameItem(existing, item)) continue;
                     int present = existing == null ? 0 : Math.max(0, existing.stackSize);
@@ -165,7 +185,11 @@ public final class AutomaticMachineCircuit {
                     staged[slot] = copy;
                     remaining -= moved;
                 }
-                if (remaining != 0) return false;
+                if (remaining != 0) {
+                    if (!allowedSlot && buffered.isEmpty() && machine.mMaxProgresstime <= 0)
+                        return reportRejection(tile, pattern, aeTable, "empty-machine-insertion-filter", candidates);
+                    return false;
+                }
             }
             ItemStack[] recipeInputs = new ItemStack[machine.mInputSlotCount + 1];
             System.arraycopy(staged, first, recipeInputs, 0, machine.mInputSlotCount);
@@ -174,15 +198,21 @@ public final class AutomaticMachineCircuit {
             // produce different recipe objects with the same inputs, outputs and configuration circuit.
             GTRecipe runnable = machine.getRecipeMap()
                 .findRecipeQuery()
-                .items(recipeInputs)
+                .items(VirtualMachineMolds.append(recipeInputs, selected.mold))
                 .fluids(combinedFluid)
                 .specialSlot(machine.getStackInSlot(machine.getSpecialSlotIndex()))
                 .voltage(GTValues.V[machine.mTier])
                 .find();
-            if (!sameRecipe(selected, describe(runnable))) return false;
+            if (!sameRecipe(selected, describe(runnable))) return reportRejection(
+                tile,
+                pattern,
+                aeTable,
+                "final-lookup-mismatch: " + recipeDescription(runnable),
+                candidates);
             committed = staged.clone();
         } finally {
             System.arraycopy(original, 0, machine.mInventory, 0, original.length);
+            VirtualMachineMolds.set(machine, originalMold);
         }
         // There is no intervening tick between simulation and commit. Use the normal sided fluid handler;
         // guard against an inconsistent handler by restoring its input tank if it accepts only part of the batch.
@@ -190,21 +220,106 @@ public final class AutomaticMachineCircuit {
             ItemStack oldCircuit = machine.mInventory[machine.getCircuitSlot()];
             FluidStack originalFluid = oldFluid == null ? null : oldFluid.copy();
             machine.mInventory[machine.getCircuitSlot()] = committed[machine.getCircuitSlot()];
+            VirtualMachineMolds.set(machine, selected.mold);
             boolean filled = false;
             try {
                 filled = tile.fill(side, fluid, true) == fluid.amount;
                 if (!filled) return false;
             } finally {
                 machine.mInventory[machine.getCircuitSlot()] = oldCircuit;
+                VirtualMachineMolds.set(machine, originalMold);
                 if (!filled) machine.setFillableStack(originalFluid);
             }
         }
+        VirtualMachineMolds.set(machine, selected.mold);
         tile.setInventorySlotContents(machine.getCircuitSlot(), committed[machine.getCircuitSlot()]);
         for (int slot = first; slot < first + machine.mInputSlotCount; slot++) {
             tile.setInventorySlotContents(slot, committed[slot]);
         }
         LAST_DELIVERIES.put(machine, selected);
         return true;
+    }
+
+    /**
+     * Records actionable matching failures without changing reception decisions or repeatedly logging AE retries.
+     * Reports include raw stack metadata/NBT so material unification and wildcard expansion can be distinguished.
+     * The bounded state holds no world references and is released when the receiving tile unloads.
+     *
+     * @return false, allowing use at an existing rejection point
+     */
+    private static boolean reportRejection(BaseMetaTileEntity tile, ICraftingPatternDetails pattern,
+        MEInventoryCrafting table, String reason, List<Match> candidates) {
+        Set<String> reported = REPORTED_REJECTIONS.computeIfAbsent(tile, ignored -> new HashSet<>());
+        if (reported.size() >= 8 || !reported.add(pattern.hashCode() + ":" + reason)) return false;
+        MTEBasicMachine machine = (MTEBasicMachine) tile.getMetaTileEntity();
+        List<IAEStack<?>> delivered = new ArrayList<>();
+        for (int slot = 0; slot < table.getSizeInventory(); slot++) {
+            IAEStack<?> stack = table.getAEStackInSlot(slot);
+            if (stack != null) delivered.add(stack);
+        }
+        GTNotGood.LOG.info(
+            "[AutoCircuit] rejected={} dimension={} pos={},{},{} tier={} pattern={} inputs={} outputs={} delivered={}",
+            reason,
+            tile.getWorldObj().provider.dimensionId,
+            tile.xCoord,
+            tile.yCoord,
+            tile.zCoord,
+            machine.mTier,
+            pattern.getPattern()
+                .writeToNBT(new NBTTagCompound()),
+            Arrays.toString(pattern.getAEInputs()),
+            Arrays.toString(pattern.getAEOutputs()),
+            delivered);
+        int shown = 0;
+        for (GTRecipe recipe : machine.getRecipeMap()
+            .getAllRecipes()) {
+            boolean related = false;
+            for (IAEStack<?> output : pattern.getAEOutputs()) {
+                if (!(output instanceof IAEItemStack item)) continue;
+                for (ItemStack recipeOutput : recipe.mOutputs) {
+                    if (recipeOutput != null
+                        && new Ingredient(recipeOutput, true).equals(new Ingredient(item.getItemStack(), true)))
+                        related = true;
+                }
+            }
+            if (!related) continue;
+            GTNotGood.LOG.info("[AutoCircuit] output-related recipe: {}", recipeDescription(recipe));
+            if (++shown >= 8) break;
+        }
+        GTNotGood.LOG.info("[AutoCircuit] cached candidates={} (at most 8 related recipes shown)", candidates.size());
+        return false;
+    }
+
+    /** Serializes registered stacks, preserving quantities, metadata and tags for runtime recipe diagnosis. */
+    private static String recipeDescription(GTRecipe recipe) {
+        if (recipe == null) return "none";
+        List<NBTTagCompound> inputs = new ArrayList<>();
+        List<NBTTagCompound> outputs = new ArrayList<>();
+        int[] outputChances = new int[recipe.mOutputs.length];
+        for (int i = 0; i < outputChances.length; i++) outputChances[i] = recipe.getOutputChance(i);
+        for (ItemStack item : recipe.mInputs) if (item != null) inputs.add(item.writeToNBT(new NBTTagCompound()));
+        for (ItemStack item : recipe.mOutputs) if (item != null) outputs.add(item.writeToNBT(new NBTTagCompound()));
+        return "inputs=" + inputs
+            + " outputs="
+            + outputs
+            + " fluidInputs="
+            + Arrays.toString(recipe.mFluidInputs)
+            + " fluidOutputs="
+            + Arrays.toString(recipe.mFluidOutputs)
+            + " EUt="
+            + recipe.mEUt
+            + " enabled="
+            + recipe.mEnabled
+            + " fake="
+            + recipe.mFakeRecipe
+            + " special="
+            + recipe.mSpecialItems
+            + " inputChances="
+            + Arrays.toString(recipe.mInputChances)
+            + " fluidInputChances="
+            + Arrays.toString(recipe.mFluidInputChances)
+            + " outputChances="
+            + Arrays.toString(outputChances);
     }
 
     /** Caches full recipe comparisons; repeated busy retries do not scan the recipe registry. */
@@ -232,21 +347,22 @@ public final class AutomaticMachineCircuit {
             for (GTRecipe recipe : map.getAllRecipes()) {
                 Match match = describe(recipe);
                 if (match == null) continue;
-                long operations = CircuitPatternQuantities.batches(match.outputs, outputs);
+                long operations = CircuitPatternQuantities.requestedOutputBatches(match.outputs, outputs);
                 if (operations <= 0
                     || CircuitRecipeInputs.quantityBatches(recipe, encodedItems, encodedFluids) != operations) continue;
                 // Retain registered variants with the same yield and quantity ratio. The CPU may supply an
                 // allowed substitute, but both the encoded pattern and actual delivery must be valid GT inputs.
                 result.add(match);
-                if (CircuitRecipeInputs.batches(recipe, match.circuit, encodedItems, encodedFluids) == operations)
-                    validEncodedRecipe = true;
+                if (CircuitRecipeInputs
+                    .batches(recipe, match.circuit, VirtualMachineMolds.append(encodedItems, match.mold), encodedFluids)
+                    == operations) validEncodedRecipe = true;
             }
             if (!validEncodedRecipe) result.clear();
             return result;
         });
     }
 
-    /** Excludes catalysts other than a configuration circuit and probabilistic outputs from automatic matching. */
+    /** Accepts one circuit and one catalog mold as zero-size catalysts; excludes unsupported/probabilistic recipes. */
     private static Match describe(GTRecipe recipe) {
         if (recipe == null || !recipe.mEnabled
             || recipe.mFakeRecipe
@@ -258,6 +374,9 @@ public final class AutomaticMachineCircuit {
             if (item.getItem() instanceof ItemIntegratedCircuit && item.stackSize == 0) {
                 if (match.circuit != null && !sameCircuit(match.circuit, item)) return null;
                 match.circuit = item.copy();
+            } else if (item.stackSize == 0 && VirtualMachineMolds.indexOf(item) >= 0) {
+                if (match.mold != null && !sameCircuit(match.mold, item)) return null;
+                match.mold = item.copy();
             } else {
                 if (item.stackSize <= 0) return null;
                 add(match.inputs, new Ingredient(item, false), item.stackSize);
@@ -307,16 +426,18 @@ public final class AutomaticMachineCircuit {
     /**
      * Compares recipe contents for both GT lookup validation and continuous refilling. Object identity, registration
      * order, duration and EU/t are not recipe identity here; GT's lookup still enforces the machine's voltage limit.
-     * Non-consumed catalysts, special-slot recipes and probabilistic outputs remain excluded by {@link #describe}.
+     * Unsupported catalysts, special-slot recipes and probabilistic outputs remain excluded by {@link #describe}.
      *
      * @param left  previously selected or delivered recipe; null means there is no known match
      * @param right recipe being checked against it
-     * @return true only for identical outputs and circuits with mutually accepted input definitions
+     * @return true only for identical outputs, circuits and molds with mutually accepted input definitions
      */
     private static boolean sameRecipe(Match left, Match right) {
         return left != null && right != null
-            && CircuitPatternQuantities
-                .sameRecipe(left.outputs, right.outputs, sameCircuit(left.circuit, right.circuit))
+            && CircuitPatternQuantities.sameRecipe(
+                left.outputs,
+                right.outputs,
+                sameCircuit(left.circuit, right.circuit) && sameCircuit(left.mold, right.mold))
             && matchingInputs(left, right.inputs) == 1
             && matchingInputs(right, left.inputs) == 1;
     }
@@ -326,7 +447,8 @@ public final class AutomaticMachineCircuit {
         ItemStack[] items = itemInputs(inputs);
         FluidStack[] fluids = fluidInputs(inputs);
         return items == null || fluids == null ? 0
-            : CircuitRecipeInputs.batches(match.recipe, match.circuit, items, fluids);
+            : CircuitRecipeInputs
+                .batches(match.recipe, match.circuit, VirtualMachineMolds.append(items, match.mold), fluids);
     }
 
     private static ItemStack[] itemInputs(Map<Ingredient, Long> inputs) {
@@ -360,13 +482,14 @@ public final class AutomaticMachineCircuit {
             && ItemStack.areItemStackTagsEqual(a, b);
     }
 
-    /** A recipe's consumed quantities and its optional non-consumed configuration circuit. */
+    /** A recipe's consumed quantities and optional non-consumed circuit and mold configuration. */
     private static final class Match {
 
         private final GTRecipe recipe;
         private final Map<Ingredient, Long> inputs = new HashMap<>();
         private final Map<Ingredient, Long> outputs = new HashMap<>();
         private ItemStack circuit;
+        private ItemStack mold;
 
         private Match(GTRecipe recipe) {
             this.recipe = recipe;

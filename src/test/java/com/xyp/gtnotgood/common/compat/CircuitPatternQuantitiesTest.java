@@ -71,12 +71,53 @@ public class CircuitPatternQuantitiesTest {
     }
 
     @Test
-    public void missingByproductsAndExtraIngredientsDoNotMatch() {
+    public void fullRecipeIdentityStillRequiresByproductsAndAllIngredients() {
         Map<String, Long> recipe = quantities("in:ore", 1, "out:metal", 1, "out:slag", 1);
         assertEquals(0, CircuitPatternQuantities.batches(recipe, quantities("in:ore", 1, "out:metal", 1)));
         Map<String, Long> extra = new HashMap<>(recipe);
         extra.put("in:circuit", 1L);
         assertEquals(0, CircuitPatternQuantities.batches(recipe, extra));
+    }
+
+    @Test
+    public void waferPatternMayOmitSiliconDustWithoutChangingFullRecipeIdentity() {
+        Map<String, Long> recipe = quantities("wafer", 16, "silicon_dust", 4);
+        Map<String, Long> pattern = quantities("wafer", 16);
+        assertEquals(1, CircuitPatternQuantities.requestedOutputBatches(recipe, pattern));
+        assertEquals(3, CircuitPatternQuantities.requestedOutputBatches(recipe, quantities("wafer", 48)));
+        assertEquals(1, CircuitPatternQuantities.requestedOutputBatches(recipe, recipe));
+        assertFalse(CircuitPatternQuantities.sameRecipe(recipe, pattern, true));
+        assertFalse(CircuitPatternQuantities.sameRecipe(recipe, quantities("wafer", 16, "silicon_dust", 8), true));
+    }
+
+    @Test
+    public void omittedByproductsDoNotAllowIncorrectAdvertisedYields() {
+        Map<String, Long> recipe = quantities("wafer", 16, "silicon_dust", 4);
+        assertEquals(0, CircuitPatternQuantities.requestedOutputBatches(recipe, quantities("wafer", 15)));
+        assertEquals(0, CircuitPatternQuantities.requestedOutputBatches(recipe, quantities("wafer", 0)));
+        assertEquals(0, CircuitPatternQuantities.requestedOutputBatches(recipe, quantities("wrong_wafer", 16)));
+        assertEquals(0, CircuitPatternQuantities.requestedOutputBatches(recipe, new HashMap<>()));
+        assertEquals(
+            0,
+            CircuitPatternQuantities.requestedOutputBatches(recipe, quantities("wafer", 32, "silicon_dust", 4)));
+        // Input validation must reject a two-operation output claim backed by only one operation of inputs.
+        long outputBatches = CircuitPatternQuantities.requestedOutputBatches(recipe, quantities("wafer", 32));
+        long inputBatches = CircuitPatternQuantities
+            .batches(quantities("ingot", 1, "lubricant", 9), quantities("ingot", 1, "lubricant", 9));
+        assertFalse(outputBatches == inputBatches);
+    }
+
+    @Test
+    public void fluidByproductsMayBeOmittedButAdvertisedFluidsMustScaleWithItems() {
+        Map<String, Long> recipe = quantities("item:product", 2, "fluid:steam", 1000, "fluid:waste", 500);
+        assertEquals(
+            2,
+            CircuitPatternQuantities
+                .requestedOutputBatches(recipe, quantities("item:product", 4, "fluid:steam", 2000)));
+        assertEquals(
+            0,
+            CircuitPatternQuantities
+                .requestedOutputBatches(recipe, quantities("item:product", 4, "fluid:steam", 1000)));
     }
 
     @Test

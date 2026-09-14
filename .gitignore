@@ -57,4 +57,4 @@ layout.json
 !/src/test/java/com/xyp/gtnotgood/common/compat/CircuitPatternQuantitiesTest.java
 !/src/test/java/com/xyp/gtnotgood/common/compat/CircuitRefillPolicyTest.java
 !/src/test/java/com/xyp/gtnotgood/common/compat/CircuitRecipeInputsTest.java
-/src/test/
+!/src/test/java/com/xyp/gtnotgood/common/compat/VirtualMoldClientChecks.java

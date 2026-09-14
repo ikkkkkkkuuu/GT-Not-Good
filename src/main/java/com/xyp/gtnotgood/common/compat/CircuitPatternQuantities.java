@@ -31,10 +31,26 @@ public final class CircuitPatternQuantities {
     public static <K> long batches(Map<K, Long> recipe, Map<K, Long> pattern) {
         if (recipe.isEmpty() || !recipe.keySet()
             .equals(pattern.keySet())) return 0;
+        return requestedOutputBatches(recipe, pattern);
+    }
+
+    /**
+     * Matches only outputs advertised to AE, allowing entire unwanted byproducts to be omitted from the pattern.
+     * Every advertised output must still have the exact yield for the same positive integer operation count.
+     * Callers must separately verify all consumed inputs against that count. Full recipe identity comparisons
+     * must continue using {@link #batches}, so omitted outputs cannot hide a different runnable recipe.
+     *
+     * @param recipe  complete deterministic outputs for one machine operation
+     * @param pattern nonempty subset of outputs advertised by the processing pattern
+     * @return operation count, or zero for unknown, fractional or inconsistent advertised outputs
+     */
+    public static <K> long requestedOutputBatches(Map<K, Long> recipe, Map<K, Long> pattern) {
+        if (pattern.isEmpty()) return 0;
         long batches = 0;
-        for (Map.Entry<K, Long> entry : recipe.entrySet()) {
-            long unit = entry.getValue();
-            long total = pattern.get(entry.getKey());
+        for (Map.Entry<K, Long> entry : pattern.entrySet()) {
+            Long unit = recipe.get(entry.getKey());
+            if (unit == null) return 0;
+            long total = entry.getValue();
             if (unit <= 0 || total <= 0 || total % unit != 0) return 0;
             long count = total / unit;
             if (batches != 0 && count != batches) return 0;
