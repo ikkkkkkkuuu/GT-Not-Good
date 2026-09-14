@@ -195,7 +195,10 @@ public final class BlockLoader {
             ModList.GTNotGood.getResourcePath("flux_point"));
         GTNGItemList.FluxPlug.set(new ItemStack(fluxPlug));
         GTNGItemList.FluxPoint.set(new ItemStack(fluxPoint));
-        GameRegistry.registerBlock(fluxLogistics, "flux_logistics_plug");
+        GameRegistry.registerBlock(
+            fluxLogistics,
+            com.xyp.gtnotgood.common.flux.ItemBlockFluxConnector.class,
+            "flux_logistics_plug");
         GameRegistry.registerTileEntity(
             com.xyp.gtnotgood.common.flux.TileFluxLogistics.class,
             ModList.GTNotGood.getResourcePath("flux_logistics_plug"));

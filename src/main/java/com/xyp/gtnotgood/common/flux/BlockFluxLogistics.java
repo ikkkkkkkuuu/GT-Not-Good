@@ -52,6 +52,7 @@ public final class BlockFluxLogistics extends BlockFluxConnector {
             tile.writeContents(contents);
             stack.setTagCompound(contents);
         }
+        FluxDropData.normalize(stack, true);
         drops.add(stack);
         return drops;
     }

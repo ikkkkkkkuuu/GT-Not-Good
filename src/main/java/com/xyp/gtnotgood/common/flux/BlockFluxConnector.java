@@ -103,6 +103,7 @@ public class BlockFluxConnector extends Block {
             tile.writeSettings(tag);
             item.setTagCompound(tag);
         }
+        FluxDropData.normalize(item, false);
         result.add(item);
         return result;
     }

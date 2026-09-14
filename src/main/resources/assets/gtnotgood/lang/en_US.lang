@@ -121,6 +121,7 @@ flux.logistics.items=Item / target count
 flux.logistics.fluids=Fluid / target mB
 flux.logistics.import_hint=Auto-collect output slots/tanks on this face. Filters and counts are unused.
 flux.logistics.target_hint=Blank/0: fill container. Positive: restock to target. Fluids use mB.
+flux.tooltip.logistics=Select an ME bridge channel; switch between restocking and automatic collection.
 flux.tooltip.plug=GT EU input -> GTNH wireless network
 flux.tooltip.point=GTNH wireless network -> GT EU output
 flux.tooltip.owner=Automatically uses the placing player's GT wireless team

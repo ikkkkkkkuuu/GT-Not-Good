@@ -15,10 +15,27 @@ public final class ItemBlockFluxConnector extends ItemBlock {
         super(block);
     }
 
+    /** Canonicalize legacy portable defaults on the server so old and newly crafted stacks can merge. */
+    @Override
+    public void onUpdate(ItemStack stack, net.minecraft.world.World world, net.minecraft.entity.Entity entity, int slot,
+        boolean held) {
+        super.onUpdate(stack, world, entity, slot, held);
+        if (!world.isRemote && world.getTotalWorldTime() % 20 == 0) {
+            FluxDropData.normalize(stack, field_150939_a instanceof BlockFluxLogistics);
+        }
+    }
+
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addInformation(ItemStack stack, EntityPlayer player, List tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
+        if (field_150939_a instanceof BlockFluxLogistics) {
+            // #tr flux.tooltip.logistics
+            // # Select an ME bridge channel; switch between restocking and automatic collection.
+            // # zh_CN 选择 ME 网桥频道，可切换定量供货与自动回收。
+            tooltip.add(StatCollector.translateToLocal("flux.tooltip.logistics"));
+            return;
+        }
         if (((BlockFluxConnector) field_150939_a).plug) {
             // #tr flux.tooltip.plug
             // # GT EU input -> GTNH wireless network

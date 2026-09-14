@@ -121,6 +121,7 @@ flux.logistics.items=物品 / 目标个数
 flux.logistics.fluids=流体 / 目标 mB
 flux.logistics.import_hint=自动回收该侧输出槽与流体；无需过滤槽或数量。
 flux.logistics.target_hint=留空或 0：装满；填写数量：补到目标。流体单位为 mB。
+flux.tooltip.logistics=选择 ME 网桥频道，可切换定量供货与自动回收。
 flux.tooltip.plug=GT EU 输入 -> GTNH 无线电网
 flux.tooltip.point=GTNH 无线电网 -> GT EU 输出
 flux.tooltip.owner=自动连接放置者所属的 GT 无线电网团队
