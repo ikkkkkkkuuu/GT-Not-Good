@@ -8,9 +8,11 @@ import java.util.Objects;
 import java.util.WeakHashMap;
 
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.config.Config;
@@ -118,8 +120,7 @@ public final class AutomaticMachineCircuit {
         }
         Match selected = null;
         for (Match candidate : matches(machine.getRecipeMap(), pattern)) {
-            if (candidate.recipe.mEUt > GTValues.V[machine.mTier]
-                || CircuitPatternQuantities.batches(candidate.inputs, actual) == 0) continue;
+            if (candidate.recipe.mEUt > GTValues.V[machine.mTier] || matchingInputs(candidate, actual) == 0) continue;
             if (selected != null && !sameCircuit(selected.circuit, candidate.circuit)) return false;
             selected = candidate;
         }
@@ -129,7 +130,7 @@ public final class AutomaticMachineCircuit {
             !buffered.isEmpty(),
             sameCircuit(machine.getStackInSlot(machine.getCircuitSlot()), selected.circuit),
             sameRecipe(LAST_DELIVERIES.get(machine), selected),
-            buffered.isEmpty() || CircuitPatternQuantities.batches(selected.inputs, buffered) > 0)) return false;
+            buffered.isEmpty() || matchingInputs(selected, buffered) > 0)) return false;
 
         FluidStack combinedFluid = oldFluid == null ? null : oldFluid.copy();
         if (fluid != null) {
@@ -213,27 +214,44 @@ public final class AutomaticMachineCircuit {
         return patterns.computeIfAbsent(pattern, ignored -> {
             List<Match> result = new ArrayList<>();
             Map<Ingredient, Long> encoded = new HashMap<>();
+            Map<Ingredient, Long> outputs = new HashMap<>();
             for (IAEStack<?> stack : pattern.getAEInputs()) {
                 if (stack != null && !addAE(encoded, stack, false)) return result;
             }
             boolean hasOutput = false;
             for (IAEStack<?> stack : pattern.getAEOutputs()) {
                 if (stack == null) continue;
-                if (!addAE(encoded, stack, true)) return result;
+                if (!addAE(outputs, stack, true)) return result;
                 hasOutput = true;
             }
             if (!hasOutput) return result;
+            boolean validEncodedRecipe = false;
+            ItemStack[] encodedItems = itemInputs(encoded);
+            FluidStack[] encodedFluids = fluidInputs(encoded);
+            if (encodedItems == null || encodedFluids == null) return result;
             for (GTRecipe recipe : map.getAllRecipes()) {
                 Match match = describe(recipe);
-                if (match != null && CircuitPatternQuantities.batches(match.quantities, encoded) > 0) result.add(match);
+                if (match == null) continue;
+                long operations = CircuitPatternQuantities.batches(match.outputs, outputs);
+                if (operations <= 0
+                    || CircuitRecipeInputs.quantityBatches(recipe, encodedItems, encodedFluids) != operations) continue;
+                // Retain registered variants with the same yield and quantity ratio. The CPU may supply an
+                // allowed substitute, but both the encoded pattern and actual delivery must be valid GT inputs.
+                result.add(match);
+                if (CircuitRecipeInputs.batches(recipe, match.circuit, encodedItems, encodedFluids) == operations)
+                    validEncodedRecipe = true;
             }
+            if (!validEncodedRecipe) result.clear();
             return result;
         });
     }
 
     /** Excludes catalysts other than a configuration circuit and probabilistic outputs from automatic matching. */
     private static Match describe(GTRecipe recipe) {
-        if (recipe == null || !recipe.mEnabled || recipe.mFakeRecipe || recipe.mSpecialItems != null) return null;
+        if (recipe == null || !recipe.mEnabled
+            || recipe.mFakeRecipe
+            || recipe.mSpecialItems != null
+            || !CircuitRecipeInputs.deterministic(recipe)) return null;
         Match match = new Match(recipe);
         for (ItemStack item : recipe.mInputs) {
             if (item == null) continue;
@@ -250,15 +268,14 @@ public final class AutomaticMachineCircuit {
             if (fluid.amount <= 0) return null;
             add(match.inputs, new Ingredient(fluid, false), fluid.amount);
         }
-        match.quantities.putAll(match.inputs);
         for (int i = 0; i < recipe.mOutputs.length; i++) {
             ItemStack item = recipe.mOutputs[i];
             if (item == null || item.stackSize <= 0) continue;
             if (recipe.getOutputChance(i) != 10000) return null;
-            add(match.quantities, new Ingredient(item, true), item.stackSize);
+            add(match.outputs, new Ingredient(item, true), item.stackSize);
         }
         for (FluidStack fluid : recipe.mFluidOutputs) {
-            if (fluid != null && fluid.amount > 0) add(match.quantities, new Ingredient(fluid, true), fluid.amount);
+            if (fluid != null && fluid.amount > 0) add(match.outputs, new Ingredient(fluid, true), fluid.amount);
         }
         return match;
     }
@@ -294,12 +311,48 @@ public final class AutomaticMachineCircuit {
      *
      * @param left  previously selected or delivered recipe; null means there is no known match
      * @param right recipe being checked against it
-     * @return true only for equal consumed quantities, all output quantities, NBT and circuit configuration
+     * @return true only for identical outputs and circuits with mutually accepted input definitions
      */
     private static boolean sameRecipe(Match left, Match right) {
         return left != null && right != null
             && CircuitPatternQuantities
-                .sameRecipe(left.quantities, right.quantities, sameCircuit(left.circuit, right.circuit));
+                .sameRecipe(left.outputs, right.outputs, sameCircuit(left.circuit, right.circuit))
+            && matchingInputs(left, right.inputs) == 1
+            && matchingInputs(right, left.inputs) == 1;
+    }
+
+    /** Uses copied resource stacks so GT can test alternative ingredients without changing inventories. */
+    private static long matchingInputs(Match match, Map<Ingredient, Long> inputs) {
+        ItemStack[] items = itemInputs(inputs);
+        FluidStack[] fluids = fluidInputs(inputs);
+        return items == null || fluids == null ? 0
+            : CircuitRecipeInputs.batches(match.recipe, match.circuit, items, fluids);
+    }
+
+    private static ItemStack[] itemInputs(Map<Ingredient, Long> inputs) {
+        List<ItemStack> result = new ArrayList<>();
+        for (Map.Entry<Ingredient, Long> entry : inputs.entrySet()) {
+            Ingredient key = entry.getKey();
+            if (!(key.type instanceof Item item)) continue;
+            long count = entry.getValue();
+            if (count <= 0 || count > Integer.MAX_VALUE) return null;
+            ItemStack stack = new ItemStack(item, (int) count, key.damage);
+            if (key.tag != null) stack.setTagCompound((NBTTagCompound) key.tag.copy());
+            result.add(stack);
+        }
+        return result.toArray(new ItemStack[0]);
+    }
+
+    private static FluidStack[] fluidInputs(Map<Ingredient, Long> inputs) {
+        List<FluidStack> result = new ArrayList<>();
+        for (Map.Entry<Ingredient, Long> entry : inputs.entrySet()) {
+            Ingredient key = entry.getKey();
+            if (!(key.type instanceof Fluid fluid)) continue;
+            long amount = entry.getValue();
+            if (amount <= 0 || amount > Integer.MAX_VALUE) return null;
+            result.add(new FluidStack(fluid, (int) amount, key.tag == null ? null : (NBTTagCompound) key.tag.copy()));
+        }
+        return result.toArray(new FluidStack[0]);
     }
 
     private static boolean sameItem(ItemStack a, ItemStack b) {
@@ -312,7 +365,7 @@ public final class AutomaticMachineCircuit {
 
         private final GTRecipe recipe;
         private final Map<Ingredient, Long> inputs = new HashMap<>();
-        private final Map<Ingredient, Long> quantities = new HashMap<>();
+        private final Map<Ingredient, Long> outputs = new HashMap<>();
         private ItemStack circuit;
 
         private Match(GTRecipe recipe) {
