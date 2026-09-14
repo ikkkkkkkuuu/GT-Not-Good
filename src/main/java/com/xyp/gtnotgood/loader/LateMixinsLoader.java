@@ -59,7 +59,10 @@ public class LateMixinsLoader implements ILateMixinLoader {
         List<String> list = new ArrayList<>();
 
         if (loadedMods.contains(ModList.AE2.getID()) && loadedMods.contains(ModList.GregTech.getID())) {
-            addAll(list, "AppliedEnergistics.PatternMEOutputMultiblockMixin");
+            addAll(
+                list,
+                "AppliedEnergistics.PatternMEOutputMultiblockMixin",
+                "AppliedEnergistics.AutomaticMachineCircuitMixin");
         }
 
         if (loadedMods.contains(ModList.AE2.getID())) {

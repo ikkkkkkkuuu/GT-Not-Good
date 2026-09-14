@@ -515,6 +515,7 @@ SteamTurbineHV=Steam Turbine HV
 SteamTurbineEV=Steam Turbine EV
 SteamTurbineIV=Steam Turbine IV
 SteamTurbineLuV=Steam Turbine V
+gtng.bbf.automation=Supports automated item input/output through the controller
 key.toolbelt.open=Open Tool Belt Menu
 key.toolbelt.cycle.left=Cycle Left
 key.toolbelt.cycle.right=Cycle Right

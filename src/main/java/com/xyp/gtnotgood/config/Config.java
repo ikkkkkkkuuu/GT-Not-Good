@@ -36,6 +36,8 @@ public class Config {
     public static boolean enableAlwaysDisplayNEIOriginalVoltage = true;
     /** Enables automated item insertion and extraction through the brick blast furnace controller. */
     public static boolean enableBrickedBlastFurnaceAutomation = true;
+    /** Lets adjacent AE interfaces select a single-block machine's virtual circuit from processing patterns. */
+    public static boolean enableAutomaticMachineCircuit = true;
     /** Divides GregTech crafting wear; positive damage is rounded up to at least one. */
     public static float gtToolsCraftingDurability = 100F;
     public static int recipeSpeedMode = 1;
@@ -124,6 +126,12 @@ public class Config {
             CATEGORY_GREGTECH,
             true,
             "开启后,砖高炉控制器各面支持自动输入原料和输出产物;关闭恢复原版手动上下料。默认开启,修改后重启游戏生效。");
+
+        enableAutomaticMachineCircuit = configuration.getBoolean(
+            "enableAutomaticMachineCircuit",
+            CATEGORY_GREGTECH,
+            true,
+            "ME接口和流体接口自动选择相邻GT单方块机器的虚拟电路。样板不写电路;同配方可续料,换电路须加工结束且输入清空;整批须装得下,歧义则等待。关闭恢复普通投料。");
 
         wirelessCrossRecipeDurationTicks = configuration.getInt(
             "crossRecipeDurationTicks",

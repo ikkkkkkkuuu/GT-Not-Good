@@ -515,6 +515,7 @@ SteamTurbineHV=进阶蒸汽轮机 II
 SteamTurbineEV=进阶蒸汽轮机 III
 SteamTurbineIV=进阶蒸汽轮机 IV
 SteamTurbineLuV=进阶蒸汽轮机 V
+gtng.bbf.automation=支持通过控制器自动输入和输出物品
 key.toolbelt.open=打开工具腰带菜单
 key.toolbelt.cycle.left=左切换
 key.toolbelt.cycle.right=右切换
