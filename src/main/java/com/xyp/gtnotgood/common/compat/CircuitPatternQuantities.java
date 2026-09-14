@@ -8,6 +8,19 @@ public final class CircuitPatternQuantities {
     private CircuitPatternQuantities() {}
 
     /**
+     * Recognizes duplicate recipe registrations independently of recipe object identity or ingredient order.
+     * A scaled recipe is not an exact duplicate: one operation must consume and produce identical quantities.
+     *
+     * @param selected    complete input/output quantities of the selected recipe
+     * @param runnable    complete input/output quantities of the recipe returned by GT or previously delivered
+     * @param sameCircuit whether both recipes require the same circuit, including both requiring none
+     * @return whether the recipes describe the same operation
+     */
+    public static <K> boolean sameRecipe(Map<K, Long> selected, Map<K, Long> runnable, boolean sameCircuit) {
+        return sameCircuit && batches(selected, runnable) == 1;
+    }
+
+    /**
      * Requires exactly the same ingredients and a single positive integer multiplier for every quantity.
      * Inputs and outputs must have distinct keys, so an incorrect output yield cannot match a recipe.
      *

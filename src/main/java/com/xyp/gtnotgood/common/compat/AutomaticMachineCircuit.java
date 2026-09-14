@@ -40,7 +40,7 @@ public final class AutomaticMachineCircuit {
     private static final Map<RecipeMap<?>, Map<ICraftingPatternDetails, List<Match>>> MATCHES = new WeakHashMap<>();
 
     /** Successful deliveries only; weak machine keys do not keep unloaded tiles alive. */
-    private static final Map<MTEBasicMachine, GTRecipe> LAST_DELIVERIES = new WeakHashMap<>();
+    private static final Map<MTEBasicMachine, Match> LAST_DELIVERIES = new WeakHashMap<>();
 
     private AutomaticMachineCircuit() {}
 
@@ -128,7 +128,7 @@ public final class AutomaticMachineCircuit {
             machine.mMaxProgresstime > 0,
             !buffered.isEmpty(),
             sameCircuit(machine.getStackInSlot(machine.getCircuitSlot()), selected.circuit),
-            LAST_DELIVERIES.get(machine) == selected.recipe,
+            sameRecipe(LAST_DELIVERIES.get(machine), selected),
             buffered.isEmpty() || CircuitPatternQuantities.batches(selected.inputs, buffered) > 0)) return false;
 
         FluidStack combinedFluid = oldFluid == null ? null : oldFluid.copy();
@@ -169,8 +169,8 @@ public final class AutomaticMachineCircuit {
             ItemStack[] recipeInputs = new ItemStack[machine.mInputSlotCount + 1];
             System.arraycopy(staged, first, recipeInputs, 0, machine.mInputSlotCount);
             recipeInputs[machine.mInputSlotCount] = staged[machine.getCircuitSlot()];
-            // Let GT's own lookup confirm the exact recipe; quantity matching alone must not bypass
-            // special-slot conditions or a backend's custom selection rules.
+            // Let GT choose a runnable recipe, then compare its contents. Duplicate registrations can
+            // produce different recipe objects with the same inputs, outputs and configuration circuit.
             GTRecipe runnable = machine.getRecipeMap()
                 .findRecipeQuery()
                 .items(recipeInputs)
@@ -178,7 +178,7 @@ public final class AutomaticMachineCircuit {
                 .specialSlot(machine.getStackInSlot(machine.getSpecialSlotIndex()))
                 .voltage(GTValues.V[machine.mTier])
                 .find();
-            if (runnable != selected.recipe) return false;
+            if (!sameRecipe(selected, describe(runnable))) return false;
             committed = staged.clone();
         } finally {
             System.arraycopy(original, 0, machine.mInventory, 0, original.length);
@@ -202,7 +202,7 @@ public final class AutomaticMachineCircuit {
         for (int slot = first; slot < first + machine.mInputSlotCount; slot++) {
             tile.setInventorySlotContents(slot, committed[slot]);
         }
-        LAST_DELIVERIES.put(machine, selected.recipe);
+        LAST_DELIVERIES.put(machine, selected);
         return true;
     }
 
@@ -233,7 +233,7 @@ public final class AutomaticMachineCircuit {
 
     /** Excludes catalysts other than a configuration circuit and probabilistic outputs from automatic matching. */
     private static Match describe(GTRecipe recipe) {
-        if (!recipe.mEnabled || recipe.mFakeRecipe || recipe.mSpecialItems != null) return null;
+        if (recipe == null || !recipe.mEnabled || recipe.mFakeRecipe || recipe.mSpecialItems != null) return null;
         Match match = new Match(recipe);
         for (ItemStack item : recipe.mInputs) {
             if (item == null) continue;
@@ -285,6 +285,21 @@ public final class AutomaticMachineCircuit {
 
     private static boolean sameCircuit(ItemStack a, ItemStack b) {
         return a == null ? b == null : b != null && sameItem(a, b);
+    }
+
+    /**
+     * Compares recipe contents for both GT lookup validation and continuous refilling. Object identity, registration
+     * order, duration and EU/t are not recipe identity here; GT's lookup still enforces the machine's voltage limit.
+     * Non-consumed catalysts, special-slot recipes and probabilistic outputs remain excluded by {@link #describe}.
+     *
+     * @param left  previously selected or delivered recipe; null means there is no known match
+     * @param right recipe being checked against it
+     * @return true only for equal consumed quantities, all output quantities, NBT and circuit configuration
+     */
+    private static boolean sameRecipe(Match left, Match right) {
+        return left != null && right != null
+            && CircuitPatternQuantities
+                .sameRecipe(left.quantities, right.quantities, sameCircuit(left.circuit, right.circuit));
     }
 
     private static boolean sameItem(ItemStack a, ItemStack b) {
