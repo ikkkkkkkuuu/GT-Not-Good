@@ -22,6 +22,9 @@ public final class ItemsLoader {
      * Registers all non-GregTech items and stores their stacks for recipes and tooltips.
      */
     public static void registry() {
+        com.xyp.gtnotgood.common.user.ItemUserSpeedUpgrade userSpeed = new com.xyp.gtnotgood.common.user.ItemUserSpeedUpgrade();
+        GameRegistry.registerItem(userSpeed, "mechanical_user_speed");
+        GTNGItemList.MechanicalUserSpeedUpgrade.set(userSpeed);
         meWirelessTransceiver = new ItemMEWirelessTransceiver();
         GameRegistry.registerItem(meWirelessTransceiver, ItemMEWirelessTransceiver.ITEM_NAME);
         GTNGItemList.MEWirelessTransceiver.set(meWirelessTransceiver);

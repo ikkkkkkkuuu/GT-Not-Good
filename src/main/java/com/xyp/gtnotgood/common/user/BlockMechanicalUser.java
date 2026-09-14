@@ -93,9 +93,14 @@ public final class BlockMechanicalUser extends Block {
     @Override
     @SideOnly(Side.CLIENT)
     public IIcon getIcon(int side, int meta) {
-        int facing = meta >= 0 && meta < 6 ? meta : 1;
-        // The inventory metadata is zero; display the marked face on top like the reference item.
-        if (meta == 0) facing = 0;
+        int facing = 1;
+        return side == facing ? front : side == (facing ^ 1) ? back : blockIcon;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(net.minecraft.world.IBlockAccess world, int x, int y, int z, int side) {
+        int facing = world.getBlockMetadata(x, y, z);
         return side == facing ? front : side == (facing ^ 1) ? back : blockIcon;
     }
 }

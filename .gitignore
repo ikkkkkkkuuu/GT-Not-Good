@@ -42,3 +42,14 @@ layout.json
 !/src/test/java/com/xyp/ldlib/
 !/src/test/java/com/xyp/ldlib/**
 /src/test/
+
+# Keep mechanical-user regression checks reviewable.
+!/src/test/
+/src/test/**
+!/src/test/java/
+!/src/test/java/com/
+!/src/test/java/com/xyp/
+!/src/test/java/com/xyp/gtnotgood/
+!/src/test/java/com/xyp/gtnotgood/common/
+!/src/test/java/com/xyp/gtnotgood/common/user/
+!/src/test/java/com/xyp/gtnotgood/common/user/*.java

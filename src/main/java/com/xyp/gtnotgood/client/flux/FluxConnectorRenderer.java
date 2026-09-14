@@ -70,7 +70,7 @@ public final class FluxConnectorRenderer implements ISimpleBlockRenderingHandler
     }
 
     private void render(BlockFluxConnector block, IBlockAccess world, int x, int y, int z) {
-        boolean active = world == null
+        boolean active = world == null || block instanceof com.xyp.gtnotgood.common.flux.BlockFluxLogistics
             || world.getTileEntity(x, y, z) instanceof TileFluxConnector tile && tile.enabled();
         drawModel(block, model(block.plug ? "fluxplug" : "fluxpoint"), active, -1, x, y, z, world == null);
         for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {

@@ -24,6 +24,17 @@ public final class FluxConnectorRecipes {
     public static void loadRecipes() {
         GTValues.RA.stdBuilder()
             .itemInputs(
+                GTNGItemList.FluxPlug.get(1),
+                GTNGItemList.MEBridgeReceiver.get(1),
+                ItemList.Conveyor_Module_MV.get(1),
+                ItemList.Electric_Pump_MV.get(1))
+            .circuit(3)
+            .itemOutputs(GTNGItemList.FluxLogisticsPlug.get(1))
+            .duration(200)
+            .eut(TierEU.RECIPE_MV)
+            .addTo(RecipeMaps.assemblerRecipes);
+        GTValues.RA.stdBuilder()
+            .itemInputs(
                 ItemList.Hull_MV.get(1),
                 ItemList.Emitter_MV.get(1),
                 GTOreDictUnificator.get(OrePrefixes.circuit, Materials.MV, 2),

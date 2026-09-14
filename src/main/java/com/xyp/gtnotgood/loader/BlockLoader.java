@@ -37,6 +37,13 @@ import cpw.mods.fml.common.registry.GameRegistry;
  */
 public final class BlockLoader {
 
+    // #tr tile.flux_logistics_plug.name
+    // # Flux Logistics Plug
+    // # zh_CN 通量物流插头
+    public static final com.xyp.gtnotgood.common.flux.BlockFluxLogistics fluxLogistics = new com.xyp.gtnotgood.common.flux.BlockFluxLogistics();
+
+    public static final com.xyp.gtnotgood.common.user.BlockMechanicalUser mechanicalUser = new com.xyp.gtnotgood.common.user.BlockMechanicalUser();
+
     // #tr tile.flux_plug.name
     // # Flux Plug
     // # zh_CN 通量插头
@@ -173,6 +180,11 @@ public final class BlockLoader {
      * Registers all non-GregTech blocks and stores their item stacks for recipe and creative-tab use.
      */
     public static void registry() {
+        GameRegistry.registerBlock(mechanicalUser, "mechanical_user");
+        GameRegistry.registerTileEntity(
+            com.xyp.gtnotgood.common.user.TileMechanicalUser.class,
+            ModList.GTNotGood.getResourcePath("mechanical_user"));
+        GTNGItemList.MechanicalUser.set(new ItemStack(mechanicalUser));
         GameRegistry.registerBlock(fluxPlug, com.xyp.gtnotgood.common.flux.ItemBlockFluxConnector.class, "flux_plug");
         GameRegistry.registerBlock(fluxPoint, com.xyp.gtnotgood.common.flux.ItemBlockFluxConnector.class, "flux_point");
         GameRegistry.registerTileEntity(
@@ -183,6 +195,11 @@ public final class BlockLoader {
             ModList.GTNotGood.getResourcePath("flux_point"));
         GTNGItemList.FluxPlug.set(new ItemStack(fluxPlug));
         GTNGItemList.FluxPoint.set(new ItemStack(fluxPoint));
+        GameRegistry.registerBlock(fluxLogistics, "flux_logistics_plug");
+        GameRegistry.registerTileEntity(
+            com.xyp.gtnotgood.common.flux.TileFluxLogistics.class,
+            ModList.GTNotGood.getResourcePath("flux_logistics_plug"));
+        GTNGItemList.FluxLogisticsPlug.set(new ItemStack(fluxLogistics));
         cpw.mods.fml.common.FMLCommonHandler.instance()
             .bus()
             .register(new com.xyp.gtnotgood.common.flux.FluxTransferScheduler());

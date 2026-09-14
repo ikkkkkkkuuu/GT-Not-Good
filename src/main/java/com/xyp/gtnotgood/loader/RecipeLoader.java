@@ -32,6 +32,7 @@ public class RecipeLoader {
      * as additional one-line loader calls.
      */
     public static void loadRecipes() {
+        com.xyp.gtnotgood.common.recipe.machine.MechanicalUserRecipes.loadRecipes();
         com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes.loadRecipes();
         com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes.loadRecipes();
         BenderRecipes.loadRecipes();

@@ -28,7 +28,7 @@ import gregtech.api.interfaces.tileentity.IEnergyConnected;
  * Forge 1.7.10 adapter for the original Flux plug/point blocks and multipart models.
  * Drops contain settings only; buffered EU is returned once in breakBlock, avoiding creative/drop duplication.
  */
-public final class BlockFluxConnector extends Block {
+public class BlockFluxConnector extends Block {
 
     public static int renderId = -1;
     public final boolean plug;

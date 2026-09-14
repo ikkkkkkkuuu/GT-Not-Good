@@ -1,5 +1,11 @@
 # Third-Party Notices
 
+## Extra Utilities 2 Mechanical User
+
+Four unchanged RWTema textures are included for the Mechanical User and speed upgrade.
+Upstream reserves all rights; these assets are excluded from this project's license.
+See `src/main/resources/META-INF/mechanical-user/NOTICE.md` for source and file mappings.
+
 ## Flux Networks
 
 The Flux plug/point code and original block models/textures are ported from SonarSonic/Flux-Networks

@@ -33,11 +33,15 @@ import gregtech.api.util.GTUtility;
  */
 public enum GTNGItemList implements IItemContainer {
 
+    MechanicalUser,
+    MechanicalUserSpeedUpgrade,
+
     NetworkController,
     NetworkPipe,
     NetworkConnector,
     FluxPlug,
     FluxPoint,
+    FluxLogisticsPlug,
 
     VaultPortHatch,
     SingularityDataHub,
