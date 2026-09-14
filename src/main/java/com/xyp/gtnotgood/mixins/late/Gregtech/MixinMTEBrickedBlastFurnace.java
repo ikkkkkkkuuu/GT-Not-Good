@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.utils.Utils;
 
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
@@ -28,6 +29,8 @@ public abstract class MixinMTEBrickedBlastFurnace {
         constant = @Constant(stringValue = "All input/output is done manually through the controller"),
         require = 1)
     private String gtng$automationTooltip(String original) {
+        Config.ensureLoaded();
+        if (!Config.enableBrickedBlastFurnaceAutomation) return original;
         // #tr gtng.bbf.automation
         // # Supports automated item input/output through the controller
         // # zh_CN 支持通过控制器自动输入和输出物品
@@ -38,6 +41,7 @@ public abstract class MixinMTEBrickedBlastFurnace {
     @Inject(method = "allowPutStack", at = @At("HEAD"), cancellable = true, require = 1)
     private void gtng$allowInput(IGregTechTileEntity tile, int index, ForgeDirection side, ItemStack stack,
         CallbackInfoReturnable<Boolean> cir) {
+        if (!Config.enableBrickedBlastFurnaceAutomation) return;
         cir.setReturnValue(index >= 0 && index < MTEBrickedBlastFurnace.INPUT_SLOTS);
     }
 
@@ -45,6 +49,7 @@ public abstract class MixinMTEBrickedBlastFurnace {
     @Inject(method = "allowPullStack", at = @At("HEAD"), cancellable = true, require = 1)
     private void gtng$allowOutput(IGregTechTileEntity tile, int index, ForgeDirection side, ItemStack stack,
         CallbackInfoReturnable<Boolean> cir) {
+        if (!Config.enableBrickedBlastFurnaceAutomation) return;
         cir.setReturnValue(
             index >= MTEBrickedBlastFurnace.INPUT_SLOTS
                 && index < MTEBrickedBlastFurnace.INPUT_SLOTS + MTEBrickedBlastFurnace.OUTPUT_SLOTS);

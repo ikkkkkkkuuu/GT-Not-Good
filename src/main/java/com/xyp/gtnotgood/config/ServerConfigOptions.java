@@ -33,6 +33,13 @@ public final class ServerConfigOptions {
         add(options, false, "CutCorners", "fixedDuration", "recipeSpeedFixedDuration", false);
         add(options, false, "CutCorners", "multiplier", "recipeSpeedMultiplier", false);
         add(options, false, "CutCorners", "fullFluidOutput", "recipeSpeedFullFluidOutput", true);
+        add(
+            options,
+            false,
+            "GregTech",
+            "enableBrickedBlastFurnaceAutomation",
+            "enableBrickedBlastFurnaceAutomation",
+            false);
         add(options, false, "CropsNH", "enableInstantGrowth", "enableCropInstantGrowth", true);
         add(options, false, "CropsNH", "enableMaxStats", "enableCropMaxStats", true);
         add(options, false, "CropsNH", "enableGuaranteedSeedDrop", "enableCropGuaranteedSeedDrop", true);

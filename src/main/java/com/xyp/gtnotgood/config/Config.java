@@ -34,6 +34,8 @@ public class Config {
     public static boolean enableAlwaysDisplayRecipeOwner = true;
     public static boolean enableAlwaysDisplayWailaAverageNS = true;
     public static boolean enableAlwaysDisplayNEIOriginalVoltage = true;
+    /** Enables automated item insertion and extraction through the brick blast furnace controller. */
+    public static boolean enableBrickedBlastFurnaceAutomation = true;
     /** Divides GregTech crafting wear; positive damage is rounded up to at least one. */
     public static float gtToolsCraftingDurability = 100F;
     public static int recipeSpeedMode = 1;
@@ -112,10 +114,16 @@ public class Config {
         configuration.addCustomCategoryComment(CATEGORY_CUT_CORNERS, "配方提速配置");
         configuration.addCustomCategoryComment(CATEGORY_CROPSNH, "CropsNH 作物配置");
         configuration.addCustomCategoryComment(CATEGORY_FORESTRY, "Forestry 蜜蜂杂交配置");
-        configuration.addCustomCategoryComment(CATEGORY_GREGTECH, "GregTech 工具与客户端显示配置");
+        configuration.addCustomCategoryComment(CATEGORY_GREGTECH, "GregTech 机器、工具与客户端显示配置");
         configuration.addCustomCategoryComment(CATEGORY_THAUMCRAFT, "Thaumcraft 扭曲与研究配置");
         configuration.addCustomCategoryComment(CATEGORY_TOOL_BELT, "工具腰带的配置设置");
         configuration.addCustomCategoryComment(CATEGORY_WIRELESS_MULTIBLOCK, "无线多方块跨配方并行配置");
+
+        enableBrickedBlastFurnaceAutomation = configuration.getBoolean(
+            "enableBrickedBlastFurnaceAutomation",
+            CATEGORY_GREGTECH,
+            true,
+            "开启后,砖高炉控制器各面支持自动输入原料和输出产物;关闭恢复原版手动上下料。默认开启,修改后重启游戏生效。");
 
         wirelessCrossRecipeDurationTicks = configuration.getInt(
             "crossRecipeDurationTicks",
