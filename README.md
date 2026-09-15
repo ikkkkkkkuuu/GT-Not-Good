@@ -13,17 +13,20 @@ ae 两个接口对单方块机器下单 直接会在推料之前修改单方块�
 也就是说类似可编程电路mod  但是不需要额外写一个虚拟编程电路了 一个单方块机器 25种电路配方完全洒洒水啦
 遇见bug 即时反馈 
 
+本mod还对单方块机器添加了自己的虚拟模具槽 处于电路槽上方 可参与配方合成
+
 
 mixin关闭了配方超净间需求
 
 mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 
 
+
 ### Current support version
 | GTNH Version | Start Version | Newest Support Version |                                                            Download                                                            | Maintenance status |
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) | ❌ |
-| 2.9.0-beta3  |     1.0.3     |         1.0.9          | [![1.0.2](https://img.shields.io/badge/release-v1.0.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.9) | ✔️ |
+| 2.9.0-beta3  |     1.0.3     |         1.1.1          | [![1.1.1](https://img.shields.io/badge/release-v1.1.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.1) | ✔️ |
 
 
 ### 🔌 ME 网桥 / ME Bridge
