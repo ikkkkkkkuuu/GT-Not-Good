@@ -544,6 +544,13 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             if (aTimer % 20 == 0) {
                 getBaseMetaTileEntity().setActive(isActive());
             }
+            if (justHadNewItems) {
+                notifyWatchers();
+                for (SuperMTEHatchCraftingInputSlave mirror : getProxyHatches()) {
+                    mirror.onParentInvChange();
+                }
+                justHadNewItems = false;
+            }
         }
     }
 
@@ -1287,12 +1294,6 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
                 slot.refund(getProxy(), getRequest(), shouldDrop);
             } catch (GridAccessException ignored) {}
         }
-    }
-
-    public boolean justUpdated() {
-        boolean ret = justHadNewItems;
-        justHadNewItems = false;
-        return ret;
     }
 
     /** Preserves buffered products on the dropped machine stack when picked up with a wrench. */

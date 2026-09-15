@@ -198,8 +198,13 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
         return getMaster() != null ? getMaster().getSharedItems() : GTValues.emptyItemStackArray;
     }
 
-    public boolean justUpdated() {
-        return getMaster() != null && getMaster().justUpdated();
+    /**
+     * Schedules a recipe check for every controller using this mirror after the master accepts ingredients.
+     * The master calls every linked mirror before clearing its pending-input flag, so controllers cannot consume
+     * another mirror's notification. This also works while this mirror's own ticking is disabled.
+     */
+    public void onParentInvChange() {
+        notifyWatchers();
     }
 
     public SuperMTEHatchCraftingInputME trySetMasterFromCoord(int x, int y, int z) {
