@@ -82,7 +82,7 @@ dependencies {
 
     implementation("org.ow2.asm:asm-commons:9.8")
 
-    devOnlyNonPublishable("com.github.ABKQPO:BetterQuestingAPI:1.1.3:dev") { transitive = false }
+    compileOnly("com.github.ABKQPO:BetterQuestingAPI:1.1.3:dev") { transitive = false }
 
 
 
