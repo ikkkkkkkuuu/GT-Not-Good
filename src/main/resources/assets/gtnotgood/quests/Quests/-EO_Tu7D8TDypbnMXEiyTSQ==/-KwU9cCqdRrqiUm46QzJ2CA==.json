@@ -1,0 +1,76 @@
+{
+  "properties:10": {
+    "betterquesting:10": {
+      "name:8": "保险库 ",
+      "desc:8": "此保险库不耗电,是ae存储保险库,容量几乎算是无算大,通过保险库接口来和ae网络连接",
+      "taskLogic:8": "AND",
+      "questLogic:8": "AND",
+      "visibility:8": "NORMAL",
+      "snd_unlock:8": "random.click",
+      "snd_update:8": "random.levelup",
+      "snd_complete:8": "random.levelup",
+      "repeatTime:3": -1,
+      "repeat_relative:1": 1,
+      "lockedProgress:1": 0,
+      "autoClaim:1": 0,
+      "isSilent:1": 0,
+      "isMain:1": 0,
+      "isGlobal:1": 0,
+      "globalShare:1": 0,
+      "simultaneous:1": 0,
+      "party_enable:1": 1,
+      "icon:10": {
+        "id:8": "gregtech:gt.blockmachines",
+        "Count:3": 1,
+        "Damage:2": 28511,
+        "OreDict:8": ""
+      }
+    }
+  },
+  "tasks:9": {
+    "0:10": {
+      "taskID:8": "bq_standard:checkbox",
+      "index:3": 0
+    }
+  },
+  "rewards:9": {
+    "0:10": {
+      "rewardID:8": "bq_standard:item",
+      "index:3": 0,
+      "rewards:9": {
+        "0:10": {
+          "id:8": "gregtech:gt.blockmachines",
+          "Count:3": 10,
+          "Damage:2": 28511,
+          "OreDict:8": ""
+        },
+        "1:10": {
+          "id:8": "gregtech:gt.blockmachines",
+          "Count:3": 10,
+          "Damage:2": 28512,
+          "OreDict:8": ""
+        },
+        "2:10": {
+          "id:8": "gregtech:gt.blockcasings2",
+          "Count:3": 50,
+          "Damage:2": 0,
+          "OreDict:8": ""
+        },
+        "3:10": {
+          "id:8": "appliedenergistics2:tile.BlockSecurity",
+          "Count:3": 64,
+          "Damage:2": 0,
+          "OreDict:8": ""
+        }
+      }
+    }
+  },
+  "preRequisites:9": {
+    "0:10": {
+      "questIDHigh:4": 4299880769203818190,
+      "questIDLow:4": -8438947251290464563
+    }
+  },
+  "questIDHigh:4": 3099951470475036346,
+  "questIDLow:4": -6750211694960413176
+}

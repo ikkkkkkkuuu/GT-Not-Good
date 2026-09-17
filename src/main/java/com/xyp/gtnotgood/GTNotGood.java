@@ -3,8 +3,10 @@ package com.xyp.gtnotgood;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.xyp.gtnotgood.loader.QuestLoader;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -52,6 +54,7 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
         + "after:dreamcraft;"
         + "required-after:structurelib;"
         + "after:ThaumcraftResearchTweaks;"
+        + "after:bqapi;"
         + "required-after:Thaumcraft;",
     acceptedMinecraftVersions = "1.7.10")
 public class GTNotGood {
@@ -78,6 +81,15 @@ public class GTNotGood {
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
+        System.out.println(
+            "[GTNotGood/BQ] betterquesting=" + Loader.isModLoaded("betterquesting")
+                + ", bqapi="
+                + Loader.isModLoaded("bqapi"));
+
+        if (Loader.isModLoaded("betterquesting") && Loader.isModLoaded("bqapi")) {
+
+            QuestLoader.init();
+        }
     }
 
     @Mod.EventHandler

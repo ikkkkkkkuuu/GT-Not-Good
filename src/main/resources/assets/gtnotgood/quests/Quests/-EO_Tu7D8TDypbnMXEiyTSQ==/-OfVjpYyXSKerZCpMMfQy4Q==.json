@@ -1,0 +1,68 @@
+{
+  "properties:10": {
+    "betterquesting:10": {
+      "name:8": "使用者",
+      "desc:8": "就单纯的移植了使用者 加了速度升级",
+      "taskLogic:8": "AND",
+      "questLogic:8": "AND",
+      "visibility:8": "NORMAL",
+      "snd_unlock:8": "random.click",
+      "snd_update:8": "random.levelup",
+      "snd_complete:8": "random.levelup",
+      "repeatTime:3": -1,
+      "repeat_relative:1": 1,
+      "lockedProgress:1": 0,
+      "autoClaim:1": 0,
+      "isSilent:1": 0,
+      "isMain:1": 0,
+      "isGlobal:1": 0,
+      "globalShare:1": 0,
+      "simultaneous:1": 0,
+      "party_enable:1": 1,
+      "icon:10": {
+        "id:8": "gtnotgood:mechanical_user",
+        "Count:3": 1,
+        "Damage:2": 0,
+        "OreDict:8": ""
+      }
+    }
+  },
+  "tasks:9": {
+    "0:10": {
+      "taskID:8": "bq_standard:checkbox",
+      "index:3": 0
+    }
+  },
+  "rewards:9": {
+    "0:10": {
+      "rewardID:8": "bq_standard:item",
+      "index:3": 0,
+      "rewards:9": {
+        "0:10": {
+          "id:8": "gtnotgood:mechanical_user",
+          "Count:3": 64,
+          "Damage:2": 0,
+          "OreDict:8": ""
+        },
+        "1:10": {
+          "id:8": "gtnotgood:mechanical_user_speed",
+          "Count:3": 64,
+          "Damage:2": 0,
+          "OreDict:8": ""
+        }
+      }
+    }
+  },
+  "preRequisites:9": {
+    "0:10": {
+      "questIDHigh:4": -8311692983179131088,
+      "questIDLow:4": -8783387124597431990
+    },
+    "1:10": {
+      "questIDHigh:4": -5631786284221511116,
+      "questIDLow:4": -7173669087128248178
+    }
+  },
+  "questIDHigh:4": 4176353792135481511,
+  "questIDLow:4": -6096701488808840479
+}

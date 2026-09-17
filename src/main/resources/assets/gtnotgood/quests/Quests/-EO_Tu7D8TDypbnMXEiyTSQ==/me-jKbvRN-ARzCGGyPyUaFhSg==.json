@@ -1,0 +1,70 @@
+{
+  "properties:10": {
+    "betterquesting:10": {
+      "name:8": "me 网桥",
+      "desc:8": "me网桥是一个无线跨纬度连接ae网络的一个桥接器  发起端发起网络(所处ae网络发起)        接收端接受网络       两个方块都有gui  可设置频率 可自定义名称可中文  还有一个物品  无线连接器  右键空气可打开gui 选择频率 然后 shift+右键ae节点 直接就可连接  取消也一样 也是shift+右键ae节点 ",
+      "taskLogic:8": "AND",
+      "questLogic:8": "AND",
+      "visibility:8": "NORMAL",
+      "snd_unlock:8": "random.click",
+      "snd_update:8": "random.levelup",
+      "snd_complete:8": "random.levelup",
+      "repeatTime:3": -1,
+      "repeat_relative:1": 1,
+      "lockedProgress:1": 0,
+      "autoClaim:1": 0,
+      "isSilent:1": 0,
+      "isMain:1": 0,
+      "isGlobal:1": 0,
+      "globalShare:1": 0,
+      "simultaneous:1": 0,
+      "party_enable:1": 1,
+      "icon:10": {
+        "id:8": "gtnotgood:blockMEBridgeSender",
+        "Count:3": 1,
+        "Damage:2": 0,
+        "OreDict:8": ""
+      }
+    }
+  },
+  "tasks:9": {
+    "0:10": {
+      "taskID:8": "bq_standard:checkbox",
+      "index:3": 0
+    }
+  },
+  "rewards:9": {
+    "0:10": {
+      "rewardID:8": "bq_standard:item",
+      "index:3": 0,
+      "rewards:9": {
+        "0:10": {
+          "id:8": "gtnotgood:blockMEBridgeSender",
+          "Count:3": 64,
+          "Damage:2": 0,
+          "OreDict:8": ""
+        },
+        "1:10": {
+          "id:8": "gtnotgood:blockMEBridgeReceiver",
+          "Count:3": 64,
+          "Damage:2": 0,
+          "OreDict:8": ""
+        },
+        "2:10": {
+          "id:8": "gtnotgood:MEWirelessTransceiver",
+          "Count:3": 1,
+          "Damage:2": 0,
+          "OreDict:8": ""
+        }
+      }
+    }
+  },
+  "preRequisites:9": {
+    "0:10": {
+      "questIDHigh:4": 5642289039362968342,
+      "questIDLow:4": -7363789579519408959
+    }
+  },
+  "questIDHigh:4": -8311692983179131088,
+  "questIDLow:4": -8783387124597431990
+}

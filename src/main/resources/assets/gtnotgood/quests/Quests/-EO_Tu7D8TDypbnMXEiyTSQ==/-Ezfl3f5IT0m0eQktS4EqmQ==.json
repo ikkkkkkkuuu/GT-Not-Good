@@ -1,0 +1,53 @@
+{
+  "properties:10": {
+    "betterquesting:10": {
+      "name:8": "超级煲",
+      "desc:8": "",
+      "taskLogic:8": "AND",
+      "questLogic:8": "AND",
+      "visibility:8": "NORMAL",
+      "snd_unlock:8": "random.click",
+      "snd_update:8": "random.levelup",
+      "snd_complete:8": "random.levelup",
+      "repeatTime:3": 720000,
+      "repeat_relative:1": 1,
+      "lockedProgress:1": 0,
+      "autoClaim:1": 0,
+      "isSilent:1": 0,
+      "isMain:1": 0,
+      "isGlobal:1": 0,
+      "globalShare:1": 0,
+      "simultaneous:1": 0,
+      "party_enable:1": 1,
+      "icon:10": {
+        "id:8": "Avaritia:Ultimate_Stew",
+        "Count:3": 1,
+        "Damage:2": 0,
+        "OreDict:8": ""
+      }
+    }
+  },
+  "tasks:9": {
+    "0:10": {
+      "taskID:8": "bq_standard:checkbox",
+      "index:3": 0
+    }
+  },
+  "rewards:9": {
+    "0:10": {
+      "rewardID:8": "bq_standard:item",
+      "index:3": 0,
+      "rewards:9": {
+        "0:10": {
+          "id:8": "Avaritia:Ultimate_Stew",
+          "Count:3": 64,
+          "Damage:2": 0,
+          "OreDict:8": ""
+        }
+      }
+    }
+  },
+  "preRequisites:9": {},
+  "questIDHigh:4": 1384828152056401737,
+  "questIDLow:4": -5442308584555599207
+}

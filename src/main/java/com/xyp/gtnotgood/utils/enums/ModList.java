@@ -18,6 +18,7 @@ public enum ModList {
     GregTech(ModIds.GREGTECH, Names.GREGTECH),
     Thaumcraft(ModIds.THAUMCRAFT, Names.THAUMCRAFT),
     ENDER_IO(ModIds.ENDER_IO, Names.ENDER_IO),
+    BetterQuestingAPI(ModIds.BETTER_QUESTING_API, Names.BETTER_QUESTING_API),
     WarpTheory(ModIds.WARP_THEORY, Names.WARP_THEORY);
 
     /**
@@ -26,6 +27,7 @@ public enum ModList {
     public static class ModIds {
 
         public static final String GT_NOT_GOOD = "gtnotgood";
+        public static final String BETTER_QUESTING_API = "bqapi";
         public static final String APPLIED_ENERGISTICS_2 = "appliedenergistics2";
         public static final String CROPSNH = "cropsnh";
         public static final String FORESTRY = "Forestry";
@@ -43,6 +45,7 @@ public enum ModList {
     public static class Names {
 
         public static final String GT_NOT_GOOD = "GT-Not-Good";
+        public static final String BETTER_QUESTING_API = "Better Questing API";
         public static final String APPLIED_ENERGISTICS_2 = "Applied Energistics 2";
         public static final String CROPSNH = "CropsNH";
         public static final String FORESTRY = "Forestry";

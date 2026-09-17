@@ -7,6 +7,11 @@
 
 本项目作自用 大量魔改修改难度
 
+
+添加自定义任务线  介绍了本mod加了的一些物品方块和机器   加入BetterQuestingAPI这个mod可自动显现!!!
+https://github.com/ABKQPO/BetterQuestingAPI
+
+
 本mod添加了个至尊功能 可以在配置文件关闭
 只针对单方块
 ae 两个接口对单方块机器下单 直接会在推料之前修改单方块机器里的虚拟编程电路

@@ -1,0 +1,66 @@
+{
+  "properties:10": {
+    "betterquesting:10": {
+      "name:8": "无线二合一终端",
+      "desc:8": "这个终端是特殊优化过的ae2thing编码终端 ,集编码 库存 接口为一体的终端,  而且编码从nei导入配方覆盖时,会自动在搜索栏里填充接口名称(此功能需要在nei设置里打开)",
+      "taskLogic:8": "AND",
+      "questLogic:8": "AND",
+      "visibility:8": "NORMAL",
+      "snd_unlock:8": "random.click",
+      "snd_update:8": "random.levelup",
+      "snd_complete:8": "random.levelup",
+      "repeatTime:3": -1,
+      "repeat_relative:1": 1,
+      "lockedProgress:1": 0,
+      "autoClaim:1": 0,
+      "isSilent:1": 0,
+      "isMain:1": 0,
+      "isGlobal:1": 0,
+      "globalShare:1": 0,
+      "simultaneous:1": 0,
+      "party_enable:1": 1,
+      "icon:10": {
+        "id:8": "gtnotgood:wireless_dual_interface_terminal",
+        "Count:3": 1,
+        "Damage:2": 0,
+        "OreDict:8": "",
+        "tag:10": {
+          "internalCurrentPower:6": 1600000,
+          "internalMaxPower:6": 1600000
+        }
+      }
+    }
+  },
+  "tasks:9": {
+    "0:10": {
+      "taskID:8": "bq_standard:checkbox",
+      "index:3": 0
+    }
+  },
+  "rewards:9": {
+    "0:10": {
+      "rewardID:8": "bq_standard:item",
+      "index:3": 0,
+      "rewards:9": {
+        "0:10": {
+          "id:8": "gtnotgood:wireless_dual_interface_terminal",
+          "Count:3": 1,
+          "Damage:2": 0,
+          "OreDict:8": "",
+          "tag:10": {
+            "internalCurrentPower:6": 1600000,
+            "internalMaxPower:6": 1600000
+          }
+        }
+      }
+    }
+  },
+  "preRequisites:9": {
+    "0:10": {
+      "questIDHigh:4": 4299880769203818190,
+      "questIDLow:4": -8438947251290464563
+    }
+  },
+  "questIDHigh:4": 2847320165682135510,
+  "questIDLow:4": -7987552725076314216
+}

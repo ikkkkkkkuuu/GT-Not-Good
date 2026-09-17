@@ -1,0 +1,58 @@
+{
+  "properties:10": {
+    "betterquesting:10": {
+      "name:8": "产线集成工厂",
+      "desc:8": "非常硬霸的一个机器   打开gui里的工序   然后可以从nei导入配方  完成一条铂处理 一条钛处理不要太简单 还可以自动配平   不放置能源仓进入无线电网模式  在预览产线里保存后就更改不了了  然后再输入总线里放置所有刚才产线需要的机器数量和不消耗物品 就可以工作啦",
+      "taskLogic:8": "AND",
+      "questLogic:8": "AND",
+      "visibility:8": "NORMAL",
+      "snd_unlock:8": "random.click",
+      "snd_update:8": "random.levelup",
+      "snd_complete:8": "random.levelup",
+      "repeatTime:3": -1,
+      "repeat_relative:1": 1,
+      "lockedProgress:1": 0,
+      "autoClaim:1": 0,
+      "isSilent:1": 0,
+      "isMain:1": 0,
+      "isGlobal:1": 0,
+      "globalShare:1": 0,
+      "simultaneous:1": 0,
+      "party_enable:1": 1,
+      "icon:10": {
+        "id:8": "gregtech:gt.blockmachines",
+        "Count:3": 1,
+        "Damage:2": 28513,
+        "OreDict:8": ""
+      }
+    }
+  },
+  "tasks:9": {
+    "0:10": {
+      "taskID:8": "bq_standard:retrieval",
+      "index:3": 0,
+      "partialMatch:1": 1,
+      "ignoreNBT:1": 1,
+      "consume:1": 0,
+      "groupDetect:1": 0,
+      "autoConsume:1": 0,
+      "requiredItems:9": {
+        "0:10": {
+          "id:8": "gregtech:gt.blockmachines",
+          "Count:3": 1,
+          "Damage:2": 28513,
+          "OreDict:8": ""
+        }
+      }
+    }
+  },
+  "rewards:9": {},
+  "preRequisites:9": {
+    "0:10": {
+      "questIDHigh:4": -7451235486134811366,
+      "questIDLow:4": -7573028001999649563
+    }
+  },
+  "questIDHigh:4": 5154638236707145247,
+  "questIDLow:4": -8001322475518205693
+}
