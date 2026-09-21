@@ -103,6 +103,11 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void complete(FMLLoadCompleteEvent event) {
         super.complete(event);
+        if (com.xyp.gtnotgood.config.Config.useEdgeWindowIcon) {
+            FMLCommonHandler.instance()
+                .bus()
+                .register(new com.xyp.gtnotgood.client.EdgeWindowIcon());
+        }
         if (Loader.isModLoaded("ThaumcraftResearchTweaks")) {
             NetworkRegistry.INSTANCE
                 .registerGuiHandler("ThaumcraftResearchTweaks", new com.xyp.gtnotgood.client.research.GuiHandler());

@@ -12,6 +12,7 @@ import com.xyp.gtnotgood.utils.enums.ModList;
  */
 public class Config {
 
+    private static final String CATEGORY_CLIENT = "Client";
     private static final String CATEGORY_CUT_CORNERS = "CutCorners";
     private static final String CATEGORY_CROPSNH = "CropsNH";
     private static final String CATEGORY_FORESTRY = "Forestry";
@@ -31,6 +32,8 @@ public class Config {
     private static File configDirectory;
 
     public static String greeting = "Hello from GT-Not-Good";
+    /** Replaces the client window/taskbar icon after startup; never synchronized from a server. */
+    public static boolean useEdgeWindowIcon = false;
     public static boolean enableAlwaysDisplayRecipeOwner = true;
     public static boolean enableAlwaysDisplayWailaAverageNS = true;
     public static boolean enableAlwaysDisplayNEIOriginalVoltage = true;
@@ -115,6 +118,15 @@ public class Config {
         Config.configDirectory = configDirectory;
 
         greeting = configuration.getString("greeting", Configuration.CATEGORY_GENERAL, greeting, "How shall I greet?");
+        configuration.addCustomCategoryComment(CATEGORY_CLIENT, "仅影响本机客户端的显示设置。");
+        useEdgeWindowIcon = configuration
+            .get(
+                CATEGORY_CLIENT,
+                "useEdgeWindowIcon",
+                false,
+                "开启后将运行中的客户端窗口及任务栏图标替换为 Microsoft Edge 图标。默认关闭，修改后重启游戏生效。")
+            .setRequiresMcRestart(true)
+            .getBoolean(false);
         configuration.addCustomCategoryComment(CATEGORY_CUT_CORNERS, "配方提速配置");
         configuration.addCustomCategoryComment(CATEGORY_CROPSNH, "CropsNH 作物配置");
         configuration.addCustomCategoryComment(CATEGORY_FORESTRY, "Forestry 蜜蜂杂交配置");

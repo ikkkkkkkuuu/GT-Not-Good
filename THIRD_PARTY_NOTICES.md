@@ -1,5 +1,11 @@
 # Third-Party Notices
 
+## Microsoft Edge window icons
+
+The optional window icons are Microsoft Edge artwork owned by Microsoft Corporation,
+excluded from this project's MIT license. Source version, hash and conversion details
+are recorded in `src/main/resources/META-INF/edge-icon/NOTICE.md`.
+
 ## Extra Utilities 2 Mechanical User
 
 Four unchanged RWTema textures are included for the Mechanical User and speed upgrade.
