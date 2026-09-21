@@ -1,5 +1,9 @@
 # Project Memory
 
+- On the current GTNH/AE2 version, every processing recipe containing fluids uses the Ultimate Encoded Pattern. Read native fluid inputs from `MEInventoryCrafting#getAEStackInSlot`; its ItemStack view contains fluid packets, not legacy AE2FC fluid drops. Test fixtures must encode native fluid NBT in Ultimate Encoded Patterns.
+
+- For the AE2LT Packaged Pattern Provider port, preserve the actual upstream GUI, textures, icons, layout and interactions; rewrite incompatible APIs rather than redesigning the visible result. Inspect the pinned reference source and license before drawing or copying assets. Keep source/commit/license/destination/modification records in `reference/UPSTREAM_PORT_NOTES.md` and the packaged asset manifest. Reference checkouts must never participate in compilation or resource packaging. The user accepts noncommercial distribution under CC BY-NC-SA 3.0 for applicable upstream visual assets; these assets are not covered by the project's general MIT grant. The connector contract is normal right-click Provider to select, then Shift-right-click target to bind.
+
 - This is a GTNH / Minecraft 1.7.10 Forge addon based on `GTNewHorizons/ExampleMod1.7.10`.
 - Keep `build.gradle.kts` aligned with the upstream starter. Put custom build logic in `addon.gradle`, dependencies in `dependencies.gradle`, and repositories in `repositories.gradle`.
 - Use `com.xyp.gtnotgood.utils.enums.ModList` as the central source for mod ids, display names, resource domains, and related mod metadata. Do not hard-code this mod's id or name elsewhere unless Java annotation constant rules require referencing `ModList.ModIds` or `ModList.Names`.

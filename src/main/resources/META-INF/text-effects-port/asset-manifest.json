@@ -1,0 +1,82 @@
+{
+  "files": [
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/burnished_auric.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/burnished_auric.frag.glsl",
+      "sha256": "fc72c29e8300a6b07e23c6965a5a90964d71af35628e0bdc92a7bb1939adf9a0"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/calamity_red.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/calamity_red.frag.glsl",
+      "sha256": "1517f89f8e4342bfcb7150433b0ded1efafc2f1716db8acab3ccc71d0f76aaf8"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/common.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/common.glsl",
+      "sha256": "6862b3a8c1dd96835e5aa6302f67e55c414e585d9b241f9eee47093379827573"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/evercold_cyan.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/evercold_cyan.frag.glsl",
+      "sha256": "526191febf52cd576533551d1d56a5c378c44a48fd979155edf16575d04ee9cb"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/exotic_rainbow.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/exotic_rainbow.frag.glsl",
+      "sha256": "07f5af2a481dad4ba96429abf3f5c3a85624ab01eb769f953ea9d9b6964aff92"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/genesis_component_rarity_shader.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/genesis_component_rarity_shader.frag.glsl",
+      "sha256": "b7ff578ebb855acd57c09da4c1db5d0c9d667c61f18bb0c6aaa07b5b04e474bd"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/infernum_red_rarity.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/infernum_red_rarity.frag.glsl",
+      "sha256": "5d2aecb763333c16a4bace90e74e6a2b8e3d6b8e68853404c3d24bbdddaa77f4"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/infernum_spark_rarity.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/infernum_spark_rarity.frag.glsl",
+      "sha256": "beb327d7e5d88b5a1cc36f199e48298f03268bf9157622f0d0424c429f0326a6"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/nameless_boss_bar_shader.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/nameless_boss_bar_shader.frag.glsl",
+      "sha256": "d9435f31b11032eb3020fb7bf442c35032f6daa55b78ea9a428a07da02b99b94"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/pulse_circle.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/pulse_circle.frag.glsl",
+      "sha256": "1f3f425913ed20fc1b2b2e3ca65f2aa7781a8c5c547be8c7510dbc8b952bc61e"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/pulse_upwards.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/pulse_upwards.frag.glsl",
+      "sha256": "1db32589d9dbd7d15204a2d6b5219b1c791c0fce218cb0db0314a68c8d590ca6"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/rarity_primitives.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/rarity_primitives.glsl",
+      "sha256": "fb6d3beaa0dff0c89d1cc52dea6575b05bc7e4ac91e827ec14c65ab88d220cf0"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/starsilver_rarity.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/starsilver_rarity.frag.glsl",
+      "sha256": "4565a4f7ab436ad7abbc3a6c14d9cd3837823915b37dff61dda80dccfb0d526d"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/superboss_rarity.frag.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/superboss_rarity.frag.glsl",
+      "sha256": "aed88666976f34c8d9012bcd36162e4cdae1ef61c4297f3521fcdffed27fb2b8"
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/text/text.vert.glsl",
+      "source": "src/main/resources/assets/sciencenotleisure/shaders/text/text.vert.glsl",
+      "sha256": "80d42eec53c1c0f788a5df5e7bf67c7e814b7a370c9a2f0a79ebf04240938f85"
+    }
+  ],
+  "commit": "52345d2c059c871febec1365d6012424c7d64547",
+  "modifications": "Resource domain relocated; shader bytes unchanged",
+  "source": "https://github.com/ABKQPO/GT-Not-Leisure"
+}

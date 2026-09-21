@@ -1,0 +1,253 @@
+[
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2/textures/guis/ex_pattern_provider.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/ex_pattern_provider.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "3f8d4d4f4360a7125f8d9ee7ffb1c9d07bf3d2ffe2406e110e5cb553f0258362",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/item/overloaded_wireless_connect_tool.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/items/packaged/wireless_connector.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "ac517eed8a7b998e546e5fda55e4e3fc95f45873a3aaa81c9f8581a3401d4e3a",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/item/overloaded_wireless_connect_tool.png.mcmeta",
+    "local": "src/main/resources/assets/gtnotgood/textures/items/packaged/wireless_connector.png.mcmeta",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "351e6ef817b5d030efe0a30c7a1d86f7ad17bc87f5d228c0ecfdbefba4405492",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2LT-Packaged-Pattern-Provider",
+    "commit": "1d3f183ecf258aff0001567d742ed30d6038d77b",
+    "source": "src/main/resources/assets/ae2ltpp/textures/item/provider_core_base.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/items/packaged/provider_core_base.png",
+    "usage": "Shared unchanged by basic, infusion, assembly-line and advanced-assembly-line cores. Controller overlays use installed GT5U items; no GT5U textures are copied.",
+    "license": "LGPL-3.0",
+    "modified": false,
+    "sha256": "d7151aa47cbca5c5915461ecce39dd5bf2913c23ed02f37a06d431548d646799",
+    "version": "1.2.0-beta.1"
+  },
+  {
+    "project": "AE2LT-Packaged-Pattern-Provider",
+    "commit": "1d3f183ecf258aff0001567d742ed30d6038d77b",
+    "source": "src/main/resources/assets/ae2ltpp/textures/block/overload_packaged_pattern_provider.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/blocks/packaged/provider.png",
+    "license": "LGPL-3.0",
+    "modified": false,
+    "sha256": "3f7e8f63dc00deeec82f565baa6fdf1d91bd92892670d650d106b8d0a2ee477a",
+    "version": "1.2.0-beta.1"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/gui/buttons/auto_input_on.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/auto_input_on.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "4741f64814a9e41d3d29b8b9de67b2551e52519414ee2dd65d1b5948bef5ad96",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/gui/buttons/auto_input_off.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/auto_input_off.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "efa2e0ddd84f9a111477e03cf695e6ab5e842bfb943fdbcb91dcfd7f4e231e3b",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/gui/buttons/frequency_select.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/frequency_select.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "442c9722f384bf909d23d631a56974e9655a99f4f006ce9755ae473721cc3b71",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/gui/wireless_overloaded_home.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/wireless_overloaded_home.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "c2867f1d2c39be1a388b7af1406eac7a66f6843d37c180d68a0eda38b4b07d21",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/gui/wireless_overloaded_selection.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/wireless_overloaded_selection.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "58928a94bae1fc42f6f8a7a070a8f19153e93d873ae329c10610aa3395dad200",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/gui/wireless_overloaded_list.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/wireless_overloaded_list.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "06e4b059f4dea57e75be5a3676fa2220babb56e409335630371861b20b75d5b4",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/gui/wireless_overloaded_form.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/wireless_overloaded_form.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "dbcfdaf6c5eb444f952dea7adeb1fcaf2a9ada6da4b927807d5c419bf93f8ba0",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/gui/buttons/menu.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/menu.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "32fc3c97f40a365a15c1b58080f18f9616a98afd52f5eb36e04a15adcd9a8596",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/gui/buttons/frequency_connect.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/frequency_connect.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "e73cef1ddd60a73e50174e9816840cce52e9c2771c459671ba4e28d0f1d04130",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/gui/buttons/frequency_member.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/frequency_member.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "4c00049139427601fd0b5130dc5f4265bd96db9ef20a310ce59e65ba2b19db7f",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "AE2-Lightning-Tech",
+    "commit": "1d4589b6bd50672051f78d766505530beacfebc0",
+    "source": "src/main/resources/assets/ae2lt/textures/gui/buttons/frequency_add.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/frequency_add.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "7a2889f6afc38ef01761af6ee80cae59252575b55383ed769e98e8e218f1e80e",
+    "version": "2.1.0-beta.5"
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "source": "src/main/resources/assets/ae2/textures/guis/extra_panels.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/extra_panels.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "c67fed0f98c9ca67a0602b5589a5191d59d5dd2bd3848c62de0e209e0e44b8b0",
+    "version": "19.2.17"
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "source": "src/main/resources/assets/ae2/textures/guis/states.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/states.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "0996b0084c7bf37f65a97a745982ab681ebd86f142fade526f14c823c4727e55",
+    "version": "19.2.17"
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "source": "src/main/resources/assets/ae2/textures/guis/priority.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/priority.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "48efb799c9cca90ad28b72866ea76f1b3db219b674dd6b8ecc79e4a97f6d926a",
+    "version": "19.2.17"
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/big_scroller.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/big_scroller.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "583732b6abe3ccea373213b1ecf62217b724d3b2acd71b07070ec7f2e7aa13d3",
+    "version": "19.2.17"
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/big_scroller_disabled.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/big_scroller_disabled.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "49e033a0736e52117a81e0f10715720f82cc82286fd072303702c757220cb374",
+    "version": "19.2.17"
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/vertical_buttons_bg.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/vertical_buttons_bg.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "62150f9869ee17cbd15bda963542287bf798482ceed1f18f0e24dd82381f7715",
+    "version": "19.2.17"
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "version": "19.2.17",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/button.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/button.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "5e815b235384d3ad4422e61e044804c097e486ffdb61fade6056965069c8f382"
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "version": "19.2.17",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/button_highlighted.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/button_highlighted.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "5f2bda04a241ebfd4dac3799c42b413c2653f6607757c95e41d86eb73b3f7ca9"
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "version": "19.2.17",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/button_disabled.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/button_disabled.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "d45e7b6314c216b81489f576c3c06e736d34502ef3c6db1430308e1bb34227f2"
+  }
+]

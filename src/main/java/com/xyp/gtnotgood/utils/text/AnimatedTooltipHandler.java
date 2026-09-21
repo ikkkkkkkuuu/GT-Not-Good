@@ -33,6 +33,31 @@ import cpw.mods.fml.relauncher.Side;
 public class AnimatedTooltipHandler {
 
     /**
+     * Creates a reusable shader span without linking client renderer classes during machine registration.
+     *
+     * @param text  literal tooltip text
+     * @param style shader and palette to apply
+     * @return supplier of the encoded, closed effect span
+     */
+    public static Supplier<String> renderedText(String text,
+        com.xyp.gtnotgood.utils.text.effect.TextEffectStyle style) {
+        String rendered = com.xyp.gtnotgood.utils.text.effect.TextEffects.apply(text, style);
+        return () -> rendered;
+    }
+
+    /**
+     * Applies a shader to text resolved at display time, including language-dependent text.
+     *
+     * @param text  supplier evaluated when the tooltip is displayed
+     * @param style shader and palette to apply
+     * @return supplier of a closed effect span
+     */
+    public static Supplier<String> renderedText(Supplier<String> text,
+        com.xyp.gtnotgood.utils.text.effect.TextEffectStyle style) {
+        return () -> com.xyp.gtnotgood.utils.text.effect.TextEffects.apply(text.get(), style);
+    }
+
+    /**
      * ItemStack-keyed tooltip registry used by {@link #renderTooltip(ItemTooltipEvent)}.
      * <p>
      * The GTNHLib {@link ItemStackMap} compares stacks by item, metadata, and NBT instead of object identity, which

@@ -50,6 +50,27 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
+        com.xyp.gtnotgood.client.text.effect.BuiltinTextEffects.register();
+        ((net.minecraft.client.resources.IReloadableResourceManager) net.minecraft.client.Minecraft.getMinecraft()
+            .getResourceManager()).registerReloadListener(com.xyp.gtnotgood.client.text.EffectTextRenderer.INSTANCE);
+        net.minecraftforge.client.ClientCommandHandler.instance
+            .registerCommand(new com.xyp.gtnotgood.client.text.preview.TextEffectPreviewCommand());
+        if (com.xyp.gtnotgood.utils.enums.ModList.Thaumcraft.isModLoaded()) {
+            net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
+                com.xyp.gtnotgood.utils.enums.GTNGItemList.ThaumcraftInfusionCore.getItem(),
+                new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(
+                    () -> new net.minecraft.item.ItemStack(
+                        thaumcraft.common.config.ConfigBlocks.blockStoneDevice,
+                        1,
+                        2)));
+        }
+        net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
+            com.xyp.gtnotgood.utils.enums.GTNGItemList.AssemblyLineCore.getItem(),
+            new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(
+                () -> gregtech.api.enums.ItemList.Machine_Multi_Assemblyline.get(1)));
+        net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
+            com.xyp.gtnotgood.utils.enums.GTNGItemList.AdvancedAssemblyLineCore.getItem(),
+            new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(() -> ggfab.GGItemList.AdvAssLine.get(1)));
         com.xyp.gtnotgood.client.gui.wildcard.WildcardPreviewCommand.register();
         com.xyp.gtnotgood.client.gui.LibraryDemoCommand.register();
         BlockNetwork.cableRenderId = RenderingRegistry.getNextAvailableRenderId();
@@ -69,6 +90,7 @@ public class ClientProxy extends CommonProxy {
             .bus()
             .register(clientUtils);
         MinecraftForge.EVENT_BUS.register(new MEWirelessNodeRenderer());
+        MinecraftForge.EVENT_BUS.register(new com.xyp.gtnotgood.client.packaged.WirelessConnectorRenderer());
         MinecraftForge.EVENT_BUS.register(new com.xyp.gtnotgood.client.nei.FactoryRecipeImport());
     }
 

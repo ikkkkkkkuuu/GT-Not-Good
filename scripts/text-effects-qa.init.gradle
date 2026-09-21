@@ -1,0 +1,32 @@
+// Opt-in render checks at the main menu; no save is opened or modified.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('runClient').configure {
+        dependsOn root.tasks.named('testClasses')
+        classpath += root.sourceSets.test.output
+        if (System.getProperty('gtng.text.noAngelica') == 'true') {
+            classpath = classpath.filter { !it.name.toLowerCase().contains('angelica') }
+        }
+        systemProperty 'gtng.text.qa', 'true'
+        systemProperty 'gtng.text.qa.output', new File(root.projectDir, 'build/text-effects-qa').absolutePath
+        // Freeze project outputs while the client is running, including FML's resource-pack jar.
+        // Other local tasks may rebuild the shared build directory during a resource reload.
+        doFirst {
+            def snapshot = java.nio.file.Files.createTempDirectory('gtng-text-qa-').toFile()
+            def projectBuild = root.layout.buildDirectory.get().asFile.toPath()
+            def entries = classpath.files.collect { entry ->
+                if (!entry.exists() || !entry.toPath().startsWith(projectBuild)) return entry
+                def target = new File(snapshot, projectBuild.relativize(entry.toPath()).toString())
+                if (entry.isDirectory()) {
+                    root.copy { from entry; into target }
+                } else {
+                    target.parentFile.mkdirs()
+                    java.nio.file.Files.copy(entry.toPath(), target.toPath())
+                }
+                return target
+            }
+            classpath = root.files(entries)
+        }
+        args '--width', '1280', '--height', '850'
+    }
+}

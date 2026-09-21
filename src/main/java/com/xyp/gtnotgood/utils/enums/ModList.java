@@ -12,11 +12,14 @@ import cpw.mods.fml.common.Loader;
 public enum ModList {
 
     GTNotGood(ModIds.GT_NOT_GOOD, Names.GT_NOT_GOOD),
+    Angelica(ModIds.ANGELICA, Names.ANGELICA),
+    NotEnoughItems(ModIds.NOT_ENOUGH_ITEMS, Names.NOT_ENOUGH_ITEMS),
     AE2(ModIds.APPLIED_ENERGISTICS_2, Names.APPLIED_ENERGISTICS_2),
     CropsNH(ModIds.CROPSNH, Names.CROPSNH),
     Forestry(ModIds.FORESTRY, Names.FORESTRY),
     GregTech(ModIds.GREGTECH, Names.GREGTECH),
     Thaumcraft(ModIds.THAUMCRAFT, Names.THAUMCRAFT),
+    ThaumicEnergistics(ModIds.THAUMIC_ENERGISTICS, Names.THAUMIC_ENERGISTICS),
     ENDER_IO(ModIds.ENDER_IO, Names.ENDER_IO),
     BetterQuestingAPI(ModIds.BETTER_QUESTING_API, Names.BETTER_QUESTING_API),
     WarpTheory(ModIds.WARP_THEORY, Names.WARP_THEORY);
@@ -27,12 +30,15 @@ public enum ModList {
     public static class ModIds {
 
         public static final String GT_NOT_GOOD = "gtnotgood";
+        public static final String ANGELICA = "angelica";
+        public static final String NOT_ENOUGH_ITEMS = "NotEnoughItems";
         public static final String BETTER_QUESTING_API = "bqapi";
         public static final String APPLIED_ENERGISTICS_2 = "appliedenergistics2";
         public static final String CROPSNH = "cropsnh";
         public static final String FORESTRY = "Forestry";
         public static final String GREGTECH = "gregtech";
         public static final String THAUMCRAFT = "Thaumcraft";
+        public static final String THAUMIC_ENERGISTICS = "thaumicenergistics";
         public static final String WARP_THEORY = "WarpTheory";
         public static final String ENDER_IO = "EnderIO";
 
@@ -45,12 +51,15 @@ public enum ModList {
     public static class Names {
 
         public static final String GT_NOT_GOOD = "GT-Not-Good";
+        public static final String ANGELICA = "Angelica";
+        public static final String NOT_ENOUGH_ITEMS = "Not Enough Items";
         public static final String BETTER_QUESTING_API = "Better Questing API";
         public static final String APPLIED_ENERGISTICS_2 = "Applied Energistics 2";
         public static final String CROPSNH = "CropsNH";
         public static final String FORESTRY = "Forestry";
         public static final String GREGTECH = "GregTech";
         public static final String THAUMCRAFT = "Thaumcraft";
+        public static final String THAUMIC_ENERGISTICS = "Thaumic Energistics";
         public static final String WARP_THEORY = "WarpTheory";
         public static final String ENDER_IO = "Ender IO";
 

@@ -1,0 +1,37 @@
+// Independent runtime snapshot for the user's manual assembly-line test client.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.fileTree('src/test/java/com/xyp/gtnotgood/common/packaged') {
+            include 'AssemblyLinePlayground.java'
+            include 'AssemblyLineClientChecks.java'
+        })
+    }
+    def snapshot = root.layout.buildDirectory.dir('assembly-playground-runtime')
+    def runtimeJar = root.tasks.register('jarAssemblyPlayground', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'assembly-playground-main.jar'
+        destinationDirectory = snapshot
+    }
+    def copyTest = root.tasks.register('snapshotAssemblyPlaygroundTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/AssemblyLinePlayground*.class'
+        include '**/AssemblyLineClientChecks*.class'
+        into root.layout.buildDirectory.dir('assembly-playground-runtime/test')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn runtimeJar, copyTest
+        notCompatibleWithConfigurationCache('Manual playground runtime setup')
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(runtimeJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('assembly-playground-runtime/test'))
+        classpath += root.configurations.testRuntimeClasspath
+        systemProperty 'gtng.assembly.playground', 'true'
+        systemProperty 'gtng.assembly.resume', root.findProperty('assemblyPlaygroundResume') ?: ''
+        systemProperty 'gtng.assembly.benchmark', root.findProperty('assemblyBenchmark') ?: 'false'
+        systemProperty 'gtng.assembly.interruptQa', root.findProperty('assemblyInterruptQa') ?: 'false'
+        args '--width', '1280', '--height', '800'
+    }
+}

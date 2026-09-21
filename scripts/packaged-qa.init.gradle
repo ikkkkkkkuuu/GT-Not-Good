@@ -1,0 +1,38 @@
+// Opt-in checks create a disposable world and reopen only that QA save in a second process.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.fileTree('src/test/java/com/xyp/gtnotgood/common/packaged') { include '**/*.java' })
+    }
+    def mainSnapshot = root.layout.buildDirectory.dir('packaged-qa-runtime/main')
+    def testSnapshot = root.layout.buildDirectory.dir('packaged-qa-runtime/test')
+    def resultFile = root.file('run/client/packaged-qa-result.txt')
+    def resumeSave = root.findProperty('packagedResume') ?: ''
+    def copyMain = root.tasks.register('snapshotPackagedMain', Sync) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        into mainSnapshot
+    }
+    def copyTest = root.tasks.register('snapshotPackagedTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/PackagedProviderClientChecks*.class'
+        into testSnapshot
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn copyMain, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainSnapshot, testSnapshot)
+        systemProperty 'gtng.packaged.qa', 'true'
+        systemProperty 'gtng.packaged.qa.resume', resumeSave
+        args '--width', '1100', '--height', '740'
+        doFirst { java.nio.file.Files.deleteIfExists(resultFile.toPath()) }
+        doLast {
+            def expected = resumeSave ? 'PASS' : 'SAVED'
+            if (!resultFile.exists() || resultFile.text.trim() != expected) {
+                throw new GradleException('Packaged Provider client checks did not complete successfully; inspect PACKAGED_QA in the client log.')
+            }
+        }
+    }
+}

@@ -1,0 +1,5 @@
+# Full local upstream checkouts are restored at pinned commits by restore-upstreams.ps1.
+# Avoid accidentally adding embedded Git repositories as unusable gitlinks.
+/AE2-Lightning-Tech/
+/AE2LT-Packaged-Pattern-Provider/
+/dependencies/*.jar

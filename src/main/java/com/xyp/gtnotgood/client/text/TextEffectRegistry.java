@@ -1,0 +1,40 @@
+// Ported from ABKQPO/GT-Not-Leisure @ 52345d2; LGPL-3.0. See META-INF/text-effects-port/.
+package com.xyp.gtnotgood.client.text;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import com.google.common.collect.ImmutableList;
+import com.xyp.gtnotgood.utils.text.effect.TextEffectStyle;
+
+/** Register effects during client initialization, before rendering starts. */
+public class TextEffectRegistry {
+
+    private static final Map<String, TextEffect> EFFECTS = new LinkedHashMap<>();
+    private static List<String> identifiers = ImmutableList.of();
+
+    private TextEffectRegistry() {}
+
+    public static void register(String identifier, TextEffect effect) {
+        new TextEffectStyle(identifier, ImmutableList.of(), 1);
+        if (EFFECTS.putIfAbsent(identifier, Objects.requireNonNull(effect, "effect")) != null) {
+            throw new IllegalArgumentException("Text effect already registered: " + identifier);
+        }
+        identifiers = ImmutableList.copyOf(EFFECTS.keySet());
+    }
+
+    /** Returns an immutable snapshot in registration order, including effects supplied by other mods. */
+    public static List<String> identifiers() {
+        return identifiers;
+    }
+
+    public static TextEffect get(String identifier) {
+        return EFFECTS.get(identifier);
+    }
+
+    public static void reload() {
+        for (TextEffect effect : EFFECTS.values()) effect.close();
+    }
+}

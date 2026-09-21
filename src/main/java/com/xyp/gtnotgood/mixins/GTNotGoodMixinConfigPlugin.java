@@ -27,6 +27,13 @@ public final class GTNotGoodMixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        // Check class resources without loading Angelica or its font renderer during early mixin discovery.
+        if (mixinClassName.contains(".texteffect.angelica.")) {
+            return FMLLaunchHandler.side()
+                .isClient()
+                && net.minecraft.launchwrapper.Launch.classLoader
+                    .getResource("com/gtnewhorizons/angelica/client/font/BatchingFontRenderer.class") != null;
+        }
         return !mixinClassName.startsWith(CLIENT_RESEARCH_MIXIN_PACKAGE) || FMLLaunchHandler.side()
             .isClient();
     }

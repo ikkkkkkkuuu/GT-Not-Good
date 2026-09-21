@@ -33,6 +33,13 @@ import gregtech.api.util.GTUtility;
  */
 public enum GTNGItemList implements IItemContainer {
 
+    WirelessPackagedPatternProvider,
+    ItemWirelessConnector,
+    BasicPackagedCore,
+    AssemblyLineCore,
+    AdvancedAssemblyLineCore,
+    ThaumcraftInfusionCore,
+
     MechanicalUser,
     MechanicalUserSpeedUpgrade,
 

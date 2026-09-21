@@ -37,6 +37,11 @@ public final class NetWorkHandler {
         registerMessage(SyncVeinPickaxeNBT.class, SyncVeinPickaxeNBT.Handler.class, id++, Side.SERVER);
         registerMessage(ServerConfigMessage.class, ServerConfigMessage.ServerHandler.class, id, Side.SERVER);
         registerMessage(ServerConfigMessage.class, ServerConfigMessage.ClientHandler.class, id++, Side.CLIENT);
+        registerMessage(
+            com.xyp.gtnotgood.common.packaged.MessagePackagedConnector.class,
+            com.xyp.gtnotgood.common.packaged.MessagePackagedConnector.Handler.class,
+            id++,
+            Side.SERVER);
     }
 
     private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<REQ> messageClass,

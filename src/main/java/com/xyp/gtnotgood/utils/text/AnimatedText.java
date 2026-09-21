@@ -1,15 +1,6 @@
 package com.xyp.gtnotgood.utils.text;
 
-import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.AQUA;
-import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.BLUE;
-import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.GOLD;
-import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.GREEN;
-import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.LIGHT_PURPLE;
-import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.RED;
-import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.YELLOW;
-import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.animatedText;
 import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.chain;
-import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.text;
 
 import java.util.function.Supplier;
 
@@ -36,8 +27,10 @@ public class AnimatedText {
         // #tr tooltip.gtnotgood.adder
         // # Mod Added by:
         // # zh_CN 添加模组：
-        text(StatCollector.translateToLocal("tooltip.gtnotgood.adder")),
-        animatedText(ModList.GTNotGood.getDisplayName(), 1, 80, RED, GOLD, YELLOW, GREEN, AQUA, BLUE, LIGHT_PURPLE));
+        () -> StatCollector.translateToLocal("tooltip.gtnotgood.adder"),
+        AnimatedTooltipHandler.renderedText(
+            ModList.GTNotGood.getDisplayName(),
+            com.xyp.gtnotgood.utils.text.effect.TextEffects.EXOTIC_RAINBOW));
 
     private AnimatedText() {}
 }

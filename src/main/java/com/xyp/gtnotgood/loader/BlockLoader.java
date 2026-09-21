@@ -69,6 +69,19 @@ public final class BlockLoader {
      * Registers all non-GregTech blocks and stores their item stacks for recipe and creative-tab use.
      */
     public static void registry() {
+        com.xyp.gtnotgood.common.packaged.BlockPackagedProvider packagedProvider = new com.xyp.gtnotgood.common.packaged.BlockPackagedProvider();
+        GameRegistry.registerBlock(packagedProvider, "wireless_packaged_pattern_provider");
+        GameRegistry.registerTileEntity(
+            com.xyp.gtnotgood.common.packaged.TilePackagedProvider.class,
+            ModList.GTNotGood.getResourcePath("wireless_packaged_pattern_provider"));
+        GTNGItemList.WirelessPackagedPatternProvider.set(new ItemStack(packagedProvider));
+        appeng.api.AEApi.instance()
+            .registries()
+            .interfaceTerminal()
+            .register(com.xyp.gtnotgood.common.packaged.TilePackagedProvider.class);
+        cpw.mods.fml.common.FMLCommonHandler.instance()
+            .bus()
+            .register(new com.xyp.gtnotgood.common.packaged.PackagedServerActions());
         GameRegistry.registerBlock(mechanicalUser, "mechanical_user");
         GameRegistry.registerTileEntity(
             com.xyp.gtnotgood.common.user.TileMechanicalUser.class,

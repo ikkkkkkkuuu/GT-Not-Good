@@ -6,11 +6,17 @@
   "refmap": "mixins.gtnotgood.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "early.texteffect.MixinEnumChatFormattingTextEffects",
     "minecraft.VanillaFurnaceMixin",
     "tcautores.GuiResearchBrowserMixin",
     "tcautores.GuiResearchTableMixin",
     "tcautores.NetHandlerPlayClientMixin"
   ],
-  "client": [],
+  "client": [
+    "early.texteffect.MixinFontRendererTextEffects",
+    "early.texteffect.MixinGuiNewChatTextEffects",
+    "early.texteffect.MixinGuiTextFieldTextEffects",
+    "early.texteffect.angelica.MixinFontBatchTextEffects"
+  ],
   "server": []
 }

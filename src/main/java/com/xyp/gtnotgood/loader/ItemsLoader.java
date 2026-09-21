@@ -22,6 +22,39 @@ public final class ItemsLoader {
      * Registers all non-GregTech items and stores their stacks for recipes and tooltips.
      */
     public static void registry() {
+        var connector = new com.xyp.gtnotgood.common.packaged.ItemWirelessConnector();
+        GameRegistry.registerItem(connector, "packaged_wireless_connector");
+        GTNGItemList.ItemWirelessConnector.set(connector);
+        var basicCore = new com.xyp.gtnotgood.common.packaged.ItemPackagedCore(false);
+        GameRegistry.registerItem(basicCore, "basic_packaged_core");
+        GTNGItemList.BasicPackagedCore.set(basicCore);
+        // #tr item.assembly_line_packaged_core.name
+        // # Assembly Line Packaged Core
+        // # zh_CN 装配线封包核心
+        var assemblyCore = new com.xyp.gtnotgood.common.packaged.ItemPackagedCore(
+            "assembly_line",
+            "assembly_line_packaged_core");
+        GameRegistry.registerItem(assemblyCore, "assembly_line_packaged_core");
+        GTNGItemList.AssemblyLineCore.set(assemblyCore);
+        // #tr item.advanced_assembly_line_packaged_core.name
+        // # Advanced Assembly Line Packaged Core
+        // # zh_CN 进阶装配线封包核心
+        var advancedCore = new com.xyp.gtnotgood.common.packaged.ItemPackagedCore(
+            "advanced_assembly_line",
+            "advanced_assembly_line_packaged_core");
+        GameRegistry.registerItem(advancedCore, "advanced_assembly_line_packaged_core");
+        GTNGItemList.AdvancedAssemblyLineCore.set(advancedCore);
+        com.xyp.gtnotgood.common.packaged.PackagedCoreRegistry
+            .register("assembly_line", new com.xyp.gtnotgood.common.packaged.AssemblyLineAdapter(false));
+        com.xyp.gtnotgood.common.packaged.PackagedCoreRegistry
+            .register("advanced_assembly_line", new com.xyp.gtnotgood.common.packaged.AssemblyLineAdapter(true));
+        if (com.xyp.gtnotgood.utils.enums.ModList.Thaumcraft.isModLoaded()) {
+            var infusionCore = new com.xyp.gtnotgood.common.packaged.ItemPackagedCore(true);
+            GameRegistry.registerItem(infusionCore, "tc4_infusion_packaged_core");
+            GTNGItemList.ThaumcraftInfusionCore.set(infusionCore);
+            com.xyp.gtnotgood.common.packaged.PackagedCoreRegistry
+                .register("thaumcraft_infusion", new com.xyp.gtnotgood.common.packaged.ThaumcraftInfusionAdapter());
+        }
         com.xyp.gtnotgood.common.user.ItemUserSpeedUpgrade userSpeed = new com.xyp.gtnotgood.common.user.ItemUserSpeedUpgrade();
         GameRegistry.registerItem(userSpeed, "mechanical_user_speed");
         GTNGItemList.MechanicalUserSpeedUpgrade.set(userSpeed);
