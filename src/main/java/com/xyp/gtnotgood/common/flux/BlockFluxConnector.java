@@ -69,6 +69,7 @@ public class BlockFluxConnector extends Block {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
         if (world.isRemote || !(world.getTileEntity(x, y, z) instanceof TileFluxConnector tile)) return;
         if (stack.hasTagCompound()) tile.readSettings(stack.getTagCompound());
+        tile.configureOnPlacement();
         if (entity instanceof EntityPlayer player) tile.placedBy(player);
     }
 

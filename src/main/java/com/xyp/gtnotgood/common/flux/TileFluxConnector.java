@@ -24,6 +24,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import gregtech.api.enums.GTValues;
+import gregtech.api.interfaces.tileentity.IBasicEnergyContainer;
 import gregtech.api.interfaces.tileentity.IEnergyConnected;
 import gregtech.common.misc.WirelessNetworkManager;
 
@@ -254,6 +255,30 @@ public abstract class TileFluxConnector extends TileEntity implements IEnergyCon
         voltage = Math.max(1, Math.min(MAX_VOLTAGE, newVoltage));
         amperage = Math.max(1, Math.min(MAX_AMPERAGE, newAmperage));
         changed();
+    }
+
+    /**
+     * Initializes voltage once on placement from adjacent GT ports, with a default current of one ampere.
+     * Plugs use the highest source output; points use the lowest sink rating to avoid overvolting a neighbor.
+     * Physical port checks also work before GT's active-face cache updates. Without a readable rating, use 32 V.
+     * This must not run from ticking, neighbor updates or NBT loading, so later manual settings remain authoritative.
+     *
+     * @see BlockFluxConnector#onBlockPlacedBy
+     * @see #configure(long, long)
+     */
+    public void configureOnPlacement() {
+        if (worldObj == null || worldObj.isRemote) return;
+        long detected = 0;
+        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+            TileEntity adjacent = neighbour(side);
+            if (!(adjacent instanceof IBasicEnergyContainer target) || adjacent instanceof TileFluxConnector) continue;
+            ForgeDirection face = side.getOpposite();
+            if (isPlug() ? !target.outputsEnergyTo(face, false) : !target.inputEnergyFrom(face, false)) continue;
+            long rating = isPlug() ? target.getOutputVoltage() : target.getInputVoltage();
+            if (rating <= 0) continue;
+            detected = detected == 0 ? rating : isPlug() ? Math.max(detected, rating) : Math.min(detected, rating);
+        }
+        configure(detected > 0 ? detected : 32, 1);
     }
 
     public void toggleEnabled() {

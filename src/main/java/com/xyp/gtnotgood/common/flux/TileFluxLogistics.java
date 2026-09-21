@@ -289,7 +289,7 @@ public final class TileFluxLogistics extends TileMEBridgeReceiver {
 
     private void exportFluid(IFluidHandler tank, ForgeDirection side, int slot) throws GridAccessException {
         FluidStack filter = fluidFilters[slot];
-        if (filter == null || !tank.canFill(side, filter.getFluid())) return;
+        if (filter == null) return;
         long present = 0;
         FluidTankInfo[] tanks = tank.getTankInfo(side);
         // A positive target needs observable stock; never guess that an opaque tank is empty.
@@ -301,6 +301,8 @@ public final class TileFluxLogistics extends TileMEBridgeReceiver {
         if (missing == 0) return;
         FluidStack offer = filter.copy();
         offer.amount = missing;
+        // GT canFill probes with 1 mB, but steam power accepts pairs of mB. Simulate the actual offer instead;
+        // sided fill still enforces the machine's input face, covers and available capacity.
         int capacity = Math.max(0, Math.min(missing, tank.fill(side, offer, false)));
         if (capacity == 0) return;
         var request = AEFluidStack.create(filter);

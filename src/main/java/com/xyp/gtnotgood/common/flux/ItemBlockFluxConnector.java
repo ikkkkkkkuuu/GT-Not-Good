@@ -15,7 +15,7 @@ public final class ItemBlockFluxConnector extends ItemBlock {
         super(block);
     }
 
-    /** Canonicalize legacy portable defaults on the server so old and newly crafted stacks can merge. */
+    /** Reset legacy portable settings on the server so old and newly crafted stacks can merge. */
     @Override
     public void onUpdate(ItemStack stack, net.minecraft.world.World world, net.minecraft.entity.Entity entity, int slot,
         boolean held) {
@@ -52,8 +52,8 @@ public final class ItemBlockFluxConnector extends ItemBlock {
         // # zh_CN 自动连接放置者所属的 GT 无线电网团队
         tooltip.add(StatCollector.translateToLocal("flux.tooltip.owner"));
         // #tr flux.tooltip.settings
-        // # Set voltage and amperage on the Settings tab; default: 32 V, 1 A
-        // # zh_CN 在设置页调整电压与安培数；默认 32 V、1 A
+        // # Placement detects voltage once (fallback: 32 V), at 1 A; settings remain editable.
+        // # zh_CN 放置时识别电压（无匹配时 32 V），默认 1 A；之后可手动调整。
         tooltip.add(StatCollector.translateToLocal("flux.tooltip.settings"));
         // #tr flux.tooltip.rating
         // # Throughput: voltage x amperage EU/t
