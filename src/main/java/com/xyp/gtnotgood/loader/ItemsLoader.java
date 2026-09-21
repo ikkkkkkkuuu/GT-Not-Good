@@ -28,6 +28,18 @@ public final class ItemsLoader {
         var basicCore = new com.xyp.gtnotgood.common.packaged.ItemPackagedCore(false);
         GameRegistry.registerItem(basicCore, "basic_packaged_core");
         GTNGItemList.BasicPackagedCore.set(basicCore);
+        if (com.xyp.gtnotgood.utils.enums.ModList.BloodMagic.isModLoaded()) {
+            // #tr item.blood_altar_packaged_core.name
+            // # Blood Altar Packaged Core
+            // # zh_CN 血魔法祭坛封包核心
+            var bloodCore = new com.xyp.gtnotgood.common.packaged.ItemPackagedCore(
+                "blood_altar",
+                "blood_altar_packaged_core");
+            GameRegistry.registerItem(bloodCore, "blood_altar_packaged_core");
+            GTNGItemList.BloodAltarCore.set(bloodCore);
+            com.xyp.gtnotgood.common.packaged.PackagedCoreRegistry
+                .register("blood_altar", new com.xyp.gtnotgood.common.packaged.BloodAltarAdapter());
+        }
         // #tr item.assembly_line_packaged_core.name
         // # Assembly Line Packaged Core
         // # zh_CN 装配线封包核心

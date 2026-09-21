@@ -64,6 +64,12 @@ public class ClientProxy extends CommonProxy {
                         1,
                         2)));
         }
+        if (com.xyp.gtnotgood.utils.enums.ModList.BloodMagic.isModLoaded()) {
+            net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
+                com.xyp.gtnotgood.utils.enums.GTNGItemList.BloodAltarCore.getItem(),
+                new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(
+                    () -> new net.minecraft.item.ItemStack(WayofTime.alchemicalWizardry.ModBlocks.blockAltar)));
+        }
         net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
             com.xyp.gtnotgood.utils.enums.GTNGItemList.AssemblyLineCore.getItem(),
             new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(

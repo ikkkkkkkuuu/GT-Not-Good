@@ -1,0 +1,30 @@
+// Independent manual runtime. Only this playground test class is included; no automated QA recipes.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.fileTree('src/test/java/com/xyp/gtnotgood/common/packaged') { include 'BloodAltarPlayground.java' })
+    }
+    def runtimeJar = root.tasks.register('jarBloodPlayground', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'blood-playground-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('blood-playground-runtime')
+    }
+    def copyTest = root.tasks.register('snapshotBloodPlaygroundTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/BloodAltarPlayground*.class'
+        into root.layout.buildDirectory.dir('blood-playground-runtime/test')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn runtimeJar, copyTest
+        notCompatibleWithConfigurationCache('Manual playground runtime setup')
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(runtimeJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('blood-playground-runtime/test'))
+        systemProperty 'gtng.blood.playground', 'true'
+        systemProperty 'gtng.blood.playground.resume', root.findProperty('bloodPlaygroundResume') ?: ''
+        args '--width', '1280', '--height', '800'
+        doFirst { java.nio.file.Files.deleteIfExists(root.file('run/client/blood-playground-ready.txt').toPath()) }
+    }
+}

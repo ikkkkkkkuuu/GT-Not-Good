@@ -37,6 +37,7 @@ public enum GTNGItemList implements IItemContainer {
     ItemWirelessConnector,
     BasicPackagedCore,
     AssemblyLineCore,
+    BloodAltarCore,
     AdvancedAssemblyLineCore,
     ThaumcraftInfusionCore,
 

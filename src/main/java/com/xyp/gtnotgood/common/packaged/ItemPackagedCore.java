@@ -67,6 +67,15 @@ public final class ItemPackagedCore extends Item {
             // # Use empty ordinary input buses, fluid hatches and one output bus.
             // # zh_CN 使用空的普通输入总线、流体输入舱和一个输出总线。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.assembly_hatches"));
+        } else if ("blood_altar".equals(adapterId)) {
+            // #tr tooltip.packaged.blood_altar
+            // # Bind an empty Blood Altar; supply LP normally.
+            // # zh_CN 绑定空血祭坛；通过原有方式供应生命源质。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.blood_altar"));
+            // #tr tooltip.packaged.blood_altar_step
+            // # One recipe step per pattern. Holds the result until collected.
+            // # zh_CN 每张样板填写单步配方；产物保留到回收为止。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.blood_altar_step"));
         } else if (adapterId.isEmpty()) {
             // #tr tooltip.packaged.basic_core
             // # Base for machine-specific Packaged Cores.

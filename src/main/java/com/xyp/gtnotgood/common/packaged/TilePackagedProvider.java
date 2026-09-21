@@ -387,6 +387,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
             ItemStack extracted = source.decrStackSize(sourceSlot, job.expected.stackSize);
             if (extracted == null) continue;
             inventory[destination] = extracted;
+            adapter.collected(targetTile);
             source.markDirty();
             if (source instanceof net.minecraft.tileentity.TileEntity pedestal) {
                 worldObj.markBlockForUpdate(pedestal.xCoord, pedestal.yCoord, pedestal.zCoord);

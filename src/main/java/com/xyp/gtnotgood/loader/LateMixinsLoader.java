@@ -57,6 +57,9 @@ public class LateMixinsLoader implements ILateMixinLoader {
     @Override
     public List<String> getMixins(Set<String> loadedMods) {
         List<String> list = new ArrayList<>();
+        if (loadedMods.contains(ModList.BloodMagic.getID())) {
+            addAll(list, "BloodMagic.MixinPackagedBloodAltar");
+        }
         if (loadedMods.contains(ModList.GregTech.getID())) {
             addAll(list, "Gregtech.AssemblyLineDataAccessMixin");
         }

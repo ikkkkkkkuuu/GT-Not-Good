@@ -45,7 +45,11 @@ public enum AltarStatus {
     // #tr gui.packaged.returns_full
     // # Return inventory full; result remains at the altar.
     // # zh_CN 回收槽已满；产物保留在祭坛。
-    RETURNS_FULL("gui.packaged.returns_full");
+    RETURNS_FULL("gui.packaged.returns_full"),
+    // #tr gui.packaged.blood_recipe
+    // # Blood Altar: check tier, single-step ingredients and output.
+    // # zh_CN 血祭坛：请检查等级、单步配方材料与产物。
+    BLOOD_RECIPE("gui.packaged.blood_recipe");
 
     public final String key;
 

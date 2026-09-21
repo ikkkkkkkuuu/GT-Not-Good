@@ -50,6 +50,9 @@ public final class PackagedCoreRegistry {
         /** Returns the real completed output inventory, or null while crafting/unavailable. */
         net.minecraft.inventory.IInventory output(TileEntity target);
 
+        /** Called after the expected output has safely moved into the provider's return inventory. */
+        default void collected(TileEntity target) {}
+
         /** Maximum accepted receipts per target; adapters must also enforce physical input capacity. */
         default int maxInFlight() {
             return 1;

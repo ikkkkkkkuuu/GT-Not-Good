@@ -1,5 +1,18 @@
 # AE2LT faithful port audit
 
+## Blood altar core extension (2026-09-21)
+
+The blood altar core reuses the unchanged AE2LTPP core base and the existing renderer listed below:
+source commit `1d3f183ecf258aff0001567d742ed30d6038d77b`, LGPL-3.0, source
+`src/main/resources/assets/ae2ltpp/textures/item/provider_core_base.png`, destination
+`src/main/resources/assets/gtnotgood/textures/items/packaged/provider_core_base.png`.
+The pinned renderer and license were inspected before extending usage. The installed Blood Magic
+altar item is rendered dynamically at the existing overlay size and placement; no Blood Magic assets
+or source code were copied. The packaged `ASSET_MANIFEST.json` records this additional use.
+New adapter and completion-stop logic were checked against the official GTNewHorizons/BloodMagic
+`1.9.4` source artifact (cached source JAR SHA-1 `94434ffc9864f3dbfc7516f374f5618722c75239`).
+Inspected source files were extracted to the OS temporary directory, outside compilation and packaging.
+
 ## Assembly line core extension (2026-09-21)
 
 The two GTNG assembly line cores reuse the unmodified `provider_core_base.png` from

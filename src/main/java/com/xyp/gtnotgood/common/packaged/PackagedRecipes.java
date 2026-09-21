@@ -58,6 +58,7 @@ public final class PackagedRecipes {
                 .maybeStack(1)
                 .get());
         if (ModList.Thaumcraft.isModLoaded()) registerInfusion();
+        if (ModList.BloodMagic.isModLoaded()) registerBloodAltar();
         GameRegistry.addShapelessRecipe(
             GTNGItemList.AssemblyLineCore.get(1),
             GTNGItemList.BasicPackagedCore.get(1),
@@ -74,5 +75,13 @@ public final class PackagedRecipes {
             GTNGItemList.ThaumcraftInfusionCore.get(1),
             GTNGItemList.BasicPackagedCore.get(1),
             new ItemStack(thaumcraft.common.config.ConfigBlocks.blockStoneDevice, 1, 2));
+    }
+
+    /** Requires the actual altar, preserving its existing progression gate. */
+    private static void registerBloodAltar() {
+        GameRegistry.addShapelessRecipe(
+            GTNGItemList.BloodAltarCore.get(1),
+            GTNGItemList.BasicPackagedCore.get(1),
+            new ItemStack(WayofTime.alchemicalWizardry.ModBlocks.blockAltar));
     }
 }

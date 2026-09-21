@@ -396,8 +396,7 @@ public final class PackagedProviderGui {
                             .isEmpty())
                     .tooltip(t -> {
                         // #tr gui.packaged.remove_target
-                        // # Right click: disconnect. Shift-right click: interrupt/release jobs. Cancel AE requests
-                        // separately.
+                        // # Right click: unlink. Shift-right click: release job. Cancel AE requests separately.
                         // # zh_CN 右键断开；Shift右键中断并释放任务，需另行取消AE订单。
                         t.addLine(IKey.lang("gui.packaged.remove_target"));
                         // #tr gui.packaged.interrupt_materials

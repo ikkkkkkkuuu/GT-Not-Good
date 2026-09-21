@@ -1,0 +1,38 @@
+// Real-client checks are opt-in and excluded from the release artifact.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.fileTree('src/test/java/com/xyp/gtnotgood/common/packaged') { include 'BloodAltarClientChecks.java' })
+    }
+    def mainSnapshot = root.layout.buildDirectory.dir('blood-qa-runtime/main')
+    def testSnapshot = root.layout.buildDirectory.dir('blood-qa-runtime/test')
+    def copyMain = root.tasks.register('snapshotBloodMain', Sync) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        into mainSnapshot
+    }
+    def copyTest = root.tasks.register('snapshotBloodTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/BloodAltarClientChecks*.class'
+        into testSnapshot
+    }
+    def resume = root.findProperty('bloodResume') ?: ''
+    def result = root.file('run/client/blood-qa-result.txt')
+    root.tasks.named('runClient').configure {
+        dependsOn copyMain, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainSnapshot, testSnapshot)
+        systemProperty 'gtng.blood.qa', 'true'
+        systemProperty 'gtng.blood.qa.resume', resume
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in runtime checks retain project references')
+        doFirst { java.nio.file.Files.deleteIfExists(result.toPath()) }
+        doLast {
+            if (!result.exists() || result.text.trim() != (resume ? 'PASS' : 'SAVED')) {
+                throw new GradleException('Blood altar checks failed; inspect BLOOD_QA in the client log.')
+            }
+        }
+    }
+}

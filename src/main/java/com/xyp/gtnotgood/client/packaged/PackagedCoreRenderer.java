@@ -18,8 +18,8 @@ import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 /**
  * LGPL-3.0 adaptation of AE2LTPP PackagedCoreItemRenderer: original core base plus a 0.45-scale target item.
- * Target art is rendered from installed TC4 or GT5U items, not copied into GTNG.
- * Registration for the optional Thaumcraft target remains guarded on the client.
+ * Target art is rendered from installed TC4, GT5U or Blood Magic items, not copied into GTNG.
+ * Registration for optional target mods remains guarded on the client.
  */
 public final class PackagedCoreRenderer implements IItemRenderer {
 
