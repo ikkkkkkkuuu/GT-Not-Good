@@ -39,7 +39,7 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 | GTNH Version | Start Version | Newest Support Version |                                                            Download                                                            | Maintenance status |
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) | ❌ |
-| 2.9.0-beta3  |     1.0.3     |         1.1.3          | [![1.1.3](https://img.shields.io/badge/release-v1.1.3-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.3) | ✔️ |
+| 2.9.0-beta3  |     1.0.3     |         1.1.4          | [![1.1.4](https://img.shields.io/badge/release-v1.1.4-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.4) | ✔️ |
 
 
 ### 🔌 ME 网桥 / ME Bridge
@@ -76,7 +76,7 @@ ME 无线收发器
     <img src="README/me2.png" width="800">
 </p>
 
-如图所示 是一个集成编码 库存 接口终端为一体的无线二合一接口终端
+如图所示 是一个集成编码 库存 接口终端为一体的无线二合一接口终端4
 自动填充nei配方时可直接在接口搜索栏里自动填入配方名称 
 优化过不会出现 搜索栏里是组装机 4  结果组装机 24排在比组装机 4更上面的情况
 可自动填充nei配方后 如果有和搜索栏相同的接口 直接会放入样板在里面
