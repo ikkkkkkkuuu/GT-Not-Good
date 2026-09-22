@@ -158,9 +158,15 @@ public final class TilePackagedProvider extends TileMEBridgeBase
         return essentiaIdentity;
     }
 
-    /** Changes the source only while idle; existing worlds keep their original altar-supply behavior. */
+    /** Whether the installed core supports the infusion-only source and speed controls. */
+    boolean hasInfusionCore() {
+        return inventory[CORE] != null && inventory[CORE].getItem() instanceof ItemPackagedCore core
+            && "thaumcraft_infusion".equals(core.adapterId);
+    }
+
+    /** Changes the source only with an idle infusion core; retains the stored setting when swapping cores. */
     public boolean setNetworkEssentia(boolean enabled) {
-        if (!isServerSide() || !jobs.isEmpty()) return false;
+        if (!isServerSide() || !hasInfusionCore() || !jobs.isEmpty()) return false;
         if (enabled && !com.xyp.gtnotgood.utils.enums.ModList.ThaumicEnergistics.isModLoaded()) return false;
         networkEssentia = enabled;
         markDirty();
@@ -169,7 +175,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
 
     /** Bounded per-cycle source throughput; changing an active transaction's rate is intentionally disallowed. */
     public boolean cycleEssentiaSpeed() {
-        if (!isServerSide() || !jobs.isEmpty()) return false;
+        if (!isServerSide() || !hasInfusionCore() || !jobs.isEmpty()) return false;
         essentiaSpeed = essentiaSpeed >= 32 ? 1 : essentiaSpeed * 2;
         markDirty();
         return true;

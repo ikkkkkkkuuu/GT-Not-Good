@@ -1,5 +1,19 @@
 # AE2LT faithful port audit
 
+## Separate AdvancedAE IO bus port (2026-09-22)
+
+Reference: `AdvancedAE/`, https://github.com/pedroksl/AdvancedAE, pinned commit
+`5ad43ee1e5f7a8b9fe7a1eacfaebdd44b61b624c`. Inspected root `LICENSE.md` (LGPL-3.0), bus/menu
+sources and generated part model before copying the three original PNG textures. The local checkout is
+ignored and excluded from compilation/packaging. Exact source/destination/hash records and modifications
+are packaged in `META-INF/advancedio-port/{NOTICE.md,ASSET_MANIFEST.json}`. The GUI retains the original AdvancedAE/AE2 layout and amount sub-screen.
+Additional pinned references inspected before copying art: AE2 v26.1.10-beta
+`3a051bb473de0b8fd329b39db4262f731d17e7e5` (LGPL code, CC BY-NC-SA 3.0 art), and AE2AddonLib
+26.1.3-alpha-neoforge `5b48a86deea7ebf50bf95166f7b74a24057c90ac` (GPL-3.0).
+`AdvancedIOGui.java` is GPL-3.0-only. Exact code mappings, visual licenses, destination paths,
+unchanged asset hashes and modifications are recorded in the packaged notice/manifest.
+These checkouts are ignored and never participate in compilation or packaging.
+
 ## Blood altar core extension (2026-09-21)
 
 The blood altar core reuses the unchanged AE2LTPP core base and the existing renderer listed below:
@@ -68,7 +82,7 @@ Authoritative license links:
 
 PP build.gradle declares Curse Maven artifact `applied-energistics-2-223794:7027323`. Its JAR metadata identifies AE2 **19.2.17**. Official tag `neoforge/v19.2.17` resolves to **79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a**. The exact JAR was downloaded for inspection into `reference/dependencies` (excluded from Git and builds): SHA-256 `460d779a0609b81409907d9956de8f6f70a1b0912257e3e5c3c7e75ac9630e95`.
 
-The official README at that commit explicitly assigns textures/models to CC BY-NC-SA 3.0 and text/translations to CC0. Java implementation headers specify LGPL-3.0-or-later. API licensing is separate (MIT). The README, LGPL text and relevant GUI source excerpts are retained under `reference/dependencies`; these excerpts are reference material only. AE2's original README/license and art attribution also accompany the production textures.
+The official README at that commit explicitly assigns textures/models to CC BY-NC-SA 3.0 and text/translations to CC0. Java implementation headers specify LGPL-3.0-only. API licensing is separate (MIT). The README, LGPL text and relevant GUI source excerpts are retained under `reference/dependencies`; these excerpts are reference material only. AE2's original README/license and art attribution also accompany the production textures.
 
 `Icon.java` uses `guis/states.png` (toolbar background UVs: normal 176,128; focus 194,128; hover 212,128; all 18×20). `UpgradesPanel` uses `guis/extra_panels.png`, 128×128, with 18-pixel slots and 5-pixel padding. Both original atlases are now copied, avoiding a substitute GTNH visual style. `common/player_inventory.json` specifies inventory left=8,bottom=84, hotbar left=8,bottom=26 and inventory title left=8,bottom=95. `common/common.json` places the vertical toolbar at left=3,top=1.
 
@@ -158,7 +172,7 @@ Source: AE2 Lightning Tech 2.1.0-beta.5, commit
 `client/WirelessConnectorRenderer.java`, `WirelessConnectorRenderFilter.java`,
 and `Ae2ltRenderTypes.java`. AE2 19.2.17 commit
 `79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a` supplies the inspected
-`client/render/overlay/OverlayRenderType.java` state definitions (LGPL-3.0-or-later).
+`client/render/overlay/OverlayRenderType.java` state definitions (LGPL-3.0-only).
 Local destination: `src/main/java/com/xyp/gtnotgood/client/packaged/WirelessConnectorRenderer.java`;
 all modified for Forge 1.7.10 Tessellator/GL, retaining original colors, inner
 cube, bound faces, line endpoints and selection filtering. Provider description

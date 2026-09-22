@@ -67,6 +67,7 @@ public class CommonProxy {
 
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
+        GuiManager.registerFactory(com.xyp.gtnotgood.common.advancedio.AdvancedIOGuiFactory.INSTANCE);
         GuiManager.registerFactory(LargeVoidMinerConfigGuiFactory.INSTANCE);
         RecipeLoader.loadRecipes();
         AE2Thing.init(event);

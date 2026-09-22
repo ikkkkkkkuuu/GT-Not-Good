@@ -72,6 +72,7 @@ public enum GTNGItemList implements IItemContainer {
     MEBridgeSender,
     MEBridgeReceiver,
     MEContainer,
+    AdvancedIOBus,
     MEWirelessTransceiver,
     WildcardPattern,
     WirelessDualInterfaceTerminal,

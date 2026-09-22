@@ -50,6 +50,10 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
+        appeng.api.AEApi.instance()
+            .partHelper()
+            .setItemBusRenderer(
+                (appeng.api.parts.IPartItem) com.xyp.gtnotgood.utils.enums.GTNGItemList.AdvancedIOBus.getItem());
         com.xyp.gtnotgood.client.text.effect.BuiltinTextEffects.register();
         ((net.minecraft.client.resources.IReloadableResourceManager) net.minecraft.client.Minecraft.getMinecraft()
             .getResourceManager()).registerReloadListener(com.xyp.gtnotgood.client.text.EffectTextRenderer.INSTANCE);

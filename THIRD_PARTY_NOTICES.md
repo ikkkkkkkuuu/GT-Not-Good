@@ -1,5 +1,15 @@
 # Third-Party Notices
 
+## AdvancedAE Advanced IO Bus
+
+The Advanced IO Bus behavior is adapted from pedroksl/AdvancedAE commit
+`5ad43ee1e5f7a8b9fe7a1eacfaebdd44b61b624c` (LGPL-3.0). Three unchanged upstream part textures
+are included. These files and adapted code retain their upstream license, outside the project's MIT grant.
+Source mappings, adaptation scope, license texts and asset hashes are in `META-INF/advancedio-port/`.
+The faithful IO GUI incorporates AE2AddonLib 26.1.3-alpha layout (GPL-3.0) and AE2 v26.1.10-beta artwork
+(CC BY-NC-SA 3.0, Ridanisaurus Rid / AlgorithmX2 / contributors). AdvancedIOGui is GPL-3.0-only;
+the copied artwork retains CC BY-NC-SA 3.0. Neither is covered by the general MIT grant.
+
 ## Microsoft Edge window icons
 
 The optional window icons are Microsoft Edge artwork owned by Microsoft Corporation,

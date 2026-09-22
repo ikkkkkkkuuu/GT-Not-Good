@@ -22,6 +22,14 @@ public final class ItemsLoader {
      * Registers all non-GregTech items and stores their stacks for recipes and tooltips.
      */
     public static void registry() {
+        var advancedIO = new com.xyp.gtnotgood.common.advancedio.ItemAdvancedIOBus();
+        GameRegistry.registerItem(advancedIO, "advanced_io_bus");
+        GTNGItemList.AdvancedIOBus.set(advancedIO);
+        appeng.api.config.Upgrades.SPEED.registerItem(GTNGItemList.AdvancedIOBus.get(1), 4);
+        appeng.api.config.Upgrades.SUPERSPEED.registerItem(GTNGItemList.AdvancedIOBus.get(1), 4);
+        appeng.api.config.Upgrades.SUPERLUMINALSPEED.registerItem(GTNGItemList.AdvancedIOBus.get(1), 4);
+        appeng.api.config.Upgrades.CAPACITY.registerItem(GTNGItemList.AdvancedIOBus.get(1), 5);
+        appeng.api.config.Upgrades.REDSTONE.registerItem(GTNGItemList.AdvancedIOBus.get(1), 1);
         var connector = new com.xyp.gtnotgood.common.packaged.ItemWirelessConnector();
         GameRegistry.registerItem(connector, "packaged_wireless_connector");
         GTNGItemList.ItemWirelessConnector.set(connector);

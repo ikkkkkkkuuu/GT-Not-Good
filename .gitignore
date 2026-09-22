@@ -53,6 +53,8 @@ layout.json
 !/src/test/java/com/xyp/gtnotgood/common/
 !/src/test/java/com/xyp/gtnotgood/common/user/
 !/src/test/java/com/xyp/gtnotgood/common/user/*.java
+!/src/test/java/com/xyp/gtnotgood/common/advancedio/
+!/src/test/java/com/xyp/gtnotgood/common/advancedio/*.java
 !/src/test/java/com/xyp/gtnotgood/common/compat/
 !/src/test/java/com/xyp/gtnotgood/common/compat/CircuitPatternQuantitiesTest.java
 !/src/test/java/com/xyp/gtnotgood/common/compat/CircuitRefillPolicyTest.java

@@ -1,0 +1,102 @@
+{
+  "upstream": "https://github.com/pedroksl/AdvancedAE",
+  "commit": "5ad43ee1e5f7a8b9fe7a1eacfaebdd44b61b624c",
+  "license": "LGPL-3.0",
+  "author": "pedroksl and AdvancedAE contributors",
+  "assets": [
+    {
+      "source": "src/main/resources/assets/advanced_ae/textures/part/advanced_io_bus.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/advancedio/advanced_io_bus.png",
+      "modified": false,
+      "sha256": "f676d0343fd5a357ca5f9558a12cd8846f000910bb01a6664765d8562e8175c4"
+    },
+    {
+      "source": "src/main/resources/assets/advanced_ae/textures/part/advanced_io_bus_sides.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/advancedio/advanced_io_bus_sides.png",
+      "modified": false,
+      "sha256": "8544433e37ff90e925461e6633394b7e47aee042f239eaea69071562500b19c4"
+    },
+    {
+      "source": "src/main/resources/assets/advanced_ae/textures/part/advanced_io_bus_back.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/advancedio/advanced_io_bus_back.png",
+      "modified": false,
+      "sha256": "49aade53c686eae6bf02bb8837b1cd79976b6ed9728e79b46e347332bb1ee3a8"
+    },
+    {
+      "upstream": "https://github.com/AppliedEnergistics/Applied-Energistics-2",
+      "commit": "3a051bb473de0b8fd329b39db4262f731d17e7e5",
+      "author": "Ridanisaurus Rid, AlgorithmX2 and Applied Energistics 2 contributors",
+      "license": "CC-BY-NC-SA-3.0",
+      "source": "src/main/resources/assets/ae2/textures/guis/storagebus.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/gui/advancedio/storagebus.png",
+      "modified": false,
+      "sha256": "434aaf794ad206a5c0d247e24fdbc5c8f9f7ad1c96c37ea5ae6e75f4d30bd599"
+    },
+    {
+      "upstream": "https://github.com/AppliedEnergistics/Applied-Energistics-2",
+      "commit": "3a051bb473de0b8fd329b39db4262f731d17e7e5",
+      "author": "Ridanisaurus Rid, AlgorithmX2 and Applied Energistics 2 contributors",
+      "license": "CC-BY-NC-SA-3.0",
+      "source": "src/main/resources/assets/ae2/textures/guis/craft_amt.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/gui/advancedio/craft_amt.png",
+      "modified": false,
+      "sha256": "4d1a8a0528db8fec9fb8732a2c68b47322b027448ac96b9c23ff8ea170c11343"
+    },
+    {
+      "upstream": "https://github.com/AppliedEnergistics/Applied-Energistics-2",
+      "commit": "3a051bb473de0b8fd329b39db4262f731d17e7e5",
+      "author": "Ridanisaurus Rid, AlgorithmX2 and Applied Energistics 2 contributors",
+      "license": "CC-BY-NC-SA-3.0",
+      "source": "src/main/resources/assets/ae2/textures/guis/extra_panels.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/gui/advancedio/extra_panels.png",
+      "modified": false,
+      "sha256": "c67fed0f98c9ca67a0602b5589a5191d59d5dd2bd3848c62de0e209e0e44b8b0"
+    },
+    {
+      "upstream": "https://github.com/AppliedEnergistics/Applied-Energistics-2",
+      "commit": "3a051bb473de0b8fd329b39db4262f731d17e7e5",
+      "author": "Ridanisaurus Rid, AlgorithmX2 and Applied Energistics 2 contributors",
+      "license": "CC-BY-NC-SA-3.0",
+      "source": "src/main/resources/assets/ae2/textures/guis/states.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/gui/advancedio/states.png",
+      "modified": false,
+      "sha256": "0996b0084c7bf37f65a97a745982ab681ebd86f142fade526f14c823c4727e55"
+    },
+    {
+      "upstream": "https://github.com/AppliedEnergistics/Applied-Energistics-2",
+      "commit": "3a051bb473de0b8fd329b39db4262f731d17e7e5",
+      "author": "Ridanisaurus Rid, AlgorithmX2 and Applied Energistics 2 contributors",
+      "license": "CC-BY-NC-SA-3.0",
+      "source": "src/main/resources/assets/ae2/textures/gui/sprites/button.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/gui/advancedio/button.png",
+      "modified": false,
+      "sha256": "5e815b235384d3ad4422e61e044804c097e486ffdb61fade6056965069c8f382"
+    },
+    {
+      "upstream": "https://github.com/AppliedEnergistics/Applied-Energistics-2",
+      "commit": "3a051bb473de0b8fd329b39db4262f731d17e7e5",
+      "author": "Ridanisaurus Rid, AlgorithmX2 and Applied Energistics 2 contributors",
+      "license": "CC-BY-NC-SA-3.0",
+      "source": "src/main/resources/assets/ae2/textures/gui/sprites/button_highlighted.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/gui/advancedio/button_highlighted.png",
+      "modified": false,
+      "sha256": "5f2bda04a241ebfd4dac3799c42b413c2653f6607757c95e41d86eb73b3f7ca9"
+    },
+    {
+      "upstream": "https://github.com/AppliedEnergistics/Applied-Energistics-2",
+      "commit": "3a051bb473de0b8fd329b39db4262f731d17e7e5",
+      "author": "Ridanisaurus Rid, AlgorithmX2 and Applied Energistics 2 contributors",
+      "license": "CC-BY-NC-SA-3.0",
+      "source": "src/main/resources/assets/ae2/textures/gui/sprites/vertical_buttons_bg.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/gui/advancedio/vertical_buttons_bg.png",
+      "modified": false,
+      "sha256": "62150f9869ee17cbd15bda963542287bf798482ceed1f18f0e24dd82381f7715"
+    },
+    {
+      "source": "src/main/resources/assets/advanced_ae/textures/guis/states.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/gui/advancedio/advanced_states.png",
+      "modified": false,
+      "sha256": "06e75617443b99c5ce1c1f7810b4f9c516d376800d05a4bbd97db4d2e15bda87"
+    }
+  ]
+}

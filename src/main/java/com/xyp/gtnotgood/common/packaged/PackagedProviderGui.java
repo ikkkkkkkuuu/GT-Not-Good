@@ -53,6 +53,8 @@ public final class PackagedProviderGui {
     static ModularPanel build(TilePackagedProvider tile, PanelSyncManager sync) {
         BooleanSyncValue auto = new BooleanSyncValue(() -> tile.autoReturn);
         BooleanSyncValue essentia = new BooleanSyncValue(() -> tile.networkEssentia);
+        BooleanSyncValue infusionCore = new BooleanSyncValue(tile::hasInfusionCore);
+        sync.syncValue("infusionCore", infusionCore);
         sync.syncValue("networkEssentia", essentia);
         IntSyncValue essentiaSpeed = new IntSyncValue(() -> tile.essentiaSpeed);
         sync.syncValue("essentiaSpeed", essentiaSpeed);
@@ -247,6 +249,7 @@ public final class PackagedProviderGui {
             // # zh_CN 源质：祭坛供给（点击切换 AE；需神秘能源）
             return StatCollector.translateToLocal("gui.packaged.essentia_altar");
         }, () -> {}).name("essentia_mode")
+            .setEnabledIf(widget -> infusionCore.getBoolValue())
             .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
                 if (mouse.isClient() || !tile.canConfigure(sync.getPlayer())) return;
                 if (mouse.mouseButton == 0) tile.setNetworkEssentia(!tile.networkEssentia);
