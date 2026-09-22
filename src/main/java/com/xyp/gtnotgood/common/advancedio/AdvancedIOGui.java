@@ -508,6 +508,19 @@ final class AdvancedIOGui {
             this.index = index;
         }
 
+        /**
+         * NEI tests ghost eligibility before sending its sample packet. The display inventory deliberately rejects
+         * real insertion, so its simulated insertion result cannot validate a ghost. Capacity is checked again
+         * by {@link #phantomClick(MouseData, ItemStack)} on the server.
+         *
+         * @param stack NEI's dragged sample, never a real inventory transfer
+         * @return whether the sample contains an item to mark
+         */
+        @Override
+        public boolean isItemValid(ItemStack stack) {
+            return stack != null && stack.stackSize > 0;
+        }
+
         @Override
         protected void phantomClick(MouseData mouse, ItemStack cursor) {
             if (index >= part.availableSlots()) return;

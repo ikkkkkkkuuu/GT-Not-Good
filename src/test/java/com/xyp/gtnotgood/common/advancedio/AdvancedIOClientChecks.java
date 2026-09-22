@@ -594,7 +594,65 @@ public final class AdvancedIOClientChecks {
     public void render(TickEvent.RenderTickEvent event) throws Exception {
         var mc = Minecraft.getMinecraft();
         if (!show || event.phase != TickEvent.Phase.END) return;
-        if (++frames == 80) {
+        frames++;
+        if (frames == 20) {
+            var item = new ItemStack(Items.diamond, 32);
+            var bucket = new ItemStack(Items.lava_bucket);
+            var packet = com.glodblock.github.common.item.ItemFluidPacket
+                .newStack(new FluidStack(FluidRegistry.WATER, 375));
+            require(ghostSlot(4).handleDragAndDrop(item, 0), "NEI item drag accepted by real phantom widget");
+            require(ghostSlot(5).handleDragAndDrop(bucket, 0), "NEI filled-container drag accepted");
+            require(ghostSlot(6).handleDragAndDrop(packet, 0), "NEI native fluid packet drag accepted");
+            require(
+                item.stackSize == 0 && bucket.stackSize == 0 && packet.stackSize == 0,
+                "NEI drag payloads consumed as markers");
+            require(!ghostSlot(62).handleDragAndDrop(new ItemStack(Items.diamond), 0), "NEI rejects locked ghost slot");
+            require(mc.thePlayer.inventory.getItemStack() == null, "NEI marking does not create cursor items");
+        }
+        if (frames == 100) {
+            var sync = com.cleanroommc.modularui.screen.ModularContainer.getCurrent(mc.thePlayer)
+                .getSyncManager()
+                .getMainPSM();
+            require(
+                ((com.cleanroommc.modularui.value.sync.IntSyncValue) sync.findSyncHandlerNullable("amount_4", 0))
+                    .getIntValue() == 32,
+                "NEI item marker reaches server and syncs back");
+            require(
+                ((com.cleanroommc.modularui.value.sync.IntSyncValue) sync.findSyncHandlerNullable("amount_5", 0))
+                    .getIntValue() == 1000,
+                "NEI bucket marker preserves fluid amount");
+            require(
+                ((com.cleanroommc.modularui.value.sync.IntSyncValue) sync.findSyncHandlerNullable("amount_6", 0))
+                    .getIntValue() == 375,
+                "NEI packet marker preserves exact mB");
+            require(
+                ((com.cleanroommc.modularui.value.sync.BooleanSyncValue) sync.findSyncHandlerNullable("fluid_6", 0))
+                    .getBoolValue(),
+                "NEI packet stored as native fluid target");
+            for (int index = 4; index <= 6; index++) {
+                ((com.cleanroommc.modularui.value.sync.PhantomItemSlotSH) sync.findSyncHandlerNullable("sample", index))
+                    .updateFromClient(null, 0);
+            }
+            require(
+                ghostSlot(2).handleDragAndDrop(
+                    com.glodblock.github.common.item.ItemFluidPacket
+                        .newStack(new FluidStack(FluidRegistry.WATER, 1500)),
+                    0),
+                "NEI restores original fluid target");
+        }
+        if (frames == 180) {
+            var sync = com.cleanroommc.modularui.screen.ModularContainer.getCurrent(mc.thePlayer)
+                .getSyncManager()
+                .getMainPSM();
+            require(
+                ((com.cleanroommc.modularui.value.sync.IntSyncValue) sync.findSyncHandlerNullable("amount_2", 0))
+                    .getIntValue() == 1500,
+                "NEI replacement remains exact after round trip");
+            System.out.println(
+                "ADVANCED_IO_QA: real NEI ghost drop item, bucket, packet, locked slot and server round trips passed");
+        }
+        int viewFrames = frames - 200;
+        if (viewFrames == 80) {
             require(
                 mc.currentScreen instanceof com.cleanroommc.modularui.screen.GuiContainerWrapper,
                 "real bus UI opened");
@@ -605,7 +663,7 @@ public final class AdvancedIOClientChecks {
                 mc.displayHeight,
                 mc.getFramebuffer());
         }
-        if (frames == 100) {
+        if (viewFrames == 100) {
             var sync = com.cleanroommc.modularui.screen.ModularContainer.getCurrent(mc.thePlayer)
                 .getSyncManager()
                 .getMainPSM();
@@ -619,7 +677,7 @@ public final class AdvancedIOClientChecks {
                         false,
                         false).writeToPacket(buffer));
         }
-        if (frames == 180) {
+        if (viewFrames == 180) {
             var sync = com.cleanroommc.modularui.screen.ModularContainer.getCurrent(mc.thePlayer)
                 .getSyncManager()
                 .getMainPSM();
@@ -631,14 +689,14 @@ public final class AdvancedIOClientChecks {
                 mc.displayHeight,
                 mc.getFramebuffer());
         }
-        if (frames == 200) {
+        if (viewFrames == 200) {
             var sync = com.cleanroommc.modularui.screen.ModularContainer.getCurrent(mc.thePlayer)
                 .getSyncManager()
                 .getMainPSM();
             ((com.cleanroommc.modularui.value.sync.InteractionSyncHandler) sync.findSyncHandlerNullable("back", 0))
                 .onMousePressed(0);
         }
-        if (frames == 240) {
+        if (viewFrames == 240) {
             var sync = com.cleanroommc.modularui.screen.ModularContainer.getCurrent(mc.thePlayer)
                 .getSyncManager()
                 .getMainPSM();
@@ -652,7 +710,7 @@ public final class AdvancedIOClientChecks {
                         false,
                         false).writeToPacket(buffer));
         }
-        if (frames == 320) {
+        if (viewFrames == 320) {
             var sync = com.cleanroommc.modularui.screen.ModularContainer.getCurrent(mc.thePlayer)
                 .getSyncManager()
                 .getMainPSM();
@@ -667,8 +725,8 @@ public final class AdvancedIOClientChecks {
                 mc.displayHeight,
                 mc.getFramebuffer());
         }
-        if (frames == 340) mc.thePlayer.closeScreen();
-        if (frames == 380) {
+        if (viewFrames == 340) mc.thePlayer.closeScreen();
+        if (viewFrames == 380) {
             ScreenShotHelper.saveScreenshot(
                 new File("."),
                 "advancedio-world.png",
@@ -680,6 +738,22 @@ public final class AdvancedIOClientChecks {
                 (resume ? "PASS" : "SAVED").getBytes(StandardCharsets.UTF_8));
             mc.shutdown();
         }
+    }
+
+    /** Uses the same widget entry point as ModularPanel's NEI drag dispatch, including client validation. */
+    private static com.cleanroommc.modularui.widgets.slot.PhantomItemSlot ghostSlot(int index) {
+        var screen = (com.cleanroommc.modularui.screen.GuiContainerWrapper) Minecraft.getMinecraft().currentScreen;
+        return screen.getScreen()
+            .getMainPanel()
+            .getChildren()
+            .stream()
+            .filter(widget -> widget instanceof com.cleanroommc.modularui.widgets.slot.PhantomItemSlot)
+            .map(widget -> (com.cleanroommc.modularui.widgets.slot.PhantomItemSlot) widget)
+            .filter(
+                slot -> slot.getSlot()
+                    .getSlotIndex() == index)
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("Missing ghost slot " + index));
     }
 
     private static void require(boolean condition, String label) {
