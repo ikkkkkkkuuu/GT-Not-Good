@@ -1,0 +1,6 @@
+# Box++ routing GUI reference
+
+- Reference: `C:/Users/Administrator/Desktop/2.8/GT-Not-Cool` at commit `65222fcd4a2f8a56c146323361ee527b9b372d23`, `src/main/java/com/silvermoon/boxplusplus/common/gui/BoxMachineGui.java`.
+- Original artwork: `C:/Users/Administrator/Desktop/2.8/BoxPlusPlus-master/src/main/resources/assets/boxplusplus/textures/gui/`. Its `LICENSE` is LGPL-3.0 and is copied to `reference/BOXPLUSPLUS_LICENSE.txt`.
+- Copied assets: `double.png`, `halve.png`, `clear.png`, and `ae.png` to `src/main/resources/assets/gtnotgood/textures/gui/box/`. The pixels are unchanged. These four files retain the upstream license; they are not part of this project's general MIT grant.
+- Adaptation: the routing panel follows the upstream 260×215 layout, 20-pixel routing rows, detail and removal buttons, compact action icons, and one-based recipe page navigation. This addon also adds confirmed deletion of the selected page while retaining at least one page. Production scheduling, NEI import, locking, balancing, and pattern export use this addon's existing server-side logic. Selecting a page changes only the editor; all locked pages run on the shared executor. Locking, clearing, or deleting a page drains in-flight work before rebuilding that executor. Controllers and non-consumable inputs are reserved once per distinct requirement across locked pages.

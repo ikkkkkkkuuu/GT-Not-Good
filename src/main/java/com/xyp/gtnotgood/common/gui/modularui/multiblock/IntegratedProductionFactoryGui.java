@@ -16,6 +16,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.ObjectValue;
 import com.cleanroommc.modularui.value.sync.GenericListSyncHandler;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
@@ -48,8 +49,12 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
     private IPanelHandler editor;
     private IPanelHandler transfer;
     private IPanelHandler clear;
+    private IPanelHandler deletePage;
     private boolean locked;
     private boolean draining;
+    private int recipePage = 1;
+    private int recipePageCount = 1;
+    private int previousRoutingCount;
     private String drainDetails = "";
     private final com.cleanroommc.modularui.value.StringValue routingCode = new com.cleanroommc.modularui.value.StringValue(
         "");
@@ -85,6 +90,11 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
                 NBTTagCompound::equals,
                 value -> (NBTTagCompound) value.copy()));
         manager.syncValue("factoryActions", actions);
+        manager
+            .syncValue("factoryRecipePage", new IntSyncValue(multiblock::getRecipePage, value -> recipePage = value));
+        manager.syncValue(
+            "factoryRecipePageCount",
+            new IntSyncValue(multiblock::getRecipePageCount, value -> recipePageCount = value));
         manager.syncValue(
             "factoryDraining",
             new StringSyncValue(
@@ -276,6 +286,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         details = manager.syncedPanel("factoryNode", true, (sm, sh) -> createDetails());
         transfer = manager.syncedPanel("factoryTransfer", true, (sm, sh) -> createTransfer());
         clear = manager.syncedPanel("factoryClear", true, (sm, sh) -> createClear());
+        deletePage = manager.syncedPanel("factoryDeletePage", true, (sm, sh) -> createDeletePage());
         editor = manager.syncedPanel("factoryEditor", true, (sm, sh) -> createEditor(manager));
         return super.createButtonColumn(panel, manager).child(
             new ButtonWidget<>().size(18)
@@ -289,84 +300,172 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
                 }));
     }
 
-    /** BOX-style list: NEI appends routes directly, details edit one route, and preview confirms the installation. */
+    /** Compact BOX-style routing page; NEI appends routes and the existing preview confirms installation. */
     private ModularPanel createEditor(PanelSyncManager manager) {
-        ModularPanel panel = ModularPanel.defaultPanel("factoryEditor", 360, 254)
-            .background(GTNGGuiTextures.MODERN_BACKGROUND);
-        card(panel, 6, 5, 326, 20, 0xffadc2d7);
-        card(panel, 6, 27, 222, 189, 0xffb6bdc9);
-        card(panel, 232, 27, 120, 189, 0xffbec6d1);
-        card(panel, 6, 218, 346, 30, 0xffadbccc);
+        ModularPanel panel = gregtech.api.modularui2.GTGuis.createPopUpPanel("factoryEditor")
+            .size(260, 215);
         panel.child(ButtonWidget.panelCloseButton());
         panel.child(
-            new TextWidget<>(IKey.dynamic(() -> FactoryText.EDIT.text() + "  " + visibleGraph.nodes.size() + "/32"))
-                .pos(10, 8)
-                .size(260, 14));
+            new TextWidget<>(IKey.dynamic(() -> FactoryText.EDIT.text() + ": " + visibleGraph.nodes.size() + "/32"))
+                .pos(25, 8)
+                .size(125, 12));
+        panel.child(
+            GTGuiTextures.OVERLAY_BUTTON_ALLOW_INPUT.asWidget()
+                .pos(5, 5)
+                .size(16, 16));
+        panel.child(
+            new TextWidget<>(IKey.dynamic(() -> locked ? FactoryText.LOCKED.text() : FactoryText.IMPORT_HELP.text()))
+                .pos(139, 96)
+                .size(110, 39));
         com.cleanroommc.modularui.widget.ScrollWidget<?> list = new com.cleanroommc.modularui.widget.ScrollWidget<>(
-            new com.cleanroommc.modularui.widget.scroll.VerticalScrollData()).pos(10, 30)
-                .size(214, 183);
+            new com.cleanroommc.modularui.widget.scroll.VerticalScrollData()).pos(21, 20)
+                .size(110, 180);
         for (int i = 0; i < FactoryGraph.MAX_NODES; i++) {
             final int index = i;
             com.cleanroommc.modularui.widget.ParentWidget<?> row = new com.cleanroommc.modularui.widget.ParentWidget<>()
-                .pos(0, i * 27)
-                .size(208, 25)
-                .background(
-                    new com.cleanroommc.modularui.drawable.Rectangle().color(i % 2 == 0 ? 0xffd9dee6 : 0xffcbd2dd))
+                .pos(0, i * 20)
+                .size(110, 20)
                 .setEnabledIf(w -> index < visibleGraph.nodes.size());
             row.child(new ItemDisplayWidget().item(new ObjectValue.Dynamic<>(ItemStack.class, () -> {
                 FactoryGraph.Node node = route(index);
                 FactoryRecipeCatalog.Entry entry = node == null ? null : FactoryRecipeCatalog.get(node.recipe);
                 return entry == null ? null : controllerIcon(entry);
             }, value -> {}))
-                .pos(0, 3));
+                .pos(0, 0)
+                .size(16, 16));
             row.child(new TextWidget<>(IKey.dynamic(() -> {
                 FactoryGraph.Node node = route(index);
-                return node == null ? "" : "#" + (index + 1) + "  P ×" + node.parallel;
-            })).pos(22, 5)
-                .size(75, 16));
-            row.child(button(FactoryText.ROUTE_DETAILS::text, 100, 2, 50, () -> {
-                FactoryGraph.Node node = route(index);
-                if (node == null) return;
-                selected = node.id;
-                routeParallel.setStringValue(Integer.toString(node.parallel));
-                nodeEUtText.setStringValue("");
-                details.openPanel();
-            }));
-            row.child(button(() -> "×", 158, 2, 28, () -> {
-                FactoryGraph.Node node = route(index);
-                if (node != null && shiftDown()) actions.send(1, node.id, 0, 0, "");
-            }).setEnabledIf(w -> !locked)
-                .tooltipBuilder(t -> t.addLine(FactoryText.SHIFT_DELETE.text())));
+                return node == null ? "" : "#" + (index + 1);
+            })).pos(20, 4)
+                .size(43, 12));
+            row.child(
+                new ButtonWidget<>().pos(70, 0)
+                    .size(16, 16)
+                    .background(GTNGGuiTextures.MODERN_BUTTON)
+                    .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
+                    .overlay(GTGuiTextures.OVERLAY_BUTTON_ALLOW_INPUT)
+                    .tooltipBuilder(t -> t.addLine(FactoryText.ROUTE_DETAILS.text()))
+                    .onMousePressed(mouse -> {
+                        FactoryGraph.Node node = route(index);
+                        if (node == null) return true;
+                        selected = node.id;
+                        routeParallel.setStringValue(Integer.toString(node.parallel));
+                        nodeEUtText.setStringValue("");
+                        details.openPanel();
+                        return true;
+                    }));
+            row.child(
+                new ButtonWidget<>().pos(92, 0)
+                    .size(16, 16)
+                    .background(GTNGGuiTextures.MODERN_BUTTON)
+                    .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
+                    .overlay(GTGuiTextures.OVERLAY_BUTTON_BLOCK_INPUT)
+                    .tooltipBuilder(t -> t.addLine(FactoryText.SHIFT_DELETE.text()))
+                    .onMousePressed(mouse -> {
+                        FactoryGraph.Node node = route(index);
+                        if (node != null && shiftDown()) actions.send(1, node.id, 0, 0, "");
+                        return true;
+                    })
+                    .setEnabledIf(w -> !locked));
             list.child(row);
         }
-        list.onUpdateListener(
-            w -> w.getScrollArea()
+        list.onUpdateListener(w -> {
+            int count = visibleGraph.nodes.size();
+            w.getScrollArea()
                 .getScrollY()
-                .setScrollSize(visibleGraph.nodes.size() * 27));
+                .setScrollSize((count + 1) * 20);
+            if (count > previousRoutingCount) w.getScrollArea()
+                .getScrollY()
+                .scrollTo(w.getScrollArea(), Integer.MAX_VALUE);
+            previousRoutingCount = count;
+        });
         panel.child(list);
-        panel.child(button(FactoryText.PREVIEW::text, 236, 31, 112, this::openPreview));
-        panel.child(button(() -> "×2", 236, 57, 52, () -> actions.send(14, 0, 0, 0, "")).setEnabledIf(w -> !locked));
-        panel.child(button(() -> "÷2", 296, 57, 52, () -> actions.send(15, 0, 0, 0, "")).setEnabledIf(w -> !locked));
         panel.child(
-            button(FactoryText.BALANCE::text, 236, 83, 112, () -> actions.send(9, 0, 0, 0, ""))
-                .setEnabledIf(w -> !locked));
+            button(() -> "<", 5, 193, 20, () -> actions.send(19, 0, recipePage - 1, 0, ""))
+                .setEnabledIf(w -> recipePage > 1)
+                .tooltipBuilder(t -> t.addLine(FactoryText.PAGE_PREVIOUS.text())));
         panel.child(
-            button(FactoryText.PATTERN_EXPORT::text, 236, 57, 112, () -> actions.send(18, 0, 0, 0, ""))
+            new TextWidget<>(
+                IKey.dynamic(() -> recipePage + " / " + recipePageCount + " (" + multiblock.getMaxRecipePages() + ")"))
+                    .pos(76, 198)
+                    .size(100, 12)
+                    .textAlign(com.cleanroommc.modularui.utils.Alignment.Center));
+        panel.child(
+            button(() -> "-", 211, 193, 20, () -> deletePage.openPanel()).setEnabledIf(w -> recipePageCount > 1)
+                .tooltipBuilder(t -> t.addLine(FactoryText.PAGE_DELETE.text())));
+        panel.child(
+            button(() -> "+", 235, 193, 20, () -> actions.send(19, 0, recipePage + 1, 0, ""))
+                .setEnabledIf(w -> recipePage < multiblock.getMaxRecipePages())
+                .tooltipBuilder(t -> t.addLine(FactoryText.PAGE_NEXT.text())));
+        panel.child(
+            new ButtonWidget<>().pos(140, 26)
+                .size(32, 32)
+                .background(GTNGGuiTextures.MODERN_BUTTON)
+                .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
+                .overlay(GTGuiTextures.OVERLAY_BUTTON_POWER_SWITCH_ON)
+                .tooltipBuilder(t -> t.addLine(FactoryText.PREVIEW.text()))
+                .onMousePressed(mouse -> {
+                    openPreview();
+                    return true;
+                }));
+        panel.child(
+            new ButtonWidget<>().pos(175, 26)
+                .size(14, 14)
+                .overlay(GTNGGuiTextures.BOX_DOUBLE)
+                .tooltipBuilder(t -> t.addLine("×2"))
+                .onMousePressed(mouse -> {
+                    actions.send(14, 0, 0, 0, "");
+                    return true;
+                })
+                .setEnabledIf(w -> !locked && !visibleGraph.nodes.isEmpty()));
+        panel.child(
+            new ButtonWidget<>().pos(175, 44)
+                .size(14, 14)
+                .overlay(GTNGGuiTextures.BOX_HALVE)
+                .tooltipBuilder(t -> t.addLine("÷2"))
+                .onMousePressed(mouse -> {
+                    actions.send(15, 0, 0, 0, "");
+                    return true;
+                })
+                .setEnabledIf(w -> !locked && !visibleGraph.nodes.isEmpty()));
+        panel.child(
+            button(FactoryText.BALANCE::text, 140, 71, 108, () -> actions.send(9, 0, 0, 0, ""))
+                .setEnabledIf(w -> !locked && !visibleGraph.nodes.isEmpty()));
+        panel.child(
+            new ButtonWidget<>().pos(175, 26)
+                .size(14, 14)
+                .overlay(GTNGGuiTextures.BOX_AE)
+                .onMousePressed(mouse -> {
+                    actions.send(18, 0, 0, 0, "");
+                    return true;
+                })
                 .setEnabledIf(w -> locked)
                 .tooltipBuilder(t -> t.addLine(FactoryText.PATTERN_HELP.text())));
-        panel.child(button(FactoryText.ROUTE_CODE::text, 236, 109, 112, () -> {
-            routingCode.setStringValue(visibleGraph.nodes.isEmpty() ? "" : FactoryRouting.encode(visibleGraph));
-            transfer.openPanel();
-        }));
-        panel.child(button(FactoryText.CLEAR::text, 236, 135, 112, () -> clear.openPanel()));
         panel.child(
-            new TextWidget<>(IKey.dynamic(() -> locked ? FactoryText.LOCKED.text() : FactoryText.IMPORT_HELP.text()))
-                .pos(236, 164)
-                .size(112, 48));
+            new ButtonWidget<>().pos(175, 44)
+                .size(14, 14)
+                .overlay(GTNGGuiTextures.BOX_CLEAR)
+                .onMousePressed(mouse -> {
+                    clear.openPanel();
+                    return true;
+                })
+                .setEnabledIf(w -> locked)
+                .tooltipBuilder(t -> t.addLine(FactoryText.CLEAR.text())));
+        panel.child(
+            new ButtonWidget<>().pos(200, 25)
+                .size(18, 18)
+                .overlay(GTGuiTextures.OVERLAY_BUTTON_AUTOOUTPUT_ITEM)
+                .tooltipBuilder(t -> t.addLine(FactoryText.ROUTE_CODE.text()))
+                .onMousePressed(mouse -> {
+                    routingCode.setStringValue(visibleGraph.nodes.isEmpty() ? "" : FactoryRouting.encode(visibleGraph));
+                    transfer.openPanel();
+                    return true;
+                }));
+        panel.child(button(FactoryText.CLEAR::text, 140, 164, 108, () -> clear.openPanel()));
         StringSyncValue status = manager.findSyncHandler("factoryEditorStatus", StringSyncValue.class);
         panel.child(
-            new TextWidget<>(IKey.dynamic(status::getStringValue)).pos(10, 222)
-                .size(338, 24));
+            new TextWidget<>(IKey.dynamic(status::getStringValue)).pos(140, 139)
+                .size(108, 22));
         return panel;
     }
 
@@ -429,6 +528,22 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
             clear.closePanel();
         }));
         panel.child(button(() -> "×", 150, 67, 120, () -> clear.closePanel()));
+        return panel;
+    }
+
+    /** Confirms removal because a locked page may contain a running production line. */
+    private ModularPanel createDeletePage() {
+        ModularPanel panel = ModularPanel.defaultPanel("factoryDeletePage", 280, 100)
+            .background(GTNGGuiTextures.MODERN_BACKGROUND);
+        panel.child(ButtonWidget.panelCloseButton());
+        panel.child(
+            new TextWidget<>(IKey.dynamic(() -> FactoryText.PAGE_DELETE_HELP.text() + " #" + recipePage)).pos(10, 10)
+                .size(252, 42));
+        panel.child(button(FactoryText.PAGE_DELETE::text, 10, 67, 120, () -> {
+            actions.send(20, recipePage, 0, 0, "");
+            deletePage.closePanel();
+        }));
+        panel.child(button(() -> "×", 150, 67, 120, () -> deletePage.closePanel()));
         return panel;
     }
 
@@ -495,7 +610,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
                     () -> previewPages[column] = Math.min(previewPageCount(column) - 1, previewPages[column] + 1)));
         }
         panel.child(button(FactoryText.CONFIRM_LOCK::text, 176, 303, 158, () -> {
-            actions.send(5, 0, 0, 0, previewCode);
+            actions.send(5, recipePage, 0, 0, previewCode);
             preview.closePanel();
         }).background(new com.cleanroommc.modularui.drawable.Rectangle().color(0xff9dd5bc))
             .hoverBackground(new com.cleanroommc.modularui.drawable.Rectangle().color(0xffb7ebd4))
@@ -743,6 +858,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
             .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
             .overlay(IKey.dynamic(text))
             .onMousePressed(mouse -> {
+                if (mouse != 0) return false;
                 action.run();
                 return true;
             });
@@ -765,13 +881,15 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
             if (!isValid() || gui.locked) return -1;
             if ((gui.details != null && gui.details.isPanelOpen()) || (gui.preview != null && gui.preview.isPanelOpen())
                 || (gui.transfer != null && gui.transfer.isPanelOpen())
-                || (gui.clear != null && gui.clear.isPanelOpen())) return -1;
+                || (gui.clear != null && gui.clear.isPanelOpen())
+                || (gui.deletePage != null && gui.deletePage.isPanelOpen())) return -1;
             return gui.editor != null && gui.editor.isPanelOpen()
                 && gui.visibleGraph.nodes.size() < FactoryGraph.MAX_NODES ? -2 : -1;
         }
 
         public void send(int command, int id, int a, int b, String recipe) {
             syncToServer(command, buf -> {
+                buf.writeInt(gui.recipePage);
                 buf.writeInt(id);
                 buf.writeInt(a);
                 buf.writeInt(b);
@@ -784,10 +902,12 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
 
         @Override
         public void readOnServer(int command, PacketBuffer buf) throws IOException {
+            int page = buf.readInt();
             int id = buf.readInt();
             int a = buf.readInt();
             int b = buf.readInt();
             String recipe = buf.readStringFromBuffer((command == 17 || command == 5) ? 8192 : 256);
+            if (page != factory.getRecipePage()) return;
             factory.edit(command, id, a, b, recipe);
         }
     }

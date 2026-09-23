@@ -13,6 +13,7 @@ import java.util.Random;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -89,6 +90,29 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     private FactoryGraph draft = new FactoryGraph();
     private FactoryGraph installed = new FactoryGraph();
     private FactoryGraph pending = new FactoryGraph();
+    private static final int MAX_RECIPE_PAGES = 99;
+    private final List<RecipePage> recipePages = new ArrayList<>();
+    private int recipePage = 1;
+
+    /** One saved routing graph and its lock state; only the selected page runs through the shared scheduler. */
+    private static final class RecipePage {
+
+        private FactoryGraph graph = new FactoryGraph();
+        private boolean locked;
+
+        private NBTTagCompound write() {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setTag("graph", graph.write());
+            tag.setBoolean("locked", locked);
+            return tag;
+        }
+
+        private void read(NBTTagCompound tag) {
+            graph.read(tag.getCompoundTag("graph"));
+            locked = tag.getBoolean("locked");
+        }
+    }
+
     private final FactoryRuntime runtime = new FactoryRuntime();
     private final FactoryReservations reservations = new FactoryReservations();
     private final Map<Integer, FactoryText> nodeStatus = new HashMap<>();
@@ -181,6 +205,98 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         return draft;
     }
 
+    /** Number of BOX-style recipe pages already created, including empty pages. */
+    public int getRecipePageCount() {
+        ensureRecipePages();
+        return recipePages.size();
+    }
+
+    /** One-based selected recipe page. */
+    public int getRecipePage() {
+        return recipePage;
+    }
+
+    /** The full page allowance matches the BOX editor's expanded page range. */
+    public int getMaxRecipePages() {
+        return MAX_RECIPE_PAGES;
+    }
+
+    private void ensureRecipePages() {
+        if (recipePages.isEmpty()) recipePages.add(new RecipePage());
+    }
+
+    private void storeRecipePage() {
+        ensureRecipePages();
+        RecipePage page = recipePages.get(recipePage - 1);
+        page.graph = draft.copy();
+        page.locked = routingLocked;
+    }
+
+    /** Changes only the editor page; all locked pages remain installed together. */
+    private void switchRecipePage(int oneBasedPage) {
+        if (oneBasedPage < 1 || oneBasedPage > MAX_RECIPE_PAGES || oneBasedPage == recipePage) return;
+        storeRecipePage();
+        while (recipePages.size() < oneBasedPage) recipePages.add(new RecipePage());
+        recipePage = oneBasedPage;
+        RecipePage next = recipePages.get(oneBasedPage - 1);
+        draft = next.graph.copy();
+        routingLocked = next.locked;
+    }
+
+    /** Removes the selected page, closes its gaps, and keeps at least one editable page. */
+    private void deleteRecipePage() {
+        storeRecipePage();
+        if (recipePages.size() <= 1) return;
+        recipePages.remove(recipePage - 1);
+        recipePage = Math.min(recipePage, recipePages.size());
+        RecipePage next = recipePages.get(recipePage - 1);
+        draft = next.graph.copy();
+        routingLocked = next.locked;
+        refreshInstalledPages();
+    }
+
+    /** Gives every locked page unique runtime ids while keeping material routes within their own page. */
+    private FactoryGraph mergedLockedPages() {
+        storeRecipePage();
+        FactoryGraph merged = new FactoryGraph();
+        for (int pageIndex = 0; pageIndex < recipePages.size(); pageIndex++) {
+            RecipePage page = recipePages.get(pageIndex);
+            if (!page.locked) continue;
+            Map<Integer, Integer> ids = new HashMap<>();
+            for (FactoryGraph.Node source : page.graph.nodes) {
+                FactoryGraph.Node node = new FactoryGraph.Node();
+                node.id = merged.nodes.size();
+                node.page = pageIndex + 1;
+                node.localId = source.id;
+                node.recipe = source.recipe;
+                node.parallel = source.parallel;
+                node.overclocks = source.overclocks;
+                node.customEUt = source.customEUt;
+                node.target = source.target;
+                node.x = source.x;
+                node.y = source.y;
+                ids.put(source.id, node.id);
+                merged.nodes.add(node);
+            }
+            for (FactoryGraph.Node node : merged.nodes) {
+                if (node.page != pageIndex + 1) continue;
+                FactoryGraph.Node source = page.graph.find(node.localId);
+                if (source != null) for (int input : source.sources) {
+                    Integer mapped = ids.get(input);
+                    if (mapped != null) node.sources.add(mapped);
+                }
+            }
+        }
+        return merged;
+    }
+
+    /** Applies edits to the shared executor after in-flight work and deposits have safely drained. */
+    private void refreshInstalledPages() {
+        pending = mergedLockedPages();
+        draining = true;
+        status = FactoryText.DRAINING;
+    }
+
     /** Submitted graph requirements only; reads reservations without consuming or probing ordinary inputs. */
     public List<NBTTagCompound> getRequirementTags() {
         List<NBTTagCompound> result = new ArrayList<>();
@@ -193,20 +309,26 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
             return result;
         }
         FactoryGraph graph = installed;
+        java.util.Set<String> shownHosts = new java.util.HashSet<>();
+        java.util.Set<String> shownCatalysts = new java.util.HashSet<>();
         for (FactoryGraph.Node node : graph.nodes) {
             FactoryRecipeCatalog.Entry entry = FactoryRecipeCatalog.get(node.recipe);
             if (entry == null) continue;
-            NBTTagCompound host = new NBTTagCompound();
-            host.setString("map", entry.map.unlocalizedName);
-            addRequirement(result, host, !draining && reservations.get(node.id, 0) != null);
+            String map = entry.map.unlocalizedName;
+            if (shownHosts.add(map)) {
+                NBTTagCompound host = new NBTTagCompound();
+                host.setString("map", map);
+                addRequirement(result, host, !draining && reservations.hasHost(map));
+            }
             for (int i = 0; i < entry.recipe.mInputs.length; i++) {
                 ItemStack input = entry.recipe.mInputs[i];
                 if (input == null || input.stackSize != 0) continue;
+                if (!shownCatalysts.add(FactoryReservations.catalystKey(input))) continue;
                 NBTTagCompound catalyst = new NBTTagCompound();
                 ItemStack display = input.copy();
                 display.stackSize = 1;
                 catalyst.setTag("item", display.writeToNBT(new NBTTagCompound()));
-                addRequirement(result, catalyst, !draining && reservations.get(node.id, i + 1) != null);
+                addRequirement(result, catalyst, !draining && reservations.hasCatalyst(input));
             }
         }
         return result;
@@ -262,8 +384,14 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     }
 
     public String getNodeStatus(int id) {
-        FactoryRuntime.State state = runtime.states.get(id);
-        FactoryGraph.Node current = installed.find(id);
+        FactoryGraph.Node current = null;
+        for (FactoryGraph.Node candidate : installed.nodes) {
+            if (candidate.page == recipePage && candidate.localId == id) {
+                current = candidate;
+                break;
+            }
+        }
+        FactoryRuntime.State state = current == null ? null : runtime.states.get(current.id);
         FactoryGraph.Node edit = draft.find(id);
         if (current == null || edit == null || !current.recipe.equals(edit.recipe)) return "";
         if (state != null && state.remaining > 0)
@@ -276,12 +404,18 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     public void edit(int command, int id, int a, int b, String recipe) {
         IGregTechTileEntity base = getBaseMetaTileEntity();
         if (base == null || !base.isServerSide()) return;
-        if (routingLocked && command != 6 && command != 16 && command != 18) return;
+        if (routingLocked && command != 6 && command != 16 && command != 18 && command != 19 && command != 20) return;
         if (command != 9) editorStatus = null;
         FactoryGraph.Node node = draft.find(id);
         switch (command) {
             case 18:
                 exportPattern();
+                break;
+            case 19:
+                switchRecipePage(a);
+                break;
+            case 20:
+                if (id == recipePage) deleteRecipePage();
                 break;
             case 0:
                 if (FactoryRecipeCatalog.get(recipe) != null) draft.add(recipe);
@@ -305,7 +439,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                 }
                 break;
             case 5:
-                if (!recipe.equals(FactoryRouting.encode(draft))) {
+                if (id != recipePage || !recipe.equals(FactoryRouting.encode(draft))) {
                     editorStatus = FactoryText.PREVIEW_STALE;
                     return;
                 }
@@ -321,17 +455,13 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                     }
                 }
                 routingLocked = true;
-                pending = draft.copy();
-                draining = true;
-                status = FactoryText.DRAINING;
+                refreshInstalledPages();
                 break;
             case 16:
                 draft.read(new NBTTagCompound());
             case 6:
                 routingLocked = false;
-                pending = new FactoryGraph();
-                draining = true;
-                status = FactoryText.DRAINING;
+                refreshInstalledPages();
                 break;
             case 7:
                 draft.add("");
@@ -399,12 +529,12 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
 
     /** Creates a free pattern from the same server-owned graph and parallel values shown in the production preview. */
     private void exportPattern() {
-        if (!routingLocked || draining || installed.nodes.isEmpty()) {
+        if (!routingLocked || draining || draft.nodes.isEmpty()) {
             editorStatus = FactoryText.PATTERN_LOCK_FIRST;
             return;
         }
         try {
-            FactoryPreview.Snapshot snapshot = FactoryPreview.describe(installed);
+            FactoryPreview.Snapshot snapshot = FactoryPreview.describe(draft);
             if (snapshot.exportIssue() != null) {
                 editorStatus = snapshot.exportIssue();
                 return;
@@ -492,7 +622,8 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                             craftingInputs.add(new FactoryInputs(shared, inventory));
                     }
                 }
-                boolean ready = true;
+                java.util.Set<Integer> readyPages = new java.util.HashSet<>();
+                for (FactoryGraph.Node candidate : installed.nodes) readyPages.add(candidate.page);
                 for (FactoryGraph.Node candidate : installed.nodes) {
                     FactoryRecipeCatalog.Entry recipe = FactoryRecipeCatalog.get(candidate.recipe);
                     FactoryText missing = recipe == null ? FactoryText.INVALID
@@ -500,13 +631,14 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                             .collect(candidate.id, recipe, depositItems, stack -> supportsHost(recipe, stack));
                     if (missing != null) {
                         nodeStatus.put(candidate.id, missing);
-                        ready = false;
+                        readyPages.remove(candidate.page);
                     } else nodeStatus.put(
                         candidate.id,
                         runtime.state(candidate.id).remaining > 0 ? FactoryText.RUNNING : FactoryText.IDLE);
                 }
-                for (int i = 0; ready && i < installed.nodes.size(); i++) {
+                for (int i = 0; i < installed.nodes.size(); i++) {
                     FactoryGraph.Node node = installed.nodes.get((i + schedulingCursor) % installed.nodes.size());
+                    if (!readyPages.contains(node.page)) continue;
                     FactoryText failure = null;
                     for (FactoryInputs input : craftingInputs) {
                         tryStart(node, input.items, input.fluids);
@@ -925,6 +1057,11 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     @Override
     public void saveNBTData(NBTTagCompound tag) {
         super.saveNBTData(tag);
+        storeRecipePage();
+        NBTTagList pages = new NBTTagList();
+        for (RecipePage page : recipePages) pages.appendTag(page.write());
+        tag.setTag("factoryRecipePages", pages);
+        tag.setInteger("factoryRecipePage", recipePage);
         tag.setTag("factoryDraft", draft.write());
         tag.setTag("factoryInstalled", installed.write());
         tag.setTag("factoryPending", pending.write());
@@ -933,16 +1070,17 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         tag.setTag("factoryReservations", reservations.write());
         tag.setBoolean("factoryDraining", draining);
         tag.setBoolean("factoryRoutingLocked", routingLocked);
+        tag.setBoolean("factoryConcurrentPages", true);
     }
 
     @Override
     public void loadNBTData(NBTTagCompound tag) {
         super.loadNBTData(tag);
         draft.read(tag.getCompoundTag("factoryDraft"));
-        installed.read(tag.getCompoundTag("factoryInstalled"));
+        installed.readActive(tag.getCompoundTag("factoryInstalled"));
         cycleGroups = null;
         cyclePlans.clear();
-        pending.read(tag.getCompoundTag("factoryPending"));
+        pending.readActive(tag.getCompoundTag("factoryPending"));
         runtime.read(tag.getCompoundTag("factoryRuntime"));
         lineProgress = null;
         lineTimingUnavailable = false;
@@ -950,6 +1088,26 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         reservations.read(tag.getCompoundTag("factoryReservations"));
         draining = tag.getBoolean("factoryDraining");
         routingLocked = tag.getBoolean("factoryRoutingLocked");
+        recipePages.clear();
+        NBTTagList pages = tag.getTagList("factoryRecipePages", 10);
+        for (int i = 0; i < Math.min(MAX_RECIPE_PAGES, pages.tagCount()); i++) {
+            RecipePage page = new RecipePage();
+            page.read(pages.getCompoundTagAt(i));
+            recipePages.add(page);
+        }
+        if (recipePages.isEmpty()) {
+            RecipePage legacy = new RecipePage();
+            legacy.graph = draft.copy();
+            legacy.locked = routingLocked;
+            recipePages.add(legacy);
+            recipePage = 1;
+        } else {
+            recipePage = Math.max(1, Math.min(recipePages.size(), tag.getInteger("factoryRecipePage")));
+            RecipePage selected = recipePages.get(recipePage - 1);
+            draft = selected.graph.copy();
+            routingLocked = selected.locked;
+        }
+        if (!tag.getBoolean("factoryConcurrentPages")) refreshInstalledPages();
     }
 
     @Override

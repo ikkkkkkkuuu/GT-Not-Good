@@ -102,7 +102,7 @@ public final class ItemsLoader {
         GTNGItem depletedFuel = new GTNGItem("depleted_iron_fuel_rod");
         GameRegistry.registerItem(depletedFuel, "depleted_iron_fuel_rod");
         GTNGItemList.DepletedIronFuelRod.set(depletedFuel);
-        // #tr gtnotgood.iron_fuel_rod.name
+        // #tr gt.gtnotgood.iron_fuel_rod.name
         // # Iron Fuel Rod
         // # zh_CN 铁燃料棒
         GTNGItemList.IronFuelRod

@@ -179,7 +179,7 @@ public final class FactoryRuntime {
     public void read(NBTTagCompound tag) {
         states.clear();
         NBTTagList list = tag.getTagList("states", 10);
-        for (int i = 0; i < Math.min(FactoryGraph.MAX_NODES, list.tagCount()); i++) {
+        for (int i = 0; i < Math.min(FactoryGraph.MAX_ACTIVE_NODES, list.tagCount()); i++) {
             NBTTagCompound data = list.getCompoundTagAt(i);
             State state = state(data.getInteger("id"));
             state.duration = Math.max(1, data.getInteger("duration"));

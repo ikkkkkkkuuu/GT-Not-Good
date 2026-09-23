@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagList;
 public final class FactoryGraph {
 
     public static final int MAX_NODES = 32;
+    public static final int MAX_ACTIVE_NODES = MAX_NODES * 99;
     public static final int MAX_PARALLEL = Integer.MAX_VALUE;
 
     /** GT stack counts use signed integers; multiply in long before saturating the effective limit. */
@@ -26,6 +27,9 @@ public final class FactoryGraph {
     public static final class Node {
 
         public int id;
+        /** One-based recipe page and its original node id in an installed, merged graph. */
+        public int page = 1;
+        public int localId;
         public String recipe = "";
         public int x;
         public int y;
@@ -39,6 +43,8 @@ public final class FactoryGraph {
         public NBTTagCompound write() {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setInteger("id", id);
+            tag.setInteger("page", page);
+            tag.setInteger("localId", localId);
             tag.setString("recipe", recipe);
             tag.setInteger("x", x);
             tag.setInteger("y", y);
@@ -65,6 +71,7 @@ public final class FactoryGraph {
         if (nodes.size() >= MAX_NODES || nextId == Integer.MAX_VALUE) return;
         Node node = new Node();
         node.id = nextId++;
+        node.localId = node.id;
         node.recipe = recipe;
         node.x = (nodes.size() % 3) * 112 + 8;
         node.y = (nodes.size() / 3) * 55 + 8;
@@ -87,15 +94,26 @@ public final class FactoryGraph {
 
     /** Reads a bounded graph and drops dangling routes; runtime contents are stored separately. */
     public void read(NBTTagCompound tag) {
+        read(tag, MAX_NODES);
+    }
+
+    /** Reads a machine-owned graph that may contain every locked recipe page. */
+    public void readActive(NBTTagCompound tag) {
+        read(tag, MAX_ACTIVE_NODES);
+    }
+
+    private void read(NBTTagCompound tag, int limit) {
         nodes.clear();
         nextId = Math.max(0, tag.getInteger("next"));
         NBTTagList list = tag.getTagList("nodes", 10);
-        for (int i = 0; i < Math.min(MAX_NODES, list.tagCount()); i++) {
+        for (int i = 0; i < Math.min(limit, list.tagCount()); i++) {
             NBTTagCompound data = list.getCompoundTagAt(i);
             int id = data.getInteger("id");
             if (id < 0 || id == Integer.MAX_VALUE || find(id) != null) continue;
             Node node = new Node();
             node.id = id;
+            node.page = data.hasKey("page") ? Math.max(1, Math.min(99, data.getInteger("page"))) : 1;
+            node.localId = data.hasKey("localId") ? data.getInteger("localId") : id;
             node.recipe = data.getString("recipe");
             node.target = data.getBoolean("target");
             node.x = Math.max(0, Math.min(2048, data.getInteger("x")));
@@ -137,7 +155,7 @@ public final class FactoryGraph {
 
     public FactoryGraph copy() {
         FactoryGraph result = new FactoryGraph();
-        result.read(write());
+        result.read(write(), Math.min(MAX_ACTIVE_NODES, Math.max(MAX_NODES, nodes.size())));
         return result;
     }
 

@@ -16,6 +16,12 @@ public final class GTNGGuiTextures {
     private static final String MODID = ModList.ModIds.GT_NOT_GOOD;
     private static final String BASE = RESOURCE_ROOT_ID + ":iconsets/";
 
+    /** Box++ LGPL artwork kept under its own resource folder and license notice. */
+    public static final UITexture BOX_DOUBLE = UITexture.fullImage(MODID, "gui/box/double");
+    public static final UITexture BOX_HALVE = UITexture.fullImage(MODID, "gui/box/halve");
+    public static final UITexture BOX_CLEAR = UITexture.fullImage(MODID, "gui/box/clear");
+    public static final UITexture BOX_AE = UITexture.fullImage(MODID, "gui/box/ae");
+
     /** Original XNet MIT-licensed panel and connection indicators, rendered through MUI2. */
     public static final UITexture NETWORK_FRAME = UITexture.builder()
         .location(MODID, "gui/network/sidegui")

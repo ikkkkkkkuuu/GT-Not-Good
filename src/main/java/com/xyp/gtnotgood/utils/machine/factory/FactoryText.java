@@ -132,6 +132,22 @@ public enum FactoryText {
     // # Production routes
     // # zh_CN 工序列表
     EDIT("factory.gtnotgood.edit"),
+    // #tr factory.gtnotgood.page_previous
+    // # Previous recipe page
+    // # zh_CN 上一配方页
+    PAGE_PREVIOUS("factory.gtnotgood.page_previous"),
+    // #tr factory.gtnotgood.page_next
+    // # Add or open the next recipe page
+    // # zh_CN 添加或打开下一配方页
+    PAGE_NEXT("factory.gtnotgood.page_next"),
+    // #tr factory.gtnotgood.page_delete
+    // # Delete current recipe page
+    // # zh_CN 删除当前配方页
+    PAGE_DELETE("factory.gtnotgood.page_delete"),
+    // #tr factory.gtnotgood.page_delete_help
+    // # Delete this page? Running jobs finish before the remaining pages update.
+    // # zh_CN 删除此页？当前任务完成后更新其余页面。
+    PAGE_DELETE_HELP("factory.gtnotgood.page_delete_help"),
     // #tr factory.gtnotgood.search
     // # Search output / machine
     // # zh_CN 搜索产物或机器
