@@ -3,6 +3,7 @@ package com.xyp.gtnotgood.mixins.early.commandtree;
 
 import com.xyp.gtnotgood.commandtree.accessor.NetHandlerPlayClientExtras;
 import com.xyp.gtnotgood.commandtree.client.ClientSuggestionProvider;
+import com.xyp.gtnotgood.commandtree.client.ClientCommandTree;
 import com.xyp.gtnotgood.commandtree.client.ISuggestionProvider;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.CommandDispatcher;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.arguments.StringArgumentType;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraft.network.play.server.S19PacketEntityStatus;
 import net.minecraft.network.play.server.S3APacketTabComplete;
 import org.jetbrains.annotations.NotNull;
@@ -84,6 +86,10 @@ public class NetHandlerPlayClientMixin implements NetHandlerPlayClientExtras {
    @NotNull
    @Override
    public CommandDispatcher<ISuggestionProvider> brigo$commands() {
+      if (this.gameController.thePlayer != null) {
+         ClientCommandTree.merge(this.brigo$commands, ClientCommandHandler.instance.getCommands(),
+             this.gameController.thePlayer);
+      }
       return this.brigo$commands;
    }
 
@@ -91,6 +97,7 @@ public class NetHandlerPlayClientMixin implements NetHandlerPlayClientExtras {
    @Override
    public void brigo$setCommands(@NotNull CommandDispatcher<ISuggestionProvider> dispatcher) {
       this.brigo$commands = dispatcher;
+      brigo$commands();
    }
 }
 // spotless:on
