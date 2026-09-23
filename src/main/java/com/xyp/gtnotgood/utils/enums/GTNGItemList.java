@@ -77,6 +77,8 @@ public enum GTNGItemList implements IItemContainer {
     AdvancedIOBus,
     MEWirelessTransceiver,
     WildcardPattern,
+    IronFuelRod,
+    DepletedIronFuelRod,
     WirelessDualInterfaceTerminal,
     SuperMTEHatchCraftingInputBusME,
     SuperMTEHatchCraftingInputME,

@@ -2,6 +2,7 @@ package com.xyp.gtnotgood.loader;
 
 import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.CraftingTableRecipes;
+import com.xyp.gtnotgood.common.recipe.gregtech.FuelRodRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeBeeBreederRecipes;
@@ -36,6 +37,7 @@ public class RecipeLoader {
         com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes.loadRecipes();
         BenderRecipes.loadRecipes();
         FurnaceRecipes.loadRecipes();
+        FuelRodRecipes.loadRecipes();
         SingularityDataHubRecipes.loadRecipes();
         CraftingTableRecipes.loadRecipes();
         OreProcessingRecipes.loadOreProcessingRecipes();

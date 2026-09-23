@@ -17,6 +17,7 @@ public class Config {
     private static final String CATEGORY_CROPSNH = "CropsNH";
     private static final String CATEGORY_FORESTRY = "Forestry";
     private static final String CATEGORY_GREGTECH = "GregTech";
+    private static final String CATEGORY_FUEL_ROD = "Fuel_Rod";
     private static final String CATEGORY_THAUMCRAFT = "Thaumcraft";
     private static final String CATEGORY_TOOL_BELT = "Tool_Belt";
     private static final String CATEGORY_WIRELESS_MULTIBLOCK = "Wireless_Multiblock";
@@ -79,6 +80,14 @@ public class Config {
     /** Maximum number of recipe matches processed in one wireless cross-recipe batch. */
     public static int wirelessCrossRecipeParallelLimit = 200;
 
+    /** Values fixed when the example fuel rod is registered; changing them requires a game restart. */
+    public static class FuelRod {
+
+        public static int energyPercent = 10000;
+        public static int durationPercent = 10000;
+        public static int heatPercent = 100;
+    }
+
     // region VeinMiningPickaxe 配置
     public static class VeinMinerPickaxe {
 
@@ -131,6 +140,13 @@ public class Config {
         configuration.addCustomCategoryComment(CATEGORY_CROPSNH, "CropsNH 作物配置");
         configuration.addCustomCategoryComment(CATEGORY_FORESTRY, "Forestry 蜜蜂杂交配置");
         configuration.addCustomCategoryComment(CATEGORY_GREGTECH, "GregTech 机器、工具与客户端显示配置");
+        configuration.addCustomCategoryComment(CATEGORY_FUEL_ROD, "铁燃料棒参数。修改后重启游戏生效，服务器和客户端应使用相同数值。");
+        FuelRod.energyPercent = configuration
+            .getInt("energyPercent", CATEGORY_FUEL_ROD, 10000, 1, 10000, "相对于四联铀燃料棒的基础产能百分比。100 表示相同产能。");
+        FuelRod.durationPercent = configuration
+            .getInt("durationPercent", CATEGORY_FUEL_ROD, 10000, 1, 10000, "相对于四联铀燃料棒的寿命百分比。100 表示相同寿命。");
+        FuelRod.heatPercent = configuration
+            .getInt("heatPercent", CATEGORY_FUEL_ROD, 100, 1, 10000, "相对于四联铀燃料棒的反应堆热量百分比。100 表示相同热量。");
         configuration.addCustomCategoryComment(CATEGORY_THAUMCRAFT, "Thaumcraft 扭曲与研究配置");
         configuration.addCustomCategoryComment(CATEGORY_TOOL_BELT, "工具腰带的配置设置");
         configuration.addCustomCategoryComment(CATEGORY_WIRELESS_MULTIBLOCK, "无线多方块跨配方并行配置");

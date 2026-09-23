@@ -1,5 +1,14 @@
 # Third-Party Notices
 
+## GT5-Unofficial iron fuel rod textures
+
+The active and depleted iron fuel rod textures are color variants of GT5-Unofficial's
+four-cell uranium fuel rod textures, version `5.09.54.133`. The original silhouette,
+shading, and alpha remain intact; only colored fuel pixels were recolored. GT5-Unofficial
+identifies its license as LGPL-3.0-or-later. These two derived textures retain that license
+and are outside this project's general MIT grant. Exact source and destination hashes,
+modifications, and license text are bundled in `META-INF/iron-fuel-rod/`.
+
 ## GT Not Leisure compact AE machines
 
 Quantum Computer, Assembler Matrix, their GUI logic and AE batch/CPU helpers are adapted from

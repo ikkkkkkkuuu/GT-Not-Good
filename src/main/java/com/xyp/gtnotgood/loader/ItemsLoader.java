@@ -1,11 +1,17 @@
 package com.xyp.gtnotgood.loader;
 
+import net.minecraft.item.ItemStack;
+
+import com.xyp.gtnotgood.common.items.GTNGItem;
 import com.xyp.gtnotgood.common.items.VeinMiningPickaxe.VeinMiningPickaxe;
+import com.xyp.gtnotgood.common.items.fuel.IronFuelRod;
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternItem;
 import com.xyp.gtnotgood.common.mebridge.ItemMEWirelessTransceiver;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import gregtech.api.enums.ItemList;
+import gregtech.api.items.ItemRadioactiveCellIC;
 
 /**
  * Registers ordinary Forge items owned by GT Not Good.
@@ -85,6 +91,23 @@ public final class ItemsLoader {
         wildcardPattern = new WildcardPatternItem();
         GameRegistry.registerItem(wildcardPattern, WildcardPatternItem.ITEM_NAME);
         GTNGItemList.WildcardPattern.set(wildcardPattern);
+
+        ItemStack baseFuel = ItemList.RodUranium4.get(1);
+        if (baseFuel == null || !(baseFuel.getItem() instanceof ItemRadioactiveCellIC)) {
+            throw new IllegalStateException("GregTech four-cell uranium fuel rod is unavailable");
+        }
+        // #tr item.gtnotgood.depleted_iron_fuel_rod.name
+        // # Depleted Iron Fuel Rod
+        // # zh_CN 枯竭的铁燃料棒
+        GTNGItem depletedFuel = new GTNGItem("depleted_iron_fuel_rod");
+        GameRegistry.registerItem(depletedFuel, "depleted_iron_fuel_rod");
+        GTNGItemList.DepletedIronFuelRod.set(depletedFuel);
+        // #tr gtnotgood.iron_fuel_rod.name
+        // # Iron Fuel Rod
+        // # zh_CN 铁燃料棒
+        GTNGItemList.IronFuelRod
+            .set(new IronFuelRod((ItemRadioactiveCellIC) baseFuel.getItem(), new ItemStack(depletedFuel)));
+
         // 注册矿脉挖掘镐
         veinMiningPickaxe = new VeinMiningPickaxe();
     }
