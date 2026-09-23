@@ -11,7 +11,6 @@ import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
 import gregtech.api.enums.TierEU;
 import gregtech.api.recipe.RecipeMaps;
-import gregtech.api.util.GTOreDictUnificator;
 
 /**
  * User-requested MV access to adjustable GTNH wireless connectors. MV hulls, circuits and
@@ -37,7 +36,7 @@ public final class FluxConnectorRecipes {
             .itemInputs(
                 ItemList.Hull_MV.get(1),
                 ItemList.Emitter_MV.get(1),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.MV, 2),
+                new Object[] { OrePrefixes.circuit.get(Materials.MV), 2 },
                 new ItemStack(Items.ender_pearl, 2))
             .circuit(1)
             .itemOutputs(GTNGItemList.FluxPlug.get(1))
@@ -48,7 +47,7 @@ public final class FluxConnectorRecipes {
             .itemInputs(
                 ItemList.Hull_MV.get(1),
                 ItemList.Sensor_MV.get(1),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.MV, 2),
+                new Object[] { OrePrefixes.circuit.get(Materials.MV), 2 },
                 new ItemStack(Items.ender_pearl, 2))
             .circuit(2)
             .itemOutputs(GTNGItemList.FluxPoint.get(1))

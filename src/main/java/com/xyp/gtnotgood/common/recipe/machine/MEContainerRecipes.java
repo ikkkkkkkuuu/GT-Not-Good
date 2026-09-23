@@ -14,7 +14,6 @@ import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.util.GTModHandler;
-import gregtech.api.util.GTOreDictUnificator;
 
 /** Registers the ME container at the same assembler tier as this addon's existing ME bridges. */
 public final class MEContainerRecipes {
@@ -27,7 +26,7 @@ public final class MEContainerRecipes {
                 GTModHandler.getModItem(ModList.AE2.getID(), "tile.BlockInterface", 1),
                 new ItemStack(Blocks.chest),
                 new ItemStack(Blocks.glass, 4),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.LV, 1))
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 1 })
             .itemOutputs(GTNGItemList.MEContainer.get(1))
             .eut(RECIPE_LV)
             .duration(15 * SECONDS)

@@ -1,5 +1,16 @@
 # Third-Party Notices
 
+## GT Not Leisure compact AE machines
+
+Quantum Computer, Assembler Matrix, their GUI logic and AE batch/CPU helpers are adapted from
+[ABKQPO/GT-Not-Leisure](https://github.com/ABKQPO/GT-Not-Leisure), commit
+`6cbc6927af4f44c445ea7a879796b4764b00988d`, under LGPL-3.0. These derived files retain their
+upstream license and are outside the project's general MIT grant. No upstream image assets are included.
+The port uses compact structures, fixed maximum performance, 144 matrix pattern slots and no machine
+energy cost. Source mappings and modifications are recorded in `reference/UPSTREAM_PORT_NOTES.md`.
+License texts are bundled as `GT-Not-Leisure-LGPL-3.0.txt` and `GT-Not-Leisure-GPL-3.0.txt`
+under `META-INF/licenses/`.
+
 ## AdvancedAE Advanced IO Bus
 
 The Advanced IO Bus behavior is adapted from pedroksl/AdvancedAE commit

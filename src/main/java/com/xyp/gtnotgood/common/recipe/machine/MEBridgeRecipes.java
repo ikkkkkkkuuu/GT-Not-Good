@@ -32,7 +32,7 @@ public class MEBridgeRecipes {
         GTValues.RA.stdBuilder()
             .itemInputs(
                 ae2Interface,
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.ULV, 2),
+                new Object[] { OrePrefixes.circuit.get(Materials.ULV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 4),
                 GTOreDictUnificator.get(OrePrefixes.cableGt01, Materials.Copper, 4))
             .fluidInputs(Materials.Redstone.getMolten(288))
@@ -45,7 +45,7 @@ public class MEBridgeRecipes {
         GTValues.RA.stdBuilder()
             .itemInputs(
                 ae2Interface,
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.ULV, 2),
+                new Object[] { OrePrefixes.circuit.get(Materials.ULV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 4),
                 GTOreDictUnificator.get(OrePrefixes.cableGt01, Materials.Copper, 4))
             .fluidInputs(Materials.Glowstone.getMolten(288))
@@ -58,7 +58,7 @@ public class MEBridgeRecipes {
             .itemInputs(
                 new ItemStack(BlockLoader.blockMEBridgeSender),
                 new ItemStack(BlockLoader.blockMEBridgeReceiver),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.LV, 1))
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 1 })
             .itemOutputs(new ItemStack(ItemsLoader.meWirelessTransceiver))
             .eut(RECIPE_LV)
             .duration(10 * SECONDS)

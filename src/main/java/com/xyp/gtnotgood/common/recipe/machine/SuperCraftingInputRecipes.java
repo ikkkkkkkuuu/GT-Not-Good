@@ -25,7 +25,7 @@ public final class SuperCraftingInputRecipes {
         GTRecipeBuilder.builder()
             .itemInputs(
                 ItemList.Hatch_Input_Bus_LV.get(1L),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.LV, 2),
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
             .circuit(22)
             .itemOutputs(GTNGItemList.SuperMTEHatchCraftingInputBusME.get(1))
@@ -36,7 +36,7 @@ public final class SuperCraftingInputRecipes {
         GTRecipeBuilder.builder()
             .itemInputs(
                 ItemList.Hatch_Input_Bus_LV.get(1L),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.LV, 2),
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
             .circuit(21)
             .itemOutputs(GTNGItemList.SuperMTEHatchCraftingInputME.get(1))
@@ -47,7 +47,7 @@ public final class SuperCraftingInputRecipes {
         GTRecipeBuilder.builder()
             .itemInputs(
                 ItemList.Hatch_Input_Bus_LV.get(1L),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.LV, 2),
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
             .circuit(23)
             .itemOutputs(GTNGItemList.SuperMTEHatchCraftingInputSlave.get(1))

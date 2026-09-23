@@ -63,6 +63,8 @@ public enum GTNGItemList implements IItemContainer {
 
     VeinMiningPickaxe,
     LargeOreProcessor,
+    QuantumComputer,
+    AssemblerMatrix,
     LargeVoidMiner,
     LargeBeeBreeder,
     LargeCropBreeder,

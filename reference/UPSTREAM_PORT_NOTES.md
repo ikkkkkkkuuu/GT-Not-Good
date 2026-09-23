@@ -186,3 +186,26 @@ Connector overlay validation: compileJava and focused compileTestJava passed. A 
 ## GTNL text-effects port (2026-09-21)
 
 Independent of the AE2LT port above. Source: https://github.com/ABKQPO/GT-Not-Leisure/tree/52345d2c059c871febec1365d6012424c7d64547 . Requested commits: d28217f, 9bd2f59, 52345d2. Inspected upstream LICENSE.txt (LGPL-3.0) and bundled MIT shader notices before copying. Source/destination/modification records and licenses are packaged in src/main/resources/META-INF/text-effects-port/NOTICE.md; shader hashes are in asset-manifest.json. Reference downloads reside in the OS temporary directory and are not compiled or packaged.
+
+
+## GTNL compact AE machines (2026-09-22)
+
+- Source: https://github.com/ABKQPO/GT-Not-Leisure
+- Commit: `6cbc6927af4f44c445ea7a879796b4764b00988d`.
+- License: LGPL-3.0; upstream LICENSE.txt copied verbatim to
+  `src/main/resources/META-INF/licenses/GT-Not-Leisure-LGPL-3.0.txt`.
+- Derived Java files carry SPDX notices; they are not relicensed under this project's general MIT grant.
+- Upstream destinations preserve the source-relative filenames below under `com.xyp.gtnotgood`:
+  `common/machine/multiblock/{QuantumComputer,AssemblerMatrix}` -> `common/machines/multiblock/`;
+  `common/gui/modularui/{QuantumComputerGui,AssemblerMatrixGui}` -> `common/gui/modularui/`;
+  `utils/{ECraftingCPUCluster,DireCraftingPatternDetails,LargeInventoryCrafting}`;
+  `utils/machine/AssemblerMatrixPatternState`; `utils/crafting/{CraftingBatchPlanner,CraftingBatchPlannerImpl}`;
+  `mixins/late/appliedEnergistics/{MixinCraftingCPUCluster,AccessorTaskProgress,AccessorSessionCraftCount}`
+  and `quamtumComputer/MixinCraftingGridCache` -> `mixins/late/AppliedEnergistics/compact/`;
+  `mixins/early/minecraft/MixinInventoryCrafting` -> late compact mixin on AE's MEInventoryCrafting.
+- Adaptations: local GTNG base, registries, GUI textures and Java 8 APIs; ore-processor-style
+  3x2x1 StructureLib shape; fixed 144 pattern slots; fixed singularity CPU and maximum matrix parallel;
+  one-tick matrix cycles; no controller, dispatch or storage-transfer energy cost; overflow,
+  interrupted-output and persistence fixes. No upstream raster assets copied.
+- Translation strings adapted from upstream English/Chinese resources into adjacent Java #tr comments.
+- Full upstream checkout remains in the OS temporary reference directory, outside all source sets.

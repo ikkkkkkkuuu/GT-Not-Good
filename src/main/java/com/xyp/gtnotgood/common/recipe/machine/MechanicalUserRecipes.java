@@ -23,7 +23,7 @@ public final class MechanicalUserRecipes {
                 ItemList.Hull_LV.get(1),
                 ItemList.Robot_Arm_LV.get(1),
                 ItemList.Conveyor_Module_LV.get(1),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.LV, 2),
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 2))
             .circuit(1)
             .itemOutputs(GTNGItemList.MechanicalUser.get(1))
@@ -33,7 +33,7 @@ public final class MechanicalUserRecipes {
         GTValues.RA.stdBuilder()
             .itemInputs(
                 ItemList.Electric_Motor_LV.get(1),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.LV, 1),
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 1 },
                 GTOreDictUnificator.get(OrePrefixes.wireGt01, Materials.Copper, 2))
             .circuit(2)
             .itemOutputs(GTNGItemList.MechanicalUserSpeedUpgrade.get(1))

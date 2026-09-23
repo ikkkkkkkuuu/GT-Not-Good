@@ -50,7 +50,7 @@ public final class NetworkRecipes {
             .itemInputs(
                 ItemList.Hull_LV.get(1),
                 GTNGItemList.NetworkConnector.get(2),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.LV, 2),
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 2),
                 new ItemStack(Items.redstone, 2))
             .circuit(23)

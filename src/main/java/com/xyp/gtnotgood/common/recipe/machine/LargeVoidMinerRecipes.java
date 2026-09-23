@@ -28,7 +28,7 @@ public final class LargeVoidMinerRecipes {
                 ItemList.Machine_LV_Miner.get(1L),
                 GTOreDictUnificator.get(OrePrefixes.frameGt, Materials.Steel, 4),
                 GTOreDictUnificator.get(OrePrefixes.plateTriple, Materials.Steel, 8),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.LV, 4),
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 4 },
                 ItemList.Electric_Motor_LV.get(4L),
                 ItemList.Electric_Piston_LV.get(4L))
             .fluidInputs(Materials.SolderingAlloy.getMolten(576))

@@ -20,7 +20,7 @@ public class SingularityDataHubRecipes {
             .itemInputs(
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 4),
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 4),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.LV, 4))
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 4 })
             .circuit(24)
             .itemOutputs(GTNGItemList.SingularityDataHub.get(1))
             .duration(5 * SECONDS)
@@ -31,7 +31,7 @@ public class SingularityDataHubRecipes {
             .itemInputs(
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Iron, 4),
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 4),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.LV, 4))
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 4 })
             .circuit(24)
             .itemOutputs(GTNGItemList.VaultPortHatch.get(1))
             .duration(5 * SECONDS)

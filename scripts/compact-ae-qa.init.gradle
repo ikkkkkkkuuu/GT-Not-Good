@@ -1,0 +1,33 @@
+// Disposable integrated-server checks; fixtures never enter the release jar.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.fileTree('scripts/qa') { include 'CompactAEClientChecks.java' })
+    }
+    def mainJar = root.tasks.register('jarCompactAEQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'compact-ae-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('compact-ae-qa-runtime')
+    }
+    def testCopy = root.tasks.register('snapshotCompactAEQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/CompactAEClientChecks*.class'
+        into root.layout.buildDirectory.dir('compact-ae-qa-runtime/test')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn mainJar, testCopy
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('compact-ae-qa-runtime/test'))
+        systemProperty 'gtng.compactae.qa', 'true'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in integrated-server checks')
+        doFirst { java.nio.file.Files.deleteIfExists(root.file('run/client/compact-ae-qa-result.txt').toPath()) }
+        doLast {
+            def result = root.file('run/client/compact-ae-qa-result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Compact AE QA failed; inspect COMPACT_AE_QA in client log.')
+        }
+    }
+}

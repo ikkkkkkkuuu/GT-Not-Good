@@ -8,7 +8,6 @@ import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
 import gregtech.api.enums.TierEU;
 import gregtech.api.recipe.RecipeMaps;
-import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTUtility;
 
 /** Registers the EV-stage assembler recipe for the integrated production controller. */
@@ -21,7 +20,7 @@ public final class IntegratedProductionFactoryRecipes {
         GTValues.RA.stdBuilder()
             .itemInputs(
                 ItemList.Hull_EV.get(2),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.EV, 4),
+                new Object[] { OrePrefixes.circuit.get(Materials.EV), 4 },
                 ItemList.Robot_Arm_EV.get(2),
                 ItemList.Conveyor_Module_EV.get(4),
                 Materials.StainlessSteel.getPlates(16),

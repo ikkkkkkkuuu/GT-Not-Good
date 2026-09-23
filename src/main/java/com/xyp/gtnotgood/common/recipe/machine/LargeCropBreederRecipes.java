@@ -31,7 +31,7 @@ public final class LargeCropBreederRecipes {
                 CropsNHItemList.cropSticks.get(16),
                 GTOreDictUnificator.get(OrePrefixes.frameGt, Materials.Steel, 4),
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 8),
-                GTOreDictUnificator.get(OrePrefixes.circuit, Materials.MV, 4),
+                new Object[] { OrePrefixes.circuit.get(Materials.MV), 4 },
                 ItemList.Electric_Motor_MV.get(2L),
                 ItemList.Electric_Piston_MV.get(2L),
                 GTUtility.getIntegratedCircuit(23))

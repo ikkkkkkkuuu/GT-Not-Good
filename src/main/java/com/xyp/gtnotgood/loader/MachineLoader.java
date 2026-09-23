@@ -37,6 +37,24 @@ public class MachineLoader {
      * and tooltip credit registration in one predictable place.
      */
     public static void registerMachines() {
+        // #tr gtng.QuantumComputer.name
+        // # QuantumComputer
+        // # zh_CN 量子计算机
+        GTNGItemList.QuantumComputer.set(
+            new com.xyp.gtnotgood.common.machines.multiblock.QuantumComputer(
+                GTNGMachineID.QUANTUM_COMPUTER.ID,
+                "QuantumComputer",
+                StatCollector.translateToLocal("gtng.QuantumComputer.name")));
+        addItemTooltip(GTNGItemList.QuantumComputer.get(1), AnimatedText.GT_NOT_GOOD);
+        // #tr gtng.AssemblerMatrix.name
+        // # AssemblerMatrix
+        // # zh_CN 装配矩阵
+        GTNGItemList.AssemblerMatrix.set(
+            new com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix(
+                GTNGMachineID.ASSEMBLER_MATRIX.ID,
+                "AssemblerMatrix",
+                StatCollector.translateToLocal("gtng.AssemblerMatrix.name")));
+        addItemTooltip(GTNGItemList.AssemblerMatrix.get(1), AnimatedText.GT_NOT_GOOD);
         GTNGItemList.IntegratedProductionFactory.set(
             new com.xyp.gtnotgood.common.machines.multiblock.IntegratedProductionFactory(
                 GTNGMachineID.INTEGRATED_PRODUCTION_FACTORY.ID,

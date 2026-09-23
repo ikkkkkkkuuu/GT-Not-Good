@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
+import appeng.api.AEApi;
+import cpw.mods.fml.common.registry.GameRegistry;
 import gregtech.api.enums.ItemList;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
@@ -16,6 +18,23 @@ public class CraftingTableRecipes {
 
     public static void loadRecipes() {
         // spotless:off
+
+        var ae = AEApi.instance().definitions();
+        GameRegistry.addShapedRecipe(
+            GTNGItemList.QuantumComputer.get(1),
+            "IRI", "CMC", "IRI",
+            'I', Items.iron_ingot,
+            'R', Items.redstone,
+            'C', ae.materials().fluixCrystal().maybeStack(1).get(),
+            'M', ae.blocks().molecularAssembler().maybeStack(1).get());
+
+        GameRegistry.addShapedRecipe(
+            GTNGItemList.AssemblerMatrix.get(1),
+            "IFI", "AMA", "IFI",
+            'I', Items.iron_ingot,
+            'F', ae.materials().fluixCrystal().maybeStack(1).get(),
+            'A', ae.blocks().iface().maybeStack(1).get(),
+            'M', ae.blocks().molecularAssembler().maybeStack(1).get());
 
 
         GTModHandler.addCraftingRecipe(
