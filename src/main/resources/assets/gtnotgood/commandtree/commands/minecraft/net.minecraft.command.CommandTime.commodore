@@ -1,0 +1,15 @@
+time {
+    set {
+        day;
+        night;
+        time brigadier:integer;
+    }
+    add {
+        time brigadier:integer;
+    }
+    query {
+        daytime;
+        gametime;
+        day;
+    }
+}

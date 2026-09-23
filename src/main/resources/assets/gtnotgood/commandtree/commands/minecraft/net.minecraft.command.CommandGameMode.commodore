@@ -1,0 +1,20 @@
+gamemode {
+    survival {
+        player brigadier:string single_word;
+    }
+    creative {
+        player brigadier:string single_word;
+    }
+    adventure {
+        player brigadier:string single_word;
+    }
+    0 {
+        player brigadier:string single_word;
+    }
+    1 {
+        player brigadier:string single_word;
+    }
+    2 {
+        player brigadier:string single_word;
+    }
+}

@@ -42,6 +42,11 @@ public final class NetWorkHandler {
             com.xyp.gtnotgood.common.packaged.MessagePackagedConnector.Handler.class,
             id++,
             Side.SERVER);
+        registerMessage(
+            com.xyp.gtnotgood.commandtree.network.CommandTreePacket.class,
+            com.xyp.gtnotgood.commandtree.network.CommandTreePacket.Handler.class,
+            id++,
+            Side.CLIENT);
     }
 
     private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<REQ> messageClass,

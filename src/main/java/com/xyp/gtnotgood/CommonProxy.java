@@ -39,6 +39,7 @@ public class CommonProxy {
 
         GTNotGood.channel = NetworkRegistry.INSTANCE.newSimpleChannel(GTNotGood.MODID);
         NetWorkHandler.registerAllMessage();
+        com.xyp.gtnotgood.commandtree.CommandTreeBootstrap.preInit();
         FMLCommonHandler.instance()
             .bus()
             .register(new com.xyp.gtnotgood.config.ServerConfigService());
@@ -71,6 +72,7 @@ public class CommonProxy {
         GuiManager.registerFactory(LargeVoidMinerConfigGuiFactory.INSTANCE);
         RecipeLoader.loadRecipes();
         AE2Thing.init(event);
+        com.xyp.gtnotgood.commandtree.CommandTreeBootstrap.init();
     }
 
     // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)

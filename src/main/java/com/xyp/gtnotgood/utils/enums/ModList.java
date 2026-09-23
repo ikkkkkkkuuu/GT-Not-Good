@@ -19,6 +19,7 @@ public enum ModList {
     Forestry(ModIds.FORESTRY, Names.FORESTRY),
     GregTech(ModIds.GREGTECH, Names.GREGTECH),
     Thaumcraft(ModIds.THAUMCRAFT, Names.THAUMCRAFT),
+    Baubles(ModIds.BAUBLES, Names.BAUBLES),
     BloodMagic(ModIds.BLOOD_MAGIC, Names.BLOOD_MAGIC),
     ThaumicEnergistics(ModIds.THAUMIC_ENERGISTICS, Names.THAUMIC_ENERGISTICS),
     ENDER_IO(ModIds.ENDER_IO, Names.ENDER_IO),
@@ -39,6 +40,7 @@ public enum ModList {
         public static final String FORESTRY = "Forestry";
         public static final String GREGTECH = "gregtech";
         public static final String THAUMCRAFT = "Thaumcraft";
+        public static final String BAUBLES = "Baubles";
         public static final String BLOOD_MAGIC = "AWWayofTime";
         public static final String THAUMIC_ENERGISTICS = "thaumicenergistics";
         public static final String WARP_THEORY = "WarpTheory";
@@ -61,6 +63,7 @@ public enum ModList {
         public static final String FORESTRY = "Forestry";
         public static final String GREGTECH = "GregTech";
         public static final String THAUMCRAFT = "Thaumcraft";
+        public static final String BAUBLES = "Baubles";
         public static final String BLOOD_MAGIC = "Blood Magic";
         public static final String THAUMIC_ENERGISTICS = "Thaumic Energistics";
         public static final String WARP_THEORY = "WarpTheory";

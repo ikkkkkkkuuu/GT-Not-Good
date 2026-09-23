@@ -16,6 +16,9 @@
     "early.texteffect.MixinFontRendererTextEffects",
     "early.texteffect.MixinGuiNewChatTextEffects",
     "early.texteffect.MixinGuiTextFieldTextEffects",
+    "early.commandtree.GuiChatMixin",
+    "early.commandtree.GuiTextFieldMixin",
+    "early.commandtree.NetHandlerPlayClientMixin",
     "early.texteffect.angelica.MixinFontBatchTextEffects"
   ],
   "server": []

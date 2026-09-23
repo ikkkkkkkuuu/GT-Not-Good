@@ -1,0 +1,8 @@
+defaultgamemode {
+    survival;
+    creative;
+    adventure;
+    0;
+    1;
+    2;
+}
