@@ -20,7 +20,7 @@ public class TileNetworkController extends TileNetworkNode {
 
     public final Channel[] channels = new Channel[8];
     private NetworkTopology topology;
-    private long topologyVersion = -1;
+    private Channel[] orderedChannels;
 
     public TileNetworkController() {
         for (int i = 0; i < channels.length; i++) channels[i] = new Channel();
@@ -33,12 +33,26 @@ public class TileNetworkController extends TileNetworkNode {
 
     public NetworkTopology topology() {
         if (worldObj == null || worldObj.isRemote) return new NetworkTopology();
-        long version = NetworkTopology.version(worldObj);
-        if (topology == null || topologyVersion != version) {
+        if (topology == null) {
             topology = NetworkTopology.scan(this);
-            topologyVersion = version;
+            NetworkTopology.register(this);
         }
         return topology;
+    }
+
+    /** Returns the cached scan for localized invalidation without starting a new scan. */
+    NetworkTopology cachedTopology() {
+        return topology;
+    }
+
+    /** Called when a watched chunk changes or a node is removed. */
+    void invalidateTopology() {
+        topology = null;
+    }
+
+    /** Priority order changes only through the controller GUI or NBT loading. */
+    void invalidateChannelOrder() {
+        orderedChannels = null;
     }
 
     public NetworkTopology.Endpoint endpoint(String key) {
@@ -63,13 +77,15 @@ public class TileNetworkController extends TileNetworkNode {
     public void updateEntity() {
         if (worldObj.isRemote) return;
         if (topology().status != 0) return;
-        Channel[] ordered = channels.clone();
-        java.util.Arrays.sort(
-            ordered,
-            java.util.Comparator.comparingInt((Channel c) -> c.priority)
-                .reversed());
+        if (orderedChannels == null) {
+            orderedChannels = channels.clone();
+            java.util.Arrays.sort(
+                orderedChannels,
+                java.util.Comparator.comparingInt((Channel c) -> c.priority)
+                    .reversed());
+        }
         java.util.Map<gregtech.api.interfaces.tileentity.IGregTechTileEntity, Long> energyDraw = new java.util.IdentityHashMap<>();
-        for (Channel channel : ordered) {
+        for (Channel channel : orderedChannels) {
             if (channel.enabled) {
                 if (channel.type == 2 ? NetworkEnergyTransfer.tick(this, channel, energyDraw)
                     : NetworkTransfer.tick(this, channel)) markDirty();
@@ -85,7 +101,7 @@ public class TileNetworkController extends TileNetworkNode {
             if (tag.hasKey("channel" + i)) channels[i].read(tag.getCompoundTag("channel" + i));
         }
         topology = null;
-        topologyVersion = -1;
+        orderedChannels = null;
     }
 
     @Override

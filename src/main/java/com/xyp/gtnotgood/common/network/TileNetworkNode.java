@@ -41,24 +41,26 @@ public class TileNetworkNode extends TileEntity implements IGuiHolder<PosGuiData
         if (worldObj == null || worldObj.isRemote || side < 0 || side >= 6) return;
         enabledFaces ^= 1 << side;
         markDirty();
-        NetworkTopology.changed(worldObj);
+        NetworkTopology.changed(worldObj, xCoord, zCoord);
     }
 
     @Override
     public void validate() {
         super.validate();
-        NetworkTopology.changed(worldObj);
+        NetworkTopology.changed(worldObj, xCoord, zCoord);
     }
 
     @Override
     public void invalidate() {
-        NetworkTopology.changed(worldObj);
+        NetworkTopology.changed(worldObj, xCoord, zCoord);
+        if (this instanceof TileNetworkController controller) NetworkTopology.unregister(controller);
         super.invalidate();
     }
 
     @Override
     public void onChunkUnload() {
-        NetworkTopology.changed(worldObj);
+        NetworkTopology.changed(worldObj, xCoord, zCoord);
+        if (this instanceof TileNetworkController controller) NetworkTopology.unregister(controller);
         super.onChunkUnload();
     }
 

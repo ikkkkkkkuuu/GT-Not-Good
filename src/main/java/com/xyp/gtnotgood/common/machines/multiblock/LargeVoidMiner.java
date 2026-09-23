@@ -735,8 +735,21 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         }
         mOreAccumulator += ORES_PER_UNIT * GRADE_COEF[mActiveGrade] * OUTPUT_COEF[mActiveGrade];
         int out = (int) Math.floor(mOreAccumulator);
+        List<Map.Entry<GTUtility.ItemId, Float>> eligibleOres = new ArrayList<>();
+        double totalWeight = 0.0d;
+        if (out > 0) {
+            for (PoolDim pd : mPool) {
+                for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap()
+                    .entrySet()) {
+                    if (mFilteredOres.contains(entry.getKey())
+                        || (mDirectionalMode && !mDirectionalOres.contains(entry.getKey()))) continue;
+                    eligibleOres.add(entry);
+                    totalWeight += entry.getValue();
+                }
+            }
+        }
         for (int i = 0; i < out; i++) {
-            GTUtility.ItemId oreId = extractNextOre();
+            GTUtility.ItemId oreId = extractNextOre(eligibleOres, totalWeight);
             if (oreId == null) break;
             ItemStack oreStack = oreId.getItemStack();
             if (oreStack == null) break;
@@ -747,27 +760,21 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         updateSlots();
     }
 
-    private GTUtility.ItemId extractNextOre() {
-        double total = 0.0d;
-        for (PoolDim pd : mPool) {
-            for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap()
-                .entrySet()) {
-                if (mFilteredOres.contains(entry.getKey())
-                    || (mDirectionalMode && !mDirectionalOres.contains(entry.getKey()))) continue;
-                total += entry.getValue();
-            }
-        }
-        if (total <= 0.0d) return null;
+    /**
+     * Draws from the eligible pool built for this output cycle. The pool and its total retain the original map order
+     * and weight summation, while avoiding repeated filter checks for every ore.
+     *
+     * @param eligibleOres entries allowed by the current filters
+     * @param totalWeight sum of their weights in iteration order
+     * @return a selected ore, or null when no positive total weight is available
+     */
+    private GTUtility.ItemId extractNextOre(List<Map.Entry<GTUtility.ItemId, Float>> eligibleOres, double totalWeight) {
+        if (totalWeight <= 0.0d) return null;
         double random = ThreadLocalRandom.current()
-            .nextDouble() * total;
-        for (PoolDim pd : mPool) {
-            for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap()
-                .entrySet()) {
-                if (mFilteredOres.contains(entry.getKey())
-                    || (mDirectionalMode && !mDirectionalOres.contains(entry.getKey()))) continue;
-                random -= entry.getValue();
-                if (random < 0.0d) return entry.getKey();
-            }
+            .nextDouble() * totalWeight;
+        for (Map.Entry<GTUtility.ItemId, Float> entry : eligibleOres) {
+            random -= entry.getValue();
+            if (random < 0.0d) return entry.getKey();
         }
         return null;
     }

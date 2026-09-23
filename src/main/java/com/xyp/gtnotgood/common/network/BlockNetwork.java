@@ -64,18 +64,18 @@ public class BlockNetwork extends Block {
 
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block neighbor) {
-        NetworkTopology.changed(world);
+        NetworkTopology.changed(world, x, z);
         world.markBlockForUpdate(x, y, z);
     }
 
     @Override
     public void onBlockAdded(World world, int x, int y, int z) {
-        NetworkTopology.changed(world);
+        NetworkTopology.changed(world, x, z);
     }
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int metadata) {
-        NetworkTopology.changed(world);
+        NetworkTopology.changed(world, x, z);
         super.breakBlock(world, x, y, z, block, metadata);
     }
 
@@ -137,7 +137,7 @@ public class BlockNetwork extends Block {
             data.setInteger("z", z);
             node.readFromNBT(data);
             node.markDirty();
-            NetworkTopology.changed(world);
+            NetworkTopology.changed(world, x, z);
         }
     }
 

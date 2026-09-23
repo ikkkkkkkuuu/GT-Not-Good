@@ -171,6 +171,7 @@ public final class NetworkGui {
             value -> {
                 if (controller.getWorldObj().isRemote) return;
                 controller.channels[selected[0]].priority = Math.max(-99, Math.min(99, value));
+                controller.invalidateChannelOrder();
                 controller.markDirty();
             }).allowC2S();
         sync.syncValue("channel_priority", channelPriority);

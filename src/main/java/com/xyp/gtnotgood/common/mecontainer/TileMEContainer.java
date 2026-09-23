@@ -77,26 +77,29 @@ public class TileMEContainer extends TileMEBridgeBase
         super.updateEntity();
         if (!isServerSide() || transferring) return;
         online = getProxy().isActive();
-        Arrays.fill(networkItems, 0);
-        Arrays.fill(networkFluid, 0);
-        if (!online) return;
+        if (!online) {
+            Arrays.fill(networkItems, 0);
+            Arrays.fill(networkFluid, 0);
+            return;
+        }
         transferring = true;
         try {
             refill();
+            if (worldObj.getTotalWorldTime() % 10 == 0) refreshNetworkCounts();
         } catch (GridAccessException ignored) {
             online = false;
+            Arrays.fill(networkItems, 0);
+            Arrays.fill(networkFluid, 0);
         } finally {
             transferring = false;
         }
     }
 
-    /** Fills real item slots and refreshes long network counts without reserving any fluid. */
+    /** Fills real item slots without reserving any fluid. */
     private void refill() throws GridAccessException {
         MachineSource source = new MachineSource(this);
         var itemInventory = getProxy().getStorage()
             .getItemInventory();
-        var fluidInventory = getProxy().getStorage()
-            .getFluidInventory();
         flushInputs();
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
             ItemStack filter = itemFilters[slot];
@@ -118,6 +121,20 @@ public class TileMEContainer extends TileMEBridgeBase
                 }
             }
         }
+    }
+
+    /**
+     * Refreshes GUI-only storage totals every ten ticks. Actual item transfers still run each tick.
+     *
+     * @throws GridAccessException if the AE grid disappears during the snapshot
+     */
+    private void refreshNetworkCounts() throws GridAccessException {
+        Arrays.fill(networkItems, 0);
+        Arrays.fill(networkFluid, 0);
+        var itemInventory = getProxy().getStorage()
+            .getItemInventory();
+        var fluidInventory = getProxy().getStorage()
+            .getFluidInventory();
         var storedItems = itemInventory.getStorageList();
         var storedFluids = fluidInventory.getStorageList();
         for (int slot = 0; slot < SLOT_COUNT; slot++) {

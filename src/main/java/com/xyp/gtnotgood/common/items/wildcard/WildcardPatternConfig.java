@@ -26,6 +26,7 @@ public final class WildcardPatternConfig {
     private static final String KEY_RULE_INCLUDE_MATERIALS = "WildcardRuleIncludeMaterials";
     private static final String KEY_RULE_EXCLUDE_MATERIALS = "WildcardRuleExcludeMaterials";
     private static final String KEY_OREDICT_PREFERENCES = "WildcardOreDictPreferences";
+    private static final int TOKEN_MATCHER_CACHE_LIMIT = 128;
     private static final Map<String, List<TokenMatcher>> TOKEN_MATCHER_CACHE = new ConcurrentHashMap<>();
 
     private WildcardPatternConfig() {}
@@ -329,8 +330,16 @@ public final class WildcardPatternConfig {
             .isEmpty()) {
             return false;
         }
-        for (TokenMatcher matcher : TOKEN_MATCHER_CACHE
-            .computeIfAbsent(value, WildcardPatternConfig::buildTokenMatchers)) {
+        List<TokenMatcher> matchers = TOKEN_MATCHER_CACHE.get(value);
+        if (matchers == null) {
+            if (TOKEN_MATCHER_CACHE.size() >= TOKEN_MATCHER_CACHE_LIMIT) {
+                java.util.Iterator<String> keys = TOKEN_MATCHER_CACHE.keySet()
+                    .iterator();
+                if (keys.hasNext()) TOKEN_MATCHER_CACHE.remove(keys.next());
+            }
+            matchers = TOKEN_MATCHER_CACHE.computeIfAbsent(value, WildcardPatternConfig::buildTokenMatchers);
+        }
+        for (TokenMatcher matcher : matchers) {
             for (String candidateTerm : candidateTerms) {
                 if (candidateTerm != null && !candidateTerm.isEmpty() && matcher.matches(candidateTerm)) {
                     return true;

@@ -1638,6 +1638,15 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             "list");
         private static final Field VIEW_HEIGHT = findField(GuiInterfaceTerminal.class, "viewHeight");
         private static final Field EXTRA_OPTIONS_TEXT = findField(GuiInterfaceTerminal.class, "extraOptionsText");
+        /** Fixed native controls used by the per-frame button refresh. Missing fields remain cached as null. */
+        private static final Map<String, Field> CONTROL_FIELDS = new java.util.HashMap<>();
+        static {
+            for (String name : new String[] { "guiButtonAssemblersOnly", "guiButtonHideFull", "guiButtonBrokenRecipes",
+                "guiButtonUseSubstitute", "guiButtonShowHidden", "guiButtonSectionOrder", "terminalStyleBox",
+                "onlyMolecularAssemblers", "onlyBrokenRecipes", "onlySubstitute", "showHidden" }) {
+                CONTROL_FIELDS.put(name, findField(GuiInterfaceTerminal.class, name));
+            }
+        }
         private static Field entryOptionsButton;
         private static Field entryHideButton;
         private static Field entryRenameButton;
@@ -1652,6 +1661,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         private String sectionOrderQuery = "";
         private SearchResultSnapshot frozenSearchResults;
         private String[] frozenSearchTexts;
+        private boolean entryHitBoxesDirty = true;
+        private int lastEntryScroll = Integer.MIN_VALUE;
+        private int lastEntryViewHeight = Integer.MIN_VALUE;
+        private String[] lastEntrySearchTexts;
 
         private EmbeddedInterfaceTerminal(Container container) {
             super(container);
@@ -1680,6 +1693,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             super.postUpdate(updates, statusFlags);
             if (restore && frozenSearchResults != null) frozenSearchResults.restore(this);
             repairEntrySlotArrays();
+            entryHitBoxesDirty = true;
         }
 
         private void changeSectionOrder(StringOrder order) {
@@ -1754,6 +1768,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
         private void initialize(Minecraft minecraft, int width, int height) {
             setWorldAndResolution(minecraft, width, height);
+            entryHitBoxesDirty = true;
             ensureCtrlTeleportTooltip();
         }
 
@@ -1790,16 +1805,25 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         }
 
         private void drawCentralBackground(int x, int y, int mouseX, int mouseY) {
-            repairEntrySlotArrays();
             updateSearchSectionOrder();
-            clearStaleEntryHitBoxes();
+            int scroll = getScrollBar().getCurrentScroll();
+            int viewHeight = VIEW_HEIGHT == null ? 0 : intField(this, VIEW_HEIGHT, 0);
+            String[] searchTexts = searchTexts();
+            if (entryHitBoxesDirty || scroll != lastEntryScroll || viewHeight != lastEntryViewHeight
+                || !Arrays.equals(searchTexts, lastEntrySearchTexts)) {
+                clearStaleEntryHitBoxes();
+                entryHitBoxesDirty = false;
+                lastEntryScroll = scroll;
+                lastEntryViewHeight = viewHeight;
+                lastEntrySearchTexts = searchTexts;
+            }
             super.drawBG(x, y, mouseX, mouseY);
         }
 
         /**
          * AE2 recreates an interface entry's inventory when GT expands its pattern slots, but leaves two parallel
          * recipe-state arrays at their previous length. Drawing the first slot past the old size then crashes the
-         * client GUI. Keep every per-slot cache aligned with the inventory before filtering or drawing the entry.
+         * client GUI. Interface inventories arrive through postUpdate, so align the caches there before the next draw.
          */
         private void repairEntrySlotArrays() {
             Object masterList = objectField(this, MASTER_LIST);
@@ -1885,14 +1909,17 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                 Method click = masterList.getClass()
                     .getMethod("mouseClicked", int.class, int.class, int.class);
                 click.setAccessible(true);
-                return Boolean.TRUE
+                boolean handled = Boolean.TRUE
                     .equals(click.invoke(masterList, mouseX - guiLeft - 10, mouseY - guiTop - 52, button));
+                if (handled) entryHitBoxesDirty = true;
+                return handled;
             } catch (ReflectiveOperationException ignored) {}
             return false;
         }
 
         /** Dispatches the per-interface option button before pattern-slot hit testing can consume modified clicks. */
         private boolean clickEntryOption(int mouseX, int mouseY, int button) {
+            if (!isInsideViewport(mouseX, mouseY)) return false;
             Object masterList = objectField(this, MASTER_LIST);
             if (masterList == null) return false;
             int relativeX = mouseX - guiLeft - 10;
@@ -1928,7 +1955,9 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                     Method click = entry.getClass()
                         .getDeclaredMethod("mouseClicked", int.class, int.class, int.class);
                     click.setAccessible(true);
-                    return Boolean.TRUE.equals(click.invoke(entry, relativeX, relativeY, button));
+                    boolean handled = Boolean.TRUE.equals(click.invoke(entry, relativeX, relativeY, button));
+                    if (handled) entryHitBoxesDirty = true;
+                    return handled;
                 } catch (ReflectiveOperationException ignored) {
                     return false;
                 }
@@ -1972,6 +2001,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
         private void perform(GuiButton button) {
             clearFrozenSearchResults();
+            entryHitBoxesDirty = true;
             super.actionPerformed(button);
         }
 
@@ -2459,7 +2489,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         }
 
         private boolean bool(String fieldName) {
-            Field field = findField(GuiInterfaceTerminal.class, fieldName);
+            Field field = CONTROL_FIELDS.get(fieldName);
             if (field == null) return false;
             try {
                 return field.getBoolean(this);
@@ -2469,7 +2499,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         }
 
         private void setActionButton(String fieldName, Enum<?> value) {
-            Field field = findField(GuiInterfaceTerminal.class, fieldName);
+            Field field = CONTROL_FIELDS.get(fieldName);
             if (field == null) return;
             try {
                 ((GuiImgButton) field.get(this)).set(value);

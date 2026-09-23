@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -45,6 +46,7 @@ public class WildcardPatternEntry {
     static final String FLUID_PREFIX_GAS = "gas.";
     static final String FLUID_PREFIX_LIQUID = "liquid.";
 
+    private static final int USER_MATCHER_CACHE_LIMIT = 128;
     private static final Map<String, Pattern> NAME_PATTERN_CACHE = new ConcurrentHashMap<>();
     private static final Map<String, Pattern> ORE_PATTERN_CACHE = new ConcurrentHashMap<>();
     private static final Map<String, Set<String>> ORE_CANDIDATE_CACHE = new ConcurrentHashMap<>();
@@ -216,9 +218,10 @@ public class WildcardPatternEntry {
             if (oreMatcher.isEmpty() || isMatchAllPattern(oreMatcher)) {
                 return new LinkedHashSet<>();
             }
-            return new LinkedHashSet<>(
-                ORE_CANDIDATE_CACHE
-                    .computeIfAbsent(oreMatcher, WildcardPatternEntry::collectOreDictCandidateMaterials));
+            return new LinkedHashSet<>(cachedUserMatcher(
+                ORE_CANDIDATE_CACHE,
+                oreMatcher,
+                WildcardPatternEntry::collectOreDictCandidateMaterials));
         }
 
         String nameMatcher = getMatcher();
@@ -229,7 +232,7 @@ public class WildcardPatternEntry {
             return getDirectCandidateMaterials();
         }
         return new LinkedHashSet<>(
-            NAME_CANDIDATE_CACHE.computeIfAbsent(nameMatcher, WildcardPatternEntry::collectNameCandidateMaterials));
+            cachedUserMatcher(NAME_CANDIDATE_CACHE, nameMatcher, WildcardPatternEntry::collectNameCandidateMaterials));
     }
 
     /**
@@ -784,7 +787,7 @@ public class WildcardPatternEntry {
         if (!containsWildcard(pattern) && !containsRegexMeta(pattern)) {
             return displayName.equalsIgnoreCase(pattern);
         }
-        Pattern compiled = NAME_PATTERN_CACHE.computeIfAbsent(pattern, WildcardPatternEntry::compileNamePattern);
+        Pattern compiled = cachedUserMatcher(NAME_PATTERN_CACHE, pattern, WildcardPatternEntry::compileNamePattern);
         return compiled != null && compiled.matcher(displayName)
             .find();
     }
@@ -797,10 +800,32 @@ public class WildcardPatternEntry {
         if (!containsWildcard(normalizedPattern)) {
             return normalizedOre.equalsIgnoreCase(normalizedPattern);
         }
-        Pattern compiled = ORE_PATTERN_CACHE
-            .computeIfAbsent(normalizedPattern, WildcardPatternEntry::compileOrePattern);
+        Pattern compiled = cachedUserMatcher(
+            ORE_PATTERN_CACHE,
+            normalizedPattern,
+            WildcardPatternEntry::compileOrePattern);
         return compiled != null && compiled.matcher(normalizedOre)
             .matches();
+    }
+
+    /**
+     * Bounds caches keyed by editable matcher text. Concurrent misses may briefly exceed the target size;
+     * removing one arbitrary old key is safe because every matcher can be rebuilt.
+     *
+     * @param cache thread-safe cache for one matcher result type
+     * @param key normalized user matcher
+     * @param build builder used only on a cache miss
+     * @return cached or newly built value, possibly null for an invalid expression
+     */
+    private static <T> T cachedUserMatcher(Map<String, T> cache, String key, Function<String, T> build) {
+        T cached = cache.get(key);
+        if (cached != null) return cached;
+        if (cache.size() >= USER_MATCHER_CACHE_LIMIT) {
+            java.util.Iterator<String> keys = cache.keySet()
+                .iterator();
+            if (keys.hasNext()) cache.remove(keys.next());
+        }
+        return cache.computeIfAbsent(key, build);
     }
 
     private static Pattern compileNamePattern(String pattern) {

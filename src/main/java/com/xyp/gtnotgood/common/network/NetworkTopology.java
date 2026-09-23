@@ -18,23 +18,56 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-/** Bounded loaded-chunk topology discovery, cached by controllers until the world network version changes. */
+/** Bounded loaded-chunk topology discovery with chunk-local cache invalidation. */
 public final class NetworkTopology {
 
-    private static final Map<World, Long> VERSIONS = new WeakHashMap<>();
+    private static final Map<World, Map<TileNetworkController, Boolean>> CONTROLLERS = new WeakHashMap<>();
     public final List<Endpoint> endpoints = new ArrayList<>();
     public final Map<String, Endpoint> byKey = new java.util.HashMap<>();
+    private final Set<Long> watchedChunks = new HashSet<>();
+    private boolean incomplete;
     public int nodes;
     public int controllers;
     /** 0: ready, 1: controller conflict, 2: size limit, 3: unloaded boundary. */
     public int status;
 
-    public static void changed(World world) {
-        if (world != null && !world.isRemote) VERSIONS.put(world, version(world) + 1);
+    /** Invalidates only networks that reached the changed block's chunk during their last scan. */
+    public static void changed(World world, int x, int z) {
+        changedChunk(world, x >> 4, z >> 4);
     }
 
-    public static long version(World world) {
-        return VERSIONS.getOrDefault(world, 0L);
+    /** Chunk events also affect scans stopped at an unloaded boundary. */
+    private static void changedChunk(World world, int chunkX, int chunkZ) {
+        if (world == null || world.isRemote) return;
+        Map<TileNetworkController, Boolean> controllers = CONTROLLERS.get(world);
+        if (controllers == null) return;
+        long key = chunkKey(chunkX, chunkZ);
+        for (TileNetworkController controller : controllers.keySet()) {
+            NetworkTopology topology = controller.cachedTopology();
+            if (topology != null && (topology.incomplete || topology.watchedChunks.contains(key))) {
+                controller.invalidateTopology();
+            }
+        }
+    }
+
+    /** Keeps weak references so unloaded controllers do not remain in the invalidation index. */
+    static void register(TileNetworkController controller) {
+        CONTROLLERS.computeIfAbsent(controller.getWorldObj(), ignored -> new WeakHashMap<>())
+            .put(controller, Boolean.TRUE);
+    }
+
+    /** Removes controllers as soon as their tile leaves the loaded world. */
+    static void unregister(TileNetworkController controller) {
+        Map<TileNetworkController, Boolean> controllers = CONTROLLERS.get(controller.getWorldObj());
+        if (controllers != null) controllers.remove(controller);
+    }
+
+    private static long chunkKey(int chunkX, int chunkZ) {
+        return ((long) chunkX << 32) ^ (chunkZ & 0xffffffffL);
+    }
+
+    private void watch(int x, int z) {
+        watchedChunks.add(chunkKey(x >> 4, z >> 4));
     }
 
     /** Chunk events also cover empty adjacent chunks, which have no node lifecycle callback. */
@@ -42,12 +75,12 @@ public final class NetworkTopology {
 
         @SubscribeEvent
         public void load(ChunkEvent.Load event) {
-            changed(event.world);
+            changedChunk(event.world, event.getChunk().xPosition, event.getChunk().zPosition);
         }
 
         @SubscribeEvent
         public void unload(ChunkEvent.Unload event) {
-            changed(event.world);
+            changedChunk(event.world, event.getChunk().xPosition, event.getChunk().zPosition);
         }
     }
 
@@ -60,8 +93,10 @@ public final class NetworkTopology {
         visited.add(position(controller));
         while (!queue.isEmpty()) {
             TileNetworkNode node = queue.removeFirst();
+            result.watch(node.xCoord, node.zCoord);
             if (++result.nodes > 1024) {
                 result.status = 2;
+                result.incomplete = true;
                 break;
             }
             if (node instanceof TileNetworkController) result.controllers++;
@@ -71,6 +106,7 @@ public final class NetworkTopology {
                 int x = node.xCoord + direction.offsetX;
                 int y = node.yCoord + direction.offsetY;
                 int z = node.zCoord + direction.offsetZ;
+                result.watch(x, z);
                 if (y < 0 || y >= world.getHeight()) continue;
                 if (!world.blockExists(x, y, z)) {
                     result.status = 3;
@@ -87,6 +123,7 @@ public final class NetworkTopology {
                             result.byKey.put(endpoint.key, endpoint);
                             if (result.endpoints.size() > 1536) {
                                 result.status = 2;
+                                result.incomplete = true;
                                 return result;
                             }
                         }

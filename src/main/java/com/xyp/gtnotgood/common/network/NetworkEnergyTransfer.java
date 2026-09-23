@@ -76,6 +76,11 @@ final class NetworkEnergyTransfer {
                 break;
             }
         }
+        // Without buffered EU there is nothing to allocate or inject into sinks.
+        if (!channel.hasCargo()) {
+            channel.cursor = (channel.cursor + 1) & Integer.MAX_VALUE;
+            return changed;
+        }
         long[] demand = new long[sinks.size()];
         for (int i = 0; i < sinks.size(); i++) {
             Endpoint sink = sinks.get(i);

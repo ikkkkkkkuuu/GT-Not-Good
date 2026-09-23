@@ -91,6 +91,9 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     private FactoryGraph installed = new FactoryGraph();
     private FactoryGraph pending = new FactoryGraph();
     private static final int MAX_RECIPE_PAGES = 99;
+    /** Display precedence for node failures; output blockage is applied after these values. */
+    private static final FactoryText[] STATUS_PRIORITY = { FactoryText.POWER, FactoryText.LIMIT, FactoryText.HOST,
+        FactoryText.CATALYST_MISSING, FactoryText.BLOCKED };
     private final List<RecipePage> recipePages = new ArrayList<>();
     private int recipePage = 1;
 
@@ -595,10 +598,13 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
             try {
                 List<ItemStack> liveItems = getStoredInputs();
                 // Circuit selector slots are ghost configuration, never physical reservations or ingredients.
-                liveItems.removeIf(
-                    stack -> stack == getStackInSlot(1) || mInputBusses.stream()
-                        .anyMatch(
-                            bus -> bus != null && bus.isValid() && stack == bus.getStackInSlot(bus.getCircuitSlot())));
+                java.util.Set<ItemStack> ghostCircuits = java.util.Collections
+                    .newSetFromMap(new java.util.IdentityHashMap<>());
+                ghostCircuits.add(getStackInSlot(1));
+                for (var bus : mInputBusses) {
+                    if (bus != null && bus.isValid()) ghostCircuits.add(bus.getStackInSlot(bus.getCircuitSlot()));
+                }
+                liveItems.removeIf(ghostCircuits::contains);
                 List<FluidStack> liveFluids = getStoredFluids();
                 List<FactoryInputs> craftingInputs = new ArrayList<>();
                 List<ItemStack> depositItems = new ArrayList<>(liveItems);
@@ -665,33 +671,29 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         }
         long active = runtime.totalEUt();
         lEUt = -active;
-        boolean running = runtime.states.values()
-            .stream()
-            .anyMatch(job -> job.remaining > 0);
+        boolean running = false;
+        int longestDuration = 0;
+        for (FactoryRuntime.State job : runtime.states.values()) {
+            if (job.remaining <= 0) continue;
+            running = true;
+            if (lineProgress == null) longestDuration = Math.max(longestDuration, job.duration);
+        }
         // The base uses max progress to signal activity; node jobs remain the authority for processing.
-        long totalTicks = lineProgress == null ? runtime.states.values()
-            .stream()
-            .filter(job -> job.remaining > 0)
-            .mapToInt(job -> job.duration)
-            .max()
-            .orElse(0) : lineProgress.totalTicks();
+        long totalTicks = lineProgress == null ? longestDuration : lineProgress.totalTicks();
         mMaxProgresstime = running ? (int) Math.min(Integer.MAX_VALUE, totalTicks) : 0;
         mProgresstime = mMaxProgresstime == 0 || lineProgress == null ? 0
             : (int) (lineProgress.progressTicks() * (double) mMaxProgresstime / totalTicks);
         if (draining) {
-            status = runtime.states.values()
-                .stream()
-                .anyMatch(job -> job.remaining > 0)
-                    ? FactoryText.DRAIN_RUNNING
-                    : !runtime.empty()
-                        ? (fluidOutputBlocked ? FactoryText.FLUID_OUTPUT_BLOCKED : FactoryText.ITEM_OUTPUT_BLOCKED)
-                        : FactoryText.REFUND_BLOCKED;
+            status = running ? FactoryText.DRAIN_RUNNING
+                : !runtime.empty() ? (fluidOutputBlocked ? FactoryText.FLUID_OUTPUT_BLOCKED : FactoryText.ITEM_OUTPUT_BLOCKED)
+                    : FactoryText.REFUND_BLOCKED;
         } else if (installed.nodes.isEmpty()) status = FactoryText.IDLE;
         else {
             status = active > 0 ? FactoryText.RUNNING : FactoryText.INPUT;
-            for (FactoryText reason : new FactoryText[] { FactoryText.POWER, FactoryText.LIMIT, FactoryText.HOST,
-                FactoryText.CATALYST_MISSING, FactoryText.BLOCKED }) {
-                if (nodeStatus.containsValue(reason) && (reason != FactoryText.BLOCKED || !running)) {
+            java.util.EnumSet<FactoryText> reasons = java.util.EnumSet.noneOf(FactoryText.class);
+            reasons.addAll(nodeStatus.values());
+            for (FactoryText reason : STATUS_PRIORITY) {
+                if (reasons.contains(reason) && (reason != FactoryText.BLOCKED || !running)) {
                     status = reason;
                     break;
                 }
