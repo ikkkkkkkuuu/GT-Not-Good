@@ -3,9 +3,10 @@
 移植 GT-Not-Leisure 的 d28217f、9bd2f59、52345d2，最终源码固定在
 `52345d2c059c871febec1365d6012424c7d64547`。
 
-在客户端输入 `/gtngtexteffects` 打开预览，可输入中英文、翻页、切换配色、粗体和斜体。
-`MachineLoader` 原有的 `AnimatedText.GT_NOT_GOOD` 调用现在自动使用 `EXOTIC_RAINBOW`；
-翻译前缀按显示时的语言解析，所有共用此 supplier 的机器均生效。
+在客户端输入 `/gtngtexteffects` 打开预览，可输入中英文、翻页，并切换配色、粗体和斜体。
+点击某一效果行后按“应用到机器署名”，选择会立即用于所有引用 `AnimatedText.GT_NOT_GOOD`
+的机器提示，并保存到客户端配置目录的 `gtnotgood-text-effects.cfg`。黄色行是当前选中，
+`*` 标出已应用的效果。默认效果为 `EXOTIC_RAINBOW`。翻译前缀按显示时的语言解析。
 
 普通字体渲染入口支持如下文字（聊天、告示牌和支持原版字体的界面）：
 
@@ -46,9 +47,10 @@ NEI 注入仅在客户端且 NEI 已加载时注册。原版字体和格式类�
 
 ## 验证记录（2026-09-21）
 
-- `compileJava`、`processResources`、`assemble`、`sourcesJar` 和 6 项 `TextEffectsTest` 通过。
+- `compileJava`、`processResources`、`assemble`、`sourcesJar` 和 7 项 `TextEffectsTest` 通过。
 - 带 Angelica 2.2.13 / 不带 Angelica 的真实客户端均通过：12 个预设渲染、粗体/斜体、
   中英文、机器署名、效果文字宽度、NEI 保留输入声明，以及资源重载后重新渲染。
+- 带 Angelica 的客户端验证了点击效果行并应用后机器提示立即变化，重读配置后选择仍生效。
 - 截图：`build/text-effects-qa/screenshots/{angelica,vanilla}-{60,120,180}.png`。
 - 成品包含 15 个 GLSL 文件及来源/许可记录，不包含测试类和参考源码目录。
 - 未进行世界内告示牌的遮挡回归、独立服务器启动或第三方字体的全面兼容测试。

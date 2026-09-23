@@ -21,6 +21,8 @@ Modified 2026-09-21 for GT-Not-Good: relocated Java packages and shader identifi
 bridge methods; adapted modern library APIs to Java 8/Guava and records to Jabel; integrated
 client initialization, resource reload, optional mixin loading and generated translations;
 renamed preview command to gtngtexteffects; connected machine tooltip credits to EXOTIC_RAINBOW.
+GT-Not-Good later added a client-only preference and an apply button to change those machine credits
+immediately; these additions are project code built on the ported effect API.
 GLSL rendering algorithms and the final upstream sampling fix are retained.
 
 Editable source is included in this project's source tree and sources artifact. When distributing

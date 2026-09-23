@@ -55,6 +55,7 @@ public class ClientProxy extends CommonProxy {
             .setItemBusRenderer(
                 (appeng.api.parts.IPartItem) com.xyp.gtnotgood.utils.enums.GTNGItemList.AdvancedIOBus.getItem());
         com.xyp.gtnotgood.client.text.effect.BuiltinTextEffects.register();
+        com.xyp.gtnotgood.client.text.TextEffectPreferences.load();
         ((net.minecraft.client.resources.IReloadableResourceManager) net.minecraft.client.Minecraft.getMinecraft()
             .getResourceManager()).registerReloadListener(com.xyp.gtnotgood.client.text.EffectTextRenderer.INSTANCE);
         net.minecraftforge.client.ClientCommandHandler.instance

@@ -8,8 +8,30 @@ import java.util.function.UnaryOperator;
 
 import org.junit.Test;
 
+import com.xyp.gtnotgood.utils.text.AnimatedText;
+
 /** Checks persisted text syntax, nested scopes and malformed user input without an OpenGL context. */
 public class TextEffectsTest {
+
+    @Test
+    public void machineCreditSupplierReadsEffectImmediately() {
+        TextEffectStyle previous = AnimatedText.creditStyle();
+        boolean previousBold = AnimatedText.creditBold();
+        boolean previousItalic = AnimatedText.creditItalic();
+        try {
+            AnimatedText.configureCredit(TextEffects.CALAMITY_RED, true, true);
+            String first = AnimatedText.GT_NOT_GOOD.get();
+            assertTrue(first.contains(TextEffects.CALAMITY_RED.rendererId()));
+            assertTrue(first.contains("\u00a7l\u00a7o"));
+            AnimatedText.configureCredit(TextEffects.EVERCOLD_CYAN, false, false);
+            String next = AnimatedText.GT_NOT_GOOD.get();
+            assertTrue(next.contains(TextEffects.EVERCOLD_CYAN.rendererId()));
+            assertFalse(next.contains(TextEffects.CALAMITY_RED.rendererId()));
+            assertFalse(next.contains("\u00a7l"));
+        } finally {
+            AnimatedText.configureCredit(previous, previousBold, previousItalic);
+        }
+    }
 
     @Test
     public void compactSyntaxAndPaletteRoundTrip() {
