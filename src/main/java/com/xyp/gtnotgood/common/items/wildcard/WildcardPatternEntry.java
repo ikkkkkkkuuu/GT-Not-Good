@@ -218,10 +218,11 @@ public class WildcardPatternEntry {
             if (oreMatcher.isEmpty() || isMatchAllPattern(oreMatcher)) {
                 return new LinkedHashSet<>();
             }
-            return new LinkedHashSet<>(cachedUserMatcher(
-                ORE_CANDIDATE_CACHE,
-                oreMatcher,
-                WildcardPatternEntry::collectOreDictCandidateMaterials));
+            return new LinkedHashSet<>(
+                cachedUserMatcher(
+                    ORE_CANDIDATE_CACHE,
+                    oreMatcher,
+                    WildcardPatternEntry::collectOreDictCandidateMaterials));
         }
 
         String nameMatcher = getMatcher();
@@ -813,7 +814,7 @@ public class WildcardPatternEntry {
      * removing one arbitrary old key is safe because every matcher can be rebuilt.
      *
      * @param cache thread-safe cache for one matcher result type
-     * @param key normalized user matcher
+     * @param key   normalized user matcher
      * @param build builder used only on a cache miss
      * @return cached or newly built value, possibly null for an invalid expression
      */

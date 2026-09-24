@@ -1,0 +1,45 @@
+// Opt-in Phase 2 lifecycle checks; follows the existing advancedio QA classpath snapshot pattern.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.fileTree('src/test/java/com/xyp/gtnotgood/client/rts') { include '*.java' })
+    }
+    def runtimeJar = root.tasks.register('jarRtsQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'rts-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('rts-qa-runtime')
+    }
+    def copyTest = root.tasks.register('snapshotRtsTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/RtsLifecycleClientChecks*.class'
+        into root.layout.buildDirectory.dir('rts-qa-runtime/test')
+    }
+    def result = root.file('run/client/rts-lifecycle-qa-result.txt')
+    root.tasks.matching { it.name == 'runClient' || it.name == 'runClient17' }.configureEach {
+        dependsOn runtimeJar, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(runtimeJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('rts-qa-runtime/test'))
+        if (name == 'runClient17') {
+            classpath += root.configurations.testRuntimeClasspath.filter {
+                it.name.startsWith('jvmdowngrader-java-api-')
+            }
+        }
+        systemProperty 'gtng.rts.qa', 'true'
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in real-client QA')
+        doFirst {
+            if (root.findProperty('rtsVisibleQa') != 'true') {
+                throw new GradleException('RTS client QA opens a window. Arrange Desktop 2 first, then explicitly pass -PrtsVisibleQa=true. Background compile/test tasks need no window.')
+            }
+            java.nio.file.Files.deleteIfExists(result.toPath())
+        }
+        doLast {
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('RTS lifecycle checks failed; inspect RTS_QA in the client log.')
+            }
+        }
+    }
+}

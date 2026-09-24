@@ -1,5 +1,31 @@
 # AE2LT faithful port audit
 
+## RTS Building staged port (2026-09-24)
+
+Behaviour source: https://github.com/Hcrab/RTSbuilding, commit
+`b5a70d83a41d7149f7c34d4aae2081017532ab08`, local `RTSbuilding/`.
+Legacy API reference: https://github.com/zslingy/RTSbuilding-1.7.10-GTNH, commit
+`5147af59f8e35cd7710db6359f7a240dd1892644`, local `RTSbuilding-1.7.10-GTNH/`.
+Both are ignored reference-only checkouts, outside production source/resource roots.
+
+Inspected original `LICENSE`, `LICENSE-ASSETS`, `ASSET-LICENSES.md`, `License.md`, and legacy
+`LICENSE.txt`. Original source/non-media files are LGPL-3.0-only; original visual/audio paths
+are all-rights-reserved with redistribution permission for the complete unmodified official mod.
+Do not transfer original or fork textures into GTNG based on the fork's root license alone.
+Earlier asset grants need path/commit-specific proof before reuse. Current phase copies no media.
+
+Migration review: [RTS_MIGRATION_MAP.md](RTS_MIGRATION_MAP.md). Phase 2 destinations are
+`client/rts/*`, `common/rts/session/*`, and `common/packet/RtsSessionMessage.java` under the GTNG
+Java package. These are newly authored Forge 1.7.10 implementations of the inspected lifecycle
+semantics, not wholesale copies of the fork. Changes include explicit open/close messages,
+connection-bound request generations, server tick dispatch, server-issued expiring leases,
+and idempotent restoration of camera/input/mouse on screen/world/player replacement.
+There are no copied algorithms or visual assets in this initial foundation.
+
+Packaged provenance is `META-INF/rts-port/NOTICE.md` and `ASSET_MANIFEST.json` (empty assets).
+When subsequent phases adapt LGPL source, append exact source/destination/modification records
+and package the required source license notices; never describe adapted LGPL files as MIT.
+
 ## Separate AdvancedAE IO bus port (2026-09-22)
 
 Reference: `AdvancedAE/`, https://github.com/pedroksl/AdvancedAE, pinned commit
@@ -209,3 +235,12 @@ Independent of the AE2LT port above. Source: https://github.com/ABKQPO/GT-Not-Le
   interrupted-output and persistence fixes. No upstream raster assets copied.
 - Translation strings adapted from upstream English/Chinese resources into adjacent Java #tr comments.
 - Full upstream checkout remains in the OS temporary reference directory, outside all source sets.
+
+RTS Phase 3 source adaptation: CameraMotionSolver.java and RtsCameraSmoothingMath.java from Hcrab/RTSbuilding commit b5a70d83a41d7149f7c34d4aae2081017532ab08, LGPL-3.0-only, relocated to client/rts. Records replaced with Java 8 immutable classes; Mth clamps replaced with Math. Packaged manifest and licenses updated. Compilation pending: C drive exhausted during this work; truncated this task's runtime log and restored NOTICE.md. No graphical client launched.
+
+RTS Phase 3 continuation: RtsCameraController adapts CameraOrbitService and CameraVisualPoseState
+from the same Hcrab pin under LGPL-3.0-only. See packaged manifest for destinations/modifications.
+RtsCameraEntity and RtsCameraInput are local Forge/LWJGL 2 adapters. Detached cameras are never
+spawned, and camera input never grants world-edit authority. Frame updates close on camera ownership
+loss rather than fighting another mod. Mouse gestures cancel over UI panels; captured-cursor rotation
+and full sensitivity GUI parity remain pending with the faithful screen port.

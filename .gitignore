@@ -66,6 +66,8 @@ layout.json
 !/src/test/java/com/xyp/gtnotgood/client/
 !/src/test/java/com/xyp/gtnotgood/client/text/
 !/src/test/java/com/xyp/gtnotgood/client/text/*.java
+!/src/test/java/com/xyp/gtnotgood/client/rts/
+!/src/test/java/com/xyp/gtnotgood/client/rts/*.java
 !/src/test/java/com/xyp/gtnotgood/utils/
 !/src/test/java/com/xyp/gtnotgood/utils/text/
 !/src/test/java/com/xyp/gtnotgood/utils/text/effect/

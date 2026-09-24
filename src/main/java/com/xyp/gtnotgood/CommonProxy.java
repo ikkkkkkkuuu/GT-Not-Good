@@ -7,6 +7,7 @@ import com.xyp.gtnotgood.ae2thing.AE2Thing;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.LargeVoidMinerConfigGuiFactory;
 import com.xyp.gtnotgood.common.items.toolbelt.common.BeltEvents;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
+import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
 import com.xyp.gtnotgood.common.mebridge.MEBridgeEventHandler;
 import com.xyp.gtnotgood.common.mebridge.MEWirelessLinkEventHandler;
 import com.xyp.gtnotgood.common.packet.NetWorkHandler;
@@ -39,6 +40,10 @@ public class CommonProxy {
 
         GTNotGood.channel = NetworkRegistry.INSTANCE.newSimpleChannel(GTNotGood.MODID);
         NetWorkHandler.registerAllMessage();
+        FMLCommonHandler.instance()
+            .bus()
+            .register(com.xyp.gtnotgood.common.rts.session.RtsSessionManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(com.xyp.gtnotgood.common.rts.session.RtsSessionManager.INSTANCE);
         com.xyp.gtnotgood.commandtree.CommandTreeBootstrap.preInit();
         FMLCommonHandler.instance()
             .bus()
@@ -81,6 +86,10 @@ public class CommonProxy {
             .registries()
             .interfaceTerminal()
             .register(SuperMTEHatchCraftingInputME.class);
+        AEApi.instance()
+            .registries()
+            .interfaceTerminal()
+            .register(AssemblerMatrix.class);
         AE2Thing.postInit(event);
     }
 
@@ -93,4 +102,7 @@ public class CommonProxy {
 
     /** Receives a server settings reply on the client proxy; dedicated servers have no settings screen. */
     public void receiveServerConfig(com.xyp.gtnotgood.common.packet.ServerConfigMessage message) {}
+
+    /** Sided receive hook; dedicated servers do not load the client RTS state or GUI classes. */
+    public void receiveRtsSession(com.xyp.gtnotgood.common.packet.RtsSessionMessage message, Object connection) {}
 }

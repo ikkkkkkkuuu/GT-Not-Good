@@ -1809,7 +1809,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             int scroll = getScrollBar().getCurrentScroll();
             int viewHeight = VIEW_HEIGHT == null ? 0 : intField(this, VIEW_HEIGHT, 0);
             String[] searchTexts = searchTexts();
-            if (entryHitBoxesDirty || scroll != lastEntryScroll || viewHeight != lastEntryViewHeight
+            if (entryHitBoxesDirty || scroll != lastEntryScroll
+                || viewHeight != lastEntryViewHeight
                 || !Arrays.equals(searchTexts, lastEntrySearchTexts)) {
                 clearStaleEntryHitBoxes();
                 entryHitBoxesDirty = false;

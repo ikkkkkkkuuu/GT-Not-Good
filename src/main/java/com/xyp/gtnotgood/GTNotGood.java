@@ -108,6 +108,12 @@ public class GTNotGood {
     public void serverStarting(FMLServerStartingEvent event) {
         proxy.serverStarting(event);
     }
+
+    /** Clears connection-scoped RTS state before another integrated or dedicated server starts. */
+    @Mod.EventHandler
+    public void serverStopped(cpw.mods.fml.common.event.FMLServerStoppedEvent event) {
+        com.xyp.gtnotgood.common.rts.session.RtsSessionManager.INSTANCE.clear();
+    }
 }
 // #tr gui.example.key
 // # English text

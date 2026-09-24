@@ -78,6 +78,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "AppliedEnergistics.compact.AccessorTaskProgress",
                 "AppliedEnergistics.compact.AccessorSessionCraftCount",
                 "AppliedEnergistics.compact.CompactCraftingEnergyMixin",
+                "AppliedEnergistics.compact.MatrixInterfaceTerminalVisibilityMixin",
                 "AppliedEnergistics.compact.MatrixPatternPersistenceMixin",
                 "AppliedEnergistics.AutomaticMachineCircuitMixin");
         }

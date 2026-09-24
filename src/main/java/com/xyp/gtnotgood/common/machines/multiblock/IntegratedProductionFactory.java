@@ -685,7 +685,8 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
             : (int) (lineProgress.progressTicks() * (double) mMaxProgresstime / totalTicks);
         if (draining) {
             status = running ? FactoryText.DRAIN_RUNNING
-                : !runtime.empty() ? (fluidOutputBlocked ? FactoryText.FLUID_OUTPUT_BLOCKED : FactoryText.ITEM_OUTPUT_BLOCKED)
+                : !runtime.empty()
+                    ? (fluidOutputBlocked ? FactoryText.FLUID_OUTPUT_BLOCKED : FactoryText.ITEM_OUTPUT_BLOCKED)
                     : FactoryText.REFUND_BLOCKED;
         } else if (installed.nodes.isEmpty()) status = FactoryText.IDLE;
         else {

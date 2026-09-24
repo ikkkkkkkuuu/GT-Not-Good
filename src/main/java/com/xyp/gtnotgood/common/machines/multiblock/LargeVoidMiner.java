@@ -765,7 +765,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
      * and weight summation, while avoiding repeated filter checks for every ore.
      *
      * @param eligibleOres entries allowed by the current filters
-     * @param totalWeight sum of their weights in iteration order
+     * @param totalWeight  sum of their weights in iteration order
      * @return a selected ore, or null when no positive total weight is available
      */
     private GTUtility.ItemId extractNextOre(List<Map.Entry<GTUtility.ItemId, Float>> eligibleOres, double totalWeight) {

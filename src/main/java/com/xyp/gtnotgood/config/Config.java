@@ -13,6 +13,7 @@ import com.xyp.gtnotgood.utils.enums.ModList;
 public class Config {
 
     private static final String CATEGORY_CLIENT = "Client";
+    private static final String CATEGORY_RTS = "RTS_Building";
     private static final String CATEGORY_CUT_CORNERS = "CutCorners";
     private static final String CATEGORY_CROPSNH = "CropsNH";
     private static final String CATEGORY_FORESTRY = "Forestry";
@@ -33,6 +34,14 @@ public class Config {
     private static File configDirectory;
 
     public static String greeting = "Hello from GT-Not-Good";
+    /** Opt-in while the staged RTS port is under development; server authorization remains mandatory. */
+    public static boolean enableRTSBuilding = false;
+    /** Server-authoritative horizontal camera/action bounds, snapshotted when a session opens. */
+    public static int rtsMaxDistance = 128;
+    /** Client camera movement multiplier for the camera phase. */
+    public static float rtsCameraSpeed = 1.0F;
+    /** Client dolly multiplier for the camera phase. */
+    public static float rtsZoomSpeed = 1.0F;
     /** Replaces the client window/taskbar icon after startup; never synchronized from a server. */
     public static boolean useEdgeWindowIcon = false;
     public static boolean enableAlwaysDisplayRecipeOwner = true;
@@ -127,6 +136,13 @@ public class Config {
         Config.configDirectory = configDirectory;
 
         greeting = configuration.getString("greeting", Configuration.CATEGORY_GENERAL, greeting, "How shall I greet?");
+        configuration.addCustomCategoryComment(CATEGORY_RTS, "RTS 移植开发配置。当前仅提供会话基础，正式摄像机和建造界面尚未开放。");
+        enableRTSBuilding = configuration
+            .getBoolean("enableRTSBuilding", CATEGORY_RTS, false, "允许建立 RTS 会话；服务器可拒绝客户端请求。开发阶段默认关闭。");
+        rtsMaxDistance = configuration
+            .getInt("rtsMaxDistance", CATEGORY_RTS, 128, 1, 512, "RTS 水平范围，单位方块；建立会话时由服务器确定。");
+        rtsCameraSpeed = configuration.getFloat("rtsCameraSpeed", CATEGORY_RTS, 1.0F, 0.1F, 5.0F, "客户端 RTS 摄像机移动速度倍率。");
+        rtsZoomSpeed = configuration.getFloat("rtsZoomSpeed", CATEGORY_RTS, 1.0F, 0.1F, 5.0F, "客户端 RTS 滚轮缩放速度倍率。");
         configuration.addCustomCategoryComment(CATEGORY_CLIENT, "仅影响本机客户端的显示设置。");
         useEdgeWindowIcon = configuration
             .get(

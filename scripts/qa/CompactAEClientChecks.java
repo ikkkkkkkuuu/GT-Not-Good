@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.common.compactae;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -30,6 +31,7 @@ import appeng.api.networking.energy.IEnergyGrid;
 import appeng.api.networking.security.MachineSource;
 import appeng.api.parts.IPartHost;
 import appeng.api.util.AEColor;
+import appeng.container.implementations.ContainerInterfaceTerminal;
 import appeng.me.cache.CraftingGridCache;
 import appeng.tile.storage.TileDrive;
 import appeng.util.item.AEItemStack;
@@ -109,9 +111,27 @@ public final class CompactAEClientChecks {
                         .getSizeInventory() == 144 && matrix.rows() == 16,
                     "144 slots / 16 terminal rows");
                 require(
+                    AEApi.instance()
+                        .registries()
+                        .interfaceTerminal()
+                        .getSupportedClasses()
+                        .contains(AssemblerMatrix.class),
+                    "matrix registered in interface terminal");
+                matrix.setShowPattern(false);
+                require(!terminalDisplays(matrix), "matrix hidden from interface terminal");
+                matrix.setShowPattern(true);
+                require(terminalDisplays(matrix), "matrix visible in interface terminal");
+                require(
                     matrix.getProxy()
                         .isActive() && computer.isActive(),
                     "AE network connection");
+                require(
+                    matrix.getProxy()
+                        .getGrid()
+                        .getMachines(AssemblerMatrix.class)
+                        .iterator()
+                        .hasNext(),
+                    "interface terminal can enumerate matrix on AE grid");
                 require(
                     computer.getProxy()
                         .getCrafting()
@@ -357,5 +377,13 @@ public final class CompactAEClientChecks {
     private static void require(boolean condition, String message) {
         if (!condition) throw new AssertionError(message);
         System.out.println("COMPACT_AE_QA: " + message);
+    }
+
+    /** Exercises the exact visibility predicate used by AE2's interface terminal after mixin application. */
+    private static boolean terminalDisplays(AssemblerMatrix matrix) throws ReflectiveOperationException {
+        Method visibility = ContainerInterfaceTerminal.class
+            .getDeclaredMethod("getTerminalVisibility", appeng.api.util.IInterfaceViewable.class);
+        visibility.setAccessible(true);
+        return (Boolean) visibility.invoke(null, matrix);
     }
 }

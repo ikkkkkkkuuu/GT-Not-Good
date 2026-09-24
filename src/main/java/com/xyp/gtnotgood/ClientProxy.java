@@ -24,6 +24,12 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 public class ClientProxy extends CommonProxy {
 
     @Override
+    public void receiveRtsSession(com.xyp.gtnotgood.common.packet.RtsSessionMessage message, Object connection) {
+        net.minecraft.client.Minecraft.getMinecraft()
+            .func_152344_a(() -> com.xyp.gtnotgood.client.rts.RtsClientState.INSTANCE.receive(message, connection));
+    }
+
+    @Override
     public void receiveServerConfig(com.xyp.gtnotgood.common.packet.ServerConfigMessage message) {
         net.minecraft.client.Minecraft.getMinecraft()
             .func_152344_a(() -> com.xyp.gtnotgood.client.config.ServerSettingsScreen.receive(message));
@@ -89,6 +95,11 @@ public class ClientProxy extends CommonProxy {
         com.xyp.gtnotgood.common.flux.BlockFluxConnector.renderId = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(new com.xyp.gtnotgood.client.flux.FluxConnectorRenderer());
         KeyBindManager.registerAllKeyBinds();
+        com.xyp.gtnotgood.client.rts.RtsClientEvents rtsEvents = new com.xyp.gtnotgood.client.rts.RtsClientEvents();
+        FMLCommonHandler.instance()
+            .bus()
+            .register(rtsEvents);
+        MinecraftForge.EVENT_BUS.register(rtsEvents);
         // Force load BlockIcons to register textures
         BlockIcons.values();
         FMLCommonHandler.instance()

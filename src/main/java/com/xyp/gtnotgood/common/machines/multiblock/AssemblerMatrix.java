@@ -92,7 +92,6 @@ import gregtech.api.util.shutdown.ShutDownReason;
 import gregtech.common.tileentities.machines.RecipeCheckReason;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
-import lombok.Setter;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 
@@ -120,7 +119,6 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     public final int mMaxSlots = PATTERN_CAPACITY;
     public final long mMaxParallelLong = Long.MAX_VALUE;
     public boolean wirelessMode;
-    @Setter
     @Getter
     public boolean showPattern = true;
     public String costingEUText = "0";
@@ -211,7 +209,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     public boolean onWireCutterRightClick(ForgeDirection side, ForgeDirection wrenchingSide, EntityPlayer aPlayer,
         float aX, float aY, float aZ, ItemStack aTool) {
         if (getBaseMetaTileEntity().isServerSide()) {
-            showPattern = !showPattern;
+            setShowPattern(!showPattern);
             GTUtility.sendChatTrans(aPlayer, patternVisibilityKey(showPattern));
         }
         return true;
@@ -398,7 +396,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         setPatternMultiply(aNBT.getInteger("patternMultiply"));
         usedParallel = aNBT.getLong("usedParallel");
         wirelessMode = false;
-        if (aNBT.hasKey("showPattern")) showPattern = aNBT.getBoolean("showPattern");
+        if (aNBT.hasKey("showPattern")) setShowPattern(aNBT.getBoolean("showPattern"));
         recipesDone = aNBT.getLong("recipesDone");
         if (aNBT.hasKey("customName")) customName = aNBT.getString("customName");
 
@@ -811,6 +809,16 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
             di = new DualityInterface(this.getProxy(), this);
         }
         return di;
+    }
+
+    /**
+     * Updates the visibility read by the interface terminal and persists the matrix's own setting.
+     *
+     * @param visible whether the matrix should appear in the interface terminal
+     */
+    public void setShowPattern(boolean visible) {
+        showPattern = visible;
+        if (getBaseMetaTileEntity() != null && getBaseMetaTileEntity().isServerSide()) markDirty();
     }
 
     @MENetworkEventSubscribe
