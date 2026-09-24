@@ -107,12 +107,29 @@ public class GTNotGood {
     // register server commands in this event handler (Remove if not needed)
     public void serverStarting(FMLServerStartingEvent event) {
         proxy.serverStarting(event);
+        if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
+            com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.onServerStarting(event);
+    }
+
+    /** Starts the embedded RTS persistence scheduler after world creation. */
+    @Mod.EventHandler
+    public void serverStarted(cpw.mods.fml.common.event.FMLServerStartedEvent event) {
+        if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
+            com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.onServerStarted(event);
+    }
+
+    /** Flushes upstream durable tasks while worlds are still available. */
+    @Mod.EventHandler
+    public void serverStopping(cpw.mods.fml.common.event.FMLServerStoppingEvent event) {
+        if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
+            com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.onServerStopping(event);
     }
 
     /** Clears connection-scoped RTS state before another integrated or dedicated server starts. */
     @Mod.EventHandler
     public void serverStopped(cpw.mods.fml.common.event.FMLServerStoppedEvent event) {
-        com.xyp.gtnotgood.common.rts.session.RtsSessionManager.INSTANCE.clear();
+        if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
+            com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.onServerStopped(event);
     }
 }
 // #tr gui.example.key

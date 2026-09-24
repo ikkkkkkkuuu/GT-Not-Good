@@ -1,0 +1,290 @@
+package com.rtsbuilding.rtsbuilding.server.service;
+
+import com.rtsbuilding.rtsbuilding.RtsbuildingMod;
+import com.rtsbuilding.rtsbuilding.common.blueprint.model.RtsBlueprint;
+import com.rtsbuilding.rtsbuilding.server.pipeline.blueprint.BlockPlacementPlanner.PlacementPlan;
+import com.rtsbuilding.rtsbuilding.server.pipeline.context.BlueprintContext;
+import com.rtsbuilding.rtsbuilding.server.pipeline.core.PipelineContext;
+import com.rtsbuilding.rtsbuilding.server.workflow.core.RtsWorkflowEngine;
+import com.rtsbuilding.rtsbuilding.server.workflow.model.RtsWorkflowStatus;
+import com.rtsbuilding.rtsbuilding.server.workflow.model.RtsWorkflowType;
+import com.rtsbuilding.rtsbuilding.util.RtsCountUtil;
+import com.rtsbuilding.rtsbuilding.platform.block.BlockState;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.WorldServer;
+import com.rtsbuilding.rtsbuilding.platform.registry.RtsRegistries;
+
+import javax.annotation.Nullable;
+import java.util.*;
+
+/**
+ * 蓝图作业扫描服务——管理蓝图工作流的世界状态扫描和材料查询。
+ *
+ * <p>从 {@link RtsPendingPlacementService} 提取的蓝图特定职责，
+ * 包括扫描蓝图剩余方块的已放置/冲突状态、聚合材料需求清单、
+ * 以及手动恢复挂起的蓝图工作流。</p>
+ *
+ * <p>所有方法均为静态无状态方法。蓝图活跃管道状态通过
+ * 统一 Task Engine 的蓝图索引访问。</p>
+ */
+public final class RtsBlueprintJobService {
+
+    private RtsBlueprintJobService() {
+    }
+
+    /**
+     * 扫描挂起的蓝图工作流的剩余方块世界状态，返回扫描结果供重启面板展示。
+     *
+     * <p>遍历剩余位置，扫描世界中的实际方块状态，统计已放置数和冲突数，
+     * 并计算最紧缺材料作为可用物品数的瓶颈指标。</p>
+     *
+     * @return 扫描结果，如果不是 BLUEPRINT_BUILD 或管道上下文不可用时返回 null
+     */
+    @Nullable
+    public static RtsResumeScanResult scanBlueprintJob(EntityPlayerMP player, int workflowEntryId) {
+        if (player == null) return null;
+
+        PipelineContext pipeCtx = com.rtsbuilding.rtsbuilding.server.task.RtsTaskEngine.INSTANCE
+                .findBlueprintContext(player, workflowEntryId);
+        if (!(pipeCtx instanceof BlueprintContext)) {
+            return null;
+        }
+        BlueprintContext bctx = (BlueprintContext) pipeCtx;
+
+        List<PlacementPlan> plans = bctx.getPlacementPlans();
+        LinkedList<Integer> remaining = bctx.getRemainingQueue();
+        if (plans == null || remaining == null || remaining.isEmpty()) {
+            return null;
+        }
+
+        WorldServer level = player.getServerForPlayer();
+        int totalRemaining = remaining.size();
+        int alreadyPlacedCount = 0;
+        int conflictCount = 0;
+
+        for (int idx : remaining) {
+            PlacementPlan plan = plans.get(idx);
+            if (plan == null) continue;
+            if (!com.rtsbuilding.rtsbuilding.platform.world.WorldCompat.isBlockLoaded(level, plan.target())) continue;
+
+            BlockState current = BlockState.fromWorld(level, plan.target());
+            if (current.getBlock() == plan.state().getBlock()) {
+                alreadyPlacedCount++;
+            } else if (current.getBlock() != Blocks.air && !current.getMaterial().isReplaceable()) {
+                conflictCount++;
+            }
+        }
+
+        int neededItems = totalRemaining - alreadyPlacedCount;
+        long bottleneckAvailable;
+        if (player.capabilities.isCreativeMode || neededItems <= 0) {
+            bottleneckAvailable = Integer.MAX_VALUE;
+        } else {
+            Map<ResourceLocation, Integer> matReqs = new LinkedHashMap<ResourceLocation, Integer>();
+            for (int idx : remaining) {
+                PlacementPlan plan = plans.get(idx);
+                if (plan == null) continue;
+                for (Item item : plan.items()) {
+                    ResourceLocation itemId = RtsRegistries.ITEMS.getKey(item);
+                    if (itemId != null) {
+                        matReqs.merge(itemId, 1, Integer::sum);
+                    }
+                }
+            }
+            long minAvailable = Long.MAX_VALUE;
+            for (Map.Entry<ResourceLocation, Integer> entry : matReqs.entrySet()) {
+                int req = entry.getValue();
+                if (req <= 0) continue;
+                long avail = countMaterial(player, entry.getKey());
+                long perBlock = (req + neededItems - 1) / neededItems;
+                long blocksPossible = perBlock > 0 ? avail / perBlock : Long.MAX_VALUE;
+                minAvailable = Math.min(minAvailable, blocksPossible);
+            }
+            bottleneckAvailable = minAvailable == Long.MAX_VALUE ? Integer.MAX_VALUE : minAvailable;
+        }
+
+        long missingItems = Math.max(0, neededItems - bottleneckAvailable);
+
+        RtsResumeScanResult result = new RtsResumeScanResult(
+                "blueprint", "蓝图",
+                totalRemaining, alreadyPlacedCount, conflictCount,
+                bottleneckAvailable, neededItems, missingItems, workflowEntryId);
+
+        RtsPendingPlacementService.consumeScanResult(player); // clear old cache
+        return result;
+    }
+
+    /**
+     * 扫描挂起的蓝图工作流的剩余方块材料需求，返回四项平行列表。
+     */
+    @Nullable
+    public static RtsBlueprintMaterialsScan scanBlueprintMaterials(EntityPlayerMP player, int workflowEntryId) {
+        if (player == null) return null;
+
+        PipelineContext pipeCtx = com.rtsbuilding.rtsbuilding.server.task.RtsTaskEngine.INSTANCE
+                .findBlueprintContext(player, workflowEntryId);
+        if (!(pipeCtx instanceof BlueprintContext)) {
+            return null;
+        }
+        BlueprintContext bctx = (BlueprintContext) pipeCtx;
+
+        RtsBlueprint blueprint = bctx.getBlueprint();
+        if (blueprint == null) return null;
+
+        List<PlacementPlan> plans = bctx.getPlacementPlans();
+        LinkedList<Integer> remaining = bctx.getRemainingQueue();
+        if (plans == null || remaining == null) return null;
+
+        int total = plans.size();
+        int completed = bctx.getPlacedCount();
+
+        Map<ResourceLocation, Integer> materialRequirements = new LinkedHashMap<ResourceLocation, Integer>();
+        for (int idx : remaining) {
+            PlacementPlan plan = plans.get(idx);
+            if (plan == null) continue;
+            for (Item item : plan.items()) {
+                ResourceLocation itemId = RtsRegistries.ITEMS.getKey(item);
+                if (itemId != null) {
+                    materialRequirements.merge(itemId, 1, Integer::sum);
+                }
+            }
+        }
+
+        List<String> itemIds = new ArrayList<String>(materialRequirements.size());
+        List<String> itemLabels = new ArrayList<String>(materialRequirements.size());
+        List<Integer> required = new ArrayList<Integer>(materialRequirements.size());
+        List<Long> available = new ArrayList<Long>(materialRequirements.size());
+
+        if (player.capabilities.isCreativeMode) {
+            for (Map.Entry<ResourceLocation, Integer> entry : materialRequirements.entrySet()) {
+                ResourceLocation id = entry.getKey();
+                itemIds.add(id.toString());
+                itemLabels.add(itemLabel(id));
+                required.add(entry.getValue());
+                available.add((long) Integer.MAX_VALUE);
+            }
+        } else {
+            for (Map.Entry<ResourceLocation, Integer> entry : materialRequirements.entrySet()) {
+                ResourceLocation id = entry.getKey();
+                int req = entry.getValue();
+                long avail = countMaterial(player, id);
+
+                itemIds.add(id.toString());
+                itemLabels.add(itemLabel(id));
+                required.add(req);
+                available.add(avail);
+            }
+        }
+
+        return new RtsBlueprintMaterialsScan(itemIds, itemLabels, required, available, completed, total);
+    }
+
+    /**
+     * 恢复挂起的蓝图工作流。
+     *
+     * @return true 表示成功恢复
+     */
+    public static boolean resumeBlueprintWorkflow(EntityPlayerMP player, int workflowEntryId) {
+        if (player == null) return false;
+        RtsWorkflowEngine engine = RtsWorkflowEngine.getInstance();
+        java.util.Optional<com.rtsbuilding.rtsbuilding.server.workflow.core.RtsWorkflowToken> opt =
+                engine.from(player, workflowEntryId);
+        if (!opt.isPresent()) return false;
+        RtsWorkflowStatus status = engine.getProgress(player, workflowEntryId);
+        if (!status.isActive() || status.type() != RtsWorkflowType.BLUEPRINT_BUILD) {
+            return false;
+        }
+        opt.get().resume();
+        com.rtsbuilding.rtsbuilding.server.task.RtsTaskEngine.INSTANCE
+                .resumeBlueprint(player, workflowEntryId);
+        RtsbuildingMod.LOGGER.info("[Blueprint] {} 手动恢复了蓝图作业 #{} (剩余 {} 方块)",
+                com.rtsbuilding.rtsbuilding.platform.player.PlayerCompat.name(player), workflowEntryId, status.remainingBlocks());
+        return true;
+    }
+
+    // ======================================================================
+    //  辅助方法
+    // ======================================================================
+
+    private static String itemLabel(ResourceLocation id) {
+        if (id == null || !RtsRegistries.ITEMS.containsKey(id)) {
+            return id != null ? id.toString() : "unknown";
+        }
+        return new ItemStack(RtsRegistries.ITEMS.getValue(id)).getDisplayName();
+    }
+
+    private static long countMaterial(EntityPlayerMP player, ResourceLocation itemId) {
+        if (itemId == null || !RtsRegistries.ITEMS.containsKey(itemId)) return 0;
+        ItemStack template = new ItemStack(RtsRegistries.ITEMS.getValue(itemId));
+        long available = 0;
+        available = RtsCountUtil.saturatedAdd(available,
+                ServiceRegistry.getInstance().transfer().countLinkedItemsMatching(player,
+                        stack -> sameStackIdentity(stack, template)));
+        available = RtsCountUtil.saturatedAdd(available,
+                RtsProgressRefresher.countItemsInPlayerInventory(player, template));
+        return available;
+    }
+
+    /**
+     * 扫描结果：四项平行列表 + 进度计数。
+     */
+    private static boolean sameStackIdentity(ItemStack first, ItemStack second) {
+        return com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.areItemsEqual(first, second) && ItemStack.areItemStackTagsEqual(first, second);
+    }
+
+    public static final class RtsBlueprintMaterialsScan {
+        private final List<String> itemIds;
+        private final List<String> itemLabels;
+        private final List<Integer> required;
+        private final List<Long> available;
+        private final int completedCount;
+        private final int totalCount;
+
+        public RtsBlueprintMaterialsScan(List<String> itemIds, List<String> itemLabels,
+                List<Integer> required, List<Long> available, int completedCount, int totalCount) {
+            this.itemIds = immutableCopy(itemIds);
+            this.itemLabels = immutableCopy(itemLabels);
+            this.required = immutableCopy(required);
+            this.available = immutableCopy(available);
+            this.completedCount = completedCount;
+            this.totalCount = totalCount;
+        }
+
+        private static <T> List<T> immutableCopy(List<T> source) {
+            if (source == null || source.isEmpty()) return Collections.emptyList();
+            return Collections.unmodifiableList(new ArrayList<T>(source));
+        }
+
+        public List<String> itemIds() { return itemIds; }
+        public List<String> itemLabels() { return itemLabels; }
+        public List<Integer> required() { return required; }
+        public List<Long> available() { return available; }
+        public int completedCount() { return completedCount; }
+        public int totalCount() { return totalCount; }
+
+        @Override
+        public boolean equals(Object object) {
+            if (this == object) return true;
+            if (!(object instanceof RtsBlueprintMaterialsScan)) return false;
+            RtsBlueprintMaterialsScan other = (RtsBlueprintMaterialsScan) object;
+            return completedCount == other.completedCount && totalCount == other.totalCount
+                    && itemIds.equals(other.itemIds) && itemLabels.equals(other.itemLabels)
+                    && required.equals(other.required) && available.equals(other.available);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(itemIds, itemLabels, required, available, completedCount, totalCount);
+        }
+
+        @Override
+        public String toString() {
+            return "RtsBlueprintMaterialsScan{completed=" + completedCount + "/" + totalCount
+                    + ", materials=" + itemIds.size() + "}";
+        }
+    }
+}

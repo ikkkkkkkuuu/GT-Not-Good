@@ -1,0 +1,33 @@
+// Real-client regression for the embedded official Forge 1.7.10 module.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def snapshot = root.tasks.register('jarRtsOfficialQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        manifest.from(root.tasks.named('jar').get().manifest)
+        archiveFileName = 'rts-official-qa.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('rts-official-qa')
+    }
+    root.tasks.matching { it.name == 'runClient' || it.name == 'runClient17' }.configureEach {
+        def report = root.file('build/reports/rts-official/' + name + '-smoke.txt')
+        dependsOn snapshot
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(snapshot.flatMap { it.archiveFile })
+        if (name == 'runClient17') {
+            classpath += root.configurations.testRuntimeClasspath.filter {
+                it.name.startsWith('jvmdowngrader-java-api-')
+            }
+        }
+        systemProperty 'rtsbuilding.clientStartupSmoke', 'true'
+        systemProperty 'rtsbuilding.clientStartupSmokeReport', report.absolutePath
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in official RTS client regression')
+        doFirst { java.nio.file.Files.deleteIfExists(report.toPath()) }
+        doLast {
+            if (!report.exists() || !report.text.readLines().any { it.startsWith('PASS ') }) {
+                throw new GradleException('Official RTS regression failed: ' + report)
+            }
+        }
+    }
+}

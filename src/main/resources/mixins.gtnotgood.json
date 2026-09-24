@@ -10,7 +10,9 @@
     "minecraft.VanillaFurnaceMixin",
     "tcautores.GuiResearchBrowserMixin",
     "tcautores.GuiResearchTableMixin",
-    "tcautores.NetHandlerPlayClientMixin"
+    "tcautores.NetHandlerPlayClientMixin",
+    "early.rts.ForgeHooksRemoteContainerMixin",
+    "early.rts.ChestMenuMixin"
   ],
   "client": [
     "early.texteffect.MixinFontRendererTextEffects",
@@ -19,7 +21,10 @@
     "early.commandtree.GuiChatMixin",
     "early.commandtree.GuiTextFieldMixin",
     "early.commandtree.NetHandlerPlayClientMixin",
-    "early.texteffect.angelica.MixinFontBatchTextEffects"
+    "early.texteffect.angelica.MixinFontBatchTextEffects",
+    "early.rts.GuiScreenOverlayInputMixin",
+    "early.rts.BlockRenderDispatcherMixin",
+    "early.rts.BlockEntityRenderDispatcherMixin"
   ],
   "server": []
 }

@@ -1,0 +1,315 @@
+package com.rtsbuilding.rtsbuilding;
+
+import com.rtsbuilding.rtsbuilding.common.RtsBlocks;
+import com.rtsbuilding.rtsbuilding.common.RtsCreativeTabs;
+import com.rtsbuilding.rtsbuilding.common.RtsEntities;
+import com.rtsbuilding.rtsbuilding.common.RtsItems;
+import com.rtsbuilding.rtsbuilding.network.RtsPayloadRegistrar;
+import com.rtsbuilding.rtsbuilding.network.builder.handler.RtsPositionBatchAssembler1122;
+import com.rtsbuilding.rtsbuilding.platform.thread.ThreadCompat;
+import com.rtsbuilding.rtsbuilding.platform.event.LegacyEventRegistrar;
+import com.rtsbuilding.rtsbuilding.server.api.impl.RtsAPIImpl;
+import com.rtsbuilding.rtsbuilding.server.camera.RtsCameraManager;
+import com.rtsbuilding.rtsbuilding.server.data.SaveScheduler;
+import com.rtsbuilding.rtsbuilding.server.diagnostic.RtsOperationDiagnostics;
+import com.rtsbuilding.rtsbuilding.server.feedback.RtsDamageFeedbackManager;
+import com.rtsbuilding.rtsbuilding.server.history.ServerHistoryManager;
+import com.rtsbuilding.rtsbuilding.server.pipeline.core.RtsPipelineRegistration;
+import com.rtsbuilding.rtsbuilding.server.plugin.RtsPluginService;
+import com.rtsbuilding.rtsbuilding.server.progression.RtsProgressionManager;
+import com.rtsbuilding.rtsbuilding.server.service.RtsDeveloperMetrics;
+import com.rtsbuilding.rtsbuilding.server.service.RtsDeveloperScenarioCommand;
+import com.rtsbuilding.rtsbuilding.gametest.RtsGameTestCommand;
+import com.rtsbuilding.rtsbuilding.server.service.RtsFarMiningStorageSmokeCommand;
+import com.rtsbuilding.rtsbuilding.server.service.RtsGuiCompatSetupCommand;
+import com.rtsbuilding.rtsbuilding.server.service.RtsPendingPlacementService;
+import com.rtsbuilding.rtsbuilding.server.service.RtsProgressRefresher;
+import com.rtsbuilding.rtsbuilding.server.service.RtsStorageTickService;
+import com.rtsbuilding.rtsbuilding.server.service.ServerTickOrchestrator;
+import com.rtsbuilding.rtsbuilding.server.service.ServiceRegistry;
+import com.rtsbuilding.rtsbuilding.server.service.page.RtsStoragePageRequestCoalescer;
+import com.rtsbuilding.rtsbuilding.server.service.placement.RtsPlacementSound;
+import com.rtsbuilding.rtsbuilding.server.service.mining.RtsMiningDropCapture;
+import com.rtsbuilding.rtsbuilding.server.tracking.RtsBlockTrackingEvents;
+import com.rtsbuilding.rtsbuilding.server.storage.cache.RtsEndpointLeaseCache;
+import com.rtsbuilding.rtsbuilding.server.task.RtsEffectAccumulator;
+import com.rtsbuilding.rtsbuilding.server.task.RtsTaskEngine;
+import com.rtsbuilding.rtsbuilding.server.task.persistence.TaskPersistenceRuntime;
+import com.rtsbuilding.rtsbuilding.server.workflow.core.RtsWorkflowEngine;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.ChunkEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppedEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.time.Duration;
+
+/**
+ * RTSBuilding 的 Forge 1.12.2 入口。
+ *
+ * <p>FML 生命周期只留在本类；游戏运行事件由实例化的 {@link GameEvents} 接收。入口不引用
+ * net.minecraft.client 或客户端 bootstrap，因此专用服务端可以安全加载整个类。</p>
+ */
+// GTNG owns the Forge lifecycle; this upstream module is not a second mod.
+public final class RtsbuildingMod {
+    public static final String MODID = com.xyp.gtnotgood.utils.enums.ModList.ModIds.GT_NOT_GOOD;
+    public static final String RESOURCE_DOMAIN = com.xyp.gtnotgood.utils.enums.ModList.ModIds.RTS_BUILDING;
+    /** 首个 GTNH 可玩 alpha 的 FML 元数据版本；发布时与 Gradle version 一起更新。 */
+    public static final String VERSION = "0.0.1";
+    public static final Logger LOGGER = LogManager.getLogger(MODID);
+
+    // Initialized by the host lifecycle.
+    public static final RtsbuildingMod INSTANCE = new RtsbuildingMod();
+
+    private final GameEvents gameEvents = new GameEvents();
+    private MinecraftServer activeServer;
+    private boolean initialized;
+
+    /** Reports the startup decision; live config reloads cannot split server lifecycle pairs. */
+    public boolean isInitialized() { return initialized; }
+
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        Config.initialize(event.getModConfigurationDirectory(), event.getSide().isClient());
+        // SimpleNetworkWrapper 必须在公共 pre-init 注册；客户端输入和专服登录都会依赖它。
+        RtsPayloadRegistrar.register();
+        if (Config.migrateLegacyServerDefaults()) {
+            LOGGER.info("已迁移 RTSBuilding 旧版服务端吞吐默认值。");
+        }
+        // TODO(port-1.12.2/client-config-ui): 由客户端批次通过 1.12 GuiFactory 接回配置界面；
+        // 此处只加载同一份 client.cfg，专用服务端绝不触发客户端类加载。
+
+        // 1.12.2 的 Block/Item 由 RegistryEvent 提交；显式调用用于在事件前完成类初始化。
+        RtsCreativeTabs.register();
+        RtsBlocks.register();
+        RtsItems.register();
+        RtsEntities.register(com.xyp.gtnotgood.GTNotGood.instance);
+        MinecraftForge.EVENT_BUS.register(gameEvents);
+        // 1.7.10 的玩家与 tick 事件位于 FML 总线；区块事件仍位于 Forge 总线。
+        FMLCommonHandler.instance().bus().register(gameEvents);
+        LegacyEventRegistrar.registerClass(RtsBlockTrackingEvents.class);
+        LegacyEventRegistrar.registerClass(RtsMiningDropCapture.class);
+        if (event.getSide().isClient()) {
+            initializeClientSide();
+        }
+        initialized = true;
+
+        // TODO(port-1.12.2/gametest): 1.12.2 没有 RegisterGameTestsEvent；测试模块必须把
+        // MekanismToolsCompatibilityGameTests 接入统一的 Forge 测试命令/测试世界入口，不能静默丢弃。
+    }
+
+    /**
+     * 通过字符串边界接入客户端，保证专用服务端验证和加载本类时不会解析任何 client 类型。
+     */
+    private static void initializeClientSide() {
+        try {
+            Class<?> bootstrap = Class.forName(
+                    "com.rtsbuilding.rtsbuilding.client.bootstrap.RtsClientBootstrap");
+            bootstrap.getMethod("registerClient").invoke(null);
+        } catch (ReflectiveOperationException failure) {
+            throw new IllegalStateException("注册 RTSBuilding 1.12 客户端生命周期失败", failure);
+        }
+    }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+        ServiceRegistry.init();
+        RtsAPIImpl.init();
+        RtsPipelineRegistration.registerAll();
+        RtsOperationDiagnostics.install();
+        LOGGER.info("RTSBuilding 通用初始化完成");
+    }
+
+    @Mod.EventHandler
+    public void onServerStarting(FMLServerStartingEvent event) {
+        activeServer = event.getServer();
+        event.registerServerCommand(new RtsDeveloperScenarioCommand());
+        event.registerServerCommand(new RtsGameTestCommand());
+        if (RtsGuiCompatSetupCommand.isProbeEnabled()) {
+            event.registerServerCommand(new RtsGuiCompatSetupCommand());
+        }
+        if (RtsFarMiningStorageSmokeCommand.isEnabled()) {
+            event.registerServerCommand(new RtsFarMiningStorageSmokeCommand());
+        }
+        try {
+            // 必须先于 durable task admission 读取；损坏时拒绝以空仓继续启动。
+            TaskPersistenceRuntime.INSTANCE.start(activeServer);
+        } catch (RuntimeException failure) {
+            LOGGER.error("读取 durable task 仓库失败，服务器将 fail-closed 停止启动", failure);
+            throw failure;
+        }
+        LOGGER.info("服务器正在启动……");
+    }
+
+    @Mod.EventHandler
+    public void onServerStarted(FMLServerStartedEvent event) {
+        MinecraftServer server = requireActiveServer();
+        RtsEffectAccumulator.INSTANCE.resetForServerStart();
+        RtsCameraManager.cleanupOrphanCameras(server);
+        SaveScheduler.INSTANCE.cleanupLegacyFiles(server);
+        RtsWorkflowEngine.getInstance().startTimeoutService(Duration.ofSeconds(1), Duration.ofSeconds(30));
+    }
+
+    @Mod.EventHandler
+    public void onServerStopping(FMLServerStoppingEvent event) {
+        MinecraftServer server = requireActiveServer();
+        try {
+            for (EntityPlayerMP player : com.rtsbuilding.rtsbuilding.platform.server.ServerCompat.getPlayerList(server).getPlayers()) {
+                RtsTaskEngine.INSTANCE.preparePlayerDetach(player);
+            }
+            RtsTaskEngine.INSTANCE.checkpointAllDurableExecutions(server);
+            for (EntityPlayerMP player : com.rtsbuilding.rtsbuilding.platform.server.ServerCompat.getPlayerList(server).getPlayers()) {
+                TaskPersistenceRuntime.INSTANCE.flushOwner(player.getUniqueID());
+                RtsTaskEngine.INSTANCE.reconcilePlayerDetach(player);
+            }
+            // Forge 1.12.2 在 ServerStopped 事件前已经卸载全部 WorldServer。
+            // 工作流仓库可能在保存时首次创建 DataCluster，因此必须趁世界仍然可用时落盘。
+            RtsWorkflowEngine.getInstance().saveAll(server);
+        } catch (RuntimeException failure) {
+            LOGGER.error("停服时 durable task 冻结失败；未确认的 dirty 不会被伪装成已落盘", failure);
+            throw failure;
+        }
+    }
+
+    @Mod.EventHandler
+    public void onServerStopped(FMLServerStoppedEvent event) {
+        MinecraftServer server = requireActiveServer();
+        RuntimeException durableFailure = null;
+        RtsWorkflowEngine.getInstance().stopTimeoutService();
+        try {
+            if (TaskPersistenceRuntime.INSTANCE.isStarted()) {
+                TaskPersistenceRuntime.INSTANCE.stop();
+            }
+            RtsTaskEngine.INSTANCE.resetDurableRuntimeAfterServerStop();
+        } catch (RuntimeException failure) {
+            durableFailure = failure;
+            LOGGER.error("服务器停止后关闭 durable task writer 失败；保留故障状态以阻止静默复用", failure);
+        }
+
+        try {
+            SaveScheduler.INSTANCE.onServerStopped();
+            RtsWorkflowEngine.getInstance().clearAllData();
+            RtsStoragePageRequestCoalescer.clearAll();
+            RtsEffectAccumulator.INSTANCE.clearAll();
+            RtsDeveloperMetrics.clearAll();
+            RtsPositionBatchAssembler1122.clearAll();
+        } finally {
+            activeServer = null;
+        }
+        if (durableFailure != null) throw durableFailure;
+    }
+
+    private MinecraftServer requireActiveServer() {
+        if (activeServer == null) {
+            MinecraftServer fallback = FMLCommonHandler.instance().getMinecraftServerInstance();
+            if (fallback != null) return fallback;
+            throw new IllegalStateException("RTSBuilding 服务器生命周期缺少活动 MinecraftServer");
+        }
+        return activeServer;
+    }
+
+    /** 游戏运行事件；只使用共同端和服务端类型。 */
+    /**
+     * 1.7.10 会在 cpw.mods.fml.common.eventhandler 包中生成独立 ASM 调用器；
+     * 订阅器类型若为私有嵌套类，调用器跨包访问时会抛出 IllegalAccessError。
+     */
+    public static final class GameEvents {
+        @SubscribeEvent
+        public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+            if (!(event.player instanceof EntityPlayerMP)) return;
+            EntityPlayerMP player = (EntityPlayerMP) event.player;
+            MinecraftServer server = com.rtsbuilding.rtsbuilding.platform.server.ServerCompat.getServer(player);
+            RtsCameraManager.cleanupOrphanCameras(server);
+            RtsDamageFeedbackManager.remember(player);
+            RtsProgressionManager.onPlayerLogin(player);
+            RtsPluginService.syncRelatedPlayers(player);
+            RtsWorkflowEngine.getInstance().loadPlayerFromStore(server, player);
+            RtsWorkflowEngine.getInstance().refreshPlayerIdleClocks(player);
+        }
+
+        @SubscribeEvent
+        public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+            if (!(event.player instanceof EntityPlayerMP)) return;
+            EntityPlayerMP player = (EntityPlayerMP) event.player;
+            try {
+                RtsTaskEngine.INSTANCE.preparePlayerDetach(player);
+                RtsTaskEngine.INSTANCE.detachPlayer(player.getUniqueID());
+                TaskPersistenceRuntime.INSTANCE.flushOwner(player.getUniqueID());
+                RtsTaskEngine.INSTANCE.reconcilePlayerDetach(player);
+            } catch (RuntimeException failure) {
+                LOGGER.error("玩家 {} 登出时 durable task 冲刷失败，已保留 dirty 并拒绝静默继续",
+                        player.getUniqueID(), failure);
+            }
+            RtsCameraManager.stopIfActive(player);
+            RtsDamageFeedbackManager.forget(player);
+            ServiceRegistry.getInstance().session().onPlayerLogout(player);
+            RtsProgressionManager.onPlayerLogout(player);
+            RtsPendingPlacementService.clearPlayerScanCache(player.getUniqueID());
+            RtsPlacementSound.forgetPlayer(player.getUniqueID());
+            RtsProgressRefresher.clearPlayerCache(player.getUniqueID());
+            RtsStoragePageRequestCoalescer.clearPlayer(player.getUniqueID());
+            RtsDeveloperMetrics.clearPlayer(player.getUniqueID());
+            RtsPositionBatchAssembler1122.clearPlayer(player.getUniqueID());
+            RtsPluginService.syncRelatedPlayers(player);
+            RtsEffectAccumulator.INSTANCE.clearPlayer(player.getUniqueID());
+            ServerHistoryManager.clear(player.getUniqueID());
+            SaveScheduler.INSTANCE.onPlayerLogout(player);
+        }
+
+        @SubscribeEvent
+        public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+            if (!(event.player instanceof EntityPlayerMP)) return;
+            EntityPlayerMP player = (EntityPlayerMP) event.player;
+            RtsCameraManager.stopIfActive(player);
+            ServiceRegistry.getInstance().pathfinding().cancel(player);
+            RtsStorageTickService.INSTANCE.unregisterPlayer(player);
+            RtsEndpointLeaseCache.INSTANCE.invalidatePlayer(player.getUniqueID());
+            RtsEffectAccumulator.INSTANCE.clearDimension(player.getUniqueID(), event.fromDim);
+        }
+
+        /** 仅唤醒等待这个 chunk 的任务，不扫描玩家或全服任务。 */
+        @SubscribeEvent
+        public void onChunkLoad(ChunkEvent.Load event) {
+            if (event.world instanceof WorldServer) {
+                RtsTaskEngine.INSTANCE.resumeLoadedChunk((WorldServer) event.world,
+                        new com.rtsbuilding.rtsbuilding.platform.math.ChunkPos(
+                                event.getChunk().xPosition, event.getChunk().zPosition));
+            }
+        }
+
+        @SubscribeEvent
+        public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+            if (event.phase != TickEvent.Phase.END || !(event.player instanceof EntityPlayerMP)) return;
+            EntityPlayerMP player = (EntityPlayerMP) event.player;
+            ServerTickOrchestrator.getInstance().onPlayerTickPost(player);
+            RtsDamageFeedbackManager.tick(player);
+        }
+
+        @SubscribeEvent
+        public void onServerTick(TickEvent.ServerTickEvent event) {
+            if (event.phase == TickEvent.Phase.START) {
+                ThreadCompat.drainServerTasks();
+                return;
+            }
+            if (event.phase != TickEvent.Phase.END) return;
+            MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+            if (server == null) return;
+            ServerTickOrchestrator.getInstance().tickMining(server);
+            SaveScheduler.INSTANCE.onTick(server);
+            TaskPersistenceRuntime.INSTANCE.tick();
+        }
+    }
+}

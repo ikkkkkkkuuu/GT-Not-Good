@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {"item": "minecraft:ender_pearl"},
+    "P": {"item": "rtsbuilding:range_extension_iii"},
+    "Q": {"tag": "c:gems/quartz"},
+    "R": {"tag": "c:dusts/redstone"}
+  },
+  "pattern": [
+    " Q ",
+    "RPR",
+    " E "
+  ],
+  "result": {"count": 1, "id": "rtsbuilding:range_extension_max"}
+}

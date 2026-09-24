@@ -598,11 +598,11 @@ public final class AdvancedIOClientChecks {
         if (frames == 20) {
             var item = new ItemStack(Items.diamond, 32);
             var bucket = new ItemStack(Items.lava_bucket);
-            var packet = com.glodblock.github.common.item.ItemFluidPacket
-                .newStack(new FluidStack(FluidRegistry.WATER, 375));
+            var packet = gregtech.api.util.GTUtility
+                .getFluidDisplayStack(new FluidStack(FluidRegistry.WATER, 375), true);
             require(ghostSlot(4).handleDragAndDrop(item, 0), "NEI item drag accepted by real phantom widget");
             require(ghostSlot(5).handleDragAndDrop(bucket, 0), "NEI filled-container drag accepted");
-            require(ghostSlot(6).handleDragAndDrop(packet, 0), "NEI native fluid packet drag accepted");
+            require(ghostSlot(6).handleDragAndDrop(packet, 0), "NEI direct GT fluid display drag accepted");
             require(
                 item.stackSize == 0 && bucket.stackSize == 0 && packet.stackSize == 0,
                 "NEI drag payloads consumed as markers");
@@ -624,11 +624,16 @@ public final class AdvancedIOClientChecks {
             require(
                 ((com.cleanroommc.modularui.value.sync.IntSyncValue) sync.findSyncHandlerNullable("amount_6", 0))
                     .getIntValue() == 375,
-                "NEI packet marker preserves exact mB");
+                "NEI GT fluid display marker preserves exact mB");
             require(
                 ((com.cleanroommc.modularui.value.sync.BooleanSyncValue) sync.findSyncHandlerNullable("fluid_6", 0))
                     .getBoolValue(),
-                "NEI packet stored as native fluid target");
+                "NEI GT display is converted to native fluid target");
+            require(
+                com.glodblock.github.common.item.ItemFluidPacket.isDisplay(
+                    ghostSlot(6).getSlot()
+                        .getStack()),
+                "fluid ghost uses display-only tooltip, not deliverable packet tooltip");
             for (int index = 4; index <= 6; index++) {
                 ((com.cleanroommc.modularui.value.sync.PhantomItemSlotSH) sync.findSyncHandlerNullable("sample", index))
                     .updateFromClient(null, 0);

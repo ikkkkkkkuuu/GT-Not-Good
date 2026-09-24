@@ -1,0 +1,53 @@
+package com.rtsbuilding.rtsbuilding.client.plugin;
+
+import com.rtsbuilding.rtsbuilding.RtsbuildingMod;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Client display helper for recognizing built-in RTS plugin items.
+ *
+ * <p>This is not an authority surface. It only lets inventory screens highlight
+ * plugin-looking items and send install requests. The server plugin service is
+ * still the only place that decides whether the request is valid.
+ */
+public final class RtsClientPluginCatalog {
+    private static final Set<ResourceLocation> PLUGIN_ITEMS = new HashSet<ResourceLocation>(Arrays.asList(
+            id("rts_control_core"),
+            id("remote_control_plugin"),
+            id("storage_integration_plugin"),
+            id("craft_terminal_plugin"),
+            id("chain_break_plugin"),
+            id("area_destroy_plugin"),
+            id("blueprint_plugin"),
+            id("range_culling_plugin"),
+            id("field_deployment_plugin"),
+            id("range_extension_i"),
+            id("range_extension_ii"),
+            id("range_extension_iii"),
+            id("range_extension_max"),
+            id("harvest_tier_stone"),
+            id("harvest_tier_iron"),
+            id("harvest_tier_diamond"),
+            id("harvest_tier_unlimited")));
+
+    private RtsClientPluginCatalog() {
+    }
+
+    public static boolean isPluginItem(ItemStack stack) {
+        if (stack == null || com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(stack)) {
+            return false;
+        }
+        ResourceLocation itemId = com.rtsbuilding.rtsbuilding.platform.registry.RtsRegistries.ITEMS
+                .getKey(stack.getItem());
+        return itemId != null && PLUGIN_ITEMS.contains(itemId);
+    }
+
+    private static ResourceLocation id(String path) {
+        return new ResourceLocation(RtsbuildingMod.MODID, path);
+    }
+}

@@ -144,6 +144,10 @@ public class LateMixinsLoader implements ILateMixinLoader {
             addAll(list, "CropsNH.MixinTileEntityCropSticks", "CropsNH.MixinSeedStats");
         }
 
+        if (loadedMods.contains(ModList.SpiceOfLife.getID())) {
+            addAll(list, "SpiceOfLife.MixinFoodModifier");
+        }
+
         if (loadedMods.contains(ModList.Thaumcraft.getID())) {
             if (loadedMods.contains(ModList.AE2.getID())) {
                 addAll(list, "Thaumcraft.MixinPackagedEssentiaHandler", "Thaumcraft.MixinPackagedInfusionSource");

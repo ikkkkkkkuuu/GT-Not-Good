@@ -1,0 +1,84 @@
+package com.rtsbuilding.rtsbuilding.client.rendering.culling;
+
+import net.minecraft.client.Minecraft;
+import com.rtsbuilding.rtsbuilding.platform.math.BlockPos;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+/**
+ * 让隐藏区域对应的区块网格失效并重新编译。
+ *
+ * <p>这里只负责渲染器刷新，不读取或修改隐藏盒。Embeddium 替换了原版区块渲染器，
+ * 因此安装时直接使用它的区域重建入口；未安装时继续调用原版 {@code LevelRenderer}。
+ * 可选模组通过一次性反射适配，避免把 Embeddium 变成运行前置。
+ */
+public final class RtsCullingRenderInvalidator {
+    private static final RendererMethods SODIUM = RendererMethods.find(
+            "net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer");
+    private static final RendererMethods EMBEDDIUM = RendererMethods.find(
+            "org.embeddedt.embeddium.impl.render.EmbeddiumWorldRenderer");
+
+    private RtsCullingRenderInvalidator() {
+    }
+
+    public static void markBlocksDirty(BlockPos min, BlockPos max) {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        if (minecraft == null || minecraft.renderGlobal == null || min == null || max == null) {
+            return;
+        }
+
+        int minX = Math.min(min.getX(), max.getX()) - 1;
+        int minY = Math.min(min.getY(), max.getY()) - 1;
+        int minZ = Math.min(min.getZ(), max.getZ()) - 1;
+        int maxX = Math.max(min.getX(), max.getX()) + 1;
+        int maxY = Math.max(min.getY(), max.getY()) + 1;
+        int maxZ = Math.max(min.getZ(), max.getZ()) + 1;
+
+        if (SODIUM.schedule(minX, minY, minZ, maxX, maxY, maxZ)
+                || EMBEDDIUM.schedule(minX, minY, minZ, maxX, maxY, maxZ)) {
+            return;
+        }
+        minecraft.renderGlobal.markBlockRangeForRenderUpdate(minX, minY, minZ, maxX, maxY, maxZ);
+    }
+
+    private static final class RendererMethods {
+        private final Method instanceNullable;
+        private final Method scheduleRebuild;
+
+        private RendererMethods(Method instanceNullable, Method scheduleRebuild) {
+            this.instanceNullable = instanceNullable;
+            this.scheduleRebuild = scheduleRebuild;
+        }
+        private static RendererMethods find(String className) {
+            try {
+                Class<?> renderer = Class.forName(
+                        className,
+                        false,
+                        RtsCullingRenderInvalidator.class.getClassLoader());
+                return new RendererMethods(
+                        renderer.getMethod("instanceNullable"),
+                        renderer.getMethod("scheduleRebuildForBlockArea",
+                                int.class, int.class, int.class, int.class, int.class, int.class, boolean.class));
+            } catch (ClassNotFoundException | NoSuchMethodException ignored) {
+                return new RendererMethods(null, null);
+            }
+        }
+
+        private boolean schedule(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+            if (instanceNullable == null || scheduleRebuild == null) {
+                return false;
+            }
+            try {
+                Object renderer = instanceNullable.invoke(null);
+                if (renderer == null) {
+                    return false;
+                }
+                scheduleRebuild.invoke(renderer, minX, minY, minZ, maxX, maxY, maxZ, false);
+                return true;
+            } catch (IllegalAccessException | InvocationTargetException ignored) {
+                return false;
+            }
+        }
+    }
+}

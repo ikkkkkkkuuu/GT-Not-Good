@@ -28,6 +28,7 @@ import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.PhantomItemSlot;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.xyp.gtnotgood.common.compat.FluidDropCompat;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import appeng.api.config.RedstoneMode;
@@ -141,7 +142,7 @@ final class AdvancedIOGui {
                         org.lwjgl.opengl.GL11.glPopMatrix();
                     })
                     .tooltip(
-                        t -> t.addLine(IKey.dynamic(() -> Integer.toString(amount.getIntValue())))
+                        t -> t.addLine(IKey.dynamic(() -> amount.getIntValue() + (fluid.getBoolValue() ? " mB" : "")))
                             .addLine(IKey.lang("gui.advancedio.amount_hint")))
                     .setEnabledIf(widget -> index < enabled.getIntValue())
                     .pos(7 + i % 9 * 18, 28 + i / 9 * 18));
@@ -531,6 +532,8 @@ final class AdvancedIOGui {
                 part.setFilter(index, null);
             } else {
                 FluidStack fluid = ItemFluidPacket.getFluidStack(cursor);
+                if (fluid == null) fluid = gregtech.api.util.GTUtility.getFluidFromDisplayStack(cursor);
+                if (fluid == null && FluidDropCompat.isFluidDrop(cursor)) fluid = FluidDropCompat.getFluidStack(cursor);
                 if (fluid == null) fluid = FluidContainerRegistry.getFluidForFilledItem(cursor);
                 if (fluid == null && cursor.getItem() instanceof IFluidContainerItem container)
                     fluid = container.getFluid(cursor);
@@ -595,7 +598,12 @@ final class AdvancedIOGui {
             if (part.getTile()
                 .getWorldObj().isRemote) return client[slot];
             var key = part.filter(slot);
-            if (key instanceof IAEFluidStack fluid) return ItemFluidPacket.newStack(fluid.getFluidStack());
+            if (key instanceof IAEFluidStack fluid) {
+                // Render a fluid marker, without the real packet's delivery/unpacking tooltip.
+                ItemStack display = ItemFluidPacket.newDisplayStack(fluid.getFluidStack());
+                ItemFluidPacket.setFluidAmount(display, fluid.getStackSize());
+                return display;
+            }
             if (key instanceof IAEItemStack item) {
                 ItemStack icon = item.getItemStack();
                 icon.stackSize = 1;

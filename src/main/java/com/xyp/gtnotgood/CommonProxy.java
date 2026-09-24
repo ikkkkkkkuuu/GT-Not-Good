@@ -37,13 +37,10 @@ public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         Config.synchronizeConfiguration(event.getSuggestedConfigurationFile());
         MainConfig.ensureLoaded();
+        if (Config.enableRTSBuilding) com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.preInit(event);
 
         GTNotGood.channel = NetworkRegistry.INSTANCE.newSimpleChannel(GTNotGood.MODID);
         NetWorkHandler.registerAllMessage();
-        FMLCommonHandler.instance()
-            .bus()
-            .register(com.xyp.gtnotgood.common.rts.session.RtsSessionManager.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(com.xyp.gtnotgood.common.rts.session.RtsSessionManager.INSTANCE);
         com.xyp.gtnotgood.commandtree.CommandTreeBootstrap.preInit();
         FMLCommonHandler.instance()
             .bus()
@@ -73,6 +70,8 @@ public class CommonProxy {
 
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
+        if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
+            com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.init(event);
         GuiManager.registerFactory(com.xyp.gtnotgood.common.advancedio.AdvancedIOGuiFactory.INSTANCE);
         GuiManager.registerFactory(LargeVoidMinerConfigGuiFactory.INSTANCE);
         RecipeLoader.loadRecipes();
@@ -103,6 +102,4 @@ public class CommonProxy {
     /** Receives a server settings reply on the client proxy; dedicated servers have no settings screen. */
     public void receiveServerConfig(com.xyp.gtnotgood.common.packet.ServerConfigMessage message) {}
 
-    /** Sided receive hook; dedicated servers do not load the client RTS state or GUI classes. */
-    public void receiveRtsSession(com.xyp.gtnotgood.common.packet.RtsSessionMessage message, Object connection) {}
 }

@@ -18,6 +18,7 @@ public class Config {
     private static final String CATEGORY_CROPSNH = "CropsNH";
     private static final String CATEGORY_FORESTRY = "Forestry";
     private static final String CATEGORY_GREGTECH = "GregTech";
+    private static final String CATEGORY_SPICE_OF_LIFE = "SpiceOfLife";
     private static final String CATEGORY_FUEL_ROD = "Fuel_Rod";
     private static final String CATEGORY_THAUMCRAFT = "Thaumcraft";
     private static final String CATEGORY_TOOL_BELT = "Tool_Belt";
@@ -36,12 +37,6 @@ public class Config {
     public static String greeting = "Hello from GT-Not-Good";
     /** Opt-in while the staged RTS port is under development; server authorization remains mandatory. */
     public static boolean enableRTSBuilding = false;
-    /** Server-authoritative horizontal camera/action bounds, snapshotted when a session opens. */
-    public static int rtsMaxDistance = 128;
-    /** Client camera movement multiplier for the camera phase. */
-    public static float rtsCameraSpeed = 1.0F;
-    /** Client dolly multiplier for the camera phase. */
-    public static float rtsZoomSpeed = 1.0F;
     /** Replaces the client window/taskbar icon after startup; never synchronized from a server. */
     public static boolean useEdgeWindowIcon = false;
     public static boolean enableAlwaysDisplayRecipeOwner = true;
@@ -67,6 +62,8 @@ public class Config {
     public static boolean enableBeeMaxGenomeOnBreed = true;
     public static boolean enableBeeIgnoreDimensionMutation = true;
     public static boolean enableBeeIgnoreResourceMutation = true;
+    /** Keeps every food at full nutritional value and normal eating speed. */
+    public static boolean disableSpiceOfLifeDiminishingReturns = true;
     /** Disables Thaumcraft and WarpTheory warp events without changing any warp values. */
     public static boolean disableWarpEvents = true;
     /** Treats every Thaumcraft research key as completed when enabled. */
@@ -136,13 +133,10 @@ public class Config {
         Config.configDirectory = configDirectory;
 
         greeting = configuration.getString("greeting", Configuration.CATEGORY_GENERAL, greeting, "How shall I greet?");
-        configuration.addCustomCategoryComment(CATEGORY_RTS, "RTS 移植开发配置。当前仅提供会话基础，正式摄像机和建造界面尚未开放。");
+        configuration
+            .addCustomCategoryComment(CATEGORY_RTS, "官方 RTS Building 集成。启用后默认按 G 进入；详细选项位于 config/rts_building。");
         enableRTSBuilding = configuration
-            .getBoolean("enableRTSBuilding", CATEGORY_RTS, false, "允许建立 RTS 会话；服务器可拒绝客户端请求。开发阶段默认关闭。");
-        rtsMaxDistance = configuration
-            .getInt("rtsMaxDistance", CATEGORY_RTS, 128, 1, 512, "RTS 水平范围，单位方块；建立会话时由服务器确定。");
-        rtsCameraSpeed = configuration.getFloat("rtsCameraSpeed", CATEGORY_RTS, 1.0F, 0.1F, 5.0F, "客户端 RTS 摄像机移动速度倍率。");
-        rtsZoomSpeed = configuration.getFloat("rtsZoomSpeed", CATEGORY_RTS, 1.0F, 0.1F, 5.0F, "客户端 RTS 滚轮缩放速度倍率。");
+            .getBoolean("enableRTSBuilding", CATEGORY_RTS, false, "加载内置官方 RTS 功能；更改后需重启游戏和服务器。集成验证阶段默认关闭。");
         configuration.addCustomCategoryComment(CATEGORY_CLIENT, "仅影响本机客户端的显示设置。");
         useEdgeWindowIcon = configuration
             .get(
@@ -156,6 +150,7 @@ public class Config {
         configuration.addCustomCategoryComment(CATEGORY_CROPSNH, "CropsNH 作物配置");
         configuration.addCustomCategoryComment(CATEGORY_FORESTRY, "Forestry 蜜蜂杂交配置");
         configuration.addCustomCategoryComment(CATEGORY_GREGTECH, "GregTech 机器、工具与客户端显示配置");
+        configuration.addCustomCategoryComment(CATEGORY_SPICE_OF_LIFE, "Spice of Life 食物收益配置");
         configuration.addCustomCategoryComment(CATEGORY_FUEL_ROD, "铁燃料棒参数。修改后重启游戏生效，服务器和客户端应使用相同数值。");
         FuelRod.energyPercent = configuration
             .getInt("energyPercent", CATEGORY_FUEL_ROD, 10000, 1, 10000, "相对于四联铀燃料棒的基础产能百分比。100 表示相同产能。");
@@ -270,6 +265,12 @@ public class Config {
             CATEGORY_FORESTRY,
             enableBeeIgnoreResourceMutation,
             "开启后,蜜蜂杂交忽略蜂箱下方指定方块或运行中 GT 机器之类的硬性条件。");
+
+        disableSpiceOfLifeDiminishingReturns = configuration.getBoolean(
+            "disableDiminishingReturns",
+            CATEGORY_SPICE_OF_LIFE,
+            disableSpiceOfLifeDiminishingReturns,
+            "开启后,所有食物始终恢复原本的饱食度与饱和度,进食时间也不再随重复食用而延长。关闭后恢复 Spice of Life 原本规则。");
 
         disableWarpEvents = configuration.getBoolean(
             "disableWarpEvents",

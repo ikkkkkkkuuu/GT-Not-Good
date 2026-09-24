@@ -1,0 +1,613 @@
+package com.rtsbuilding.rtsbuilding.client.input.overlay;
+
+import com.rtsbuilding.rtsbuilding.RtsbuildingMod;
+import com.rtsbuilding.rtsbuilding.client.controller.ClientRtsController;
+import com.rtsbuilding.rtsbuilding.client.record.CraftableEntry;
+import com.rtsbuilding.rtsbuilding.client.record.StorageEntry;
+import com.rtsbuilding.rtsbuilding.client.screen.standalone.RtsHomeScreen;
+import com.rtsbuilding.rtsbuilding.client.util.RtsClientUiUtil;
+import com.rtsbuilding.rtsbuilding.client.util.RtsCraftablesUiHelper;
+import com.rtsbuilding.rtsbuilding.uikit.theme.ContainerOverlayStyle;
+import com.rtsbuilding.rtsbuilding.compat.remote.RtsRemoteMenuCompat;
+import com.rtsbuilding.rtsbuilding.network.RtsPayloadRegistrar;
+import com.rtsbuilding.rtsbuilding.network.craft.C2SRtsCraftRefillPayload;
+import com.rtsbuilding.rtsbuilding.network.storage.C2SRtsImportMenuSlotPayload;
+import com.rtsbuilding.rtsbuilding.network.storage.C2SRtsLinkedPickupPayload;
+import com.rtsbuilding.rtsbuilding.network.storage.C2SRtsLinkedQuickMovePayload;
+import com.rtsbuilding.rtsbuilding.network.storage.C2SRtsReturnCarriedPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.GuiCrafting;
+import net.minecraft.client.gui.inventory.GuiInventory;
+import net.minecraft.inventory.ContainerWorkbench;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
+import com.rtsbuilding.rtsbuilding.platform.math.MathHelper;
+import com.rtsbuilding.rtsbuilding.platform.registry.RtsRegistries;
+import org.lwjgl.input.Mouse;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.rtsbuilding.rtsbuilding.client.input.RtsClientInputGate.*;
+import static com.rtsbuilding.rtsbuilding.client.input.overlay.OverlayLayoutHelper.*;
+
+public final class OverlayInteraction {
+    private OverlayInteraction() {
+    }
+
+    // =========================================================================
+    //  Slot index resolution
+    // =========================================================================
+
+    public static int resolveOverlaySlotIndex(double mouseX, double mouseY, int gridX, int gridY) {
+        return resolveOverlaySlotIndex(mouseX, mouseY, gridX, gridY, overlayProfile().storageRows());
+    }
+
+    public static int resolveOverlaySlotIndex(double mouseX, double mouseY, int gridX, int gridY, int storageRows) {
+        if (!inside(mouseX, mouseY, gridX, gridY, STORAGE_COLS * SLOT_PITCH, storageRows * SLOT_PITCH)) {
+            return -1;
+        }
+        int col = MathHelper.floor((mouseX - gridX) / SLOT_PITCH);
+        int row = MathHelper.floor((mouseY - gridY) / SLOT_PITCH);
+        if (col < 0 || col >= STORAGE_COLS || row < 0 || row >= storageRows) {
+            return -1;
+        }
+        return row * STORAGE_COLS + col;
+    }
+
+    public static int resolveQuickbarSlotIndex(double mouseX, double mouseY, int x, int y) {
+        if (!inside(mouseX, mouseY, x, y, QUICKBAR_SLOTS * SLOT_PITCH, SLOT_SIZE)) {
+            return -1;
+        }
+        int col = MathHelper.floor((mouseX - x) / SLOT_PITCH);
+        if (col < 0 || col >= QUICKBAR_SLOTS) {
+            return -1;
+        }
+        int slotX = x + col * SLOT_PITCH;
+        return mouseX <= slotX + SLOT_SIZE ? col : -1;
+    }
+
+    public static int resolveReturnSlotIndex(double mouseX, double mouseY, int x, int y) {
+        if (!inside(mouseX, mouseY, x, y, RETURN_SLOTS * SLOT_PITCH, SLOT_SIZE)) {
+            return -1;
+        }
+        int col = MathHelper.floor((mouseX - x) / SLOT_PITCH);
+        if (col < 0 || col >= RETURN_SLOTS) {
+            return -1;
+        }
+        int cx = x + col * SLOT_PITCH;
+        return mouseX <= cx + SLOT_SIZE ? col : -1;
+    }
+
+    public static int resolveOverlayCraftableEntryIndex(double mouseX, double mouseY, OverlayLayoutHelper.OverlayLayout layout) {
+        if (layout.craftCollapsed()) {
+            return -1;
+        }
+        overlayCraftScroll = MathHelper.clamp(overlayCraftScroll, 0, maxOverlayCraftScroll(ClientRtsController.get(), layout.craftVisibleRows()));
+        if (!inside(mouseX, mouseY, layout.craftPanelX() + 4, layout.craftGridY(), CRAFT_COLS * CRAFT_PITCH, layout.craftVisibleRows() * CRAFT_PITCH)) {
+            return -1;
+        }
+        int col = MathHelper.floor((mouseX - (layout.craftPanelX() + 4)) / CRAFT_PITCH);
+        int row = MathHelper.floor((mouseY - layout.craftGridY()) / CRAFT_PITCH);
+        if (col < 0 || col >= CRAFT_COLS || row < 0 || row >= layout.craftVisibleRows()) {
+            return -1;
+        }
+        int slotX = layout.craftPanelX() + 4 + col * CRAFT_PITCH;
+        int slotY = layout.craftGridY() + row * CRAFT_PITCH;
+        if (!inside(mouseX, mouseY, slotX, slotY, CRAFT_SLOT, CRAFT_SLOT)) {
+            return -1;
+        }
+        int index = overlayCraftScroll * CRAFT_COLS + row * CRAFT_COLS + col;
+        return index < ClientRtsController.get().getCraftableEntries().size() ? index : -1;
+    }
+
+    public static int maxOverlayCraftScroll(ClientRtsController controller, int visibleRows) {
+        int totalRows = Math.max(1, (int) Math.ceil(controller.getCraftableEntries().size() / (double) CRAFT_COLS));
+        return Math.max(0, totalRows - visibleRows);
+    }
+
+    // =========================================================================
+    //  Pickup & deposit
+    // =========================================================================
+
+    public static void selectOverlayQuickbarSlot(int index) {
+        if (index < 0 || index >= QUICKBAR_SLOTS) {
+            return;
+        }
+        ClientRtsController.get().selectQuickSlot(index);
+    }
+
+    public static boolean tryPickupFromOverlay(int index, int requestedAmount) {
+        if (index < 0 || index >= ClientRtsController.get().getStorageEntries().size()) {
+            return false;
+        }
+        Minecraft minecraft = Minecraft.getMinecraft();
+        if (minecraft.thePlayer == null) {
+            return false;
+        }
+        StorageEntry entry = ClientRtsController.get().getStorageEntries().get(index);
+        ItemStack carried = minecraft.thePlayer.inventory.getItemStack();
+        int wanted = requestedFromCarried(carried, entry.stack(), requestedAmount);
+        if (wanted <= 0) {
+            return false;
+        }
+        applyLocalCarriedPreview(entry.stack(), wanted);
+        ItemStack request = entry.stack().copy();
+        request.stackSize = 1;
+        RtsPayloadRegistrar.sendToServer(new C2SRtsLinkedPickupPayload(request, wanted));
+        RtsbuildingMod.LOGGER.info(
+                "[RTS-OVERLAY] side=C event=TRANSFER_SENT action=PICKUP item={} amount={} index={}",
+                entry.itemId(), wanted, index);
+        ClientRtsController.get().selectStorageEntry(index);
+        pendingOverlayCarriedItemId = entry.itemId();
+        return true;
+    }
+
+    public static boolean tryDepositCarriedToLinked(int requestedAmount) {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        if (minecraft.thePlayer == null) {
+            return false;
+        }
+        ItemStack carried = minecraft.thePlayer.inventory.getItemStack();
+        if (com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(carried)) {
+            return false;
+        }
+        ResourceLocation itemId = RtsRegistries.ITEMS.getKey(carried.getItem());
+        if (itemId == null) {
+            return false;
+        }
+        int amount = Math.max(1, Math.min(requestedAmount, carried.stackSize));
+        RtsPayloadRegistrar.sendToServer(new C2SRtsReturnCarriedPayload(itemId.toString(), amount));
+        RtsbuildingMod.LOGGER.info(
+                "[RTS-OVERLAY] side=C event=TRANSFER_SENT action=DEPOSIT item={} amount={}",
+                itemId, amount);
+        ItemStack preview = carried.copy();
+        preview.stackSize = amount;
+        enqueueReturnPreview(preview);
+        com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.shrink(carried, amount);
+        if (com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(carried)) {
+            minecraft.thePlayer.inventory.setItemStack(null);
+        } else {
+            minecraft.thePlayer.inventory.setItemStack(carried);
+        }
+        pendingOverlayCarriedItemId = "";
+        return true;
+    }
+
+    public static int requestedFromCarried(ItemStack carried, ItemStack target, int requestedAmount) {
+        int requested = requestedAmount <= 0 ? 1 : requestedAmount;
+        if (com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(carried)) {
+            return Math.min(requested, target.getMaxStackSize());
+        }
+        if (!sameItemAndTags(carried, target)) {
+            return 0;
+        }
+        return Math.min(requested, carried.getMaxStackSize() - carried.stackSize);
+    }
+
+    public static void applyLocalCarriedPreview(ItemStack pickedPrototype, int requested) {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        if (minecraft.thePlayer == null || com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(pickedPrototype)) {
+            return;
+        }
+        ItemStack carried = minecraft.thePlayer.inventory.getItemStack();
+        int wanted = Math.max(1, requested);
+        if (com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(carried)) {
+            ItemStack preview = pickedPrototype.copy();
+            preview.stackSize = Math.min(wanted, preview.getMaxStackSize());
+            minecraft.thePlayer.inventory.setItemStack(preview);
+            return;
+        }
+        if (!sameItemAndTags(carried, pickedPrototype)) {
+            return;
+        }
+        int grow = Math.min(wanted, carried.getMaxStackSize() - carried.stackSize);
+        if (grow <= 0) {
+            return;
+        }
+        com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.grow(carried, grow);
+        minecraft.thePlayer.inventory.setItemStack(carried);
+    }
+
+    // =========================================================================
+    //  Menu slot import & shift drag
+    // =========================================================================
+
+    public static int resolveHoveredMenuSlot(GuiContainer screen, double mouseX, double mouseY) {
+        if (screen == null || screen.inventorySlots == null) {
+            return -1;
+        }
+        Slot hovered = com.rtsbuilding.rtsbuilding.platform.client.GuiContainerCompat
+                .slotAt(screen, mouseX, mouseY);
+        if (hovered != null && hovered.getHasStack()) {
+            return screen.inventorySlots.inventorySlots.indexOf(hovered);
+        }
+        for (int i = 0; i < screen.inventorySlots.inventorySlots.size(); i++) {
+            Slot slot = screen.inventorySlots.inventorySlots.get(i);
+            int sx = com.rtsbuilding.rtsbuilding.platform.client.GuiContainerCompat.guiLeft(screen)
+                    + slot.xDisplayPosition;
+            int sy = com.rtsbuilding.rtsbuilding.platform.client.GuiContainerCompat.guiTop(screen)
+                    + slot.yDisplayPosition;
+            if (inside(mouseX, mouseY, sx, sy, SLOT_SIZE, SLOT_SIZE) && slot.getHasStack()) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static boolean tryImportHoveredMenuSlot(GuiContainer screen, double mouseX, double mouseY, int button) {
+        if (isLocalSophisticatedMenu(screen)) {
+            return false;
+        }
+        int menuSlot = resolveHoveredMenuSlot(screen, mouseX, mouseY);
+        if (menuSlot < 0) {
+            return false;
+        }
+        if (menuSlot == 0 && button != 0) {
+            return true;
+        }
+        if (!canImportMenuSlot(screen, menuSlot)) {
+            return false;
+        }
+        RtsPayloadRegistrar.sendToServer(new C2SRtsImportMenuSlotPayload(menuSlot));
+        RtsbuildingMod.LOGGER.info(
+                "[RTS-OVERLAY] side=C event=TRANSFER_SENT action=IMPORT_MENU_SLOT menu={} slot={}",
+                screen.inventorySlots.getClass().getName(), menuSlot);
+        return true;
+    }
+
+    public static boolean tryStartShiftImportDrag(GuiContainer screen, double mouseX, double mouseY) {
+        int menuSlot = resolveHoveredMenuSlot(screen, mouseX, mouseY);
+        if (!canDragImportMenuSlot(screen, menuSlot)) {
+            return false;
+        }
+        shiftImportDragging = true;
+        shiftImportDragScreen = screen;
+        shiftImportDragSlots.clear();
+        return trySendShiftImportDragSlot(screen, menuSlot);
+    }
+
+    public static boolean tryContinueShiftImportDrag(GuiContainer screen, double mouseX, double mouseY) {
+        int menuSlot = resolveHoveredMenuSlot(screen, mouseX, mouseY);
+        return trySendShiftImportDragSlot(screen, menuSlot);
+    }
+
+    public static boolean trySendShiftImportDragSlot(GuiContainer screen, int menuSlot) {
+        if (shiftImportDragSlots.contains(menuSlot) || !canDragImportMenuSlot(screen, menuSlot)) {
+            return false;
+        }
+        shiftImportDragSlots.add(menuSlot);
+        RtsPayloadRegistrar.sendToServer(new C2SRtsImportMenuSlotPayload(menuSlot));
+        return true;
+    }
+
+    public static boolean canDragImportMenuSlot(GuiContainer screen, int menuSlot) {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        if (!canImportMenuSlot(screen, menuSlot) || minecraft.thePlayer == null || screen == null || screen.inventorySlots == null) {
+            return false;
+        }
+        Slot slot = screen.inventorySlots.inventorySlots.get(menuSlot);
+        return isPlayerInventorySlot(slot, minecraft.thePlayer);
+    }
+
+    public static boolean canImportMenuSlot(GuiContainer screen, int menuSlot) {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        if (minecraft.thePlayer == null || screen == null || screen.inventorySlots == null
+                || menuSlot < 0 || menuSlot >= screen.inventorySlots.inventorySlots.size()) {
+            return false;
+        }
+        if (isLocalSophisticatedMenu(screen)) {
+            return false;
+        }
+        Slot slot = screen.inventorySlots.inventorySlots.get(menuSlot);
+        if (slot == null || !slot.getHasStack() || !slot.canTakeStack(minecraft.thePlayer)) {
+            return false;
+        }
+        return !isPlayerInventorySlot(slot, minecraft.thePlayer) || isInventoryOrGuiCrafting(screen);
+    }
+
+    public static void endShiftImportDrag() {
+        shiftImportDragging = false;
+        shiftImportDragScreen = null;
+        shiftImportDragSlots.clear();
+    }
+
+    public static boolean isPlayerInventorySlot(Slot slot, net.minecraft.entity.player.EntityPlayer player) {
+        return slot != null && player != null && slot.inventory == player.inventory;
+    }
+
+    public static boolean isInventoryOrGuiCrafting(GuiScreen screen) {
+        return screen instanceof GuiInventory || screen instanceof GuiCrafting;
+    }
+
+    private static boolean isLocalSophisticatedMenu(GuiContainer screen) {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        return minecraft.thePlayer != null
+                && screen != null
+                && RtsRemoteMenuCompat.isLocalSophisticatedMenu(screen.inventorySlots, minecraft.thePlayer);
+    }
+
+    // =========================================================================
+    //  Quick-move overlay entry
+    // =========================================================================
+
+    public static boolean tryQuickMoveOverlayEntry(GuiContainer screen, double mouseX, double mouseY) {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        if (minecraft.thePlayer == null || !com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(minecraft.thePlayer.inventory.getItemStack())) {
+            return false;
+        }
+        OverlayLayoutHelper.OverlayLayout layout = OverlayLayoutHelper.resolveOverlayLayout(screen);
+        int idx = resolveOverlaySlotIndex(mouseX, mouseY, layout.gridX(), layout.gridY());
+        if (idx < 0 || idx >= ClientRtsController.get().getStorageEntries().size()) {
+            return false;
+        }
+        StorageEntry entry = ClientRtsController.get().getStorageEntries().get(idx);
+        if (entry == null || com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(entry.stack())) {
+            return false;
+        }
+        ItemStack request = entry.stack().copy();
+        request.stackSize = 1;
+        RtsPayloadRegistrar.sendToServer(new C2SRtsLinkedQuickMovePayload(request));
+        RtsbuildingMod.LOGGER.info(
+                "[RTS-OVERLAY] side=C event=TRANSFER_SENT action=QUICK_MOVE item={} index={}",
+                entry.itemId(), idx);
+        ClientRtsController.get().selectStorageEntry(idx);
+        pendingOverlayCarriedItemId = "";
+        return true;
+    }
+
+    // =========================================================================
+    //  Craft refill
+    // =========================================================================
+
+    public static void capturePendingCraftRefill(GuiContainer screen, double mouseX, double mouseY, int button) {
+        clearPendingCraftRefill();
+        if (screen == null || GuiScreen.isShiftKeyDown()) {
+            return;
+        }
+        if (button != 0 && button != 1) {
+            return;
+        }
+        if (!(screen.inventorySlots instanceof ContainerWorkbench)) {
+            return;
+        }
+        ContainerWorkbench menu = (ContainerWorkbench) screen.inventorySlots;
+        int slotIndex = resolveHoveredMenuSlot(screen, mouseX, mouseY);
+        if (slotIndex != 0) {
+            return;
+        }
+        List<ItemStack> blueprint = new ArrayList<>(9);
+        for (int i = 0; i < 9; i++) {
+            Slot slot = menu.getSlot(1 + i);
+            ItemStack stack = slot == null ? null : slot.getStack();
+            blueprint.add(com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(stack) ? null : copyOne(stack));
+        }
+        Slot resultSlot = menu.getSlot(0);
+        ItemStack result = resultSlot == null ? null : resultSlot.getStack();
+        ResourceLocation resultId = com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(result) ? null : RtsRegistries.ITEMS.getKey(result.getItem());
+        pendingCraftRefillScreen = screen;
+        pendingCraftRefillButton = button;
+        pendingCraftRefillBlueprint = blueprint;
+        pendingCraftResultItemId = resultId == null ? "" : resultId.toString();
+        pendingCraftResultCount = com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(result) ? 0 : result.stackSize;
+    }
+
+    public static void trySendPendingCraftRefill(GuiScreen screen, int button) {
+        if (pendingCraftRefillScreen != screen
+                || pendingCraftRefillButton != button
+                || pendingCraftRefillBlueprint.size() != 9) {
+            clearPendingCraftRefill();
+            return;
+        }
+        RtsPayloadRegistrar.sendToServer(new C2SRtsCraftRefillPayload(
+                new ArrayList<>(pendingCraftRefillBlueprint),
+                pendingCraftResultItemId,
+                pendingCraftResultCount));
+        clearPendingCraftRefill();
+    }
+
+    public static void clearPendingCraftRefill() {
+        pendingCraftRefillScreen = null;
+        pendingCraftRefillButton = -1;
+        pendingCraftRefillBlueprint = java.util.Collections.emptyList();
+        pendingCraftResultItemId = "";
+        pendingCraftResultCount = 0;
+    }
+
+    // =========================================================================
+    //  Return queue
+    // =========================================================================
+
+    public static void enqueueReturnPreview(ItemStack stack) {
+        pruneReturnQueue();
+        int slot = -1;
+        for (int i = 0; i < RETURN_SLOTS; i++) {
+            if (com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(RETURN_QUEUE[i])) {
+                slot = i;
+                break;
+            }
+        }
+        if (slot < 0) {
+            for (int i = 1; i < RETURN_SLOTS; i++) {
+                RETURN_QUEUE[i - 1] = RETURN_QUEUE[i];
+                RETURN_QUEUE_EXPIRY[i - 1] = RETURN_QUEUE_EXPIRY[i];
+            }
+            slot = RETURN_SLOTS - 1;
+        }
+        RETURN_QUEUE[slot] = stack.copy();
+        RETURN_QUEUE_EXPIRY[slot] = System.currentTimeMillis() + RETURN_PREVIEW_MS;
+    }
+
+    public static void pruneReturnQueue() {
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < RETURN_SLOTS; i++) {
+            if (!com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(RETURN_QUEUE[i]) && now >= RETURN_QUEUE_EXPIRY[i]) {
+                RETURN_QUEUE[i] = null;
+                RETURN_QUEUE_EXPIRY[i] = 0L;
+            }
+        }
+        int write = 0;
+        for (int read = 0; read < RETURN_SLOTS; read++) {
+            if (com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(RETURN_QUEUE[read])) {
+                continue;
+            }
+            if (write != read) {
+                RETURN_QUEUE[write] = RETURN_QUEUE[read];
+                RETURN_QUEUE_EXPIRY[write] = RETURN_QUEUE_EXPIRY[read];
+                RETURN_QUEUE[read] = null;
+                RETURN_QUEUE_EXPIRY[read] = 0L;
+            }
+            write++;
+        }
+    }
+
+    // =========================================================================
+    //  Inventory RTS buttons
+    // =========================================================================
+
+    public static void renderInventoryRtsButtons(FontRenderer font, GuiScreen screen,
+            double mouseX, double mouseY) {
+        if (!ClientRtsController.get().isProgressionEnabled()) {
+            return;
+        }
+        OverlayLayoutHelper.ButtonLayout home = inventoryHomeButton(screen);
+        Gui.drawRect(home.x(), home.y(), home.x() + home.w(), home.y() + home.h(),
+                ContainerOverlayStyle.INVENTORY_HOME_BACKGROUND.toArgb());
+        String label = I18n.format("screen.rtsbuilding.inventory.home_button");
+        font.drawString(label, home.x() + Math.max(2, (home.w() - font.getStringWidth(label)) / 2),
+                home.y() + Math.max(1, (home.h() - font.FONT_HEIGHT) / 2),
+                ContainerOverlayStyle.INVENTORY_HOME_TEXT.toArgb(), false);
+    }
+
+    public static boolean handleInventoryRtsButtonClick(GuiScreen screen, double mouseX, double mouseY) {
+        if (!ClientRtsController.get().isProgressionEnabled()) {
+            return false;
+        }
+        Minecraft minecraft = Minecraft.getMinecraft();
+        OverlayLayoutHelper.ButtonLayout home = inventoryHomeButton(screen);
+        if (inside(mouseX, mouseY, home.x(), home.y(), home.w(), home.h())) {
+            minecraft.displayGuiScreen(new RtsHomeScreen(screen));
+            return true;
+        }
+        return false;
+    }
+
+    public static OverlayLayoutHelper.ButtonLayout inventoryHomeButton(GuiScreen screen) {
+        int x = Math.max(4, (screen.width - INVENTORY_RTS_BUTTON_W) / 2);
+        int y = 4;
+        return new OverlayLayoutHelper.ButtonLayout(x, y, INVENTORY_RTS_BUTTON_W, INVENTORY_RTS_BUTTON_H);
+    }
+
+    // =========================================================================
+    //  Craft search
+    // =========================================================================
+
+    public static void submitOverlayCraftDialogIfReady() {
+        if (OVERLAY_CRAFT_DIALOG != null) {
+            RtsCraftablesUiHelper.submitPendingCraftRequest(OVERLAY_CRAFT_DIALOG, ClientRtsController.get());
+        }
+    }
+
+    public static boolean handleOverlayCraftLeftClick(double mouseX, double mouseY, OverlayLayoutHelper.OverlayLayout layout) {
+        if (!inside(mouseX, mouseY, layout.craftPanelX(), layout.craftPanelY(), layout.craftPanelW(), layout.craftPanelH())) {
+            return false;
+        }
+        OverlayInputHandler.clearOverlaySearchFocus();
+        if (inside(mouseX, mouseY, layout.craftPanelX() + 3, layout.craftPanelY() + 2,
+                Math.max(36, layout.craftPanelW() - 6), OVERLAY_HEADER_H + 2)) {
+            overlayCraftCollapsed = !overlayCraftCollapsed;
+            OverlayInputHandler.clearOverlaySearchFocus();
+            return true;
+        }
+        if (layout.craftCollapsed()) {
+            OverlayInputHandler.clearOverlaySearchFocus();
+            return true;
+        }
+        if (inside(mouseX, mouseY, layout.craftSearchX(), layout.craftSearchY(), layout.craftSearchW(), CRAFT_SEARCH_H)) {
+            OverlayInputHandler.setOverlayCraftSearchFocused(true);
+            return true;
+        }
+        if (inside(mouseX, mouseY, layout.craftApplyX(), layout.craftSearchY(), CRAFT_APPLY_W, CRAFT_SEARCH_H)) {
+            applyOverlayCraftSearch();
+            OverlayInputHandler.clearOverlaySearchFocus();
+            return true;
+        }
+        if (inside(mouseX, mouseY, layout.craftToggleX(), layout.craftSearchY(), CRAFT_TOGGLE_W, CRAFT_SEARCH_H)) {
+            OverlayInputHandler.clearOverlaySearchFocus();
+            ClientRtsController.get().toggleCraftablesShowUnavailable();
+            return true;
+        }
+        OverlayInputHandler.clearOverlaySearchFocus();
+        return true;
+    }
+
+    public static boolean handleOverlayCraftRightClick(double mouseX, double mouseY, OverlayLayoutHelper.OverlayLayout layout) {
+        if (!inside(mouseX, mouseY, layout.craftPanelX(), layout.craftPanelY(), layout.craftPanelW(), layout.craftPanelH())) {
+            return false;
+        }
+        if (layout.craftCollapsed()) {
+            return true;
+        }
+        int index = resolveOverlayCraftableEntryIndex(mouseX, mouseY, layout);
+        if (index < 0 || index >= ClientRtsController.get().getCraftableEntries().size()) {
+            return true;
+        }
+        CraftableEntry entry = ClientRtsController.get().getCraftableEntries().get(index);
+        if (!entry.craftable()) {
+            return true;
+        }
+        OverlayInputHandler.clearOverlaySearchFocus();
+        RtsCraftablesUiHelper.openCraftQuantityDialog(OVERLAY_CRAFT_DIALOG, entry);
+        return true;
+    }
+
+    public static void applyOverlayCraftSearch() {
+        overlayCraftSearchDraft = normalizeOverlayCraftSearchDraft(overlayCraftSearchDraft);
+        overlayCraftScroll = 0;
+        ClientRtsController.get().setCraftablesSearch(overlayCraftSearchDraft);
+    }
+
+    public static boolean hasPendingOverlayCraftSearch() {
+        return !normalizeOverlayCraftSearchDraft(overlayCraftSearchDraft)
+                .equals(normalizeOverlayCraftSearchDraft(ClientRtsController.get().getCraftablesSearch()));
+    }
+
+    public static String normalizeOverlayCraftSearchDraft(String value) {
+        return RtsCraftablesUiHelper.normalizeSearchDraft(value);
+    }
+
+    // =========================================================================
+    //  Utility
+    // =========================================================================
+
+    public static long resolvePinnedItemCount(String itemId) {
+        return ClientRtsController.get().getStorageTotalCount(itemId);
+    }
+
+    public static String storageCountDetail(ClientRtsController controller, long count) {
+        return I18n.format(controller.isStorageLinked()
+                        ? "screen.rtsbuilding.tooltip.count_storage"
+                        : "screen.rtsbuilding.tooltip.count_inventory",
+                RtsClientUiUtil.compactCount(count));
+    }
+
+    public static boolean isLeftMouseDown() {
+        return Mouse.isButtonDown(0);
+    }
+
+    private static boolean sameItemAndTags(ItemStack left, ItemStack right) {
+        return com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.areItemsEqual(left, right) && ItemStack.areItemStackTagsEqual(left, right);
+    }
+
+    private static ItemStack copyOne(ItemStack stack) {
+        ItemStack copy = stack.copy();
+        copy.stackSize = 1;
+        return copy;
+    }
+}

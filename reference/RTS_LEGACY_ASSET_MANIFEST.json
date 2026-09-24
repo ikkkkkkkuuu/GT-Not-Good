@@ -1,0 +1,330 @@
+{
+  "stage": "Official forge-1.7.10 source and resource integration; see OFFICIAL_IMPORT_MANIFEST.json. Legacy preview records below are historical.",
+  "references": [
+    {
+      "source": "https://github.com/Hcrab/RTSbuilding",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "codeLicense": "LGPL-3.0-only",
+      "assetLicense": "LICENSE-ASSETS / ASSET-LICENSES.md; original media all rights reserved"
+    },
+    {
+      "source": "https://github.com/zslingy/RTSbuilding-1.7.10-GTNH",
+      "commit": "5147af59f8e35cd7710db6359f7a240dd1892644",
+      "codeLicenseFile": "LICENSE.txt (LGPL-3.0)",
+      "assetReuse": "Not authorized by assumption; no assets copied"
+    }
+  ],
+  "assets": [],
+  "copiedSourceFiles": [
+    {
+      "source": "src/main/java/com/rtsbuilding/rtsbuilding/client/service/CameraMotionSolver.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/CameraMotionSolver.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "modifications": "Package relocation, Java 8 immutable classes replacing records, standalone Math clamps replacing modern Minecraft Mth. Corrected right-axis basis for positive-D input and grab-pan against the vanilla yaw+180 view transform; forward/dolly unchanged."
+    },
+    {
+      "source": "src/main/java/com/rtsbuilding/rtsbuilding/client/service/RtsCameraSmoothingMath.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/RtsCameraSmoothingMath.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "modifications": "Package relocation, Java 8 immutable classes replacing records, standalone Math clamps replacing modern Minecraft Mth."
+    },
+    {
+      "source": "src/main/java/com/rtsbuilding/rtsbuilding/client/service/CameraOrbitService.java; CameraVisualPoseState.java",
+      "modifications": "Adapted input accumulation, immediate rotation, frame smoothing and sensitivity defaults. Detached client-only camera, local bounds from server lease; no server camera movement packet. Finite input guards; focus-loss reset; input scaling remains screen-owned.",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/RtsCameraController.java",
+      "license": "LGPL-3.0-only"
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiInsets.java",
+      "modifications": "Package relocation and nested-class documentation; upstream geometry and coordinates preserved.",
+      "license": "LGPL-3.0-only",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/geometry/UiInsets.java"
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiClipStack.java",
+      "modifications": "Package relocation and nested-class documentation; upstream geometry and coordinates preserved.",
+      "license": "LGPL-3.0-only",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/canvas/UiClipStack.java"
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiRect.java",
+      "modifications": "Package relocation and nested-class documentation; upstream geometry and coordinates preserved.",
+      "license": "LGPL-3.0-only",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/geometry/UiRect.java"
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/RtsMainlineLayout.java",
+      "modifications": "Package relocation and nested-class documentation; upstream geometry and coordinates preserved.",
+      "license": "LGPL-3.0-only",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/layout/RtsMainlineLayout.java"
+    },
+    {
+      "destination": "src/test/java/com/xyp/gtnotgood/client/rts/RtsMainlineLayoutTest.java",
+      "modifications": "JUnit 5 imports/public methods adapted to JUnit 4; assertion coordinates unchanged.",
+      "license": "LGPL-3.0-only",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "source": "src/uiKitTest/java/com/rtsbuilding/rtsbuilding/uikit/layout/RtsMainlineLayoutTest.java"
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/window/UiWindowInteractionModel.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiWindowInteractionModel.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, LGPL header, nested-type Javadoc and project formatting. Upstream interaction/scroll/tooltip algorithms preserved."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/tooltip/UiTooltipPlacement.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiTooltipPlacement.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, LGPL header, nested-type Javadoc and project formatting. Upstream interaction/scroll/tooltip algorithms preserved."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/scroll/UiScrollModel.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiScrollModel.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, LGPL header, nested-type Javadoc and project formatting. Upstream interaction/scroll/tooltip algorithms preserved."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/scroll/UiVisibleRange.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiVisibleRange.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, LGPL header, nested-type Javadoc and project formatting. Upstream interaction/scroll/tooltip algorithms preserved."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/bottom/BottomBarUiAction.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomBarUiAction.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, license header, nested-type Javadoc and formatting; bottom-bar state and command semantics preserved."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/bottom/BottomBarUiCategory.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomBarUiCategory.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, license header, nested-type Javadoc and formatting; bottom-bar state and command semantics preserved."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/bottom/BottomBarUiEntry.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomBarUiEntry.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, license header, nested-type Javadoc and formatting; bottom-bar state and command semantics preserved."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/bottom/BottomBarUiFormats.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomBarUiFormats.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, license header, nested-type Javadoc and formatting; bottom-bar state and command semantics preserved."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/bottom/BottomBarUiReducer.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomBarUiReducer.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, license header, nested-type Javadoc and formatting; bottom-bar state and command semantics preserved."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/bottom/BottomBarUiState.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomBarUiState.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, license header, nested-type Javadoc and formatting; bottom-bar state and command semantics preserved."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/bottom/BottomBarUiTab.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomBarUiTab.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, license header, nested-type Javadoc and formatting; bottom-bar state and command semantics preserved."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/bottom/BottomBarUiToolSlot.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomBarUiToolSlot.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, license header, nested-type Javadoc and formatting; bottom-bar state and command semantics preserved."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/bottom/BottomBarUiTransition.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomBarUiTransition.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, license header, nested-type Javadoc and formatting; bottom-bar state and command semantics preserved."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/layout/BottomPanelGridLayout.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomPanelGridLayout.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, license header, nested-type Javadoc and formatting; bottom-bar state and command semantics preserved. Reject non-finite pointer coordinates instead of allowing NaN to hit cell zero."
+    },
+    {
+      "source": "src/uiCoreTest/java/com/rtsbuilding/rtsbuilding/uicore/bottom/BottomBarUiReducerTest.java",
+      "destination": "src/test/java/com/xyp/gtnotgood/client/rts/BottomBarUiReducerTest.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "JUnit 4 adaptation and package relocation; upstream assertions preserved."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/layout/BottomPanelBrowseLayout.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomPanelBrowseLayout.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, nested-type Javadoc and formatting; test sources adapted to JUnit 4. Geometry and assertions preserved."
+    },
+    {
+      "source": "src/uiKitTest/java/com/rtsbuilding/rtsbuilding/uikit/layout/BottomPanelBrowseLayoutTest.java",
+      "destination": "src/test/java/com/xyp/gtnotgood/client/rts/BottomPanelBrowseLayoutTest.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, nested-type Javadoc and formatting; test sources adapted to JUnit 4. Geometry and assertions preserved."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/layout/BottomPanelSortLayout.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomPanelSortLayout.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, nested-type Javadoc and formatting; test sources adapted to JUnit 4. Geometry and assertions preserved."
+    },
+    {
+      "source": "src/uiKitTest/java/com/rtsbuilding/rtsbuilding/uikit/layout/BottomPanelSortLayoutTest.java",
+      "destination": "src/test/java/com/xyp/gtnotgood/client/rts/BottomPanelSortLayoutTest.java",
+      "commit": "b5a70d83a41d7149f7c34d4aae2081017532ab08",
+      "license": "LGPL-3.0-only",
+      "modifications": "Package relocation, nested-type Javadoc and formatting; test sources adapted to JUnit 4. Geometry and assertions preserved."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/topbar/TopBarUiButtonId.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/TopBarUiButtonId.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/topbar/TopBarUiButton.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/TopBarUiButton.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/topbar/TopBarUiState.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/TopBarUiState.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/topbar/TopBarUiAction.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/TopBarUiAction.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/topbar/TopBarUiReducer.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/TopBarUiReducer.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/topbar/TopBarUiTransition.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/TopBarUiTransition.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/layout/BottomPanelHeaderLayout.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomPanelHeaderLayout.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/layout/BottomPanelCategoryLayout.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/BottomPanelCategoryLayout.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/layout/WorkflowWindowLayout.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/WorkflowWindowLayout.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/animation/UiFloatAnimation.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiFloatAnimation.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/animation/SystemUiClock.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/SystemUiClock.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/animation/UiEasing.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiEasing.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/animation/UiMotionSpec.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiMotionSpec.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/bottom/PanelUiCatalog.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/PanelUiCatalog.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/registry/UiRegistration.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiRegistration.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/bottom/PanelUiContribution.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/PanelUiContribution.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/animation/UiClock.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiClock.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiKit/java/com/rtsbuilding/rtsbuilding/uikit/animation/FixedUiClock.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/FixedUiClock.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/registry/UiOrderedRegistry.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiOrderedRegistry.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    },
+    {
+      "source": "src/uiCore/java/com/rtsbuilding/rtsbuilding/uicore/control/UiControlRole.java",
+      "license": "LGPL-3.0-only",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/rts/gui/UiControlRole.java",
+      "modifications": "Package relocation, Java 8/Javadoc/formatter adaptation; original control semantics and geometry retained."
+    }
+  ],
+  "officialImportManifest": "OFFICIAL_IMPORT_MANIFEST.json"
+}

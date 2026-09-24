@@ -1,0 +1,222 @@
+package com.rtsbuilding.rtsbuilding.server.task.persistence;
+
+import com.github.bsideup.jabel.Desugar;
+import com.rtsbuilding.rtsbuilding.server.task.identity.TaskId;
+import com.rtsbuilding.rtsbuilding.server.task.TaskType;
+import com.rtsbuilding.rtsbuilding.server.task.persistence.asset.TaskAssetId;
+import com.rtsbuilding.rtsbuilding.server.task.persistence.asset.TaskAssetManifest;
+import com.rtsbuilding.rtsbuilding.server.task.persistence.asset.TaskAssetMetadata;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+
+/**
+ * durable task 的持久化端口。
+ *
+ * <p>一次 {@link Commit} 必须满足全有或全无。主线程只调用 {@link #prepare(Commit)}；后台 writer
+ * 只接收 {@link PreparedCommit} 并调用 {@link #writePrepared(PreparedCommit)}；完成消息回到主线程后
+ * 才调用 {@link #acknowledge(WriteCompletion)}。后台阶段不得接触玩家、世界、Capability 或 Session。</p>
+ */
+public interface TaskRepository {
+
+    LoadResult load();
+
+    PrepareResult prepare(Commit commit);
+
+    /** 仅限有界后台 writer 调用；实现只能操作深复制 NBT、byte[]、Path 和普通值。 */
+    WriteCompletion writePrepared(PreparedCommit preparedCommit);
+
+    /** 仅限服务器主线程消费 writer completion。 */
+    AcknowledgeResult acknowledge(WriteCompletion completion);
+
+    /** 已持久化的完整逻辑镜像；集合在构造时做防御性复制。 */
+    @Desugar
+    record Image(Map<TaskId, TaskSnapshot> tasks,
+                 Map<TaskId, TaskTombstone> tombstones,
+                 Set<String> completedMigrations,
+                 TaskAssetManifest assets) {
+        public Image {
+            tasks = Collections.unmodifiableMap(new LinkedHashMap<TaskId, TaskSnapshot>(
+                    Objects.requireNonNull(tasks, "tasks")));
+            tombstones = Collections.unmodifiableMap(new LinkedHashMap<TaskId, TaskTombstone>(
+                    Objects.requireNonNull(tombstones, "tombstones")));
+            completedMigrations = com.rtsbuilding.rtsbuilding.server.task.Java8Collections.copySet(
+                    new LinkedHashSet<>(Objects.requireNonNull(completedMigrations, "completedMigrations")));
+            Objects.requireNonNull(assets, "assets");
+            assets.requireOwnedBy(tasks.keySet());
+            requireConsistentAssetLinks(tasks, assets);
+        }
+
+        public static Image empty() {
+            return new Image(Collections.<TaskId, TaskSnapshot>emptyMap(),
+                    Collections.<TaskId, TaskTombstone>emptyMap(),
+                    com.rtsbuilding.rtsbuilding.server.task.Java8Collections.<String>setOf(),
+                    TaskAssetManifest.empty());
+        }
+
+        // Jabel 在 Java 8 目标下不会替 record 生成可靠的值语义，必须显式保留。
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            if (!(other instanceof Image)) return false;
+            Image that = (Image) other;
+            return tasks.equals(that.tasks)
+                    && tombstones.equals(that.tombstones)
+                    && completedMigrations.equals(that.completedMigrations)
+                    && assets.equals(that.assets);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(tasks, tombstones, completedMigrations, assets);
+        }
+    }
+
+    /** 一个必须原子提交的增量批次。 */
+    @Desugar
+    record Commit(List<TaskSnapshot> upserts,
+                  List<TaskTombstone> tombstones,
+                  Set<TaskId> purgedTombstones,
+                  Set<String> completedMigrations,
+                  List<TaskAssetMetadata> assetUpserts,
+                  Set<TaskAssetId> removedAssets) {
+        public Commit {
+            upserts = com.rtsbuilding.rtsbuilding.server.task.Java8Collections.copyList(new ArrayList<>(Objects.requireNonNull(upserts, "upserts")));
+            tombstones = com.rtsbuilding.rtsbuilding.server.task.Java8Collections.copyList(new ArrayList<>(Objects.requireNonNull(tombstones, "tombstones")));
+            purgedTombstones = com.rtsbuilding.rtsbuilding.server.task.Java8Collections.copySet(
+                    new LinkedHashSet<>(Objects.requireNonNull(purgedTombstones, "purgedTombstones")));
+            completedMigrations = com.rtsbuilding.rtsbuilding.server.task.Java8Collections.copySet(
+                    new LinkedHashSet<>(Objects.requireNonNull(completedMigrations, "completedMigrations")));
+            assetUpserts = com.rtsbuilding.rtsbuilding.server.task.Java8Collections.copyList(new ArrayList<>(Objects.requireNonNull(assetUpserts, "assetUpserts")));
+            removedAssets = com.rtsbuilding.rtsbuilding.server.task.Java8Collections.copySet(
+                    new LinkedHashSet<>(Objects.requireNonNull(removedAssets, "removedAssets")));
+            if (upserts.isEmpty() && tombstones.isEmpty()
+                    && purgedTombstones.isEmpty() && completedMigrations.isEmpty()
+                    && assetUpserts.isEmpty() && removedAssets.isEmpty()) {
+                throw new IllegalArgumentException("不能提交空批次");
+            }
+        }
+
+        public Commit(List<TaskSnapshot> upserts, List<TaskTombstone> tombstones,
+                Set<TaskId> purgedTombstones, Set<String> completedMigrations) {
+            this(upserts, tombstones, purgedTombstones, completedMigrations, com.rtsbuilding.rtsbuilding.server.task.Java8Collections.listOf(), com.rtsbuilding.rtsbuilding.server.task.Java8Collections.setOf());
+        }
+
+        public static Commit upserts(Collection<TaskSnapshot> snapshots) {
+            return new Commit(com.rtsbuilding.rtsbuilding.server.task.Java8Collections.copyList(snapshots), com.rtsbuilding.rtsbuilding.server.task.Java8Collections.listOf(), com.rtsbuilding.rtsbuilding.server.task.Java8Collections.setOf(), com.rtsbuilding.rtsbuilding.server.task.Java8Collections.setOf());
+        }
+
+        public int recordCount() {
+            return upserts.size() + tombstones.size() + purgedTombstones.size()
+                    + assetUpserts.size() + removedAssets.size();
+        }
+    }
+
+    /** Repository 自有的不透明准备结果；接口不暴露内部 NBT，避免外部线程修改。 */
+    interface PreparedCommit {
+        UUID ticketId();
+
+        int recordCount();
+    }
+
+    interface LoadResult {
+        @Desugar
+        record Found(Image image) implements LoadResult {
+            public Found {
+                Objects.requireNonNull(image, "image");
+            }
+        }
+
+        @Desugar
+        record Missing() implements LoadResult {
+        }
+
+        @Desugar
+        record Failed(Throwable cause) implements LoadResult {
+            public Failed {
+                Objects.requireNonNull(cause, "cause");
+            }
+        }
+    }
+
+    interface PrepareResult {
+        @Desugar
+        record Prepared(PreparedCommit commit) implements PrepareResult {
+            public Prepared {
+                Objects.requireNonNull(commit, "commit");
+            }
+        }
+
+        @Desugar
+        record Failed(Throwable cause) implements PrepareResult {
+            public Failed {
+                Objects.requireNonNull(cause, "cause");
+            }
+        }
+    }
+
+    @Desugar
+    record WriteCompletion(UUID ticketId, boolean successful, long bytesWritten, Throwable failure) {
+        public WriteCompletion {
+            Objects.requireNonNull(ticketId, "ticketId");
+            if (bytesWritten < -1L) throw new IllegalArgumentException("bytesWritten 无效");
+            if (successful == (failure != null)) {
+                throw new IllegalArgumentException("成功 completion 不能带 failure，失败 completion 必须带 failure");
+            }
+        }
+
+        public static WriteCompletion succeeded(UUID ticketId, long bytesWritten) {
+            return new WriteCompletion(ticketId, true, bytesWritten, null);
+        }
+
+        public static WriteCompletion failed(UUID ticketId, Throwable failure) {
+            return new WriteCompletion(ticketId, false, -1L, failure);
+        }
+    }
+
+    @Desugar
+    record AcknowledgeResult(boolean accepted, boolean durable, Throwable failure) {
+        public AcknowledgeResult {
+            if (!accepted && durable) throw new IllegalArgumentException("未接受的 ACK 不能是 durable");
+            if (durable && failure != null) throw new IllegalArgumentException("durable ACK 不能带 failure");
+        }
+    }
+
+    static void requireConsistentAssetLinks(
+            Map<TaskId, TaskSnapshot> tasks, TaskAssetManifest manifest) {
+        Map<TaskId, Integer> assetsPerTask = new LinkedHashMap<>();
+        for (TaskAssetMetadata metadata : manifest.entries().values()) {
+            TaskSnapshot task = tasks.get(metadata.taskId());
+            if (task == null) throw new IllegalArgumentException("asset metadata 引用不存在的 task");
+            if ("blueprint".equals(metadata.kind()) && task.type() != TaskType.BLUEPRINT) {
+                throw new IllegalArgumentException("blueprint metadata 只能属于 BLUEPRINT task");
+            }
+            if (!NbtCompat.hasUuid(task.payloadView(), "asset_id")
+                    || !NbtCompat.getUuid(task.payloadView(), "asset_id").equals(metadata.assetId().value())) {
+                throw new IllegalArgumentException("task.payload.asset_id 与 metadata 不一致");
+            }
+            assetsPerTask.merge(metadata.taskId(), 1, Integer::sum);
+        }
+        for (TaskSnapshot task : tasks.values()) {
+            if (!NbtCompat.containsUuidField(task.payloadView(), "asset_id")) continue;
+            if (!NbtCompat.hasUuid(task.payloadView(), "asset_id")) {
+                throw new IllegalArgumentException("task.payload.asset_id 类型损坏");
+            }
+            TaskAssetId assetId = new TaskAssetId(NbtCompat.getUuid(task.payloadView(), "asset_id"));
+            TaskAssetMetadata metadata = manifest.entries().get(assetId);
+            if (metadata == null || !metadata.taskId().equals(task.id())
+                    || assetsPerTask.getOrDefault(task.id(), 0) != 1) {
+                throw new IllegalArgumentException("含 asset_id 的 task 必须有且仅有一条匹配 metadata");
+            }
+        }
+    }
+
+}

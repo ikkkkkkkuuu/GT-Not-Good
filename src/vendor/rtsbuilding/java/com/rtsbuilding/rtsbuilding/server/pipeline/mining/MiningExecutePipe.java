@@ -1,0 +1,125 @@
+package com.rtsbuilding.rtsbuilding.server.pipeline.mining;
+
+import com.rtsbuilding.rtsbuilding.server.pipeline.context.MiningContext;
+import com.rtsbuilding.rtsbuilding.server.pipeline.core.*;
+import com.rtsbuilding.rtsbuilding.server.pipeline.sync.HistoryRecordPipe;
+import com.rtsbuilding.rtsbuilding.server.pipeline.tool.ToolBorrowPipe;
+import com.rtsbuilding.rtsbuilding.server.pipeline.tool.ToolReturnPipe;
+import com.rtsbuilding.rtsbuilding.server.pipeline.validation.SessionValidatePipe;
+import com.rtsbuilding.rtsbuilding.server.pipeline.workflow.WorkflowCompletePipe;
+import com.rtsbuilding.rtsbuilding.server.protection.RtsClaimProtectionService;
+import com.rtsbuilding.rtsbuilding.server.service.mining.RtsMiningStateMachine;
+import com.rtsbuilding.rtsbuilding.server.service.mining.RtsMiningValidator;
+import com.rtsbuilding.rtsbuilding.server.service.mining.RtsToolLease;
+import com.rtsbuilding.rtsbuilding.server.storage.resolver.RtsLinkedStorageResolver;
+import com.rtsbuilding.rtsbuilding.server.storage.session.RtsStorageSession;
+import com.rtsbuilding.rtsbuilding.platform.math.BlockPos;
+import com.rtsbuilding.rtsbuilding.platform.math.EnumFacing;
+import net.minecraft.entity.player.EntityPlayerMP;
+
+import java.util.List;
+
+/**
+ * 执行单方块远程挖掘操作。
+ *
+ * <p>此 Pipe 按顺序处理以下关注点：</p>
+ * <ol>
+ *   <li>验证世界目标访问——如果玩家无法到达目标则失败。</li>
+ *   <li>尝试已放置方块恢复——如果恢复成功则跳过管道。</li>
+ *   <li>创造模式快速路径——立即破坏方块，记录历史。</li>
+ *   <li>生存模式设置——从共享数据读取借用工具租约，配置会话
+ *       状态，并调用 {@link RtsMiningStateMachine#beginRemoteMining}。</li>
+ * </ol>
+ *
+ * <p>预期的上下文参数：</p>
+ * <ul>
+ *   <li>{@code "pos"} —— {@link BlockPos} 目标位置</li>
+ *   <li>{@code "face"} —— {@link EnumFacing} 挖掘面（可为空）</li>
+ *   <li>{@code "allowPlacedBlockRecovery"} —— {@code boolean}（可选，默认 false）</li>
+ *   <li>{@code "toolProtectionEnabled"} —— {@code boolean}（可选，默认 true）</li>
+ * </ul>
+ *
+ * <p>从共享数据中读取：</p>
+ * <ul>
+ *   <li>{@code "session"} —— 由 {@link SessionValidatePipe} 解析</li>
+ *   <li>{@code "toolLease"} —— 借用的工具租约（创造模式下可能不存在）</li>
+ *   <li>{@code "selectedToolRequested"} —— 是否请求了特定工具</li>
+ * </ul>
+ */
+public final class MiningExecutePipe implements PipelinePipe<MiningContext> {
+
+    public static final TypedKey<BlockPos> ARG_POS =
+            new TypedKey<>("pos", BlockPos.class);
+    public static final TypedKey<EnumFacing> ARG_FACE =
+            new TypedKey<>("face", EnumFacing.class);
+    public static final TypedKey<Boolean> ARG_ALLOW_PLACED_BLOCK_RECOVERY =
+            new TypedKey<>("allowPlacedBlockRecovery", Boolean.class);
+    public static final TypedKey<Boolean> ARG_TOOL_PROTECTION_ENABLED =
+            new TypedKey<>("toolProtectionEnabled", Boolean.class);
+
+    public static final TypedKey<RtsToolLease> KEY_TOOL_LEASE = ToolBorrowPipe.KEY_TOOL_LEASE;
+    public static final TypedKey<Boolean> KEY_SELECTED_TOOL_REQUESTED = ToolBorrowPipe.KEY_SELECTED_TOOL_REQUESTED;
+    public static final TypedKey<Integer> KEY_WORKFLOW_ENTRY_ID = PipelineContext.KEY_WORKFLOW_ENTRY_ID;
+
+    @Override
+    public PipelineResult execute(MiningContext ctx) {
+        MiningContext mctx = ctx;
+        RtsStorageSession session = mctx.getResolvedSession();
+        if (session == null) {
+            return PipelineResult.failure("No session in context — SessionValidatePipe must run first");
+        }
+
+        EntityPlayerMP player = mctx.player();
+        BlockPos pos = mctx.getPos();
+        EnumFacing face = mctx.getFace();
+        int toolSlot = RtsMiningValidator.clampHotbarSlot(mctx.getToolSlot());
+        boolean allowPlacedBlockRecovery = mctx.isAllowPlacedBlockRecovery();
+        boolean toolProtectionEnabled = mctx.isToolProtectionEnabled();
+
+        // ── 1. 验证世界目标访问 ──────────────────────────────
+        if (!RtsLinkedStorageResolver.canAccessWorldTarget(player, pos)) {
+            return PipelineResult.failure("Cannot access world target at " + pos);
+        }
+        if (!RtsClaimProtectionService.canBreakBlock(player, pos, face == null ? EnumFacing.DOWN : face)) {
+            return PipelineResult.failure("Claim protection denied block break at " + pos);
+        }
+
+        // ── 2. 已放置方块恢复 ─────────────────────────────────────
+        if (allowPlacedBlockRecovery
+                && RtsMiningValidator.tryRecoverPlacedBlock(player, session, pos, face)) {
+            return PipelineResult.skip("Placed block recovered, no mining needed");
+        }
+
+        // ── 3. 创造模式快速路径 ───────────────────────────────────
+        if (player.capabilities.isCreativeMode) {
+            EnumFacing actualFace = face == null ? EnumFacing.DOWN : face;
+            // 在上下文数据中存储破坏信息，用于历史记录
+            ctx.setData(HistoryRecordPipe.ARG_HISTORY_POSITIONS, com.rtsbuilding.rtsbuilding.server.task.Java8Collections.listOf(pos.toImmutable()));
+            ctx.setData(HistoryRecordPipe.ARG_HISTORY_FACE, actualFace);
+            RtsMiningStateMachine.destroyMinedBlock(player, session, pos, toolSlot);
+            // 完成工作流、归还工具、记录历史（同生存模式 finalizeMiningOperation）
+            WorkflowPipeline.runCleanupSequence(ctx, com.rtsbuilding.rtsbuilding.server.task.Java8Collections.listOf(
+                    new WorkflowCompletePipe(),
+                    new ToolReturnPipe(),
+                    new HistoryRecordPipe()
+            ));
+            return PipelineResult.success();
+        }
+
+        // ── 5. 生存模式设置 ───────────────────────────────────────
+        session.mining.miningToolLease = mctx.hasToolLease()
+                ? mctx.getToolLease()
+                : RtsToolLease.empty();
+        // 这是本次请求的快照，不能只在 true 时写入；否则一次指定工具请求
+        // 会污染后续空手请求，使所有挖掘速度永久变成 0。
+        session.mining.miningSelectedToolRequested = mctx.isSelectedToolRequested();
+        session.mining.miningToolProtectionEnabled = toolProtectionEnabled;
+
+        int workflowEntryId = mctx.hasWorkflowEntryId() ? mctx.getWorkflowEntryId() : -1;
+        boolean submitted = com.rtsbuilding.rtsbuilding.server.task.RtsTaskEngine.INSTANCE
+                .submitMiningTargets(player, workflowEntryId, com.rtsbuilding.rtsbuilding.server.task.Java8Collections.listOf(pos), face, toolSlot,
+                        session.mining.miningSelectedToolRequested, toolProtectionEnabled, true);
+        return submitted ? PipelineResult.success()
+                : PipelineResult.failure("无法提交挖掘任务到 TaskStore");
+    }
+}

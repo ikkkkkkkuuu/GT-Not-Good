@@ -1,4 +1,36 @@
+历史记录：旧 RTS 预览实现已于 2026-09-24 删除。下文保留迁移过程，不代表当前入口或可运行检查；当前实现见 docs/testing/rts-official-integration.md。
+
 # RTS Building → GTNG migration
+
+## Official baseline — 2026-09-24 (supersedes all staged-preview notes)
+
+The user selected Hcrab's official `forge-1.7.10` branch as the integration base.
+Commit `c8bdff25ea9aa692c641fee231671afe58057a39` is now vendored in
+`src/vendor/rtsbuilding`, including main/uiCore/uiKit and official resources.
+The normal G-key entry runs the official interface and service stack inside GTNG.
+GTNG owns item/entity registration, lifecycle and the packet-channel namespace.
+The old preview no longer registers its client events by default.
+
+GTNH AE2 rv3 API adaptation and null insertion-remainder handling replace upstream's
+still-rv6 reflection signatures. Current host dependency versions are retained.
+Validation and remaining acceptance scope: `docs/testing/rts-official-integration.md`.
+
+The following staged-preview notes are historical, not the current architecture.
+
+## Latest checkpoint (supersedes historical phase notes below)
+
+The explicitly named development preview now joins detached camera/cursor selection, real inventory
+equipment, native held/empty-hand interaction, progressive native mining, and bounded sequential
+fill/mining tasks. Tasks support pause/resume/cancel, real backpack refill and missing-material waits.
+PgUp/PgDn moves the selected region vertically. Server mining revalidates session, world, block and
+real tool identity each tick; native harvesting owns drops, durability and BreakEvent. Close has a
+bounded acknowledgement outbox independent of camera restoration.
+
+This is a usable core-operation checkpoint, **not near-complete upstream parity**. Full upstream
+GUI/animation, blueprint capture/rotation/ghosts, linked storage and crafting, persistent multi-job
+workflow, GT/AE2/StructureLib-specific adapters, Java 17 full-pack and multiplayer acceptance remain
+open. The development toolbar is not the final upstream top-bar port. See the player guide and
+dated runtime evidence in `docs/testing/` for the actual tested scope.
 
 ## Pinned inputs and scope
 
@@ -110,3 +142,61 @@ Destination roots are `com.xyp.gtnotgood.client.rts`, `common.rts`, and `common.
 Each implemented phase runs compileJava, available formatting/check/test tasks and focused runtime
 verification. No production RTS menu is exposed by the Phase 2 foundation alone; the public entry
 must wait for the camera and faithful GUI. Test-only screens may exercise ownership/restoration.
+
+## Current implementation checkpoint
+
+Phase 2: Java 8 lifecycle runtime probe passed before the subsequent cursor/action additions.
+Phase 3: production detached camera and input adapters compile; physical drag/smoothing acceptance remains open.
+Phase 4: faithful production screen/layout port remains open; no simplified replacement is exposed.
+Phase 5: matrix-based cursor picker and bounded cuboid state implemented; 7 geometry tests pass,
+with actual center-ray checks added to the next graphical probe.
+Phase 6: native held-item block-use request/service/result path implemented. This uses the actual
+selected inventory stack and ItemInWorldManager, with Forge hooks and no direct world writes.
+Session/token/dimension, selected slot/item signature, loaded chunk, build height, horizontal lease
+bounds, spawn/world protection, replay fence and one queued request per connection are enforced.
+The GUI-facing endpoint is RtsClientState.useHeldItem; native ACCEPTED means handled, not necessarily
+placed (a block may open a container). No full production GUI dispatch is claimed.
+Survival consumption/replay/Forge-denial assertions are prepared in the opt-in runtime probe but
+have not run. Empty-hand interaction, progressive mining, external material sources, batches,
+orientation adapters and machine/multipart acceptance are still pending.
+The production GUI work is the next integration priority; the lower-level endpoints now allow its
+actual controls to be connected without placeholder world edits.
+
+Phase 4 continuation: upstream mainline top/bottom geometry and clipping primitives are now ported,
+with original baseline-coordinate regression tests. RtsScreenInput routes widget-approved events
+into the camera, two-corner selection and native held-item use endpoints. Full screen composition,
+textured controls, inventory panels, animated states and the public entry are not yet complete.
+
+Runtime update: center-ray/top-face and single-block selection passed in the visible Java 8 probe.
+Fresh-world survival use, actual consumption, duplicate suppression and Forge cancellation passed
+in actions-only mode (build/rts-actions-isolated.log). Combined post-reconnect acceptance is still
+open: the current full probe has a native acknowledgement failure and subsequent CoFH ore-dictionary
+login crashes. See docs/testing/rts-lifecycle.md for evidence; do not extrapolate the focused PASS.
+## Floating-window input continuation
+
+Ported upstream drag/eight-edge resize, scrolling/visible-range and tooltip placement models.
+RtsWindowLayer gives the screen one pointer owner, consistent draw/hit order, child-control priority,
+capture across frames and out-of-window drags, close-before-release handling and focus/modal cleanup.
+RtsScreenInput owns this layer and blocks camera/world input while a window owns the gesture.
+Seven added regressions exercise overlap, drag bounds, release ownership, close/focus cleanup,
+minimum resize, large-list bounds and tooltip fallback. Full production panel composition is still open.
+## Bottom-bar data continuation
+
+Ported the upstream bottom-bar state, command reducer and grid layout, including original regression
+cases. Added read-only player inventory snapshots, name/id filtering, pagination, selected-entry
+state and NBT-preserving icon copies. RtsScreenInput refresh/close owns catalog lifetime.
+The panel renderer, creative/storage backend adapters and selection-to-material commands remain open.
+## Manual development entry
+
+The user requested a usable manual entry after the isolated probes. G now requests a server session
+and opens RtsDevelopmentScreen; ESC restores the previous view. The preview connects camera input,
+bounded selection with world outline, inventory search/paging and native held-stack use. It preserves
+the ported bar/grid geometry but is explicitly not the finished faithful upstream GUI. Full panel
+composition, storage/crafting/mining and compatibility acceptance remain on the migration plan.
+## Bottom toolbar integration
+
+The manual preview now consumes upstream search/clear/pager and sorting/height layout owners for
+both drawing and dispatch. Quantity/mod/name ordering and direction are local to read-only inventory
+snapshots; slot identities, NBT and selected source slot survive reordering. Panel resize uses the
+upstream step and minimum rows. Java 8 runtime verifies a populated two-page inventory plus screen
+exit/reopen. Full upstream theme, categories, remote storage/crafting and top-bar feature wiring remain open.

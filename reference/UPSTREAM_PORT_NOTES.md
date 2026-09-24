@@ -1,5 +1,31 @@
 # AE2LT faithful port audit
 
+## RTS official Forge baseline — 2026-09-24
+
+Source: https://github.com/Hcrab/RTSbuilding/tree/forge-1.7.10
+Pinned commit: `c8bdff25ea9aa692c641fee231671afe58057a39`.
+Reference: `reference/RTSbuilding-official-forge-1.7.10`, ignored and not a build input.
+Destination: `src/vendor/rtsbuilding/java` and `src/vendor/rtsbuilding/resources`.
+User explicitly requested source and original-resource packaging in GTNG.
+Original source LGPL-3.0-only and original-media LICENSE-ASSETS notices remain intact;
+this records the packaging instruction, not a new license grant or MIT relicensing.
+Full notices: `src/vendor/rtsbuilding/licenses`; packaged under `META-INF/licenses/rtsbuilding`.
+
+Changes: merge lifecycle into GTNG; remove standalone mod discovery; register plugins
+through GTNGItem/GTNGItemList and host creative tab; retain original resource namespace;
+dedicated host RTS packet channel; relocate the five official early mixins to host config;
+adapt AE2 reflection from rv6 to GTNH rv3 and fix successful insertion's null remainder;
+adapt optional startup QA for custom menus, unique worlds, API checks and screenshots.
+The host's GTNHLib/GT/AE2/MUI/StructureLib dependencies are retained without downgrading.
+Follow-up crash fix: correct destruction/mining/placement progress NBT type checks
+to the actual 1.7.10 int-array encoding; accept native long lists in placement job
+definitions; use the registered GTNG instance for remote chunk tickets.
+`OFFICIAL_IMPORT_MANIFEST.json` records each imported source/resource path and original hash.
+Unchanged upstream translations are imported verbatim; new GTNG translations continue
+to use adjacent Java `#tr` declarations.
+
+The older RTS staged-port section below is historical and does not describe this import.
+
 ## RTS Building staged port (2026-09-24)
 
 Behaviour source: https://github.com/Hcrab/RTSbuilding, commit
@@ -244,3 +270,119 @@ RtsCameraEntity and RtsCameraInput are local Forge/LWJGL 2 adapters. Detached ca
 spawned, and camera input never grants world-edit authority. Frame updates close on camera ownership
 loss rather than fighting another mod. Mouse gestures cancel over UI panels; captured-cursor rotation
 and full sensitivity GUI parity remain pending with the faithful screen port.
+
+RTS cursor/selection continuation: inspected pinned RaycastHelper, ScreenCursorPicker,
+ShapeSelectionSession and ShapeSelectionLimiter. Added newly authored RtsRayMath,
+RtsCursorPicker and RtsSelectionState (no additional upstream source or media copied).
+The adapter inverts the actual 1.7.10 render matrices rather than rebuilding a ray from option FOV.
+The client-only bounded voxel walk invokes each block's collisionRayTrace and retains the vanilla
+hit face, offset and subHit. It stops at EmptyChunk/unloaded client chunks; chunkExists alone is not
+valid because vanilla ChunkProviderClient always returns true. A 128-block cursor reach matches the
+pinned ScreenCursorPicker; cuboid storage is bounded to 4096 cells locally, with no world changes.
+Full shape/handle/culling/entity-picking and GUI input routing remain separate unfinished work.
+
+Native held-item interaction adapter: newly authored RtsUseBlockMessage, RtsUseBlockService and
+RtsActionLedger; no additional upstream code/media copied. The design follows the migration map's
+real-player/material contract using local Forge 1.7.10 ItemInWorldManager.activateBlockOrUseItem.
+The actual held stack is used, not a copied prototype. Sneak state is temporarily scoped in finally;
+player position, reach, item metadata and NBT are not rewritten by the adapter. Hook failures consume
+the request sequence and report an indeterminate error rather than retrying or undoing partial mod effects.
+
+GUI foundation: ported RtsMainlineLayout, UiRect, UiInsets and UiClipStack from the pinned upstream
+uiKit/uiCore source sets into client/rts/gui. LGPL-3.0-only retained, package names relocated;
+coordinates, half-open hit rectangles and nested clipping semantics unchanged. The upstream four
+RtsMainlineLayoutTest cases are ported to JUnit 4 with their coordinate assertions unchanged.
+RtsUiHitRegions and RtsScreenInput are newly authored adapters connecting those rectangles to
+camera/selection/native-use endpoints. Source/test mappings are in the packaged manifest.
+No restricted texture was copied. Full production screen composition and drawing are still open.
+# RTS floating-window interaction continuation
+
+Source: Hcrab/RTSbuilding at b5a70d83a41d7149f7c34d4aae2081017532ab08, LGPL-3.0-only.
+Inspected root LICENSE and README's separate all-rights-reserved media boundary before copying.
+No media copied. Four pure Java classes were ported into client/rts/gui:
+UiWindowInteractionModel (uiKit/window), UiScrollModel and UiVisibleRange (uiKit/scroll),
+UiTooltipPlacement (uiKit/tooltip). Changes are package relocation, license header, nested-type
+Javadoc and formatting; original geometry/scroll/fallback algorithms remain intact.
+Full source and destination paths are in META-INF/rts-port/ASSET_MANIFEST.json.
+GTNG-authored RtsWindowLayer owns stacking and capture and RtsScreenInput connects it to the
+existing camera/world dispatch. These are interaction foundations, not a completed upstream screen.
+# Bottom-bar state and inventory continuation
+
+Pinned Hcrab/RTSbuilding b5a70d83a41d7149f7c34d4aae2081017532ab08, LGPL-3.0-only:
+ported uiCore/bottom/BottomBarUi* state/action/reducer/value types, uiKit/layout/BottomPanelGridLayout,
+and the four original reducer tests. Package relocation, JUnit 4 adaptation, headers/Javadoc and
+formatting are recorded in the packaged manifest. Grid hit testing additionally rejects NaN/infinity.
+No upstream media copied. RtsInventoryCatalog is a GTNG-authored read-only inventory bridge; it does
+not implement remote storage extraction, creative item grants, crafting or selection-to-held-slot changes.
+# Camera right-axis adaptation correction
+
+CameraMotionSolver's upstream lateral basis was incompatible with this port's positive-D input.
+Changed strafe and pan-right to (-cos(yaw), -sin(yaw)), verified against MC 1.7.10's actual
+EntityRenderer Rx(pitch)*Ry(yaw+180) transform. Forward, dolly and vertical pan were preserved.
+Recorded in the camera source manifest entry; no upstream media involved.
+# Bottom toolbar controls continuation
+
+Pinned Hcrab/RTSbuilding b5a70d83a41d7149f7c34d4aae2081017532ab08, LGPL-3.0-only:
+ported uiKit/layout/BottomPanelBrowseLayout and BottomPanelSortLayout and their uiKitTest cases.
+Source/destination/license/modification records are in the packaged manifest. Geometry is unchanged;
+packages, Javadoc and JUnit 4 imports are adapted. No media copied.
+The manual preview now consumes the same upstream rectangles for drawing and clicking clear/search,
+previous/next page, sorting/direction and height controls. Height changes use upstream's 22-pixel step.
+The local inventory adapter sorts separate real slots by quantity/mod/name without moving any items.
+Minecraft 1.7.10 tooltips display actual stack metadata; final upstream theme parity remains open.
+
+# Native operations and sequential task continuation
+
+Behavior references remain pinned to Hcrab b5a70d83a41d7149f7c34d4aae2081017532ab08:
+RtsMiningStateMachine, ConstructionMaterialSources and PlacementExecutePipe. The 1.7.10 adapters
+RtsMiningOperation, RtsTaskQueue and RtsCloseHandshake are newly authored, not copied upstream source.
+Mining accumulates native player-relative hardness and calls ItemInWorldManager.tryHarvestBlock;
+it deliberately does not arm the legacy uncancellable deferred-finish flag. Original GUI parity,
+linked storage, histories and persistent workflow remain pending; these adapters are not substitutes
+for acceptance of those upstream systems. No upstream media was copied.
+
+## Official quick-drop null-stack compatibility — 2026-09-24
+Pinned official source remains c8bdff25ea9aa692c641fee231671afe58057a39. RtsTransferExtractor now uses StackCompat.count for nullable linked/hotbar/network extraction results. This preserves extraction priority and limits while accepting Minecraft 1.7.10 null empty stacks. Added independently authored OfficialRtsQuickDropTest and an empty-source quick-drop packet probe in the opt-in startup smoke. No assets changed.
+
+## GT native quick-build placement — 2026-09-24
+Inspected the installed GT5-Unofficial 5.09.54.133 sources, gregtech/common/blocks/ItemMachines.java placeBlockAt. RTS quick build now delegates ItemMachines placement to that native hook with the original prototype and clicked face, rather than setting only block metadata. This preserves MetaTileEntity initialization, ownership, connection hooks and synchronization; it avoids repeating generic placement callbacks afterwards. No GT source or assets copied. Official RTS pinned revision remains unchanged.
+
+## Full-chunk tile description synchronization — 2026-09-24
+User follow-up exposed a second GT issue in RtsRemoteMenuChunkLease. The pinned RTS branch sent S21PacketChunkData for distant interactions, but sent only the clicked tile description later. A controlled pre-fix client run at more than eight blocks reproduced loss of the first controller subtype after placing the second in the same chunk (build/rts-remote-repro-client.log; remote-before-fix.txt). The 1.7.10 adapter now sends every live tile's native description packet immediately after full chunk data, isolating failures per tile. Inspected GT5 5.09.54.133 CommonBaseMetaTileEntity.getDescriptionPacket (native S35 data); no GT source copied. Near-only prior tests did not cover this lease path.
+
+## Nullable durable placement prototype — 2026-09-24
+The user's 15:29:31 crash is PlaceBatchJob.itemPrototype copying a null optional prototype. The constructor and NBT format already permit absent prototypes (empty-hand/current-tool tasks); the getter now uses StackCompat.copyOrNull. Added restore/resave and unreadable-prototype regression cases plus an actual sendEmptyHandPlace durable-task probe. No inventory semantics, task format or assets changed.
+
+## GT rotation and destruction history compatibility — 2026-09-24
+Added independently authored common/placement/GtMachineRotation.java. Both client rotation handles and the server resolve legal facings through IGregTechTileEntity; server mutation uses setFrontFacing and markDirty, preserving tile identity and GT notifications. Inspected installed GT5 5.09.54.133 BaseMetaTileEntity.setFrontFacing and CommonBaseMetaTileEntity.isValidFacing. No GT source copied. Existing RTS permission/range checks remain in effect.
+RtsDestructionBatch now serializes native case-sensitive registry names and metadata, instead of converting names through ResourceLocation and dropping metadata. Unavailable history records are logged/skipped so terminal task history cannot crash the server; other records are retained. The startup probe checks all mixed-case block registry entries for metadata-preserving history round trips and performs four real GT rotation requests.
+
+## Range-handle cursor alignment — 2026-09-24
+RtsCursorRay now captures the actual world model-view/projection/viewport before RTS overlays and unprojects framebuffer mouse coordinates. The previous analytical ray used raw FOV and eye position, which need not match the rendered 1.7.10 camera transform. Cached frames are rejected on camera/world/size changes; the analytical path remains a pre-frame fallback. Six-axis arrow picking gains a symmetric 0.12-block tolerance without changing drawn geometry. The opt-in smoke projects each visible arrow head through the captured matrices and checks a picking ray through that pixel. No assets changed.
+
+## Plugin item display names — 2026-09-24
+RtsPluginItem now translates the full .name key directly, falling back to the bare upstream key. Upstream includes both key forms; vanilla 1.7.10's getUnlocalizedNameInefficiently translates the bare key before appending .name, producing translated text followed by the literal suffix. The shared item override covers all plugins without editing language assets. Assembly passed.
+
+## Linked AE drop insertion crash — 2026-09-24
+User confirmed AE network linked before area destruction. RtsAggregateStorage.trackChange now treats a null insertion remainder as zero, matching native 1.7.10 success semantics. Added inventory full/partial/complete/simulation and slot-independent AnySlotInsertItemHandler regression coverage. Also fixed the analogous unchecked remainder count in linked-storage-to-player transfer. No changes to AE permissions or insertion policy.
+
+## Linked network browser refresh — 2026-09-24
+LinkedItemHandlerView now forwards RefreshableSnapshotHandler so the browser cache can refresh AE snapshots after network changes. RtsAe2Compat.getReportedCount accepts the shared reported-count interface as well as its legacy alias. Changes are independently authored compatibility adaptations; no new assets.
+
+## Built-in unlocked RTS harvesting — 2026-09-24
+GTNG now disables plugin progression regardless of legacy setting, granting existing unrestricted capabilities and unlimited mining tier. Physical tool borrowing, harvest eligibility and durability gates are removed from RTS mining. Independently authored RtsToollessHarvest retains Forge break-event cancellation, native removal/harvest callbacks, and unbreakable-block guards. Held stack and creative state are restored in finally; no physical tool or fortune/silk-touch bonus is applied. Native drops feed the existing capture/storage path.
+
+## Top-bar texture decode recovery — 2026-09-24
+Added independently authored TopBarTexture adapter. It checks ImageIO null decode results before legacy GL upload, respects resource-pack priority, falls back to the bundled icon on IOException, and lets TextureManager handle unrecoverable image errors. TopBarIconRenderer registers this reloadable texture type before first binding. No artwork modified. Supplied log identifies mode_rotate_active.png but does not identify which resource pack/file supplied its bytes; all 52 local top-bar PNGs decode successfully.
+
+## Inventory RTS button removal — 2026-09-24
+Removed the GuiInventory initialization subscriber that added the RTS plugin-management button. Existing client configuration cannot recreate the removed entry point. Keyboard RTS entry remains available.
+
+## Legacy preview removal — 2026-09-24
+Removed 60 client preview classes, five common RTS classes, both legacy packet classes, legacy registrations/proxy delivery/key binding/config fields, and preview-only tests. Retained OfficialRts regression fixtures and the embedded official integration. Historical ASSET_MANIFEST moved out of runtime resources to reference/RTS_LEGACY_ASSET_MANIFEST.json; NOTICE updated. Main addon packet discriminators preceding the removed tail entries remain unchanged.
+
+## Host mixin source layout — 2026-09-24
+Moved the five already host-packaged early RTS mixin sources from the upstream directory layout into src/main/java/com/xyp/gtnotgood/mixins/early/rts, matching their unchanged declared package and mixin JSON names. Updated the import manifest generator to map upstream paths to the relocated files and removed its obsolete dependency on the retired preview asset manifest. Runtime class names and injections are unchanged.
+
+## Unsupported JEI source cleanup — 2026-09-24
+Removed seven compat/jei source files and RecipeRegistryOverlayTransferMixin from the working import. They were already excluded from compilation and never active in the NEI-based 1.7.10 runtime. Removed obsolete Gradle exclusions; manifest generation explicitly skips these unsupported upstream sources, preserved in the pinned reference checkout. No NEI feature was removed. Compile, checkstyle and assembly pass.

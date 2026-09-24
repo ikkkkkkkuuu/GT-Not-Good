@@ -155,3 +155,21 @@ tasks.withType(Test).configureEach {
         systemProperty 'jdk.net.unixdomain.tmpdir', new File(System.getenv('SystemRoot') ?: 'C:/Windows', 'Temp').absolutePath
     }
 }
+// Official Forge 1.7.10 RTS sources are vendored, never compiled from reference checkouts.
+sourceSets.main.java {
+    srcDir 'src/vendor/rtsbuilding/java'
+    exclude 'com/rtsbuilding/rtsbuilding/compat/refinedstorage/**'
+    exclude 'com/rtsbuilding/rtsbuilding/bootstrap/RtsMixinConfigLoader.java'
+    exclude 'com/rtsbuilding/rtsbuilding/bootstrap/RtsLateMixinConfigLoader.java'
+}
+sourceSets.main.resources.srcDir 'src/vendor/rtsbuilding/resources'
+// Preserve the pinned upstream formatting for meaningful future vendor diffs.
+tasks.withType(Checkstyle).configureEach {
+    exclude 'com/rtsbuilding/**'
+}
+tasks.named('processResources') {
+    from('src/vendor/rtsbuilding/licenses') { into 'META-INF/licenses/rtsbuilding' }
+}
+tasks.named('sourcesJar') {
+    from('src/vendor/rtsbuilding/licenses') { into 'META-INF/licenses/rtsbuilding' }
+}

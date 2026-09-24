@@ -16,6 +16,7 @@ public enum ModList {
     NotEnoughItems(ModIds.NOT_ENOUGH_ITEMS, Names.NOT_ENOUGH_ITEMS),
     AE2(ModIds.APPLIED_ENERGISTICS_2, Names.APPLIED_ENERGISTICS_2),
     CropsNH(ModIds.CROPSNH, Names.CROPSNH),
+    SpiceOfLife(ModIds.SPICE_OF_LIFE, Names.SPICE_OF_LIFE),
     Forestry(ModIds.FORESTRY, Names.FORESTRY),
     GregTech(ModIds.GREGTECH, Names.GREGTECH),
     Thaumcraft(ModIds.THAUMCRAFT, Names.THAUMCRAFT),
@@ -32,11 +33,14 @@ public enum ModList {
     public static class ModIds {
 
         public static final String GT_NOT_GOOD = "gtnotgood";
+        /** Preserved resource namespace of the embedded official RTS Building module. */
+        public static final String RTS_BUILDING = "rtsbuilding";
         public static final String ANGELICA = "angelica";
         public static final String NOT_ENOUGH_ITEMS = "NotEnoughItems";
         public static final String BETTER_QUESTING_API = "bqapi";
         public static final String APPLIED_ENERGISTICS_2 = "appliedenergistics2";
         public static final String CROPSNH = "cropsnh";
+        public static final String SPICE_OF_LIFE = "SpiceOfLife";
         public static final String FORESTRY = "Forestry";
         public static final String GREGTECH = "gregtech";
         public static final String THAUMCRAFT = "Thaumcraft";
@@ -60,6 +64,7 @@ public enum ModList {
         public static final String BETTER_QUESTING_API = "Better Questing API";
         public static final String APPLIED_ENERGISTICS_2 = "Applied Energistics 2";
         public static final String CROPSNH = "CropsNH";
+        public static final String SPICE_OF_LIFE = "Spice of Life";
         public static final String FORESTRY = "Forestry";
         public static final String GREGTECH = "GregTech";
         public static final String THAUMCRAFT = "Thaumcraft";

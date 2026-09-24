@@ -47,8 +47,6 @@ public final class NetWorkHandler {
             com.xyp.gtnotgood.commandtree.network.CommandTreePacket.Handler.class,
             id++,
             Side.CLIENT);
-        registerMessage(RtsSessionMessage.class, RtsSessionMessage.ServerHandler.class, id, Side.SERVER);
-        registerMessage(RtsSessionMessage.class, RtsSessionMessage.ClientHandler.class, id++, Side.CLIENT);
     }
 
     private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<REQ> messageClass,
