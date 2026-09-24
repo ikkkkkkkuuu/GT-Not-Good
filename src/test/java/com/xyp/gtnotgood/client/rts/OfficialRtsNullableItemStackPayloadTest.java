@@ -13,7 +13,13 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import org.junit.Test;
 
-import com.rtsbuilding.rtsbuilding.network.builder.*;
+import com.rtsbuilding.rtsbuilding.network.builder.C2SRtsAreaDestroyPayload;
+import com.rtsbuilding.rtsbuilding.network.builder.C2SRtsAreaMinePayload;
+import com.rtsbuilding.rtsbuilding.network.builder.C2SRtsInteractPayload;
+import com.rtsbuilding.rtsbuilding.network.builder.C2SRtsMinePayload;
+import com.rtsbuilding.rtsbuilding.network.builder.C2SRtsPlaceBatchPayload;
+import com.rtsbuilding.rtsbuilding.network.builder.C2SRtsPlacePayload;
+import com.rtsbuilding.rtsbuilding.network.builder.C2SRtsUltiminePayload;
 import com.rtsbuilding.rtsbuilding.platform.math.BlockPos;
 import com.rtsbuilding.rtsbuilding.platform.storage.StackCompat;
 

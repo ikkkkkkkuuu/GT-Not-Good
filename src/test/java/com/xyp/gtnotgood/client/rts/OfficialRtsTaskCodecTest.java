@@ -17,11 +17,17 @@ import org.junit.Test;
 
 import com.rtsbuilding.rtsbuilding.platform.math.BlockPos;
 import com.rtsbuilding.rtsbuilding.platform.math.EnumFacing;
-import com.rtsbuilding.rtsbuilding.server.task.*;
-import com.rtsbuilding.rtsbuilding.server.task.destruction.*;
-import com.rtsbuilding.rtsbuilding.server.task.mining.*;
+import com.rtsbuilding.rtsbuilding.server.task.DestructionTaskPayload;
+import com.rtsbuilding.rtsbuilding.server.task.MiningTaskPayload;
+import com.rtsbuilding.rtsbuilding.server.task.PlacementTaskPayload;
+import com.rtsbuilding.rtsbuilding.server.task.destruction.DestructionTaskCodec;
+import com.rtsbuilding.rtsbuilding.server.task.destruction.DestructionTaskState;
+import com.rtsbuilding.rtsbuilding.server.task.mining.MiningTaskCodec;
+import com.rtsbuilding.rtsbuilding.server.task.mining.MiningTaskState;
 import com.rtsbuilding.rtsbuilding.server.task.persistence.NbtCompat;
-import com.rtsbuilding.rtsbuilding.server.task.placement.*;
+import com.rtsbuilding.rtsbuilding.server.task.placement.PlacementResumePolicy;
+import com.rtsbuilding.rtsbuilding.server.task.placement.PlacementTaskCodec;
+import com.rtsbuilding.rtsbuilding.server.task.placement.PlacementTaskState;
 
 /** Reproduces task snapshot decoding failures with Minecraft 1.7.10's actual NBT types. */
 public class OfficialRtsTaskCodecTest {
