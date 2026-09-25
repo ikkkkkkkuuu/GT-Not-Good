@@ -126,7 +126,7 @@ public class BlockFluxConnector extends Block {
         TileEntity tile = world.getTileEntity(nx, ny, nz);
         if (tile instanceof TileFluxConnector || !(tile instanceof IEnergyConnected target)) return false;
         return plug ? target.outputsEnergyTo(side.getOpposite(), false)
-            : target.inputEnergyFrom(side.getOpposite(), false);
+            : TileFluxConnector.acceptsPointEnergy(tile, side.getOpposite(), false);
     }
 
     @Override

@@ -26,6 +26,8 @@ import com.xyp.gtnotgood.utils.enums.ModList;
 import gregtech.api.enums.GTValues;
 import gregtech.api.interfaces.tileentity.IBasicEnergyContainer;
 import gregtech.api.interfaces.tileentity.IEnergyConnected;
+import gregtech.api.metatileentity.BaseMetaPipeEntity;
+import gregtech.api.metatileentity.implementations.MTECable;
 import gregtech.common.misc.WirelessNetworkManager;
 
 /**
@@ -332,7 +334,7 @@ public abstract class TileFluxConnector extends TileEntity implements IEnergyCon
                 TileEntity tile = neighbour(side);
                 if (!(tile instanceof IEnergyConnected target) || tile instanceof TileFluxConnector) continue;
                 ForgeDirection opposite = side.getOpposite();
-                if (!target.inputEnergyFrom(opposite)) continue;
+                if (!acceptsPointEnergy(tile, opposite, true)) continue;
                 long offered = buffer.stored() / voltage;
                 long accepted = target.injectEnergyUnits(opposite, voltage, offered);
                 buffer.remove(Math.max(0, Math.min(offered, accepted)) * voltage);
@@ -359,6 +361,24 @@ public abstract class TileFluxConnector extends TileEntity implements IEnergyCon
     private TileEntity neighbour(ForgeDirection side) {
         int x = xCoord + side.offsetX, y = yCoord + side.offsetY, z = zCoord + side.offsetZ;
         return worldObj.blockExists(x, y, z) ? worldObj.getTileEntity(x, y, z) : null;
+    }
+
+    /**
+     * GT cables accept packets through their meta pipe entity even though their base tile reports
+     * {@code inputEnergyFrom} as false. Require a connected cable face so the visual connection and
+     * actual transfer agree; ordinary machines still use their normal energy input check.
+     *
+     * @param tile          adjacent energy receiver
+     * @param inputSide     face of the receiver touching this point
+     * @param waitForActive whether an ordinary receiver must have an active input face
+     * @return whether the point may offer packets to this face
+     */
+    static boolean acceptsPointEnergy(TileEntity tile, ForgeDirection inputSide, boolean waitForActive) {
+        if (!(tile instanceof IEnergyConnected target) || tile instanceof TileFluxConnector) return false;
+        if (tile instanceof BaseMetaPipeEntity pipe && pipe.getMetaTileEntity() instanceof MTECable cable) {
+            return cable.isConnectedAtSide(inputSide);
+        }
+        return target.inputEnergyFrom(inputSide, waitForActive);
     }
 
     @Override

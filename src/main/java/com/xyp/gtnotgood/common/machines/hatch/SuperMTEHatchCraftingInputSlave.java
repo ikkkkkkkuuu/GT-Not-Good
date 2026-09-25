@@ -35,7 +35,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.implementations.MTEHatchInputBus;
 import gregtech.api.modularui2.ProxiedMteGui;
 import gregtech.api.render.TextureFactory;
-import gregtech.api.util.GTSplit;
 import gregtech.api.util.GTUtility;
 import gregtech.common.tileentities.machines.IDualInputHatchWithPattern;
 import gregtech.common.tileentities.machines.IDualInputInventory;
@@ -385,8 +384,23 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
 
     @Override
     public String[] getDescription() {
-        return PatternMEOutput.describe(
-            GTSplit
-                .splitLocalizedFormatted("gt.blockmachines.input_bus_crafting_slave.desc", TIER_COLORS[11] + VN[11]));
+        // #tr tooltip.gtnotgood.crafting_input_mirror.proxy
+        // # Proxy for Crafting Input Buffer/Bus (CRIB)
+        // # zh_CN 样板输入总成或总线（CRIB）的镜像舱
+        String proxy = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input_mirror.proxy");
+        // #tr tooltip.gtnotgood.crafting_input_mirror.tier
+        // # Hatch Tier: %s
+        // # zh_CN 舱室等级：%s
+        String tier = StatCollector
+            .translateToLocalFormatted("tooltip.gtnotgood.crafting_input_mirror.tier", TIER_COLORS[11] + VN[11]);
+        // #tr tooltip.gtnotgood.crafting_input_mirror.share
+        // # Link with Crafting Input Buffer/Bus using Data Stick to share inventory
+        // # zh_CN 使用数据棒连接样板输入总成或总线以共享库存
+        String share = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input_mirror.share");
+        // #tr tooltip.gtnotgood.crafting_input_mirror.link
+        // # Left click on the Crafting Input Buffer/Bus, then right click on this block to link them
+        // # zh_CN 左键点击样板输入总成或总线，再右键点击此方块完成连接
+        String link = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input_mirror.link");
+        return PatternMEOutput.describe(new String[] { proxy, tier, share, link });
     }
 }

@@ -108,7 +108,6 @@ import gregtech.api.metatileentity.implementations.MTEHatchInputBus;
 import gregtech.api.objects.GTDualInputPattern;
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.render.TextureFactory;
-import gregtech.api.util.GTSplit;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.extensions.ArrayExt;
 import gregtech.common.config.Gregtech;
@@ -1443,17 +1442,46 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
     @Override
     public String[] getDescription() {
-        if (supportFluids) return PatternMEOutput.describe(
-            GTSplit.splitLocalizedFormatted(
-                "gt.blockmachines.input_bus_crafting_me.desc",
-                TIER_COLORS[10] + VN[10],
-                StatCollector.translateToLocal("gt.blockmachines.input_bus_crafting_me.support_fluid.desc")
-                    + GTSplit.LB));
+        // #tr tooltip.gtnotgood.crafting_input.type
+        // # Machine Type: {\\YELLOW}CRIB{\\RESET}
+        // # zh_CN 机器类型：{\\YELLOW}CRIB{\\RESET}
+        String type = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.type");
+        // #tr tooltip.gtnotgood.crafting_input.item_input
+        // # Advanced item input for Multiblocks
+        // # zh_CN 多方块机器的高级物品输入舱
+        String itemInput = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.item_input");
+        // #tr tooltip.gtnotgood.crafting_input.tier
+        // # Hatch Tier: %s
+        // # zh_CN 舱室等级：%s
+        String tier = StatCollector.translateToLocalFormatted(
+            "tooltip.gtnotgood.crafting_input.tier",
+            TIER_COLORS[supportFluids ? 10 : 6] + VN[supportFluids ? 10 : 6]);
+        // #tr tooltip.gtnotgood.crafting_input.processes
+        // # Processes patterns directly from ME
+        // # zh_CN 直接处理来自ME网络的样板
+        String processes = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.processes");
+        // #tr tooltip.gtnotgood.crafting_input.supports_fluids
+        // # It supports patterns including fluids
+        // # zh_CN 支持包含流体的样板
+        String supportsFluids = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.supports_fluids");
+        // #tr tooltip.gtnotgood.crafting_input.no_fluids
+        // # It does not support patterns including fluids
+        // # zh_CN 不支持包含流体的样板
+        String noFluids = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.no_fluids");
+        // #tr tooltip.gtnotgood.crafting_input.connection
+        // # Change ME connection behavior by right-clicking with wire cutter
+        // # zh_CN 使用剪线钳右键点击可切换ME连接方式
+        String connection = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.connection");
+        // #tr tooltip.gtnotgood.crafting_input.ignores_hatches
+        // # Ignores the contents of other buses or hatches
+        // # zh_CN 不会使用其他总线或舱室中的物品
+        String ignoresHatches = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.ignores_hatches");
+        // #tr tooltip.gtnotgood.crafting_input.ignores_patterns
+        // # Also ignores other patterns within the same bus
+        // # zh_CN 同一总线内的不同样板也互不共用输入
+        String ignoresPatterns = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.ignores_patterns");
         return PatternMEOutput.describe(
-            GTSplit.splitLocalizedFormatted(
-                "gt.blockmachines.input_bus_crafting_me.desc",
-                TIER_COLORS[6] + VN[6],
-                StatCollector.translateToLocal("gt.blockmachines.input_bus_crafting_me.not_support_fluid.desc")
-                    + GTSplit.LB));
+            new String[] { type, itemInput, tier, processes, supportFluids ? supportsFluids : noFluids, connection,
+                ignoresHatches, ignoresPatterns });
     }
 }
