@@ -6,6 +6,7 @@ import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.concurrent.Future;
+import java.util.EnumSet;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -62,6 +63,7 @@ public final class CompactAEClientChecks {
     private Future<ICraftingJob> job;
     private TileDrive drive;
     private int requestedSticks;
+    private int networkResumeTick;
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
@@ -249,6 +251,43 @@ public final class CompactAEClientChecks {
                         new MachineSource(matrix));
                 require(planks == null, "exact input consumption");
                 require(matrix.lEUt == 0, "no recipe power draw");
+                stage = 6;
+            } else if (stage == 6) {
+                // Let startup structure checks finish before testing a second order on the reloaded matrix.
+                if (ticks < 400) return;
+                matrix.getProxy().getStorage().getItemInventory().injectItems(
+                    AEItemStack.create(new ItemStack(Blocks.planks, 64)), Actionable.MODULATE, new MachineSource(matrix));
+                job = matrix.getProxy().getCrafting().beginCraftingJob(
+                    world, matrix.getProxy().getGrid(), new MachineSource(matrix),
+                    AEItemStack.create(new ItemStack(Items.stick, requestedSticks)), null);
+                stage = 7;
+            } else if (stage == 7 && job.isDone()) {
+                require(!job.get().isSimulation(), "new order after idle reload has ingredients");
+                var link = matrix.getProxy().getCrafting().submitJob(
+                    job.get(), null, null, false, new MachineSource(matrix));
+                require(link != null, "new order after idle reload accepted");
+                for (var cpu : computer.cpus) {
+                    cpu.updateCraftingLogic(matrix.getProxy().getGrid(), matrix.getProxy().getEnergy(),
+                        (CraftingGridCache) matrix.getProxy().getCrafting());
+                }
+                // Interrupt AE after dispatch but before the matrix's next recipe check. No switch toggles or
+                // manual checkProcessing calls are allowed when the network returns.
+                matrix.getProxy().setValidSides(EnumSet.noneOf(ForgeDirection.class));
+                networkResumeTick = ticks + 40;
+                stage = 8;
+            } else if (stage == 8) {
+                if (ticks < networkResumeTick) return;
+                require(!matrix.isActive() && matrix.isBusy(), "offline matrix rejects further dispatch");
+                matrix.updateValidGridProxySides();
+                stage = 9;
+            } else if (stage == 9) {
+                if (!matrix.isActive()) return;
+                var count = matrix.getProxy().getStorage().getItemInventory().extractItems(
+                    AEItemStack.create(new ItemStack(Items.stick, requestedSticks * 2)), Actionable.SIMULATE,
+                    new MachineSource(matrix));
+                if (count == null || count.getStackSize() < requestedSticks * 2) return;
+                require(count.getStackSize() == requestedSticks * 2,
+                    "accepted work resumes after AE interruption without controller toggle");
                 player.playerNetServerHandler.setPlayerLocation(.5, 10, -1.5, 0, 15);
                 matrix.onRightclick(matrix.getBaseMetaTileEntity(), player);
                 screenshot = 1;

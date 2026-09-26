@@ -129,10 +129,12 @@ public final class AutomaticMachineCircuit {
         List<Match> candidates = matches(machine.getRecipeMap(), pattern);
         for (Match candidate : candidates) {
             if (candidate.recipe.mEUt > GTValues.V[machine.mTier] || matchingInputs(candidate, actual) == 0) continue;
-            if (selected != null
-                && (!sameCircuit(selected.circuit, candidate.circuit) || !sameCircuit(selected.mold, candidate.mold)))
-                return reportRejection(tile, pattern, aeTable, "ambiguous-circuit-or-mold", candidates);
-            selected = candidate;
+            if (selected != null && !sameCircuit(selected.circuit, candidate.circuit))
+                return reportRejection(tile, pattern, aeTable, "ambiguous-circuit", candidates);
+            // Several catalog lenses can produce the same encoded output from the same delivery.
+            // Keep the first valid choice unless another matches the installed mold, so retries and
+            // continuous refills do not switch catalysts merely because registration order differs.
+            if (selected == null || sameCircuit(VirtualMachineMolds.get(machine), candidate.mold)) selected = candidate;
         }
         if (selected == null) return reportRejection(
             tile,

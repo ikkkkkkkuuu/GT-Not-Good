@@ -136,6 +136,9 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     /** Retains pattern notifications until the server has finished formation and the AE node is active. */
     private boolean needsPatternSync = true;
 
+    /** Last observed AE availability; recovery must wake GregTech's event-driven recipe checks as well as AE. */
+    private boolean wasNetworkActive;
+
     // Resolve container items returned after an input is consumed.
     public static ItemStack resolveContainerItem(ItemStack stack) {
         final var item = stack.getItem();
@@ -213,7 +216,22 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     @Override
     public void onPostTick(IGregTechTileEntity tile, long timer) {
         super.onPostTick(tile, timer);
-        if (!tile.isServerSide() || !needsPatternSync || timer % 10 != 0 || !getProxy().isActive()) return;
+        if (!tile.isServerSide()) return;
+        boolean active = getProxy().isActive();
+        if (active != wasNetworkActive) {
+            wasNetworkActive = active;
+            needsPatternSync = true;
+            if (active) scheduleRecipeCheck(RecipeCheckReason.IMMEDIATE);
+        }
+        // Queued products can outlive the one-shot recipe check (offline AE or full storage). Retry only while
+        // actual work is waiting; never turn a manually disabled controller back on.
+        if (active && timer % 20 == 0
+            && mMaxProgresstime <= 0
+            && !patternState.getOutputs()
+                .isEmpty()) {
+            scheduleRecipeCheck(RecipeCheckReason.IMMEDIATE);
+        }
+        if (!needsPatternSync || timer % 10 != 0 || !active) return;
         try {
             getProxy().getGrid()
                 .postEvent(new MENetworkCraftingPatternChange(this, getProxy().getNode()));
@@ -286,7 +304,17 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
      */
     @Override
     public boolean isBusy() {
-        return !mMachine || machineMode != MODE_OPERATING || !getBaseMetaTileEntity().isAllowedToWork();
+        return getBaseMetaTileEntity() == null || !mMachine
+            || machineMode != MODE_OPERATING
+            || !getBaseMetaTileEntity().isAllowedToWork()
+            || !isActive();
+    }
+
+    /** A grid replacement must refresh both the advertised patterns and any accepted work awaiting processing. */
+    @Override
+    public void gridChanged() {
+        needsPatternSync = true;
+        scheduleRecipeCheck(RecipeCheckReason.IMMEDIATE);
     }
 
     @Override
