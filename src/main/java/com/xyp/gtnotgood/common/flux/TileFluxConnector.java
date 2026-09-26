@@ -381,6 +381,23 @@ public abstract class TileFluxConnector extends TileEntity implements IEnergyCon
         return target.inputEnergyFrom(inputSide, waitForActive);
     }
 
+    /**
+     * Recognizes a cable supplying this plug without using the cable base tile's always-false
+     * output-port query. GT's cable network pushes packets into {@link #injectEnergyUnits}; this
+     * check only describes the physical connection and never extracts energy from a cable.
+     *
+     * @param tile       adjacent energy source
+     * @param outputSide face of the source touching this plug
+     * @return whether the source has a physical output connection to this plug
+     */
+    static boolean suppliesPlugEnergy(TileEntity tile, ForgeDirection outputSide) {
+        if (!(tile instanceof IEnergyConnected source) || tile instanceof TileFluxConnector) return false;
+        if (tile instanceof BaseMetaPipeEntity pipe && pipe.getMetaTileEntity() instanceof MTECable cable) {
+            return cable.isConnectedAtSide(outputSide);
+        }
+        return source.outputsEnergyTo(outputSide, false);
+    }
+
     @Override
     public long injectEnergyUnits(ForgeDirection side, long inputVoltage, long inputAmperage) {
         if (worldObj == null || worldObj.isRemote || owner == null || !inputEnergyFrom(side)) return 0;
@@ -395,9 +412,34 @@ public abstract class TileFluxConnector extends TileEntity implements IEnergyCon
         return isPlug() && canTransfer();
     }
 
+    /**
+     * Keeps plugs in GT's cached cable consumer graph while disabled or waiting for redstone.
+     * Actual packet acceptance still checks the active state in {@link #injectEnergyUnits}.
+     *
+     * @param side          queried connector face
+     * @param waitForActive true for active acceptance, false for physical topology discovery
+     * @return whether this face is an input under the requested check
+     */
+    @Override
+    public boolean inputEnergyFrom(ForgeDirection side, boolean waitForActive) {
+        return isPlug() && (!waitForActive || canTransfer());
+    }
+
     @Override
     public boolean outputsEnergyTo(ForgeDirection side) {
         return !isPlug() && canTransfer();
+    }
+
+    /**
+     * Keeps the point's physical cable connection stable while output is temporarily disabled.
+     *
+     * @param side          queried connector face
+     * @param waitForActive true for active output, false for physical topology discovery
+     * @return whether this face is an output under the requested check
+     */
+    @Override
+    public boolean outputsEnergyTo(ForgeDirection side, boolean waitForActive) {
+        return !isPlug() && (!waitForActive || canTransfer());
     }
 
     @Override

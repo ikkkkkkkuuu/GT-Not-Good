@@ -85,6 +85,8 @@ public class Config {
     public static int wirelessCrossRecipeDurationTicks = 128;
     /** Maximum number of recipe matches processed in one wireless cross-recipe batch. */
     public static int wirelessCrossRecipeParallelLimit = 200;
+    /** Adds assembler alternatives for wireless energy hatches; machine registration is always stable. */
+    public static boolean enableEasyWirelessRecipes = true;
 
     /** Values fixed when the example fuel rod is registered; changing them requires a game restart. */
     public static class FuelRod {
@@ -161,6 +163,14 @@ public class Config {
         configuration.addCustomCategoryComment(CATEGORY_THAUMCRAFT, "Thaumcraft 扭曲与研究配置");
         configuration.addCustomCategoryComment(CATEGORY_TOOL_BELT, "工具腰带的配置设置");
         configuration.addCustomCategoryComment(CATEGORY_WIRELESS_MULTIBLOCK, "无线多方块跨配方并行配置");
+        enableEasyWirelessRecipes = configuration
+            .get(
+                "Wireless_Energy",
+                "enableEasyWirelessRecipes",
+                true,
+                "启用无线能源仓、无线动力仓和无线激光仓的简易组装机配方。关闭不移除机器或原版配方；修改后重启生效。")
+            .setRequiresMcRestart(true)
+            .getBoolean(true);
 
         enableBrickedBlastFurnaceAutomation = configuration.getBoolean(
             "enableBrickedBlastFurnaceAutomation",

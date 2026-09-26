@@ -1,0 +1,35 @@
+// Opt-in native GT wireless checks; the test mod is never included in release jars.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.fileTree('src/test/java/com/xyp/gtnotgood/common/wireless') { include '*ClientChecks.java' })
+    }
+    def runtimeJar = root.tasks.register('jarWirelessLaserQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'wireless-laser-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('wireless-laser-qa-runtime')
+    }
+    def copyTest = root.tasks.register('snapshotWirelessLaserTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/WirelessLaserClientChecks*.class'
+        into root.layout.buildDirectory.dir('wireless-laser-qa-runtime/test')
+    }
+    def result = root.file('run/client/wireless-laser-qa-result.txt')
+    root.tasks.named('runClient').configure {
+        dependsOn runtimeJar, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(runtimeJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('wireless-laser-qa-runtime/test'))
+        systemProperty 'gtng.wireless.qa', 'true'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in real-client QA')
+        doFirst { java.nio.file.Files.deleteIfExists(result.toPath()) }
+        doLast {
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('Wireless laser checks failed; inspect WIRELESS_LASER_QA in the client log.')
+            }
+        }
+    }
+}

@@ -22,7 +22,6 @@ import com.xyp.gtnotgood.utils.enums.ModList;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import gregtech.api.interfaces.tileentity.IEnergyConnected;
 
 /**
  * Forge 1.7.10 adapter for the original Flux plug/point blocks and multipart models.
@@ -124,8 +123,7 @@ public class BlockFluxConnector extends Block {
         int nx = x + side.offsetX, ny = y + side.offsetY, nz = z + side.offsetZ;
         if (world instanceof World actual && !actual.blockExists(nx, ny, nz)) return false;
         TileEntity tile = world.getTileEntity(nx, ny, nz);
-        if (tile instanceof TileFluxConnector || !(tile instanceof IEnergyConnected target)) return false;
-        return plug ? target.outputsEnergyTo(side.getOpposite(), false)
+        return plug ? TileFluxConnector.suppliesPlugEnergy(tile, side.getOpposite())
             : TileFluxConnector.acceptsPointEnergy(tile, side.getOpposite(), false);
     }
 
