@@ -386,3 +386,6 @@ Moved the five already host-packaged early RTS mixin sources from the upstream d
 
 ## Unsupported JEI source cleanup — 2026-09-24
 Removed seven compat/jei source files and RecipeRegistryOverlayTransferMixin from the working import. They were already excluded from compilation and never active in the NEI-based 1.7.10 runtime. Removed obsolete Gradle exclusions; manifest generation explicitly skips these unsupported upstream sources, preserved in the pinned reference checkout. No NEI feature was removed. Compile, checkstyle and assembly pass.
+
+## RTS host item catalog binding — 2026-09-26
+Restored the 17 host RTS enum constants removed in b25f2e0. Replaced the RtsItems.register string-based enum lookup with the independently authored host RtsItemBindings adapter, using direct references to all 17 enum constants and registered handles. Registry names and upstream assets are unchanged; missing enum entries now fail compilation instead of enabled-RTS startup.

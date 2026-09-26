@@ -90,9 +90,8 @@ public final class RtsItems {
         if (registered) return;
         for (Handle<? extends Item> handle : ALL_ITEMS) {
             GameRegistry.registerItem(handle.get(), handle.id());
-            com.xyp.gtnotgood.utils.enums.GTNGItemList.valueOf(
-                    "RTS_" + handle.id().toUpperCase(java.util.Locale.ROOT)).set(handle.get());
         }
+        com.xyp.gtnotgood.loader.RtsItemBindings.bind();
         registered = true;
     }
 

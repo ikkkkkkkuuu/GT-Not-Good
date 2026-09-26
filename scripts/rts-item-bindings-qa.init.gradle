@@ -1,0 +1,35 @@
+// Opt-in RTS item registration checks; requires enableRTSBuilding=true; the test mod is never included in release jars.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.fileTree('src/test/java/com/xyp/gtnotgood/client/rts') { include 'RtsItemBindingsClientChecks.java' })
+    }
+    def runtimeJar = root.tasks.register('jarRtsItemBindingsQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'rts-item-bindings-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('rts-item-bindings-qa-runtime')
+    }
+    def copyTest = root.tasks.register('snapshotRtsItemBindingsTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/RtsItemBindingsClientChecks*.class'
+        into root.layout.buildDirectory.dir('rts-item-bindings-qa-runtime/test')
+    }
+    def result = root.file('run/client/rts-item-bindings-qa-result.txt')
+    root.tasks.named('runClient').configure {
+        dependsOn runtimeJar, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(runtimeJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('rts-item-bindings-qa-runtime/test'))
+        systemProperty 'gtng.rts.itemBindings.qa', 'true'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in real-client QA')
+        doFirst { java.nio.file.Files.deleteIfExists(result.toPath()) }
+        doLast {
+            if (!result.exists() || !result.text.trim().startsWith('PASS:')) {
+                throw new GradleException('RTS item checks failed; inspect RTS_ITEM_BINDINGS_QA in the client log.')
+            }
+        }
+    }
+}
