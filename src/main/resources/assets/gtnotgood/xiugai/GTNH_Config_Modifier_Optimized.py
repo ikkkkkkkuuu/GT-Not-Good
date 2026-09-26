@@ -309,7 +309,7 @@ class ConfigModifier:
     4. replace 支持 count，默认全部替换；可指定只替换前 N 个。
     5. replace_line 支持 count，默认全部替换。
     6. 使用临时文件 + os.replace 原子写入，降低文件写坏风险。
-    7. 自动保留 UTF-8 BOM；普通 UTF-8 文件不会强制添加 BOM。
+    7. UTF-8 配置统一写为无 BOM，兼容 Gendustry，并修复旧文件中的 BOM。
     8. 提供 dry-run 模式：只检查和显示修改，不写入文件。
     9. 修改后验证目标内容确实已经写入。
     10. 日志统计更准确。
@@ -607,7 +607,7 @@ class ConfigModifier:
 
     def _read_text(self, file_path):
         """
-        读取文本，同时尽量保留 UTF-8 BOM。
+        读取文本，记录并剥离 UTF-8 BOM，供写入时修复。
 
         优先 UTF-8 / UTF-8-SIG，失败后尝试 GB18030。
         """
@@ -615,7 +615,7 @@ class ConfigModifier:
 
         has_bom = raw.startswith(b"\xef\xbb\xbf")
 
-        encodings = ["utf-8-sig", "utf-8", "gb18030"]
+        encodings = ["utf-8-sig"] if has_bom else ["utf-8", "gb18030"]
 
         last_error = None
         for encoding in encodings:
@@ -633,13 +633,8 @@ class ConfigModifier:
         )
 
     def _write_text_atomic(self, file_path, content, encoding, has_bom):
-        """使用临时文件 + os.replace 原子写入。"""
-        if encoding == "utf-8-sig":
-            output_encoding = "utf-8-sig"
-        elif encoding == "utf-8" and has_bom:
-            output_encoding = "utf-8-sig"
-        else:
-            output_encoding = encoding
+        """原子写入；UTF-8 不带 BOM，其余编码保持不变。"""
+        output_encoding = "utf-8" if encoding in ("utf-8", "utf-8-sig") else encoding
 
         temp_path = file_path.with_name(file_path.name + ".gtnc_tmp")
 
@@ -803,7 +798,10 @@ class ConfigModifier:
                 )
                 failed_rules += 1
 
-        changed = content != original_content
+        # 即使配置值已经符合规则，也要清理旧脚本或备份引入的 BOM。
+        changed = content != original_content or has_bom
+        if has_bom:
+            self.log("  检测到 UTF-8 BOM，将移除以兼容配置解析器")
 
         if changed and not self.dry_run:
             try:

@@ -75,6 +75,16 @@ public final class ItemsLoader {
         com.xyp.gtnotgood.common.packaged.PackagedCoreRegistry
             .register("advanced_assembly_line", new com.xyp.gtnotgood.common.packaged.AssemblyLineAdapter(true));
         if (com.xyp.gtnotgood.utils.enums.ModList.Thaumcraft.isModLoaded()) {
+            // #tr item.tc4_crucible_packaged_core.name
+            // # Thaumcraft Crucible Packaged Core
+            // # zh_CN 神秘时代坩埚封包核心
+            var crucibleCore = new com.xyp.gtnotgood.common.packaged.ItemPackagedCore(
+                "thaumcraft_crucible",
+                "tc4_crucible_packaged_core");
+            GameRegistry.registerItem(crucibleCore, "tc4_crucible_packaged_core");
+            GTNGItemList.ThaumcraftCrucibleCore.set(crucibleCore);
+            com.xyp.gtnotgood.common.packaged.PackagedCoreRegistry
+                .register("thaumcraft_crucible", new com.xyp.gtnotgood.common.packaged.ThaumcraftCrucibleAdapter());
             // #tr item.arcane_workbench_packaged_core.name
             // # Arcane Workbench Packaged Core
             // # zh_CN 奥术工作台封包核心

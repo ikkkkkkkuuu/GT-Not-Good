@@ -30,6 +30,19 @@ public class RecipeLoader {
      * as additional one-line loader calls.
      */
     public static void loadRecipes() {
+        if (com.xyp.gtnotgood.utils.enums.ModList.ThaumicEnergistics.isModLoaded()
+            && com.xyp.gtnotgood.utils.enums.ModList.Thaumcraft.isModLoaded()) {
+            cpw.mods.fml.common.registry.GameRegistry.addShapelessRecipe(
+                com.xyp.gtnotgood.utils.enums.GTNGItemList.EssentiaDisassembler.get(1),
+                gregtech.api.enums.ItemList.Machine_HV_Extractor.get(1),
+                appeng.api.AEApi.instance()
+                    .definitions()
+                    .blocks()
+                    .iface()
+                    .maybeStack(1)
+                    .get(),
+                new net.minecraft.item.ItemStack(thaumcraft.common.config.ConfigBlocks.blockStoneDevice, 1, 0));
+        }
         com.xyp.gtnotgood.common.recipe.machine.LargeTransmutationMachineRecipes.loadRecipes();
         com.xyp.gtnotgood.common.advancedio.AdvancedIORecipes.register();
         com.xyp.gtnotgood.common.packaged.PackagedRecipes.register();

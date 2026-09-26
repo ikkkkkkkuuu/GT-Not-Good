@@ -434,3 +434,15 @@ remains outside compilation/resource inputs. Validation details: docs/testing/ld
 - Standard machine GUI and NEI only; no dedicated LDLib screen or browser button.
 - Structure uses existing GT/BartWorks/vanilla blocks; no upstream artwork is copied.
 - Reference checkouts remain excluded from compilation and resource packaging.
+
+## Crucible core — 2026-09-26
+
+- Inspected pinned AE2LT-Packaged-Pattern-Provider renderer and LICENSE (LGPL-3.0), commit
+  `1d3f183ecf258aff0001567d742ed30d6038d77b`, before reusing the existing core rendering.
+- Destination: existing `PackagedCoreRenderer` and `textures/items/packaged/provider_core_base.png`.
+  Base PNG, geometry and provider layout remain unchanged; the new overlay renders installed TC4
+  4.2.3.5 `blockMetalDevice:0`. No TC artwork or implementation source is copied into the addon.
+- Inspected the pinned TC4 dependency source for crucible recipe selection, research, heat,
+  water consumption, aspect removal and post-reaction decay delay. New integration uses native APIs.
+- Existing asset licenses remain applicable; usage is recorded in the packaged asset manifest.
+  Reference checkouts remain outside compilation and resource packaging.

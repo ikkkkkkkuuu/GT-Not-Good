@@ -62,6 +62,13 @@ public class ClientProxy extends CommonProxy {
             .registerCommand(new com.xyp.gtnotgood.client.text.preview.TextEffectPreviewCommand());
         if (com.xyp.gtnotgood.utils.enums.ModList.Thaumcraft.isModLoaded()) {
             net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
+                com.xyp.gtnotgood.utils.enums.GTNGItemList.ThaumcraftCrucibleCore.getItem(),
+                new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(
+                    () -> new net.minecraft.item.ItemStack(
+                        thaumcraft.common.config.ConfigBlocks.blockMetalDevice,
+                        1,
+                        0)));
+            net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
                 com.xyp.gtnotgood.utils.enums.GTNGItemList.ArcaneWorkbenchCore.getItem(),
                 new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(
                     () -> new net.minecraft.item.ItemStack(thaumcraft.common.config.ConfigBlocks.blockTable, 1, 15)));

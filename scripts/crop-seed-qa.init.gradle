@@ -1,0 +1,32 @@
+// Opt-in real Mixin checks. Test fixtures are excluded from release jars.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.fileTree('scripts/qa') { include 'CropSeedClientChecks.java' })
+    }
+    def mainJar = root.tasks.register('jarCropSeedQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'crop-seed-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('crop-seed-qa-runtime')
+    }
+    def testCopy = root.tasks.register('snapshotCropSeedQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/CropSeedClientChecks*.class'
+        into root.layout.buildDirectory.dir('crop-seed-qa-runtime/test')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn mainJar, testCopy
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('crop-seed-qa-runtime/test'))
+        systemProperty 'gtng.cropseed.qa', 'true'
+        notCompatibleWithConfigurationCache('Opt-in integrated-server checks')
+        doFirst { java.nio.file.Files.deleteIfExists(root.file('run/client/crop-seed-qa-result.txt').toPath()) }
+        doLast {
+            def result = root.file('run/client/crop-seed-qa-result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) throw new GradleException('Crop seed QA failed')
+        }
+    }
+}

@@ -133,6 +133,9 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     private final CombinationPatternsIInventory inventory = new CombinationPatternsIInventory();
     private final AssemblerMatrixPatternState patternState = new AssemblerMatrixPatternState();
 
+    /** Retains pattern notifications until the server has finished formation and the AE node is active. */
+    private boolean needsPatternSync = true;
+
     // Resolve container items returned after an input is consumed.
     public static ItemStack resolveContainerItem(ItemStack stack) {
         final var item = stack.getItem();
@@ -197,6 +200,27 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
             this.mUpdate = 200;
         }
         getProxy().onReady();
+        needsPatternSync = true;
+    }
+
+    /**
+     * Publishes patterns after GregTech has committed its structure state. Loading and structure checks can run
+     * before AE is ready, so failed notifications remain pending and are retried without rebuilding the patterns.
+     *
+     * @param tile  controller tile ticking this machine
+     * @param timer controller tick counter; notifications are coalesced to at most one per ten ticks
+     */
+    @Override
+    public void onPostTick(IGregTechTileEntity tile, long timer) {
+        super.onPostTick(tile, timer);
+        if (!tile.isServerSide() || !needsPatternSync || timer % 10 != 0 || !getProxy().isActive()) return;
+        try {
+            getProxy().getGrid()
+                .postEvent(new MENetworkCraftingPatternChange(this, getProxy().getNode()));
+            needsPatternSync = false;
+        } catch (GridAccessException ignored) {
+            // Keep the pending update while the network is still loading or changing topology.
+        }
     }
 
     @Override
@@ -392,6 +416,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     @Override
     public void loadNBTData(NBTTagCompound aNBT) {
         super.loadNBTData(aNBT);
+        needsPatternSync = true;
         patternState.clearRuntimeData();
         setPatternMultiply(aNBT.getInteger("patternMultiply"));
         usedParallel = aNBT.getLong("usedParallel");
@@ -483,17 +508,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
                 }
             }
         }
-        try {
-            AssemblerMatrix.this.getProxy()
-                .getGrid()
-                .postEvent(
-                    new MENetworkCraftingPatternChange(
-                        this,
-                        this.getProxy()
-                            .getNode()));
-        } catch (GridAccessException ignored) {
-
-        }
+        needsPatternSync = true;
     }
 
     @Override
@@ -527,15 +542,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
                     if (inventory.size() >= mMaxSlots) break;
                 }
                 if (updated) {
-                    try {
-                        this.getProxy()
-                            .getGrid()
-                            .postEvent(
-                                new MENetworkCraftingPatternChange(
-                                    this,
-                                    this.getProxy()
-                                        .getNode()));
-                    } catch (GridAccessException ignored) {}
+                    needsPatternSync = true;
                 }
                 updateSlots();
             } else if (machineMode == MODE_OUTPUT && !inventory.isEmpty()) {
@@ -823,12 +830,14 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
 
     @MENetworkEventSubscribe
     public void stateChange(final MENetworkChannelsChanged c) {
+        needsPatternSync = true;
         this.getInterfaceDuality()
             .notifyNeighbors();
     }
 
     @MENetworkEventSubscribe
     public void stateChange(final MENetworkPowerStatusChange c) {
+        needsPatternSync = true;
         this.getInterfaceDuality()
             .notifyNeighbors();
     }
@@ -850,23 +859,13 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     }
 
     /**
-     * Syncs pattern caches and emits the network change event when the pattern inventory changes.
+     * Syncs pattern caches and queues a network change notification when the pattern inventory changes.
      */
     @Override
     public void onChangeInventory(IInventory inv, int slot, InvOperation operation, ItemStack removedStack,
         ItemStack newStack) {
         if (patternState.onPatternInventoryChanged(this, removedStack, newStack)) {
-            try {
-                this.getProxy()
-                    .getGrid()
-                    .postEvent(
-                        new MENetworkCraftingPatternChange(
-                            this,
-                            this.getProxy()
-                                .getNode()));
-            } catch (GridAccessException ignored) {
-
-            }
+            needsPatternSync = true;
         }
     }
 
@@ -1062,9 +1061,20 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         return getCrafterIcon() != null ? getCrafterIcon().getDisplayName() : getLocalName();
     }
 
+    /**
+     * Supplies the terminal icon with the matrix name. AE2 also uses this stack's display name when the raw name
+     * has no translation, which is normally the case for player-entered names.
+     *
+     * @return a display stack carrying the custom name, or the default matrix stack when unnamed
+     * @see appeng.api.util.IInterfaceViewable#getDisplayRep()
+     */
     @Override
     public ItemStack getDisplayRep() {
-        return getSelfRep();
+        ItemStack display = getSelfRep();
+        if (display != null && hasCustomName()) {
+            display.setStackDisplayName(customName);
+        }
+        return display;
     }
 
     public Set<IAEItemStack> getPossibleOutputs() {
@@ -1103,15 +1113,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
             if (remaining.stackSize <= 0) inventory.setInventorySlotContents(slot, null);
         }
 
-        try {
-            this.getProxy()
-                .getGrid()
-                .postEvent(
-                    new MENetworkCraftingPatternChange(
-                        this,
-                        this.getProxy()
-                            .getNode()));
-        } catch (GridAccessException ignored) {}
+        needsPatternSync = true;
     }
 
     /** Adapted AE crafting component; see reference/UPSTREAM_PORT_NOTES.md for provenance. */

@@ -16,6 +16,47 @@ final class ThaumicEnergisticsSupply {
     private ThaumicEnergisticsSupply() {}
 
     /**
+     * Simulates all missing aspects before extraction. Actual partial extractions remain in a persistent
+     * reservation, so an under-delivering storage cannot lose essentia or double-charge a retry.
+     * The caller debits these units only when it commits the crucible reaction and return inventory.
+     */
+    @SuppressWarnings("unchecked")
+    static boolean reserveCrucible(TilePackagedProvider provider, thaumcraft.api.aspects.AspectList missing) {
+        if (!provider.getProxy()
+            .isActive()) return false;
+        try {
+            IMEMonitor<AEEssentiaStack> monitor = (IMEMonitor<AEEssentiaStack>) provider.getProxy()
+                .getStorage()
+                .getMEMonitor(AEEssentiaStackType.ESSENTIA_STACK_TYPE);
+            MachineSource source = new MachineSource(provider);
+            for (Aspect aspect : missing.getAspects()) {
+                long needed = missing.getAmount(aspect)
+                    - provider.crucibleEssentiaCredit.getOrDefault(aspect.getTag(), 0L);
+                if (needed <= 0) continue;
+                AEEssentiaStack simulated = monitor
+                    .extractItems(new AEEssentiaStack(aspect, needed), Actionable.SIMULATE, source);
+                if (simulated == null || simulated.getStackSize() < needed) return false;
+            }
+            for (Aspect aspect : missing.getAspects()) {
+                long credit = provider.crucibleEssentiaCredit.getOrDefault(aspect.getTag(), 0L);
+                long needed = missing.getAmount(aspect) - credit;
+                if (needed <= 0) continue;
+                AEEssentiaStack extracted = monitor
+                    .extractItems(new AEEssentiaStack(aspect, needed), Actionable.MODULATE, source);
+                if (extracted != null && extracted.getStackSize() > 0) {
+                    credit += extracted.getStackSize();
+                    provider.crucibleEssentiaCredit.put(aspect.getTag(), credit);
+                    provider.markDirty();
+                }
+                if (credit < missing.getAmount(aspect)) return false;
+            }
+            return true;
+        } catch (GridAccessException ignored) {
+            return false;
+        }
+    }
+
+    /**
      * Reserves only missing primal Vis after simulating every aspect. Integer essentia is converted to 0.01-Vis
      * credit, retaining fractional change. If another storage handler supplies less than simulated, extracted
      * credit stays in the provider's persistent ledger; retries cannot double-charge or discard it.

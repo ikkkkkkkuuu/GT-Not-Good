@@ -3,7 +3,7 @@
 // Upstream authors and exact source mappings: META-INF/ae2lt-port/CODE_PORT_NOTES.md
 package com.xyp.gtnotgood.common.packaged;
 
-/** Server-synchronized infusion feedback shown in the original core-slot tooltip. */
+/** Server-synchronized adapter feedback shown in the original core-slot tooltip. */
 public enum AltarStatus {
 
     // #tr gui.packaged.altar_idle
@@ -81,7 +81,31 @@ public enum AltarStatus {
     // #tr gui.packaged.arcane_ready
     // # Workbench: last craft completed; results buffered for AE.
     // # zh_CN 工作台：上次合成已完成，产物已进入 AE 回收流程。
-    ARCANE_READY("gui.packaged.arcane_ready");
+    ARCANE_READY("gui.packaged.arcane_ready"),
+    // #tr gui.packaged.crucible_owner
+    // # Crucible: owner must be online here and allowed to use the target.
+    // # zh_CN 坩埚：所有者须在本维度在线且有权使用目标。
+    CRUCIBLE_OWNER("gui.packaged.crucible_owner"),
+    // #tr gui.packaged.crucible_heat
+    // # Crucible: heat above 150, or place a heat source under an empty crucible.
+    // # zh_CN 坩埚：温度须高于 150；空坩埚可直接在下方放置热源。
+    CRUCIBLE_HEAT("gui.packaged.crucible_heat"),
+    // #tr gui.packaged.crucible_recipe
+    // # Crucible: check research, one catalyst, output and competing local aspects.
+    // # zh_CN 坩埚：请检查研究、单个催化剂、产物和已有源质的配方冲突。
+    CRUCIBLE_RECIPE("gui.packaged.crucible_recipe"),
+    // #tr gui.packaged.crucible_essentia
+    // # Crucible: waiting for missing AE essentia (Thaumic Energistics).
+    // # zh_CN 坩埚：等待 AE 中缺少的源质（需要神秘能源）。
+    CRUCIBLE_ESSENTIA("gui.packaged.crucible_essentia"),
+    // #tr gui.packaged.crucible_returns_full
+    // # Crucible: make room in the provider's return inventory.
+    // # zh_CN 坩埚：请腾出供应器回收栏空间。
+    CRUCIBLE_RETURNS_FULL("gui.packaged.crucible_returns_full"),
+    // #tr gui.packaged.crucible_ready
+    // # Crucible: alchemy complete; results buffered for AE.
+    // # zh_CN 坩埚：炼金术已完成，产物已进入 AE 回收流程。
+    CRUCIBLE_READY("gui.packaged.crucible_ready");
 
     public final String key;
 

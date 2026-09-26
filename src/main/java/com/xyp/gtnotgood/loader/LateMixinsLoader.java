@@ -154,7 +154,11 @@ public class LateMixinsLoader implements ILateMixinLoader {
 
         if (loadedMods.contains(ModList.Thaumcraft.getID())) {
             if (loadedMods.contains(ModList.AE2.getID())) {
-                addAll(list, "Thaumcraft.MixinPackagedEssentiaHandler", "Thaumcraft.MixinPackagedInfusionSource");
+                addAll(
+                    list,
+                    "Thaumcraft.MixinPackagedEssentiaHandler",
+                    "Thaumcraft.MixinPackagedInfusionSource",
+                    "Thaumcraft.MixinPackagedCrucible");
             }
             addAll(
                 list,

@@ -68,12 +68,23 @@ public abstract class MixinTileEntityCropSticks {
         ci.cancel();
     }
 
+    /**
+     * Returns one seed even when planting consumed the last item in the original stack.
+     * CropsNH retains that stack in its seed data, so its count may be zero or the remainder of a larger stack.
+     * Normalize only the returned copy; the crop's saved data and the player's inventory must not be mutated.
+     *
+     * @param cir callback receiving the guaranteed single-seed drop
+     */
     @Inject(method = "getSeedDrop", at = @At("HEAD"), cancellable = true, remap = false)
     private void gtnotgood$guaranteedSeedDrop(CallbackInfoReturnable<ItemStack> cir) {
         Config.ensureLoaded();
         if (!Config.enableCropGuaranteedSeedDrop) return;
         if (this.hasCrop() && !this.hasWeed()) {
-            cir.setReturnValue(this.getSeedStack());
+            ItemStack drop = this.getSeedStack();
+            if (drop != null) {
+                drop.stackSize = 1;
+                cir.setReturnValue(drop);
+            }
         }
     }
 }

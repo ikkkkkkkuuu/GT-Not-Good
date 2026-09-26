@@ -2,6 +2,7 @@ package com.xyp.gtnotgood.ae2thing.nei.recipes;
 
 import com.xyp.gtnotgood.ae2thing.integration.Mods;
 import com.xyp.gtnotgood.ae2thing.nei.recipes.extractor.GT5RecipeExtractor;
+import com.xyp.gtnotgood.ae2thing.nei.recipes.extractor.ThaumcraftRecipeExtractor;
 import com.xyp.gtnotgood.ae2thing.nei.recipes.extractor.VanillaRecipeExtractor;
 
 import gregtech.api.recipe.RecipeMap;
@@ -14,6 +15,7 @@ public class DefaultExtractorLoader implements Runnable {
         FluidRecipe.addRecipeMap("brewing", new VanillaRecipeExtractor(false));
         FluidRecipe.addRecipeMap("crafting", new VanillaRecipeExtractor(true));
         FluidRecipe.addRecipeMap("crafting2x2", new VanillaRecipeExtractor(true));
+        ThaumcraftRecipeExtractor.register();
         if (Mods.isGt5UnofficialLoaded() || Mods.isLegacyGt5Loaded()) {
             for (RecipeMap<?> recipeMap : RecipeMap.ALL_RECIPE_MAPS.values()) {
                 FluidRecipe.addRecipeMap(

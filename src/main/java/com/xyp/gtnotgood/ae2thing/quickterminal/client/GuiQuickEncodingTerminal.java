@@ -1685,9 +1685,9 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             // bracket-free text instead of changing only what is drawn.
             for (PacketEntry update : updates) {
                 if (update instanceof PacketAdd add) {
-                    add.suffix = normalizeInterfaceSuffix(add.suffix);
+                    add.suffix = InterfaceTerminalSuffix.normalize(add.suffix);
                 } else if (update instanceof PacketRename rename) {
-                    rename.suffix = normalizeInterfaceSuffix(rename.suffix);
+                    rename.suffix = InterfaceTerminalSuffix.normalize(rename.suffix);
                 }
             }
             super.postUpdate(updates, statusFlags);
@@ -1755,15 +1755,6 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             if (normalized.startsWith(query)) return 1;
             if (normalized.contains(query)) return 2;
             return 3;
-        }
-
-        private static String normalizeInterfaceSuffix(String suffix) {
-            if (suffix == null || suffix.isEmpty()) return suffix;
-            String cleaned = suffix.replace("[", "")
-                .replace("]", "")
-                .trim()
-                .replaceAll("\\s+", " ");
-            return cleaned.isEmpty() ? "" : " " + cleaned;
         }
 
         private void initialize(Minecraft minecraft, int width, int height) {

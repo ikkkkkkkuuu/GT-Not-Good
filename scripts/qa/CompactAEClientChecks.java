@@ -150,7 +150,6 @@ public final class CompactAEClientChecks {
                 matrix.setMachineMode(AssemblerMatrix.MODE_OPERATING);
                 matrix.getBaseMetaTileEntity()
                     .enableWorking();
-                matrix.upPatterns();
                 matrix.getProxy()
                     .getStorage()
                     .getItemInventory()
@@ -162,6 +161,10 @@ public final class CompactAEClientChecks {
                 return;
             }
             if (stage == 1) {
+                if (matrix.getProxy()
+                    .getCrafting()
+                    .getCraftingFor(AEItemStack.create(new ItemStack(Items.stick)), null, 0, world)
+                    .isEmpty()) return;
                 job = matrix.getProxy()
                     .getCrafting()
                     .beginCraftingJob(
@@ -221,6 +224,11 @@ public final class CompactAEClientChecks {
             } else if (stage == 3) {
                 if (!matrix.getProxy()
                     .isActive()) return;
+                // Reloaded patterns must return without touching the cable or manually refreshing the matrix.
+                if (matrix.getProxy()
+                    .getCrafting()
+                    .getCraftingFor(AEItemStack.create(new ItemStack(Items.stick)), null, 0, world)
+                    .isEmpty()) return;
                 var count = matrix.getProxy()
                     .getStorage()
                     .getItemInventory()

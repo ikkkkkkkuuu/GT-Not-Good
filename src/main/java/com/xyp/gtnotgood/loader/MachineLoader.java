@@ -183,6 +183,17 @@ public class MachineLoader {
     }
 
     public static void registerbasicMachine() {
+        if (com.xyp.gtnotgood.utils.enums.ModList.ThaumicEnergistics.isModLoaded()
+            && com.xyp.gtnotgood.utils.enums.ModList.Thaumcraft.isModLoaded()) {
+            // #tr gtng.EssentiaDisassembler.name
+            // # Advanced Essentia Disassembler
+            // # zh_CN 高级源质分解机
+            GTNGItemList.EssentiaDisassembler.set(
+                new com.xyp.gtnotgood.common.machines.basicMachine.EssentiaDisassembler(
+                    GTNGMachineID.ESSENTIA_DISASSEMBLER.ID,
+                    "essentia_disassembler",
+                    StatCollector.translateToLocal("gtng.EssentiaDisassembler.name")));
+        }
 
         // #tr SteamTurbineLV
         // # Steam Turbine LV

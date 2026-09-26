@@ -43,8 +43,8 @@ import appeng.util.item.AEItemStack;
  * Ingredients reside in the target after acceptance; only actual completed outputs are ever imported.
  * A missing chunk pauses a lane rather than deleting its binding or loading the chunk.
  */
-public final class TilePackagedProvider extends TileMEBridgeBase
-    implements IInventory, ICraftingProvider, IGuiHolder<PosGuiData>, appeng.api.util.IInterfaceViewable {
+public final class TilePackagedProvider extends TileMEBridgeBase implements IInventory, ICraftingProvider,
+    IGuiHolder<PosGuiData>, appeng.api.util.IInterfaceViewable, appeng.helpers.ICustomNameObject {
 
     public static final int PATTERNS = 36;
     public static final int CORE = 45;
@@ -55,6 +55,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     private final List<Job> jobs = new ArrayList<>();
     private final List<ICraftingPatternDetails> patterns = new ArrayList<>();
     private boolean patternsDirty = true;
+    private String customName = "";
     boolean autoReturn;
     boolean networkEssentia;
     int essentiaSpeed = 8;
@@ -75,6 +76,8 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     private int failures;
     /** Fractional converted Vis and extraction reservations survive retries and world saves. Units are 0.01 Vis. */
     final java.util.Map<String, Long> arcaneVisCredit = new java.util.HashMap<>();
+    /** Actual AE essentia reserved for crucible crafts; retained if a storage handler under-delivers. */
+    final java.util.Map<String, Long> crucibleEssentiaCredit = new java.util.HashMap<>();
     /** Successful synchronous dispatches, bounded to one per target per server tick. */
     private final java.util.Map<PackagedTarget, Long> arcaneDispatchTicks = new java.util.HashMap<>();
     private static final int[] RETRY = { 1, 2, 3, 4, 5, 8, 10, 20, 40 };
@@ -141,6 +144,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     @Override
     public Packet getDescriptionPacket() {
         NBTTagCompound tag = new NBTTagCompound();
+        tag.setString("CustomName", customName);
         NBTTagList connections = new NBTTagList();
         for (PackagedTarget target : targets) connections.appendTag(target.write());
         tag.setTag("WirelessConnections", connections);
@@ -151,6 +155,8 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     @Override
     public void onDataPacket(NetworkManager network, S35PacketUpdateTileEntity packet) {
         if (worldObj == null || !worldObj.isRemote) return;
+        customName = packet.func_148857_g()
+            .getString("CustomName");
         NBTTagList connections = packet.func_148857_g()
             .getTagList("WirelessConnections", 10);
         targets.clear();
@@ -351,7 +357,8 @@ public final class TilePackagedProvider extends TileMEBridgeBase
                     ((ItemPackagedCore) inventory[CORE].getItem()).adapterId,
                     expected.copy(),
                     details.getPattern()));
-            altarStatus = adapter.returnsImmediately() ? AltarStatus.ARCANE_READY : AltarStatus.RUNNING;
+            if (!adapter.returnsImmediately()) altarStatus = AltarStatus.RUNNING;
+            else if (altarStatus != AltarStatus.CRUCIBLE_READY) altarStatus = AltarStatus.ARCANE_READY;
             if (craftingLock == PackagedCraftingLock.PULSE) {
                 pulseLocked = true;
                 previousRedstone = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
@@ -395,7 +402,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
         return planned;
     }
 
-    /** Commits a server-thread plan after the workbench's native Vis payment succeeds. */
+    /** Commits a server-thread plan after the synchronous adapter has paid its native recipe resources. */
     void commitArcaneReturns(ItemStack[] planned) {
         System.arraycopy(planned, 0, inventory, PATTERNS, planned.length);
         markDirty();
@@ -510,8 +517,16 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
+        customName = tag.getString("CustomName");
         arcaneDispatchTicks.clear();
         arcaneVisCredit.clear();
+        crucibleEssentiaCredit.clear();
+        NBTTagCompound crucibleCredits = tag.getCompoundTag("CrucibleEssentiaCredit");
+        for (Object entry : crucibleCredits.func_150296_c()) {
+            String aspect = (String) entry;
+            long credit = crucibleCredits.getLong(aspect);
+            if (credit > 0) crucibleEssentiaCredit.put(aspect, credit);
+        }
         NBTTagCompound credits = tag.getCompoundTag("ArcaneVisCredit");
         for (String aspect : new String[] { "aer", "terra", "ignis", "aqua", "ordo", "perditio" }) {
             long credit = credits.getLong(aspect);
@@ -569,9 +584,14 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     @Override
     public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
+        if (hasCustomName()) tag.setString("CustomName", customName);
+        else tag.removeTag("CustomName");
         NBTTagCompound credits = new NBTTagCompound();
         arcaneVisCredit.forEach(credits::setLong);
         tag.setTag("ArcaneVisCredit", credits);
+        NBTTagCompound crucibleCredits = new NBTTagCompound();
+        crucibleEssentiaCredit.forEach(crucibleCredits::setLong);
+        tag.setTag("CrucibleEssentiaCredit", crucibleCredits);
         NBTTagList items = new NBTTagList();
         for (int slot = 0; slot < inventory.length; slot++) {
             if (inventory[slot] == null) continue;
@@ -644,12 +664,31 @@ public final class TilePackagedProvider extends TileMEBridgeBase
 
     @Override
     public String getInventoryName() {
-        return "tile.wireless_packaged_pattern_provider.name";
+        return hasCustomName() ? customName : "tile.wireless_packaged_pattern_provider.name";
     }
 
     @Override
     public boolean hasCustomInventoryName() {
-        return false;
+        return hasCustomName();
+    }
+
+    @Override
+    public String getCustomName() {
+        return customName;
+    }
+
+    @Override
+    public boolean hasCustomName() {
+        return !customName.isEmpty();
+    }
+
+    /** AE interface terminals use this contract to rename remote providers; the name survives chunk reloads. */
+    @Override
+    public void setCustomName(String name) {
+        if (worldObj != null && worldObj.isRemote) return;
+        customName = name == null ? "" : name;
+        markDirty();
+        if (worldObj != null) worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
@@ -715,7 +754,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     /** A strict 36-slot view prevents a remote terminal from reaching the return inventory or core. */
     @Override
     public IInventory getPatterns() {
-        return new net.minecraft.inventory.InventoryBasic(getInventoryName(), false, PATTERNS) {
+        return new net.minecraft.inventory.InventoryBasic(getInventoryName(), hasCustomName(), PATTERNS) {
 
             @Override
             public ItemStack getStackInSlot(int slot) {

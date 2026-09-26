@@ -53,6 +53,20 @@ public final class ItemPackagedCore extends Item {
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advanced) {
+        if ("thaumcraft_crucible".equals(adapterId)) {
+            // #tr tooltip.packaged.crucible
+            // # Requires research and a heated crucible. No water needed or consumed.
+            // # zh_CN 需要研究和加热的坩埚；无需供水，也不消耗水。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.crucible"));
+            // #tr tooltip.packaged.crucible_pattern
+            // # Processing pattern: one catalyst to one recipe's output.
+            // # zh_CN 处理样板：一个催化剂对应一次配方产物。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.crucible_pattern"));
+            // #tr tooltip.packaged.crucible_essentia
+            // # Uses local aspects first, then missing AE essentia via Thaumic Energistics.
+            // # zh_CN 优先使用坩埚已有源质，不足部分通过神秘能源从 AE 补充。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.crucible_essentia"));
+        }
         if ("arcane_workbench".equals(adapterId)) {
             // #tr tooltip.packaged.arcane
             // # Wand Vis first; missing Vis is converted from matching AE primal essentia.

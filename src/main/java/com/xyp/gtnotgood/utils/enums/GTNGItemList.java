@@ -34,6 +34,7 @@ import gregtech.api.util.GTUtility;
 public enum GTNGItemList implements IItemContainer {
 
     LargeTransmutationMachine,
+    EssentiaDisassembler,
 
     RTS_RTS_CONTROL_CORE,
     RTS_REMOTE_CONTROL_PLUGIN,
@@ -61,6 +62,7 @@ public enum GTNGItemList implements IItemContainer {
     AdvancedAssemblyLineCore,
     ThaumcraftInfusionCore,
     ArcaneWorkbenchCore,
+    ThaumcraftCrucibleCore,
 
     MechanicalUser,
     MechanicalUserSpeedUpgrade,
