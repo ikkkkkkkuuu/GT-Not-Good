@@ -8,6 +8,8 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.world.World;
 
 import appeng.api.AEApi;
+import appeng.api.storage.data.IAEItemStack;
+import appeng.tile.inventory.IAEStackInventory;
 import thaumcraft.common.lib.crafting.ThaumcraftCraftingManager;
 import thaumcraft.common.tiles.TileArcaneWorkbench;
 import thaumcraft.common.tiles.TileMagicWorkbench;
@@ -15,9 +17,52 @@ import thaumcraft.common.tiles.TileMagicWorkbench;
 /** Records a real workbench's nine positions in an ordinary AE processing pattern without consuming its example. */
 public final class ArcaneWorkbenchPatterns {
 
-    private static final String GRID = "GTNGArcaneGrid";
+    /** Nine vanilla ItemStack NBT entries shared by captured patterns and terminal-imported patterns. */
+    public static final String GRID = "GTNGArcaneGrid";
 
     private ArcaneWorkbenchPatterns() {}
+
+    /**
+     * Verifies a saved layout against the current processing bill before attaching it to a newly encoded pattern.
+     * Condensing/reordering identical items is allowed; fluids, extra items and changed quantities are rejected.
+     *
+     * @param layout nine vanilla ItemStack NBT entries, including empty cells
+     * @param inputs current native AE input inventory
+     * @return whether the inventory supplies exactly one item for each occupied layout cell
+     */
+    public static boolean matchesInputs(NBTTagList layout, IAEStackInventory inputs) {
+        if (layout == null || layout.tagCount() != 9) return false;
+        long[] remaining = new long[inputs.getSizeInventory()];
+        long total = 0;
+        for (int i = 0; i < remaining.length; i++) {
+            var stack = inputs.getAEStackInSlot(i);
+            if (stack == null) continue;
+            if (!stack.isItem() || stack.getStackSize() <= 0 || stack.getStackSize() > 9) return false;
+            remaining[i] = stack.getStackSize();
+            total += remaining[i];
+            if (total > 9) return false;
+        }
+        if (total == 0) return false;
+        for (int i = 0; i < 9; i++) {
+            NBTTagCompound entry = layout.getCompoundTagAt(i);
+            if (entry.hasNoTags()) continue;
+            ItemStack required = ItemStack.loadItemStackFromNBT(entry);
+            if (required == null || required.stackSize != 1) return false;
+            int match = -1;
+            for (int j = 0; j < remaining.length; j++) {
+                if (remaining[j] == 0) continue;
+                ItemStack supplied = ((IAEItemStack) inputs.getAEStackInSlot(j)).getItemStack();
+                if (required.isItemEqual(supplied) && ItemStack.areItemStackTagsEqual(required, supplied)) {
+                    match = j;
+                    break;
+                }
+            }
+            if (match < 0) return false;
+            remaining[match]--;
+            total--;
+        }
+        return total == 0;
+    }
 
     /** Validates untrusted pattern NBT; every occupied slot describes exactly one ingredient per craft. */
     static TileMagicWorkbench grid(ItemStack pattern, World world) {

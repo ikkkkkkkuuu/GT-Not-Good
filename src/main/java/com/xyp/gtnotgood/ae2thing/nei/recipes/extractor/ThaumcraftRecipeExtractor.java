@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 import com.xyp.gtnotgood.ae2thing.nei.object.IRecipeExtractor;
 import com.xyp.gtnotgood.ae2thing.nei.object.OrderStack;
@@ -18,6 +20,39 @@ import codechicken.nei.PositionedStack;
  * in these patterns: the target machine or altar supplies its own magical resources.
  */
 public final class ThaumcraftRecipeExtractor implements IRecipeExtractor {
+
+    /** Returns whether the recipe needs a TC workbench layout in addition to its AE processing bill. */
+    public static boolean isArcane(String identifier) {
+        return "thaumcraft.arcane.shaped".equals(identifier) || "thaumcraft.arcane.shapeless".equals(identifier)
+            || "thaumcraft.wands".equals(identifier);
+    }
+
+    /**
+     * Converts ARI's workbench coordinates (47/75/103, 38/65/92) into the provider's nine-cell layout.
+     * This runs before processing-input compression, retaining holes, repeated ingredients and selected NBT.
+     *
+     * @param ingredients displayed NEI ingredients
+     * @return the nine vanilla ItemStack tags consumed by the arcane packaged core
+     */
+    public static NBTTagList arcaneLayout(List<PositionedStack> ingredients) {
+        NBTTagCompound[] cells = new NBTTagCompound[9];
+        for (PositionedStack ingredient : ingredients) {
+            if (ingredient == null || ingredient.item == null || isAspectDisplay(ingredient.item)) continue;
+            int x = ingredient.relx - 47;
+            int y = ingredient.rely - 38;
+            if (x < 0 || y < 0 || x % 28 != 0 || y % 27 != 0 || x / 28 > 2 || y / 27 > 2) {
+                throw new IllegalArgumentException("Invalid arcane recipe position");
+            }
+            int slot = x / 28 + y / 27 * 3;
+            if (cells[slot] != null) throw new IllegalArgumentException("Duplicate arcane recipe position");
+            ItemStack item = ingredient.item.copy();
+            item.stackSize = 1;
+            cells[slot] = item.writeToNBT(new NBTTagCompound());
+        }
+        NBTTagList layout = new NBTTagList();
+        for (NBTTagCompound cell : cells) layout.appendTag(cell == null ? new NBTTagCompound() : cell);
+        return layout;
+    }
 
     /** Registers overlay identifiers without loading the optional Aspect Recipe Index classes. */
     public static void register() {

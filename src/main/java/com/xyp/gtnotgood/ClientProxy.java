@@ -1,15 +1,36 @@
 package com.xyp.gtnotgood;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
+import com.xyp.gtnotgood.client.flux.FluxConnectorRenderer;
+import com.xyp.gtnotgood.client.gui.LibraryDemoCommand;
+import com.xyp.gtnotgood.client.gui.wildcard.WildcardPreviewCommand;
 import com.xyp.gtnotgood.client.mebridge.MEWirelessNodeRenderer;
+import com.xyp.gtnotgood.client.nei.FactoryRecipeImport;
 import com.xyp.gtnotgood.client.network.NetworkBlockRenderer;
+import com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer;
+import com.xyp.gtnotgood.client.packaged.WirelessConnectorRenderer;
+import com.xyp.gtnotgood.client.text.EffectTextRenderer;
+import com.xyp.gtnotgood.client.text.TextEffectPreferences;
+import com.xyp.gtnotgood.client.text.effect.BuiltinTextEffects;
+import com.xyp.gtnotgood.client.text.preview.TextEffectPreviewCommand;
+import com.xyp.gtnotgood.common.flux.BlockFluxConnector;
 import com.xyp.gtnotgood.common.gui.BlockIcons;
 import com.xyp.gtnotgood.common.network.BlockNetwork;
+import com.xyp.gtnotgood.utils.enums.GTNGItemList;
+import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.gtnotgood.utils.event.SubscribeEventClientUtils;
 import com.xyp.gtnotgood.utils.event.ToolBeltClientEvents;
 import com.xyp.gtnotgood.utils.keybind.KeyBindManager;
 
+import WayofTime.alchemicalWizardry.ModBlocks;
+import appeng.api.AEApi;
+import appeng.api.parts.IPartItem;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -17,6 +38,9 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import ggfab.GGItemList;
+import gregtech.api.enums.ItemList;
+import thaumcraft.common.config.ConfigBlocks;
 
 /**
  * Client-side proxy for render, GUI, and other client-only registrations.
@@ -25,7 +49,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void receiveServerConfig(com.xyp.gtnotgood.common.packet.ServerConfigMessage message) {
-        net.minecraft.client.Minecraft.getMinecraft()
+        Minecraft.getMinecraft()
             .func_152344_a(() -> com.xyp.gtnotgood.client.config.ServerSettingsScreen.receive(message));
     }
 
@@ -44,64 +68,74 @@ public class ClientProxy extends CommonProxy {
             .register(new com.xyp.gtnotgood.client.research.ClientResearchTickHandler());
     }
 
-    // Override CommonProxy methods here, if you want a different behaviour on the client (e.g. registering renders).
-    // Don't forget to call the super methods as well.
-
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
-        appeng.api.AEApi.instance()
-            .partHelper()
-            .setItemBusRenderer(
-                (appeng.api.parts.IPartItem) com.xyp.gtnotgood.utils.enums.GTNGItemList.AdvancedIOBus.getItem());
-        com.xyp.gtnotgood.client.text.effect.BuiltinTextEffects.register();
-        com.xyp.gtnotgood.client.text.TextEffectPreferences.load();
-        ((net.minecraft.client.resources.IReloadableResourceManager) net.minecraft.client.Minecraft.getMinecraft()
-            .getResourceManager()).registerReloadListener(com.xyp.gtnotgood.client.text.EffectTextRenderer.INSTANCE);
-        net.minecraftforge.client.ClientCommandHandler.instance
-            .registerCommand(new com.xyp.gtnotgood.client.text.preview.TextEffectPreviewCommand());
-        if (com.xyp.gtnotgood.utils.enums.ModList.Thaumcraft.isModLoaded()) {
-            net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
-                com.xyp.gtnotgood.utils.enums.GTNGItemList.ThaumcraftCrucibleCore.getItem(),
-                new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(
-                    () -> new net.minecraft.item.ItemStack(
-                        thaumcraft.common.config.ConfigBlocks.blockMetalDevice,
-                        1,
-                        0)));
-            net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
-                com.xyp.gtnotgood.utils.enums.GTNGItemList.ArcaneWorkbenchCore.getItem(),
-                new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(
-                    () -> new net.minecraft.item.ItemStack(thaumcraft.common.config.ConfigBlocks.blockTable, 1, 15)));
-            net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
-                com.xyp.gtnotgood.utils.enums.GTNGItemList.ThaumcraftInfusionCore.getItem(),
-                new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(
-                    () -> new net.minecraft.item.ItemStack(
-                        thaumcraft.common.config.ConfigBlocks.blockStoneDevice,
-                        1,
-                        2)));
-        }
-        if (com.xyp.gtnotgood.utils.enums.ModList.BloodMagic.isModLoaded()) {
-            net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
-                com.xyp.gtnotgood.utils.enums.GTNGItemList.BloodAltarCore.getItem(),
-                new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(
-                    () -> new net.minecraft.item.ItemStack(WayofTime.alchemicalWizardry.ModBlocks.blockAltar)));
-        }
-        net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
-            com.xyp.gtnotgood.utils.enums.GTNGItemList.AssemblyLineCore.getItem(),
-            new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(
-                () -> gregtech.api.enums.ItemList.Machine_Multi_Assemblyline.get(1)));
-        net.minecraftforge.client.MinecraftForgeClient.registerItemRenderer(
-            com.xyp.gtnotgood.utils.enums.GTNGItemList.AdvancedAssemblyLineCore.getItem(),
-            new com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer(() -> ggfab.GGItemList.AdvAssLine.get(1)));
-        com.xyp.gtnotgood.client.gui.wildcard.WildcardPreviewCommand.register();
-        com.xyp.gtnotgood.client.gui.LibraryDemoCommand.register();
-        BlockNetwork.cableRenderId = RenderingRegistry.getNextAvailableRenderId();
-        RenderingRegistry.registerBlockHandler(new NetworkBlockRenderer());
-        com.xyp.gtnotgood.common.flux.BlockFluxConnector.renderId = RenderingRegistry.getNextAvailableRenderId();
-        RenderingRegistry.registerBlockHandler(new com.xyp.gtnotgood.client.flux.FluxConnectorRenderer());
+        registerAEPartRenderer();
+        initializeTextEffects();
+        registerPackagedCoreRenderers();
+        registerPreviewCommands();
+        registerBlockRenderers();
         KeyBindManager.registerAllKeyBinds();
         // Force load BlockIcons to register textures
         BlockIcons.values();
+        registerClientEvents();
+    }
+
+    private void registerAEPartRenderer() {
+        AEApi.instance()
+            .partHelper()
+            .setItemBusRenderer((IPartItem) GTNGItemList.AdvancedIOBus.getItem());
+    }
+
+    private void initializeTextEffects() {
+        BuiltinTextEffects.register();
+        TextEffectPreferences.load();
+        ((IReloadableResourceManager) Minecraft.getMinecraft()
+            .getResourceManager()).registerReloadListener(EffectTextRenderer.INSTANCE);
+        ClientCommandHandler.instance.registerCommand(new TextEffectPreviewCommand());
+    }
+
+    /** Keeps optional mod access guarded and defers target icon creation until rendering. */
+    private void registerPackagedCoreRenderers() {
+        if (ModList.Thaumcraft.isModLoaded()) {
+            MinecraftForgeClient.registerItemRenderer(
+                GTNGItemList.ThaumcraftCrucibleCore.getItem(),
+                new PackagedCoreRenderer(() -> new ItemStack(ConfigBlocks.blockMetalDevice, 1, 0)));
+            MinecraftForgeClient.registerItemRenderer(
+                GTNGItemList.ArcaneWorkbenchCore.getItem(),
+                new PackagedCoreRenderer(() -> new ItemStack(ConfigBlocks.blockTable, 1, 15)));
+            MinecraftForgeClient.registerItemRenderer(
+                GTNGItemList.ThaumcraftInfusionCore.getItem(),
+                new PackagedCoreRenderer(() -> new ItemStack(ConfigBlocks.blockStoneDevice, 1, 2)));
+        }
+        if (ModList.BloodMagic.isModLoaded()) {
+            MinecraftForgeClient.registerItemRenderer(
+                GTNGItemList.BloodAltarCore.getItem(),
+                new PackagedCoreRenderer(() -> new ItemStack(ModBlocks.blockAltar)));
+        }
+        MinecraftForgeClient.registerItemRenderer(
+            GTNGItemList.AssemblyLineCore.getItem(),
+            new PackagedCoreRenderer(() -> ItemList.Machine_Multi_Assemblyline.get(1)));
+        MinecraftForgeClient.registerItemRenderer(
+            GTNGItemList.AdvancedAssemblyLineCore.getItem(),
+            new PackagedCoreRenderer(() -> GGItemList.AdvAssLine.get(1)));
+    }
+
+    private void registerPreviewCommands() {
+        WildcardPreviewCommand.register();
+        LibraryDemoCommand.register();
+    }
+
+    private void registerBlockRenderers() {
+        BlockNetwork.cableRenderId = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(new NetworkBlockRenderer());
+        BlockFluxConnector.renderId = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(new FluxConnectorRenderer());
+    }
+
+    /** Registers one shared client utility listener on both Forge and FML event buses. */
+    private void registerClientEvents() {
         FMLCommonHandler.instance()
             .bus()
             .register(new ToolBeltClientEvents());
@@ -112,8 +146,8 @@ public class ClientProxy extends CommonProxy {
             .bus()
             .register(clientUtils);
         MinecraftForge.EVENT_BUS.register(new MEWirelessNodeRenderer());
-        MinecraftForge.EVENT_BUS.register(new com.xyp.gtnotgood.client.packaged.WirelessConnectorRenderer());
-        MinecraftForge.EVENT_BUS.register(new com.xyp.gtnotgood.client.nei.FactoryRecipeImport());
+        MinecraftForge.EVENT_BUS.register(new WirelessConnectorRenderer());
+        MinecraftForge.EVENT_BUS.register(new FactoryRecipeImport());
     }
 
     /**

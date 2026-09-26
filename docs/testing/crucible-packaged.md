@@ -28,3 +28,5 @@
 已检查客户端核心截图。
 
 无水版回归通过：空坩埚下放置熔岩，连续 100 次炼金，水量始终为零；有水时封包不扣水，无热源时拒绝派单。
+
+终极样板回归通过：使用原生 UltimatePatternHelper 和 MEInventoryCrafting，真实铁锭→神秘锭配方成功，消耗 4 点 Praecantatio；连续 100 次封包派单通过。实例排查确认 baicha172 仅有 @THAUMIUM 线索，缺少 THAUMIUM 完成记录（未修改玩家存档）。

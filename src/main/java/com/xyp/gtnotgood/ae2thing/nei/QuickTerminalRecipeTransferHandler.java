@@ -17,6 +17,7 @@ import com.glodblock.github.util.Util;
 import com.xyp.gtnotgood.ae2thing.integration.Mods;
 import com.xyp.gtnotgood.ae2thing.nei.object.OrderStack;
 import com.xyp.gtnotgood.ae2thing.nei.recipes.FluidRecipe;
+import com.xyp.gtnotgood.ae2thing.nei.recipes.extractor.ThaumcraftRecipeExtractor;
 import com.xyp.gtnotgood.ae2thing.proxy.ClientProxy;
 import com.xyp.gtnotgood.ae2thing.quickterminal.RecipeTransferPayload;
 import com.xyp.gtnotgood.ae2thing.quickterminal.client.GuiQuickEncodingTerminal;
@@ -58,6 +59,9 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
 
         try {
             boolean crafting = isCraftingRecipe(recipe);
+            var arcaneLayout = ThaumcraftRecipeExtractor.isArcane(recipe.getOverlayIdentifier())
+                ? ThaumcraftRecipeExtractor.arcaneLayout(safeList(recipe.getIngredientStacks(recipeIndex)))
+                : null;
             List<OrderStack<?>> namedInputs = FluidRecipe
                 .getPackageInputs(recipe, recipeIndex, !crafting && terminal.shouldPrioritizeFluids());
             String interfaceSearch = getConfigValue(ButtonConstants.DUAL_INTERFACE_TERMINAL)
@@ -84,6 +88,12 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
             }
             IAEStack<?>[] inputs = crafting ? collectCraftingInputs(recipe, recipeIndex)
                 : collectStacks(transferInputs);
+            if (arcaneLayout != null) {
+                inputs = new IAEStack<?>[RecipeTransferPayload.SLOT_COUNT];
+                for (int i = 0; i < 9; i++) {
+                    inputs[i] = AEItemStack.create(ItemStack.loadItemStackFromNBT(arcaneLayout.getCompoundTagAt(i)));
+                }
+            }
             IAEStack<?>[] outputs = crafting ? new IAEStack<?>[RecipeTransferPayload.SLOT_COUNT]
                 : collectStacks(transferOutputs);
             boolean hasInterchangeableInputs = hasInterchangeableInputs(recipe, recipeIndex, crafting);
@@ -92,7 +102,7 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
             // GT-Not-Cool has one processing layout: every processing recipe is
             // transferred as 4x4, while crafting recipes keep their shaped 3x3 positions.
             terminal.transferRecipe(
-                new RecipeTransferPayload(crafting, encode, 4, false, inputs, outputs),
+                new RecipeTransferPayload(crafting, encode, 4, false, inputs, outputs, arcaneLayout),
                 interfaceSearch);
         } catch (RuntimeException | LinkageError failure) {
             AELog.warn(failure, "Failed to transfer an NEI recipe to the GT-Not-Cool quick terminal");

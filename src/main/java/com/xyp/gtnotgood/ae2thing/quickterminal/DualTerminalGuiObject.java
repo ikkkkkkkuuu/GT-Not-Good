@@ -1,19 +1,27 @@
 package com.xyp.gtnotgood.ae2thing.quickterminal;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 
 import com.xyp.gtnotgood.common.compat.FluidDropCompat;
+import com.xyp.gtnotgood.common.packaged.ArcaneWorkbenchPatterns;
 
 import appeng.api.features.IWirelessTermHandler;
+import appeng.api.networking.energy.IEnergySource;
 import appeng.api.networking.events.MENetworkBootingStatusChange;
 import appeng.api.networking.events.MENetworkEventSubscribe;
+import appeng.api.networking.security.BaseActionSource;
 import appeng.api.parts.IInterfaceTerminal;
+import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.StorageName;
+import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.items.contents.WirelessPatternTerminalGuiObject;
+import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
 import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
@@ -39,6 +47,124 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
     private static final String LEGACY_PROCESSING_OUTPUTS = "output_ex";
 
     private boolean needsUpdate = true;
+    /** Suppresses output-slot layout replacement during native encoding and stored inventory restoration. */
+    private boolean encodingPattern;
+
+    /** Whether an imported arcane recipe is displayed in the workbench panel instead of the processing panel. */
+    public boolean isArcaneWorkbenchView() {
+        return !Platform.openNbtData(getItemStack())
+            .getBoolean("GTNGArcaneProcessingView");
+    }
+
+    public void setArcaneWorkbenchView(boolean workbench) {
+        Platform.openNbtData(getItemStack())
+            .setBoolean("GTNGArcaneProcessingView", !workbench);
+    }
+
+    /** Restores shaped positions after AE loads the unordered bill from an encoded workbench pattern. */
+    private void restoreArcaneInputs() {
+        NBTTagList layout = getArcaneLayout();
+        var inputs = getAEInventoryByName(StorageName.CRAFTING_INPUT);
+        if (isCraftingRecipe() || inputs == null || !ArcaneWorkbenchPatterns.matchesInputs(layout, inputs)) return;
+        for (int i = 0; i < inputs.getSizeInventory(); i++) {
+            inputs.putAEStackInSlot(
+                i,
+                i < 9 ? AEItemStack.create(ItemStack.loadItemStackFromNBT(layout.getCompoundTagAt(i))) : null);
+        }
+    }
+
+    /** Restoring stored inventories must not replace a pending NEI layout with the previous encoded output's tag. */
+    @Override
+    public void readInventory() {
+        encodingPattern = true;
+        try {
+            super.readInventory();
+            restoreArcaneInputs();
+        } finally {
+            encodingPattern = false;
+        }
+    }
+
+    /** Persists the pending processing recipe's layout across terminal closes and crafting-mode round trips. */
+    public void setArcaneLayout(NBTTagList layout) {
+        NBTTagCompound data = Platform.openNbtData(getItemStack());
+        if (layout == null || layout.tagCount() != 9) data.removeTag(ArcaneWorkbenchPatterns.GRID);
+        else data.setTag(ArcaneWorkbenchPatterns.GRID, layout.copy());
+    }
+
+    public NBTTagList getArcaneLayout() {
+        return (NBTTagList) Platform.openNbtData(getItemStack())
+            .getTagList(ArcaneWorkbenchPatterns.GRID, 10)
+            .copy();
+    }
+
+    /** Loading an existing pattern restores its layout; taking the encoded result leaves the pending recipe intact. */
+    @Override
+    public void onChangeInventory(IInventory inventory, int slot, InvOperation operation, ItemStack removed,
+        ItemStack added) {
+        if (!encodingPattern && inventory == getInventoryByName("pattern") && slot == 1 && added != null) {
+            setArcaneLayout(
+                added.hasTagCompound() ? added.getTagCompound()
+                    .getTagList(ArcaneWorkbenchPatterns.GRID, 10) : null);
+        }
+        super.onChangeInventory(inventory, slot, operation, removed, added);
+        if (!encodingPattern && inventory == getInventoryByName("pattern") && slot == 1 && added != null) {
+            restoreArcaneInputs();
+        }
+    }
+
+    /**
+     * Adds the workbench layout inside AE's native encoding transaction, before container synchronization or
+     * automatic placement. All native blank-pattern consumption and output handling remain authoritative.
+     * A changed bill cannot be encoded with stale layout metadata.
+     */
+    @Override
+    public boolean encode(IEnergySource powerSource, IMEMonitor<IAEItemStack> itemMonitor,
+        BaseActionSource actionSource, String author, World world) {
+        NBTTagList layout = getArcaneLayout();
+        boolean arcane = !isCraftingRecipe() && layout.tagCount() == 9;
+        if (arcane
+            && !ArcaneWorkbenchPatterns.matchesInputs(layout, getAEInventoryByName(StorageName.CRAFTING_INPUT))) {
+            return false;
+        }
+        encodingPattern = true;
+        try {
+            if (!super.encode(powerSource, itemMonitor, actionSource, author, world)) return false;
+            if (arcane) {
+                IInventory patterns = getInventoryByName("pattern");
+                NBTTagCompound encoded = patterns.getStackInSlot(1)
+                    .getTagCompound();
+                encoded.setTag(ArcaneWorkbenchPatterns.GRID, layout);
+                encoded.setBoolean("substitute", false);
+                patterns.markDirty();
+            }
+            return true;
+        } finally {
+            encodingPattern = false;
+        }
+    }
+
+    /** Updates every occurrence in the shaped layout when the terminal cycles an NEI ingredient alternative. */
+    public void replaceArcaneIngredient(IAEStack<?> from, IAEStack<?> to) {
+        if (from == null || to == null || !from.isItem() || !to.isItem()) return;
+        NBTTagList layout = getArcaneLayout();
+        if (layout.tagCount() != 9) return;
+        ItemStack previous = ((IAEItemStack) from).getItemStack();
+        NBTTagList updated = new NBTTagList();
+        for (int i = 0; i < 9; i++) {
+            NBTTagCompound entry = layout.getCompoundTagAt(i);
+            ItemStack current = ItemStack.loadItemStackFromNBT(entry);
+            if (current != null && current.isItemEqual(previous)
+                && ItemStack.areItemStackTagsEqual(current, previous)) {
+                ItemStack replacement = ((IAEItemStack) to).getItemStack()
+                    .copy();
+                replacement.stackSize = 1;
+                entry = replacement.writeToNBT(new NBTTagCompound());
+            }
+            updated.appendTag(entry);
+        }
+        setArcaneLayout(updated);
+    }
 
     public DualTerminalGuiObject(IWirelessTermHandler handler, ItemStack stack, EntityPlayer player, World world,
         int slot) {

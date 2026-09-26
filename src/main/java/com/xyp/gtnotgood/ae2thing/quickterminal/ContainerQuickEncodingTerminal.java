@@ -82,6 +82,8 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     private final SlotRestrictedInput encodedPatternSlot;
 
     public final BooleanSyncHandler invertedSync;
+    public final BooleanSyncHandler arcaneModeSync;
+    public final BooleanSyncHandler arcaneWorkbenchViewSync;
     public final BooleanSyncHandler combineSync;
     public final BooleanSyncHandler prioritizeFluidsSync;
     public final IntSyncHandler activePageSync;
@@ -145,6 +147,9 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         appliedCraftingModeInitialized = true;
 
         SyncRegistrar sync = syncRegistrar();
+        arcaneModeSync = sync.booleanSync("arcaneMode");
+        arcaneWorkbenchViewSync = sync.booleanSync("arcaneWorkbenchView")
+            .onServerChange((oldValue, newValue) -> getDualTerminal().setArcaneWorkbenchView(newValue));
         invertedSync = sync.booleanSync("inverted")
             .onServerChange((oldValue, newValue) -> getExtendedPatternTerminal().setInverted(newValue));
         combineSync = sync.booleanSync("combine");
@@ -220,6 +225,10 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         if (encodingWithLogicalInventorySize) return;
         if (Platform.isServer()) {
             IPatternTerminalEx terminal = getExtendedPatternTerminal();
+            arcaneModeSync.set(
+                !isCraftingMode() && getDualTerminal().getArcaneLayout()
+                    .tagCount() == 9);
+            arcaneWorkbenchViewSync.set(getDualTerminal().isArcaneWorkbenchView());
             invertedSync.set(terminal.isInverted());
             combineSync.set(getDualTerminal().shouldCombine());
             prioritizeFluidsSync.set(getDualTerminal().shouldPrioritizeFluids());
@@ -333,6 +342,10 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
 
     /** Updates the visible tab immediately; authoritative slot contents arrive from the server action. */
     public void requestRecipeTransfer(RecipeTransferPayload payload) {
+        boolean arcane = payload.getArcaneLayout()
+            .tagCount() == 9;
+        arcaneModeSync.setLocalValue(arcane);
+        arcaneWorkbenchViewSync.setLocalValue(true);
         craftingModeSync.setLocalValue(payload.isCrafting());
         if (!payload.isCrafting()) {
             processingGridSizeSync.setLocalValue(4);
@@ -729,6 +742,8 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             return;
         }
 
+        if (getDualTerminal().getArcaneLayout()
+            .tagCount() == 9) return;
         IAEStackInventory inputInventory = inputsSync.get();
         List<IAEStack<?>> fluids = new ArrayList<>();
         List<IAEStack<?>> items = new ArrayList<>();
@@ -903,6 +918,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     }
 
     private void seedProcessingFromCrafting(IAEStack<?> craftingResult) {
+        getDualTerminal().setArcaneLayout(null);
         clearArray(processingInputSnapshot);
         clearArray(processingOutputSnapshot);
         boolean compact = getDualTerminal().getProcessingGridSize() == 4;
@@ -1044,6 +1060,8 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             updateVirtualSlot(appeng.api.storage.StorageName.CRAFTING_INPUT, slot, payload.getInput(slot));
             updateVirtualSlot(appeng.api.storage.StorageName.CRAFTING_OUTPUT, slot, payload.getOutput(slot));
         }
+        getDualTerminal().setArcaneLayout(payload.getArcaneLayout());
+        getDualTerminal().setArcaneWorkbenchView(true);
         rememberActivePattern(payload.isCrafting());
         // A NEI transfer establishes a new authoritative recipe. The other
         // representation is regenerated from it on the next mode switch.
@@ -1056,6 +1074,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     private void applyRecipeIngredient(RecipeIngredientReplacement replacement) {
         boolean crafting = appliedCraftingModeInitialized ? appliedCraftingMode : isCraftingMode();
         if (!applyRecipeIngredientToInputs(replacement, crafting)) return;
+        if (!crafting) getDualTerminal().replaceArcaneIngredient(replacement.getFrom(), replacement.getTo());
         rememberActivePattern(crafting);
         patternSnapshotsLinked = false;
         getDualTerminal().setPatternSnapshotsLinked(false);
@@ -1077,6 +1096,10 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             IAEStack<?> replacementStack = to.copy();
             // Keep the selected NEI alternative's quantity in both local prediction and server application.
             if (crafting) replacementStack.setStackSize(1);
+            else if (getDualTerminal().getArcaneLayout()
+                .tagCount() == 9) {
+                    replacementStack.setStackSize(current.getStackSize());
+                }
             updateVirtualSlot(appeng.api.storage.StorageName.CRAFTING_INPUT, slot, replacementStack);
             changed = true;
         }
@@ -1092,6 +1115,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     @Override
     public void onContainerClosed(EntityPlayer player) {
         if (Platform.isServer()) {
+            rememberArcaneLayout();
             boolean activeMode = appliedCraftingModeInitialized ? appliedCraftingMode : isCraftingMode();
             patternSnapshotsLinked &= activePatternMatches(activeMode);
             rememberActivePattern(activeMode);
@@ -1258,7 +1282,35 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         return null;
     }
 
+    /** Clearing the visible recipe also discards any pending workbench layout. */
+    @Override
+    public void clear() {
+        getDualTerminal().setArcaneLayout(null);
+        super.clear();
+    }
+
+    /** Saves edits to the nine workbench cells before encoding or closing, without accepting hidden extra inputs. */
+    private boolean rememberArcaneLayout() {
+        if (!isCraftingMode() && getDualTerminal().getArcaneLayout()
+            .tagCount() == 9) {
+            net.minecraft.nbt.NBTTagList layout = new net.minecraft.nbt.NBTTagList();
+            for (int i = 0; i < RecipeTransferPayload.SLOT_COUNT; i++) {
+                IAEStack<?> stack = inputsSync.get()
+                    .getAEStackInSlot(i);
+                if (stack != null && (i >= 9 || !(stack instanceof IAEItemStack) || stack.getStackSize() != 1))
+                    return false;
+                if (i < 9) layout.appendTag(
+                    stack == null ? new net.minecraft.nbt.NBTTagCompound()
+                        : ((IAEItemStack) stack).getItemStack()
+                            .writeToNBT(new net.minecraft.nbt.NBTTagCompound()));
+            }
+            getDualTerminal().setArcaneLayout(layout);
+        }
+        return true;
+    }
+
     private void quickEncode() {
+        if (!rememberArcaneLayout()) return;
         if (isCraftingMode()) {
             encodeWithInventorySizes(9, -1);
             return;
@@ -1267,6 +1319,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     }
 
     private void quickEncodeAndMoveToInventory(boolean encodeWholeStack) {
+        if (!rememberArcaneLayout()) return;
         quickEncode();
         ItemStack output = encodedPatternSlot.getStack();
         if (output == null) return;

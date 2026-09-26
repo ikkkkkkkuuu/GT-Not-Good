@@ -17,6 +17,9 @@ import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 
+import com.xyp.gtnotgood.ae2thing.nei.recipes.extractor.ThaumcraftRecipeExtractor;
+import com.xyp.gtnotgood.ae2thing.quickterminal.DualTerminalGuiObject;
+import com.xyp.gtnotgood.ae2thing.quickterminal.RecipeTransferPayload;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import appeng.api.AEApi;
@@ -26,12 +29,17 @@ import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.networking.crafting.ICraftingProviderHelper;
 import appeng.api.networking.security.MachineSource;
 import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.StorageName;
+import appeng.api.storage.data.IAEStack;
 import appeng.tile.storage.TileDrive;
+import appeng.util.item.AEItemStack;
+import codechicken.nei.PositionedStack;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import io.netty.buffer.Unpooled;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -54,6 +62,9 @@ public final class ArcaneWorkbenchClientChecks {
 
     private boolean started;
     private volatile boolean finished;
+    private volatile ItemStack previewPattern;
+    private DualTerminalGuiObject pendingTerminal;
+    private ItemStack pendingTerminalStack;
     private int ticks;
     private int crafted;
     private int frames;
@@ -82,7 +93,11 @@ public final class ArcaneWorkbenchClientChecks {
         mc.gameSettings.pauseOnLostFocus = false;
         mc.gameSettings.guiScale = 2;
         if (finished) {
-            if (!(mc.currentScreen instanceof CoreScreen)) mc.displayGuiScreen(new CoreScreen());
+            if (Boolean.getBoolean("gtng.arcane.terminalView")) {
+                if (!(mc.currentScreen instanceof com.xyp.gtnotgood.ae2thing.quickterminal.client.GuiQuickEncodingTerminal)) {
+                    showTerminal(mc);
+                }
+            } else if (!(mc.currentScreen instanceof CoreScreen)) mc.displayGuiScreen(new CoreScreen());
         } else if (!started && mc.theWorld == null && mc.currentScreen != null) {
             started = true;
             mc.launchIntegratedServer(
@@ -159,6 +174,17 @@ public final class ArcaneWorkbenchClientChecks {
                 provider.getStackInSlot(0) != null && player.inventory.mainInventory[0] == null,
                 "capture consumes blank");
             require(table.getStackInSlot(1).stackSize == 12, "capture preserves example");
+            ItemStack terminalPattern = terminalPattern(player);
+            require(
+                terminalPattern.getTagCompound()
+                    .getTagList(ArcaneWorkbenchPatterns.GRID, 10)
+                    .equals(
+                        provider.getStackInSlot(0)
+                            .getTagCompound()
+                            .getTagList(ArcaneWorkbenchPatterns.GRID, 10)),
+                "NEI layout equals workbench-captured layout");
+            provider.setInventorySlotContents(0, terminalPattern);
+            previewPattern = terminalPattern.copy();
             table.setInventorySlotContentsSoftly(1, null);
             table.setInventorySlotContentsSoftly(3, null);
             player.playerNetServerHandler.setPlayerLocation(4.5, 10, 1.5, 0, 15);
@@ -169,6 +195,7 @@ public final class ArcaneWorkbenchClientChecks {
                 provider.getProxy()
                     .isActive(),
                 "active AE grid");
+            verifyContainerEncoding(player);
             essentia = (IMEMonitor<AEEssentiaStack>) provider.getProxy()
                 .getStorage()
                 .getMEMonitor(AEEssentiaStackType.ESSENTIA_STACK_TYPE);
@@ -214,6 +241,192 @@ public final class ArcaneWorkbenchClientChecks {
                 "ARCANE_QA: PASS native recipes, exact layout, shortage, wand-first, capacity, blocked returns, NBT, 1000 dispatches in 1000 ticks");
             finished = true;
         }
+    }
+
+    /** Exercises NEI positions, the wire codec, terminal persistence and native encoding before real dispatch. */
+    private ItemStack terminalPattern(EntityPlayerMP player) throws Exception {
+        var layout = ThaumcraftRecipeExtractor.arcaneLayout(
+            java.util.Arrays.asList(
+                new PositionedStack(new ItemStack(Items.brick), 75, 38, false),
+                new PositionedStack(new ItemStack(Items.brick), 47, 65, false)));
+        IAEStack<?>[] inputs = new IAEStack<?>[16];
+        IAEStack<?>[] outputs = new IAEStack<?>[16];
+        inputs[0] = AEItemStack.create(new ItemStack(Items.brick, 2));
+        outputs[0] = AEItemStack.create(new ItemStack(Items.emerald));
+        var buffer = Unpooled.buffer();
+        RecipeTransferPayload payload;
+        try {
+            RecipeTransferPayload.CODEC
+                .write(buffer, new RecipeTransferPayload(false, true, 4, false, inputs, outputs, layout));
+            payload = RecipeTransferPayload.CODEC.read(buffer);
+        } finally {
+            buffer.release();
+        }
+        require(
+            payload.shouldEncode() && payload.getArcaneLayout()
+                .equals(layout),
+            "layout survives transfer packet");
+        ItemStack terminalStack = GTNGItemList.WirelessDualInterfaceTerminal.get(1);
+        appeng.util.Platform.openNbtData(terminalStack);
+        var handler = AEApi.instance()
+            .registries()
+            .wireless()
+            .getWirelessTerminalHandler(terminalStack);
+        var terminal = new DualTerminalGuiObject(handler, terminalStack, player, player.worldObj, 0);
+        terminal.setInventorySize(16, 16);
+        terminal.readInventory();
+        terminal.setCraftingRecipe(false);
+        terminal.getAEInventoryByName(StorageName.CRAFTING_INPUT)
+            .putAEStackInSlot(0, payload.getInput(0));
+        terminal.getAEInventoryByName(StorageName.CRAFTING_OUTPUT)
+            .putAEStackInSlot(0, payload.getOutput(0));
+        terminal.setArcaneLayout(payload.getArcaneLayout());
+        terminal.getInventoryByName("pattern")
+            .setInventorySlotContents(
+                0,
+                AEApi.instance()
+                    .definitions()
+                    .materials()
+                    .blankPattern()
+                    .maybeStack(3)
+                    .get());
+        terminal.writeInventory();
+        // Reopening must not lose the layout before the user presses Encode.
+        terminal = new DualTerminalGuiObject(handler, terminalStack, player, player.worldObj, 0);
+        terminal.setInventorySize(16, 16);
+        terminal.readInventory();
+        require(
+            terminal.encode(null, null, null, player.getCommandSenderName(), player.worldObj),
+            "terminal native encode");
+        ItemStack encoded = terminal.getInventoryByName("pattern")
+            .getStackInSlot(1)
+            .copy();
+        require(
+            encoded.getTagCompound()
+                .getTagList(ArcaneWorkbenchPatterns.GRID, 10)
+                .equals(layout),
+            "encoded arcane grid");
+        require(
+            !encoded.getTagCompound()
+                .getBoolean("crafting"),
+            "arcane remains a processing pattern");
+        require(
+            !encoded.getTagCompound()
+                .getBoolean("substitute"),
+            "exact ingredients enforced");
+        ItemStack previousOutput = encoded.copy();
+        previousOutput.getTagCompound()
+            .removeTag(ArcaneWorkbenchPatterns.GRID);
+        terminal.getInventoryByName("pattern")
+            .setInventorySlotContents(1, previousOutput);
+        terminal.setArcaneLayout(layout);
+        terminal.writeInventory();
+        terminal = new DualTerminalGuiObject(handler, terminalStack, player, player.worldObj, 0);
+        terminal.setInventorySize(16, 16);
+        terminal.readInventory();
+        require(
+            terminal.getArcaneLayout()
+                .equals(layout),
+            "previous encoded output cannot overwrite pending NEI layout");
+        terminal.getInventoryByName("pattern")
+            .setInventorySlotContents(1, null);
+        require(
+            terminal.encode(null, null, null, player.getCommandSenderName(), player.worldObj),
+            "repeat encoding retains layout");
+        terminal.getAEInventoryByName(StorageName.CRAFTING_INPUT)
+            .putAEStackInSlot(0, AEItemStack.create(new ItemStack(Items.brick, 3)));
+        require(
+            !terminal.encode(null, null, null, player.getCommandSenderName(), player.worldObj),
+            "stale layout rejects changed quantities");
+        terminal.getInventoryByName("pattern")
+            .setInventorySlotContents(1, encoded.copy());
+        require(
+            terminal.getArcaneLayout()
+                .equals(layout),
+            "loading encoded pattern restores layout");
+        require(
+            terminal.getAEInventoryByName(StorageName.CRAFTING_INPUT)
+                .getAEStackInSlot(0) == null,
+            "loading encoded pattern restores shaped holes");
+        terminal.getAEInventoryByName(StorageName.CRAFTING_INPUT)
+            .putAEStackInSlot(1, AEItemStack.create(new ItemStack(Items.stick)));
+        terminal.getAEInventoryByName(StorageName.CRAFTING_INPUT)
+            .putAEStackInSlot(3, AEItemStack.create(new ItemStack(Items.stick)));
+        terminal.replaceArcaneIngredient(inputs[0], AEItemStack.create(new ItemStack(Items.stick)));
+        require(
+            ArcaneWorkbenchPatterns
+                .matchesInputs(terminal.getArcaneLayout(), terminal.getAEInventoryByName(StorageName.CRAFTING_INPUT)),
+            "alternative updates both repeated grid cells");
+        ItemStack ordinary = encoded.copy();
+        ordinary.getTagCompound()
+            .removeTag(ArcaneWorkbenchPatterns.GRID);
+        terminal.getInventoryByName("pattern")
+            .setInventorySlotContents(1, ordinary);
+        require(
+            terminal.getArcaneLayout()
+                .tagCount() == 0,
+            "ordinary pattern clears old layout");
+        terminal.getInventoryByName("pattern")
+            .setInventorySlotContents(1, encoded.copy());
+        pendingTerminal = terminal;
+        pendingTerminalStack = terminalStack;
+        System.out.println(
+            "ARCANE_QA: PASS terminal NEI layout, packet, reopen, native encode, repeat, replacement, stale rejection");
+        return encoded;
+    }
+
+    /** Runs the actual encode action once the fixture AE node is ready. */
+    private void verifyContainerEncoding(EntityPlayerMP player) throws Exception {
+        var terminal = pendingTerminal;
+        ItemStack terminalStack = pendingTerminalStack;
+        ItemStack encoded = previewPattern.copy();
+        var layout = encoded.getTagCompound()
+            .getTagList(ArcaneWorkbenchPatterns.GRID, 10);
+        ItemStack held = player.inventory.mainInventory[0];
+        player.inventory.mainInventory[0] = terminalStack;
+        try {
+            // The isolated terminal fixture is not linked to a wireless access point. Supply the fixture grid's
+            // node so the interface delegate can initialize; pattern encoding still uses the real host/inventories.
+            var accessPoint = appeng.helpers.WirelessTerminalGuiObject.class.getDeclaredField("myWap");
+            accessPoint.setAccessible(true);
+            accessPoint.set(
+                terminal,
+                Proxy.newProxyInstance(
+                    getClass().getClassLoader(),
+                    new Class<?>[] { appeng.api.implementations.tiles.IWirelessAccessPoint.class },
+                    (proxy, method, args) -> {
+                        if (method.getName()
+                            .equals("getActionableNode"))
+                            return provider.getProxy()
+                                .getNode();
+                        if (method.getName()
+                            .equals("getGrid"))
+                            return provider.getProxy()
+                                .getNode()
+                                .getGrid();
+                        return null;
+                    }));
+            var container = new com.xyp.gtnotgood.ae2thing.quickterminal.ContainerQuickEncodingTerminal(
+                player.inventory,
+                terminal);
+            var encodeMethod = container.getClass()
+                .getDeclaredMethod("quickEncode");
+            encodeMethod.setAccessible(true);
+            encodeMethod.invoke(container);
+            encoded = terminal.getInventoryByName("pattern")
+                .getStackInSlot(1)
+                .copy();
+            require(
+                encoded.getTagCompound()
+                    .getTagList(ArcaneWorkbenchPatterns.GRID, 10)
+                    .equals(layout),
+                "workbench view encoding action preserves exact layout");
+            container.onContainerClosed(player);
+        } finally {
+            player.inventory.mainInventory[0] = held;
+        }
+        provider.setInventorySlotContents(0, encoded);
+        previewPattern = encoded.copy();
     }
 
     private void checks(EntityPlayerMP player) {
@@ -337,14 +550,53 @@ public final class ArcaneWorkbenchClientChecks {
         if (!condition) throw new IllegalStateException("ARCANE_QA: " + message);
     }
 
+    /** Renders the real terminal with synchronized arcane state after server-side dispatch verification. */
+    private void showTerminal(Minecraft mc) {
+        ItemStack item = GTNGItemList.WirelessDualInterfaceTerminal.get(1);
+        appeng.util.Platform.openNbtData(item);
+        mc.thePlayer.inventory.mainInventory[0] = item;
+        var handler = AEApi.instance()
+            .registries()
+            .wireless()
+            .getWirelessTerminalHandler(item);
+        var host = new DualTerminalGuiObject(handler, item, mc.thePlayer, mc.theWorld, 0);
+        var gui = new com.xyp.gtnotgood.ae2thing.quickterminal.client.GuiQuickEncodingTerminal(
+            mc.thePlayer.inventory,
+            host);
+        host.setCraftingRecipe(false);
+        host.getInventoryByName("pattern")
+            .setInventorySlotContents(1, previewPattern.copy());
+        var container = (com.xyp.gtnotgood.ae2thing.quickterminal.ContainerQuickEncodingTerminal) gui.inventorySlots;
+        container.craftingModeSync.setLocalValue(false);
+        container.arcaneModeSync.setLocalValue(true);
+        container.arcaneWorkbenchViewSync.setLocalValue(true);
+        // Native pattern loading is server-only. Supply the same inventory state that a real open GUI receives
+        // from its server sync handlers, instead of relying on a client-side output-slot insertion to decode it.
+        var layout = previewPattern.getTagCompound()
+            .getTagList(ArcaneWorkbenchPatterns.GRID, 10);
+        for (int i = 0; i < 16; i++) {
+            container.inputsSync.get()
+                .putAEStackInSlot(
+                    i,
+                    i < 9 ? AEItemStack.create(ItemStack.loadItemStackFromNBT(layout.getCompoundTagAt(i))) : null);
+            container.outputsSync.get()
+                .putAEStackInSlot(i, i == 0 ? AEItemStack.create(new ItemStack(Items.emerald)) : null);
+        }
+        mc.displayGuiScreen(gui);
+    }
+
     @SubscribeEvent
     public void render(TickEvent.RenderTickEvent event) throws Exception {
         Minecraft mc = Minecraft.getMinecraft();
-        if (event.phase != TickEvent.Phase.END || !(mc.currentScreen instanceof CoreScreen)) return;
+        if (event.phase != TickEvent.Phase.END || !(mc.currentScreen instanceof CoreScreen) && !(Boolean
+            .getBoolean("gtng.arcane.terminalView")
+            && mc.currentScreen instanceof com.xyp.gtnotgood.ae2thing.quickterminal.client.GuiQuickEncodingTerminal))
+            return;
         if (++frames == 40) {
             ScreenShotHelper.saveScreenshot(
                 new File("."),
-                "arcane-core-qa.png",
+                Boolean.getBoolean("gtng.arcane.terminalView") ? "arcane-workbench-terminal-qa.png"
+                    : "arcane-core-qa.png",
                 mc.displayWidth,
                 mc.displayHeight,
                 mc.getFramebuffer());

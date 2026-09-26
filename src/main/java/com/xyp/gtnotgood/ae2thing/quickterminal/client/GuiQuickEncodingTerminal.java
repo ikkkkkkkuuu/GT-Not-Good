@@ -574,7 +574,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             }
             GuiImgButton image = (GuiImgButton) button;
             Enum<?> value = image.getCurrentValue();
-            boolean centralGrid = patternContainer.isCraftingMode();
+            boolean centralGrid = isWorkbenchView();
             int controlX = 13;
             int controlY = centralGrid ? 75 : 84;
             if (value == ActionItems.ENCODE) {
@@ -615,8 +615,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     }
 
     private void layoutPatternSlots() {
-        boolean crafting = patternContainer.isCraftingMode();
-        synchronizeNativeCraftingMode(crafting);
+        boolean crafting = isWorkbenchView();
+        synchronizeNativeCraftingMode(patternContainer.isCraftingMode());
         int panelY = patternPanelY();
         if (craftingSlots != null) {
             for (int i = 0; i < craftingSlots.length; i++) {
@@ -645,6 +645,11 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                 slot.setHidden(crafting || i >= RecipeTransferPayload.SLOT_COUNT);
                 slot.setX(PATTERN_PANEL_X + PATTERN_PROCESSING_GRID_X + x * 18);
                 slot.setY(panelY + PATTERN_PROCESSING_OUTPUT_GRID_Y + y * 18);
+                if (isArcaneWorkbenchView()) {
+                    slot.setHidden(i != 0);
+                    slot.setX(PATTERN_PANEL_X + 42);
+                    slot.setY(panelY + PATTERN_CRAFTING_OUTPUT_Y);
+                }
             }
         }
 
@@ -659,6 +664,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             if (value == ItemSubstitution.DISABLED) button.visible = !patternContainer.substituteSync.get();
             if (value == PatternBeSubstitution.ENABLED) button.visible = patternContainer.beSubstituteSync.get();
             if (value == PatternBeSubstitution.DISABLED) button.visible = !patternContainer.beSubstituteSync.get();
+            if (patternContainer.arcaneModeSync.get()
+                && (value instanceof ItemSubstitution || value instanceof PatternBeSubstitution
+                    || value == ActionItems.DOUBLE))
+                button.visible = false;
         }
         if (combineEnabledButton != null)
             combineEnabledButton.visible = !crafting && patternContainer.isCombineEnabled();
@@ -714,7 +723,16 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     }
 
     public boolean isCraftingEncodingMode() {
-        return patternContainer.isCraftingMode();
+        return isWorkbenchView();
+    }
+
+    /** Uses the existing workbench panel for arcane recipes while keeping AE's processing encoder underneath. */
+    private boolean isWorkbenchView() {
+        return patternContainer.isCraftingMode() || isArcaneWorkbenchView();
+    }
+
+    private boolean isArcaneWorkbenchView() {
+        return patternContainer.arcaneModeSync.get() && patternContainer.arcaneWorkbenchViewSync.get();
     }
 
     /** Starts a native fluid craft from an NEI synthetic fluid display item. */
@@ -863,7 +881,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         // MEGuiTextField changes the current GL color. Without restoring white,
         // the encoder is tinted dark until another widget happens to reset it.
         GL11.glColor4f(1, 1, 1, 1);
-        boolean crafting = patternContainer.isCraftingMode();
+        boolean crafting = isWorkbenchView();
         ResourceLocation texture = crafting ? PATTERN_PANEL : PATTERN_PANEL_4X4;
         mc.getTextureManager()
             .bindTexture(texture);
@@ -923,11 +941,17 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             return;
         }
         if (button == craftingModeButton) {
-            patternContainer.craftingModeSync.set(true);
+            if (patternContainer.arcaneModeSync.get()) patternContainer.arcaneWorkbenchViewSync.set(true);
+            else patternContainer.craftingModeSync.set(true);
             layoutPatternExtension();
             return;
         }
         if (button == processing4ModeButton) {
+            if (patternContainer.arcaneModeSync.get()) {
+                patternContainer.arcaneWorkbenchViewSync.set(false);
+                layoutPatternExtension();
+                return;
+            }
             patternContainer.requestProcessingGridSize(4);
             patternContainer.craftingModeSync.set(false);
             layoutPatternExtension();
@@ -1045,7 +1069,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     }
 
     private boolean handleFluidCraftingControlClick(int mouseX, int mouseY, int mouseButton) {
-        if (patternContainer.isCraftingMode() || mouseButton != 0 && mouseButton != 1) return false;
+        if (isWorkbenchView() || mouseButton != 0 && mouseButton != 1) return false;
         if (isOverHalfSizeButton(combineEnabledButton, mouseX, mouseY)) {
             patternContainer.requestCombine(!patternContainer.isCombineEnabled());
             layoutPatternSlots();
@@ -1269,7 +1293,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     }
 
     private void updateFluidCraftingButtonVisibility() {
-        boolean processing = !patternContainer.isCraftingMode();
+        boolean processing = !isWorkbenchView();
         if (combineEnabledButton != null)
             combineEnabledButton.visible = processing && patternContainer.isCombineEnabled();
         if (combineDisabledButton != null)
@@ -1367,7 +1391,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     }
 
     private int patternPanelTextureHeight() {
-        return patternContainer.isCraftingMode() ? CRAFTING_PANEL_TEXTURE_HEIGHT : PROCESSING_PANEL_TEXTURE_HEIGHT;
+        return isWorkbenchView() ? CRAFTING_PANEL_TEXTURE_HEIGHT : PROCESSING_PANEL_TEXTURE_HEIGHT;
     }
 
     private int patternPanelTotalHeight() {
@@ -1375,11 +1399,11 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     }
 
     private int patternRowY() {
-        return patternContainer.isCraftingMode() ? CRAFTING_PATTERN_ROW_Y : PROCESSING_PATTERN_ROW_Y;
+        return isWorkbenchView() ? CRAFTING_PATTERN_ROW_Y : PROCESSING_PATTERN_ROW_Y;
     }
 
     private int patternTabY() {
-        return patternContainer.isCraftingMode() ? CRAFTING_TAB_Y : PROCESSING_TAB_Y;
+        return isWorkbenchView() ? CRAFTING_TAB_Y : PROCESSING_TAB_Y;
     }
 
     private int viewCellPanelY() {

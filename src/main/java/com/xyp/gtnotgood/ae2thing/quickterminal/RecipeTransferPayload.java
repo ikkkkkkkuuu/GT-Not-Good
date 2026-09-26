@@ -2,9 +2,13 @@ package com.xyp.gtnotgood.ae2thing.quickterminal;
 
 import java.io.IOException;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+
 import appeng.api.storage.data.IAEStack;
 import appeng.container.sync.StreamCodec;
 import appeng.container.sync.StreamCodecs;
+import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 
 /**
@@ -24,15 +28,28 @@ public final class RecipeTransferPayload {
     private final boolean inverted;
     private final IAEStack<?>[] inputs;
     private final IAEStack<?>[] outputs;
+    private final NBTTagList arcaneLayout;
 
     public RecipeTransferPayload(boolean crafting, boolean encode, int processingGridSize, boolean inverted,
         IAEStack<?>[] inputs, IAEStack<?>[] outputs) {
+        this(crafting, encode, processingGridSize, inverted, inputs, outputs, null);
+    }
+
+    public RecipeTransferPayload(boolean crafting, boolean encode, int processingGridSize, boolean inverted,
+        IAEStack<?>[] inputs, IAEStack<?>[] outputs, NBTTagList arcaneLayout) {
         this.crafting = crafting;
         this.encode = encode;
         this.processingGridSize = 4;
         this.inverted = !crafting && this.processingGridSize == 4 && inverted;
         this.inputs = copyToFixedSize(inputs);
         this.outputs = copyToFixedSize(outputs);
+        this.arcaneLayout = !crafting && arcaneLayout != null && arcaneLayout.tagCount() == 9
+            ? (NBTTagList) arcaneLayout.copy()
+            : new NBTTagList();
+    }
+
+    public NBTTagList getArcaneLayout() {
+        return (NBTTagList) arcaneLayout.copy();
     }
 
     public boolean isCrafting() {
@@ -84,6 +101,9 @@ public final class RecipeTransferPayload {
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
             IAEStack.writeToPacketGeneric(buffer, payload.outputs[slot]);
         }
+        NBTTagCompound layout = new NBTTagCompound();
+        layout.setTag("Grid", payload.arcaneLayout);
+        ByteBufUtils.writeTag(buffer, layout);
     }
 
     private static RecipeTransferPayload read(ByteBuf buffer) throws IOException {
@@ -99,6 +119,14 @@ public final class RecipeTransferPayload {
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
             outputs[slot] = IAEStack.fromPacketGeneric(buffer);
         }
-        return new RecipeTransferPayload(crafting, encode, processingGridSize, inverted, inputs, outputs);
+        NBTTagCompound layout = ByteBufUtils.readTag(buffer);
+        return new RecipeTransferPayload(
+            crafting,
+            encode,
+            processingGridSize,
+            inverted,
+            inputs,
+            outputs,
+            layout == null ? null : layout.getTagList("Grid", 10));
     }
 }
