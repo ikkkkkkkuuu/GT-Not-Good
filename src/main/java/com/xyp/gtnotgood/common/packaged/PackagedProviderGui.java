@@ -62,6 +62,10 @@ public final class PackagedProviderGui {
         IntSyncValue count = new IntSyncValue(() -> tile.targets.size());
         IntSyncValue priority = new IntSyncValue(() -> tile.priority);
         StringSyncValue altar = new StringSyncValue(() -> tile.altarStatus.key);
+        StringSyncValue missingAspect = new StringSyncValue(() -> tile.arcaneMissingAspect);
+        IntSyncValue missingUnits = new IntSyncValue(() -> tile.arcaneMissingUnits);
+        sync.syncValue("arcaneMissingAspect", missingAspect);
+        sync.syncValue("arcaneMissingUnits", missingUnits);
         IntSyncValue lock = new IntSyncValue(() -> tile.craftingLock.ordinal());
         BooleanSyncValue locked = new BooleanSyncValue(tile::craftingLocked);
         BooleanSyncValue visible = new BooleanSyncValue(() -> tile.terminalVisible);
@@ -159,6 +163,11 @@ public final class PackagedProviderGui {
             // # zh_CN 封包核心（有任务时锁定）
             .tooltip(
                 t -> t.addLine(IKey.lang("gui.packaged.core_slot"))
+                    .addLine(
+                        IKey.dynamic(
+                            () -> missingUnits.getIntValue() > 0
+                                ? missingAspect.getValue() + ": -" + missingUnits.getIntValue()
+                                : ""))
                     .addLine(IKey.dynamic(() -> StatCollector.translateToLocal(altar.getValue())))));
         panel.child(
             SlotGroupWidget.playerInventory((index, slot) -> slot.background(IDrawable.EMPTY))
@@ -402,12 +411,21 @@ public final class PackagedProviderGui {
                         // # Right click: unlink. Shift-right click: release job. Cancel AE requests separately.
                         // # zh_CN 右键断开；Shift右键中断并释放任务，需另行取消AE订单。
                         t.addLine(IKey.lang("gui.packaged.remove_target"));
+                        // #tr gui.packaged.arcane_record
+                        // # Arcane core: left-click to record this table; bring a blank pattern.
+                        // # zh_CN 奥术核心：左击录入此工作台配方，需携带空白样板。
+                        t.addLine(IKey.lang("gui.packaged.arcane_record"));
                         // #tr gui.packaged.interrupt_materials
                         // # Assembly lines stop. Consumed inputs are lost; clear leftovers before restarting.
                         // # zh_CN 装配线停机，已消耗材料不退还；重启前清理剩余材料。
                         t.addLine(IKey.lang("gui.packaged.interrupt_materials"));
                     })
                     .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
+                        if (!mouse.isClient() && mouse.mouseButton == 0
+                            && tile.canConfigure(sync.getPlayer())
+                            && ModList.Thaumcraft.isModLoaded()) {
+                            ArcaneWorkbenchPatterns.capture(tile, sync.getPlayer(), page[0] + offset);
+                        }
                         if (!mouse.isClient() && mouse.mouseButton == 1 && tile.canConfigure(sync.getPlayer())) {
                             if (mouse.shift) {
                                 boolean released = tile.releaseInterrupted(page[0] + offset);

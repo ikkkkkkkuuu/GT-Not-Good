@@ -389,3 +389,48 @@ Removed seven compat/jei source files and RecipeRegistryOverlayTransferMixin fro
 
 ## RTS host item catalog binding — 2026-09-26
 Restored the 17 host RTS enum constants removed in b25f2e0. Replaced the RtsItems.register string-based enum lookup with the independently authored host RtsItemBindings adapter, using direct references to all 17 enum constants and registered handles. Registry names and upstream assets are unchanged; missing enum entries now fail compilation instead of enabled-RTS startup.
+
+## LDLib extended controls — 2026-09-26
+
+Source: user-supplied `../LDLib2-1.21`, version 2.2.40, Low-Drag-MC/LDLib2,
+https://github.com/Low-Drag-MC/LDLib2, LGPL-3.0 (read before implementation).
+No Git metadata exists in this snapshot; source SHA-256 hashes are pinned in
+`src/main/resources/META-INF/ldlib-port/CONTROLS_MANIFEST.json`.
+
+Destination: `src/main/java/com/xyp/ldlib/gui/ui/elements/` for ProgressBar, Slider,
+SearchComponent, Menu, Dialog, TreeList, SplitView, VirtualScrollerView, ColorSelector,
+and GraphView. Scene is explicitly excluded at the user's request.
+
+Changes: modern layout/style/editor/RPC integrations replaced by host fixed bounds,
+client-side callbacks, LWJGL2/Tessellator rendering and the existing MUI2 boundary.
+Added ModalLayer and modal focus isolation in UIInput; extended ScrollerView with
+thumb dragging and model extent overrides. No new upstream art copied. Existing theme
+assets keep their existing licenses. Fixed-height virtualization, single-selection trees
+and textured graph nodes are the supported adaptation scope; full editor/XML, variable
+row-height virtualization and graph execution are not claimed. The upstream directory
+remains outside compilation/resource inputs. Validation details: docs/testing/ldlib-controls.md.
+
+## Arcane workbench core — 2026-09-26
+
+- Existing core base and renderer inspected in the pinned AE2LT-Packaged-Pattern-Provider checkout,
+  commit `1d3f183ecf258aff0001567d742ed30d6038d77b`, `LICENSE` (LGPL-3.0).
+- Destination: existing `textures/items/packaged/provider_core_base.png` and `PackagedCoreRenderer`.
+  The base PNG and overlay geometry remain unchanged. The arcane core renders the installed
+  Thaumcraft 4.2.3.5 `blockTable:15` item; no Thaumcraft texture/source code is copied or redistributed.
+- Existing upstream connection-list row gains a server-authorized left-click capture action.
+  Its layout and artwork remain unchanged; source/asset license records above still apply.
+- New native API integration is implemented in `ArcaneWorkbenchAdapter` and `ArcaneWorkbenchPatterns`.
+  Local dependency source was inspected for recipe matching, wand units/cost and table metadata.
+- Reference checkouts remain outside compilation and resource packaging.
+
+## Large Transmutation Machine — 2026-09-26
+
+- Pinned upstream: ABKQPO/GT-Not-Leisure dev-290, `f1b74060d2a91b422eb950076075c601a644f882`.
+- Read LICENSE.txt (LGPL-3.0), ShimmerRecipes, DisassemblerHelper, ReversedRecipeRegistry and crafting mixins.
+- Ported blacklist/material transformations and recipe-source selection. Full source/destination,
+  modification and license records: `src/main/resources/META-INF/shimmer-port/NOTICE.md`.
+- Installed GTNL is loaded first and supplies its real conversion table, including hard overrides.
+- Adaptations: EV power, exact batches, native fluid output hatches, GT NBT matching/output protection.
+- Standard machine GUI and NEI only; no dedicated LDLib screen or browser button.
+- Structure uses existing GT/BartWorks/vanilla blocks; no upstream artwork is copied.
+- Reference checkouts remain excluded from compilation and resource packaging.

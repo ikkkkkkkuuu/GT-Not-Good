@@ -100,14 +100,22 @@ public final class WildcardIndexPage extends ParentWidget<WildcardIndexPage> {
         filterPatterns();
     }
 
-    /** Filters only the cached snapshot; typing never reruns recipe expansion or changes item data. */
+    /**
+     * Searches internal and client-localized material names in the cached snapshot.
+     * Typing never reruns recipe expansion or changes item data.
+     */
     private void filterPatterns() {
         String query = search.trim()
             .toLowerCase(Locale.ROOT);
         List<WildcardExpansion.Expanded> matches = new ArrayList<>();
         for (WildcardExpansion.Expanded pattern : allPatterns) {
-            if (query.isEmpty() || (pattern.material != null && pattern.material.mName.toLowerCase(Locale.ROOT)
-                .contains(query))) matches.add(pattern);
+            Materials material = pattern.material;
+            if (query.isEmpty() || (material != null && (material.mName.toLowerCase(Locale.ROOT)
+                .contains(query)
+                || material.getLocalizedName()
+                    .toLowerCase(Locale.ROOT)
+                    .contains(query))))
+                matches.add(pattern);
         }
         patterns = matches;
         ticks = 0;

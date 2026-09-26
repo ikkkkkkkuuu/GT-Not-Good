@@ -33,12 +33,18 @@ public final class WirelessLaserDynamoHatch extends MTEHatchWirelessDynamoMulti 
     @Override
     public String getLocalName() {
         // #tr gtng.wireless.laser.output.name
-        // # %s Wireless Laser Dynamo Hatch (%s A)
-        // # zh_CN %s 无线激光动力仓 (%s A)
+        // # %1$s %2$sA Wireless Laser Dynamo Hatch
+        // # zh_CN %2$s安%1$s无线激光动力仓
         return StatCollector.translateToLocalFormatted(
             "gtng.wireless.laser.output.name",
             GTValues.VN[mTier],
             NumberFormatUtil.formatNumber(maxAmperes));
+    }
+
+    /** Keeps native energy details while the loader supplies this variant's animated mod credit. */
+    @Override
+    public String[] getDescription() {
+        return formatEnergyInfoDesc(null, null, true, mTier, maxAmperes, "gt.blockmachines.dynamo_hatch.wireless");
     }
 
     /** Retains the custom family name when GregTech creates a placed tile from the registered prototype. */

@@ -672,17 +672,18 @@ public class WildcardPatternGui {
         if (configSync != null) {
             configSync.setValue(serializeConfig(), true, true);
         }
-        saveToLocalStack();
-        if (previewPage != null) previewPage.refresh(WildcardExpansion.expand(inputs, outputs, filters));
+        List<WildcardExpansion.Expanded> expanded = WildcardExpansion.expand(inputs, outputs, filters);
+        saveToLocalStack(expanded.size());
+        if (previewPage != null) previewPage.refresh(expanded);
     }
 
-    private void saveToLocalStack() {
+    private void saveToLocalStack(int expandedCount) {
         if (backingStack == null) return;
         WildcardModelState.ensureInitialized(backingStack);
         WildcardModelState.setInputs(backingStack, inputs);
         WildcardModelState.setOutputs(backingStack, outputs);
         WildcardModelState.setFilters(backingStack, filters);
-        WildcardModelState.setExpandedCount(backingStack, countExpanded());
+        WildcardModelState.setExpandedCount(backingStack, expandedCount);
     }
 
     // ============================================================
@@ -730,7 +731,4 @@ public class WildcardPatternGui {
         filters.addAll(WildcardModelState.getFilters(backingStack));
     }
 
-    private int countExpanded() {
-        return WildcardExpansion.countExpanded(inputs, outputs, filters);
-    }
 }

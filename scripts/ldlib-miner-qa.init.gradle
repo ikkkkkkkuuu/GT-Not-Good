@@ -1,0 +1,35 @@
+// Arrange the test desktop or obtain current-desktop authorization, then pass -PldlibVisibleQa=true.
+// The flag acknowledges the desktop arrangement; it does not hide or move the game window.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def qaLanguage = root.findProperty('ldlibQaLanguage') ?: 'zh_CN'
+    def qaScale = root.findProperty('ldlibQaScale') ?: '2'
+    root.tasks.named('runClient').configure {
+        notCompatibleWithConfigurationCache('Client QA snapshots project outputs at execution time')
+        dependsOn root.tasks.named('testClasses')
+        classpath += root.sourceSets.test.output
+        workingDir root.file('run/ldlib-miner-check')
+        systemProperty 'gtng.ldminer.qa', 'true'
+        systemProperty 'gtng.ldminer.qa.output', root.file("build/ldlib-miner-qa/${qaLanguage}-scale${qaScale}").absolutePath
+        doFirst {
+            if (root.findProperty('ldlibVisibleQa') != 'true') {
+                throw new GradleException('Arrange Desktop 2 or obtain current-desktop authorization, then pass -PldlibVisibleQa=true.')
+            }
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText("lang:${qaLanguage}\nguiScale:${qaScale}\npauseOnLostFocus:false\n", 'UTF-8')
+            def snapshot = java.nio.file.Files.createTempDirectory('gtng-ldlib-qa-').toFile()
+            def projectBuild = root.layout.buildDirectory.get().asFile.toPath()
+            classpath = root.files(classpath.files.collect { entry ->
+                if (!entry.exists() || !entry.toPath().startsWith(projectBuild)) return entry
+                def target = new File(snapshot, projectBuild.relativize(entry.toPath()).toString())
+                if (entry.isDirectory()) root.copy { from entry; into target }
+                else {
+                    target.parentFile.mkdirs()
+                    java.nio.file.Files.copy(entry.toPath(), target.toPath())
+                }
+                return target
+            })
+        }
+        args '--width', '1100', '--height', '740'
+    }
+}

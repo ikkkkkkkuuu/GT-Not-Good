@@ -49,7 +49,39 @@ public enum AltarStatus {
     // #tr gui.packaged.blood_recipe
     // # Blood Altar: check tier, single-step ingredients and output.
     // # zh_CN 血祭坛：请检查等级、单步配方材料与产物。
-    BLOOD_RECIPE("gui.packaged.blood_recipe");
+    BLOOD_RECIPE("gui.packaged.blood_recipe"),
+    // #tr gui.packaged.arcane_owner
+    // # Workbench: owner must be online here and allowed to use the target.
+    // # zh_CN 工作台：所有者须在本维度在线且有权使用目标。
+    ARCANE_OWNER("gui.packaged.arcane_owner"),
+    // #tr gui.packaged.arcane_occupied
+    // # Workbench: clear the grid and close its screen.
+    // # zh_CN 工作台：请清空九宫格并关闭其界面。
+    ARCANE_OCCUPIED("gui.packaged.arcane_occupied"),
+    // #tr gui.packaged.arcane_wand
+    // # Workbench: insert a crafting wand or sceptre.
+    // # zh_CN 工作台：请放入可合成的法杖或权杖。
+    ARCANE_WAND("gui.packaged.arcane_wand"),
+    // #tr gui.packaged.arcane_recipe
+    // # Workbench: check recorded grid, research, exact inputs and output.
+    // # zh_CN 工作台：请检查录入的九宫格、研究、材料及产物。
+    ARCANE_RECIPE("gui.packaged.arcane_recipe"),
+    // #tr gui.packaged.arcane_capacity
+    // # Workbench: the recipe exceeds this wand's capacity.
+    // # zh_CN 工作台：配方所需 Vis 超过法杖容量。
+    ARCANE_CAPACITY("gui.packaged.arcane_capacity"),
+    // #tr gui.packaged.arcane_essentia
+    // # Workbench: waiting for matching AE primal essentia (Thaumic Energistics).
+    // # zh_CN 工作台：等待 AE 中对应的基础源质（需要神秘能源）。
+    ARCANE_ESSENTIA("gui.packaged.arcane_essentia"),
+    // #tr gui.packaged.arcane_returns_full
+    // # Workbench: make room in the provider's return inventory.
+    // # zh_CN 工作台：请腾出供应器回收栏空间。
+    ARCANE_RETURNS_FULL("gui.packaged.arcane_returns_full"),
+    // #tr gui.packaged.arcane_ready
+    // # Workbench: last craft completed; results buffered for AE.
+    // # zh_CN 工作台：上次合成已完成，产物已进入 AE 回收流程。
+    ARCANE_READY("gui.packaged.arcane_ready");
 
     public final String key;
 

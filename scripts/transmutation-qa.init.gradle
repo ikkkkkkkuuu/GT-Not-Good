@@ -1,0 +1,33 @@
+// Opt-in disposable world: structure, processing, standard machine screen and NEI verification.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.matching { it.name == 'runClient' || it.name == 'runClient25' }.configureEach {
+        notCompatibleWithConfigurationCache('Snapshots build outputs before client QA')
+        dependsOn root.tasks.named('testClasses')
+        classpath += root.sourceSets.test.output
+        workingDir root.file('run/transmutation-check')
+        systemProperty 'gtng.transmutation.qa', 'true'
+        systemProperty 'gtng.transmutation.qa.reload', 'true'
+        systemProperty 'gtng.transmutation.qa.output', root.file('build/transmutation-qa').absolutePath
+        doFirst {
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            if (root.hasProperty('transmutationQaLiveResources')) return
+            def snapshot = java.nio.file.Files.createTempDirectory('gtng-transmutation-qa-').toFile()
+            def projectBuild = root.layout.buildDirectory.get().asFile.toPath()
+            classpath = root.files(classpath.files.collect { entry ->
+                if (!entry.exists() || !entry.toPath().startsWith(projectBuild)) return entry
+                def target = new File(snapshot, projectBuild.relativize(entry.toPath()).toString())
+                if (entry.isDirectory()) root.copy { from entry; into target }
+                else {
+                    target.parentFile.mkdirs()
+                    java.nio.file.Files.copy(entry.toPath(), target.toPath())
+                }
+                return target
+            })
+        }
+        args '--width', '1100', '--height', '740'
+    }
+}
+
+

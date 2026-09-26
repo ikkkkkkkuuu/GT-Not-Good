@@ -9,6 +9,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.common.compat.FluidDropCompat;
+import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternCache;
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternGenerator;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 
@@ -28,8 +29,7 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
     private ICraftingPatternDetails activePatternDetails;
     private ItemStack activePatternStack;
     private String activeGeneratedPatternId = "";
-    private String cachedSignature;
-    private boolean cachedComputed;
+    private final WildcardPatternCache<List<ICraftingPatternDetails>> expansionCache = new WildcardPatternCache<>();
     private List<ICraftingPatternDetails> cachedExpandedDetails = java.util.Collections.emptyList();
 
     public WildcardPatternSlotSuper(SuperMTEHatchCraftingInputME parent, ItemStack pattern,
@@ -50,6 +50,7 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
     }
 
     public void setActivePatternDetails(ICraftingPatternDetails activePatternDetails) {
+        if (this.activePatternDetails == activePatternDetails) return;
         this.activePatternDetails = activePatternDetails;
         setActivePatternStack(activePatternDetails == null ? null : activePatternDetails.getPattern());
     }
@@ -64,17 +65,8 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
     }
 
     public List<ICraftingPatternDetails> getExpandedDetails(ItemStack patternStack, World world) {
-        String signature = getPatternSignature(patternStack);
-        // 用 cachedComputed 标志判断是否已展开，而不是 cachedExpandedDetails.isEmpty()：一个展开成 0 个样板的通配符
-        // （空白/半配置、过滤器排除全部材料、无材料能满足）本身就是合法的空结果，用 isEmpty() 会把它当成「缓存没填」，
-        // 于是每次调用都重跑一遍全材料表扫描（provideCrafting 每次电网重算都调），是节点接入卡顿的固定放大器。
-        if (!this.cachedComputed || !signature.equals(this.cachedSignature)) {
-            this.cachedExpandedDetails = WildcardPatternGenerator.generateAllDetails(patternStack, world);
-            // generateAllDetails 会把 WPExpandedCount 写回 patternStack 的 NBT，改变签名来源。必须在写回之后重新取签名，
-            // 否则下一次调用用的是写回前的旧签名，必然未命中、再展开一次（每个新 slot 固定 2× 展开开销）。
-            this.cachedSignature = getPatternSignature(patternStack);
-            this.cachedComputed = true;
-        }
+        this.cachedExpandedDetails = expansionCache
+            .get(patternStack, world, () -> WildcardPatternGenerator.generateAllDetails(patternStack, world));
         return this.cachedExpandedDetails;
     }
 
@@ -399,18 +391,24 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
             dualInputs.inputFluid = GTValues.emptyFluidStackArray;
             return dualInputs;
         }
-        ItemStack[] inputItems = this.parentMTE.getSharedItems();
-        FluidStack[] inputFluids = GTValues.emptyFluidStackArray;
-
-        // 使用getAEInputs()匹配新版GTNH,直接获取IAEFluidStack
-        for (IAEStack<?> singleInput : details.getAEInputs()) {
-            if (singleInput == null) {
-                continue;
-            }
+        ItemStack[] sharedItems = this.parentMTE.getSharedItems();
+        IAEStack<?>[] inputs = details.getAEInputs();
+        int itemCount = sharedItems == null ? 0 : sharedItems.length;
+        int fluidCount = 0;
+        for (IAEStack<?> input : inputs) {
+            if (input instanceof IAEItemStack) itemCount++;
+            else if (input instanceof IAEFluidStack) fluidCount++;
+        }
+        ItemStack[] inputItems = new ItemStack[itemCount];
+        FluidStack[] inputFluids = new FluidStack[fluidCount];
+        int itemIndex = sharedItems == null ? 0 : sharedItems.length;
+        if (itemIndex > 0) System.arraycopy(sharedItems, 0, inputItems, 0, itemIndex);
+        int fluidIndex = 0;
+        for (IAEStack<?> singleInput : inputs) {
             if (singleInput instanceof IAEItemStack ais) {
-                inputItems = org.apache.commons.lang3.ArrayUtils.addAll(inputItems, ais.getItemStack());
+                inputItems[itemIndex++] = ais.getItemStack();
             } else if (singleInput instanceof IAEFluidStack ifs) {
-                inputFluids = org.apache.commons.lang3.ArrayUtils.addAll(inputFluids, ifs.getFluidStack());
+                inputFluids[fluidIndex++] = ifs.getFluidStack();
             }
         }
 
@@ -436,11 +434,4 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
         return getFluidFromPatternInput(stack) != null;
     }
 
-    private static String getPatternSignature(ItemStack stack) {
-        if (stack == null) {
-            return "";
-        }
-        NBTTagCompound tag = stack.getTagCompound();
-        return stack.getItemDamage() + ":" + (tag == null ? "" : tag.toString());
-    }
 }

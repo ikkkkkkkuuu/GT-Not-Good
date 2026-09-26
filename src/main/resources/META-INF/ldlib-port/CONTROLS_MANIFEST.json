@@ -1,0 +1,75 @@
+{
+  "source": "https://github.com/Low-Drag-MC/LDLib2",
+  "localSnapshot": "LDLib2-1.21",
+  "version": "2.2.40",
+  "commit": null,
+  "revisionNote": "User-supplied source snapshot without .git metadata; source hashes pin inspected inputs.",
+  "license": "LGPL-3.0",
+  "licenseSha256": "b9e90671bf0ce37f013533e0e0782e1b9a0eaacff66f2e18cb6478fe0e3f8c90",
+  "excluded": [
+    "Scene"
+  ],
+  "addedArtwork": [],
+  "entries": [
+    {
+      "source": "src/main/java/com/lowdragmc/lowdraglib2/gui/ui/elements/ProgressBar.java",
+      "sourceSha256": "e3acbbb28df62fa2140bc0a1280ff717629f5abbc7d87161fe9fecc74e80c942",
+      "destination": "src/main/java/com/xyp/ldlib/gui/ui/elements/ProgressBar.java",
+      "modification": "Adapted component behavior to the host 1.7.10 UI tree, client callbacks and LWJGL2; modern editor/layout/sync APIs omitted."
+    },
+    {
+      "source": "src/main/java/com/lowdragmc/lowdraglib2/gui/ui/elements/Slider.java",
+      "sourceSha256": "647d15a8f48386c8632e100d0d4990dabb3d5e525216ace6197648947323697c",
+      "destination": "src/main/java/com/xyp/ldlib/gui/ui/elements/Slider.java",
+      "modification": "Adapted component behavior to the host 1.7.10 UI tree, client callbacks and LWJGL2; modern editor/layout/sync APIs omitted."
+    },
+    {
+      "source": "src/main/java/com/lowdragmc/lowdraglib2/gui/ui/elements/SearchComponent.java",
+      "sourceSha256": "2297ca1261c4375482fa211dbaf6d306492bd635ba514119896250870762f2b8",
+      "destination": "src/main/java/com/xyp/ldlib/gui/ui/elements/SearchComponent.java",
+      "modification": "Adapted component behavior to the host 1.7.10 UI tree, client callbacks and LWJGL2; modern editor/layout/sync APIs omitted."
+    },
+    {
+      "source": "src/main/java/com/lowdragmc/lowdraglib2/gui/ui/elements/Menu.java",
+      "sourceSha256": "93218444c1483f243c6fbdae14965e8478350e9c544650457949b9b5bd14048b",
+      "destination": "src/main/java/com/xyp/ldlib/gui/ui/elements/Menu.java",
+      "modification": "Adapted component behavior to the host 1.7.10 UI tree, client callbacks and LWJGL2; modern editor/layout/sync APIs omitted."
+    },
+    {
+      "source": "src/main/java/com/lowdragmc/lowdraglib2/gui/ui/elements/Dialog.java",
+      "sourceSha256": "0f873af6497d4f166a53800a38efe32f9b8d952bbc8cc4ecaafc2f0618fb82b3",
+      "destination": "src/main/java/com/xyp/ldlib/gui/ui/elements/Dialog.java",
+      "modification": "Adapted component behavior to the host 1.7.10 UI tree, client callbacks and LWJGL2; modern editor/layout/sync APIs omitted."
+    },
+    {
+      "source": "src/main/java/com/lowdragmc/lowdraglib2/gui/ui/elements/TreeList.java",
+      "sourceSha256": "293b57c2d755f9b413379f15ffe97af1fa6a406f4b9116bb19669e4c9a607a96",
+      "destination": "src/main/java/com/xyp/ldlib/gui/ui/elements/TreeList.java",
+      "modification": "Adapted component behavior to the host 1.7.10 UI tree, client callbacks and LWJGL2; modern editor/layout/sync APIs omitted."
+    },
+    {
+      "source": "src/main/java/com/lowdragmc/lowdraglib2/gui/ui/elements/SplitView.java",
+      "sourceSha256": "53545288ea9111c815f44590f2cc196018d7d8feec32719653d22e670b7205dc",
+      "destination": "src/main/java/com/xyp/ldlib/gui/ui/elements/SplitView.java",
+      "modification": "Adapted component behavior to the host 1.7.10 UI tree, client callbacks and LWJGL2; modern editor/layout/sync APIs omitted."
+    },
+    {
+      "source": "src/main/java/com/lowdragmc/lowdraglib2/gui/ui/elements/VirtualScrollerView.java",
+      "sourceSha256": "56d65e60a8ffb9fdaae948fd6addd05c0ba104c32a5f16f40021d3386b900b93",
+      "destination": "src/main/java/com/xyp/ldlib/gui/ui/elements/VirtualScrollerView.java",
+      "modification": "Adapted component behavior to the host 1.7.10 UI tree, client callbacks and LWJGL2; modern editor/layout/sync APIs omitted."
+    },
+    {
+      "source": "src/main/java/com/lowdragmc/lowdraglib2/gui/ui/elements/ColorSelector.java",
+      "sourceSha256": "38d275b3e1165b9ac900878656d405ffa239af35fb46f2a8def263daff4c8f2d",
+      "destination": "src/main/java/com/xyp/ldlib/gui/ui/elements/ColorSelector.java",
+      "modification": "Adapted component behavior to the host 1.7.10 UI tree, client callbacks and LWJGL2; modern editor/layout/sync APIs omitted."
+    },
+    {
+      "source": "src/main/java/com/lowdragmc/lowdraglib2/gui/ui/elements/GraphView.java",
+      "sourceSha256": "e0c5c802e17391bc29f76ae05aad8ac528ed4e5c070f2ec814518925eafafb88",
+      "destination": "src/main/java/com/xyp/ldlib/gui/ui/elements/GraphView.java",
+      "modification": "Adapted component behavior to the host 1.7.10 UI tree, client callbacks and LWJGL2; modern editor/layout/sync APIs omitted."
+    }
+  ]
+}

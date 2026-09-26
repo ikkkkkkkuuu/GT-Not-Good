@@ -1,10 +1,13 @@
 package com.xyp.gtnotgood.loader;
 
+import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.addItemTooltip;
+
 import com.xyp.gtnotgood.common.machines.hatch.WirelessLaserDynamoHatch;
 import com.xyp.gtnotgood.common.machines.hatch.WirelessLaserEnergyHatch;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.GTNGMachineID;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.gtnotgood.utils.text.AnimatedText;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.enums.VoltageIndex;
@@ -147,6 +150,7 @@ public final class WirelessLaserLoader {
                         ModList.GTNotGood.getID() + ".wireless.laser.input." + tier + "." + amperes(variant),
                         tier,
                         amperes(variant)));
+                addItemTooltip(energy(tier, variant).get(1), AnimatedText.GT_NOT_GOOD);
             }
             if (tier != VoltageIndex.UMV) {
                 dynamo(tier).set(
@@ -155,6 +159,7 @@ public final class WirelessLaserLoader {
                         ModList.GTNotGood.getID() + ".wireless.laser.output." + tier,
                         tier,
                         DYNAMO_AMPERES));
+                addItemTooltip(dynamo(tier).get(1), AnimatedText.GT_NOT_GOOD);
             }
         }
     }
@@ -162,8 +167,10 @@ public final class WirelessLaserLoader {
     /** Called during postInit, after TecTech has registered its native lasers and dynamo during init. */
     public static void bindNativeHatches() {
         dynamo(VoltageIndex.UMV).set(CustomItemList.eM_dynamoWirelessMulti.get(1));
+        addItemTooltip(dynamo(VoltageIndex.UMV).get(1), AnimatedText.GT_NOT_GOOD);
         for (int variant = 0; variant < INPUT_VARIANTS; variant++) {
             energy(VoltageIndex.UXV, variant).set(NATIVE_UXV_INPUTS[variant].get(1));
+            addItemTooltip(energy(VoltageIndex.UXV, variant).get(1), AnimatedText.GT_NOT_GOOD);
         }
     }
 }

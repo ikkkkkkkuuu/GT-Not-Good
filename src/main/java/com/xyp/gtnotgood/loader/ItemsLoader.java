@@ -75,6 +75,16 @@ public final class ItemsLoader {
         com.xyp.gtnotgood.common.packaged.PackagedCoreRegistry
             .register("advanced_assembly_line", new com.xyp.gtnotgood.common.packaged.AssemblyLineAdapter(true));
         if (com.xyp.gtnotgood.utils.enums.ModList.Thaumcraft.isModLoaded()) {
+            // #tr item.arcane_workbench_packaged_core.name
+            // # Arcane Workbench Packaged Core
+            // # zh_CN 奥术工作台封包核心
+            var arcaneCore = new com.xyp.gtnotgood.common.packaged.ItemPackagedCore(
+                "arcane_workbench",
+                "arcane_workbench_packaged_core");
+            GameRegistry.registerItem(arcaneCore, "arcane_workbench_packaged_core");
+            GTNGItemList.ArcaneWorkbenchCore.set(arcaneCore);
+            com.xyp.gtnotgood.common.packaged.PackagedCoreRegistry
+                .register("arcane_workbench", new com.xyp.gtnotgood.common.packaged.ArcaneWorkbenchAdapter());
             var infusionCore = new com.xyp.gtnotgood.common.packaged.ItemPackagedCore(true);
             GameRegistry.registerItem(infusionCore, "tc4_infusion_packaged_core");
             GTNGItemList.ThaumcraftInfusionCore.set(infusionCore);

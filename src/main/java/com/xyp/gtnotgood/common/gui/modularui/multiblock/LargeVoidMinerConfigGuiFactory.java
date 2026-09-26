@@ -11,7 +11,7 @@ import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidMiner;
 public final class LargeVoidMinerConfigGuiFactory {
 
     public static final PosMetaTileGuiFactory<LargeVoidMiner> INSTANCE = new PosMetaTileGuiFactory<>(
-        "gtnotgood:lvm_config",
+        com.xyp.gtnotgood.utils.enums.ModList.GTNotGood.getID() + ":lvm_config",
         LargeVoidMiner.class,
         LargeVoidMinerConfigGui::new,
         "Large Void Miner");

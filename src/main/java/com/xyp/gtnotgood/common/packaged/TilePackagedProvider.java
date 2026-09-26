@@ -61,6 +61,8 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     private String essentiaIdentity = java.util.UUID.randomUUID()
         .toString();
     AltarStatus altarStatus = AltarStatus.IDLE;
+    String arcaneMissingAspect = "";
+    int arcaneMissingUnits;
     int priority;
     boolean terminalVisible = true;
     PackagedCraftingLock craftingLock = PackagedCraftingLock.NONE;
@@ -71,6 +73,10 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     private int collectionCursor;
     private long nextDispatch;
     private int failures;
+    /** Fractional converted Vis and extraction reservations survive retries and world saves. Units are 0.01 Vis. */
+    final java.util.Map<String, Long> arcaneVisCredit = new java.util.HashMap<>();
+    /** Successful synchronous dispatches, bounded to one per target per server tick. */
+    private final java.util.Map<PackagedTarget, Long> arcaneDispatchTicks = new java.util.HashMap<>();
     private static final int[] RETRY = { 1, 2, 3, 4, 5, 8, 10, 20, 40 };
 
     @Override
@@ -115,6 +121,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
         PackagedTarget target = targets.get(index);
         if (busy(target)) return false;
         targets.remove(index);
+        arcaneDispatchTicks.remove(target);
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         getProxy().setIdlePowerUsage(10 + targets.size());
         markDirty();
@@ -284,7 +291,8 @@ public final class TilePackagedProvider extends TileMEBridgeBase
             } catch (GridAccessException ignored) {}
         }
         var adapter = PackagedCoreRegistry.get(inventory[CORE]);
-        boolean fast = adapter != null && adapter.maxInFlight() > 1 && !jobs.isEmpty();
+        boolean fast = adapter != null
+            && (adapter.returnsImmediately() || adapter.maxInFlight() > 1 && !jobs.isEmpty());
         if ((fast || worldObj.getTotalWorldTime() % 20 == 0) && getProxy().isActive()) {
             flushReturns();
             if (autoReturn) collectCompleted();
@@ -323,20 +331,27 @@ public final class TilePackagedProvider extends TileMEBridgeBase
         if (isBusy() || !patterns.contains(details)) return false;
         PackagedCoreRegistry.Adapter adapter = PackagedCoreRegistry.get(inventory[CORE]);
         int count = targets.size();
+        boolean throttled = false;
         // Bound work even with 1024 remote targets; successive retries continue from the next lane.
         for (int i = 0; i < Math.min(count, 16); i++) {
             PackagedTarget target = targets.get(Math.floorMod(cursor++, count));
+            if (adapter.returnsImmediately()
+                && arcaneDispatchTicks.getOrDefault(target, Long.MIN_VALUE) == worldObj.getTotalWorldTime()) {
+                throttled = true;
+                continue;
+            }
             if (!canQueue(target, adapter, details.getPattern()) || !adapter.accepts(target.resolve(worldObj)))
                 continue;
             ItemStack expected = adapter.dispatch(this, target, details, table);
             if (expected == null) continue;
-            jobs.add(
+            if (adapter.returnsImmediately()) arcaneDispatchTicks.put(target, worldObj.getTotalWorldTime());
+            else jobs.add(
                 new Job(
                     target,
                     ((ItemPackagedCore) inventory[CORE].getItem()).adapterId,
                     expected.copy(),
                     details.getPattern()));
-            altarStatus = AltarStatus.RUNNING;
+            altarStatus = adapter.returnsImmediately() ? AltarStatus.ARCANE_READY : AltarStatus.RUNNING;
             if (craftingLock == PackagedCraftingLock.PULSE) {
                 pulseLocked = true;
                 previousRedstone = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
@@ -348,9 +363,42 @@ public final class TilePackagedProvider extends TileMEBridgeBase
             return true;
         }
         nextDispatch = worldObj.getTotalWorldTime()
-            + (adapter.maxInFlight() > 1 && !jobs.isEmpty() ? 1 : RETRY[failures]);
-        failures = Math.min(failures + 1, RETRY.length - 1);
+            + (throttled || adapter.maxInFlight() > 1 && !jobs.isEmpty() ? 1 : RETRY[failures]);
+        failures = throttled ? 0 : Math.min(failures + 1, RETRY.length - 1);
         return false;
+    }
+
+    /** Plans all synchronous results, including container items, without mutating the return buffer. */
+    ItemStack[] planArcaneReturns(List<ItemStack> results) {
+        ItemStack[] planned = new ItemStack[CORE - PATTERNS];
+        for (int i = 0; i < planned.length; i++) {
+            planned[i] = inventory[PATTERNS + i] == null ? null : inventory[PATTERNS + i].copy();
+        }
+        for (ItemStack result : results) {
+            int remaining = result.stackSize;
+            for (int pass = 0; pass < 2 && remaining > 0; pass++) {
+                for (int i = 0; i < planned.length && remaining > 0; i++) {
+                    if (pass == 0 && sameItem(planned[i], result)) {
+                        int moved = Math
+                            .min(remaining, Math.max(0, Math.min(64, result.getMaxStackSize()) - planned[i].stackSize));
+                        planned[i].stackSize += moved;
+                        remaining -= moved;
+                    } else if (pass == 1 && planned[i] == null) {
+                        planned[i] = result.copy();
+                        planned[i].stackSize = Math.min(remaining, Math.min(64, result.getMaxStackSize()));
+                        remaining -= planned[i].stackSize;
+                    }
+                }
+            }
+            if (remaining > 0) return null;
+        }
+        return planned;
+    }
+
+    /** Commits a server-thread plan after the workbench's native Vis payment succeeds. */
+    void commitArcaneReturns(ItemStack[] planned) {
+        System.arraycopy(planned, 0, inventory, PATTERNS, planned.length);
+        markDirty();
     }
 
     /** Imports only the expected result of a lane accepted by this provider, never arbitrary altar contents. */
@@ -462,6 +510,13 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
+        arcaneDispatchTicks.clear();
+        arcaneVisCredit.clear();
+        NBTTagCompound credits = tag.getCompoundTag("ArcaneVisCredit");
+        for (String aspect : new String[] { "aer", "terra", "ignis", "aqua", "ordo", "perditio" }) {
+            long credit = credits.getLong(aspect);
+            if (credit > 0) arcaneVisCredit.put(aspect, credit);
+        }
         Arrays.fill(inventory, null);
         NBTTagList items = tag.getTagList("Inventory", 10);
         for (int i = 0; i < items.tagCount(); i++) {
@@ -514,6 +569,9 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     @Override
     public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
+        NBTTagCompound credits = new NBTTagCompound();
+        arcaneVisCredit.forEach(credits::setLong);
+        tag.setTag("ArcaneVisCredit", credits);
         NBTTagList items = new NBTTagList();
         for (int slot = 0; slot < inventory.length; slot++) {
             if (inventory[slot] == null) continue;

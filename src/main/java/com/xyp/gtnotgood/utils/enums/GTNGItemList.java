@@ -33,6 +33,8 @@ import gregtech.api.util.GTUtility;
  */
 public enum GTNGItemList implements IItemContainer {
 
+    LargeTransmutationMachine,
+
     RTS_RTS_CONTROL_CORE,
     RTS_REMOTE_CONTROL_PLUGIN,
     RTS_STORAGE_INTEGRATION_PLUGIN,
@@ -58,6 +60,7 @@ public enum GTNGItemList implements IItemContainer {
     BloodAltarCore,
     AdvancedAssemblyLineCore,
     ThaumcraftInfusionCore,
+    ArcaneWorkbenchCore,
 
     MechanicalUser,
     MechanicalUserSpeedUpgrade,
@@ -286,11 +289,11 @@ public enum GTNGItemList implements IItemContainer {
     }
 
     /**
-     * Assigns an item stack to this enum constant and registers GregTech machine stacks in the machine creative tab.
+     * Assigns an item stack and routes GregTech machines to their machine or wireless-hatch creative tab.
      * <p>
      * The stored stack is always copied to stack size one. If the assigned item belongs to
      * {@link GregTechAPI#sBlockMachines}, a copy is passed to {@link GTNGCreativeTabs#addToMachineList(ItemStack)} so
-     * custom meta-tile entities automatically appear under the GT Not Good machine tab.
+     * custom meta-tile entities automatically appear under the appropriate GT Not Good tab.
      *
      * @param aStack registered stack or meta-tile stack form
      * @return this enum constant for chained registration calls

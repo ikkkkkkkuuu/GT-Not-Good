@@ -11,10 +11,13 @@ import com.xyp.ldlib.gui.ui.event.UIEvents;
  * Vertical LDLib2 scroller adaptation. Content coordinates stay unchanged; the viewport
  * applies the same offset to rendering and hit testing. Wheel events bubble at either limit.
  */
-public final class ScrollerView extends UIElement {
+public class ScrollerView extends UIElement {
 
-    private int scroll, contentHeight;
+    private int scroll;
+    protected int contentHeight;
     private IGuiTexture thumbTexture;
+    private boolean draggingThumb;
+    private int grabOffset;
 
     public ScrollerView setThumbTexture(IGuiTexture texture) {
         thumbTexture = texture;
@@ -31,6 +34,43 @@ public final class ScrollerView extends UIElement {
                 event.stopPropagation();
             }
         });
+        addEventListener(UIEvents.MOUSE_DOWN, event -> {
+            if (event.button != 0 || event.target != this || getMaxScroll() == 0 || event.x < getScreenX() + width - 6)
+                return;
+            int thumb = thumbSize();
+            int offset = (int) ((long) scroll * (height - thumb) / getMaxScroll());
+            int localY = event.y - getScreenY();
+            grabOffset = localY >= offset && localY < offset + thumb ? localY - offset : thumb / 2;
+            draggingThumb = true;
+            dragThumb(localY);
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        addEventListener(UIEvents.MOUSE_MOVE, event -> {
+            if (!draggingThumb || event.button != 0) return;
+            dragThumb(event.y - getScreenY());
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        addEventListener(UIEvents.MOUSE_UP, event -> draggingThumb = false);
+    }
+
+    private int thumbSize() {
+        return contentHeight == 0 ? height
+            : (int) Math.min(height, Math.max(8, (long) height * height / contentHeight));
+    }
+
+    private void dragThumb(int localY) {
+        int travel = height - thumbSize();
+        if (travel > 0)
+            setScroll((int) ((long) Math.max(0, Math.min(travel, localY - grabOffset)) * getMaxScroll() / travel));
+    }
+
+    @Override
+    public UIElement hitTest(int mx, int my) {
+        UIElement hit = super.hitTest(mx, my);
+        if (hit != null && getMaxScroll() > 0 && mx >= getScreenX() + width - 6) return this;
+        return hit;
     }
 
     public int getScroll() {
@@ -62,11 +102,16 @@ public final class ScrollerView extends UIElement {
     @Override
     public void layout() {
         super.layout();
+        updateContentHeight();
+        setScroll(scroll);
+    }
+
+    /** Virtual lists override this using model extent rather than instantiated children. */
+    protected void updateContentHeight() {
         contentHeight = 0;
         for (UIElement child : getChildren()) {
             if (child.isVisible()) contentHeight = Math.max(contentHeight, child.getY() + child.getHeight());
         }
-        setScroll(scroll);
     }
 
     @Override
@@ -79,8 +124,8 @@ public final class ScrollerView extends UIElement {
     @Override
     protected void drawForeground(int mouseX, int mouseY, int parentX, int parentY) {
         if (getMaxScroll() == 0 || height == 0) return;
-        int thumb = Math.min(height, Math.max(8, height * height / contentHeight));
-        int offset = scroll * (height - thumb) / getMaxScroll();
+        int thumb = thumbSize();
+        int offset = (int) ((long) scroll * (height - thumb) / getMaxScroll());
         if (thumbTexture != null) {
             thumbTexture.draw(mouseX, mouseY, parentX + x + width - 6, parentY + y + offset, 6, thumb);
             return;

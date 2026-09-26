@@ -44,6 +44,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import fox.spiteful.avaritia.items.ItemMatterCluster;
+import fox.spiteful.avaritia.items.ItemStackWrapper;
+import fox.spiteful.avaritia.items.LudicrousItems;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.items.MetaGeneratedTool;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
@@ -123,6 +126,11 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
         // # §7Hold §eShift§7 + §eScroll§7 to adjust range
         // # zh_CN §7按住§eShift§7 + §e滚轮§7调整范围
         toolTip.add(StatCollector.translateToLocal("Tooltip_VeinMiningPickaxe_ShiftScroll"));
+
+        // #tr Tooltip_VeinMiningPickaxe_MatterCluster
+        // # Chain-mined drops form Matter Clusters. Right-click a cluster to unpack.
+        // # zh_CN 连锁挖掘掉落物自动打包为物质团，手持物质团右键拆包。
+        toolTip.add(StatCollector.translateToLocal("Tooltip_VeinMiningPickaxe_MatterCluster"));
     }
 
     @Override
@@ -315,7 +323,11 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
                         fortune);
                     if (!player.capabilities.isCreativeMode) {
                         for (ItemStack drop : drops) {
-                            if (drop != null) merged.addTo(new ItemStackWrapper(drop), drop.stackSize);
+                            if (drop != null && drop.stackSize > 0) {
+                                ItemStack representative = drop.copy();
+                                representative.stackSize = 1;
+                                merged.addTo(new ItemStackWrapper(representative), drop.stackSize);
+                            }
                         }
                     }
 
@@ -365,13 +377,8 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
                     .addExhaustion(1f);
             }
 
-            for (Object2IntMap.Entry<ItemStackWrapper> entry : merged.object2IntEntrySet()) {
-                ItemStack dropStack = entry.getKey()
-                    .stack()
-                    .copy();
-                dropStack.stackSize = entry.getIntValue();
-
-                EntityItem entityItem = new EntityItem(world, player.posX, player.posY + 1, player.posZ, dropStack);
+            for (ItemStack cluster : createMatterClusters(merged, LudicrousItems.matter_cluster)) {
+                EntityItem entityItem = new EntityItem(world, player.posX, player.posY + 1, player.posZ, cluster);
                 entityItem.delayBeforeCanPickup = 0;
                 entityItem.motionX = 0;
                 entityItem.motionY = 0;
@@ -381,6 +388,43 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
         } finally {
             activePlayers.remove(player.getUniqueID());
         }
+    }
+
+    /**
+     * Packs merged drops into ordinary, right-click-openable Avaritia clusters without expanding large item counts
+     * into individual stacks. Keys contain one representative item so their serialized stack count stays valid.
+     *
+     * @param drops       positive item counts keyed by item, metadata and NBT; never modified
+     * @param clusterItem registered Avaritia matter cluster item
+     * @return clusters capped at Avaritia's normal capacity, or an empty list for no drops
+     * @see ItemMatterCluster#setClusterData(ItemStack, java.util.Map, int)
+     */
+    static List<ItemStack> createMatterClusters(Object2IntOpenHashMap<ItemStackWrapper> drops, Item clusterItem) {
+        List<ItemStack> clusters = new ArrayList<>();
+        Object2IntOpenHashMap<ItemStackWrapper> contents = new Object2IntOpenHashMap<>();
+        int total = 0;
+        for (Object2IntMap.Entry<ItemStackWrapper> entry : drops.object2IntEntrySet()) {
+            int remaining = entry.getIntValue();
+            while (remaining > 0) {
+                int count = Math.min(remaining, ItemMatterCluster.MAX_NORMAL_CAPACITY - total);
+                contents.addTo(entry.getKey(), count);
+                total += count;
+                remaining -= count;
+                if (total == ItemMatterCluster.MAX_NORMAL_CAPACITY) {
+                    ItemStack cluster = new ItemStack(clusterItem);
+                    ItemMatterCluster.setClusterData(cluster, contents, total);
+                    clusters.add(cluster);
+                    contents.clear();
+                    total = 0;
+                }
+            }
+        }
+        if (total > 0) {
+            ItemStack cluster = new ItemStack(clusterItem);
+            ItemMatterCluster.setClusterData(cluster, contents, total);
+            clusters.add(cluster);
+        }
+        return clusters;
     }
 
     public List<ItemStack> removeBlockAndGetDrops(EntityPlayerMP player, ItemStack stack, World world, int x, int y,
@@ -462,23 +506,5 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
         IChatComponent component = new ChatComponentTranslation(messageKey, range);
         component.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.WHITE));
         Minecraft.getMinecraft().ingameGUI.func_110326_a(component.getFormattedText(), true);
-    }
-
-    @Desugar
-    private record ItemStackWrapper(ItemStack stack) {
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (!(obj instanceof ItemStackWrapper other)) return false;
-            return ItemStack.areItemStacksEqual(this.stack, other.stack);
-        }
-
-        @Override
-        public int hashCode() {
-            return stack == null ? 0
-                : stack.getItem()
-                    .hashCode() * 31 + stack.getItemDamage();
-        }
     }
 }

@@ -31,6 +31,8 @@ public class Config {
         DEFAULT_CONFIG_DIRECTORY,
         ModList.ModIds.GT_NOT_GOOD + ".cfg");
     private static boolean configLoaded = false;
+    /** Whole visible Vis points produced by one primal essentia unit; fractions are retained by the provider. */
+    public static int arcaneVisPerEssentia = 1;
     private static Configuration configuration;
     private static File configDirectory;
 
@@ -85,7 +87,7 @@ public class Config {
     public static int wirelessCrossRecipeDurationTicks = 128;
     /** Maximum number of recipe matches processed in one wireless cross-recipe batch. */
     public static int wirelessCrossRecipeParallelLimit = 200;
-    /** Adds assembler alternatives for wireless energy hatches; machine registration is always stable. */
+    /** Adds wireless conversion and component recipes; machine registration is always stable. */
     public static boolean enableEasyWirelessRecipes = true;
 
     /** Values fixed when the example fuel rod is registered; changing them requires a game restart. */
@@ -168,7 +170,7 @@ public class Config {
                 "Wireless_Energy",
                 "enableEasyWirelessRecipes",
                 true,
-                "启用无线能源仓、无线动力仓和无线激光仓的简易组装机配方。关闭不移除机器或原版配方；修改后重启生效。")
+                "启用无线仓组装机配方及激光雕刻机转换配方，激光仓成本按前置仓或安培元件数量区分。关闭不移除机器或原版配方；重启生效。")
             .setRequiresMcRestart(true)
             .getBoolean(true);
 
@@ -314,6 +316,13 @@ public class Config {
 
         tcInfiniteVis = configuration
             .getBoolean("infiniteVis", CATEGORY_THAUMCRAFT, tcInfiniteVis, "开启后,从 vis 网络抽取魔力永远成功且不消耗节点存量。");
+        arcaneVisPerEssentia = configuration.getInt(
+            "arcaneVisPerEssentia",
+            CATEGORY_THAUMCRAFT,
+            arcaneVisPerEssentia,
+            1,
+            1000,
+            "奥术封包中每单位基础源质转换的 Vis 点数；默认 1。小数余量保留在供应器内。");
 
         gtToolsCraftingDurability = configuration.getFloat(
             "gtToolsCraftingDurability",

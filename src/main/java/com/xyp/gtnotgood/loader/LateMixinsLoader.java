@@ -61,7 +61,11 @@ public class LateMixinsLoader implements ILateMixinLoader {
             addAll(list, "BloodMagic.MixinPackagedBloodAltar");
         }
         if (loadedMods.contains(ModList.GregTech.getID())) {
-            addAll(list, "Gregtech.AssemblyLineDataAccessMixin");
+            addAll(
+                list,
+                "Gregtech.AssemblyLineDataAccessMixin",
+                "Gregtech.TransmutationShapedRecipeMixin",
+                "Gregtech.TransmutationShapelessRecipeMixin");
         }
         if (cpw.mods.fml.relauncher.FMLLaunchHandler.side()
             .isClient() && loadedMods.contains(ModList.NotEnoughItems.getID())) {

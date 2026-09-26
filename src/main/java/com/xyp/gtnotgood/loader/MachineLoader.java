@@ -37,6 +37,15 @@ public class MachineLoader {
      * and tooltip credit registration in one predictable place.
      */
     public static void registerMachines() {
+        // #tr gtng.LargeTransmutationMachine.name
+        // # Large Transmutation Machine
+        // # zh_CN 大型嬗变机
+        GTNGItemList.LargeTransmutationMachine.set(
+            new com.xyp.gtnotgood.common.machines.multiblock.LargeTransmutationMachine(
+                GTNGMachineID.LARGE_TRANSMUTATION_MACHINE.ID,
+                "LargeTransmutationMachine",
+                StatCollector.translateToLocal("gtng.LargeTransmutationMachine.name")));
+        addItemTooltip(GTNGItemList.LargeTransmutationMachine.get(1), AnimatedText.GT_NOT_GOOD);
         // #tr gtng.QuantumComputer.name
         // # QuantumComputer
         // # zh_CN 量子计算机

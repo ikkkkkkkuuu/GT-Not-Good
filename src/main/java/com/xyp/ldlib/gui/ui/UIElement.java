@@ -74,6 +74,11 @@ public class UIElement {
         return focusable;
     }
 
+    /** Modal root children isolate pointer and keyboard input until removed. */
+    public boolean isModal() {
+        return false;
+    }
+
     public int getX() {
         return x;
     }

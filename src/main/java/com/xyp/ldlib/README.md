@@ -46,3 +46,32 @@ FancyMachineUIWidget 缓存页面；ModernTheme 由宿主传入资源路径解�
 
 真实物品槽、服务端保存和同步、RPC、Taffy/Yoga、LSS/XML、可视化编辑器、
 着色器和动画。许可证与源文件路径见 META-INF/ldlib-port/NOTICE.md。
+
+## 扩展控件（2026-09-26）
+
+`/ldlib-demo` 新增六个页面：数值控件、搜索菜单、树形分栏、虚拟列表、颜色选择、节点画布。
+本轮排除 Scene，沿用 GTNH 已有的三维预览。
+
+| 控件 | 接口与行为 |
+| --- | --- |
+| ProgressBar | `setValue` 或 `setSupplier` 输入 0～1，四向填充，`setInterpolation` 按客户端 tick 平滑 |
+| Slider | 构造时指定范围、步长、方向和材质；拖动、方向键、Home/End；`setValue` 静默，用户修改通知 |
+| SearchComponent<T> | `setCandidates` 提供快照；按名称忽略大小写搜索；上/下键和回车选择；Esc/外部点击关闭 |
+| Menu | `Entry` 提供动作、禁用项和子菜单；`openAt` 使用屏幕坐标；动作执行前关闭菜单 |
+| Dialog | `content` 接收任意控件；`confirm` 由宿主传入本地化文字；Esc 关闭，不调用结果回调 |
+| TreeList<T> | `Node` 提供有父子归属的树；展开/折叠、单选、方向键、Home/End；修改模型后 `refresh` |
+| SplitView | `first` / `second` 是裁剪滚动容器；横向或纵向分栏；拖动/方向键调整；最小面板宽高 |
+| VirtualScrollerView<T> | 固定行高、可见行加上下各一行缓冲；`setItems` 更新快照；`revealIndex` 定位；PageUp/PageDown |
+| ColorSelector | HSV 平面、色相滑块、透明度滑块、ARGB 十六进制输入和透明棋盘预览；`setColor` 静默 |
+| GraphView | 网格、鼠标锚定缩放、空白/中键拖动画布、左键选择/拖动节点、定向连线、Home 适配内容 |
+
+这些是上游交互契约的 1.7.10 适配，不兼容上游 LSS/XML/编辑器绑定 API。
+虚拟列表当前使用固定行高；树形列表当前为单选；GraphView 的 `Node.texture` 可绘制二维内容，
+节点通过专用世界坐标接口命中，不承诺任意 UIElement 子树的缩放交互或完整 Node Graph Toolkit。
+服务端模型、权限校验、物品操作仍需由宿主通过 MUI2 等现有同步接口处理。
+
+弹层挂到根节点，输入仅进入最上层弹层，Tab 不会穿透，关闭后恢复原焦点。
+隐藏、禁用或卸载拥有弹层的页面时，下一次布局自动清理弹层。
+普通滚动列表也获得滚动条拖动能力。大数据行的选择状态应存于模型，不应仅存在临时行控件内。
+
+来源哈希和移植范围见 `META-INF/ldlib-port/CONTROLS_MANIFEST.json`；验证说明见 `docs/testing/ldlib-controls.md`。

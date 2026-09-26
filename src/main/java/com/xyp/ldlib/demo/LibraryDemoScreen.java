@@ -67,6 +67,30 @@ public final class LibraryDemoScreen extends ModularUIScreen {
             public void attachSideTabs(com.xyp.ldlib.gui.fancy.TabsWidget tabs) {
                 tabs.attachSubTab(provider(scroll, 1));
                 tabs.attachSubTab(provider(textures, 2));
+                // #tr gui.ldlibdemo.values
+                // # Values
+                // # zh_CN 数值控件
+                tabs.attachSubTab(provider(StatCollector.translateToLocal("gui.ldlibdemo.values"), 3));
+                // #tr gui.ldlibdemo.search
+                // # Search / menus
+                // # zh_CN 搜索菜单
+                tabs.attachSubTab(provider(StatCollector.translateToLocal("gui.ldlibdemo.search"), 4));
+                // #tr gui.ldlibdemo.tree
+                // # Tree / split
+                // # zh_CN 树形分栏
+                tabs.attachSubTab(provider(StatCollector.translateToLocal("gui.ldlibdemo.tree"), 5));
+                // #tr gui.ldlibdemo.virtual
+                // # Virtual list
+                // # zh_CN 虚拟列表
+                tabs.attachSubTab(provider(StatCollector.translateToLocal("gui.ldlibdemo.virtual"), 6));
+                // #tr gui.ldlibdemo.color
+                // # Color picker
+                // # zh_CN 颜色选择
+                tabs.attachSubTab(provider(StatCollector.translateToLocal("gui.ldlibdemo.color"), 7));
+                // #tr gui.ldlibdemo.graph
+                // # Graph canvas
+                // # zh_CN 节点画布
+                tabs.attachSubTab(provider(StatCollector.translateToLocal("gui.ldlibdemo.graph"), 8));
             }
         };
         root.addChild(new com.xyp.ldlib.gui.fancy.FancyMachineUIWidget(main, 310, 226, theme));
@@ -92,6 +116,7 @@ public final class LibraryDemoScreen extends ModularUIScreen {
     }
 
     private UIElement createPage(int index) {
+        if (index >= 3) return ExtendedDemoPages.create(index, theme);
         pages = new UIElement(0, 0, 225, 161);
         if (index == 0) buildControls();
         else if (index == 1) buildScroll();

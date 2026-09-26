@@ -34,7 +34,7 @@
     "commit": "1d3f183ecf258aff0001567d742ed30d6038d77b",
     "source": "src/main/resources/assets/ae2ltpp/textures/item/provider_core_base.png",
     "local": "src/main/resources/assets/gtnotgood/textures/items/packaged/provider_core_base.png",
-    "usage": "Shared unchanged by basic, infusion, assembly-line, advanced-assembly-line and blood-altar cores. Overlays use installed GT5U or Blood Magic items; no target-mod textures are copied.",
+    "usage": "Shared unchanged by basic, infusion, assembly-line, advanced-assembly-line, blood-altar and arcane-workbench cores. Overlays use installed TC4, GT5U or Blood Magic items; no target-mod textures are copied.",
     "license": "LGPL-3.0",
     "modified": false,
     "sha256": "d7151aa47cbca5c5915461ecce39dd5bf2913c23ed02f37a06d431548d646799",

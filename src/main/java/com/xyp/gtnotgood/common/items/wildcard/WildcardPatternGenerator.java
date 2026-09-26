@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,6 +31,9 @@ public final class WildcardPatternGenerator {
     private static final String KEY_WILDCARD = "WildcardPattern";
     private static final String KEY_SELECTED_MATERIAL = "WildcardSelectedMaterial";
     public static final String KEY_GENERATED_PATTERN_ID = "WildcardGeneratedPatternId";
+
+    /** Client tooltip results retain no live stacks and are capped even before weak keys are collected. */
+    private static final Map<ItemStack, WildcardPatternCache<Integer>> COUNT_CACHE = new WeakHashMap<>();
 
     private WildcardPatternGenerator() {}
 
@@ -101,10 +106,19 @@ public final class WildcardPatternGenerator {
             return 0;
         }
         markAsWildcard(stack);
-        return WildcardExpansion.countExpanded(
-            WildcardModelState.getInputs(stack),
-            WildcardModelState.getOutputs(stack),
-            WildcardModelState.getFilters(stack));
+        WildcardPatternCache<Integer> cache = COUNT_CACHE.get(stack);
+        if (cache == null) {
+            if (COUNT_CACHE.size() >= 128) COUNT_CACHE.clear();
+            cache = new WildcardPatternCache<>();
+            COUNT_CACHE.put(stack, cache);
+        }
+        return cache.get(
+            stack,
+            null,
+            () -> WildcardExpansion.countExpanded(
+                WildcardModelState.getInputs(stack),
+                WildcardModelState.getOutputs(stack),
+                WildcardModelState.getFilters(stack)));
     }
 
     // ============================================================

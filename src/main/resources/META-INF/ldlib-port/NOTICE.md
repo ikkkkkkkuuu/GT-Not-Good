@@ -12,6 +12,18 @@ Rendering uses the 1.7.10 font/item renderers and Tessellator. Java Flow layouts
 replace native Taffy/Yoga. TextField delegates cursor, selection and clipboard
 operations to 1.7.10 GuiTextField rather than the modern editor.
 
+Extended controls (2026-09-26): ProgressBar, Slider, SearchComponent, Menu, Dialog,
+TreeList, SplitView, VirtualScrollerView, ColorSelector and GraphView follow the
+user-supplied 2.2.40 snapshot's component contracts. The snapshot has no .git metadata;
+CONTROLS_MANIFEST.json records the source SHA-256 values rather than inventing a commit.
+Destination: src/main/java/com/xyp/ldlib/gui/ui/elements/ in the distributed source tree.
+ModalLayer, UIInput modal isolation and showcase/regression fixtures are host adaptations.
+The port replaces native layout, modern rendering, editor/serialization and RPC APIs
+with fixed bounds, LWJGL2/Tessellator, client callbacks and the existing host synchronization boundary.
+Virtual rows are fixed-height; trees are single-select; GraphView exposes textured nodes
+and visual edges rather than the complete upstream node-graph toolkit. Scene is excluded
+at the user's request. No additional upstream artwork is copied by this extension.
+
 Fancy contracts/organization and the root background.png/button.png under assets/gtnotgood/textures/gui/ldlib:
 GregTechCEu/GregTech-Modern v7.4.0-1.20.1,
 commit 07ac5207f6f58ba3a2f9cd8b862b382d24300a17.

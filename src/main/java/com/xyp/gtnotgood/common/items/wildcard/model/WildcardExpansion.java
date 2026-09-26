@@ -62,10 +62,27 @@ public final class WildcardExpansion {
         return result;
     }
 
-    /** 只统计展开数量（用于 tooltip），避免构建全部 stack 的开销。 */
+    /** Counts valid materials without retaining expanded recipes or allocating per-material lists. */
     public static int countExpanded(List<IWildcardIOComponent> inputs, List<IWildcardIOComponent> outputs,
         List<IWildcardFilterComponent> filters) {
-        return expand(inputs, outputs, filters).size();
+        if (inputs == null || outputs == null || (!hasNonEmpty(inputs) && !hasNonEmpty(outputs))) return 0;
+        int count = 0;
+        for (Materials material : Materials.getAll()) {
+            if (WildcardMaterials.isExpandableMaterial(material) && passesFilters(material, filters)
+                && canApplyAll(inputs, material)
+                && canApplyAll(outputs, material)) count++;
+        }
+        return count;
+    }
+
+    /** Uses the same stack validity checks as expansion, including unavailable forms and fluids. */
+    private static boolean canApplyAll(List<IWildcardIOComponent> components, Materials material) {
+        for (IWildcardIOComponent component : components) {
+            if (component == null || component.isEmpty()) continue;
+            ItemStack stack = component.apply(material);
+            if (stack == null || stack.getItem() == null) return false;
+        }
+        return true;
     }
 
     private static boolean passesFilters(Materials material, List<IWildcardFilterComponent> filters) {

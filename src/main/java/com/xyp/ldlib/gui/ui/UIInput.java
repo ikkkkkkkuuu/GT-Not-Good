@@ -1,7 +1,9 @@
 package com.xyp.ldlib.gui.ui;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.xyp.ldlib.gui.ui.event.UIEvent;
 import com.xyp.ldlib.gui.ui.event.UIEvents;
@@ -16,9 +18,12 @@ public final class UIInput {
     private final UIElement root;
     private UIElement focused, captured;
     private int capturedButton = -1;
+    private UIElement scope;
+    private final Map<UIElement, UIElement> savedFocus = new IdentityHashMap<>();
 
     public UIInput(UIElement root) {
         this.root = root;
+        scope = root;
     }
 
     public UIElement getFocused() {
@@ -27,10 +32,22 @@ public final class UIInput {
     }
 
     private boolean valid(UIElement element) {
-        return element != null && element.belongsTo(root) && element.isInteractive();
+        return element != null && element.belongsTo(scope) && element.isInteractive();
     }
 
     public void validate() {
+        UIElement next = root;
+        for (UIElement child : root.getChildren()) {
+            if (child.isModal() && child.isInteractive()) next = child;
+        }
+        if (next != scope) {
+            if (scope.belongsTo(root)) savedFocus.put(scope, focused);
+            scope = next;
+            focus(savedFocus.remove(scope));
+            if (focused == null && scope != root) cycleFocus(false);
+        }
+        savedFocus.keySet()
+            .removeIf(element -> !element.belongsTo(root));
         if (focused != null && (!valid(focused) || !focused.isFocusable())) focus(null);
         if (!valid(captured)) {
             captured = null;
@@ -56,11 +73,12 @@ public final class UIInput {
         focus(null);
         captured = null;
         capturedButton = -1;
+        savedFocus.clear();
     }
 
     public boolean mouseDown(int x, int y, int button) {
         validate();
-        UIElement hit = root.hitTest(x, y);
+        UIElement hit = scope.hitTest(x, y);
         if (button == 0 || button == 1) {
             UIElement candidate = hit;
             while (candidate != null && !candidate.isFocusable()) candidate = candidate.getParent();
@@ -81,7 +99,7 @@ public final class UIInput {
         captured = null;
         capturedButton = -1;
         dispatch(target, mouse(UIEvents.MOUSE_UP, x, y, button));
-        if (valid(target) && root.hitTest(x, y) == target) {
+        if (valid(target) && scope.hitTest(x, y) == target) {
             dispatch(target, mouse(UIEvents.CLICK, x, y, button));
         }
         validate();
@@ -90,13 +108,13 @@ public final class UIInput {
 
     public void mouseMove(int x, int y) {
         validate();
-        UIElement target = captured != null ? captured : root.hitTest(x, y);
+        UIElement target = captured != null ? captured : scope.hitTest(x, y);
         if (target != null) dispatch(target, mouse(UIEvents.MOUSE_MOVE, x, y, capturedButton));
     }
 
     public boolean mouseWheel(int x, int y, int delta) {
         validate();
-        UIElement target = root.hitTest(x, y);
+        UIElement target = scope.hitTest(x, y);
         if (target == null || delta == 0) return false;
         UIEvent event = mouse(UIEvents.MOUSE_WHEEL, x, y, -1);
         event.deltaY = delta;
@@ -111,20 +129,20 @@ public final class UIInput {
             cycleFocus(shift);
             return true;
         }
-        if (focused == null) return false;
+        if (focused == null && scope == root) return false;
         UIEvent event = new UIEvent(UIEvents.KEY_DOWN);
         event.codePoint = character;
         event.keyCode = keyCode;
         event.shift = shift;
         event.control = control;
-        dispatch(focused, event);
+        dispatch(focused == null ? scope : focused, event);
         validate();
         return event.isDefaultPrevented();
     }
 
     public void cycleFocus(boolean backwards) {
         List<UIElement> candidates = new ArrayList<>();
-        collect(root, candidates);
+        collect(scope, candidates);
         if (candidates.isEmpty()) {
             focus(null);
             return;
@@ -151,7 +169,10 @@ public final class UIInput {
     /** Dispatches along a snapshot of ancestors; stopping propagation keeps remaining same-node listeners. */
     public void dispatch(UIElement target, UIEvent event) {
         List<UIElement> path = new ArrayList<>();
-        for (UIElement node = target; node != null; node = node.getParent()) path.add(node);
+        for (UIElement node = target; node != null; node = node.getParent()) {
+            path.add(node);
+            if (node == scope) break;
+        }
         event.target = target;
         for (int i = path.size() - 1; i > 0; i--) {
             notify(path.get(i), event, UIEvent.EventPhase.CAPTURE, true);

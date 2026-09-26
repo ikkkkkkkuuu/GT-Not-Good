@@ -72,6 +72,10 @@ public final class PackagedRecipes {
     /** Kept separate so an installation without TC never resolves a TC item while registering common recipes. */
     private static void registerInfusion() {
         GameRegistry.addShapelessRecipe(
+            GTNGItemList.ArcaneWorkbenchCore.get(1),
+            GTNGItemList.BasicPackagedCore.get(1),
+            new ItemStack(thaumcraft.common.config.ConfigBlocks.blockTable, 1, 15));
+        GameRegistry.addShapelessRecipe(
             GTNGItemList.ThaumcraftInfusionCore.get(1),
             GTNGItemList.BasicPackagedCore.get(1),
             new ItemStack(thaumcraft.common.config.ConfigBlocks.blockStoneDevice, 1, 2));

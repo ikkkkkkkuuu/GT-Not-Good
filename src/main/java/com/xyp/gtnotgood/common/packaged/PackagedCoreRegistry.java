@@ -38,9 +38,15 @@ public final class PackagedCoreRegistry {
     /**
      * Server-only adapter contract. A failed dispatch must leave all inventories unchanged. A successful dispatch
      * transfers ownership of the supplied ingredients to the real target and returns its expected central output.
-     * Implementations must not synthesize finished products or force-load chunks.
+     * Implementations must not synthesize unearned products or force-load chunks. Synchronous workbench adapters
+     * consume native recipe resources and buffer their completed outputs before returning success.
      */
     public interface Adapter {
+
+        /** Synchronous adapters already deposited paid-for results in the provider; no target receipt is needed. */
+        default boolean returnsImmediately() {
+            return false;
+        }
 
         boolean accepts(TileEntity target);
 

@@ -16,7 +16,7 @@ import me.eigenraven.lwjgl3ify.api.InputEvents;
  * The shared font state is restored after every callback, including failures, so other screens keep their font.
  */
 @SideOnly(Side.CLIENT)
-public final class PixelFontModularScreen extends ModularScreen {
+public class PixelFontModularScreen extends ModularScreen {
 
     public PixelFontModularScreen(String owner, ModularPanel panel) {
         super(owner, panel);

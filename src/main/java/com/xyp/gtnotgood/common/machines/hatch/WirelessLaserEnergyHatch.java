@@ -34,12 +34,27 @@ public final class WirelessLaserEnergyHatch extends MTEHatchWirelessMulti {
     @Override
     public String getLocalName() {
         // #tr gtng.wireless.laser.input.name
-        // # %s Wireless Laser Energy Hatch (%s A)
-        // # zh_CN %s 无线激光能源仓 (%s A)
+        // # %1$s %2$sA Wireless Laser Energy Hatch
+        // # zh_CN %2$s安%1$s无线激光能源仓
         return StatCollector.translateToLocalFormatted(
             "gtng.wireless.laser.input.name",
             GTValues.VN[mTier],
             NumberFormatUtil.formatNumber(maxAmperes));
+    }
+
+    /**
+     * Keeps native energy details and screwdriver help; the loader supplies this variant's animated mod credit.
+     * Upstream implementation attribution remains documented separately from the item's added-by line.
+     */
+    @Override
+    public String[] getDescription() {
+        return formatEnergyInfoDesc(
+            null,
+            StatCollector.translateToLocal("gt.blockmachines.hatch.screwdrivertooltip"),
+            false,
+            mTier,
+            maxAmperes,
+            "gt.blockmachines.energy_hatch.wireless");
     }
 
     /**

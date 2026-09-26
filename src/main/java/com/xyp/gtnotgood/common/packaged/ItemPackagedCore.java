@@ -53,6 +53,20 @@ public final class ItemPackagedCore extends Item {
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advanced) {
+        if ("arcane_workbench".equals(adapterId)) {
+            // #tr tooltip.packaged.arcane
+            // # Wand Vis first; missing Vis is converted from matching AE primal essentia.
+            // # zh_CN 优先使用法杖 Vis；不足时转换 AE 中对应的基础源质。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.arcane"));
+            // #tr tooltip.packaged.arcane_record
+            // # Left-click a connected table row to record its grid using a blank pattern.
+            // # zh_CN 左击连接列表中的工作台，消耗空白样板录入九宫格。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.arcane_record"));
+            // #tr tooltip.packaged.arcane_owner
+            // # Clear the grid after recording. Owner must remain online in this dimension.
+            // # zh_CN 录入后清空九宫格；所有者须在本维度在线。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.arcane_owner"));
+        }
         if ("thaumcraft_infusion".equals(adapterId)) {
             // #tr tooltip.packaged.infusion
             // # Automates a real infusion altar; research and essentia are required.
