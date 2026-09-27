@@ -132,6 +132,7 @@ item.advanced_io_bus.name=ME 高级 IO 总线
 tooltip.advancedio.stock=定量补充选定物品与流体，回收未标记的产物。
 tooltip.advancedio.regulate=可开关超量回收；遵循所连接机器面的输入输出限制。
 tooltip.advancedio.cards=8 个升级槽：支持加速卡、容量卡与红石卡。
+tile.working_apiary.0.name=工作蜂箱
 tile.mebridge.receiver.name=ME 网桥 - 接收端
 tooltip.mebridge.receiver.0=§b连接到发起端广播的频道。
 tooltip.mebridge.receiver.1=§7跨维度并入发起端所在的 ME 网络。

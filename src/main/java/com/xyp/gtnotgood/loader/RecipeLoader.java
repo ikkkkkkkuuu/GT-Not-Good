@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.loader;
 
 import com.xyp.gtnotgood.common.advancedio.AdvancedIORecipes;
+import com.xyp.gtnotgood.common.beekeeping.WorkingApiaryRegistration;
 import com.xyp.gtnotgood.common.packaged.PackagedRecipes;
 import com.xyp.gtnotgood.common.patternsorter.PatternSorterRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
@@ -21,6 +22,11 @@ import com.xyp.gtnotgood.common.recipe.machine.NetworkRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SingularityDataHubRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SuperCraftingInputRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.WildcardPatternRecipes;
+import com.xyp.gtnotgood.utils.enums.GTNGItemList;
+import com.xyp.gtnotgood.utils.enums.ModList;
+
+import cpw.mods.fml.common.registry.GameRegistry;
+import gregtech.api.enums.ItemList;
 
 /**
  * Dispatches recipe registration for this mod during Forge initialization.
@@ -37,16 +43,18 @@ public class RecipeLoader {
      * as additional one-line loader calls.
      */
     public static void loadRecipes() {
+        if (ModList.Forestry.isModLoaded()) {
+            WorkingApiaryRegistration.registerRecipe();
+        }
         cpw.mods.fml.common.registry.GameRegistry.addShapelessRecipe(
-            com.xyp.gtnotgood.utils.enums.GTNGItemList.StructureCompass.get(1),
+            GTNGItemList.StructureCompass.get(1),
             net.minecraft.init.Items.compass,
             net.minecraft.init.Items.map,
             net.minecraft.init.Items.brick);
-        if (com.xyp.gtnotgood.utils.enums.ModList.ThaumicEnergistics.isModLoaded()
-            && com.xyp.gtnotgood.utils.enums.ModList.Thaumcraft.isModLoaded()) {
-            cpw.mods.fml.common.registry.GameRegistry.addShapelessRecipe(
-                com.xyp.gtnotgood.utils.enums.GTNGItemList.EssentiaDisassembler.get(1),
-                gregtech.api.enums.ItemList.Machine_HV_Extractor.get(1),
+        if (ModList.ThaumicEnergistics.isModLoaded() && ModList.Thaumcraft.isModLoaded()) {
+            GameRegistry.addShapelessRecipe(
+                GTNGItemList.EssentiaDisassembler.get(1),
+                ItemList.Machine_HV_Extractor.get(1),
                 appeng.api.AEApi.instance()
                     .definitions()
                     .blocks()

@@ -132,6 +132,7 @@ item.advanced_io_bus.name=ME Advanced IO Bus
 tooltip.advancedio.stock=Maintains selected item/fluid amounts; imports unlisted outputs.
 tooltip.advancedio.regulate=Optional excess recovery. Respects the connected machine face.
 tooltip.advancedio.cards=8 upgrade slots: acceleration, capacity and redstone cards.
+tile.working_apiary.0.name=Working Apiary
 tile.mebridge.receiver.name=ME Bridge Receiver
 tooltip.mebridge.receiver.0=§bConnects to a channel broadcast by a Sender.
 tooltip.mebridge.receiver.1=§7Becomes part of the Sender's ME network across dimensions.

@@ -154,6 +154,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
         }
 
         if (loadedMods.contains(ModList.Forestry.getID())) {
+            addAll(list, "Forestry.MixinWorkingApiaryProducts");
             addAll(list, "Forestry.MixinBee", "Forestry.MixinMutationConditions", "Forestry.MixinBeeHomozygous");
         }
 

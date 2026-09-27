@@ -1,0 +1,50 @@
+// Opt-in native Forestry/Mixin integration checks; QA classes are never packaged in release jars.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/WorkingApiaryClientChecks.java'))
+    }
+    def mainJar = root.tasks.register('jarWorkingApiaryQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'working-apiary-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('working-apiary-qa-runtime')
+    }
+    def testCopy = root.tasks.register('snapshotWorkingApiaryQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/WorkingApiaryClientChecks*.class'
+        into root.layout.buildDirectory.dir('working-apiary-qa-runtime/test')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn mainJar, testCopy
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('working-apiary-qa-runtime/test'))
+        workingDir root.file('run/working-apiary-check')
+        systemProperty 'gtng.apiary.qa', 'true'
+        systemProperty 'gtng.apiary.qa.output', root.file('build/working-apiary-qa').absolutePath
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in integrated-server checks')
+        doFirst {
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/working-apiary-qa/result.txt').toPath())
+        }
+        doLast {
+            def result = root.file('build/working-apiary-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Working apiary QA failed')
+        }
+    }
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/common/beekeeping/*.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/Forestry/MixinWorkingApiaryProducts.java',
+                'src/main/java/com/xyp/gtnotgood/config/Config.java',
+                'src/main/java/com/xyp/gtnotgood/loader/BlockLoader.java',
+                'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',
+                'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java'
+        }
+    }
+}

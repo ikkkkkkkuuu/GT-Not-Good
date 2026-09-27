@@ -446,3 +446,12 @@ remains outside compilation/resource inputs. Validation details: docs/testing/ld
   water consumption, aspect removal and post-reaction decay delay. New integration uses native APIs.
 - Existing asset licenses remain applicable; usage is recorded in the packaged asset manifest.
   Reference checkouts remain outside compilation and resource packaging.
+
+## Working Apiary / 工作蜂箱 (2026-09-27)
+
+- Source: https://github.com/GTNewHorizons/ForestryMC, tag `4.11.38`, commit `0bd9a7978a3852c3a815e41a16e678176344aa3d`.
+- Inspected the matching Gradle sources artifact (SHA-1 `7434384c6402bc8669354baff0ae61dc0ce781c1`) and the pinned repository `LICENSE.txt` before implementation. Upstream implementation license: LGPL-3.0; API source headers identify MIT.
+- Destination: `src/main/java/com/xyp/gtnotgood/common/beekeeping/` and `mixins/late/Forestry/MixinWorkingApiaryProducts.java`.
+- Integration: subclass native `BlockApiculture`/`TileApiary`, delegate texture lookup to the installed apiary, reuse `ItemBlockForestry`, native containers, GUI, bee logic, inventories and packets. Independent machine definition and registry entry; do not mutate upstream definitions.
+- Modifications: separate name, server clock multiplier, successful ordinary/specialty product quantity multipliers, lifespan/mutation modifiers and conversion recipe. Defaults: 1x speed/mutation, 5x ordinary/specialty quantities (preserved concurrent workspace edits), user-requested 2,147,436x lifespan.
+- Assets: no upstream textures, icons, GUI files or source implementations are copied or packaged. Runtime assets stay in the separately installed Forestry mod and retain its license. Resource-pack substitutions remain effective. Reference sources were extracted outside the project source sets and are not compiled or packaged.

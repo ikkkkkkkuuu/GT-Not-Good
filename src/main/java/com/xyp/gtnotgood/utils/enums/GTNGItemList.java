@@ -34,6 +34,7 @@ import gregtech.api.util.GTUtility;
 public enum GTNGItemList implements IItemContainer {
 
     StructureCompass,
+    WorkingApiary,
 
     LargeTransmutationMachine,
     EssentiaDisassembler,

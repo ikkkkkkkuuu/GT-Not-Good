@@ -5,6 +5,7 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.xyp.gtnotgood.GTNotGood;
+import com.xyp.gtnotgood.common.beekeeping.WorkingApiaryRegistration;
 import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeReceiver;
 import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeSender;
 import com.xyp.gtnotgood.common.blocks.mebridge.ItemBlockMEBridge;
@@ -82,6 +83,9 @@ public final class BlockLoader {
      * Registers all non-GregTech blocks and stores their item stacks for recipe and creative-tab use.
      */
     public static void registry() {
+        if (ModList.Forestry.isModLoaded()) {
+            WorkingApiaryRegistration.register();
+        }
         registerPackagedProvider();
         registerMechanicalUser();
         registerFluxBlocks();
