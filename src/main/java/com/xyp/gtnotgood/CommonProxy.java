@@ -101,6 +101,7 @@ public class CommonProxy {
 
     public void complete(FMLLoadCompleteEvent event) {
         AE2Thing.onLoadComplete(event);
+        com.xyp.gtnotgood.common.recipe.gtnotgood.CombProcessingRecipes.loadRecipes();
         com.xyp.gtnotgood.common.recipe.gtnotgood.TransmutationRecipes.load();
     }
 

@@ -455,3 +455,16 @@ remains outside compilation/resource inputs. Validation details: docs/testing/ld
 - Integration: subclass native `BlockApiculture`/`TileApiary`, delegate texture lookup to the installed apiary, reuse `ItemBlockForestry`, native containers, GUI, bee logic, inventories and packets. Independent machine definition and registry entry; do not mutate upstream definitions.
 - Modifications: separate name, server clock multiplier, successful ordinary/specialty product quantity multipliers, lifespan/mutation modifiers and conversion recipe. Defaults: 1x speed/mutation, 5x ordinary/specialty quantities (preserved concurrent workspace edits), user-requested 2,147,436x lifespan.
 - Assets: no upstream textures, icons, GUI files or source implementations are copied or packaged. Runtime assets stay in the separately installed Forestry mod and retain its license. Resource-pack substitutions remain effective. Reference sources were extracted outside the project source sets and are not compiled or packaged.
+
+
+## Comb Processor / 蜂窝处理机 (2026-09-27)
+
+- Source: sibling GT-Not-Cool checkout, HEAD `65222fcd4a2f8a56c146323361ee527b9b372d23`; inspected local `LargeCombProcessor.java`, `CombProcessingRecipes.java`, recipe map and assembler recipe before copying.
+- License: MIT; source notice preserved in `src/main/resources/META-INF/licenses/GT-Not-Cool-MIT.txt`.
+- Destinations under `src/main/java/com/xyp/gtnotgood/`: `common/machines/multiblock/LargeCombProcessor.java`, `common/recipe/gtnotgood/CombProcessingRecipes.java`, `common/recipe/machine/LargeCombProcessorRecipes.java`.
+- Registration: GTNGItemList, machine ID 28517, own recipe map and NEI controller icon; imports run once at Forge load-complete after native recipe registration.
+- Adaptations: shared GTNG electric base/modern GUI, long EU/t accounting, native solid steel casing (sBlockCasings2:0), existing singularity overlays. LV assembler replaces unavailable SteamAssemblerModule; other controller ingredients and 100 ticks/32 EU/t retained.
+- Retained recipe policy: centrifuge priority, chemical comb-to-dust conversion without acid, fluid extraction fallback, 30 EU/t recipe entries, 10% processing duration/EU modifier and perfect overclocking.
+- Cross-recipe processing retains summed duration/EU/t, with remaining-power checks and a 256-group bound. Output protection uses a single native transaction; cross-recipe grouping requires both output types to allow overflow. Fluid outputs remain separate stacks to avoid integer overflow.
+- Structure: original 15 x 17 x 15 arrangement; short source rows padded on the right, preserving block positions. Controller offset (7, 8, 0).
+- No new visual assets copied. Sibling/reference source trees are not compilation or resource inputs.

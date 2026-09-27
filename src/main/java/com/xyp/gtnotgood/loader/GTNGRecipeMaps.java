@@ -15,6 +15,17 @@ import gregtech.api.recipe.RecipeMapBuilder;
  */
 public final class GTNGRecipeMaps {
 
+    /** Comb conversions imported from completed GregTech recipe registries. */
+    public static final RecipeMap<RecipeMapBackend> CombProcessingRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.combProcessing
+        // # Comb Processing
+        // # zh_CN 蜂窝处理
+        .of("recipe.gtnotgood.combProcessing")
+        .maxIO(9, 9, 0, 3)
+        .progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.LargeCombProcessor.get(1)))
+        .build();
+
     /** Item and fluid recovery through the standard GT processing pipeline and NEI. */
     public static final RecipeMap<RecipeMapBackend> TransmutationRecipes = RecipeMapBuilder
         // #tr recipe.gtnotgood.transmutation

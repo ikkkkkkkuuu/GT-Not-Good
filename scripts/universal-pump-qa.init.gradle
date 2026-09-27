@@ -1,0 +1,42 @@
+// Opt-in disposable world: never packaged in release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.fileTree('scripts/qa') { include 'UniversalPumpClientChecks.java' })
+    }
+    root.spotless.java {
+        target root.file('src/main/java/com/xyp/gtnotgood/common/machines/basicMachine/UniversalFluidPump.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/common/machines/basicMachine/PumpScanCursor.java'),
+            root.file('scripts/qa/UniversalPumpClientChecks.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java')
+    }
+    def mainJar = root.tasks.register('jarUniversalPumpQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'universal-pump-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('universal-pump-qa-runtime')
+    }
+    def snapshot = root.tasks.register('snapshotUniversalPumpQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/UniversalPumpClientChecks*.class'
+        into root.layout.buildDirectory.dir('universal-pump-qa-runtime/test')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn mainJar, snapshot
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('universal-pump-qa-runtime/test'))
+        systemProperty 'gtng.pump.qa', 'true'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in integrated-server checks')
+        doFirst { java.nio.file.Files.deleteIfExists(root.file('run/client/universal-pump-qa-result.txt').toPath()) }
+        doLast {
+            def result = root.file('run/client/universal-pump-qa-result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Universal pump QA failed; inspect UNIVERSAL_PUMP_QA in client log.')
+        }
+    }
+}

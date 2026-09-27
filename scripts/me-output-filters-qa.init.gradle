@@ -1,0 +1,38 @@
+// Disposable integration world; samples and test fixtures are excluded from release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.fileTree('scripts/qa') { include 'MEOutputFiltersClientChecks.java' })
+    }
+    root.spotless.java {
+        target root.fileTree('src/main/java/com/xyp/gtnotgood/common/machines/hatch/me') {
+            include 'MaxCapacityMEOutput*.java', 'FilteredMEOutputTransaction.java'
+        }, root.file('scripts/qa/MEOutputFiltersClientChecks.java')
+    }
+    def mainJar = root.tasks.register('jarMEOutputFiltersQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'me-output-filters-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('me-output-filters-qa-runtime')
+    }
+    def testCopy = root.tasks.register('snapshotMEOutputFiltersQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/MEOutputFiltersClientChecks*.class'
+        into root.layout.buildDirectory.dir('me-output-filters-qa-runtime/test')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn mainJar, testCopy
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('me-output-filters-qa-runtime/test'))
+        systemProperty 'gtng.meoutputfilters.qa', 'true'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in integrated-server checks')
+        doFirst { java.nio.file.Files.deleteIfExists(root.file('run/client/me-output-filters-qa-result.txt').toPath()) }
+        doLast {
+            def result = root.file('run/client/me-output-filters-qa-result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('ME output filter QA failed; inspect ME_OUTPUT_FILTER_QA in client log.')
+        }
+    }
+}

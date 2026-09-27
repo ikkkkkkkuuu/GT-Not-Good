@@ -11,11 +11,18 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+
 import appeng.api.storage.StorageChannel;
+import gregtech.api.enums.OutputBusType;
 import gregtech.api.interfaces.IOutputBusTransaction;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.util.GTUtility;
 import gregtech.common.tileentities.machines.outputme.MTEHatchOutputBusME;
 import io.netty.buffer.ByteBuf;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -32,6 +39,48 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
  * @see MTEHatchOutputBusME
  */
 public class MaxCapacityMEOutputBus extends MTEHatchOutputBusME {
+
+    private final MaxCapacityMEOutputFilters filters = new MaxCapacityMEOutputFilters(this::filtersChanged);
+
+    public MaxCapacityMEOutputFilters getFilters() {
+        return filters;
+    }
+
+    /** Persists server edits and wakes controllers blocked on a previously excluded output. */
+    private void filtersChanged() {
+        if (getBaseMetaTileEntity() != null && getBaseMetaTileEntity().isServerSide()) {
+            markDirty();
+            notifyOutputSpaceChanged();
+        }
+    }
+
+    @Override
+    public boolean isFiltered() {
+        return filters.hasItems() || super.isFiltered();
+    }
+
+    @Override
+    public boolean isLocked() {
+        return isFiltered();
+    }
+
+    @Override
+    public boolean isFilteredToItem(GTUtility.ItemId id) {
+        return filters.accepts(id.getItemStack()) && super.isFilteredToItem(id);
+    }
+
+    /** Uses native filtered-ME ordering so matching outputs precede unfiltered destinations. */
+    @Override
+    public OutputBusType getBusType() {
+        if (getProvider().getCacheMode())
+            return isFiltered() ? OutputBusType.MECacheFiltered : OutputBusType.MECacheUnfiltered;
+        return isFiltered() ? OutputBusType.MEFiltered : OutputBusType.MEUnfiltered;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData data, PanelSyncManager sync, UISettings settings) {
+        return new MaxCapacityMEOutputGui.Items(this).build(data, sync, settings);
+    }
 
     public MaxCapacityMEOutputBus(int aID, String aName, String aNameRegional) {
         super(aID, aName, aNameRegional);
@@ -104,7 +153,7 @@ public class MaxCapacityMEOutputBus extends MTEHatchOutputBusME {
     @Override
     public IOutputBusTransaction createTransaction() {
         forceMaxCapacity();
-        return super.createTransaction();
+        return new FilteredMEOutputTransaction.Items(super.createTransaction(), filters::accepts);
     }
 
     /**
@@ -116,25 +165,36 @@ public class MaxCapacityMEOutputBus extends MTEHatchOutputBusME {
      */
     @Override
     public boolean storePartial(ItemStack stack, boolean simulate) {
+        if (!filters.accepts(stack)) return false;
         forceMaxCapacity();
         return super.storePartial(stack, simulate);
     }
 
+    /**
+     * Resets filters and omits intrinsic capacity on pickup so the bus stacks with a freshly crafted bus.
+     * Unrelated upgrade/cover data remain intact; placement always restores maximum capacity.
+     *
+     * @param aNBT dropped-item data populated by GregTech
+     */
     @Override
     public void setItemNBT(NBTTagCompound aNBT) {
         forceMaxCapacity();
         super.setItemNBT(aNBT);
+        aNBT.removeTag("baseCapacity");
+        MaxCapacityMEOutputFilters.clearItemData(aNBT);
     }
 
     @Override
     public void saveNBTData(NBTTagCompound aNBT) {
         forceMaxCapacity();
         super.saveNBTData(aNBT);
+        filters.save(aNBT);
     }
 
     @Override
     public void loadNBTData(NBTTagCompound aNBT) {
         super.loadNBTData(aNBT);
+        filters.load(aNBT);
         forceMaxCapacity();
     }
 
@@ -205,8 +265,8 @@ public class MaxCapacityMEOutputBus extends MTEHatchOutputBusME {
             // # zh_CN 默认最大缓存容量
             StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputBus.2"),
             // #tr tooltip.gtnotgood.maxCapacityMEOutputBus.3
-            // # Storage cells are only needed for filters
-            // # zh_CN 存储元件只用于过滤
+            // # 9 ghost filters; empty accepts all; matches get output priority
+            // # zh_CN 9格虚拟过滤：全空接收全部，标记后仅接收并优先分配匹配物品
             StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputBus.3"),
             // #tr tooltip.gtnotgood.maxCapacityMEOutputBus.4
             // # Right click with screwdriver to toggle Cache Mode

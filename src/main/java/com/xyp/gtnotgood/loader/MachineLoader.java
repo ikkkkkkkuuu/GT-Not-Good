@@ -5,6 +5,7 @@ import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.addItemTooltip
 import net.minecraft.util.StatCollector;
 
 import com.xyp.gtnotgood.common.machines.basicMachine.SteamTurbine;
+import com.xyp.gtnotgood.common.machines.basicMachine.UniversalFluidPump;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputSlave;
 import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
@@ -37,6 +38,16 @@ public class MachineLoader {
      * and tooltip credit registration in one predictable place.
      */
     public static void registerMachines() {
+        // #tr gtng.comb.name
+        // # Comb Processor
+        // # zh_CN 蜂窝处理机
+        GTNGItemList.LargeCombProcessor.set(
+            new com.xyp.gtnotgood.common.machines.multiblock.LargeCombProcessor(
+                GTNGMachineID.LARGE_COMB_PROCESSOR.ID,
+                "LargeCombProcessor",
+                StatCollector.translateToLocal("gtng.comb.name")));
+        addItemTooltip(GTNGItemList.LargeCombProcessor.get(1), AnimatedText.GT_NOT_GOOD);
+
         // #tr gtng.LargeTransmutationMachine.name
         // # Large Transmutation Machine
         // # zh_CN 大型嬗变机
@@ -183,6 +194,16 @@ public class MachineLoader {
     }
 
     public static void registerbasicMachine() {
+        // #tr gtng.pump.name
+        // # High-Speed Universal Fluid Pump (HV)
+        // # zh_CN 高速通用流体泵 (HV)
+        GTNGItemList.UniversalFluidPump.set(
+            new UniversalFluidPump(
+                GTNGMachineID.UNIVERSAL_FLUID_PUMP.ID,
+                "UniversalFluidPump",
+                StatCollector.translateToLocal("gtng.pump.name")));
+        addItemTooltip(GTNGItemList.UniversalFluidPump.get(1), AnimatedText.GT_NOT_GOOD);
+
         if (com.xyp.gtnotgood.utils.enums.ModList.ThaumicEnergistics.isModLoaded()
             && com.xyp.gtnotgood.utils.enums.ModList.Thaumcraft.isModLoaded()) {
             // #tr gtng.EssentiaDisassembler.name

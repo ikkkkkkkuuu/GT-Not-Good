@@ -36,8 +36,10 @@ public enum GTNGItemList implements IItemContainer {
     StructureCompass,
     WorkingApiary,
 
+    LargeCombProcessor,
     LargeTransmutationMachine,
     EssentiaDisassembler,
+    UniversalFluidPump,
 
     RTS_RTS_CONTROL_CORE,
     RTS_REMOTE_CONTROL_PLUGIN,

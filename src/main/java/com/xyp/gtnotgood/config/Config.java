@@ -1,10 +1,11 @@
 package com.xyp.gtnotgood.config;
 
-import com.xyp.gtnotgood.common.items.toolbelt.ConfigData;
-import com.xyp.gtnotgood.utils.enums.ModList;
+import java.io.File;
+
 import net.minecraftforge.common.config.Configuration;
 
-import java.io.File;
+import com.xyp.gtnotgood.common.items.toolbelt.ConfigData;
+import com.xyp.gtnotgood.utils.enums.ModList;
 
 /**
  * Loads and saves GT Not Good's Forge configuration values.

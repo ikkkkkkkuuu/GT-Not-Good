@@ -17,6 +17,7 @@ import com.xyp.gtnotgood.common.recipe.machine.LargeTransmutationMachineRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeVoidMinerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEBridgeRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEContainerRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.MaxCapacityMEOutputRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MechanicalUserRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.NetworkRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SingularityDataHubRecipes;
@@ -43,6 +44,10 @@ public class RecipeLoader {
      * as additional one-line loader calls.
      */
     public static void loadRecipes() {
+        GameRegistry.addShapelessRecipe(
+            GTNGItemList.UniversalFluidPump.get(1),
+            ItemList.Pump_HV.get(1),
+            ItemList.Electric_Pump_HV.get(1));
         if (ModList.Forestry.isModLoaded()) {
             WorkingApiaryRegistration.registerRecipe();
         }
@@ -77,11 +82,13 @@ public class RecipeLoader {
         OreProcessingRecipes.loadOreProcessingRecipes();
         MEBridgeRecipes.loadRecipes();
         MEContainerRecipes.loadRecipes();
+        MaxCapacityMEOutputRecipes.loadRecipes();
         WildcardPatternRecipes.loadRecipes();
         PatternSorterRecipes.register();
         SuperCraftingInputRecipes.loadRecipes();
         LargeVoidMinerRecipes.loadRecipes();
         LargeBeeBreederRecipes.loadRecipes();
+        com.xyp.gtnotgood.common.recipe.machine.LargeCombProcessorRecipes.loadRecipes();
         LargeCropBreederRecipes.loadRecipes();
         NetworkRecipes.loadRecipes();
     }

@@ -12,11 +12,18 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+
 import appeng.api.storage.StorageChannel;
+import gregtech.api.enums.OutputHatchType;
 import gregtech.api.interfaces.IOutputHatchTransaction;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.util.GTUtility;
 import gregtech.common.tileentities.machines.outputme.MTEHatchOutputME;
 import io.netty.buffer.ByteBuf;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -32,6 +39,58 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
  * @see MTEHatchOutputME
  */
 public class MaxCapacityMEOutputHatch extends MTEHatchOutputME {
+
+    private final MaxCapacityMEOutputFilters filters = new MaxCapacityMEOutputFilters(this::filtersChanged);
+
+    public MaxCapacityMEOutputFilters getFilters() {
+        return filters;
+    }
+
+    /** Persists server edits and wakes controllers blocked on a previously excluded output. */
+    private void filtersChanged() {
+        if (getBaseMetaTileEntity() != null && getBaseMetaTileEntity().isServerSide()) {
+            markDirty();
+            notifyOutputSpaceChanged();
+        }
+    }
+
+    @Override
+    public boolean isFiltered() {
+        return filters.hasFluids() || super.isFiltered();
+    }
+
+    @Override
+    public boolean isFluidLocked() {
+        return isFiltered();
+    }
+
+    @Override
+    public boolean isEmptyAndAcceptsAnyFluid() {
+        return !filters.hasFluids() && super.isEmptyAndAcceptsAnyFluid();
+    }
+
+    @Override
+    public boolean canStoreFluid(FluidStack stack) {
+        return filters.accepts(stack) && super.canStoreFluid(stack);
+    }
+
+    @Override
+    public boolean isFilteredToFluid(GTUtility.FluidId id) {
+        return canStoreFluid(id.getFluidStack());
+    }
+
+    /** Uses native filtered-ME ordering so matching outputs precede unfiltered destinations. */
+    @Override
+    public OutputHatchType getHatchType() {
+        if (getProvider().getCacheMode())
+            return isFiltered() ? OutputHatchType.MECacheFiltered : OutputHatchType.MECacheUnfiltered;
+        return isFiltered() ? OutputHatchType.MEFiltered : OutputHatchType.MEUnfiltered;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData data, PanelSyncManager sync, UISettings settings) {
+        return new MaxCapacityMEOutputGui.Fluids(this).build(data, sync, settings);
+    }
 
     public MaxCapacityMEOutputHatch(int aID, String aName, String aNameRegional) {
         super(aID, aName, aNameRegional);
@@ -104,7 +163,7 @@ public class MaxCapacityMEOutputHatch extends MTEHatchOutputME {
     @Override
     public IOutputHatchTransaction createTransaction() {
         forceMaxCapacity();
-        return super.createTransaction();
+        return new FilteredMEOutputTransaction.Fluids(super.createTransaction(), filters::accepts);
     }
 
     /**
@@ -116,25 +175,36 @@ public class MaxCapacityMEOutputHatch extends MTEHatchOutputME {
      */
     @Override
     public int fill(FluidStack aFluid, boolean doFill) {
+        if (!filters.accepts(aFluid)) return 0;
         forceMaxCapacity();
         return super.fill(aFluid, doFill);
     }
 
+    /**
+     * Resets filters and omits intrinsic capacity on pickup so the hatch stacks with a freshly crafted hatch.
+     * Unrelated upgrade/cover data remain intact; placement always restores maximum capacity.
+     *
+     * @param aNBT dropped-item data populated by GregTech
+     */
     @Override
     public void setItemNBT(NBTTagCompound aNBT) {
         forceMaxCapacity();
         super.setItemNBT(aNBT);
+        aNBT.removeTag("baseCapacity");
+        MaxCapacityMEOutputFilters.clearItemData(aNBT);
     }
 
     @Override
     public void saveNBTData(NBTTagCompound aNBT) {
         forceMaxCapacity();
         super.saveNBTData(aNBT);
+        filters.save(aNBT);
     }
 
     @Override
     public void loadNBTData(NBTTagCompound aNBT) {
         super.loadNBTData(aNBT);
+        filters.load(aNBT);
         forceMaxCapacity();
     }
 
@@ -205,8 +275,8 @@ public class MaxCapacityMEOutputHatch extends MTEHatchOutputME {
             // # zh_CN 默认最大缓存容量
             StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputHatch.2"),
             // #tr tooltip.gtnotgood.maxCapacityMEOutputHatch.3
-            // # Fluid storage cells are only needed for filters
-            // # zh_CN 流体存储元件只用于过滤
+            // # 9 ghost filters; empty accepts all; matches get output priority
+            // # zh_CN 9格虚拟过滤：全空接收全部，标记后仅接收并优先分配匹配流体
             StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputHatch.3"),
             // #tr tooltip.gtnotgood.maxCapacityMEOutputHatch.4
             // # Right click with screwdriver to toggle Cache Mode
