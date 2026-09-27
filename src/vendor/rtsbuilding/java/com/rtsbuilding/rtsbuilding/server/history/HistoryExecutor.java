@@ -151,7 +151,7 @@ public final class HistoryExecutor {
      * <p>
      * 退还优先级：链接储存空间 → 玩家背包 → 原地掉落物。
      * <p>
-     * <b>为什么不用 {@link net.minecraft.world.WorldServer#destroyBlock}：</b>
+     * <b>为什么不用 {@code net.minecraft.world.WorldServer#destroyBlock}：</b>
      * <ul>
      *   <li>{@code destroyBlock(pos, true, player)} 会以掉落物实体形式丢出物品</li>
      *   <li>取而代之：移除方块后优先尝试放入链接储存空间</li>

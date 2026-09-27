@@ -18,7 +18,7 @@ import gregtech.api.util.GTRecipe;
 /**
  * 电力熔炉(Electric Furnace)冶炼提速——仿 GTNH-CutCorners。
  * <p>
- * 电炉配方不在注册期预置，而是运行期由 {@link FurnaceBackend#overwriteFindRecipe} 从原版熔炉配方动态生成
+ * 电炉配方不在注册期预置，而是运行期由 {@link FurnaceBackend} 的 {@code overwriteFindRecipe} 从原版熔炉配方动态生成
  * (固定 {@code .duration(128)})。这条路<b>不经过 compileRecipe</b>，故 {@code RecipeSpeedMixin} 覆盖不到，
  * 需在此单独 hook：在方法返回处按 {@link Config#getModifiedRecipeDuration(int)} 改写返回配方的 {@code mDuration}。
  * <p>

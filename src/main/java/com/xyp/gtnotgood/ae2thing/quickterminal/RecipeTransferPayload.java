@@ -10,6 +10,7 @@ import appeng.container.sync.StreamCodec;
 import appeng.container.sync.StreamCodecs;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
+import lombok.Getter;
 
 /**
  * Complete state needed to atomically transfer an NEI recipe into the pattern
@@ -22,9 +23,12 @@ public final class RecipeTransferPayload {
     public static final StreamCodec<RecipeTransferPayload> CODEC = StreamCodecs
         .of(RecipeTransferPayload.class.getName(), RecipeTransferPayload::write, RecipeTransferPayload::read);
 
+    @Getter
     private final boolean crafting;
     private final boolean encode;
+    @Getter
     private final int processingGridSize;
+    @Getter
     private final boolean inverted;
     private final IAEStack<?>[] inputs;
     private final IAEStack<?>[] outputs;
@@ -52,20 +56,8 @@ public final class RecipeTransferPayload {
         return (NBTTagList) arcaneLayout.copy();
     }
 
-    public boolean isCrafting() {
-        return crafting;
-    }
-
     public boolean shouldEncode() {
         return encode;
-    }
-
-    public int getProcessingGridSize() {
-        return processingGridSize;
-    }
-
-    public boolean isInverted() {
-        return inverted;
     }
 
     public IAEStack<?> getInput(int slot) {

@@ -26,9 +26,6 @@ public final class FactoryPreview {
         GTRecipe.RecipeItemInput match;
         double rate;
 
-        String name() {
-            return item != null ? item.getDisplayName() : fluid.getLocalizedName() + " L";
-        }
     }
 
     /** Typed preview quantities preserve item NBT and fluid identity instead of grouping by translated name. */

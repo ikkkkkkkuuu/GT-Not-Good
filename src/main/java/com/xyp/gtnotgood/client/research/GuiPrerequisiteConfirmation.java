@@ -25,7 +25,6 @@ public final class GuiPrerequisiteConfirmation extends GuiScreen {
     private final GuiResearchTableHelperInterface helper;
     private final ResearchItem target;
     private ResearchPlan plan;
-    private GuiButton executeButton;
     private int scroll;
 
     public GuiPrerequisiteConfirmation(GuiScreen searchScreen, GuiScreen researchTableScreen,
@@ -43,7 +42,7 @@ public final class GuiPrerequisiteConfirmation extends GuiScreen {
         int center = width / 2;
         buttonList
             .add(new GuiButtonExt(0, center - 105, height - 24, 100, 20, StatCollector.translateToLocal("gui.back")));
-        executeButton = new GuiButtonExt(
+        GuiButton executeButton = new GuiButtonExt(
             1,
             center + 5,
             height - 24,

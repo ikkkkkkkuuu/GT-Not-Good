@@ -10,8 +10,8 @@ import java.util.Objects;
  * <p>以 {@code (维度, 坐标)} 为复合键，确保不同维度相同坐标的方块身份独立。
  * 本 record 仅包含身份信息——权限检查、显示名和 Capability 查询属于外部服务职责。
  *
- * @param dimension 方块所在的维度键
- * @param pos       方块的世界坐标
+ * <p>{@code dimension}: 方块所在的维度键
+ * <p>{@code pos}: 方块的世界坐标
  */
 public final class LinkedStorageRef {
     private final int dimension;

@@ -39,9 +39,13 @@ public abstract class BlackHoleCompressorMixin extends MTEExtendedPowerMultiBloc
     private float blackHoleStability = 100;
 
     @Shadow
+    // This shadow writes the target object's state and must remain a field.
+    @SuppressWarnings("FieldCanBeLocal")
     private int catalyzingCostModifier = 1;
 
     @Shadow
+    // This shadow writes the target object's state and must remain a field.
+    @SuppressWarnings("FieldCanBeLocal")
     private boolean shouldRender = true;
 
     @Shadow
@@ -115,12 +119,4 @@ public abstract class BlackHoleCompressorMixin extends MTEExtendedPowerMultiBloc
         }
     }
 
-    private float parseFloatConfig(String value, float defaultValue) {
-        try {
-            return Float.parseFloat(value);
-        } catch (NumberFormatException e) {
-            System.err.println("配置文件中数据异常：" + value + "，将使用默认值：" + defaultValue);
-            return defaultValue;
-        }
-    }
 }

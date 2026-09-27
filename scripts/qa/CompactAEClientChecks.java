@@ -299,6 +299,7 @@ public final class CompactAEClientChecks {
                 screenshot = 2;
                 stage = 5;
             } else if (stage == 5) {
+                verifyPatternHashSurvivesAECacheEviction(world);
                 Files.write(new File("compact-ae-qa-result.txt").toPath(), "PASS".getBytes(StandardCharsets.UTF_8));
                 System.out.println("COMPACT_AE_QA: PASS");
                 finished = true;
@@ -424,6 +425,33 @@ public final class CompactAEClientChecks {
     private static void require(boolean condition, String message) {
         if (!condition) throw new AssertionError(message);
         System.out.println("COMPACT_AE_QA: " + message);
+    }
+
+    /** Simulates AE's weak NBT cache eviction without depending on nondeterministic garbage collection. */
+    private static void verifyPatternHashSurvivesAECacheEviction(World world) throws Exception {
+        ItemStack encoded = pattern();
+        encoded.getTagCompound().setString("gtngHashRegression", "isolated-fixture");
+        var nativeDetails = ((appeng.api.implementations.ICraftingPatternItem) encoded.getItem())
+            .getPatternForItem(encoded, world);
+        var details = new com.xyp.gtnotgood.utils.DireCraftingPatternDetails(nativeDetails);
+        var map = new java.util.HashMap<com.xyp.gtnotgood.utils.DireCraftingPatternDetails, String>();
+        map.put(details, "registered matrix");
+        int before = details.hashCode();
+        int oldHash = 31 * AEItemStack.create(nativeDetails.getPattern()).hashCode() + 1;
+        var cacheField = appeng.util.item.AESharedNBT.class.getDeclaredField("SHARED_TAG_COMPOUND");
+        cacheField.setAccessible(true);
+        synchronized (appeng.util.item.AESharedNBT.class) {
+            ((java.util.Map<?, ?>) cacheField.get(null)).clear();
+        }
+        int after = details.hashCode();
+        int oldHashAfterEviction = 31 * AEItemStack.create(nativeDetails.getPattern()).hashCode() + 1;
+        require(oldHash != oldHashAfterEviction,
+            "old hash formula reproduces cache-lifetime drift: " + oldHash + " -> " + oldHashAfterEviction);
+        require(before == after, "pattern hash survives AE weak-cache eviction: " + before + " -> " + after);
+        require("registered matrix".equals(map.get(details)), "existing task still finds its registered matrix");
+        var equivalent = new com.xyp.gtnotgood.utils.DireCraftingPatternDetails(nativeDetails);
+        require(details.equals(equivalent) && "registered matrix".equals(map.get(equivalent)),
+            "equivalent reloaded pattern finds the same matrix");
     }
 
     /** Exercises the exact visibility predicate used by AE2's interface terminal after mixin application. */

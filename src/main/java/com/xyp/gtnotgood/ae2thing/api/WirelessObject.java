@@ -33,30 +33,43 @@ import appeng.core.localization.PlayerMessages;
 import appeng.items.tools.powered.ToolWirelessTerminal;
 import appeng.tile.networking.TileWireless;
 import appeng.util.Platform;
+import lombok.Getter;
+import lombok.Setter;
 
 public class WirelessObject implements IActionHost {
 
     private final ItemStack item;
-    private final World world;
     private final int x;
-    private final int y;
-    private final int z;
+    @Getter
     private final EntityPlayer player;
+    @Getter
     private IGridNode gridNode;
+    @Getter
     private IGrid grid;
+    @Setter
     private IEnergySource energySource;
     private IMEMonitor<IAEItemStack> itemInv;
     private IMEMonitor<IAEFluidStack> fluidInv;
     private WirelessTerminal wirelessTerminal;
+    @Getter
     private PlayerSource source;
 
-    public WirelessObject(ItemStack item, World world, int x, int y, int z, EntityPlayer player)
+    /**
+     * Creates a wireless terminal session. The world and unused coordinates remain in the signature for
+     * compatibility with existing terminal adapters; {@code x} carries the player's inventory slot.
+     *
+     * @param item         wireless terminal stack
+     * @param ignoredWorld adapter world, unused by the wireless session
+     * @param x            inventory slot containing the terminal
+     * @param ignoredY     unused adapter coordinate
+     * @param ignoredZ     unused adapter coordinate
+     * @param player       player opening the terminal
+     * @throws AppEngException if no reachable wireless grid is available
+     */
+    public WirelessObject(ItemStack item, World ignoredWorld, int x, int ignoredY, int ignoredZ, EntityPlayer player)
         throws AppEngException {
         this.item = item;
-        this.world = world;
         this.x = x;
-        this.y = y;
-        this.z = z;
         this.player = player;
         if (Platform.isServer()) {
             this.gridNode = getWirelessGrid();
@@ -86,24 +99,8 @@ public class WirelessObject implements IActionHost {
         return item;
     }
 
-    public IGridNode getGridNode() {
-        return gridNode;
-    }
-
     public int getSlot() {
         return x;
-    }
-
-    public IGrid getGrid() {
-        return grid;
-    }
-
-    public EntityPlayer getPlayer() {
-        return player;
-    }
-
-    public void setEnergySource(IEnergySource energySource) {
-        this.energySource = energySource;
     }
 
     public boolean rangeCheck() {
@@ -223,7 +220,4 @@ public class WirelessObject implements IActionHost {
             .securityBreak();
     }
 
-    public PlayerSource getSource() {
-        return this.source;
-    }
 }

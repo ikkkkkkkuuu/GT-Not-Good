@@ -1,6 +1,8 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.tree;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.Command;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.RedirectModifier;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.StringReader;
@@ -19,10 +21,10 @@ import java.util.function.Predicate;
 
 /** Relocated Brigadier ArgumentCommandNode used by the command-tree parser. */
 public class ArgumentCommandNode<S, T> extends CommandNode<S> {
-   private static final String USAGE_ARGUMENT_OPEN = "<";
-   private static final String USAGE_ARGUMENT_CLOSE = ">";
    private final String name;
+   @Getter
    private final ArgumentType<T> type;
+   @Getter
    private final SuggestionProvider<S> customSuggestions;
 
    public ArgumentCommandNode(
@@ -41,10 +43,6 @@ public class ArgumentCommandNode<S, T> extends CommandNode<S> {
       this.customSuggestions = customSuggestions;
    }
 
-   public ArgumentType<T> getType() {
-      return this.type;
-   }
-
    @Override
    public String getName() {
       return this.name;
@@ -53,10 +51,6 @@ public class ArgumentCommandNode<S, T> extends CommandNode<S> {
    @Override
    public String getUsageText() {
       return "<" + this.name + ">";
-   }
-
-   public SuggestionProvider<S> getCustomSuggestions() {
-      return this.customSuggestions;
    }
 
    @Override

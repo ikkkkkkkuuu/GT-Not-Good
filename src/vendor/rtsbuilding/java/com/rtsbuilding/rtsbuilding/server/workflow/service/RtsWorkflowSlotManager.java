@@ -39,14 +39,14 @@ public final class RtsWorkflowSlotManager {
      * 按优先级排序的条目列表。该列表是排序和迭代的唯一数据源；
      * {@link #entryIndex} 映射提供按不可变条目 ID 的 O(1) 查找。
      *
-     * <p><b>访问必须通过 {@link #lock} 加锁。</b></p>
+     * <p><b>访问必须通过 {@code #lock} 加锁。</b></p>
      */
     private final List<RtsWorkflowEntry> entries = new ArrayList<>(MAX_SLOTS);
 
     /**
      * 按不可变 ID 进行 O(1) 条目查找，与 {@link #entries} 保持同步。
      *
-     * <p><b>访问必须通过 {@link #lock} 加锁。</b></p>
+     * <p><b>访问必须通过 {@code #lock} 加锁。</b></p>
      */
     private final Map<Integer, RtsWorkflowEntry> entryIndex = new HashMap<>();
 
@@ -351,7 +351,7 @@ public final class RtsWorkflowSlotManager {
     private static final String NBT_ENTRIES = "entries";
 
     /**
-     * 将此槽位管理器（所有条目 + nextId）序列化为 {@link CompoundTag}。
+     * 将此槽位管理器（所有条目 + nextId）序列化为 {@code CompoundTag}。
      */
     public NBTTagCompound saveToNbt() {
         rwLock.readLock().lock();
@@ -372,7 +372,7 @@ public final class RtsWorkflowSlotManager {
     }
 
     /**
-     * 从之前序列化的 {@link CompoundTag} 恢复槽位管理器。
+     * 从之前序列化的 {@code CompoundTag} 恢复槽位管理器。
      * 新创建的实例不需要加锁（外部无引用）。
      *
      * @param tag 之前由 {@link #saveToNbt()} 生成的 NBT 标签

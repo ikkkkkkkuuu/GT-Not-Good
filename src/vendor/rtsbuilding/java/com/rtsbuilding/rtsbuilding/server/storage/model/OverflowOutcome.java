@@ -6,8 +6,8 @@ package com.rtsbuilding.rtsbuilding.server.storage.model;
  * <p>当操作后的剩余物品无法完全放入链接存储时，
  * 优先放入玩家物品栏，剩余部分掉落在地上。
  *
- * @param movedToInventory 成功移入玩家物品栏的数量
- * @param dropped          掉落到地上的数量
+ * <p>{@code movedToInventory}: 成功移入玩家物品栏的数量
+ * <p>{@code dropped}: 掉落到地上的数量
  */
 public final class OverflowOutcome {
     public static final OverflowOutcome EMPTY = new OverflowOutcome(0, 0);

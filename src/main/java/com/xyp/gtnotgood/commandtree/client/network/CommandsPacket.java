@@ -25,17 +25,10 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.function.BiConsumer;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 /** Ported command-tree CommandsPacket used by the integrated chat suggestions. */
 public class CommandsPacket {
-   private static final byte NODE_TYPE_ROOT = 0;
-   private static final byte NODE_TYPE_LITERAL = 1;
-   private static final byte NODE_TYPE_ARGUMENT = 2;
-   private static final byte FLAG_HAS_REDIRECT = 8;
-   private static final byte FLAG_HAS_COMMAND = 4;
-   private static final byte FLAG_HAS_SUGGESTIONS = 16;
 
    public static byte[] create(RootCommandNode<ISuggestionProvider> root) {
       return new CommandsPacket.PacketBuilder().withRoot(root).build();
@@ -143,6 +136,7 @@ public class CommandsPacket {
          }
       }
 
+      @javax.annotation.Nullable
       CommandNode<ISuggestionProvider> getNode() {
          return this.node;
       }

@@ -1,7 +1,5 @@
 package com.xyp.gtnotgood.common.gui.modularui;
 
-import static com.xyp.gtnotgood.GTNotGood.RESOURCE_ROOT_ID;
-
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
@@ -14,7 +12,6 @@ import com.xyp.gtnotgood.utils.enums.ModList;
 public final class GTNGGuiTextures {
 
     private static final String MODID = ModList.ModIds.GT_NOT_GOOD;
-    private static final String BASE = RESOURCE_ROOT_ID + ":iconsets/";
 
     /** Box++ LGPL artwork kept under its own resource folder and license notice. */
     public static final UITexture BOX_DOUBLE = UITexture.fullImage(MODID, "gui/box/double");

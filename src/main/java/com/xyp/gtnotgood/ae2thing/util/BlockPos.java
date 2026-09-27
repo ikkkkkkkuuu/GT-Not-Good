@@ -13,11 +13,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import appeng.api.util.DimensionalCoord;
+import lombok.Getter;
 
 public class BlockPos {
 
+    @Getter
     private final int x;
+    @Getter
     private final int y;
+    @Getter
     private final int z;
     private final World w;
 
@@ -92,18 +96,6 @@ public class BlockPos {
             return w.getBlockMetadata(x, y, z);
         }
         throw new IllegalArgumentException("world is null");
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getZ() {
-        return z;
     }
 
     public World getWorld() {

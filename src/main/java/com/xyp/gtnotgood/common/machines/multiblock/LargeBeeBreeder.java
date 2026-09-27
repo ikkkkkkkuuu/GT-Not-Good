@@ -60,6 +60,7 @@ import gregtech.api.structure.error.StructureErrors;
 import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.MultiblockTooltipBuilder;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
+import lombok.Getter;
 
 /**
  * 大型蜜蜂杂交机
@@ -171,9 +172,11 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
     // ==================== 机器状态 ====================
 
     /** 目标蜜蜂品种名 */
+    @Getter
     private String targetBeeSpecies = "";
 
     /** Permanently unlocked species archive. */
+    @Getter
     private DronePool dronePool = new DronePool();
 
     /** Current immutable plan and the list exposed to legacy display code. */
@@ -185,31 +188,41 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
     private List<BreedingAttempt> activeBreedingBatch = new ArrayList<>();
 
     /** 待输出的目标公主蜂数量 */
+    @Getter
     private int pendingPrincessOutputs = 0;
 
     /** 当前缺少的品种名（用于GUI显示） */
+    @Getter
     private String missingDroneSpecies = "";
 
     /** 是否因缺少品种而无法继续 */
+    @Getter
     private boolean allTasksBlocked = false;
 
     /** 繁育链总步数 */
+    @Getter
     private int chainTotalSteps = 0;
 
     /** 繁育链已完成步数 */
+    @Getter
     private int chainCompletedSteps = 0;
 
     /** 用于客户端同步的雄蜂池品种数 */
+    @Getter
     private int syncedPoolSize = 0;
 
     /** Species UID currently blocking the plan. */
+    @Getter
     private String syncedMissingInfo = "";
 
     /** Structured GUI data. UIDs are resolved to localized names on the client. */
+    @Getter
     private List<String> syncedPoolSpecies = Collections.emptyList();
+    @Getter
     private List<NBTTagCompound> syncedChainSteps = Collections.emptyList();
 
     /** Last server-side target validation result, displayed beside the Apply button. */
+    @Getter
     private boolean targetInputValid = true;
 
     /**
@@ -561,27 +574,25 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
 
     // ==================== 物品处理 ====================
 
-    private boolean scanInputBuses() {
+    private void scanInputBuses() {
         ArrayList<ItemStack> inputs = getStoredInputs();
         List<ItemStack> toRemove = new ArrayList<>();
-        boolean stateChanged = false;
 
         for (ItemStack stack : inputs) {
             if (stack == null) continue;
 
             if (BeeBreedingHelper.isDrone(stack)) {
-                stateChanged |= dronePool.addDrone(stack);
+                dronePool.addDrone(stack);
                 toRemove.add(stack);
             } else if (BeeBreedingHelper.isPrincess(stack)) {
                 // 使用基因组中的实际 UID，确保同 unlocalizedName 但不同 UID 的品种不过混淆
                 String uid = BeeBreedingHelper.getBeeUID(stack);
                 if (uid != null) {
-                    stateChanged |= dronePool.unlockSpecies(uid);
+                    dronePool.unlockSpecies(uid);
                     long newPending = (long) pendingPrincessOutputs + Math.max(1, stack.stackSize);
                     pendingPrincessOutputs = (int) Math.min(Integer.MAX_VALUE, newPending);
                 }
                 toRemove.add(stack);
-                stateChanged = true;
             }
         }
 
@@ -594,7 +605,6 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
             markDisplayDirty();
         }
 
-        return stateChanged;
     }
 
     private void settleActiveOperation() {
@@ -693,6 +703,7 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
     }
 
     @Override
+    @Nonnull
     protected MTEMultiBlockBaseGui<LargeBeeBreeder> getGui() {
         return new LargeBeeBreederGui(this);
     }
@@ -768,10 +779,6 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
 
     // ==================== 访问器 ====================
 
-    public String getTargetBeeSpecies() {
-        return targetBeeSpecies;
-    }
-
     public void setTargetBeeSpecies(String species) {
         // 优先按 UID 精确查找（来自 NEI 拖放），再按名称模糊匹配（用户手动输入）
         String candidate = species == null ? "" : species.trim();
@@ -807,52 +814,8 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
         if (baseTile != null) baseTile.markDirty();
     }
 
-    public DronePool getDronePool() {
-        return dronePool;
-    }
-
-    public int getSyncedPoolSize() {
-        return syncedPoolSize;
-    }
-
-    public int getPendingPrincessOutputs() {
-        return pendingPrincessOutputs;
-    }
-
-    public int getChainTotalSteps() {
-        return chainTotalSteps;
-    }
-
-    public int getChainCompletedSteps() {
-        return chainCompletedSteps;
-    }
-
-    public boolean isAllTasksBlocked() {
-        return allTasksBlocked;
-    }
-
-    public String getMissingDroneSpecies() {
-        return missingDroneSpecies;
-    }
-
-    public String getSyncedMissingInfo() {
-        return syncedMissingInfo;
-    }
-
-    public boolean isTargetInputValid() {
-        return targetInputValid;
-    }
-
-    public List<String> getSyncedPoolSpecies() {
-        return syncedPoolSpecies;
-    }
-
     public void setSyncedPoolSpecies(List<String> species) {
         syncedPoolSpecies = species == null ? Collections.emptyList() : species;
-    }
-
-    public List<NBTTagCompound> getSyncedChainSteps() {
-        return syncedChainSteps;
     }
 
     public void setSyncedChainSteps(List<NBTTagCompound> steps) {

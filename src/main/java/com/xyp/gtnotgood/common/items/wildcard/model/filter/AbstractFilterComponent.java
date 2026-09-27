@@ -13,7 +13,7 @@ public abstract class AbstractFilterComponent implements IWildcardFilterComponen
 
     protected static final String KEY_WHITELIST = "Whitelist";
 
-    private boolean whitelist = true;
+    private boolean whitelist;
 
     protected AbstractFilterComponent(boolean whitelist) {
         this.whitelist = whitelist;

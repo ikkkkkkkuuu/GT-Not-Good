@@ -25,7 +25,7 @@ import java.util.UUID;
  *   <li>完成后，调用 {@link RtsWorkflowToken#complete()} 或
  *       {@link RtsWorkflowToken#cancel()}。</li>
  *   <li>从其他代码位置，通过之前保存的 {@code entryId} 使用
- *       {@link #from(ServerPlayer, int)} 重建令牌。</li>
+ *       {@code #from(ServerPlayer, int)} 重建令牌。</li>
  * </ol>
  *
  * <p>所有工作流状态由引擎实现内部管理。消费者不要直接触碰
@@ -64,7 +64,7 @@ public interface IWorkflowEngine {
 
     /**
      * 为最近的活动（非挂起）工作流条目创建令牌。
-     * 尽力而为；建议优先使用 {@link #from(ServerPlayer, int)} 配合已存储的 entryId。
+     * 尽力而为；建议优先使用 {@code #from(ServerPlayer, int)} 配合已存储的 entryId。
      *
      * @return 令牌，若没有活动工作流则返回空
      */

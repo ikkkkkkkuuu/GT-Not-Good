@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
@@ -161,6 +163,7 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
     }
 
     @Override
+    @Nonnull
     public Reference2BooleanMap<IAEStackType<?>> getTypeFilter(EntityPlayer player) {
         return this.typeFilters.getFiltersMap();
     }

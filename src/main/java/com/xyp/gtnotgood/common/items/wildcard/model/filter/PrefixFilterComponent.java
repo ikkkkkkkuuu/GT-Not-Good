@@ -6,6 +6,8 @@ import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
+import lombok.Getter;
+import lombok.Setter;
 
 /** 按"能否做成某 OrePrefix 物品"过滤（doGenerateItem）。 */
 public final class PrefixFilterComponent extends AbstractFilterComponent {
@@ -14,6 +16,8 @@ public final class PrefixFilterComponent extends AbstractFilterComponent {
 
     private static final String KEY_PREFIX = "Prefix";
 
+    @Getter
+    @Setter
     private OrePrefixes prefix;
 
     public PrefixFilterComponent(OrePrefixes prefix, boolean whitelist) {
@@ -28,14 +32,6 @@ public final class PrefixFilterComponent extends AbstractFilterComponent {
     public static PrefixFilterComponent readData(NBTTagCompound data) {
         OrePrefixes prefix = WildcardMaterials.findPrefix(data.getString(KEY_PREFIX));
         return new PrefixFilterComponent(prefix, readWhitelist(data));
-    }
-
-    public OrePrefixes getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(OrePrefixes prefix) {
-        this.prefix = prefix;
     }
 
     @Override

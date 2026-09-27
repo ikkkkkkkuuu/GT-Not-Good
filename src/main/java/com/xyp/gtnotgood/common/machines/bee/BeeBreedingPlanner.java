@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.Getter;
+
 /**
  * Plans a deterministic mutation path from an unlocked species archive to a target species.
  * <p>
@@ -157,9 +159,13 @@ public final class BeeBreedingPlanner {
 
     public static final class Plan {
 
+        @Getter
         private final String targetUID;
+        @Getter
         private final List<BeeBreedingHelper.BreedingStep> steps;
+        @Getter
         private final Set<String> missingSpecies;
+        @Getter
         private final double expectedAttempts;
 
         private Plan(String targetUID, List<BeeBreedingHelper.BreedingStep> steps, Set<String> missingSpecies,
@@ -174,26 +180,10 @@ public final class BeeBreedingPlanner {
             return new Plan(targetUID, Collections.emptyList(), Collections.emptySet(), 0.0D);
         }
 
-        public String getTargetUID() {
-            return targetUID;
-        }
-
-        public List<BeeBreedingHelper.BreedingStep> getSteps() {
-            return steps;
-        }
-
-        public Set<String> getMissingSpecies() {
-            return missingSpecies;
-        }
-
         public String getFirstMissingSpecies() {
             return missingSpecies.isEmpty() ? ""
                 : missingSpecies.iterator()
                     .next();
-        }
-
-        public double getExpectedAttempts() {
-            return expectedAttempts;
         }
 
         public List<BeeBreedingHelper.BreedingStep> getReadySteps(Set<String> unlockedSpecies, int limit) {

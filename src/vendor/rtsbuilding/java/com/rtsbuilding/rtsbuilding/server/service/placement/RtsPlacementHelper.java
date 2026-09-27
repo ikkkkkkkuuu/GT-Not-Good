@@ -20,13 +20,13 @@ import net.minecraft.world.WorldServer;
  *
  * <p><b>核心方法：</b>
  * <ul>
- *   <li>{@link #sanitizeHitOffset(double, Direction, Direction.Axis)} — 清理点击偏移量，
+ *   <li>{@code #sanitizeHitOffset(double, Direction, Direction.Axis)} — 清理点击偏移量，
  *       非有限值时回退到基于面的默认值（0.5 ± 0.5）</li>
  *   <li>{@link #rotateState(BlockState, byte)} — 将方块状态旋转指定次数的 90 度（仅用最低 2 位）</li>
- *   <li>{@link #rotatePlacedBlock(ServerLevel, BlockPos, byte)} — 对世界中已放置的方块施加增量旋转</li>
- *   <li>{@link #detectPlacedPos(ServerLevel, BlockPos, BlockState, BlockPos, BlockState)} —
+ *   <li>{@code #rotatePlacedBlock(ServerLevel, BlockPos, byte)} — 对世界中已放置的方块施加增量旋转</li>
+ *   <li>{@code #detectPlacedPos(ServerLevel, BlockPos, BlockState, BlockPos, BlockState)} —
  *       通过比较点击位置和相邻位置的前后状态，检测方块实际放置的位置</li>
- *   <li>{@link #requestSessionPage(ServerPlayer, RtsStorageSession, boolean)} —
+ *   <li>{@code #requestSessionPage(ServerPlayer, RtsStorageSession, boolean)} —
  *       条件性请求刷新玩家的储存页面（仅在 {@code refreshStoragePage} 为 true 时）</li>
  * </ul>
  *

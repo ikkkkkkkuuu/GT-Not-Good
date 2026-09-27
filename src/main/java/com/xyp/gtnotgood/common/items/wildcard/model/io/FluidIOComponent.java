@@ -10,6 +10,8 @@ import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 
 import gregtech.api.enums.FluidState;
 import gregtech.api.enums.Materials;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 流体组件：用流体状态（MOLTEN/PLASMA/GAS/LIQUID）+ 数量，把当前材料变成对应流体（AE2FC ItemFluidDrop）。
@@ -21,7 +23,10 @@ public final class FluidIOComponent implements IWildcardIOComponent {
     private static final String KEY_STATE = "State";
     private static final String KEY_AMOUNT = "Amount";
 
+    @Getter
+    @Setter
     private FluidState state;
+    @Getter
     private long amount;
 
     public FluidIOComponent(FluidState state, long amount) {
@@ -43,18 +48,6 @@ public final class FluidIOComponent implements IWildcardIOComponent {
         }
         long amount = Math.max(1L, data.getLong(KEY_AMOUNT));
         return new FluidIOComponent(state, amount);
-    }
-
-    public FluidState getState() {
-        return state;
-    }
-
-    public void setState(FluidState state) {
-        this.state = state;
-    }
-
-    public long getAmount() {
-        return amount;
     }
 
     public void setAmount(long amount) {

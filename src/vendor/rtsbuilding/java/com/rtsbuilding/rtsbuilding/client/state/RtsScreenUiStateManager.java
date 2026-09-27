@@ -235,7 +235,7 @@ public final class RtsScreenUiStateManager {
 
     /**
      * 将缓存的脏状态刷入磁盘。仅在标记为脏时执行实际写入。
-     * <p>应在每 tick 调用一次（由 {@link BuilderScreen#tick()} 驱动）。
+     * <p>应在每 tick 调用一次（由 {@code BuilderScreen#tick()} 驱动）。
      */
     public void flush() {
         this.cache.flushIfDirty();

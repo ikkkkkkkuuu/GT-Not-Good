@@ -68,7 +68,7 @@ public final class WildcardPatternGenerator {
         if (isGeneratedPattern(stack)) {
             return createDetailForCurrentStack(stack, world);
         }
-        return getDisplayDetails(stack, world);
+        return getDisplayDetails(stack);
     }
 
     /**
@@ -125,7 +125,7 @@ public final class WildcardPatternGenerator {
     // 显示 / 输出
     // ============================================================
 
-    private static ICraftingPatternDetails getDisplayDetails(ItemStack stack, World world) {
+    private static ICraftingPatternDetails getDisplayDetails(ItemStack stack) {
         return new WildcardPreviewPatternDetails(stack, getRepresentativeInput(stack), getRepresentativeOutput(stack));
     }
 
@@ -200,6 +200,8 @@ public final class WildcardPatternGenerator {
         if ((inputs == null || inputs.isEmpty()) && (outputs == null || outputs.isEmpty())) {
             return null;
         }
+        inputs = inputs == null ? java.util.Collections.emptyList() : inputs;
+        outputs = outputs == null ? java.util.Collections.emptyList() : outputs;
 
         NBTTagList inputList = buildPatternList(inputs);
         NBTTagList outputList = buildPatternList(outputs);

@@ -11,19 +11,18 @@ import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
+import lombok.Getter;
+
 /** Non-ticking physical cable or connector. Loading changes invalidate cached network topology. */
 public class TileNetworkNode extends TileEntity implements IGuiHolder<PosGuiData> {
 
+    @Getter
     private String name = "";
     private int enabledFaces = 63;
 
     @Override
     public boolean canUpdate() {
         return false;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setName(String value) {

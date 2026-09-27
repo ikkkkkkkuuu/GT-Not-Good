@@ -48,12 +48,12 @@ public final class ShapeBuildTypes {
      * placement face, two anchor positions, and an optional height offset
      * used only for the BOX shape.
      *
-     * @param shape          the shape kind (LINE, SQUARE, WALL, CIRCLE, BOX)
-     * @param planeFace      the reference-plane direction the shape lives on
-     * @param placementFace  the face toward which blocks are placed
-     * @param pointA         first anchor point (origin corner)
-     * @param pointB         second anchor point (opposite corner / end)
-     * @param boxHeightOffset height offset in blocks (BOX only, 0 otherwise)
+     * <p>{@code shape}: the shape kind (LINE, SQUARE, WALL, CIRCLE, BOX)
+     * <p>{@code planeFace}: the reference-plane direction the shape lives on
+     * <p>{@code placementFace}: the face toward which blocks are placed
+     * <p>{@code pointA}: first anchor point (origin corner)
+     * <p>{@code pointB}: second anchor point (opposite corner / end)
+     * <p>{@code boxHeightOffset}: height offset in blocks (BOX only, 0 otherwise)
      */
     public static final class Input {
         private final BuildShape shape;
@@ -108,14 +108,14 @@ public final class ShapeBuildTypes {
      * Adds the current {@link Phase}, a height-offset value, and a
      * Y-coordinate reference for mouse-based height dragging.
      *
-     * @param shape               the shape kind
-     * @param planeFace           the reference-plane direction
-     * @param placementFace       the placement face
-     * @param pointA              first anchor point
-     * @param pointB              second anchor point (null until placed)
-     * @param phase               current interaction stage
-     * @param boxHeightOffset     height offset in blocks (BOX only)
-     * @param boxHeightMouseBaseY screen Y at which height-drag started
+     * <p>{@code shape}: the shape kind
+     * <p>{@code planeFace}: the reference-plane direction
+     * <p>{@code placementFace}: the placement face
+     * <p>{@code pointA}: first anchor point
+     * <p>{@code pointB}: second anchor point (null until placed)
+     * <p>{@code phase}: current interaction stage
+     * <p>{@code boxHeightOffset}: height offset in blocks (BOX only)
+     * <p>{@code boxHeightMouseBaseY}: screen Y at which height-drag started
      */
     public static final class Session {
         private final BuildShape shape;

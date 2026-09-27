@@ -3,7 +3,6 @@ package com.rtsbuilding.rtsbuilding;
 import com.rtsbuilding.rtsbuilding.common.RtsBlocks;
 import com.rtsbuilding.rtsbuilding.common.RtsCreativeTabs;
 import com.rtsbuilding.rtsbuilding.common.RtsEntities;
-import com.rtsbuilding.rtsbuilding.common.RtsItems;
 import com.rtsbuilding.rtsbuilding.network.RtsPayloadRegistrar;
 import com.rtsbuilding.rtsbuilding.network.builder.handler.RtsPositionBatchAssembler1122;
 import com.rtsbuilding.rtsbuilding.platform.thread.ThreadCompat;
@@ -92,10 +91,9 @@ public final class RtsbuildingMod {
         // TODO(port-1.12.2/client-config-ui): 由客户端批次通过 1.12 GuiFactory 接回配置界面；
         // 此处只加载同一份 client.cfg，专用服务端绝不触发客户端类加载。
 
-        // 1.12.2 的 Block/Item 由 RegistryEvent 提交；显式调用用于在事件前完成类初始化。
+        // GTNG 不注册 RTS 插件物品；保留其余 RTS 生命周期初始化。
         RtsCreativeTabs.register();
         RtsBlocks.register();
-        RtsItems.register();
         RtsEntities.register(com.xyp.gtnotgood.GTNotGood.instance);
         MinecraftForge.EVENT_BUS.register(gameEvents);
         // 1.7.10 的玩家与 tick 事件位于 FML 总线；区块事件仍位于 Forge 总线。

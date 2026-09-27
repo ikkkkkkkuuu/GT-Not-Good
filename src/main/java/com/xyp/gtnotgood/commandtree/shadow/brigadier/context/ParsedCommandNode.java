@@ -1,25 +1,21 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.context;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.tree.CommandNode;
 import java.util.Objects;
 
 /** Relocated Brigadier ParsedCommandNode used by the command-tree parser. */
 public class ParsedCommandNode<S> {
+   @Getter
    private final CommandNode<S> node;
+   @Getter
    private final StringRange range;
 
    public ParsedCommandNode(CommandNode<S> node, StringRange range) {
       this.node = node;
       this.range = range;
-   }
-
-   public CommandNode<S> getNode() {
-      return this.node;
-   }
-
-   public StringRange getRange() {
-      return this.range;
    }
 
    @Override

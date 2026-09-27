@@ -271,9 +271,9 @@ public final class TopBarPanel {
 
     /**
      * Renders an icon-only top bar button. Tries a texture icon first via
-     * {@link TopBarIconRenderer#topbarModeTexture(TopBarTypes.TopBarButtonId, boolean, boolean, boolean)};
+     * {@code TopBarIconRenderer#topbarModeTexture(TopBarTypes.TopBarButtonId, boolean, boolean, boolean)};
      * if no texture is available, draws a pixel-art icon via
-     * {@link TopBarIconRenderer#renderIcon}.
+     * {@code TopBarIconRenderer#renderIcon}.
      * <p>
      * The button background colour changes based on active, pressed, and hovered states.
      */

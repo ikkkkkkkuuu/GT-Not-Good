@@ -14,12 +14,12 @@ public final class CategoryTypes {
     /**
      * 底栏分类树的一行生产数据。
      *
-     * @param token 用于筛选的稳定分类标识
-     * @param label 已翻译或回退整理后的显示名
-     * @param depth 树深度，0 为模组根行，1 为创造标签子行
-     * @param expandable 是否存在可展开子行
-     * @param expanded 当前是否展开
-     * @param modNamespace 所属模组命名空间；“全部”行为空
+     * <p>{@code token}: 用于筛选的稳定分类标识
+     * <p>{@code label}: 已翻译或回退整理后的显示名
+     * <p>{@code depth}: 树深度，0 为模组根行，1 为创造标签子行
+     * <p>{@code expandable}: 是否存在可展开子行
+     * <p>{@code expanded}: 当前是否展开
+     * <p>{@code modNamespace}: 所属模组命名空间；“全部”行为空
      */
     public static final class CategoryRow {
         private final String token;

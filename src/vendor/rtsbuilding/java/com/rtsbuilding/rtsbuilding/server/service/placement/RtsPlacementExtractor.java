@@ -34,7 +34,7 @@ public final class RtsPlacementExtractor {
 
     /**
      * 验证给定物品 ID 的物品原型是否符合预期。
-     * 当匹配时返回原型堆叠的单个计数副本，否则返回 {@link ItemStack#EMPTY}。
+     * 当匹配时返回原型堆叠的单个计数副本，否则返回 {@code ItemStack#EMPTY}。
      */
     public static ItemStack sanitizePrototype(String itemId, ItemStack itemPrototype) {
         if (itemId == null || itemId.trim().isEmpty() || itemPrototype == null || com.rtsbuilding.rtsbuilding.platform.storage.StackCompat.isEmpty(itemPrototype)) {

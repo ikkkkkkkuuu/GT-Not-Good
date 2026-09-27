@@ -32,6 +32,8 @@ public abstract class Grade6WaterPurificationMixin extends MTEPurificationUnitBa
     private UVTreatmentLensCycle lensCycle = null;
 
     @Shadow
+    // This shadow writes the target object's state and must remain a field.
+    @SuppressWarnings("FieldCanBeLocal")
     private int timeUntilNextSwap = 0;
 
     @Shadow

@@ -26,7 +26,7 @@ import java.util.UUID;
  * 允许存入权限、显示名称和存储摘要。
  * 它刻意不构建页面、修改物品栏、合成、转移流体、
  * 执行远程挖掘、读写 NBT 或发送数据包。
- * 这些游戏玩法和传输流程仍由 {@link RtsStorageManager} 拥有。
+ * 这些游戏玩法和传输流程仍由 {@code RtsStorageManager} 拥有。
  *
  * <p>解析器必须保留现有的 AE2 网络处理器行为、
  * 普通方块容器能力探测和 NeoForge 能力查询顺序。

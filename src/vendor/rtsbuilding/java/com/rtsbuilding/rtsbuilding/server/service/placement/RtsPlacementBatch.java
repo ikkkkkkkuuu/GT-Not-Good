@@ -564,7 +564,7 @@ public final class RtsPlacementBatch {
         private static final String NBT_INDEX = "index";
 
         /**
-         * 将此批处理作业序列化为 {@link CompoundTag} 用于持久化存储。
+         * 将此批处理作业序列化为 {@code CompoundTag} 用于持久化存储。
          */
         public NBTTagCompound toNbt(Object ignoredRegistryAccess) {
             NBTTagCompound tag = new NBTTagCompound();
@@ -601,7 +601,7 @@ public final class RtsPlacementBatch {
         public NBTTagCompound toNbt() { return toNbt(null); }
 
         /**
-         * 从 {@link CompoundTag} 反序列化 {@link PlaceBatchJob}。
+         * 从 {@code CompoundTag} 反序列化 {@link PlaceBatchJob}。
          */
         public static PlaceBatchJob fromNbt(NBTTagCompound tag, Object ignoredRegistryAccess) {
             NBTTagList encodedPositions = tag.getTagList(NBT_POSITIONS, Constants.NBT.TAG_LONG);

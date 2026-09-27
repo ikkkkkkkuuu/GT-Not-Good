@@ -44,11 +44,11 @@ public final class BlockPlacementPlanner {
      * 单个方块的预计算放置结果。
      * 包含放置所需的所有不会被世界状态改变的信息。
      *
-     * @param target         旋转后的世界坐标
-     * @param state          旋转后的方块状态
-     * @param items          摆放所需的物品列表（空 = 不需要物品/仅流体）
-     * @param fluidCost      流体成本（WATER / LAVA / EMPTY）
-     * @param blockEntityTag 方块实体标签（可能为 null）
+     * <p>{@code target}: 旋转后的世界坐标
+     * <p>{@code state}: 旋转后的方块状态
+     * <p>{@code items}: 摆放所需的物品列表（空 = 不需要物品/仅流体）
+     * <p>{@code fluidCost}: 流体成本（WATER / LAVA / EMPTY）
+     * <p>{@code blockEntityTag}: 方块实体标签（可能为 null）
      */
     public static final class PlacementPlan {
         private final BlockPos target;

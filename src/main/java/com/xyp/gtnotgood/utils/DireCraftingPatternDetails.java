@@ -4,6 +4,7 @@
 package com.xyp.gtnotgood.utils;
 
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -148,10 +149,19 @@ public class DireCraftingPatternDetails implements ICraftingPatternDetails {
             && ItemStack.areItemStackTagsEqual(pattern, details.pattern);
     }
 
+    /**
+     * Uses the same item, metadata and NBT values as {@link #equals(Object)}. AEItemStack hashes include the identity
+     * of a weakly cached shared NBT object; recreating that temporary wrapper here changes the hash after collection
+     * and strands otherwise valid entries in AE's crafting-provider and CPU-task maps.
+     *
+     * @return content-based hash independent of AE's shared NBT cache lifetime
+     */
     @Override
     public int hashCode() {
-        return 31 * AEItemStack.create(pattern)
-            .hashCode() + multiply;
+        int hash = 31 * Item.getIdFromItem(pattern.getItem()) + pattern.getItemDamage();
+        hash = 31 * hash + (pattern.hasTagCompound() ? pattern.getTagCompound()
+            .hashCode() : 0);
+        return 31 * hash + multiply;
     }
 
     @Override

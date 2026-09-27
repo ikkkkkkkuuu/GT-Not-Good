@@ -22,7 +22,7 @@ import net.minecraftforge.common.util.ForgeDirection;
  * 并在适用时委托给 AE2 虚拟网络处理器。
  *
  * <p>它刻意不解析会话引用、构建存储页面、转移物品/流体、
- * 修改物品栏或管理权限。这些职责保留在 {@link RtsLinkedStorageResolver}
+ * 修改物品栏或管理权限。这些职责保留在 {@code RtsLinkedStorageResolver}
  * 和其他存储辅助类中。
  */
 public final class RtsLinkedCapabilities {

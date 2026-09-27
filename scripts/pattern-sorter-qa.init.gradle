@@ -1,0 +1,26 @@
+// Disposable integrated-server fixtures and native LDLib screen checks; not included in release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files(root.file('scripts/qa/PatternSorterClientChecks.java'),
+            root.file('scripts/qa/PatternSorterTest.java')))
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn root.tasks.named('testClasses')
+        classpath += root.sourceSets.test.output
+        workingDir root.file('run/pattern-sorter-check')
+        systemProperty 'gtng.sorter.qa', 'true'
+        systemProperty 'gtng.sorter.qa.output', root.file('build/pattern-sorter-qa').absolutePath
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in integrated-server checks')
+        doFirst {
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/pattern-sorter-qa/result.txt').toPath())
+        }
+        doLast {
+            def result = root.file('build/pattern-sorter-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Pattern sorter QA failed')
+        }
+    }
+}

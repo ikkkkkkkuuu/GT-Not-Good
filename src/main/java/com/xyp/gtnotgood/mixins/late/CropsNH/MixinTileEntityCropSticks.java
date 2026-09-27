@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.gtnewhorizon.cropsnh.api.ISeedData;
+import com.gtnewhorizon.cropsnh.items.ItemGenericSeed;
 import com.gtnewhorizon.cropsnh.tileentity.TileEntityCropSticks;
 import com.xyp.gtnotgood.config.Config;
 
@@ -28,6 +29,8 @@ public abstract class MixinTileEntityCropSticks {
     private int growthProgress;
 
     @Shadow(remap = false)
+    // This shadow writes the target object's state and must remain a field.
+    @SuppressWarnings("FieldCanBeLocal")
     private boolean isDirty;
 
     @Shadow(remap = false)
@@ -71,6 +74,7 @@ public abstract class MixinTileEntityCropSticks {
     /**
      * Returns one seed even when planting consumed the last item in the original stack.
      * CropsNH retains that stack in its seed data, so its count may be zero or the remainder of a larger stack.
+     * Alternative planting items such as vanilla carrots must become native seeds carrying the crop's current stats.
      * Normalize only the returned copy; the crop's saved data and the player's inventory must not be mutated.
      *
      * @param cir callback receiving the guaranteed single-seed drop
@@ -82,6 +86,11 @@ public abstract class MixinTileEntityCropSticks {
         if (this.hasCrop() && !this.hasWeed()) {
             ItemStack drop = this.getSeedStack();
             if (drop != null) {
+                if (!(drop.getItem() instanceof ItemGenericSeed)) {
+                    drop = this.seed.getCrop()
+                        .getSeedItem(this.seed.getStats());
+                }
+                if (drop == null) return;
                 drop.stackSize = 1;
                 cir.setReturnValue(drop);
             }

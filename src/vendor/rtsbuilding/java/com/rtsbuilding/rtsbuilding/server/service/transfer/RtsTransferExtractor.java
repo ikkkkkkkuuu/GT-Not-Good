@@ -462,7 +462,7 @@ public final class RtsTransferExtractor {
      * <p>这样做是安全的，因为 {@code LinkedItemHandlerView.extractItem}
      * 委托给缓存所操作的同一原始处理器——提取操作不会绕过权限检查。
      *
-     * @return 提取的物品栈，或 {@link ItemStack#EMPTY}
+     * @return 提取的物品栈，或 {@code ItemStack#EMPTY}
      */
     public static ItemStack extractOneCached(EntityPlayerMP player, List<IItemHandler> fallbackHandlers, Item targetItem) {
         if (player == null || targetItem == null) return null;

@@ -13,9 +13,11 @@ import appeng.me.diagnostics.CraftingDiagnosticSessionId;
 
 /**
  * Adapts one private AE diagnostics count segment to the planner's bulk-consumption contract without reflection.
+ *
+ * <p>
+ * Adapted AE crafting component; see reference/UPSTREAM_PORT_NOTES.md for provenance.
  */
 @Mixin(value = CraftingCPUCluster.TaskProgress.SessionCraftCount.class, remap = false)
-/** Adapted AE crafting component; see reference/UPSTREAM_PORT_NOTES.md for provenance. */
 public interface AccessorSessionCraftCount extends SessionSegment<CraftingDiagnosticSessionId> {
 
     /**

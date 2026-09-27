@@ -12,7 +12,7 @@ import java.util.Collection;
 /**
  * 把一次受限的正负 90 度旋转手势转换为 1.12 方块状态能够表达的变化。
  *
- * <p>水平旋转优先交给方块自身的 {@link net.minecraft.block.Block#withRotation}，
+ * <p>水平旋转优先交给方块自身的 {@code net.minecraft.block.Block#withRotation}，
  * 以保留原版和第三方方块注册的旋转规则。竖直旋转没有统一 API，因此只对名称、
  * 类型和允许值都能确认的 facing、axis、half、slab 和 attach_face 属性做保守映射。</p>
  */

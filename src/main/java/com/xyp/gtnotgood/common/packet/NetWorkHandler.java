@@ -45,7 +45,7 @@ public final class NetWorkHandler {
         registerMessage(
             com.xyp.gtnotgood.commandtree.network.CommandTreePacket.class,
             com.xyp.gtnotgood.commandtree.network.CommandTreePacket.Handler.class,
-            id++,
+            id,
             Side.CLIENT);
     }
 

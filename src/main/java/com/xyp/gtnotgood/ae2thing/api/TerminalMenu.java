@@ -15,12 +15,15 @@ import com.xyp.gtnotgood.ae2thing.network.CPacketOpenTerminal;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import lombok.Getter;
 
 @SideOnly(Side.CLIENT)
 public class TerminalMenu {
 
     public static List<IItemTerminal> terminalHandlers = new ArrayList<>();
+    @Getter
     private final List<TerminalItems> terminalItems = new ArrayList<>();
+    @Getter
     private final List<ItemStack> items = new ArrayList<>();
 
     public TerminalMenu() {
@@ -30,14 +33,6 @@ public class TerminalMenu {
         for (TerminalItems t : terminalItems) {
             items.add(t.getTargetItem());
         }
-    }
-
-    public List<ItemStack> getItems() {
-        return items;
-    }
-
-    public List<TerminalItems> getTerminalItems() {
-        return terminalItems;
     }
 
     public void openTerminal(int index) {

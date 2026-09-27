@@ -29,7 +29,7 @@ import com.rtsbuilding.rtsbuilding.platform.registry.RtsRegistries;
  *   <li>{@link #playRemoteUseSound(EntityPlayerMP, WorldServer, Entity, BlockPos, ItemStack)} —
  *       根据物品类型选择对应的远程使用声音并播放（如锄头耕地、锹铲平、斧剥皮等）</li>
  *   <li>{@link #sendDirectSound(EntityPlayerMP, String, double, double, double, float, float)} —
- *       直接向玩家发送 {@link SPacketSoundEffect}，支持自定义音量、音调和位置</li>
+ *       直接向玩家发送 {@code SPacketSoundEffect}，支持自定义音量、音调和位置</li>
  *   <li>{@link #selectRemoteUseSound(ItemStack)} — 根据物品栈选择 1.7.10 声音键</li>
  *   </li>
  *   <li>{@link #createSoundStack(String)} — 根据物品 ID 构造用于声音播放的 ItemStack</li>

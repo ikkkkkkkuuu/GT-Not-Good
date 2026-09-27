@@ -798,25 +798,6 @@ public final class NetworkGui {
         return tr("gui.network.off");
     }
 
-    private static String status(int status) {
-        // #tr gui.network.conflict
-        // # Controller conflict
-        // # zh_CN 控制器冲突
-        if (status == 1) return tr("gui.network.conflict");
-        // #tr gui.network.limit
-        // # Network too large
-        // # zh_CN 网络超出上限
-        if (status == 2) return tr("gui.network.limit");
-        // #tr gui.network.unloaded
-        // # Unloaded boundary
-        // # zh_CN 边界区块未加载
-        if (status == 3) return tr("gui.network.unloaded");
-        // #tr gui.network.ready
-        // # Ready
-        // # zh_CN 就绪
-        return tr("gui.network.ready");
-    }
-
     private static String side(int side) {
         switch (side) {
             // #tr gui.network.down

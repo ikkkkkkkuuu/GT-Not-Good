@@ -33,6 +33,8 @@ import gregtech.api.util.GTUtility;
  */
 public enum GTNGItemList implements IItemContainer {
 
+    StructureCompass,
+
     LargeTransmutationMachine,
     EssentiaDisassembler,
 
@@ -212,6 +214,7 @@ public enum GTNGItemList implements IItemContainer {
     AdvancedIOBus,
     MEWirelessTransceiver,
     WildcardPattern,
+    PatternSorter,
     IronFuelRod,
     DepletedIronFuelRod,
     WirelessDualInterfaceTerminal,

@@ -19,6 +19,8 @@ import com.gtnewhorizon.cropsnh.api.ICropMutation;
 import com.gtnewhorizon.cropsnh.farming.registries.CropRegistry;
 import com.gtnewhorizon.cropsnh.farming.registries.MutationRegistry;
 
+import lombok.Getter;
+
 /**
  * Plans a deterministic CropsNH mutation path from archived crops to a target crop.
  */
@@ -169,6 +171,7 @@ public final class CropBreedingPlanner {
      */
     public static final class Step {
 
+        @Getter
         private final ICropMutation mutation;
         public final List<String> parents;
         public final String result;
@@ -187,10 +190,6 @@ public final class CropBreedingPlanner {
             this.eut = Math.max(1, mutation.getBreedingMachineRecipeEUt());
         }
 
-        public ICropMutation getMutation() {
-            return mutation;
-        }
-
         public String signature() {
             return parents.stream()
                 .sorted()
@@ -204,7 +203,9 @@ public final class CropBreedingPlanner {
      */
     public static final class Plan {
 
+        @Getter
         private final String targetCropId;
+        @Getter
         private final List<Step> steps;
         private final Set<String> missingCrops;
 
@@ -216,14 +217,6 @@ public final class CropBreedingPlanner {
 
         public static Plan empty(String targetCropId) {
             return new Plan(targetCropId, Collections.emptyList(), Collections.emptySet());
-        }
-
-        public String getTargetCropId() {
-            return targetCropId;
-        }
-
-        public List<Step> getSteps() {
-            return steps;
         }
 
         public String getFirstMissingCrop() {

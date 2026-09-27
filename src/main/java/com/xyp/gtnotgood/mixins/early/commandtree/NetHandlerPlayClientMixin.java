@@ -9,13 +9,8 @@ import com.xyp.gtnotgood.commandtree.shadow.brigadier.CommandDispatcher;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.arguments.StringArgumentType;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.builder.LiteralArgumentBuilder;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.builder.RequiredArgumentBuilder;
-import com.xyp.gtnotgood.commandtree.shadow.brigadier.context.StringRange;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion.Suggestion;
-import com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion.Suggestions;
 import com.xyp.gtnotgood.commandtree.util.SuggestionProviders;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraftforge.client.ClientCommandHandler;
@@ -29,9 +24,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Stores the synced command tree and receives server tab completions. */
+/** Stores the synced command tree and receives server tab completions.
+ * <p>
+ * Ported command-tree NetHandlerPlayClientMixin used by the integrated chat suggestions. */
 @Mixin(NetHandlerPlayClient.class)
-/** Ported command-tree NetHandlerPlayClientMixin used by the integrated chat suggestions. */
 public class NetHandlerPlayClientMixin implements NetHandlerPlayClientExtras {
    @Shadow
    private Minecraft gameController; // gameController

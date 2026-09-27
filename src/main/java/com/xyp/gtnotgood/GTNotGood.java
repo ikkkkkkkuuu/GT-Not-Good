@@ -23,7 +23,7 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
  * {@code required-after}. CropsNH and Et Futurum Requiem both bundle MCLib 0.3.7.7, and MCLib's shared-state election
  * keeps whichever copy registers first when the versions tie. CropsNH's relocated copy ships a minimized cglib that is
  * missing {@code net.sf.cglib.proxy.NoOp}, so when it wins the tie every MCLib consumer dies during preInit. Combined
- * with {@code after:etfuturum} this forces the transitive order etfuturum -> gtnotgood -> cropsnh, which makes Et
+ * with {@code after:etfuturum} these forces the transitive order etfuturum -> gtnotgood -> cropsnh, which makes Et
  * Futurum's intact copy register first. Loading before CropsNH is safe because nothing in our preInit touches it, and
  * the CropsNH items we need at init are registered during CropsNH's own preInit, which the FML phase barrier already
  * guarantees. Remove this workaround once CropsNH ships a complete shaded cglib.
@@ -55,7 +55,9 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
         + "before:neicustomdiagram;"
         + "after:dreamcraft;"
         + "required-after:structurelib;"
-        + "after:ThaumcraftResearchTweaks;"
+        + "after:"
+        + ModList.ModIds.THAUMCRAFT_RESEARCH_TWEAKS
+        + ";"
         + "after:bqapi;"
         + "required-after:Thaumcraft;",
     acceptedMinecraftVersions = "1.7.10")
@@ -73,7 +75,7 @@ public class GTNotGood {
     public static CommonProxy proxy;
 
     @Mod.EventHandler
-    // preInit "Run before anything else. Read your config, create blocks, items, etc, and register them with the
+    // preInit "Run before anything else. Read your config, create blocks, items, etc., and register them with the
     // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(event);

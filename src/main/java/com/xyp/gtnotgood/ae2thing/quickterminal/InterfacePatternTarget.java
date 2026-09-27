@@ -5,6 +5,7 @@ import java.io.IOException;
 import appeng.container.sync.StreamCodec;
 import appeng.container.sync.StreamCodecs;
 import io.netty.buffer.ByteBuf;
+import lombok.Getter;
 
 /** Identifies one pattern slot in AE2's interface-terminal entry list. */
 public final class InterfacePatternTarget {
@@ -12,20 +13,14 @@ public final class InterfacePatternTarget {
     public static final StreamCodec<InterfacePatternTarget> CODEC = StreamCodecs
         .of(InterfacePatternTarget.class.getName(), InterfacePatternTarget::write, InterfacePatternTarget::read);
 
+    @Getter
     private final long entryId;
+    @Getter
     private final int slot;
 
     public InterfacePatternTarget(long entryId, int slot) {
         this.entryId = entryId;
         this.slot = slot;
-    }
-
-    public long getEntryId() {
-        return entryId;
-    }
-
-    public int getSlot() {
-        return slot;
     }
 
     private static void write(ByteBuf buffer, InterfacePatternTarget target) throws IOException {

@@ -20,11 +20,11 @@ import java.util.UUID;
  *
  * <p><b>核心方法：</b>
  * <ul>
- *   <li>{@link #playRemotePlacedBlockAnimation(ServerPlayer, BlockPos)} —
+ *   <li>{@code #playRemotePlacedBlockAnimation(ServerPlayer, BlockPos)} —
  *       发送方块破坏动画数据包（{@link S2CRtsPlaceAnimationPayload}）给玩家</li>
- *   <li>{@link #playRemotePlacedBlockSound(ServerPlayer, ServerLevel, BlockPos)} —
+ *   <li>{@code #playRemotePlacedBlockSound(ServerPlayer, ServerLevel, BlockPos)} —
  *       播放远程放置方块的放置声音</li>
- *   <li>{@link #playRemoteBlockBreakSound(ServerPlayer, ServerLevel, BlockPos, BlockState)} —
+ *   <li>{@code #playRemoteBlockBreakSound(ServerPlayer, ServerLevel, BlockPos, BlockState)} —
  *       播放远程挖掘方块的破坏声音</li>
  * </ul>
  *

@@ -1,6 +1,8 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.arguments;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.StringReader;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.context.CommandContext;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.exceptions.CommandSyntaxException;
@@ -9,6 +11,7 @@ import java.util.Collection;
 
 /** Relocated Brigadier StringArgumentType used by the command-tree parser. */
 public class StringArgumentType implements ArgumentType<String> {
+   @Getter
    private final StringArgumentType.StringType type;
 
    private StringArgumentType(StringArgumentType.StringType type) {
@@ -29,10 +32,6 @@ public class StringArgumentType implements ArgumentType<String> {
 
    public static String getString(CommandContext<?> context, String name) {
       return context.getArgument(name, String.class);
-   }
-
-   public StringArgumentType.StringType getType() {
-      return this.type;
    }
 
    public String parse(StringReader reader) throws CommandSyntaxException {
@@ -86,15 +85,13 @@ public class StringArgumentType implements ArgumentType<String> {
       QUOTABLE_PHRASE("\"quoted phrase\"", "word", "\"\""),
       GREEDY_PHRASE("word", "words with spaces", "\"and symbols\"");
 
+      @Getter
       private final Collection<String> examples;
 
       private StringType(String... examples) {
          this.examples = Arrays.asList(examples);
       }
 
-      public Collection<String> getExamples() {
-         return this.examples;
-      }
    }
 }
 // spotless:on

@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -95,8 +97,6 @@ import lombok.Getter;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 
-@IMetaTileEntity.SkipGenerateDescription
-@IMetaTileEntity.SkipGenerateName
 /**
  * Compact AE molecular assembler with exactly 144 pattern slots, fixed maximum batch throughput and one-tick
  * cycles. Input/output modes transfer encoded patterns through GregTech buses; operating mode exposes them to
@@ -105,6 +105,8 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
  *
  * @see AssemblerMatrixPatternState
  */
+@IMetaTileEntity.SkipGenerateDescription
+@IMetaTileEntity.SkipGenerateName
 public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> implements ISurvivalConstructable,
     IInterfaceHost, IGridProxyable, IAEAppEngInventory, IMEConnectable, ICustomNameObject {
 
@@ -1276,7 +1278,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         public int size() {
             if (size < 0) {
                 size = 0;
-                for (ItemStack inv : this) {
+                for (ItemStack ignored : this) {
                     ++size;
                 }
             }
@@ -1451,6 +1453,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     }
 
     @Override
+    @Nonnull
     protected gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui<?> getGui() {
         return new com.xyp.gtnotgood.common.gui.modularui.AssemblerMatrixGui(this);
     }

@@ -1,6 +1,10 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.tree;
 
+import javax.annotation.Nonnull;
+
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.AmbiguityConsumer;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.Command;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.RedirectModifier;
@@ -25,10 +29,13 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
    private final Map<String, CommandNode<S>> children = new LinkedHashMap<>();
    private final Map<String, LiteralCommandNode<S>> literals = new LinkedHashMap<>();
    private final Map<String, ArgumentCommandNode<S, ?>> arguments = new LinkedHashMap<>();
+   @Getter
    private final Predicate<S> requirement;
+   @Getter
    private final CommandNode<S> redirect;
    private final RedirectModifier<S> modifier;
    private final boolean forks;
+   @Getter
    private Command<S> command;
 
    protected CommandNode(Command<S> command, Predicate<S> requirement, CommandNode<S> redirect, RedirectModifier<S> modifier, boolean forks) {
@@ -39,20 +46,12 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
       this.forks = forks;
    }
 
-   public Command<S> getCommand() {
-      return this.command;
-   }
-
    public Collection<CommandNode<S>> getChildren() {
       return this.children.values();
    }
 
    public CommandNode<S> getChild(String name) {
       return this.children.get(name);
-   }
-
-   public CommandNode<S> getRedirect() {
-      return this.redirect;
    }
 
    public RedirectModifier<S> getRedirectModifier() {
@@ -133,10 +132,6 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
       return 31 * this.children.hashCode() + (this.command != null ? this.command.hashCode() : 0);
    }
 
-   public Predicate<S> getRequirement() {
-      return this.requirement;
-   }
-
    public abstract String getName();
 
    public abstract String getUsageText();
@@ -166,7 +161,7 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
       }
    }
 
-   public int compareTo(CommandNode<S> o) {
+   public int compareTo(@Nonnull CommandNode<S> o) {
       if (this instanceof LiteralCommandNode == (o instanceof LiteralCommandNode)) {
          return this.getSortedKey().compareTo(o.getSortedKey());
       } else {

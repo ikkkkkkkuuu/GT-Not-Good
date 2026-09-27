@@ -14,6 +14,9 @@ import org.lwjgl.opengl.GL11;
 
 import com.xyp.gtnotgood.common.items.toolbelt.ConfigData;
 
+import lombok.Getter;
+
+/** Renders and animates the tool belt's radial selection menu. */
 public class GenericRadialMenu extends Gui {
 
     private final Minecraft mc;
@@ -21,8 +24,8 @@ public class GenericRadialMenu extends Gui {
     private final List<RadialMenuItem> menuItems = new ArrayList<>();
     private RadialMenuItem itemHovering;
     private float animProgress;
-    private float animTarget;
     private boolean closing;
+    @Getter
     private boolean ready;
 
     public GenericRadialMenu(Minecraft mc, IRadialMenuHost host) {
@@ -41,6 +44,7 @@ public class GenericRadialMenu extends Gui {
     }
 
     public void tick() {
+        float animTarget;
         if (closing) {
             animTarget = 0.0f;
             if (animProgress <= 0.01f) {
@@ -71,11 +75,7 @@ public class GenericRadialMenu extends Gui {
         return closing && animProgress <= 0.001f;
     }
 
-    public boolean isReady() {
-        return ready;
-    }
-
-    public void draw(int mouseX, int mouseY, float partialTicks) {
+    public void draw(int mouseX, int mouseY) {
         ScaledResolution sr = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         int centerX = sr.getScaledWidth() / 2;
         int centerY = sr.getScaledHeight() / 2;
@@ -98,7 +98,7 @@ public class GenericRadialMenu extends Gui {
         float anglePerItem = 360.0f / visibleCount;
 
         // Draw full-screen dark background overlay behind the radial menu
-        drawDarkOverlay(sr, centerX, centerY, radiusOut);
+        drawDarkOverlay(centerX, centerY, radiusOut);
 
         // === PHASE 1: Detect hover BEFORE drawing wedges ===
         // Angle-only selection: any mouse position past the deadzone selects the
@@ -106,8 +106,7 @@ public class GenericRadialMenu extends Gui {
         // to be inside the ring.
         itemHovering = null;
         int visibleIndex = 0;
-        for (int i = 0; i < menuItems.size(); i++) {
-            RadialMenuItem item = menuItems.get(i);
+        for (RadialMenuItem item : menuItems) {
             if (!item.isVisible()) continue;
 
             float angle = startAngle + anglePerItem * visibleIndex;
@@ -162,8 +161,7 @@ public class GenericRadialMenu extends Gui {
 
         // === PHASE 3: Draw items and tooltips ===
         visibleIndex = 0;
-        for (int i = 0; i < menuItems.size(); i++) {
-            RadialMenuItem item = menuItems.get(i);
+        for (RadialMenuItem item : menuItems) {
             if (!item.isVisible()) continue;
 
             float angle = startAngle + anglePerItem * visibleIndex;
@@ -187,6 +185,11 @@ public class GenericRadialMenu extends Gui {
             visibleIndex++;
         }
 
+        drawCenterCircle(centerX, centerY, radiusIn);
+    }
+
+    /** Draws the animated center disk, restoring the matrix, texture and blend state afterward. */
+    private void drawCenterCircle(int centerX, int centerY, float radiusIn) {
         // Draw center circle with more visible background
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
@@ -216,7 +219,7 @@ public class GenericRadialMenu extends Gui {
      * Draw a semi-transparent dark overlay behind the radial menu area.
      * This creates the "GUI background" effect that darkens the game world.
      */
-    private void drawDarkOverlay(ScaledResolution sr, int centerX, int centerY, float radiusOut) {
+    private void drawDarkOverlay(int centerX, int centerY, float radiusOut) {
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
         OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);

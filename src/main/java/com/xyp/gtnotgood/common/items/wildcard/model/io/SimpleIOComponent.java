@@ -8,6 +8,7 @@ import com.xyp.gtnotgood.common.compat.FluidDropCompat;
 import com.xyp.gtnotgood.common.items.wildcard.model.IWildcardIOComponent;
 
 import gregtech.api.enums.Materials;
+import lombok.Getter;
 
 /**
  * 固定组件：忽略当前材料，始终返回一个固定物品/流体 stack。
@@ -22,6 +23,7 @@ public final class SimpleIOComponent implements IWildcardIOComponent {
     private static final String KEY_AMOUNT = "Amount";
 
     private ItemStack stack;
+    @Getter
     private long amount;
 
     public SimpleIOComponent(ItemStack stack, long amount) {
@@ -56,10 +58,6 @@ public final class SimpleIOComponent implements IWildcardIOComponent {
 
     public ItemStack getStack() {
         return stack == null ? null : stack.copy();
-    }
-
-    public long getAmount() {
-        return amount;
     }
 
     public void setAmount(long amount) {

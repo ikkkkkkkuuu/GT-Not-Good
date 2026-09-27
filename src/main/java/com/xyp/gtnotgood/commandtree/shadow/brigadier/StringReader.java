@@ -2,13 +2,12 @@
 package com.xyp.gtnotgood.commandtree.shadow.brigadier;
 
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.exceptions.CommandSyntaxException;
+import lombok.Setter;
 
 /** Relocated Brigadier StringReader used by the command-tree parser. */
 public class StringReader implements ImmutableStringReader {
-   private static final char SYNTAX_ESCAPE = '\\';
-   private static final char SYNTAX_DOUBLE_QUOTE = '"';
-   private static final char SYNTAX_SINGLE_QUOTE = '\'';
    private final String string;
+   @Setter
    private int cursor;
 
    public StringReader(StringReader other) {
@@ -23,10 +22,6 @@ public class StringReader implements ImmutableStringReader {
    @Override
    public String getString() {
       return this.string;
-   }
-
-   public void setCursor(int cursor) {
-      this.cursor = cursor;
    }
 
    @Override
@@ -90,6 +85,8 @@ public class StringReader implements ImmutableStringReader {
       return c == '"' || c == '\'';
    }
 
+   /** Retained as part of the relocated Brigadier parser API. */
+   @SuppressWarnings("unused")
    public void skipWhitespace() {
       while (this.canRead() && Character.isWhitespace(this.peek())) {
          this.skip();
@@ -190,6 +187,8 @@ public class StringReader implements ImmutableStringReader {
       return this.string.substring(start, this.cursor);
    }
 
+   /** Retained as part of the relocated Brigadier parser API. */
+   @SuppressWarnings("unused")
    public String readQuotedString() throws CommandSyntaxException {
       if (!this.canRead()) {
          return "";
@@ -251,16 +250,19 @@ public class StringReader implements ImmutableStringReader {
       String value = this.readString();
       if (value.isEmpty()) {
          throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().createWithContext(this);
-      } else if (value.equals("true")) {
-         return true;
-      } else if (value.equals("false")) {
-         return false;
-      } else {
-         this.cursor = start;
-         throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerInvalidBool().createWithContext(this, value);
       }
+      return switch (value) {
+         case "true" -> true;
+         case "false" -> false;
+         default -> {
+            this.cursor = start;
+            throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerInvalidBool().createWithContext(this, value);
+         }
+      };
    }
 
+   /** Retained as part of the relocated Brigadier parser API. */
+   @SuppressWarnings("unused")
    public void expect(char c) throws CommandSyntaxException {
       if (this.canRead() && this.peek() == c) {
          this.skip();

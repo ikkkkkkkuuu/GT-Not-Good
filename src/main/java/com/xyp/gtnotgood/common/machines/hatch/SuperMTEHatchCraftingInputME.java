@@ -115,6 +115,7 @@ import gregtech.common.tileentities.machines.IDualInputHatch;
 import gregtech.common.tileentities.machines.IDualInputHatchWithPattern;
 import gregtech.common.tileentities.machines.IDualInputInventory;
 import gregtech.common.tileentities.machines.IDualInputInventoryWithPattern;
+import lombok.Setter;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 
@@ -767,11 +768,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
      * mixin on addToMachineList feeds the controller's recipe map here instead. See
      * MixinMTEMultiBlockBaseHatchRecipeMap.
      */
+    @Setter
     private RecipeMap<?> controllerRecipeMap;
-
-    public void setControllerRecipeMap(RecipeMap<?> map) {
-        this.controllerRecipeMap = map;
-    }
 
     @Override
     public IChatComponent getNameSuffix() {

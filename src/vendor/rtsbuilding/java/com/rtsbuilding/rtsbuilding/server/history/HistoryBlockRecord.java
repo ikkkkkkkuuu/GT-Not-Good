@@ -13,9 +13,9 @@ import java.util.Objects;
  * 保存方块在操作发生时的完整状态，用于撤回/重做时精确恢复。
  * 注意：为防止刷物品漏洞，生存模式不恢复方块实体数据，仅创造模式恢复 NBT。
  *
- * @param pos              方块位置
- * @param state            方块状态
- * @param blockEntityData  方块实体 NBT 数据（仅创造模式恢复，生存模式不还原）
+ * <p>{@code pos}: 方块位置
+ * <p>{@code state}: 方块状态
+ * <p>{@code blockEntityData}: 方块实体 NBT 数据（仅创造模式恢复，生存模式不还原）
  */
 public final class HistoryBlockRecord {
     private final BlockPos pos;

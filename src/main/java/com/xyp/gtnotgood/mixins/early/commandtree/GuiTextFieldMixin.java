@@ -15,9 +15,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Adds command colors and inline completion to the chat input field. */
+/** Adds command colors and inline completion to the chat input field.
+ * <p>
+ * Ported command-tree GuiTextFieldMixin used by the integrated chat suggestions. */
 @Mixin(GuiTextField.class)
-/** Ported command-tree GuiTextFieldMixin used by the integrated chat suggestions. */
 public abstract class GuiTextFieldMixin implements GuiTextFieldExtras {
    @Shadow
    private String text; // text

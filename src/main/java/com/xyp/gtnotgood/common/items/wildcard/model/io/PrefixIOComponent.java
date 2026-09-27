@@ -8,6 +8,7 @@ import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
+import lombok.Getter;
 
 /**
  * 前缀组件：用 GT 前缀（ingot/plate/dust...）+ 数量，把当前材料变成对应统一物品。
@@ -20,7 +21,9 @@ public final class PrefixIOComponent implements IWildcardIOComponent {
     private static final String KEY_PREFIX = "Prefix";
     private static final String KEY_AMOUNT = "Amount";
 
+    @Getter
     private OrePrefixes prefix;
+    @Getter
     private int amount;
     /** 用户正在输入的前缀名原始文本；解析成 OrePrefixes 后仍保留原文，避免输入过程被 getter 冲掉。 */
     private String rawText;
@@ -41,10 +44,6 @@ public final class PrefixIOComponent implements IWildcardIOComponent {
         return new PrefixIOComponent(prefix, amount);
     }
 
-    public OrePrefixes getPrefix() {
-        return prefix;
-    }
-
     public void setPrefix(OrePrefixes prefix) {
         this.prefix = prefix;
         if (prefix != null) this.rawText = prefix.name();
@@ -59,10 +58,6 @@ public final class PrefixIOComponent implements IWildcardIOComponent {
     public void setRawText(String text) {
         this.rawText = text == null ? "" : text;
         this.prefix = WildcardMaterials.findPrefix(this.rawText);
-    }
-
-    public int getAmount() {
-        return amount;
     }
 
     public void setAmount(int amount) {

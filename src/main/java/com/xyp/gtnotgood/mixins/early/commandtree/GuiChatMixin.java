@@ -3,7 +3,6 @@ package com.xyp.gtnotgood.mixins.early.commandtree;
 
 import com.xyp.gtnotgood.commandtree.client.gui.CommandSuggestions;
 import com.xyp.gtnotgood.commandtree.accessor.GuiTextFieldExtras;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -18,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /** Connects Brigadier suggestions to the vanilla chat screen. */
 @Mixin(GuiChat.class)
-/** Ported command-tree GuiChatMixin used by the integrated chat suggestions. */
 public class GuiChatMixin extends GuiScreen {
    @Shadow
    protected GuiTextField inputField; // inputField

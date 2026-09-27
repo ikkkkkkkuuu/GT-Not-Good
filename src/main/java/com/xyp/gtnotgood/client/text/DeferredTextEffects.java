@@ -11,18 +11,17 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
+import lombok.Getter;
+
 /** Replays effect text after the model geometry that owns Angelica's deferred font batch. */
 public class DeferredTextEffects {
 
     private static final Deque<Draw> PENDING = new ArrayDeque<>();
     private static final Deque<Draw> POOL = new ArrayDeque<>();
+    @Getter
     private static boolean flushing;
 
     private DeferredTextEffects() {}
-
-    public static boolean isFlushing() {
-        return flushing;
-    }
 
     public static void enqueue(FontRenderer font, String text, float x, float y, int color, boolean shadow) {
         Draw draw = POOL.pollFirst();

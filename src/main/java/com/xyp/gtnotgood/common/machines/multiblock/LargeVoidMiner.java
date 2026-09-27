@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -361,12 +363,12 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
 
     private PoolDim createPoolDim(String dimAbbr, String dimName) {
         if (dimName == null) {
-            return new PoolDim(dimAbbr, null, new VoidMinerUtility.DropMap(), new VoidMinerUtility.DropMap());
+            return new PoolDim(dimAbbr, null, new VoidMinerUtility.DropMap());
         }
         VoidMinerUtility.DropMap dropMap = VoidMinerUtilityShim.getDropMap(dimName);
         VoidMinerUtility.DropMap extraDropMap = VoidMinerUtilityShim.getExtraDropMap(dimName);
         dropMap.isDistributionCached(extraDropMap);
-        return new PoolDim(dimAbbr, dimName, dropMap, extraDropMap);
+        return new PoolDim(dimAbbr, dimName, dropMap);
     }
 
     private void rebuildPool() {
@@ -1095,6 +1097,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
     }
 
     @Override
+    @Nonnull
     protected MTEMultiBlockBaseGui<?> getGui() {
         return new LargeVoidMinerGui(this);
     }
@@ -1163,14 +1166,11 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         final String dimAbbr;
         final String dimName;
         final VoidMinerUtility.DropMap dropMap;
-        final VoidMinerUtility.DropMap extraDropMap;
 
-        PoolDim(String dimAbbr, String dimName, VoidMinerUtility.DropMap dropMap,
-            VoidMinerUtility.DropMap extraDropMap) {
+        PoolDim(String dimAbbr, String dimName, VoidMinerUtility.DropMap dropMap) {
             this.dimAbbr = dimAbbr;
             this.dimName = dimName;
             this.dropMap = dropMap;
-            this.extraDropMap = extraDropMap;
         }
     }
 

@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * <p>
  * 覆盖所有已支持的第三方 Mod 容器类（Iron Furnaces、Generator Galore、
  * Sophisticated Storage），使其在 RTS 远程操作模式下仍保持有效。
- * 原版箱子由 {@link ChestMenuMixin} 单独处理。
+ * 原版箱子由 {@code ChestMenuMixin} 单独处理。
  */
 @Pseudo
 @Mixin(targets = {

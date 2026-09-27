@@ -25,8 +25,8 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 /** Adapted AE crafting component; see reference/UPSTREAM_PORT_NOTES.md for provenance. */
+@Getter
 public class AssemblerMatrixPatternState {
 
     private final Map<ItemStack, DireCraftingPatternDetails> patterns = new Reference2ObjectOpenHashMap<>();

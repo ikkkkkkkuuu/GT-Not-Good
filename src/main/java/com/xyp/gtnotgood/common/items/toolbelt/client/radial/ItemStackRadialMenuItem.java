@@ -8,15 +8,15 @@ import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class ItemStackRadialMenuItem extends RadialMenuItem {
 
     private static final RenderItem itemRenderer = new RenderItem();
 
+    @Getter
     private final ItemStack stack;
-
-    public ItemStack getStack() {
-        return stack;
-    }
 
     public ItemStackRadialMenuItem(GenericRadialMenu menu, ItemStack stack) {
         super(menu);
@@ -81,11 +81,8 @@ public class ItemStackRadialMenuItem extends RadialMenuItem {
         return false;
     }
 
+    @Setter
     private boolean visible = true;
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
 
     @Override
     public boolean isVisible() {

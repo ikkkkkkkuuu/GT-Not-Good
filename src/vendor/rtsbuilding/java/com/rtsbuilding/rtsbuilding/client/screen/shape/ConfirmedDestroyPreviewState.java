@@ -41,9 +41,9 @@ public final class ConfirmedDestroyPreviewState {
     /**
      * 当前破坏进度的最小只读快照。
      *
-     * @param position              服务端当前报告的方块
-     * @param mineStage             单块/批量挖掘阶段，负数表示无活动进度
-     * @param activeDestroyWorkflow 是否存在带目标数量的活动破坏工作流
+     * <p>{@code position}: 服务端当前报告的方块
+     * <p>{@code mineStage}: 单块/批量挖掘阶段，负数表示无活动进度
+     * <p>{@code activeDestroyWorkflow}: 是否存在带目标数量的活动破坏工作流
      */
     public static final class Progress {
         private final BlockPos position;

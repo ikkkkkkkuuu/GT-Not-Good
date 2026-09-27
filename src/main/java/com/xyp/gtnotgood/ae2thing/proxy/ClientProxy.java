@@ -41,9 +41,11 @@ import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
+import lombok.Getter;
 
 public class ClientProxy extends CommonProxy {
 
+    @Getter
     private static GuiOverlayButton overlayButton = null;
     public static List<MouseWheelHandler> mouseHandlers = new ArrayList<>();
 
@@ -53,10 +55,6 @@ public class ClientProxy extends CommonProxy {
         if (Mods.NOT_ENOUGH_ITEMS.isModLoaded()) {
             new DefaultExtractorLoader().run();
         }
-    }
-
-    public static GuiOverlayButton getOverlayButton() {
-        return overlayButton;
     }
 
     @SubscribeEvent

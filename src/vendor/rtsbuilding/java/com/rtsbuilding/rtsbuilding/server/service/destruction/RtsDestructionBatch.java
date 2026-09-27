@@ -115,7 +115,7 @@ public final class RtsDestructionBatch {
      * Tick 处理器，从排队的破坏作业中处理最多 {@link #DESTROY_MAX_BLOCKS_PER_TICK}
      * 个方块，实际处理量同时受全局任务数量预算与纳秒截止时间限制。
      *
-     * <p>在处理前先尝试恢复挂起的破坏作业（{@link #tryResumePendingDestroyJobs}）。
+     * <p>在处理前先尝试恢复挂起的破坏作业（{@code #tryResumePendingDestroyJobs}）。
      *
      * <p>当完整的作业完成时，记录历史、更新工作流进度、归还工具（如果是最后的作业）、
      * 刷新储存页面。
@@ -431,7 +431,7 @@ public final class RtsDestructionBatch {
 
     /**
      * 单个批处理破坏作业，持有共享的破坏参数和有序的目标位置列表。
-     * 每个作业由 {@link #tickDestroyJobs} 以数量与纳秒双预算节流处理。
+     * 每个作业由 {@code #tickDestroyJobs} 以数量与纳秒双预算节流处理。
      */
     public static final class DestructionJob {
         private final List<BlockPos> positions;
@@ -531,7 +531,7 @@ public final class RtsDestructionBatch {
         private static final String NBT_INDEX = "index";
 
         /**
-         * 将此破坏作业序列化为 {@link CompoundTag} 用于持久化存储。
+         * 将此破坏作业序列化为 {@code CompoundTag} 用于持久化存储。
          */
         public NBTTagCompound toNbt() {
             NBTTagCompound tag = new NBTTagCompound();
@@ -548,7 +548,7 @@ public final class RtsDestructionBatch {
         }
 
         /**
-         * 从 {@link CompoundTag} 反序列化 {@link DestructionJob}。
+         * 从 {@code CompoundTag} 反序列化 {@link DestructionJob}。
          */
         public static DestructionJob fromNbt(NBTTagCompound tag) {
             NBTTagList encodedPositions = tag.getTagList(NBT_POSITIONS, Constants.NBT.TAG_LONG);

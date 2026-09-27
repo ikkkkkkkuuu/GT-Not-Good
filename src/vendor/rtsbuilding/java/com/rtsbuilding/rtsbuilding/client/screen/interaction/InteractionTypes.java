@@ -19,11 +19,11 @@ public final class InteractionTypes {
     /**
      * Target picked from the current RTS cursor ray.
      *
-     * @param entityId    target entity id, or -1 when the target is a block
-     * @param hitLocation precise hit location
-     * @param blockHit    block hit result, null for entity targets
-     * @param rayOrigin   ray-cast origin
-     * @param rayDir      ray-cast direction
+     * <p>{@code entityId}: target entity id, or -1 when the target is a block
+     * <p>{@code hitLocation}: precise hit location
+     * <p>{@code blockHit}: block hit result, null for entity targets
+     * <p>{@code rayOrigin}: ray-cast origin
+     * <p>{@code rayDir}: ray-cast direction
      */
     public static final class InteractionTarget {
         private final int entityId;

@@ -1,11 +1,14 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.builder;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.tree.CommandNode;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.tree.LiteralCommandNode;
 
 /** Relocated Brigadier LiteralArgumentBuilder used by the command-tree parser. */
 public class LiteralArgumentBuilder<S> extends ArgumentBuilder<S, LiteralArgumentBuilder<S>> {
+   @Getter
    private final String literal;
 
    protected LiteralArgumentBuilder(String literal) {
@@ -18,10 +21,6 @@ public class LiteralArgumentBuilder<S> extends ArgumentBuilder<S, LiteralArgumen
 
    protected LiteralArgumentBuilder<S> getThis() {
       return this;
-   }
-
-   public String getLiteral() {
-      return this.literal;
    }
 
    public LiteralCommandNode<S> build() {

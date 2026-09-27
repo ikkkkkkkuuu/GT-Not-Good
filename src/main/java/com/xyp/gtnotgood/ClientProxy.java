@@ -7,6 +7,7 @@ import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
+import com.xyp.gtnotgood.client.StructureCompassRenderer;
 import com.xyp.gtnotgood.client.flux.FluxConnectorRenderer;
 import com.xyp.gtnotgood.client.gui.LibraryDemoCommand;
 import com.xyp.gtnotgood.client.gui.wildcard.WildcardPreviewCommand;
@@ -33,7 +34,6 @@ import appeng.api.AEApi;
 import appeng.api.parts.IPartItem;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -44,7 +44,9 @@ import thaumcraft.common.config.ConfigBlocks;
 
 /**
  * Client-side proxy for render, GUI, and other client-only registrations.
+ * Instantiated by Forge through the class name declared in {@link GTNotGood}'s sided proxy registration.
  */
+@SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
 
     @Override
@@ -71,14 +73,15 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
+        MinecraftForgeClient
+            .registerItemRenderer(GTNGItemList.StructureCompass.getItem(), new StructureCompassRenderer());
         registerAEPartRenderer();
         initializeTextEffects();
         registerPackagedCoreRenderers();
         registerPreviewCommands();
         registerBlockRenderers();
         KeyBindManager.registerAllKeyBinds();
-        // Force load BlockIcons to register textures
-        BlockIcons.values();
+        BlockIcons.initialize();
         registerClientEvents();
     }
 
@@ -164,9 +167,10 @@ public class ClientProxy extends CommonProxy {
                 .bus()
                 .register(new com.xyp.gtnotgood.client.EdgeWindowIcon());
         }
-        if (Loader.isModLoaded("ThaumcraftResearchTweaks")) {
-            NetworkRegistry.INSTANCE
-                .registerGuiHandler("ThaumcraftResearchTweaks", new com.xyp.gtnotgood.client.research.GuiHandler());
+        if (ModList.ThaumcraftResearchTweaks.isModLoaded()) {
+            NetworkRegistry.INSTANCE.registerGuiHandler(
+                ModList.ThaumcraftResearchTweaks.getID(),
+                new com.xyp.gtnotgood.client.research.GuiHandler());
         }
     }
 }

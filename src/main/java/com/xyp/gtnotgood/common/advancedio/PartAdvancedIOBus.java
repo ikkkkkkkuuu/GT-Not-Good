@@ -5,6 +5,8 @@ package com.xyp.gtnotgood.common.advancedio;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -290,14 +292,15 @@ public final class PartAdvancedIOBus extends PartExportBus {
 
     /** Memory-card settings copy only ghost targets/settings, never real escrow or installed upgrades. */
     @Override
-    public NBTTagCompound downloadSettings(appeng.util.SettingsFrom from) {
+    @Nonnull
+    public NBTTagCompound downloadSettings(@Nonnull appeng.util.SettingsFrom from) {
         NBTTagCompound tag = super.downloadSettings(from);
         tag.setBoolean("regulateStock", regulate);
         return tag;
     }
 
     @Override
-    public void uploadSettings(appeng.util.SettingsFrom from, NBTTagCompound tag) {
+    public void uploadSettings(@Nonnull appeng.util.SettingsFrom from, @Nonnull NBTTagCompound tag) {
         for (int i = 0; i < CONFIG_SLOTS; i++) stockConfig.putAEStackInSlot(i, null);
         super.uploadSettings(from, tag);
         normalizeFilters();

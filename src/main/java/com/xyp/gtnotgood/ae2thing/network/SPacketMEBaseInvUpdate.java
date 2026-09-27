@@ -16,6 +16,8 @@ import appeng.core.AELog;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import lombok.Getter;
+import lombok.Setter;
 
 public abstract class SPacketMEBaseInvUpdate implements IMessage {
 
@@ -27,7 +29,10 @@ public abstract class SPacketMEBaseInvUpdate implements IMessage {
     protected GZIPOutputStream compressFrame;
     protected int writtenBytes = 0;
     protected final ByteBuf data = Unpooled.buffer(OPERATION_BYTE_LIMIT);
+    @Getter
+    @Setter
     protected byte ref = (byte) 0;
+    @Getter
     protected final List<IAEStack<?>> list = new ArrayList<>();
 
     public SPacketMEBaseInvUpdate() {}
@@ -107,24 +112,12 @@ public abstract class SPacketMEBaseInvUpdate implements IMessage {
         return this.list.isEmpty();
     }
 
-    public List<IAEStack<?>> getList() {
-        return this.list;
-    }
-
     public void appendStack(final IAEStack<?> stack) {
         this.list.add(stack);
     }
 
     public void addAll(final List<? extends IAEStack<?>> stacks) {
         this.list.addAll(stacks);
-    }
-
-    public byte getRef() {
-        return this.ref;
-    }
-
-    public void setRef(byte ref) {
-        this.ref = ref;
     }
 
 }

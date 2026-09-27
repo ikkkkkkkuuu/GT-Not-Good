@@ -1,6 +1,8 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.exceptions;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.Message;
 
 /** Relocated Brigadier CommandSyntaxException used by the command-tree parser. */
@@ -8,9 +10,12 @@ public class CommandSyntaxException extends Exception {
    public static final int CONTEXT_AMOUNT = 10;
    public static boolean ENABLE_COMMAND_STACK_TRACES = true;
    public static BuiltInExceptionProvider BUILT_IN_EXCEPTIONS = new BuiltInExceptions();
+   @Getter
    private final CommandExceptionType type;
    private final Message message;
+   @Getter
    private final String input;
+   @Getter
    private final int cursor;
 
    public CommandSyntaxException(CommandExceptionType type, Message message) {
@@ -60,16 +65,5 @@ public class CommandSyntaxException extends Exception {
       }
    }
 
-   public CommandExceptionType getType() {
-      return this.type;
-   }
-
-   public String getInput() {
-      return this.input;
-   }
-
-   public int getCursor() {
-      return this.cursor;
-   }
 }
 // spotless:on

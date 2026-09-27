@@ -13,7 +13,6 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.client.C14PacketTabComplete;
-import org.jetbrains.annotations.Nullable;
 
 /** Requests vanilla server tab completions for Brigadier's asynchronous suggestions. */
 public class ClientSuggestionProvider implements ISuggestionProvider {

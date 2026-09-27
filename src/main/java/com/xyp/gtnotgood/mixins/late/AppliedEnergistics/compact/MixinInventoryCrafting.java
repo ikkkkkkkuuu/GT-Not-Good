@@ -11,8 +11,8 @@ import com.xyp.gtnotgood.utils.LargeInventoryCrafting;
 
 import appeng.util.inv.MEInventoryCrafting;
 
-@Mixin(value = MEInventoryCrafting.class, remap = false)
 /** Adapted AE crafting component; see reference/UPSTREAM_PORT_NOTES.md for provenance. */
+@Mixin(value = MEInventoryCrafting.class, remap = false)
 public class MixinInventoryCrafting implements LargeInventoryCrafting {
 
     @Unique

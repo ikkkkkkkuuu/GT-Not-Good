@@ -266,7 +266,7 @@ public final class RtsAggregateStorage {
 
     /**
      * 返回指定物品 ID 的代表性 ItemStack（数量=1），
-     * 若未缓存则返回 {@link ItemStack#EMPTY}。
+     * 若未缓存则返回 {@code ItemStack#EMPTY}。
      */
     public ItemStack getPrototype(String itemId) {
         for (CachedHandlerSlot cs : this.flatOrdered) {

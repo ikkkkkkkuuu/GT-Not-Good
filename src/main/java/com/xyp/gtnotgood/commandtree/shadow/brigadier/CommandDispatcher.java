@@ -1,6 +1,10 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier;
 
+import lombok.Setter;
+
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.builder.LiteralArgumentBuilder;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.context.CommandContext;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.context.CommandContextBuilder;
@@ -29,17 +33,14 @@ import java.util.stream.Collectors;
 public class CommandDispatcher<S> {
    public static final String ARGUMENT_SEPARATOR = " ";
    public static final char ARGUMENT_SEPARATOR_CHAR = ' ';
-   private static final String USAGE_OPTIONAL_OPEN = "[";
-   private static final String USAGE_OPTIONAL_CLOSE = "]";
-   private static final String USAGE_REQUIRED_OPEN = "(";
-   private static final String USAGE_REQUIRED_CLOSE = ")";
-   private static final String USAGE_OR = "|";
+   @Getter
    private final RootCommandNode<S> root;
    private final Predicate<CommandNode<S>> hasCommand = new Predicate<CommandNode<S>>() {
       public boolean test(CommandNode<S> input) {
          return input != null && (input.getCommand() != null || input.getChildren().stream().anyMatch(CommandDispatcher.this.hasCommand));
       }
    };
+   @Setter
    private ResultConsumer<S> consumer = (c, s, r) -> {};
 
    public CommandDispatcher(RootCommandNode<S> root) {
@@ -54,10 +55,6 @@ public class CommandDispatcher<S> {
       LiteralCommandNode<S> build = command.build();
       this.root.addChild(build);
       return build;
-   }
-
-   public void setConsumer(ResultConsumer<S> consumer) {
-      this.consumer = consumer;
    }
 
    public int execute(String input, S source) throws CommandSyntaxException {
@@ -88,10 +85,7 @@ public class CommandDispatcher<S> {
          List<CommandContext<S>> contexts = Collections.singletonList(original);
 
          for (ArrayList<CommandContext<S>> next = null; contexts != null; next = null) {
-            int size = contexts.size();
-
-            for (int i = 0; i < size; i++) {
-               CommandContext<S> context = contexts.get(i);
+            for (CommandContext<S> context : contexts) {
                CommandContext<S> child = context.getChild();
                if (child != null) {
                   forked |= context.isForked();
@@ -383,10 +377,6 @@ public class CommandDispatcher<S> {
          result.complete(Suggestions.merge(fullInput, suggestions));
       });
       return result;
-   }
-
-   public RootCommandNode<S> getRoot() {
-      return this.root;
    }
 
    public Collection<String> getPath(CommandNode<S> target) {

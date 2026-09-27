@@ -60,7 +60,7 @@ public final class SessionComponents {
     //  工具
     // ==================================================================
 
-    /** 创建一个 {@link CompoundTag} 直通桥接组件 */
+    /** 创建一个 {@code CompoundTag} 直通桥接组件 */
     private static DataComponent<NBTTagCompound> bridge(String key) {
         return new DataComponent<>(
                 key,

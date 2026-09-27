@@ -321,13 +321,6 @@ public class BeeBreedingHelper {
         return uidSpeciesCache != null ? uidSpeciesCache.get(uid) : null;
     }
 
-    private static boolean isAscii(String s) {
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) > 127) return false;
-        }
-        return true;
-    }
-
     /**
      * 直接从 IAlleleBeeSpecies 获取显示名（无额外查找），供 matchSpeciesName 使用。
      */

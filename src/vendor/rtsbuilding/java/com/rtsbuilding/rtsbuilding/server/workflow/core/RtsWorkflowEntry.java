@@ -295,7 +295,7 @@ public final class RtsWorkflowEntry {
     private static final String NBT_LAST_UPDATED_AT = "last_updated_at";
 
     /**
-     * 将此条目序列化为 {@link CompoundTag}。
+     * 将此条目序列化为 {@code CompoundTag}。
      */
     public NBTTagCompound toNbt() {
         NBTTagCompound tag = new NBTTagCompound();
@@ -330,7 +330,7 @@ public final class RtsWorkflowEntry {
     }
 
     /**
-     * 从 {@link CompoundTag} 反序列化条目。
+     * 从 {@code CompoundTag} 反序列化条目。
      *
      * @param tag 之前由 {@link #toNbt()} 生成的 NBT 标签
      * @return 恢复了所有字段的新条目

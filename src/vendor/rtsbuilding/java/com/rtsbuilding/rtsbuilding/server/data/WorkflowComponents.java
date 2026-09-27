@@ -30,7 +30,7 @@ public final class WorkflowComponents {
  *
  * <p>槽位管理器的编解码仍委托给
  * {@link com.rtsbuilding.rtsbuilding.server.workflow.service.RtsWorkflowSlotManager#saveToNbt()}
- * 和 {@link com.rtsbuilding.rtsbuilding.server.workflow.service.RtsWorkflowSlotManager#loadFromNbt(CompoundTag)}。
+ * 和 {@code com.rtsbuilding.rtsbuilding.server.workflow.service.RtsWorkflowSlotManager#loadFromNbt(CompoundTag)}。
  */
     public static final DataComponent<NBTTagCompound> FULL_WORKFLOW = new DataComponent<>(
             "workflow",

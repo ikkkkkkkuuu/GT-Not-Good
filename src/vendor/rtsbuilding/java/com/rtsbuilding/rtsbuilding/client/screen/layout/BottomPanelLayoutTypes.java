@@ -17,30 +17,30 @@ public final class BottomPanelLayoutTypes {
      * of the bottom panel: sort button, category panel, storage grid, craft
      * panel, search box, pager, tool row, and grid-scroll area.
      *
-     * @param panelX        panel left edge
-     * @param panelY        panel top edge
-     * @param panelW        panel width
-     * @param panelH        panel height
-     * @param sortX         sort-button X
-     * @param sortY         sort-button Y
-     * @param craftDockX    craft-dock ring left edge
-     * @param craftDockY    craft-dock ring top edge
-     * @param categoryX     category-panel X
-     * @param categoryY     category-panel Y
-     * @param categoryH     category-panel height
-     * @param storageX      storage-block X
-     * @param storageY      storage-block Y
-     * @param storageW      storage-block width
-     * @param craftPanelX   craft panel X
-     * @param mainStorageW  main-storage width
-     * @param searchW       search-box width
-     * @param pagerX        pager X
-     * @param toolY         tool-row Y
-     * @param gridY         storage-grid Y
-     * @param gridH         storage-grid height
-     * @param storageRows   number of visible storage rows
-     * @param craftPanelY   craft panel Y
-     * @param craftPanelH   craft panel height
+     * <p>{@code panelX}: panel left edge
+     * <p>{@code panelY}: panel top edge
+     * <p>{@code panelW}: panel width
+     * <p>{@code panelH}: panel height
+     * <p>{@code sortX}: sort-button X
+     * <p>{@code sortY}: sort-button Y
+     * <p>{@code craftDockX}: craft-dock ring left edge
+     * <p>{@code craftDockY}: craft-dock ring top edge
+     * <p>{@code categoryX}: category-panel X
+     * <p>{@code categoryY}: category-panel Y
+     * <p>{@code categoryH}: category-panel height
+     * <p>{@code storageX}: storage-block X
+     * <p>{@code storageY}: storage-block Y
+     * <p>{@code storageW}: storage-block width
+     * <p>{@code craftPanelX}: craft panel X
+     * <p>{@code mainStorageW}: main-storage width
+     * <p>{@code searchW}: search-box width
+     * <p>{@code pagerX}: pager X
+     * <p>{@code toolY}: tool-row Y
+     * <p>{@code gridY}: storage-grid Y
+     * <p>{@code gridH}: storage-grid height
+     * <p>{@code storageRows}: number of visible storage rows
+     * <p>{@code craftPanelY}: craft panel Y
+     * <p>{@code craftPanelH}: craft panel height
      */
     public static final class BottomPanelLayout {
         private final int panelX, panelY, panelW, panelH;

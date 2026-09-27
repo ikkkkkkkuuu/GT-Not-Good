@@ -19,7 +19,7 @@ import java.util.Set;
  * 存储浏览器页面构建的外观（Facade）。
  *
  * <p>所有方法委托给 {@code page} 包中的相应子模块。
- * 本类仅用于保留 {@link com.rtsbuilding.rtsbuilding.server.RtsStorageManager}
+ * 本类仅用于保留 {@code com.rtsbuilding.rtsbuilding.server.RtsStorageManager}
  * 和网络层中现有的调用点，无需更改导入。
  *
  * <p>实际实现位于：

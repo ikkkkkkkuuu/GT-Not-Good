@@ -1,6 +1,8 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.Message;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.context.StringRange;
 import java.util.ArrayList;
@@ -10,10 +12,14 @@ import java.util.concurrent.CompletableFuture;
 
 /** Relocated Brigadier SuggestionsBuilder used by the command-tree parser. */
 public class SuggestionsBuilder {
+   @Getter
    private final String input;
    private final String inputLowerCase;
+   @Getter
    private final int start;
+   @Getter
    private final String remaining;
+   @Getter
    private final String remainingLowerCase;
    private final List<Suggestion> result = new ArrayList<>();
 
@@ -27,22 +33,6 @@ public class SuggestionsBuilder {
 
    public SuggestionsBuilder(String input, int start) {
       this(input, input.toLowerCase(Locale.ROOT), start);
-   }
-
-   public String getInput() {
-      return this.input;
-   }
-
-   public int getStart() {
-      return this.start;
-   }
-
-   public String getRemaining() {
-      return this.remaining;
-   }
-
-   public String getRemainingLowerCase() {
-      return this.remainingLowerCase;
    }
 
    public Suggestions build() {

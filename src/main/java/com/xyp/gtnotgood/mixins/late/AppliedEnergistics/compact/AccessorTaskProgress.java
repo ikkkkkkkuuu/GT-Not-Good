@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 
-@Mixin(value = CraftingCPUCluster.TaskProgress.class, remap = false)
 /** Adapted AE crafting component; see reference/UPSTREAM_PORT_NOTES.md for provenance. */
+@Mixin(value = CraftingCPUCluster.TaskProgress.class, remap = false)
 public interface AccessorTaskProgress {
 
     @Accessor

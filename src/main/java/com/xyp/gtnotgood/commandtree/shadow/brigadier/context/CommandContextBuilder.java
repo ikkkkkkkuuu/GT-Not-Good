@@ -1,6 +1,8 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.context;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.Command;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.CommandDispatcher;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.RedirectModifier;
@@ -12,13 +14,21 @@ import java.util.Map;
 
 /** Relocated Brigadier CommandContextBuilder used by the command-tree parser. */
 public class CommandContextBuilder<S> {
+   @Getter
    private final Map<String, ParsedArgument<S, ?>> arguments = new LinkedHashMap<>();
+   @Getter
    private final CommandNode<S> rootNode;
+   @Getter
    private final List<ParsedCommandNode<S>> nodes = new ArrayList<>();
+   @Getter
    private final CommandDispatcher<S> dispatcher;
+   @Getter
    private S source;
+   @Getter
    private Command<S> command;
+   @Getter
    private CommandContextBuilder<S> child;
+   @Getter
    private StringRange range;
    private RedirectModifier<S> modifier = null;
    private boolean forks;
@@ -35,21 +45,9 @@ public class CommandContextBuilder<S> {
       return this;
    }
 
-   public S getSource() {
-      return this.source;
-   }
-
-   public CommandNode<S> getRootNode() {
-      return this.rootNode;
-   }
-
    public CommandContextBuilder<S> withArgument(String name, ParsedArgument<S, ?> argument) {
       this.arguments.put(name, argument);
       return this;
-   }
-
-   public Map<String, ParsedArgument<S, ?>> getArguments() {
-      return this.arguments;
    }
 
    public CommandContextBuilder<S> withCommand(Command<S> command) {
@@ -81,10 +79,6 @@ public class CommandContextBuilder<S> {
       return this;
    }
 
-   public CommandContextBuilder<S> getChild() {
-      return this.child;
-   }
-
    public CommandContextBuilder<S> getLastChild() {
       CommandContextBuilder<S> result = this;
 
@@ -93,14 +87,6 @@ public class CommandContextBuilder<S> {
       }
 
       return result;
-   }
-
-   public Command<S> getCommand() {
-      return this.command;
-   }
-
-   public List<ParsedCommandNode<S>> getNodes() {
-      return this.nodes;
    }
 
    public CommandContext<S> build(String input) {
@@ -116,14 +102,6 @@ public class CommandContextBuilder<S> {
          this.modifier,
          this.forks
       );
-   }
-
-   public CommandDispatcher<S> getDispatcher() {
-      return this.dispatcher;
-   }
-
-   public StringRange getRange() {
-      return this.range;
    }
 
    public SuggestionContext<S> findSuggestionContext(int cursor) {

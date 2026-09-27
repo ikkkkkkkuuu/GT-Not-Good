@@ -1,0 +1,39 @@
+// Opt-in real-client checks. Fixtures never enter release artifacts.
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(project.file('.gradle/structure-compass-qa-build'))
+}
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileJava').configure {
+        destinationDirectory.set(root.layout.buildDirectory.dir('classes/java/main'))
+    }
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(root.layout.buildDirectory.dir('classes/java/test'))
+        setSource(root.files(root.file('scripts/qa/StructureCompassClientChecks.java')))
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn root.tasks.named('testClasses')
+        classpath += root.sourceSets.test.output
+        workingDir root.file('run/structure-compass-check')
+        systemProperty 'gtng.compass.qa', 'true'
+        systemProperty 'gtng.compass.qa.output', root.file('build/structure-compass-qa').absolutePath
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in integrated-server checks')
+        doFirst {
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/structure-compass-qa/result.txt').toPath())
+        }
+        doLast {
+            def result = root.file('build/structure-compass-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Structure compass QA failed')
+        }
+    }
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/common/compass/*.java',
+                'src/main/java/com/xyp/gtnotgood/client/StructureCompassRenderer.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/compass/*.java'
+        }
+    }
+}

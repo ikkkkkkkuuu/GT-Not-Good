@@ -1,15 +1,22 @@
 package com.xyp.gtnotgood.loader;
 
+import com.xyp.gtnotgood.common.advancedio.AdvancedIORecipes;
+import com.xyp.gtnotgood.common.packaged.PackagedRecipes;
+import com.xyp.gtnotgood.common.patternsorter.PatternSorterRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.CraftingTableRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FuelRodRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeBeeBreederRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCropBreederRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.LargeTransmutationMachineRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeVoidMinerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEBridgeRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEContainerRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.MechanicalUserRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.NetworkRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SingularityDataHubRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SuperCraftingInputRecipes;
@@ -30,6 +37,11 @@ public class RecipeLoader {
      * as additional one-line loader calls.
      */
     public static void loadRecipes() {
+        cpw.mods.fml.common.registry.GameRegistry.addShapelessRecipe(
+            com.xyp.gtnotgood.utils.enums.GTNGItemList.StructureCompass.get(1),
+            net.minecraft.init.Items.compass,
+            net.minecraft.init.Items.map,
+            net.minecraft.init.Items.brick);
         if (com.xyp.gtnotgood.utils.enums.ModList.ThaumicEnergistics.isModLoaded()
             && com.xyp.gtnotgood.utils.enums.ModList.Thaumcraft.isModLoaded()) {
             cpw.mods.fml.common.registry.GameRegistry.addShapelessRecipe(
@@ -43,12 +55,12 @@ public class RecipeLoader {
                     .get(),
                 new net.minecraft.item.ItemStack(thaumcraft.common.config.ConfigBlocks.blockStoneDevice, 1, 0));
         }
-        com.xyp.gtnotgood.common.recipe.machine.LargeTransmutationMachineRecipes.loadRecipes();
-        com.xyp.gtnotgood.common.advancedio.AdvancedIORecipes.register();
-        com.xyp.gtnotgood.common.packaged.PackagedRecipes.register();
-        com.xyp.gtnotgood.common.recipe.machine.MechanicalUserRecipes.loadRecipes();
-        com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes.loadRecipes();
-        com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes.loadRecipes();
+        LargeTransmutationMachineRecipes.loadRecipes();
+        AdvancedIORecipes.register();
+        PackagedRecipes.register();
+        MechanicalUserRecipes.loadRecipes();
+        FluxConnectorRecipes.loadRecipes();
+        IntegratedProductionFactoryRecipes.loadRecipes();
         BenderRecipes.loadRecipes();
         FurnaceRecipes.loadRecipes();
         FuelRodRecipes.loadRecipes();
@@ -58,6 +70,7 @@ public class RecipeLoader {
         MEBridgeRecipes.loadRecipes();
         MEContainerRecipes.loadRecipes();
         WildcardPatternRecipes.loadRecipes();
+        PatternSorterRecipes.register();
         SuperCraftingInputRecipes.loadRecipes();
         LargeVoidMinerRecipes.loadRecipes();
         LargeBeeBreederRecipes.loadRecipes();

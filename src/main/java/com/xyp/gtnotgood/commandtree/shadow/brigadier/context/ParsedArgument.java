@@ -1,24 +1,20 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.context;
 
+import lombok.Getter;
+
 import java.util.Objects;
 
 /** Relocated Brigadier ParsedArgument used by the command-tree parser. */
 public class ParsedArgument<S, T> {
+   @Getter
    private final StringRange range;
+   @Getter
    private final T result;
 
    public ParsedArgument(int start, int end, T result) {
       this.range = StringRange.between(start, end);
       this.result = result;
-   }
-
-   public StringRange getRange() {
-      return this.range;
-   }
-
-   public T getResult() {
-      return this.result;
    }
 
    @Override

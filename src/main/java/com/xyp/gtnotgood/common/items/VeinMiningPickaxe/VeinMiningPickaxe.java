@@ -284,7 +284,7 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
             while (!queue.isEmpty() && cleared < amount) {
                 if (!player.isSneaking()) break;
 
-                Node node = queue.poll();
+                Node node = queue.remove();
                 int px = node.x, py = node.y, pz = node.z;
                 int gap = node.gap;
 

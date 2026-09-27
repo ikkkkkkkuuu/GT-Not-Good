@@ -112,7 +112,7 @@ public class WildcardPatternItem extends ItemEncodedPattern implements IGuiHolde
         }
 
         // 实时计算考虑排除规则后的实际配方数量(添加异常保护)
-        int actualCount = 0;
+        int actualCount;
         try {
             actualCount = WildcardPatternGenerator.countActualPatternsAfterExclude(stack);
         } catch (Exception e) {

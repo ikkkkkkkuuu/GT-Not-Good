@@ -264,15 +264,6 @@ public class MachineLoader {
     }
 
     /**
-     * Backward-compatible alias for older call sites that still use the ExampleMod-style method name.
-     *
-     * @see #registry()
-     */
-    public static void loadMachines() {
-        registry();
-    }
-
-    /**
      * Entry point used by the common proxy to register every machine-related object.
      * <p>
      * This name follows the GT-Not-Cool loader pattern, where a single {@code registry()} method fans out to machine,

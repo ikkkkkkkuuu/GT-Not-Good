@@ -1051,7 +1051,7 @@ public final class WeightedResearchSolver {
         return compatibilityGraph;
     }
 
-    private static BoardGeometry geometry(ResearchNoteData note, Metrics metrics) {
+    private static BoardGeometry geometry(ResearchNoteData note) {
         String[] keys = note.hexEntries.keySet()
             .toArray(new String[0]);
         Arrays.sort(keys);
@@ -1059,7 +1059,6 @@ public final class WeightedResearchSolver {
         synchronized (GEOMETRY_CACHE) {
             BoardGeometry cached = GEOMETRY_CACHE.get(signature);
             if (cached != null) {
-                metrics.geometryCacheHit = true;
                 return cached;
             }
         }
@@ -1096,7 +1095,6 @@ public final class WeightedResearchSolver {
         synchronized (GEOMETRY_CACHE) {
             BoardGeometry concurrent = GEOMETRY_CACHE.get(signature);
             if (concurrent != null) {
-                metrics.geometryCacheHit = true;
                 return concurrent;
             }
             GEOMETRY_CACHE.put(signature, built);
@@ -1167,7 +1165,7 @@ public final class WeightedResearchSolver {
 
         static Problem from(ResearchNoteData note, AspectList inventory, Config.SolverSettings settings,
             BooleanSupplier cancelled, Metrics metrics) {
-            BoardGeometry geometry = geometry(note, metrics);
+            BoardGeometry geometry = geometry(note);
             Map<Cell, Aspect> anchors = new LinkedHashMap<>();
             for (Map.Entry<String, ResearchManager.HexEntry> entry : note.hexEntries.entrySet()) {
                 Cell cell = geometry.cellsByKey.get(entry.getKey());
@@ -1506,7 +1504,6 @@ public final class WeightedResearchSolver {
         int peakPlans;
         int peakStateCapacity;
         boolean graphCacheHit;
-        boolean geometryCacheHit;
 
         void observe(int states, int queue, int stateCapacity) {
             peakStates = Math.max(peakStates, states);

@@ -3,6 +3,8 @@ package com.xyp.gtnotgood.ae2thing.inventory.item;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -413,6 +415,7 @@ public class WirelessDualInterfaceTerminalInventory extends WirelessTerminal imp
     }
 
     @Override
+    @Nonnull
     public Reference2BooleanMap<IAEStackType<?>> getTypeFilter(EntityPlayer player) {
         return this.typeFilters.getFiltersMap();
     }

@@ -505,15 +505,15 @@ public final class RtsCameraManager {
     /**
      * RTS 相机会话记录。
      *
-     * @param cameraUuid       相机实体的 UUID
-     * @param anchor           锚点位置（玩家脚下方块中心）
-     * @param cameraPos        相机当前位置
-     * @param yawDeg           偏航角（度）
-     * @param pitchDeg         俯仰角（度）
-     * @param heightOffset     相机相对锚点的高度偏移
-     * @param homeSelection    是否为家选择模式
-     * @param maxRadius        最大动作半径
-     * @param closeRangeAllowed 是否允许近距开始
+     * <p>{@code cameraUuid}: 相机实体的 UUID
+     * <p>{@code anchor}: 锚点位置（玩家脚下方块中心）
+     * <p>{@code cameraPos}: 相机当前位置
+     * <p>{@code yawDeg}: 偏航角（度）
+     * <p>{@code pitchDeg}: 俯仰角（度）
+     * <p>{@code heightOffset}: 相机相对锚点的高度偏移
+     * <p>{@code homeSelection}: 是否为家选择模式
+     * <p>{@code maxRadius}: 最大动作半径
+     * <p>{@code closeRangeAllowed}: 是否允许近距开始
      */
     private static final class Session {
         private final UUID cameraUuid;

@@ -229,7 +229,6 @@ public final class GuiResearchQueue extends GuiScreen {
         super.handleMouseInput();
         int wheel = Mouse.getEventDWheel();
         if (wheel != 0) {
-            int mouseX = Mouse.getEventX() * width / mc.displayWidth;
             int mouseY = height - Mouse.getEventY() * height / mc.displayHeight - 1;
             if (mouseY >= CATEGORY_Y && mouseY < CATEGORY_Y + 20) {
                 categoryScroll += wheel < 0 ? visibleCategoryCount() : -visibleCategoryCount();

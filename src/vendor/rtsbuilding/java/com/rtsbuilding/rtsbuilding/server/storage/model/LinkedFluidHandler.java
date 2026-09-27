@@ -8,11 +8,11 @@ import com.rtsbuilding.rtsbuilding.platform.storage.IFluidHandler;
  *
  * <p>封装了流体处理器的身份引用、显示名称、是否允许存入以及优先级。
  *
- * @param ref        链接存储引用
- * @param name       显示名称
- * @param handler    流体处理器
- * @param allowStore 是否允许存入流体（false = 仅提取模式）
- * @param priority   优先级（AE 风格，影响插入顺序）
+ * <p>{@code ref}: 链接存储引用
+ * <p>{@code name}: 显示名称
+ * <p>{@code handler}: 流体处理器
+ * <p>{@code allowStore}: 是否允许存入流体（false = 仅提取模式）
+ * <p>{@code priority}: 优先级（AE 风格，影响插入顺序）
  */
 public final class LinkedFluidHandler {
     private final LinkedStorageRef ref;

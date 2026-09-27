@@ -58,7 +58,7 @@ import java.util.Optional;
 public final class RtsMiningStateMachine {
 
     /**
-     * 工作流条目 ID 现在存储在 {@link com.rtsbuilding.rtsbuilding.server.storage.state.RtsMiningState#workflowEntryId}
+     * 工作流条目 ID 现在存储在 {@code com.rtsbuilding.rtsbuilding.server.storage.state.RtsMiningState#workflowEntryId}
      * 中，而非使用独立的静态 WORKFLOW_ENTRY_IDS 映射。
      * 消除了两套平行追踪系统导致的不一致风险。
      */
@@ -79,9 +79,9 @@ public final class RtsMiningStateMachine {
      * and target positions so multiple range-mining tasks can coexist in a
      * FIFO queue.</p>
      *
-     * @param workflowEntryId  the workflow entry tracking this job's progress
-     * @param targets          the block positions to destroy
-     * @param totalTargets     total number of targets before validation losses
+     * <p>{@code workflowEntryId}: the workflow entry tracking this job's progress
+     * <p>{@code targets}: the block positions to destroy
+     * <p>{@code totalTargets}: total number of targets before validation losses
      */
     public static final class MiningJob {
         private final int workflowEntryId; private final Deque<BlockPos> targets; private final int totalTargets;
@@ -600,7 +600,7 @@ public final class RtsMiningStateMachine {
      * Stops all active mining/ultimine activity, cancelling the workflow
      * entries. Equivalent to {@code stopActiveMining(player, session, false)}.
      *
-     * @see #stopActiveMining(ServerPlayer, RtsStorageSession, boolean)
+     * @see #stopActiveMining(EntityPlayerMP, RtsStorageSession, boolean)
      */
     public static void stopActiveMining(EntityPlayerMP player, RtsStorageSession session) {
         stopActiveMining(player, session, false);
@@ -719,8 +719,8 @@ public final class RtsMiningStateMachine {
     /**
      * Result of a {@link #destroyMinedBlock} call.
      *
-     * @param broken  whether the target block was successfully broken
-     * @param remainder  the tool stack remainder after breaking
+     * <p>{@code broken}: whether the target block was successfully broken
+     * <p>{@code remainder}: the tool stack remainder after breaking
      */
     public static final class MiningBreakResult {
         private final boolean broken; private final ItemStack remainder;

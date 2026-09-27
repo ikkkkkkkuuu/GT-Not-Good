@@ -4,12 +4,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import appeng.util.Platform;
+import lombok.Getter;
+import lombok.Setter;
 
 public class TerminalItems {
 
     private ItemStack raw;
     private ItemStack target;
+    @Getter
+    @Setter
     private String displayName;
+    @Getter
+    @Setter
     private NBTTagCompound data;
 
     public TerminalItems(ItemStack raw, ItemStack target) {
@@ -27,14 +33,6 @@ public class TerminalItems {
         this.data = data;
     }
 
-    public NBTTagCompound getData() {
-        return data;
-    }
-
-    public void setData(NBTTagCompound data) {
-        this.data = data;
-    }
-
     public ItemStack getRawItem() {
         return raw;
     }
@@ -49,14 +47,6 @@ public class TerminalItems {
 
     public void setTargetItem(ItemStack target) {
         this.target = target;
-    }
-
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     public void writeNBT(NBTTagCompound tag) {

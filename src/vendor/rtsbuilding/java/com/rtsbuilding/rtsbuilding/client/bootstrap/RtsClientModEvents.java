@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * Forge 1.12 客户端注册入口。
  *
  * <p>既可由客户端 proxy 在 preInit 调用 {@link #register()}，也会在仅客户端触发的
- * {@link ModelRegistryEvent} 中兜底注册。公共模组入口无需静态引用本类。</p>
+ * {@code ModelRegistryEvent} 中兜底注册。公共模组入口无需静态引用本类。</p>
  */
 @SideOnly(Side.CLIENT)
 public final class RtsClientModEvents {

@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.base.GTNGModernMultiBlockBaseGui;
@@ -117,6 +119,7 @@ public abstract class GTNGMultiBlockBase<T extends GTNGMultiBlockBase<T>> extend
      * @return modern skinned GregTech multiblock GUI wrapper
      */
     @Override
+    @Nonnull
     protected MTEMultiBlockBaseGui<?> getGui() {
         return new GTNGModernMultiBlockBaseGui<>(this);
     }

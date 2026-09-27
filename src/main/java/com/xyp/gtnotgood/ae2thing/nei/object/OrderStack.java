@@ -15,11 +15,14 @@ import net.minecraftforge.oredict.OreDictionary;
 import com.glodblock.github.util.Util;
 
 import codechicken.nei.PositionedStack;
+import lombok.Getter;
 
 public class OrderStack<T> {
 
     private T RealStack;
+    @Getter
     private int index;
+    @Getter
     private ItemStack[] items;
 
     public static final int ITEM = 1;
@@ -52,20 +55,12 @@ public class OrderStack<T> {
         this.items = items;
     }
 
-    public ItemStack[] getItems() {
-        return this.items;
-    }
-
     public final void setIndex(int i) {
         this.index = i;
     }
 
     public T getStack() {
         return RealStack;
-    }
-
-    public int getIndex() {
-        return index;
     }
 
     public static OrderStack<ItemStack> pack(PositionedStack stack, int index) {

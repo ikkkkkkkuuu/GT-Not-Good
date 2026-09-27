@@ -1,11 +1,21 @@
 package com.xyp.gtnotgood.loader;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 
+import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeReceiver;
 import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeSender;
 import com.xyp.gtnotgood.common.blocks.mebridge.ItemBlockMEBridge;
+import com.xyp.gtnotgood.common.flux.BlockFluxConnector;
+import com.xyp.gtnotgood.common.flux.BlockFluxLogistics;
+import com.xyp.gtnotgood.common.flux.FluxChunkLoading;
+import com.xyp.gtnotgood.common.flux.FluxTransferScheduler;
+import com.xyp.gtnotgood.common.flux.ItemBlockFluxConnector;
+import com.xyp.gtnotgood.common.flux.TileFluxLogistics;
+import com.xyp.gtnotgood.common.flux.TileFluxPlug;
+import com.xyp.gtnotgood.common.flux.TileFluxPoint;
 import com.xyp.gtnotgood.common.mebridge.TileMEBridgeReceiver;
 import com.xyp.gtnotgood.common.mebridge.TileMEBridgeSender;
 import com.xyp.gtnotgood.common.mecontainer.BlockMEContainer;
@@ -14,9 +24,16 @@ import com.xyp.gtnotgood.common.network.BlockNetwork;
 import com.xyp.gtnotgood.common.network.NetworkTopology;
 import com.xyp.gtnotgood.common.network.TileNetworkController;
 import com.xyp.gtnotgood.common.network.TileNetworkNode;
+import com.xyp.gtnotgood.common.packaged.BlockPackagedProvider;
+import com.xyp.gtnotgood.common.packaged.PackagedServerActions;
+import com.xyp.gtnotgood.common.packaged.TilePackagedProvider;
+import com.xyp.gtnotgood.common.user.BlockMechanicalUser;
+import com.xyp.gtnotgood.common.user.TileMechanicalUser;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
+import appeng.api.AEApi;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
@@ -27,22 +44,18 @@ public final class BlockLoader {
     // #tr tile.flux_logistics_plug.name
     // # Flux Logistics Plug
     // # zh_CN 通量物流插头
-    public static final com.xyp.gtnotgood.common.flux.BlockFluxLogistics fluxLogistics = new com.xyp.gtnotgood.common.flux.BlockFluxLogistics();
+    public static final BlockFluxLogistics fluxLogistics = new BlockFluxLogistics();
 
-    public static final com.xyp.gtnotgood.common.user.BlockMechanicalUser mechanicalUser = new com.xyp.gtnotgood.common.user.BlockMechanicalUser();
+    public static final BlockMechanicalUser mechanicalUser = new BlockMechanicalUser();
 
     // #tr tile.flux_plug.name
     // # Flux Plug
     // # zh_CN 通量插头
-    public static final com.xyp.gtnotgood.common.flux.BlockFluxConnector fluxPlug = new com.xyp.gtnotgood.common.flux.BlockFluxConnector(
-        true,
-        "flux_plug");
+    public static final BlockFluxConnector fluxPlug = new BlockFluxConnector(true, "flux_plug");
     // #tr tile.flux_point.name
     // # Flux Point
     // # zh_CN 通量点
-    public static final com.xyp.gtnotgood.common.flux.BlockFluxConnector fluxPoint = new com.xyp.gtnotgood.common.flux.BlockFluxConnector(
-        false,
-        "flux_point");
+    public static final BlockFluxConnector fluxPoint = new BlockFluxConnector(false, "flux_point");
 
     // #tr tile.network_controller.name
     // # Programmable Network Controller
@@ -69,51 +82,60 @@ public final class BlockLoader {
      * Registers all non-GregTech blocks and stores their item stacks for recipe and creative-tab use.
      */
     public static void registry() {
-        com.xyp.gtnotgood.common.packaged.BlockPackagedProvider packagedProvider = new com.xyp.gtnotgood.common.packaged.BlockPackagedProvider();
+        registerPackagedProvider();
+        registerMechanicalUser();
+        registerFluxBlocks();
+        registerMEContainer();
+        registerNetworkBlocks();
+        registerMEBridgeBlocks();
+    }
+
+    private static void registerPackagedProvider() {
+        BlockPackagedProvider packagedProvider = new BlockPackagedProvider();
         GameRegistry.registerBlock(packagedProvider, "wireless_packaged_pattern_provider");
         GameRegistry.registerTileEntity(
-            com.xyp.gtnotgood.common.packaged.TilePackagedProvider.class,
+            TilePackagedProvider.class,
             ModList.GTNotGood.getResourcePath("wireless_packaged_pattern_provider"));
         GTNGItemList.WirelessPackagedPatternProvider.set(new ItemStack(packagedProvider));
-        appeng.api.AEApi.instance()
+        AEApi.instance()
             .registries()
             .interfaceTerminal()
-            .register(com.xyp.gtnotgood.common.packaged.TilePackagedProvider.class);
-        cpw.mods.fml.common.FMLCommonHandler.instance()
+            .register(TilePackagedProvider.class);
+        FMLCommonHandler.instance()
             .bus()
-            .register(new com.xyp.gtnotgood.common.packaged.PackagedServerActions());
+            .register(new PackagedServerActions());
+    }
+
+    private static void registerMechanicalUser() {
         GameRegistry.registerBlock(mechanicalUser, "mechanical_user");
-        GameRegistry.registerTileEntity(
-            com.xyp.gtnotgood.common.user.TileMechanicalUser.class,
-            ModList.GTNotGood.getResourcePath("mechanical_user"));
+        GameRegistry.registerTileEntity(TileMechanicalUser.class, ModList.GTNotGood.getResourcePath("mechanical_user"));
         GTNGItemList.MechanicalUser.set(new ItemStack(mechanicalUser));
-        GameRegistry.registerBlock(fluxPlug, com.xyp.gtnotgood.common.flux.ItemBlockFluxConnector.class, "flux_plug");
-        GameRegistry.registerBlock(fluxPoint, com.xyp.gtnotgood.common.flux.ItemBlockFluxConnector.class, "flux_point");
-        GameRegistry.registerTileEntity(
-            com.xyp.gtnotgood.common.flux.TileFluxPlug.class,
-            ModList.GTNotGood.getResourcePath("flux_plug"));
-        GameRegistry.registerTileEntity(
-            com.xyp.gtnotgood.common.flux.TileFluxPoint.class,
-            ModList.GTNotGood.getResourcePath("flux_point"));
+    }
+
+    private static void registerFluxBlocks() {
+        GameRegistry.registerBlock(fluxPlug, ItemBlockFluxConnector.class, "flux_plug");
+        GameRegistry.registerBlock(fluxPoint, ItemBlockFluxConnector.class, "flux_point");
+        GameRegistry.registerTileEntity(TileFluxPlug.class, ModList.GTNotGood.getResourcePath("flux_plug"));
+        GameRegistry.registerTileEntity(TileFluxPoint.class, ModList.GTNotGood.getResourcePath("flux_point"));
         GTNGItemList.FluxPlug.set(new ItemStack(fluxPlug));
         GTNGItemList.FluxPoint.set(new ItemStack(fluxPoint));
-        GameRegistry.registerBlock(
-            fluxLogistics,
-            com.xyp.gtnotgood.common.flux.ItemBlockFluxConnector.class,
-            "flux_logistics_plug");
-        GameRegistry.registerTileEntity(
-            com.xyp.gtnotgood.common.flux.TileFluxLogistics.class,
-            ModList.GTNotGood.getResourcePath("flux_logistics_plug"));
+        GameRegistry.registerBlock(fluxLogistics, ItemBlockFluxConnector.class, "flux_logistics_plug");
+        GameRegistry
+            .registerTileEntity(TileFluxLogistics.class, ModList.GTNotGood.getResourcePath("flux_logistics_plug"));
         GTNGItemList.FluxLogisticsPlug.set(new ItemStack(fluxLogistics));
-        cpw.mods.fml.common.FMLCommonHandler.instance()
+        FMLCommonHandler.instance()
             .bus()
-            .register(new com.xyp.gtnotgood.common.flux.FluxTransferScheduler());
-        net.minecraftforge.common.ForgeChunkManager.setForcedChunkLoadingCallback(
-            com.xyp.gtnotgood.GTNotGood.instance,
-            new com.xyp.gtnotgood.common.flux.FluxChunkLoading());
+            .register(new FluxTransferScheduler());
+        ForgeChunkManager.setForcedChunkLoadingCallback(GTNotGood.instance, new FluxChunkLoading());
+    }
+
+    private static void registerMEContainer() {
         GameRegistry.registerBlock(meContainer, ItemBlockMEBridge.class, "me_container");
         GameRegistry.registerTileEntity(TileMEContainer.class, ModList.GTNotGood.getResourcePath("me_container"));
         GTNGItemList.MEContainer.set(new ItemStack(meContainer));
+    }
+
+    private static void registerNetworkBlocks() {
         GameRegistry.registerBlock(networkController, "network_controller");
         GameRegistry.registerBlock(networkPipe, "network_pipe");
         GameRegistry.registerBlock(networkConnector, "network_connector");
@@ -124,6 +146,10 @@ public final class BlockLoader {
         GTNGItemList.NetworkController.set(new ItemStack(networkController));
         GTNGItemList.NetworkPipe.set(new ItemStack(networkPipe));
         GTNGItemList.NetworkConnector.set(new ItemStack(networkConnector));
+    }
+
+    /** Preserves the legacy tile entity IDs used by ME bridge blocks in existing worlds. */
+    private static void registerMEBridgeBlocks() {
         GameRegistry.registerBlock(blockMEBridgeSender, ItemBlockMEBridge.class, "blockMEBridgeSender");
         GameRegistry.registerBlock(blockMEBridgeReceiver, ItemBlockMEBridge.class, "blockMEBridgeReceiver");
         GameRegistry.registerTileEntity(TileMEBridgeSender.class, "tileMEBridgeSender");

@@ -14,6 +14,7 @@ import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.common.packet.SyncToolBeltData;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
+import lombok.Getter;
 
 /**
  * 工具腰带数据 - 存储在玩家身上，固定10个槽位，无需物品
@@ -25,6 +26,7 @@ public class ToolBeltData implements IExtendedEntityProperties {
     public static final int SLOT_COUNT = 10;
     private static final String NBT_ITEMS = "Items";
 
+    @Getter
     private final EntityLivingBase owner;
     private final ItemStack[] items = new ItemStack[SLOT_COUNT];
 
@@ -39,10 +41,6 @@ public class ToolBeltData implements IExtendedEntityProperties {
 
     public static void register(EntityLivingBase entity) {
         entity.registerExtendedProperties(PROP_NAME, new ToolBeltData(entity));
-    }
-
-    public EntityLivingBase getOwner() {
-        return owner;
     }
 
     public int getSlotCount() {
@@ -71,7 +69,7 @@ public class ToolBeltData implements IExtendedEntityProperties {
     /**
      * 尝试将物品插入腰带，优先合并已有堆叠，其次放入空槽
      * Try to insert a stack into the belt, merge first, then empty slot
-     * 
+     *
      * @return remaining stack (null if fully inserted)
      */
     public ItemStack tryInsert(ItemStack stack) {
@@ -115,7 +113,6 @@ public class ToolBeltData implements IExtendedEntityProperties {
 
     public void syncToTracking() {
         if (!(owner instanceof EntityPlayerMP)) return;
-        EntityPlayerMP player = (EntityPlayerMP) owner;
         NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(
             owner.dimension,
             owner.posX,

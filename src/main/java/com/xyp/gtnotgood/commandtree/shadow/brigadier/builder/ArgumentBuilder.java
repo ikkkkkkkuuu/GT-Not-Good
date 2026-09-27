@@ -1,6 +1,8 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.builder;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.Command;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.RedirectModifier;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.SingleRedirectModifier;
@@ -13,7 +15,9 @@ import java.util.function.Predicate;
 /** Relocated Brigadier ArgumentBuilder used by the command-tree parser. */
 public abstract class ArgumentBuilder<S, T extends ArgumentBuilder<S, T>> {
    private final RootCommandNode<S> arguments = new RootCommandNode<>();
+   @Getter
    private Command<S> command;
+   @Getter
    private Predicate<S> requirement = s -> true;
    private CommandNode<S> target;
    private RedirectModifier<S> modifier = null;
@@ -48,17 +52,9 @@ public abstract class ArgumentBuilder<S, T extends ArgumentBuilder<S, T>> {
       return this.getThis();
    }
 
-   public Command<S> getCommand() {
-      return this.command;
-   }
-
    public T requires(Predicate<S> requirement) {
       this.requirement = requirement;
       return this.getThis();
-   }
-
-   public Predicate<S> getRequirement() {
-      return this.requirement;
    }
 
    public T redirect(CommandNode<S> target) {

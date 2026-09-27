@@ -318,13 +318,6 @@ public final class WildcardPatternConfig {
         return prefix.toString();
     }
 
-    private static boolean matchesList(String value, String materialName) {
-        if (materialName == null || materialName.isEmpty()) {
-            return false;
-        }
-        return matchesList(value, java.util.Collections.singleton(materialName));
-    }
-
     private static boolean matchesList(String value, Set<String> candidateTerms) {
         if (value == null || value.trim()
             .isEmpty()) {

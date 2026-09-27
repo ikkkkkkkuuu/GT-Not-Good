@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import com.gtnewhorizon.gtnhmixins.ILateMixinLoader;
 import com.gtnewhorizon.gtnhmixins.LateMixin;
 import com.xyp.gtnotgood.utils.enums.ModList;
@@ -15,6 +17,7 @@ import com.xyp.gtnotgood.utils.enums.ModList;
  * mixins should be listed directly in JSON, matching the project rule copied from GT-Not-Cool.
  */
 @LateMixin
+@SuppressWarnings("unused")
 public class LateMixinsLoader implements ILateMixinLoader {
 
     /**
@@ -55,8 +58,22 @@ public class LateMixinsLoader implements ILateMixinLoader {
      * @return simple mixin class names from the late mixin config
      */
     @Override
+    @Nonnull
     public List<String> getMixins(Set<String> loadedMods) {
         List<String> list = new ArrayList<>();
+        if (loadedMods.contains(ModList.Roguelike.getID())) {
+            addAll(list, "compass.RoguelikeWorldAccessor", "compass.RoguelikeHouseMixin");
+        }
+        if (loadedMods.contains(ModList.LootGames.getID())) {
+            addAll(
+                list,
+                "compass.LootGamesStructureMixin",
+                "lootgames.EasyLightConfigMixin",
+                "lootgames.EasyMinesweeperConfigMixin",
+                "lootgames.EasyMinesweeperStageMixin",
+                "lootgames.EasySudokuConfigMixin",
+                "lootgames.MaximumRewardsMixin");
+        }
         if (loadedMods.contains(ModList.BloodMagic.getID())) {
             addAll(list, "BloodMagic.MixinPackagedBloodAltar");
         }

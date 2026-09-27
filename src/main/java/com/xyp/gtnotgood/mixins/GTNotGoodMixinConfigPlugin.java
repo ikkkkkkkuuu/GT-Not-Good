@@ -13,6 +13,7 @@ import cpw.mods.fml.relauncher.FMLLaunchHandler;
  * Keeps the Thaumcraft auto-research mixins client-only while allowing the
  * regular mixin configuration to be loaded in both client and server JVMs.
  */
+@SuppressWarnings("unused")
 public final class GTNotGoodMixinConfigPlugin implements IMixinConfigPlugin {
 
     private static final String CLIENT_RESEARCH_MIXIN_PACKAGE = "com.xyp.gtnotgood.mixins.tcautores.";

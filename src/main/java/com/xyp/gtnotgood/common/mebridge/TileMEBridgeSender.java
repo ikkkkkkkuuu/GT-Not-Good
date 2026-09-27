@@ -11,9 +11,13 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.loader.BlockLoader;
 
+import lombok.Getter;
+
 public class TileMEBridgeSender extends TileMEBridgeBase implements IGuiHolder<PosGuiData> {
 
+    @Getter
     private String channelName = "";
+    @Getter
     private int channelColor = MEBridgeChannelColor.defaultFor("");
     private boolean channelColorAssigned;
     private long receiverTopologyRevision = Long.MIN_VALUE;
@@ -23,14 +27,6 @@ public class TileMEBridgeSender extends TileMEBridgeBase implements IGuiHolder<P
     @Override
     protected ItemStack getVisualRepresentation() {
         return new ItemStack(BlockLoader.blockMEBridgeSender);
-    }
-
-    public String getChannelName() {
-        return channelName;
-    }
-
-    public int getChannelColor() {
-        return channelColor;
     }
 
     public void setChannelColor(int color) {

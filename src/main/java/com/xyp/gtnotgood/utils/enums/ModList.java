@@ -5,11 +5,15 @@ import java.util.Locale;
 import net.minecraft.util.ResourceLocation;
 
 import cpw.mods.fml.common.Loader;
+import lombok.Getter;
 
 /**
  * Central enum for mod IDs, display names, resource domains, and loaded checks.
  */
 public enum ModList {
+
+    Roguelike("Roguelike", "Roguelike Dungeons"),
+    LootGames("lootgames", "LootGames"),
 
     GTNotLeisure(ModIds.GT_NOT_LEISURE, Names.GT_NOT_LEISURE),
     GTNotGood(ModIds.GT_NOT_GOOD, Names.GT_NOT_GOOD),
@@ -21,6 +25,7 @@ public enum ModList {
     Forestry(ModIds.FORESTRY, Names.FORESTRY),
     GregTech(ModIds.GREGTECH, Names.GREGTECH),
     Thaumcraft(ModIds.THAUMCRAFT, Names.THAUMCRAFT),
+    ThaumcraftResearchTweaks(ModIds.THAUMCRAFT_RESEARCH_TWEAKS, Names.THAUMCRAFT_RESEARCH_TWEAKS),
     Baubles(ModIds.BAUBLES, Names.BAUBLES),
     BloodMagic(ModIds.BLOOD_MAGIC, Names.BLOOD_MAGIC),
     ThaumicEnergistics(ModIds.THAUMIC_ENERGISTICS, Names.THAUMIC_ENERGISTICS),
@@ -46,6 +51,7 @@ public enum ModList {
         public static final String FORESTRY = "Forestry";
         public static final String GREGTECH = "gregtech";
         public static final String THAUMCRAFT = "Thaumcraft";
+        public static final String THAUMCRAFT_RESEARCH_TWEAKS = "ThaumcraftResearchTweaks";
         public static final String BAUBLES = "Baubles";
         public static final String BLOOD_MAGIC = "AWWayofTime";
         public static final String THAUMIC_ENERGISTICS = "thaumicenergistics";
@@ -71,6 +77,7 @@ public enum ModList {
         public static final String FORESTRY = "Forestry";
         public static final String GREGTECH = "GregTech";
         public static final String THAUMCRAFT = "Thaumcraft";
+        public static final String THAUMCRAFT_RESEARCH_TWEAKS = "Thaumcraft Research Tweaks";
         public static final String BAUBLES = "Baubles";
         public static final String BLOOD_MAGIC = "Blood Magic";
         public static final String THAUMIC_ENERGISTICS = "Thaumic Energistics";
@@ -80,8 +87,10 @@ public enum ModList {
         private Names() {}
     }
 
+    @Getter
     private final String ID;
     private final String resourceDomain;
+    @Getter
     private final String displayName;
     private Boolean modLoaded;
 
@@ -98,16 +107,8 @@ public enum ModList {
         return this.modLoaded;
     }
 
-    public String getID() {
-        return ID;
-    }
-
     public String getResourceLocation() {
         return resourceDomain;
-    }
-
-    public String getDisplayName() {
-        return displayName;
     }
 
     public String getResourcePath(String path) {

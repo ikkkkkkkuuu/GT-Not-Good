@@ -54,6 +54,39 @@ public final class AutomaticMachineCircuit {
     private AutomaticMachineCircuit() {}
 
     /**
+     * Resolves the exact encoded ingredients for a read-only pattern classifier. Unlike push candidates,
+     * every returned configuration must match the encoded material itself, not just an allowed CPU substitute.
+     * No machine voltage filter is applied: this describes recipe configuration, not current executability.
+     *
+     * @param map     user-selected machine recipe map
+     * @param pattern decoded processing pattern with catalysts omitted
+     * @return distinct circuit-damage / mold-catalog-index pairs; -1 denotes an absent catalyst
+     */
+    public static List<int[]> patternConfigurations(RecipeMap<?> map, ICraftingPatternDetails pattern) {
+        List<int[]> result = new ArrayList<>();
+        if (map == null || pattern == null || pattern.isCraftable()) return result;
+        Map<Ingredient, Long> inputs = new HashMap<>();
+        Map<Ingredient, Long> outputs = new HashMap<>();
+        for (IAEStack<?> stack : pattern.getAEInputs()) {
+            if (stack != null && !addAE(inputs, stack, false)) return result;
+        }
+        for (IAEStack<?> stack : pattern.getAEOutputs()) {
+            if (stack != null && !addAE(outputs, stack, true)) return result;
+        }
+        for (Match match : matches(map, pattern)) {
+            long batches = CircuitPatternQuantities.requestedOutputBatches(match.outputs, outputs);
+            if (batches <= 0 || matchingInputs(match, inputs) != batches) continue;
+            int circuit = match.circuit == null ? -1 : match.circuit.getItemDamage();
+            int mold = VirtualMachineMolds.indexOf(match.mold);
+            if (result.stream()
+                .noneMatch(pair -> pair[0] == circuit && pair[1] == mold)) {
+                result.add(new int[] { circuit, mold });
+            }
+        }
+        return result;
+    }
+
+    /**
      * Keeps unsupported GT tile entities on AE's ordinary insertion path.
      *
      * @param tile receiving GT tile entity

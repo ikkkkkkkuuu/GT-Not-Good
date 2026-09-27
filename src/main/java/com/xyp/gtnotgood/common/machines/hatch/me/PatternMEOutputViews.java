@@ -2,6 +2,8 @@ package com.xyp.gtnotgood.common.machines.hatch.me;
 
 import java.lang.reflect.Field;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -134,7 +136,7 @@ public final class PatternMEOutputViews {
         }
 
         @Override
-        public boolean canStoreFluid(FluidStack stack) {
+        public boolean canStoreFluid(@Nonnull FluidStack stack) {
             return resolve(input) != null;
         }
 

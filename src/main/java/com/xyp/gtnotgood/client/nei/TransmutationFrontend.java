@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import com.gtnewhorizons.modularui.api.math.Pos2d;
 
 import gregtech.api.recipe.BasicUIPropertiesBuilder;
@@ -18,11 +20,13 @@ public final class TransmutationFrontend extends RecipeMapFrontend {
     }
 
     @Override
+    @Nonnull
     public List<Pos2d> getItemInputPositions(int count) {
         return count == 0 ? Collections.emptyList() : Collections.singletonList(new Pos2d(24, 35));
     }
 
     @Override
+    @Nonnull
     public List<Pos2d> getItemOutputPositions(int count) {
         List<Pos2d> positions = new ArrayList<>(count);
         for (int i = 0; i < count; i++) positions.add(new Pos2d(88 + i % 4 * 18, 8 + i / 4 * 18));
@@ -30,6 +34,7 @@ public final class TransmutationFrontend extends RecipeMapFrontend {
     }
 
     @Override
+    @Nonnull
     public List<Pos2d> getFluidOutputPositions(int count) {
         List<Pos2d> positions = new ArrayList<>(count);
         for (int i = 0; i < count; i++) positions.add(new Pos2d(88 + i * 18, 86));

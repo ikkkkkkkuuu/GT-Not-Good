@@ -6,6 +6,7 @@ import java.util.regex.PatternSyntaxException;
 import net.minecraft.nbt.NBTTagCompound;
 
 import gregtech.api.enums.Materials;
+import lombok.Getter;
 
 /**
  * 字符串通配/正则过滤（兼容旧玩法）：按材料名匹配，支持 * ? 通配和正则元字符。
@@ -17,7 +18,9 @@ public final class StringFilterComponent extends AbstractFilterComponent {
     private static final String KEY_PATTERN = "Pattern";
     private static final String KEY_EXACT = "Exact";
 
+    @Getter
     private String pattern;
+    @Getter
     private boolean exact;
     private transient Pattern compiled;
     private transient String compiledFor;
@@ -45,16 +48,8 @@ public final class StringFilterComponent extends AbstractFilterComponent {
         return new StringFilterComponent(data.getString(KEY_PATTERN), data.getBoolean(KEY_EXACT), readWhitelist(data));
     }
 
-    public String getPattern() {
-        return pattern;
-    }
-
     public void setPattern(String pattern) {
         this.pattern = pattern == null ? "" : pattern.trim();
-    }
-
-    public boolean isExact() {
-        return exact;
     }
 
     @Override

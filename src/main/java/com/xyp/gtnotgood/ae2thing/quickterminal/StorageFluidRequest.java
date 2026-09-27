@@ -6,6 +6,7 @@ import appeng.api.storage.data.IAEStack;
 import appeng.container.sync.StreamCodec;
 import appeng.container.sync.StreamCodecs;
 import io.netty.buffer.ByteBuf;
+import lombok.Getter;
 
 /** A fluid selected in the quick terminal's ME storage panel. */
 public final class StorageFluidRequest {
@@ -15,6 +16,7 @@ public final class StorageFluidRequest {
 
     private final IAEStack<?> fluid;
 
+    @Getter
     private final boolean fullStack;
 
     public StorageFluidRequest(IAEStack<?> fluid) {
@@ -34,10 +36,6 @@ public final class StorageFluidRequest {
 
     public IAEStack<?> getFluid() {
         return fluid == null ? null : fluid.copy();
-    }
-
-    public boolean isFullStack() {
-        return fullStack;
     }
 
     private static void write(ByteBuf buffer, StorageFluidRequest request) throws IOException {

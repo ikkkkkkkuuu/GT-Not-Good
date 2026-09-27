@@ -8,11 +8,11 @@ import com.rtsbuilding.rtsbuilding.platform.storage.IItemHandler;
  *
  * <p>封装了物品处理器的身份引用、显示名称、是否允许存入以及优先级。
  *
- * @param ref        链接存储引用
- * @param name       显示名称
- * @param handler    物品处理器
- * @param allowStore 是否允许存入物品（false = 仅提取模式）
- * @param priority   优先级（AE 风格，影响插入顺序）
+ * <p>{@code ref}: 链接存储引用
+ * <p>{@code name}: 显示名称
+ * <p>{@code handler}: 物品处理器
+ * <p>{@code allowStore}: 是否允许存入物品（false = 仅提取模式）
+ * <p>{@code priority}: 优先级（AE 风格，影响插入顺序）
  */
 public final class LinkedHandler {
     private final LinkedStorageRef ref;

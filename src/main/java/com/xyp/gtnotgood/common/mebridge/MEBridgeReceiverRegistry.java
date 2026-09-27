@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import lombok.Getter;
+
 /**
  * 跨维度 ME 网桥 - 接收端连接计数(纯静态,仅服务端)。
  * <p>
@@ -16,6 +18,7 @@ public final class MEBridgeReceiverRegistry {
 
     /** 频道名 → 已连入的接收端 tile 集合。 */
     private static final Map<String, Set<TileMEBridgeReceiver>> BY_CHANNEL = new HashMap<>();
+    @Getter
     private static long revision;
 
     private MEBridgeReceiverRegistry() {}
@@ -75,7 +78,4 @@ public final class MEBridgeReceiverRegistry {
         revision++;
     }
 
-    public static long getRevision() {
-        return revision;
-    }
 }

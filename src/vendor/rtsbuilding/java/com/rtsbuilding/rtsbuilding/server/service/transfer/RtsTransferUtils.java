@@ -25,15 +25,15 @@ import net.minecraft.inventory.ContainerWorkbench;
  *
  * <p><b>工具方法：</b>
  * <ul>
- *   <li>{@link #shouldIncludePlayerMainInventoryInStorageView(ServerPlayer, RtsStorageSession)} —
+ *   <li>{@code #shouldIncludePlayerMainInventoryInStorageView(ServerPlayer, RtsStorageSession)} —
  *       判断玩家主背包是否应作为可见源/接收器包含在储存浏览器视图中；
  *       在无链接存储且非合成终端菜单时返回 {@code true}</li>
- *   <li>{@link #movesLinkedQuickMoveToPlayerInventory(AbstractContainerMenu)} —
+ *   <li>{@code #movesLinkedQuickMoveToPlayerInventory(AbstractContainerMenu)} —
  *       判断从链接存储的快速移动是否应发往玩家背包（而非菜单槽位）；
  *       对于 {@code InventoryMenu} 或普通 {@code CraftingMenu} 返回 {@code true}</li>
  *   <li>{@link #clampHotbarSlot(int)} — 将快捷栏槽位索引限制在 [0, 8] 范围内</li>
- *   <li>{@link #getPlayerMainInventoryStart(ServerPlayer)} — 返回主背包起始索引（始终 0）</li>
- *   <li>{@link #getPlayerMainInventoryEndExclusive(ServerPlayer)} —
+ *   <li>{@code #getPlayerMainInventoryStart(ServerPlayer)} — 返回主背包起始索引（始终 0）</li>
+ *   <li>{@code #getPlayerMainInventoryEndExclusive(ServerPlayer)} —
  *       返回主背包结束索引，取 {@code PLAYER_MAIN_INVENTORY_END_EXCLUSIVE} 与
  *       实际容器大小的较小值</li>
  * </ul>

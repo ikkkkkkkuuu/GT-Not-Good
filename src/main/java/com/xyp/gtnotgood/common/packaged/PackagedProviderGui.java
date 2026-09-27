@@ -5,6 +5,8 @@ package com.xyp.gtnotgood.common.packaged;
 
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
 
@@ -118,7 +120,7 @@ public final class PackagedProviderGui {
             panel.child(new ItemSlot().slot(new ModularSlot(inventory, slot) {
 
                 @Override
-                public int getItemStackLimit(net.minecraft.item.ItemStack stack) {
+                public int getItemStackLimit(@Nonnull net.minecraft.item.ItemStack stack) {
                     return 1;
                 }
             }.slotGroup("patterns")
@@ -144,7 +146,7 @@ public final class PackagedProviderGui {
         panel.child(new ItemSlot().slot(new ModularSlot(inventory, TilePackagedProvider.CORE) {
 
             @Override
-            public int getItemStackLimit(net.minecraft.item.ItemStack stack) {
+            public int getItemStackLimit(@Nonnull net.minecraft.item.ItemStack stack) {
                 return 1;
             }
 

@@ -8,6 +8,7 @@ import java.util.List;
 
 import appeng.api.storage.data.IAEStack;
 import appeng.crafting.MECraftingInventory;
+import lombok.Getter;
 
 /**
  * Plans and commits one exact crafting dispatch batch.
@@ -106,10 +107,22 @@ public interface CraftingBatchPlanner {
      */
     final class BatchPlan {
 
-        /** Exact number of crafts represented by this dispatch. */
+        /**
+         * Returns the exact multiplier shared by all dispatch stages.
+         *
+         * <p>
+         * Value: positive craft count
+         */
+        @Getter
         private final long crafts;
 
-        /** Constraint responsible for the selected count. */
+        /**
+         * Returns the constraint that selected {@link #getCrafts()}.
+         *
+         * <p>
+         * Value: limiting constraint
+         */
+        @Getter
         private final LimitingFactor limitingFactor;
 
         public BatchPlan(long crafts, LimitingFactor limitingFactor) {
@@ -117,24 +130,6 @@ public interface CraftingBatchPlanner {
             if (limitingFactor == null) throw new IllegalArgumentException("A crafting batch needs a limiting factor");
             this.crafts = crafts;
             this.limitingFactor = limitingFactor;
-        }
-
-        /**
-         * Returns the exact multiplier shared by all dispatch stages.
-         *
-         * @return positive craft count
-         */
-        public long getCrafts() {
-            return crafts;
-        }
-
-        /**
-         * Returns the constraint that selected {@link #getCrafts()}.
-         *
-         * @return limiting constraint
-         */
-        public LimitingFactor getLimitingFactor() {
-            return limitingFactor;
         }
 
         /**
@@ -152,16 +147,40 @@ public interface CraftingBatchPlanner {
      */
     final class BatchRequirement {
 
-        /** Stable identity used to aggregate repeated input slots. */
+        /**
+         * Returns the identity used to combine duplicate expanded slots.
+         *
+         * <p>
+         * Value: stable material key
+         */
+        @Getter
         private final Object materialKey;
 
-        /** Quantity required by one craft in this slot. */
+        /**
+         * Returns this slot's one-craft quantity.
+         *
+         * <p>
+         * Value: positive required amount
+         */
+        @Getter
         private final long amountPerCraft;
 
-        /** Precise quantity currently present in the CPU inventory. */
+        /**
+         * Returns the precise CPU inventory amount for this material.
+         *
+         * <p>
+         * Value: non-negative available amount
+         */
+        @Getter
         private final long availableAmount;
 
-        /** AE amount-per-power-unit used by native energy accounting. */
+        /**
+         * Returns AE's amount represented by one unit of crafting energy.
+         *
+         * <p>
+         * Value: finite positive conversion value
+         */
+        @Getter
         private final double amountPerEnergyUnit;
 
         public BatchRequirement(Object materialKey, long amountPerCraft, long availableAmount,
@@ -178,41 +197,6 @@ public interface CraftingBatchPlanner {
             this.amountPerEnergyUnit = amountPerEnergyUnit;
         }
 
-        /**
-         * Returns the identity used to combine duplicate expanded slots.
-         *
-         * @return stable material key
-         */
-        public Object getMaterialKey() {
-            return materialKey;
-        }
-
-        /**
-         * Returns this slot's one-craft quantity.
-         *
-         * @return positive required amount
-         */
-        public long getAmountPerCraft() {
-            return amountPerCraft;
-        }
-
-        /**
-         * Returns the precise CPU inventory amount for this material.
-         *
-         * @return non-negative available amount
-         */
-        public long getAvailableAmount() {
-            return availableAmount;
-        }
-
-        /**
-         * Returns AE's amount represented by one unit of crafting energy.
-         *
-         * @return finite positive conversion value
-         */
-        public double getAmountPerEnergyUnit() {
-            return amountPerEnergyUnit;
-        }
     }
 
     /**
@@ -220,13 +204,31 @@ public interface CraftingBatchPlanner {
      */
     final class CommitResult {
 
-        /** Whether the accepted push represents a batched commit. */
+        /**
+         * Reports whether state changes must be applied.
+         *
+         * <p>
+         * Value: {@code true} only after an accepted batched push
+         */
+        @Getter
         private final boolean committed;
 
-        /** Task value after pre-deducting all but AE's native one-craft decrement. */
+        /**
+         * Returns the task value that leaves one decrement to AE.
+         *
+         * <p>
+         * Value: task value before AE's native decrement
+         */
+        @Getter
         private final long taskValueBeforeNativeDecrement;
 
-        /** Operation budget after pre-deducting all but AE's native one-operation decrement. */
+        /**
+         * Returns the operation budget that leaves one decrement to AE without narrowing a long multiplier to int.
+         *
+         * <p>
+         * Value: operation budget before AE's native decrement
+         */
+        @Getter
         private final int remainingOperationsBeforeNativeDecrement;
 
         public CommitResult(boolean committed, long taskValueBeforeNativeDecrement,
@@ -236,32 +238,6 @@ public interface CraftingBatchPlanner {
             this.remainingOperationsBeforeNativeDecrement = remainingOperationsBeforeNativeDecrement;
         }
 
-        /**
-         * Reports whether state changes must be applied.
-         *
-         * @return {@code true} only after an accepted batched push
-         */
-        public boolean isCommitted() {
-            return committed;
-        }
-
-        /**
-         * Returns the task value that leaves one decrement to AE.
-         *
-         * @return task value before AE's native decrement
-         */
-        public long getTaskValueBeforeNativeDecrement() {
-            return taskValueBeforeNativeDecrement;
-        }
-
-        /**
-         * Returns the operation budget that leaves one decrement to AE without narrowing a long multiplier to int.
-         *
-         * @return operation budget before AE's native decrement
-         */
-        public int getRemainingOperationsBeforeNativeDecrement() {
-            return remainingOperationsBeforeNativeDecrement;
-        }
     }
 
     /**
@@ -271,10 +247,22 @@ public interface CraftingBatchPlanner {
      */
     final class SessionAllocation<S> {
 
-        /** Session receiving expected outputs. */
+        /**
+         * Returns the diagnostics session receiving this allocation.
+         *
+         * <p>
+         * Value: diagnostics session identifier
+         */
+        @Getter
         private final S sessionId;
 
-        /** Number of crafts assigned to the session. */
+        /**
+         * Returns the number of crafts represented for this session.
+         *
+         * <p>
+         * Value: positive craft count
+         */
+        @Getter
         private final long crafts;
 
         public SessionAllocation(S sessionId, long crafts) {
@@ -284,23 +272,6 @@ public interface CraftingBatchPlanner {
             this.crafts = crafts;
         }
 
-        /**
-         * Returns the diagnostics session receiving this allocation.
-         *
-         * @return diagnostics session identifier
-         */
-        public S getSessionId() {
-            return sessionId;
-        }
-
-        /**
-         * Returns the number of crafts represented for this session.
-         *
-         * @return positive craft count
-         */
-        public long getCrafts() {
-            return crafts;
-        }
     }
 
     /**
@@ -310,33 +281,27 @@ public interface CraftingBatchPlanner {
      */
     final class SessionConsumption<S> {
 
-        /** Session allocations in original task order. */
+        /**
+         * Returns ordered per-session craft allocations.
+         *
+         * <p>
+         * Value: immutable allocation list
+         */
+        @Getter
         private final List<SessionAllocation<S>> allocations;
 
-        /** Total number of session-tagged crafts consumed. */
+        /**
+         * Returns how many crafts had diagnostics session metadata.
+         *
+         * <p>
+         * Value: consumed session-tagged craft count
+         */
+        @Getter
         private final long consumedCrafts;
 
         public SessionConsumption(List<SessionAllocation<S>> allocations, long consumedCrafts) {
             this.allocations = allocations;
             this.consumedCrafts = consumedCrafts;
-        }
-
-        /**
-         * Returns ordered per-session craft allocations.
-         *
-         * @return immutable allocation list
-         */
-        public List<SessionAllocation<S>> getAllocations() {
-            return allocations;
-        }
-
-        /**
-         * Returns how many crafts had diagnostics session metadata.
-         *
-         * @return consumed session-tagged craft count
-         */
-        public long getConsumedCrafts() {
-            return consumedCrafts;
         }
 
         /**

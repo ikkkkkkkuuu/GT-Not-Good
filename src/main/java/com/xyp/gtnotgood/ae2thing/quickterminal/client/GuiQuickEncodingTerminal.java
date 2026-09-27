@@ -1981,11 +1981,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             return false;
         }
 
-        private boolean wheel(int mouseX, int mouseY, int wheel) {
-            if (!isInsideViewport(mouseX, mouseY) && !isOverScrollBar(mouseX, mouseY)) return false;
-            if (super.mouseWheelEvent(mouseX, mouseY, wheel)) return true;
+        private void wheel(int mouseX, int mouseY, int wheel) {
+            if (!isInsideViewport(mouseX, mouseY) && !isOverScrollBar(mouseX, mouseY)) return;
+            if (super.mouseWheelEvent(mouseX, mouseY, wheel)) return;
             getScrollBar().wheel(wheel);
-            return true;
         }
 
         private boolean clickScrollBar(int mouseX, int mouseY) {

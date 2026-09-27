@@ -32,15 +32,15 @@ import java.util.List;
  * <p>快速建造为每个批处理作业预计算一个 {@link StatePlacementPlan}，
  * 使得作业内所有目标位置共享同一组解析后的方块状态、点击上下文模板
  * 和物品提取规则。这显著消除了大批量放置中重复的
- * {@link BlockPlaceContext} 创建和状态查找开销。
+ * {@code BlockPlaceContext} 创建和状态查找开销。
  *
  * <p><b>核心方法：</b>
  * <ul>
- *   <li>{@link #resolveStatePlacementPlan(ServerPlayer, RtsPlacementBatch.PlaceBatchJob)} —
+ *   <li>{@code #resolveStatePlacementPlan(ServerPlayer, RtsPlacementBatch.PlaceBatchJob)} —
  *       从批处理作业的第一个位置解析放置计划，缓存物品、模板堆叠、旋转状态和来源 ID</li>
- *   <li>{@link #placeStateBatchEntry(ServerPlayer, RtsStorageSession, BlockPos, StatePlacementPlan)} —
+ *   <li>{@code #placeStateBatchEntry(ServerPlayer, RtsStorageSession, BlockPos, StatePlacementPlan)} —
  *       使用预解析计划放置单个方块，提取物品、设置方块、触发动画/声音</li>
- *   <li>{@link #canPlaceStateAt(ServerLevel, ServerPlayer, BlockPos, BlockState)} —
+ *   <li>{@code #canPlaceStateAt(ServerLevel, ServerPlayer, BlockPos, BlockState)} —
  *       检查目标位置是否可以放置给定方块状态（空气/可替换检查 + 碰撞检测）</li>
  * </ul>
  *
@@ -236,12 +236,12 @@ public final class RtsPlacementQuickBuild {
     /**
      * 快速建造路径的预计算放置计划。
      *
-     * @param item                  要放置的方块物品
-     * @param templateStack         单次计数模板堆叠（组件保留）
-     * @param state                 完全旋转后的方块状态
-     * @param selectedStorageItem   此计划是从储存中提取（{@code true}）
+     * <p>{@code item}: 要放置的方块物品
+     * <p>{@code templateStack}: 单次计数模板堆叠（组件保留）
+     * <p>{@code state}: 完全旋转后的方块状态
+     * <p>{@code selectedStorageItem}: 此计划是从储存中提取（{@code true}）
      *                              还是使用主手堆叠（{@code false}）
-     * @param itemId                用于最近物品追踪的字符串编码物品 ID
+     * <p>{@code itemId}: 用于最近物品追踪的字符串编码物品 ID
      */
     public static final class StatePlacementPlan {
         private final Item item;

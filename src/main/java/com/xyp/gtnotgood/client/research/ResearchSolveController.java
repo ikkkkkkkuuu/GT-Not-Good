@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.StatCollector;
 
+import lombok.Getter;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.client.gui.GuiResearchTable;
@@ -34,6 +35,7 @@ public final class ResearchSolveController {
     private static final AtomicLong GENERATION = new AtomicLong();
 
     private static volatile WeightedResearchSolver.Result lastResult;
+    @Getter
     private static volatile CompletionReport lastReport;
     private static volatile String lastPuzzle;
     private static volatile long lastSettingsRevision;
@@ -194,10 +196,6 @@ public final class ResearchSolveController {
     public static boolean isAutomaticSuppressed(ResearchNoteData note) {
         return note != null && ResearchNoteFingerprint.topology(note)
             .equals(suppressedAutomaticPuzzle);
-    }
-
-    public static CompletionReport getLastReport() {
-        return lastReport;
     }
 
     private static void handleSolved(WeightedResearchSolver.Result result, String puzzle, long generation,

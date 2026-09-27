@@ -4,6 +4,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.xyp.gtnotgood.ae2thing.AE2Thing;
+import com.xyp.gtnotgood.common.compass.StructureSearch;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.LargeVoidMinerConfigGuiFactory;
 import com.xyp.gtnotgood.common.items.toolbelt.common.BeltEvents;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
@@ -32,7 +33,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
  */
 public class CommonProxy {
 
-    // preInit "Run before anything else. Read your config, create blocks, items, etc, and register them with the
+    // preInit "Run before anything else. Read your config, create blocks, items, etc., and register them with the
     // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         Config.synchronizeConfiguration(event.getSuggestedConfigurationFile());
@@ -47,6 +48,10 @@ public class CommonProxy {
             .register(new com.xyp.gtnotgood.config.ServerConfigService());
 
         ItemsLoader.registry();
+        MinecraftForge.EVENT_BUS.register(StructureSearch.INSTANCE);
+        FMLCommonHandler.instance()
+            .bus()
+            .register(StructureSearch.INSTANCE);
         BlockLoader.registry();
         MachineLoader.registry();
         AE2Thing.preInit(event, GTNotGood.instance);

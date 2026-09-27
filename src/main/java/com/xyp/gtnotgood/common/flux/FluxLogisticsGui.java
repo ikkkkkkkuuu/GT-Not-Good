@@ -3,6 +3,8 @@ package com.xyp.gtnotgood.common.flux;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -241,7 +243,7 @@ public final class FluxLogisticsGui {
         }
 
         @Override
-        public int getItemStackLimit(ItemStack stack) {
+        public int getItemStackLimit(@Nonnull ItemStack stack) {
             return 1;
         }
     }

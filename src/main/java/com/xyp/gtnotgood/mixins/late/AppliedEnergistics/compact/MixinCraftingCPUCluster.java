@@ -45,8 +45,8 @@ import appeng.me.cache.CraftingGridCache;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.diagnostics.CraftingDiagnosticSessionId;
 
-@Mixin(value = CraftingCPUCluster.class, remap = false)
 /** Adapted AE crafting component; see reference/UPSTREAM_PORT_NOTES.md for provenance. */
+@Mixin(value = CraftingCPUCluster.class, remap = false)
 public abstract class MixinCraftingCPUCluster {
 
     @Unique

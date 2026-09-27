@@ -10,6 +10,7 @@ import codechicken.nei.NEIClientConfig;
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
 
+/** Discovered and instantiated by NEI's configuration-class scanner. */
 @SuppressWarnings("unused")
 public class NEI_TH_Config implements IConfigureNEI {
 

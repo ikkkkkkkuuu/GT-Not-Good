@@ -1,12 +1,16 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.context;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.ImmutableStringReader;
 import java.util.Objects;
 
 /** Relocated Brigadier StringRange used by the command-tree parser. */
 public class StringRange {
+   @Getter
    private final int start;
+   @Getter
    private final int end;
 
    public StringRange(int start, int end) {
@@ -24,14 +28,6 @@ public class StringRange {
 
    public static StringRange encompassing(StringRange a, StringRange b) {
       return new StringRange(Math.min(a.getStart(), b.getStart()), Math.max(a.getEnd(), b.getEnd()));
-   }
-
-   public int getStart() {
-      return this.start;
-   }
-
-   public int getEnd() {
-      return this.end;
    }
 
    public String get(ImmutableStringReader reader) {

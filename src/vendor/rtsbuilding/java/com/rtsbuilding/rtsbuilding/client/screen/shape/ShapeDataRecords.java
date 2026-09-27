@@ -27,8 +27,8 @@ public final class ShapeDataRecords {
      * preview, and a flag indicating whether the player has confirmed the
      * shape and is ready to place.
      *
-     * @param blocks       block positions to highlight
-     * @param readyConfirm true once the shape is fully defined and awaiting
+     * <p>{@code blocks}: block positions to highlight
+     * <p>{@code readyConfirm}: true once the shape is fully defined and awaiting
      *                     a placement click
      */
     public static final class GhostPreview {
@@ -99,14 +99,14 @@ public final class ShapeDataRecords {
      * Stores the operation kind, item/tool identifiers, the target face, and
      * all affected positions.
      *
-     * @param replayKind    kind of replay (pinned item, tool slot, or break)
-     * @param itemId        item registry name (empty for tool-slot placements/breaks)
-     * @param toolSlot      hotbar slot used (0-8, -1 for pinned items)
-     * @param face          the face all positions were placed/clicked against
-     * @param positions     the affected block positions
-     * @param isDestructive true if this batch records a BREAK operation (undo=re-place);
+     * <p>{@code replayKind}: kind of replay (pinned item, tool slot, or break)
+     * <p>{@code itemId}: item registry name (empty for tool-slot placements/breaks)
+     * <p>{@code toolSlot}: hotbar slot used (0-8, -1 for pinned items)
+     * <p>{@code face}: the face all positions were placed/clicked against
+     * <p>{@code positions}: the affected block positions
+     * <p>{@code isDestructive}: true if this batch records a BREAK operation (undo=re-place);
      *                      false if this batch records a PLACEMENT operation (undo=break)
-     * @param blockStates   full block state strings (e.g. "minecraft:stone" or "minecraft:oak_log[axis=y]")
+     * <p>{@code blockStates}: full block state strings (e.g. "minecraft:stone" or "minecraft:oak_log[axis=y]")
      *                      parallel to {@code positions}; empty string for unknown blocks
      */
     public static final class HistoryBatch {

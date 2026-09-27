@@ -6,6 +6,8 @@ import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.SubTag;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 按 GT SubTag 过滤（METAL / CRYSTAL / NO_SMASHING ...）。
@@ -18,8 +20,11 @@ public final class SubTagFilterComponent extends AbstractFilterComponent {
     private static final String KEY_SUBTAG = "SubTag";
     private static final String KEY_EXAMPLE = "Example";
 
+    @Getter
+    @Setter
     private SubTag subTag;
     /** 示例材料（拖入的物品解析出来），仅用于 GUI 列出可选 SubTag，不参与匹配。 */
+    @Getter
     private Materials example;
 
     public SubTagFilterComponent(SubTag subTag, Materials example, boolean whitelist) {
@@ -37,18 +42,6 @@ public final class SubTagFilterComponent extends AbstractFilterComponent {
         Materials example = data.hasKey(KEY_EXAMPLE) ? WildcardMaterials.findByName(data.getString(KEY_EXAMPLE)) : null;
         if (!WildcardMaterials.isRealMaterial(example)) example = null;
         return new SubTagFilterComponent(subTag, example, readWhitelist(data));
-    }
-
-    public SubTag getSubTag() {
-        return subTag;
-    }
-
-    public void setSubTag(SubTag subTag) {
-        this.subTag = subTag;
-    }
-
-    public Materials getExample() {
-        return example;
     }
 
     /** 设置示例材料，并把当前 SubTag 对齐到该材料实际拥有的第一个 SubTag（若当前的它没有）。 */

@@ -1,14 +1,19 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.Message;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.context.StringRange;
 import java.util.Objects;
 
 /** Relocated Brigadier Suggestion used by the command-tree parser. */
 public class Suggestion implements Comparable<Suggestion> {
+   @Getter
    private final StringRange range;
+   @Getter
    private final String text;
+   @Getter
    private final Message tooltip;
 
    public Suggestion(StringRange range, String text) {
@@ -19,18 +24,6 @@ public class Suggestion implements Comparable<Suggestion> {
       this.range = range;
       this.text = text;
       this.tooltip = tooltip;
-   }
-
-   public StringRange getRange() {
-      return this.range;
-   }
-
-   public String getText() {
-      return this.text;
-   }
-
-   public Message getTooltip() {
-      return this.tooltip;
    }
 
    public String apply(String input) {

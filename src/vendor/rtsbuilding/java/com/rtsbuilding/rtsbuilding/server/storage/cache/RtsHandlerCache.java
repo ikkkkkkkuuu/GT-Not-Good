@@ -150,7 +150,7 @@ public final class RtsHandlerCache {
 
     /**
      * 返回指定物品 ID 的代表性（数量=1）ItemStack，包含完整 NBT，
-     * 若未缓存则返回 {@link ItemStack#EMPTY}。
+     * 若未缓存则返回 {@code ItemStack#EMPTY}。
      */
     public ItemStack getPrototype(String itemId) {
         ItemStack stack = this.prototypeByItem.get(itemId);
@@ -158,7 +158,7 @@ public final class RtsHandlerCache {
     }
 
     /**
-     * 返回完整的槽位快照，或 {@link CachedSlot#EMPTY}。
+     * 返回完整的槽位快照，或 {@code CachedSlot#EMPTY}。
      */
     public CachedSlot getSlot(int slot) {
         if (slot < 0 || slot >= this.front.length) {

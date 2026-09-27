@@ -7,6 +7,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -59,8 +61,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 
-@IMetaTileEntity.SkipGenerateDescription
-@IMetaTileEntity.SkipGenerateName
 /**
  * Compact, fixed-singularity AE crafting CPU controller. Five GregTech casings surround the controller in the
  * same 3x2x1 layout as the ore processor. Each accepted order receives its own persistent CPU; completed CPUs
@@ -69,6 +69,8 @@ import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
  *
  * @see ECraftingCPUCluster
  */
+@IMetaTileEntity.SkipGenerateDescription
+@IMetaTileEntity.SkipGenerateName
 public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
     implements ISurvivalConstructable, IActionHost, IGridProxyable, IAddGregtechLogo, ICustomNameObject {
 
@@ -580,6 +582,7 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
     }
 
     @Override
+    @Nonnull
     protected gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui<?> getGui() {
         return new com.xyp.gtnotgood.common.gui.modularui.QuantumComputerGui(this);
     }

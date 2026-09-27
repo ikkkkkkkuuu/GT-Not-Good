@@ -71,6 +71,7 @@ import gregtech.api.structure.error.StructureErrors;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
+import lombok.Getter;
 
 /**
  * Large electric CropsNH crop breeder.
@@ -104,6 +105,7 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
     private int casingCount;
     private IStructureDefinition<LargeCropBreeder> structureDefinition;
     private String targetCropId = "";
+    @Getter
     private boolean targetInputValid = true;
     private CropArchive cropArchive = new CropArchive();
     private CropBreedingPlanner.Plan breedingPlan = CropBreedingPlanner.Plan.empty("");
@@ -114,15 +116,21 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
     private int activeGrowth;
     private int activeGain;
     private int activeResistance;
+    @Getter
     private int pendingSeedOutputs;
     private String missingCropId = "";
+    @Getter
     private boolean allTasksBlocked;
     private boolean missingBreedingRequirements;
+    @Getter
     private int chainTotalSteps;
+    @Getter
     private int chainCompletedSteps;
+    @Getter
     private int syncedArchiveSize;
-    private String syncedMissingInfo = "";
+    @Getter
     private List<String> syncedArchiveCrops = Collections.emptyList();
+    @Getter
     private List<NBTTagCompound> syncedChainSteps = Collections.emptyList();
     private boolean displayDirty = true;
 
@@ -147,6 +155,7 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
     }
 
     @Override
+    @Nonnull
     protected MTEMultiBlockBaseGui<?> getGui() {
         return new LargeCropBreederGui(this);
     }
@@ -284,7 +293,6 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
                 syncedArchiveCrops = new ArrayList<>(cropArchive.getAvailableCropIds());
                 Collections.sort(syncedArchiveCrops);
                 syncedChainSteps = buildStructuredChainSteps();
-                syncedMissingInfo = allTasksBlocked && missingCropId != null ? missingCropId : "";
                 displayDirty = false;
             }
         }
@@ -512,7 +520,7 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         return new SeedStats((byte) activeGrowth, (byte) activeGain, (byte) activeResistance, true);
     }
 
-    private boolean scanInputBuses() {
+    private void scanInputBuses() {
         ArrayList<ItemStack> inputs = getStoredInputs();
         boolean stateChanged = false;
         for (ItemStack stack : inputs) {
@@ -532,7 +540,6 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
             invalidateBreedingPlan();
             markBaseTileDirty();
         }
-        return stateChanged;
     }
 
     private void refreshBreedingPlan() {
@@ -721,30 +728,6 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         }
     }
 
-    public boolean isTargetInputValid() {
-        return targetInputValid;
-    }
-
-    public int getSyncedArchiveSize() {
-        return syncedArchiveSize;
-    }
-
-    public int getPendingSeedOutputs() {
-        return pendingSeedOutputs;
-    }
-
-    public int getChainTotalSteps() {
-        return chainTotalSteps;
-    }
-
-    public int getChainCompletedSteps() {
-        return chainCompletedSteps;
-    }
-
-    public boolean isAllTasksBlocked() {
-        return allTasksBlocked;
-    }
-
     public String getSyncedMissingInfo() {
         return allTasksBlocked && missingCropId != null ? missingCropId : "";
     }
@@ -753,16 +736,8 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         return allTasksBlocked && missingBreedingRequirements;
     }
 
-    public List<String> getSyncedArchiveCrops() {
-        return syncedArchiveCrops;
-    }
-
     public void setSyncedArchiveCrops(List<String> crops) {
         syncedArchiveCrops = crops == null ? Collections.emptyList() : crops;
-    }
-
-    public List<NBTTagCompound> getSyncedChainSteps() {
-        return syncedChainSteps;
     }
 
     public void setSyncedChainSteps(List<NBTTagCompound> steps) {

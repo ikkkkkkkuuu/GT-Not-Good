@@ -251,6 +251,11 @@ public class WildcardPatternGui {
                 // # Tag
                 // # zh_CN 标签
                 addButton("gui.wildcardpattern.tag", () -> addIO(cards, list, PrefixIOComponent.empty())).pos(37, 155))
+            .child(
+                // #tr gui.wildcardpattern.fluid
+                // # Fluid
+                // # zh_CN 流体
+                addButton("gui.wildcardpattern.fluid", () -> addIO(cards, list, FluidIOComponent.empty())).pos(72, 155))
             .child(saveButton().pos(126, 155));
     }
 
@@ -406,24 +411,6 @@ public class WildcardPatternGui {
         return order[(idx + 1) % order.length];
     }
 
-    private IWidget iconWidget(IWildcardIOComponent component) {
-        ItemStack display = component == null ? null : component.getDisplayStack();
-        if (display == null) {
-            return Flow.row()
-                .size(16);
-        }
-        return new ItemDrawable(display).asWidget()
-            .size(16);
-    }
-
-    private String ioLabel(IWildcardIOComponent component) {
-        if (component instanceof SimpleIOComponent) {
-            ItemStack stack = ((SimpleIOComponent) component).getStack();
-            return stack == null ? "(empty)" : safeName(stack);
-        }
-        return component == null ? "" : component.typeKey();
-    }
-
     // ============================================================
     // 过滤页
     // ============================================================
@@ -479,9 +466,8 @@ public class WildcardPatternGui {
         if (component instanceof StringFilterComponent)
             row.child(stringFilterEditor((StringFilterComponent) component));
         else if (component instanceof PropertyFilterComponent)
-            row.child(propertyEditor(cards, (PropertyFilterComponent) component));
-        else if (component instanceof SubTagFilterComponent)
-            row.child(subTagEditor(cards, (SubTagFilterComponent) component));
+            row.child(propertyEditor((PropertyFilterComponent) component));
+        else if (component instanceof SubTagFilterComponent) row.child(subTagEditor((SubTagFilterComponent) component));
         row.child(
             whitelistButton(component).pos(120, 5)
                 .size(14));
@@ -524,7 +510,7 @@ public class WildcardPatternGui {
     }
 
     /** Source selector: changing the example replaces candidates and selects the first available property. */
-    private IWidget propertyEditor(ListWidget<IWidget, ?> cards, PropertyFilterComponent component) {
+    private IWidget propertyEditor(PropertyFilterComponent component) {
         com.xyp.ldlib.integration.modularui.SelectorWidget selector = new com.xyp.ldlib.integration.modularui.SelectorWidget(
             "wildcard_property_" + filters.indexOf(component),
             THEME.button,
@@ -573,7 +559,7 @@ public class WildcardPatternGui {
     }
 
     /** Flags use 1.7.10 SubTags with the original source's candidate replacement interaction. */
-    private IWidget subTagEditor(ListWidget<IWidget, ?> cards, SubTagFilterComponent component) {
+    private IWidget subTagEditor(SubTagFilterComponent component) {
         com.xyp.ldlib.integration.modularui.SelectorWidget selector = new com.xyp.ldlib.integration.modularui.SelectorWidget(
             "wildcard_subtag_" + filters.indexOf(component),
             THEME.button,

@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.common.gui.modularui.widget;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.api.IPanelHandler;
@@ -86,6 +88,7 @@ public final class SingleblockMoldSelector {
         return new SlotLikeButtonWidget(() -> VirtualMachineMolds.at(selection.getIntValue())) {
 
             @Override
+            @Nonnull
             public Result onMousePressed(int button) {
                 if (button == 0 && Interactable.hasShiftDown()) popup.openPanel();
                 else if (button == 1 && Interactable.hasShiftDown()) selection.setIntValue(-1);

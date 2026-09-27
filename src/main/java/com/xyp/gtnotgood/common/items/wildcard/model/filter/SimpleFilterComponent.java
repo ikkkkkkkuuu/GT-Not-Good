@@ -5,6 +5,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 
 import gregtech.api.enums.Materials;
+import lombok.Getter;
+import lombok.Setter;
 
 /** 按单个具体材料过滤。 */
 public final class SimpleFilterComponent extends AbstractFilterComponent {
@@ -13,6 +15,8 @@ public final class SimpleFilterComponent extends AbstractFilterComponent {
 
     private static final String KEY_MATERIAL = "Material";
 
+    @Getter
+    @Setter
     private Materials material;
 
     public SimpleFilterComponent(Materials material, boolean whitelist) {
@@ -29,14 +33,6 @@ public final class SimpleFilterComponent extends AbstractFilterComponent {
         return new SimpleFilterComponent(
             WildcardMaterials.isRealMaterial(material) ? material : null,
             readWhitelist(data));
-    }
-
-    public Materials getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(Materials material) {
-        this.material = material;
     }
 
     @Override

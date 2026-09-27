@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -54,6 +56,7 @@ import gregtech.common.blocks.ItemMachines;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 import gregtech.common.misc.WirelessNetworkManager;
 import gtPlusPlus.xmod.gregtech.common.blocks.textures.TexturesGtBlock;
+import lombok.Getter;
 
 /**
  * A bounded production graph executor with automatic wired/wireless selection and a ModularUI2 editor.
@@ -87,6 +90,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                     .build()))
         .build();
 
+    @Getter
     private FactoryGraph draft = new FactoryGraph();
     private FactoryGraph installed = new FactoryGraph();
     private FactoryGraph pending = new FactoryGraph();
@@ -95,6 +99,8 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     private static final FactoryText[] STATUS_PRIORITY = { FactoryText.POWER, FactoryText.LIMIT, FactoryText.HOST,
         FactoryText.CATALYST_MISSING, FactoryText.BLOCKED };
     private final List<RecipePage> recipePages = new ArrayList<>();
+    /** One-based selected recipe page. */
+    @Getter
     private int recipePage = 1;
 
     /** One saved routing graph and its lock state; only the selected page runs through the shared scheduler. */
@@ -120,6 +126,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     private final FactoryReservations reservations = new FactoryReservations();
     private final Map<Integer, FactoryText> nodeStatus = new HashMap<>();
     private final Random random = new Random();
+    @Getter
     private boolean draining;
     private int schedulingCursor;
     /** Cached traversal timing and saved credits; rebuilt only when the installed graph changes. */
@@ -128,15 +135,8 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     private NBTTagCompound savedLineProgress = new NBTTagCompound();
     private boolean itemOutputBlocked, fluidOutputBlocked;
 
-    public boolean isDraining() {
-        return draining;
-    }
-
+    @Getter
     private boolean routingLocked;
-
-    public boolean isRoutingLocked() {
-        return routingLocked;
-    }
 
     private Map<Integer, List<FactoryGraph.Node>> cycleGroups;
     private final Map<Integer, FactoryCycles.Plan> cyclePlans = new HashMap<>();
@@ -189,6 +189,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     }
 
     @Override
+    @Nonnull
     protected MTEMultiBlockBaseGui<?> getGui() {
         return new IntegratedProductionFactoryGui(this);
     }
@@ -204,19 +205,10 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         return Math.max(1, node.parallel);
     }
 
-    public FactoryGraph getDraft() {
-        return draft;
-    }
-
     /** Number of BOX-style recipe pages already created, including empty pages. */
     public int getRecipePageCount() {
         ensureRecipePages();
         return recipePages.size();
-    }
-
-    /** One-based selected recipe page. */
-    public int getRecipePage() {
-        return recipePage;
     }
 
     /** The full page allowance matches the BOX editor's expanded page range. */
@@ -908,8 +900,11 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         return cycleGroups.containsKey(first) && cycleGroups.get(first) == cycleGroups.get(second);
     }
 
-    /** Matches multiblock controllers by their advertised recipe maps, as in SuperFactory. */
-    /** Shared controller eligibility for deposits and the route-list machine icon. */
+    /**
+     * Matches multiblock controllers by their advertised recipe maps, as in SuperFactory.
+     * <p>
+     * Shared controller eligibility for deposits and the route-list machine icon.
+     */
     public static boolean supportsHost(FactoryRecipeCatalog.Entry entry, ItemStack stack) {
         if (stack == null || stack.stackSize <= 0 || !(stack.getItem() instanceof ItemMachines)) return false;
         IMetaTileEntity meta = ItemMachines.getMetaTileEntity(stack);
@@ -1000,8 +995,10 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         return false;
     }
 
-    /** Atomic bounded chunks preserve unsent amounts, including when ME or ordinary output storage is full. */
     /**
+     * Atomic bounded chunks preserve unsent amounts, including when ME or ordinary output storage is full.
+     * <p>
+     *
      * Offers each finished product at its actual size, allowing ME assemblies to receive large batches at once.
      * Native transactions distribute partial acceptance across outputs; leftovers stay local and voiding is disabled.
      * The per-tick budget limits product types rather than splitting huge amounts into thousands of tiny transfers.

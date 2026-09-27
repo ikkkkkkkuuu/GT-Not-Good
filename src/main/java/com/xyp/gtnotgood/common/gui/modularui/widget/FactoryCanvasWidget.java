@@ -4,6 +4,8 @@ import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -121,6 +123,7 @@ public final class FactoryCanvasWidget extends Widget<FactoryCanvasWidget> imple
 
     @SideOnly(Side.CLIENT)
     @Override
+    @Nonnull
     public Result onMousePressed(int button) {
         int x = getContext().getMouseX(), y = getContext().getMouseY();
         FactoryGraph.Node hit = null;

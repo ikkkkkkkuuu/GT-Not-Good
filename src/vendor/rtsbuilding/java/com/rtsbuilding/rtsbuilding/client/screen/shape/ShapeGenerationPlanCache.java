@@ -25,12 +25,12 @@ public final class ShapeGenerationPlanCache {
     /**
      * 生成计划所需的完整只读输入。
      *
-     * @param input             原始形状输入
-     * @param fillMode          当前填充模式
-     * @param advancedBox       高级选区；普通两/三点模式传 {@code null}
-     * @param rangeDestroy      是否按范围破坏限制生成
-     * @param rangeLimits       范围破坏限制
-     * @param buildMaxDimension 普通范围建造的单轴上限
+     * <p>{@code input}: 原始形状输入
+     * <p>{@code fillMode}: 当前填充模式
+     * <p>{@code advancedBox}: 高级选区；普通两/三点模式传 {@code null}
+     * <p>{@code rangeDestroy}: 是否按范围破坏限制生成
+     * <p>{@code rangeLimits}: 范围破坏限制
+     * <p>{@code buildMaxDimension}: 普通范围建造的单轴上限
      */
     public static final class Request {
         private final ShapeBuildTypes.Input input;

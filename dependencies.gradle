@@ -36,49 +36,53 @@
 // GTNH 2.9.0-RC-1: DreamAssemblerXXL/releases/manifests/2.9.0-RC-1.json
 def elytraModpackVersion = project.extensions.getByName("elytraModpackVersion")
 
+// The plugin extension is loaded dynamically; declare its dependency coordinates as strings for IDE type checking.
+
 dependencies {
-    compileOnly(elytraModpackVersion.gtnhdev("BloodMagic")) { transitive = false }
-    runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("BloodMagic")) { transitive = false }
-    testImplementation(elytraModpackVersion.gtnhdev("BloodMagic")) { transitive = false }
-    compileOnly(elytraModpackVersion.gtnhdev("Angelica")) { transitive = false }
-    runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("Angelica"))
+    compileOnly(elytraModpackVersion.gtnhdev("Roguelike-Dungeons") as String) { transitive = false }
+    compileOnly(elytraModpackVersion.gtnhdev("LootGames") as String) { transitive = false }
+    runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("Roguelike-Dungeons") as String) { transitive = false }
+    runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("LootGames") as String)
+    compileOnly(elytraModpackVersion.gtnhdev("BloodMagic") as String) { transitive = false }
+    runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("BloodMagic") as String) { transitive = false }
+    testImplementation(elytraModpackVersion.gtnhdev("BloodMagic") as String) { transitive = false }
+    compileOnly(elytraModpackVersion.gtnhdev("Angelica") as String) { transitive = false }
+    runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("Angelica") as String)
     // AE stack interface proxies resolve Minecraft client method signatures during headless output tests.
     testRuntimeOnly("org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209") { transitive = false }
     // MUI2 uses the pack's FastUtil at runtime; headless GUI lifecycle tests need it explicitly.
     testRuntimeOnly("it.unimi.dsi:fastutil:8.5.18")
     testImplementation("junit:junit:4.13.2")
     // Exercise the real synthetic aspect item without loading a Forge client.
-    testRuntimeOnly(elytraModpackVersion.gtnhdev("AspectRecipeIndex")) { transitive = false }
+    testRuntimeOnly(elytraModpackVersion.gtnhdev("AspectRecipeIndex") as String) { transitive = false }
     // Angelica's RFB plugin uses these before GTNHLib's shaded stubs are visible on Java 17.
     // The RTS QA runner adds this test-only artifact to the launcher classpath; release dependencies are unchanged.
     testRuntimeOnly("xyz.wagyourtail.jvmdowngrader:jvmdowngrader-java-api:2.0.1:downgraded-8") { transitive = false }
     // Opt-in manual playground: AE essentia storage and real TC4 infusion supply.
-    testImplementation(elytraModpackVersion.gtnhdev("ThaumicEnergistics")) { transitive = false }
-    compileOnly(elytraModpackVersion.gtnhdev("ThaumicEnergistics")) { transitive = false }
+    testImplementation(elytraModpackVersion.gtnhdev("ThaumicEnergistics") as String) { transitive = false }
+    compileOnly(elytraModpackVersion.gtnhdev("ThaumicEnergistics") as String) { transitive = false }
     testRuntimeOnly("org.joml:joml:1.10.8") { transitive = false }
-    implementation(elytraModpackVersion.gtnhdev("AE2FluidCraft-Rework")) {
+    implementation(elytraModpackVersion.gtnhdev("AE2FluidCraft-Rework") as String) {
         exclude group: "com.github.GTNewHorizons", module: "Applied-Energistics-2-Unofficial"
     }
-    implementation(elytraModpackVersion.gtnhdev("Applied-Energistics-2-Unofficial"))
-    implementation(elytraModpackVersion.gtnhdev("Avaritia"))
-    implementation(elytraModpackVersion.gtnhdev("Botania"))
-    implementation(elytraModpackVersion.gtnhdev("CodeChickenCore"))
-    implementation(elytraModpackVersion.gtnhdev("CropsNH"))
-    implementation(elytraModpackVersion.gtnhdev("Galaxy-Space-GTNH"))
-    implementation(elytraModpackVersion.gtnhdev("GT5-Unofficial"))
-    implementation(elytraModpackVersion.gtnhdev("NotEnoughItems"))
-    implementation(elytraModpackVersion.gtnhdev("GTNHLib"))
+    implementation(elytraModpackVersion.gtnhdev("Applied-Energistics-2-Unofficial") as String)
+    implementation(elytraModpackVersion.gtnhdev("Avaritia") as String)
+    implementation(elytraModpackVersion.gtnhdev("Botania") as String)
+    implementation(elytraModpackVersion.gtnhdev("CodeChickenCore") as String)
+    implementation(elytraModpackVersion.gtnhdev("CropsNH") as String)
+    implementation(elytraModpackVersion.gtnhdev("GT5-Unofficial") as String)
+    implementation(elytraModpackVersion.gtnhdev("NotEnoughItems") as String)
+    implementation(elytraModpackVersion.gtnhdev("GTNHLib") as String)
     implementation("thaumcraft:Thaumcraft:1.7.10-4.2.3.5:dev")
-    devOnlyNonPublishable(elytraModpackVersion.gtnhdev("ForestryMC"))
-    devOnlyNonPublishable(elytraModpackVersion.gtnhdev("BetterQuesting")) { transitive = false }
+    devOnlyNonPublishable(elytraModpackVersion.gtnhdev("ForestryMC") as String)
+    devOnlyNonPublishable(elytraModpackVersion.gtnhdev("BetterQuesting") as String) { transitive = false }
     // Not used by our code. CropsNH 2.0.114's BetterBuildersWandsCompatHandler.postInit passes a
     // CropsNHBetterBuildersWandsCropStickCustomMapping to setMapping(ICustomMapping), so verifying that method body
     // loads portablejim.bbw.core.conversion.ICustomMapping before its own isModLoaded() guard can run. Without BBW on
     // the dev classpath that is a NoClassDefFoundError in postInit. Present in the real pack, so dev-only.
-    devOnlyNonPublishable(elytraModpackVersion.gtnhdev("BetterBuildersWands"))
-    compileOnlyApi(elytraModpackVersion.gtnhdev("NewHorizonsCoreMod"))
-    compileOnlyApi(elytraModpackVersion.gtnhdev("nei-custom-diagram"))
-    devOnlyNonPublishable(elytraModpackVersion.gtnhdev("BlockRenderer6343"))
+    devOnlyNonPublishable(elytraModpackVersion.gtnhdev("BetterBuildersWands") as String)
+    compileOnlyApi(elytraModpackVersion.gtnhdev("NewHorizonsCoreMod") as String)
+    devOnlyNonPublishable(elytraModpackVersion.gtnhdev("BlockRenderer6343") as String)
 
 
 
@@ -87,13 +91,10 @@ dependencies {
 
 
 
-    compileOnly("javax.xml.bind:jaxb-api:2.3.1")
     compileOnly("org.jetbrains:annotations:26.0.1")
     compileOnly("org.projectlombok:lombok:1.18.42") { transitive = false }
     annotationProcessor("org.projectlombok:lombok:1.18.42")
 
-    implementation("com.google.auto.value:auto-value-annotations:1.10.4")
-    annotationProcessor("com.google.auto.value:auto-value:1.10.4")
 
     implementation("org.ow2.asm:asm-commons:9.8")
 

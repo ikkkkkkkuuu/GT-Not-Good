@@ -11,8 +11,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.xyp.gtnotgood.client.text.EffectTextLayout;
 import com.xyp.gtnotgood.utils.text.effect.EffectTextParser;
 
-@Mixin(GuiNewChat.class)
 /** MixinGuiNewChatTextEffects component of the upstream text-effect rendering framework. */
+@Mixin(GuiNewChat.class)
 public abstract class MixinGuiNewChatTextEffects {
 
     @WrapOperation(

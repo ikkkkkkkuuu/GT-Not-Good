@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -335,7 +337,7 @@ public final class PatternMEOutput {
             return pending.hasSpace();
         }
 
-        public boolean storePartial(GTUtility.ItemId id, ItemStack stack, long total, long perParallel) {
+        public boolean storePartial(GTUtility.ItemId id, @Nonnull ItemStack stack, long total, long perParallel) {
             if (!pending.insert(AEItemStack.create(stack))) return false;
             stack.stackSize = 0;
             return true;
@@ -388,7 +390,7 @@ public final class PatternMEOutput {
             return pending.hasSpace();
         }
 
-        public boolean storePartial(GTUtility.FluidId id, FluidStack stack, long total, long perParallel) {
+        public boolean storePartial(GTUtility.FluidId id, @Nonnull FluidStack stack, long total, long perParallel) {
             if (!pending.insert(AEFluidStack.create(stack))) return false;
             stack.amount = 0;
             return true;

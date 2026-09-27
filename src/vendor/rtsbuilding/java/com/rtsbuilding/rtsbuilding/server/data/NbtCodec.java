@@ -7,7 +7,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
- * 类型安全的 NBT 编解码器——将 {@link CompoundTag} 与 Java 对象互相转换。
+ * 类型安全的 NBT 编解码器——将 {@code CompoundTag} 与 Java 对象互相转换。
  *
  * <p>函数式设计，可通过 {@link #of(Function, BiConsumer)} 快捷创建：
  * <pre>{@code

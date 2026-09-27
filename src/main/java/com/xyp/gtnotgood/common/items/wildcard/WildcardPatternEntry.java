@@ -26,6 +26,7 @@ import gregtech.api.enums.OrePrefixes;
 import gregtech.api.objects.ItemData;
 import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTUtility;
+import lombok.Getter;
 
 /**
  * 通配样板符条目
@@ -53,11 +54,12 @@ public class WildcardPatternEntry {
     private static final Map<String, Set<String>> NAME_CANDIDATE_CACHE = new ConcurrentHashMap<>();
     private static final Map<String, Materials> MATERIAL_NAME_CACHE = new ConcurrentHashMap<>();
     private static final Map<String, ItemStack> DEFAULT_ORE_STACK_CACHE = new ConcurrentHashMap<>();
-    private static volatile Set<String> ALL_KNOWN_MATERIAL_NAMES;
     /** Cached OrePrefixes -> display name, resolved once per prefix to avoid per-call reflection in hot loops. */
     private static final Map<OrePrefixes, String> PREFIX_NAME_CACHE = new ConcurrentHashMap<>();
 
     private boolean oreDictMode;
+    /** 获取流体类型。 */
+    @Getter
     private FluidState fluidType;
     private ItemStack stack;
     private ItemStack displayStack;
@@ -334,13 +336,6 @@ public class WildcardPatternEntry {
      */
     public boolean isFluid() {
         return this.fluidType != null;
-    }
-
-    /**
-     * 获取流体类型
-     */
-    public FluidState getFluidType() {
-        return this.fluidType;
     }
 
     /**

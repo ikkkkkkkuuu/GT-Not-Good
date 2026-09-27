@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * 物品注册器。实例在类初始化时构造，但只在 1.12.2 的 {@link RegistryEvent.Register} 阶段提交。
+ * 物品注册器。实例在类初始化时构造，但只在 1.12.2 的 {@code RegistryEvent.Register} 阶段提交。
  * {@link Handle} 保留业务代码熟悉的 {@code get()} 边界，同时不伪装成新版本 DeferredRegister。
  */
 public final class RtsItems {

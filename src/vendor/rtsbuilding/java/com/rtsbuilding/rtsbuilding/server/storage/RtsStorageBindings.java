@@ -17,7 +17,7 @@ import com.rtsbuilding.rtsbuilding.platform.math.BlockPos;
  * 完整的存储页面、聚合存储内容、移动物品、转移流体、合成、
  * 挖掘、放置方块或持久化包装器，因此现有网络处理器无需了解此拆分。
  *
- * <p>链接存储能力探测和访问检查仍来自 {@link RtsLinkedStorageResolver}；
+ * <p>链接存储能力探测和访问检查仍来自 {@code RtsLinkedStorageResolver}；
  * 本类仅将产生的绑定状态应用到会话。远程 GUI 打开委托给 {@link RtsGuiBindingHelper}。
  */
 public final class RtsStorageBindings {

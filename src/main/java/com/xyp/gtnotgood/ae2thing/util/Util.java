@@ -46,6 +46,7 @@ import codechicken.nei.recipe.StackInfo;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameRegistry;
+import lombok.Getter;
 
 public class Util {
 
@@ -403,7 +404,9 @@ public class Util {
 
     public static class DimensionalCoordSide extends DimensionalCoord {
 
-        private ForgeDirection side = ForgeDirection.UNKNOWN;
+        @Getter
+        private final ForgeDirection side;
+        @Getter
         private final String name;
 
         public DimensionalCoordSide(final int _x, final int _y, final int _z, final int _dim, ForgeDirection side,
@@ -411,14 +414,6 @@ public class Util {
             super(_x, _y, _z, _dim);
             this.side = side;
             this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public ForgeDirection getSide() {
-            return this.side;
         }
 
         @Override

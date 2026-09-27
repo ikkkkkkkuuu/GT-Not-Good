@@ -11,11 +11,11 @@ import java.util.Objects;
  * 携带锚点位置、两个对角点（定义形状的覆盖范围）、
  * 高度偏移（用于 BOX / WALL 等 3D 形状）、点击面方向和放置面方向。
  *
- * @param start        锚点 / 第一个角坐标
- * @param end          第二个角坐标（定义形状的延伸范围）
- * @param heightOffset 相对于基准平面的垂直偏移（2D 形状为 0）
- * @param clickedFace  玩家点击的面的方向
- * @param placementFace 放置方块时的贴附面方向
+ * <p>{@code start}: 锚点 / 第一个角坐标
+ * <p>{@code end}: 第二个角坐标（定义形状的延伸范围）
+ * <p>{@code heightOffset}: 相对于基准平面的垂直偏移（2D 形状为 0）
+ * <p>{@code clickedFace}: 玩家点击的面的方向
+ * <p>{@code placementFace}: 放置方块时的贴附面方向
  */
 public final class AreaShapeInput {
     private final BlockPos start;

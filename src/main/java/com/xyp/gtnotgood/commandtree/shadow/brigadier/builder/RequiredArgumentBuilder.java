@@ -1,6 +1,8 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.builder;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.arguments.ArgumentType;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion.SuggestionProvider;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.tree.ArgumentCommandNode;
@@ -8,8 +10,11 @@ import com.xyp.gtnotgood.commandtree.shadow.brigadier.tree.CommandNode;
 
 /** Relocated Brigadier RequiredArgumentBuilder used by the command-tree parser. */
 public class RequiredArgumentBuilder<S, T> extends ArgumentBuilder<S, RequiredArgumentBuilder<S, T>> {
+   @Getter
    private final String name;
+   @Getter
    private final ArgumentType<T> type;
+   @Getter
    private SuggestionProvider<S> suggestionsProvider = null;
 
    private RequiredArgumentBuilder(String name, ArgumentType<T> type) {
@@ -26,20 +31,8 @@ public class RequiredArgumentBuilder<S, T> extends ArgumentBuilder<S, RequiredAr
       return this.getThis();
    }
 
-   public SuggestionProvider<S> getSuggestionsProvider() {
-      return this.suggestionsProvider;
-   }
-
    protected RequiredArgumentBuilder<S, T> getThis() {
       return this;
-   }
-
-   public ArgumentType<T> getType() {
-      return this.type;
-   }
-
-   public String getName() {
-      return this.name;
    }
 
    public ArgumentCommandNode<S, T> build() {

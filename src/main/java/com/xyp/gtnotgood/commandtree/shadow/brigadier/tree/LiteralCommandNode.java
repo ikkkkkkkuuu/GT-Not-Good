@@ -1,6 +1,8 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.tree;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.Command;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.RedirectModifier;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.StringReader;
@@ -19,6 +21,7 @@ import java.util.function.Predicate;
 
 /** Relocated Brigadier LiteralCommandNode used by the command-tree parser. */
 public class LiteralCommandNode<S> extends CommandNode<S> {
+   @Getter
    private final String literal;
    private final String literalLowerCase;
 
@@ -26,10 +29,6 @@ public class LiteralCommandNode<S> extends CommandNode<S> {
       super(command, requirement, redirect, modifier, forks);
       this.literal = literal;
       this.literalLowerCase = literal.toLowerCase(Locale.ROOT);
-   }
-
-   public String getLiteral() {
-      return this.literal;
    }
 
    @Override

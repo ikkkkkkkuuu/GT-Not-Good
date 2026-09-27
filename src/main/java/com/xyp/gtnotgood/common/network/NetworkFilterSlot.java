@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.common.network;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.utils.item.IItemHandlerModifiable;
@@ -18,7 +20,7 @@ final class NetworkFilterSlot extends ModularSlot {
     }
 
     @Override
-    public int getItemStackLimit(ItemStack stack) {
+    public int getItemStackLimit(@Nonnull ItemStack stack) {
         return 1;
     }
 }

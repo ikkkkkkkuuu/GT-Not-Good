@@ -12,6 +12,8 @@ import thaumcraft.common.tiles.TileCrucible;
 public abstract class MixinPackagedCrucible implements CrucibleCooldownAccess {
 
     @Shadow
+    // This shadow writes the target object's state and must remain a field.
+    @SuppressWarnings("FieldCanBeLocal")
     private long counter;
 
     @Override

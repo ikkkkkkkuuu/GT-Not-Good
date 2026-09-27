@@ -61,7 +61,7 @@ public final class RtsWorkflowEngine implements IWorkflowEngine {
     private final Map<UUID, Map<Integer, RtsWorkflowSlotManager>> playerSlots = new ConcurrentHashMap<>();
 
     /**
-     * 追踪每个 UUID 最近的有效 {@link ServerPlayer} 引用。
+     * 追踪每个 UUID 最近的有效 {@code ServerPlayer} 引用。
      * 每次调用 {@code start()}、{@code from()} 和 {@code lastActive()} 时更新。
      */
     private final Map<UUID, EntityPlayerMP> playerRefs = new ConcurrentHashMap<>();
@@ -154,7 +154,7 @@ public final class RtsWorkflowEngine implements IWorkflowEngine {
     }
 
     /**
-     * 根据 {@link ServerPlayer} 和条目 ID 查找条目。
+     * 根据 {@code ServerPlayer} 和条目 ID 查找条目。
      * 公开方法——供统一 Task Engine
      * 等跨包组件使用，避免重复的 engine.from() → token.isPaused() 两次独立 lookup。
      */
@@ -165,7 +165,7 @@ public final class RtsWorkflowEngine implements IWorkflowEngine {
     }
 
     /**
-     * 根据玩家 UUID、维度和条目 ID 查找条目，无需 {@link ServerPlayer} 对象。
+     * 根据玩家 UUID、维度和条目 ID 查找条目，无需 {@code ServerPlayer} 对象。
      * <p>供调用方已有 UUID 和维度时的 hot path 使用，避免 {@code player.level().dimension()} 额外开销。
      */
     @Nullable
@@ -355,11 +355,10 @@ public final class RtsWorkflowEngine implements IWorkflowEngine {
         if (slots == null) return Optional.empty();
         for (RtsWorkflowEntry entry : slots.allEntries()) {
             NBTTagCompound extra = entry.getExtraData();
-            if (entry.type() == RtsWorkflowType.BLUEPRINT_BUILD && extra != null
-                    && com.rtsbuilding.rtsbuilding.platform.nbt.NbtCompat.hasUuid(
-                            extra, "durable_task_id")
-                    && taskId.equals(com.rtsbuilding.rtsbuilding.server.task.persistence.NbtCompat
-                            .getUuid(extra, "durable_task_id"))) {
+            if (entry.type() == RtsWorkflowType.BLUEPRINT_BUILD && com.rtsbuilding.rtsbuilding.platform.nbt.NbtCompat.hasUuid(
+                extra, "durable_task_id")
+                && taskId.equals(com.rtsbuilding.rtsbuilding.server.task.persistence.NbtCompat
+                .getUuid(extra, "durable_task_id"))) {
                 return Optional.of(new RtsWorkflowToken(player.getUniqueID(), entry.id(), dimension, this));
             }
         }

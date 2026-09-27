@@ -196,7 +196,7 @@ public class RadialMenuScreen extends GuiScreen {
             needsRecheckStacks = false;
         }
 
-        menu.draw(mouseX, mouseY, partialTicks);
+        menu.draw(mouseX, mouseY);
     }
 
     /**

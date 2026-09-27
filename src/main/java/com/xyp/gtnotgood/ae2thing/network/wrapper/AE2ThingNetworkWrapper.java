@@ -5,7 +5,6 @@ import java.util.EnumMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
-import net.minecraft.tileentity.TileEntity;
 
 import com.google.common.base.Throwables;
 
@@ -114,7 +113,7 @@ public class AE2ThingNetworkWrapper {
 
     /**
      * Construct a minecraft packet from the supplied message. Can be used where minecraft packets are required, such as
-     * {@link TileEntity#getDescriptionPacket}.
+     * {@link net.minecraft.tileentity.TileEntity#getDescriptionPacket()}.
      *
      * @param message The message to translate into packet form
      * @return A minecraft {@link Packet} suitable for use in minecraft APIs

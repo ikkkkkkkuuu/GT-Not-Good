@@ -1,12 +1,15 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.Message;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.context.StringRange;
 import java.util.Objects;
 
 /** Relocated Brigadier IntegerSuggestion used by the command-tree parser. */
 public class IntegerSuggestion extends Suggestion {
+   @Getter
    private int value;
 
    public IntegerSuggestion(StringRange range, int value) {
@@ -16,10 +19,6 @@ public class IntegerSuggestion extends Suggestion {
    public IntegerSuggestion(StringRange range, int value, Message tooltip) {
       super(range, Integer.toString(value), tooltip);
       this.value = value;
-   }
-
-   public int getValue() {
-      return this.value;
    }
 
    @Override

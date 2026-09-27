@@ -9,15 +9,15 @@ import java.util.Objects;
  * 对挂起作业的剩余位置进行世界扫描，得到各项统计数据。
  * 此结果被缓存后由客户端消费，用于在面板上展示扫描详情和重启策略决策。
  *
- * @param itemId             正在放置的物品 ID（如 {@code "minecraft:diamond_block"}）
- * @param itemLabel          物品的本地化显示名称（可选，为空时客户端使用 itemId）
- * @param totalRemaining     作业剩余总位置数（含已放置和冲突的格）
- * @param alreadyPlacedCount 范围内已存在同种方块的位置数（用户手动放置的）
- * @param conflictCount      范围内存在不同方块的位置数（冲突格，需跳过或覆盖）
- * @param availableItems     当前存储系统中该物品的可用数量（含玩家背包）
- * @param neededItems        重启实际需要从存储提取的物品数（= totalRemaining - alreadyPlacedCount）
- * @param missingItems       缺少物品数（= neededItems - availableItems，≤0 表示足够）
- * @param workflowEntryId    目标工作流条目 ID，用于定位对应的挂起作业
+ * <p>{@code itemId}: 正在放置的物品 ID（如 {@code "minecraft:diamond_block"}）
+ * <p>{@code itemLabel}: 物品的本地化显示名称（可选，为空时客户端使用 itemId）
+ * <p>{@code totalRemaining}: 作业剩余总位置数（含已放置和冲突的格）
+ * <p>{@code alreadyPlacedCount}: 范围内已存在同种方块的位置数（用户手动放置的）
+ * <p>{@code conflictCount}: 范围内存在不同方块的位置数（冲突格，需跳过或覆盖）
+ * <p>{@code availableItems}: 当前存储系统中该物品的可用数量（含玩家背包）
+ * <p>{@code neededItems}: 重启实际需要从存储提取的物品数（= totalRemaining - alreadyPlacedCount）
+ * <p>{@code missingItems}: 缺少物品数（= neededItems - availableItems，≤0 表示足够）
+ * <p>{@code workflowEntryId}: 目标工作流条目 ID，用于定位对应的挂起作业
  *
  * <p><b>派生方法：</b>
  * <ul>

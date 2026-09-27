@@ -5,6 +5,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 
 import gregtech.api.enums.Materials;
+import lombok.Getter;
+import lombok.Setter;
 
 /** 按材料属性过滤（金属/宝石/矿石/齿轮/电池/流体...）。可记住一个示例材料，供 GUI 只在它实际拥有的属性里循环选择。 */
 public final class PropertyFilterComponent extends AbstractFilterComponent {
@@ -14,8 +16,11 @@ public final class PropertyFilterComponent extends AbstractFilterComponent {
     private static final String KEY_PROPERTY = "Property";
     private static final String KEY_EXAMPLE = "Example";
 
+    @Getter
+    @Setter
     private WildcardMaterials.Property property;
     /** 示例材料（拖入的物品解析出来），仅用于 GUI 列出可选属性，不参与匹配。 */
+    @Getter
     private Materials example;
 
     public PropertyFilterComponent(WildcardMaterials.Property property, Materials example, boolean whitelist) {
@@ -33,18 +38,6 @@ public final class PropertyFilterComponent extends AbstractFilterComponent {
         Materials example = data.hasKey(KEY_EXAMPLE) ? WildcardMaterials.findByName(data.getString(KEY_EXAMPLE)) : null;
         if (!WildcardMaterials.isRealMaterial(example)) example = null;
         return new PropertyFilterComponent(property, example, readWhitelist(data));
-    }
-
-    public WildcardMaterials.Property getProperty() {
-        return property;
-    }
-
-    public void setProperty(WildcardMaterials.Property property) {
-        this.property = property;
-    }
-
-    public Materials getExample() {
-        return example;
     }
 
     /** 设置示例材料，并把当前属性对齐到该材料实际拥有的第一个属性（若当前属性它没有）。 */

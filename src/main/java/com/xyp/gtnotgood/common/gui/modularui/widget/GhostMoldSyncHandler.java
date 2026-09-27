@@ -12,6 +12,8 @@ import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.utils.MoldDataManager;
 
+import lombok.Getter;
+
 /**
  * 幽灵模具槽位的同步处理器
  * 处理客户端-服务器之间的模具选择同步
@@ -19,6 +21,7 @@ import com.xyp.gtnotgood.common.utils.MoldDataManager;
 public class GhostMoldSyncHandler extends PhantomItemSlotSH {
 
     private final SuperMTEHatchCraftingInputME hatch;
+    @Getter
     private IntSyncValue indexSync;
 
     @SuppressWarnings("UnstableApiUsage")
@@ -88,7 +91,4 @@ public class GhostMoldSyncHandler extends PhantomItemSlotSH {
         if (indexSync != null) indexSync.setIntValue(index);
     }
 
-    public IntSyncValue getIndexSync() {
-        return indexSync;
-    }
 }

@@ -13,11 +13,8 @@ import net.minecraft.server.MinecraftServer;
 
 /** Ported command-tree CommandSource used by the integrated chat suggestions. */
 public class CommandSource implements ISuggestionProvider {
-   private final ICommandSender sender;
-
-   public CommandSource(ICommandSender sender) {
-      this.sender = sender;
-   }
+   /** Keeps the adapter constructor compatible; suggestions currently use the server-wide player list. */
+   public CommandSource(ICommandSender ignoredSender) {}
 
    public static CommandSource adapt(ICommandSender sender) {
       return new CommandSource(sender);

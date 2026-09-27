@@ -202,6 +202,7 @@ public abstract class GTNGCleanWirelessMultiMachineBase<T extends GTNGCleanWirel
             }
 
             @Override
+            @Nonnull
             protected Stream<GTRecipe> findRecipeMatches(@Nullable RecipeMap<?> map) {
                 return filterRecipeMatches(super.findRecipeMatches(map));
             }

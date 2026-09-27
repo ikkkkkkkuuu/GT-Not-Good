@@ -32,10 +32,10 @@ public class CommandTreeConverter {
    private CommandNode<ISuggestionProvider> convertNode(CommandNode<CommandSource> serverNode) {
       @SuppressWarnings("unchecked")
       ArgumentBuilder<ISuggestionProvider, ?> builder = (ArgumentBuilder<ISuggestionProvider, ?>) (ArgumentBuilder) serverNode.createBuilder();
-      return this.configureBuilder(builder, serverNode).build();
+      return this.configureBuilder(builder).build();
    }
 
-   private ArgumentBuilder<ISuggestionProvider, ?> configureBuilder(ArgumentBuilder<ISuggestionProvider, ?> builder, CommandNode<CommandSource> serverNode) {
+   private ArgumentBuilder<ISuggestionProvider, ?> configureBuilder(ArgumentBuilder<ISuggestionProvider, ?> builder) {
       builder.requires(client -> true);
       if (builder.getCommand() != null) {
          builder.executes(context -> 0);

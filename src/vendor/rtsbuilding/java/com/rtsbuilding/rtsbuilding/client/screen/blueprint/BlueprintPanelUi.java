@@ -31,7 +31,7 @@ final class BlueprintPanelUi {
      * Trims a string to fit within a pixel width and appends an ellipsis.
      *
      * <p>Minecraft's bitmap font is not monospaced across all glyphs and active
-     * languages, so this uses the live {@link Font} measurement instead of a
+     * languages, so this uses the live {@code Font} measurement instead of a
      * character count.</p>
      */
     static String trim(FontRenderer font, String text, int maxWidth) {

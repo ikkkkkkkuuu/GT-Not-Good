@@ -5,6 +5,8 @@ package com.xyp.gtnotgood.common.advancedio;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -304,12 +306,13 @@ final class AdvancedIOGui {
         panel.child(new TextFieldWidget() {
 
             @Override
-            public void setText(String text) {
+            public void setText(@Nonnull String text) {
                 // DoubleSyncValue's change notification uses Double.toString even for integer amounts.
                 super.setText(text.endsWith(".0") ? text.substring(0, text.length() - 2) : text);
             }
 
             @Override
+            @Nonnull
             public Result onKeyPressed(char character, int keyCode) {
                 Result result = super.onKeyPressed(character, keyCode);
                 if (result == Result.SUCCESS && (keyCode == 28 || keyCode == 156)) confirm.onMousePressed(0);

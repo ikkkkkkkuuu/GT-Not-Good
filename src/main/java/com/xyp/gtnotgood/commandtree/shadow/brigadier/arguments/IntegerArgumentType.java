@@ -1,6 +1,8 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.arguments;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.StringReader;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.context.CommandContext;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.exceptions.CommandSyntaxException;
@@ -10,7 +12,9 @@ import java.util.Collection;
 /** Relocated Brigadier IntegerArgumentType used by the command-tree parser. */
 public class IntegerArgumentType implements ArgumentType<Integer> {
    private static final Collection<String> EXAMPLES = Arrays.asList("0", "123", "-123");
+   @Getter
    private final int minimum;
+   @Getter
    private final int maximum;
 
    private IntegerArgumentType(int minimum, int maximum) {
@@ -32,14 +36,6 @@ public class IntegerArgumentType implements ArgumentType<Integer> {
 
    public static int getInteger(CommandContext<?> context, String name) {
       return context.getArgument(name, int.class);
-   }
-
-   public int getMinimum() {
-      return this.minimum;
-   }
-
-   public int getMaximum() {
-      return this.maximum;
    }
 
    public Integer parse(StringReader reader) throws CommandSyntaxException {

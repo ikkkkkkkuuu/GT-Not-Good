@@ -20,6 +20,7 @@ import appeng.api.storage.data.IAEStack;
 import gregtech.api.enums.GTValues;
 import gregtech.api.objects.GTDualInputPattern;
 import gregtech.api.util.GTUtility;
+import lombok.Getter;
 
 public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.PatternSlot<SuperMTEHatchCraftingInputME> {
 
@@ -28,6 +29,7 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
 
     private ICraftingPatternDetails activePatternDetails;
     private ItemStack activePatternStack;
+    @Getter
     private String activeGeneratedPatternId = "";
     private final WildcardPatternCache<List<ICraftingPatternDetails>> expansionCache = new WildcardPatternCache<>();
     private List<ICraftingPatternDetails> cachedExpandedDetails = java.util.Collections.emptyList();
@@ -58,10 +60,6 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
     private void setActivePatternStack(ItemStack activePattern) {
         this.activePatternStack = activePattern == null ? null : activePattern.copy();
         this.activeGeneratedPatternId = WildcardPatternGenerator.getGeneratedPatternId(activePattern);
-    }
-
-    public String getActiveGeneratedPatternId() {
-        return this.activeGeneratedPatternId;
     }
 
     public List<ICraftingPatternDetails> getExpandedDetails(ItemStack patternStack, World world) {

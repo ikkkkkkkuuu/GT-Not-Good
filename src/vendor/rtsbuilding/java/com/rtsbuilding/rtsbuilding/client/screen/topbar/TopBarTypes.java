@@ -6,8 +6,8 @@ package com.rtsbuilding.rtsbuilding.client.screen.topbar;
  * <p>
  * Groups the button identifier enum and the layout parameter record that are
  * always used together by {@link TopBarPanel}, {@link TopBarIconRenderer},
- * {@link com.rtsbuilding.rtsbuilding.client.screen.BuilderScreen},
- * and the {@link com.rtsbuilding.rtsbuilding.client.screen.guide.GuidePanel guide system}.
+ * {@code com.rtsbuilding.rtsbuilding.client.screen.BuilderScreen},
+ * and the {@code com.rtsbuilding.rtsbuilding.client.screen.guide.GuidePanel guide system}.
  * <p>
  * <b>Why combined:</b> {@link TopBarButtonLayout} references {@link TopBarButtonId}
  * directly in its single field, and every call site imports both types from the
@@ -46,12 +46,12 @@ public final class TopBarTypes {
      * top-bar button. Produced by {@link TopBarPanel#buildTopBarButtonLayouts()}
      * and consumed by its render and click methods.
      *
-     * @param id       the button identifier
-     * @param x        button left-edge X coordinate
-     * @param width    button width in pixels
-     * @param label    display label (empty for icon-only buttons)
-     * @param iconOnly true if this button draws an icon instead of a text label
-     * @param active   true if the button should appear highlighted (toggled on)
+     * <p>{@code id}: the button identifier
+     * <p>{@code x}: button left-edge X coordinate
+     * <p>{@code width}: button width in pixels
+     * <p>{@code label}: display label (empty for icon-only buttons)
+     * <p>{@code iconOnly}: true if this button draws an icon instead of a text label
+     * <p>{@code active}: true if the button should appear highlighted (toggled on)
      */
     public static final class TopBarButtonLayout {
         private final TopBarButtonId id;

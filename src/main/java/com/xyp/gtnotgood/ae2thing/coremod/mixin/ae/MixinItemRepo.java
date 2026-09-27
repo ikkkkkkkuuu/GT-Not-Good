@@ -38,6 +38,8 @@ public abstract class MixinItemRepo implements IDisplayRepo, IDisplayRepoExtend 
     private IItemList<IAEStack<?>> list;
 
     @Shadow(remap = false)
+    // This shadow writes the target object's state and must remain a field.
+    @SuppressWarnings("FieldCanBeLocal")
     private boolean paused;
 
     private void setAsEmpty(int i) {

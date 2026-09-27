@@ -133,7 +133,8 @@ public abstract class ItemBaseWirelessTerminal extends ToolWirelessTerminal
     /**
      * When AE2's own GUI switching (PacketSwitchGuis / GuiBridge) reopens a terminal from its item stack — e.g. the
      * "back" button on the crafting-status screen returning to GUI_CRAFTING_TERMINAL — it rebuilds the host via
-     * {@link appeng.core.sync.GuiBridge#getGuiObject}. Without this override that path wraps any wireless terminal in a
+     * {@link appeng.core.sync.GuiBridge}'s {@code getGuiObject}. Without this override that path wraps any wireless
+     * terminal in a
      * plain {@link appeng.helpers.WirelessTerminalGuiObject}, which is NOT an
      * {@link appeng.api.parts.ICraftingTerminal},
      * so GUI_CRAFTING_TERMINAL's host check fails, a ContainerNull is returned and the GUI closes. Returning a

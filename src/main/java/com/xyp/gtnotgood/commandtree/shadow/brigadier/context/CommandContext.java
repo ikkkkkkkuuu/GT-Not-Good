@@ -1,6 +1,8 @@
 // spotless:off
 package com.xyp.gtnotgood.commandtree.shadow.brigadier.context;
 
+import lombok.Getter;
+
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.Command;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.RedirectModifier;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.tree.CommandNode;
@@ -11,13 +13,20 @@ import java.util.Map;
 /** Relocated Brigadier CommandContext used by the command-tree parser. */
 public class CommandContext<S> {
    private static final Map<Class<?>, Class<?>> PRIMITIVE_TO_WRAPPER = new HashMap<>();
+   @Getter
    private final S source;
+   @Getter
    private final String input;
+   @Getter
    private final Command<S> command;
    private final Map<String, ParsedArgument<S, ?>> arguments;
+   @Getter
    private final CommandNode<S> rootNode;
+   @Getter
    private final List<ParsedCommandNode<S>> nodes;
+   @Getter
    private final StringRange range;
+   @Getter
    private final CommandContext<S> child;
    private final RedirectModifier<S> modifier;
    private final boolean forks;
@@ -52,10 +61,6 @@ public class CommandContext<S> {
          : new CommandContext<>(source, this.input, this.arguments, this.command, this.rootNode, this.nodes, this.range, this.child, this.modifier, this.forks);
    }
 
-   public CommandContext<S> getChild() {
-      return this.child;
-   }
-
    public CommandContext<S> getLastChild() {
       CommandContext<S> result = this;
 
@@ -64,14 +69,6 @@ public class CommandContext<S> {
       }
 
       return result;
-   }
-
-   public Command<S> getCommand() {
-      return this.command;
-   }
-
-   public S getSource() {
-      return this.source;
    }
 
    public <V> V getArgument(String name, Class<V> clazz) {
@@ -128,22 +125,6 @@ public class CommandContext<S> {
 
    public RedirectModifier<S> getRedirectModifier() {
       return this.modifier;
-   }
-
-   public StringRange getRange() {
-      return this.range;
-   }
-
-   public String getInput() {
-      return this.input;
-   }
-
-   public CommandNode<S> getRootNode() {
-      return this.rootNode;
-   }
-
-   public List<ParsedCommandNode<S>> getNodes() {
-      return this.nodes;
    }
 
    public boolean hasNodes() {

@@ -4,10 +4,12 @@ import net.minecraft.inventory.IInventory;
 
 import appeng.container.slot.IOptionalSlotHost;
 import appeng.container.slot.OptionalSlotFake;
+import lombok.Getter;
 
 public class SlotPatternFake extends OptionalSlotFake {
 
     private static final int POSITION_SHIFT = 9000;
+    @Getter
     private boolean hidden = false;
 
     public SlotPatternFake(IInventory inv, IOptionalSlotHost containerBus, int idx, int x, int y, int offX, int offY,
@@ -23,7 +25,4 @@ public class SlotPatternFake extends OptionalSlotFake {
         }
     }
 
-    public boolean isHidden() {
-        return this.hidden;
-    }
 }

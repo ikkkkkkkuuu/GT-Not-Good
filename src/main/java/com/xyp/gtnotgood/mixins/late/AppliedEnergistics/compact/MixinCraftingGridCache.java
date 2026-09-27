@@ -20,8 +20,8 @@ import appeng.crafting.CraftingLink;
 import appeng.me.cache.CraftingGridCache;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 
-@Mixin(value = CraftingGridCache.class, remap = false)
 /** Adapted AE crafting component; see reference/UPSTREAM_PORT_NOTES.md for provenance. */
+@Mixin(value = CraftingGridCache.class, remap = false)
 public abstract class MixinCraftingGridCache {
 
     @Shadow

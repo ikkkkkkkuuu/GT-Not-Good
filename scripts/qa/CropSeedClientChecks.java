@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldSettings;
@@ -66,6 +67,29 @@ public final class CropSeedClientChecks {
             Config.enableCropMaxStats = false;
             Config.enableCropGuaranteedSeedDrop = true;
             player.capabilities.isCreativeMode = false;
+            for (int amount : new int[] { 1, 64 }) {
+                int x = 500 + amount * 4;
+                player.worldObj.setBlock(x, 80, 0, Blocks.farmland, 7, 3);
+                player.worldObj.setBlock(x, 81, 0, CropsNHBlocks.blockCropSticks, 0, 3);
+                TileEntityCropSticks crop = (TileEntityCropSticks) player.worldObj.getTileEntity(x, 81, 0);
+                ItemStack carrot = new ItemStack(Items.carrot, amount);
+                player.inventory.setInventorySlotContents(player.inventory.currentItem, carrot);
+                crop.onRightClick(player, carrot);
+                if (!crop.hasCrop() || crop.getSeed().getCrop() != CropsNHCrops.Carrot) {
+                    throw new AssertionError("Vanilla carrot planting failed");
+                }
+                crop.setGrowthProgress(CropsNHCrops.Carrot.getGrowthDuration());
+                if (!crop.canHarvest()) throw new AssertionError("Carrot must be mature and harvestable");
+                ItemStack expected = CropsNHCrops.Carrot.getSeedItem(crop.getSeed().getStats());
+                player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+                CropsNHBlocks.blockCropSticks.onBlockClicked(player.worldObj, x, 81, 0, player);
+                List<EntityItem> items = player.worldObj.getEntitiesWithinAABB(EntityItem.class,
+                    AxisAlignedBB.getBoundingBox(x - 1, 80, -1, x + 2, 83, 2));
+                int seeds = items.stream().map(EntityItem::getEntityItem)
+                    .filter(s -> s.isItemEqual(expected) && ItemStack.areItemStackTagsEqual(s, expected))
+                    .mapToInt(s -> s.stackSize).sum();
+                if (seeds != 1 || crop.hasCrop()) throw new AssertionError("Vanilla carrots=" + amount + ", CropsNH seeds=" + seeds);
+            }
             for (int amount : new int[] { 1, 2, 64 }) {
                 int x = 100 + amount * 4;
                 player.worldObj.setBlock(x, 80, 0, Blocks.farmland, 7, 3);
@@ -103,7 +127,7 @@ public final class CropSeedClientChecks {
                     }
                 }
             }
-            Files.write(Paths.get("crop-seed-qa-result.txt"), "PASS: survival planting/entity drops for stacks 1/2/64; 800 empty-hand removals".getBytes());
+            Files.write(Paths.get("crop-seed-qa-result.txt"), "PASS: mature vanilla carrots 1/64 produce CropsNH seeds; native seeds 1/2/64; 800 empty-hand removals".getBytes());
             System.out.println("CROP_SEED_QA: PASS");
         } catch (Throwable failure) {
             failure.printStackTrace();
