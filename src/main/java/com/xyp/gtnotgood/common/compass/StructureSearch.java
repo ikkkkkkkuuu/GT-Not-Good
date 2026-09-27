@@ -29,9 +29,11 @@ import net.minecraftforge.event.world.WorldEvent;
 
 import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.common.compass.StructureLocations.Location;
+import com.xyp.gtnotgood.utils.enums.ModList;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 /** Bounded, server-thread seed search. Only reads existing chunks; it never calls a generating chunk provider. */
 public final class StructureSearch {
@@ -60,6 +62,7 @@ public final class StructureSearch {
             player.addChatMessage(new ChatComponentTranslation("compass.busy"));
             return;
         }
+        if (StructureCompassItem.mode(stack) == 1) refreshLoadedGames(player);
         Location known = StructureLocations.get(player.worldObj)
             .nearest(StructureCompassItem.mode(stack), player.posX, player.posZ, RADIUS);
         if (known != null) {
@@ -163,6 +166,38 @@ public final class StructureSearch {
         StructureMarkers.scan(level, StructureLocations.get(world), Block.getIdFromBlock(Blocks.brick_block));
     }
 
+    /**
+     * Discovers nearby existing game cores even when they predate the compass index or current seed settings.
+     * Only examines already loaded tiles within 256 blocks; no terrain is loaded or generated.
+     *
+     * @param player search origin in the server world
+     */
+    private static void refreshLoadedGames(EntityPlayer player) {
+        World world = player.worldObj;
+        for (Object object : world.loadedTileEntityList) {
+            TileEntity tile = (TileEntity) object;
+            double dx = tile.xCoord + .5 - player.posX, dz = tile.zCoord + .5 - player.posZ;
+            if (dx * dx + dz * dz > 256.0 * 256.0 || !isGameCore(tile)) continue;
+            StructureLocations.get(world)
+                .add(1, tile.xCoord, tile.yCoord, tile.zCoord);
+        }
+    }
+
+    /** Recognizes registered game cores without depending on optional tile class names or loading chunks. */
+    private static boolean isGameCore(TileEntity tile) {
+        if (tile.isInvalid() || tile.getWorldObj() == null
+            || !tile.getWorldObj()
+                .getChunkProvider()
+                .chunkExists(tile.xCoord >> 4, tile.zCoord >> 4))
+            return false;
+        GameRegistry.UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(tile.getBlockType());
+        return id != null && ModList.LootGames.getID()
+            .equals(id.modId)
+            && ("LootGamesMasterBlock".equals(id.name) || "gol_master".equals(id.name)
+                || "ms_master".equals(id.name)
+                || "sdk_master".equals(id.name));
+    }
+
     /** Copies only tile and block-ID data needed to recognize old structures; never reads neighboring chunks. */
     private static NBTTagCompound snapshot(Chunk chunk) {
         NBTTagCompound level = new NBTTagCompound();
@@ -171,9 +206,7 @@ public final class StructureSearch {
         boolean houseChest = false;
         for (Object object : chunk.chunkTileEntityMap.values()) {
             TileEntity tile = (TileEntity) object;
-            if (!(tile instanceof TileEntityChest) && !tile.getClass()
-                .getName()
-                .startsWith("ru.timeconqueror.lootgames.")) continue;
+            if (!(tile instanceof TileEntityChest) && !isGameCore(tile)) continue;
             NBTTagCompound tag = new NBTTagCompound();
             tile.writeToNBT(tag);
             tiles.appendTag(tag);

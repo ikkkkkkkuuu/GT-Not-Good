@@ -20,15 +20,13 @@ import com.xyp.ldlib.integration.modularui.ModernThemeAdapter;
 public final class StructureCompassGui {
 
     private final PlayerInventoryGuiData data;
-    private final ItemStack compass;
     private final ModernThemeAdapter theme = new ModernThemeAdapter(
         path -> ModList.GTNotGood.getResourceLocation("textures/gui/ldlib/" + path));
     private final IntSyncValue mode, state, x, y, z, dimension, distance;
 
     public StructureCompassGui(PlayerInventoryGuiData data, PanelSyncManager sync) {
         this.data = data;
-        compass = data.getUsedItemStack();
-        mode = new IntSyncValue(() -> StructureCompassItem.mode(compass));
+        mode = new IntSyncValue(() -> tag().getInteger("Mode") == 1 ? 1 : 0);
         state = new IntSyncValue(
             () -> StructureSearch.INSTANCE.isSearching(data.getPlayer()) ? 1
                 : tag().getBoolean("Found") ? tag().getBoolean("Confirmed") ? 3 : 2 : 0);
@@ -51,7 +49,19 @@ public final class StructureCompassGui {
     }
 
     private NBTTagCompound tag() {
-        return compass.hasTagCompound() ? compass.getTagCompound() : new NBTTagCompound();
+        ItemStack compass = compass();
+        return compass != null && compass.hasTagCompound() ? compass.getTagCompound() : new NBTTagCompound();
+    }
+
+    /**
+     * Resolves the opening inventory slot each time. Vanilla replaces its stack with a copy after handling
+     * the right-click packet, so retaining the construction-time object would reject every subsequent click.
+     *
+     * @return the current compass in the opening slot, or null if that slot no longer contains a compass
+     */
+    private ItemStack compass() {
+        ItemStack stack = data.getPlayer().inventory.getStackInSlot(data.getSlotIndex());
+        return stack != null && stack.getItem() instanceof StructureCompassItem ? stack : null;
     }
 
     public ModularPanel build() {
@@ -71,7 +81,7 @@ public final class StructureCompassGui {
                     14 + target * 159,
                     34,
                     153,
-                    () -> StructureCompassItem.selectMode(data.getPlayer(), compass, selected)).background(
+                    () -> StructureCompassItem.selectMode(data.getPlayer(), compass(), selected)).background(
                         new com.cleanroommc.modularui.drawable.DynamicDrawable(
                             () -> mode.getIntValue() == selected ? theme.hover : theme.button)));
         }
@@ -106,7 +116,7 @@ public final class StructureCompassGui {
                 14,
                 134,
                 100,
-                () -> StructureCompassItem.search(data.getPlayer(), compass),
+                () -> StructureCompassItem.search(data.getPlayer(), compass()),
                 () -> state.getIntValue() != 1));
         // #tr gui.compass.cancel
         // # Cancel search
@@ -130,14 +140,15 @@ public final class StructureCompassGui {
                 226,
                 134,
                 100,
-                () -> StructureCompassItem.selectMode(data.getPlayer(), compass, StructureCompassItem.mode(compass))));
+                () -> StructureCompassItem
+                    .selectMode(data.getPlayer(), compass(), StructureCompassItem.mode(compass()))));
         // #tr gui.compass.teleport
         // # Teleport to safe surface
         // # zh_CN 传送至目标附近安全地表
         panel.child(button("teleport", "gui.compass.teleport", 14, 163, 312, () -> {
             EntityPlayer player = data.getPlayer();
             if (player instanceof EntityPlayerMP && tag().getBoolean("Found")) {
-                CompassTravel.teleport((EntityPlayerMP) player, compass);
+                CompassTravel.teleport((EntityPlayerMP) player, compass());
                 player.closeScreen();
             }
         }, () -> state.getIntValue() >= 2 && distance.getIntValue() >= 0));
@@ -177,9 +188,7 @@ public final class StructureCompassGui {
             .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
                 if (mouse.isClient() || !available.getAsBoolean()) return;
                 EntityPlayer player = data.getPlayer();
-                if (player.isDead || player.inventory.currentItem != data.getSlotIndex()
-                    || player.getHeldItem() != compass
-                    || !(compass.getItem() instanceof StructureCompassItem)) return;
+                if (player.isDead || player.inventory.currentItem != data.getSlotIndex() || compass() == null) return;
                 action.run();
             }));
     }

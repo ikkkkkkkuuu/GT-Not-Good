@@ -321,7 +321,6 @@ Tooltip_VeinMiningPickaxe_01=Amount: %d
 Tooltip_VeinMiningPickaxe_PreciseMode_On=§aPrecise Mode: ON
 Tooltip_VeinMiningPickaxe_PreciseMode_Off=§cPrecise Mode: OFF
 Tooltip_VeinMiningPickaxe_ShiftScroll=§7Hold §eShift§7 + §eScroll§7 to adjust range
-Tooltip_VeinMiningPickaxe_MatterCluster=Chain-mined drops form Matter Clusters. Right-click a cluster to unpack.
 item.wildcardpattern.name=Wildcard Pattern
 tooltip.wildcardpattern.expand_count=Expanded Patterns:
 tooltip.wildcardpattern.usage=Right-click to configure

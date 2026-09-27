@@ -12,6 +12,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
@@ -113,9 +114,25 @@ public final class StructureCompassClientChecks {
             CompassTravel.teleport(player, compass);
             require(Math.abs(player.posX - 320) < 9 && Math.abs(player.posZ - 320) < 9, "explicit teleport destination");
             require(!player.isEntityInsideOpaqueBlock(), "safe teleport body");
+            // Simulate an already loaded old game room with no discovery record. Keep the house fixture.
+            StructureLocations index = StructureLocations.get(world);
+            var houseLocation = index.nearest(0, 400, 400, 4);
+            index.readFromNBT(new NBTTagCompound());
+            index.add(0, houseLocation.x, houseLocation.y, houseLocation.z);
+            require(index.nearest(1, 320, 320, 256) == null, "old room begins without an index entry");
+            StructureCompassItem.selectMode(player, compass, 1);
             stage = 3;
+            // Exercise the actual normal-right-click handler, including vanilla's post-open stack copy.
+            ItemStack openingStack = compass;
+            player.playerNetServerHandler.processPlayerBlockPlacement(
+                new C08PacketPlayerBlockPlacement(-1, -1, -1, 255, compass.copy(), 0, 0, 0));
+            compass = player.getHeldItem();
+            require(compass != openingStack, "normal right-click replaces the opening stack reference");
             verified = true;
-            compass.getItem().onItemRightClick(compass, world, player);
+        } else if (stage == 3 && guiStep == 10 && compass.getTagCompound().getBoolean("Found")) {
+            require(compass.getTagCompound().getBoolean("Confirmed"), "GUI discovers an already loaded unindexed game room");
+            require(Math.abs(compass.getTagCompound().getInteger("X") - 320) < 4, "GUI finds visible game core");
+            guiStep = 11;
         } else if (stage == 3 && guiStep == 1 && StructureCompassItem.mode(compass) == 0) {
             require(!compass.getTagCompound().getBoolean("Found"), "GUI target change clears old destination");
             guiStep = 2;
@@ -173,13 +190,16 @@ public final class StructureCompassClientChecks {
         File output = new File(System.getProperty("gtng.compass.qa.output")); output.mkdirs();
         if (guiStep == 6) {
         Files.write(new File(output, "result.txt").toPath(), "PASS".getBytes(StandardCharsets.UTF_8));
-        System.out.println("STRUCTURE_COMPASS_QA_PASS seed-no-load, generation hooks, markers, persistence, safe travel, GUI mode/search/teleport");
+        System.out.println("STRUCTURE_COMPASS_QA_PASS seed-no-load, generation hooks, markers, persistence, safe travel, real-right-click stack copy, unindexed loaded game room, GUI mode/search/teleport");
         mc.shutdown();
         return;
         }
         if (!(mc.currentScreen instanceof com.cleanroommc.modularui.screen.GuiContainerWrapper wrapper)) return;
         var screen = wrapper.getScreen();
         if (guiStep == 0) {
+            guiStep = 10;
+            click(screen, 60, 145);
+        } else if (guiStep == 11) {
             ScreenShotHelper.saveScreenshot(output, "compass-gui-lootgames.png", mc.displayWidth, mc.displayHeight, mc.getFramebuffer());
             guiStep = 1;
             click(screen, 70, 45);

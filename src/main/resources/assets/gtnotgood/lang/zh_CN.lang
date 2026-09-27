@@ -321,7 +321,6 @@ Tooltip_VeinMiningPickaxe_01=数量: %d
 Tooltip_VeinMiningPickaxe_PreciseMode_On=§a精确模式: 开启
 Tooltip_VeinMiningPickaxe_PreciseMode_Off=§c精确模式: 关闭
 Tooltip_VeinMiningPickaxe_ShiftScroll=§7按住§eShift§7 + §e滚轮§7调整范围
-Tooltip_VeinMiningPickaxe_MatterCluster=连锁挖掘掉落物自动打包为物质团，手持物质团右键拆包。
 item.wildcardpattern.name=通配样板符
 tooltip.wildcardpattern.expand_count=展开配方数:
 tooltip.wildcardpattern.usage=右键配置
