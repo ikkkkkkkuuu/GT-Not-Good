@@ -168,11 +168,9 @@ public class ClientProxy extends CommonProxy {
                 .bus()
                 .register(new com.xyp.gtnotgood.client.EdgeWindowIcon());
         }
-        if (com.xyp.gtnotgood.config.Config.hideWindowsTaskbarButton) {
-            FMLCommonHandler.instance()
-                .bus()
-                .register(new WindowsTaskbarButton());
-        }
+        FMLCommonHandler.instance()
+            .bus()
+            .register(new WindowsTaskbarButton());
         if (ModList.ThaumcraftResearchTweaks.isModLoaded()) {
             NetworkRegistry.INSTANCE.registerGuiHandler(
                 ModList.ThaumcraftResearchTweaks.getID(),

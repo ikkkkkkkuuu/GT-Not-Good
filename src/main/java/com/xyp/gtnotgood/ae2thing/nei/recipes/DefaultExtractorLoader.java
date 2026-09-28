@@ -5,7 +5,7 @@ import com.xyp.gtnotgood.ae2thing.nei.recipes.extractor.GT5RecipeExtractor;
 import com.xyp.gtnotgood.ae2thing.nei.recipes.extractor.ThaumcraftRecipeExtractor;
 import com.xyp.gtnotgood.ae2thing.nei.recipes.extractor.VanillaRecipeExtractor;
 
-import gregtech.api.recipe.RecipeMap;
+import gregtech.api.recipe.RecipeCategory;
 
 public class DefaultExtractorLoader implements Runnable {
 
@@ -17,12 +17,12 @@ public class DefaultExtractorLoader implements Runnable {
         FluidRecipe.addRecipeMap("crafting2x2", new VanillaRecipeExtractor(true));
         ThaumcraftRecipeExtractor.register();
         if (Mods.isGt5UnofficialLoaded() || Mods.isLegacyGt5Loaded()) {
-            for (RecipeMap<?> recipeMap : RecipeMap.ALL_RECIPE_MAPS.values()) {
+            for (RecipeCategory category : RecipeCategory.ALL_RECIPE_CATEGORIES.values()) {
                 FluidRecipe.addRecipeMap(
-                    recipeMap.unlocalizedName,
+                    category.unlocalizedName,
                     new GT5RecipeExtractor(
-                        recipeMap.unlocalizedName.equals("gt.recipe.scanner")
-                            || recipeMap.unlocalizedName.equals("gt.recipe.fakeAssemblylineProcess")));
+                        category.recipeMap.unlocalizedName.equals("gt.recipe.scanner")
+                            || category.recipeMap.unlocalizedName.equals("gt.recipe.fakeAssemblylineProcess")));
             }
         }
     }

@@ -165,8 +165,7 @@ public class Config {
                 CATEGORY_CLIENT,
                 "hideWindowsTaskbarButton",
                 false,
-                "开启后在 Windows 上自动隐藏本客户端的任务栏按钮；游戏窗口仍可正常使用。默认关闭，修改后重启游戏生效。")
-            .setRequiresMcRestart(true)
+                "开启后在 Windows 上隐藏本客户端的任务栏按钮；游戏窗口仍可正常使用。默认关闭，可在游戏内设置中即时切换。")
             .getBoolean(false);
         configuration.addCustomCategoryComment(CATEGORY_CUT_CORNERS, "配方提速配置");
         configuration.addCustomCategoryComment(CATEGORY_CROPSNH, "CropsNH 作物配置");
@@ -428,6 +427,14 @@ public class Config {
     public static synchronized Configuration getConfiguration() {
         ensureLoaded();
         return configuration;
+    }
+
+    /** Applies the taskbar option edited through Forge's live configuration screen. */
+    public static synchronized void refreshClientTaskbarButton() {
+        ensureLoaded();
+        hideWindowsTaskbarButton = configuration.getCategory(CATEGORY_CLIENT)
+            .get("hideWindowsTaskbarButton")
+            .getBoolean(false);
     }
 
     /**

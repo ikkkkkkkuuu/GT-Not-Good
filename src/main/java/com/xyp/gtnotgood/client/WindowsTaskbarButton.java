@@ -12,45 +12,52 @@ import java.util.concurrent.TimeUnit;
 import org.lwjgl.opengl.Display;
 
 import com.xyp.gtnotgood.GTNotGood;
+import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 
-/** Removes this client's taskbar button once its Windows window has been created. */
+/** Keeps this client's Windows taskbar button in sync with the live client option. */
 public final class WindowsTaskbarButton {
 
+    private volatile boolean hidden;
+    private volatile boolean running;
+    private volatile long nextAttemptAt;
+
     /**
-     * Starts the native taskbar operation off the render thread and unregisters after one attempt.
-     * The bundled script runs in a short-lived child process and makes no persistent Windows changes.
+     * Applies a changed setting off the render thread after the game window exists.
+     * A failed operation retries later without running a helper process every tick.
      *
      * @param event client tick delivered after the display may have been created
      */
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !Display.isCreated()) {
+        if (event.phase != TickEvent.Phase.END || !Display.isCreated()
+            || running
+            || Config.hideWindowsTaskbarButton == hidden
+            || System.nanoTime() < nextAttemptAt) {
             return;
         }
-        FMLCommonHandler.instance()
-            .bus()
-            .unregister(this);
         if (!System.getProperty("os.name", "")
             .toLowerCase(Locale.ROOT)
             .startsWith("windows")) {
             return;
         }
-        Thread worker = new Thread(this::hideButton, "GTNG-taskbar-button");
+        boolean desiredHidden = Config.hideWindowsTaskbarButton;
+        running = true;
+        Thread worker = new Thread(() -> setButtonHidden(desiredHidden), "GTNG-taskbar-button");
         worker.setDaemon(true);
         worker.start();
     }
 
-    private void hideButton() {
+    private void setButtonHidden(boolean desiredHidden) {
         try {
             String runtimeName = ManagementFactory.getRuntimeMXBean()
                 .getName();
             String processId = runtimeName.substring(0, runtimeName.indexOf('@'));
-            String script = readScript().replace("__PID__", processId);
+            String script = readScript().replace("__PID__", processId)
+                .replace("__VISIBLE__", desiredHidden ? "$false" : "$true");
             String command = Base64.getEncoder()
                 .encodeToString(script.getBytes(StandardCharsets.UTF_16LE));
             Process process = new ProcessBuilder(
@@ -66,15 +73,20 @@ public final class WindowsTaskbarButton {
                     .start();
             if (!process.waitFor(30, TimeUnit.SECONDS)) {
                 process.destroyForcibly();
-                GTNotGood.LOG.warn("Timed out hiding the Windows taskbar button");
+                GTNotGood.LOG.warn("Timed out changing the Windows taskbar button");
             } else if (process.exitValue() != 0) {
-                GTNotGood.LOG.warn("Could not hide the Windows taskbar button (exit {})", process.exitValue());
+                GTNotGood.LOG.warn("Could not change the Windows taskbar button (exit {})", process.exitValue());
+            } else {
+                hidden = desiredHidden;
             }
         } catch (IOException | RuntimeException e) {
-            GTNotGood.LOG.warn("Could not hide the Windows taskbar button", e);
+            GTNotGood.LOG.warn("Could not change the Windows taskbar button", e);
         } catch (InterruptedException e) {
             Thread.currentThread()
                 .interrupt();
+        } finally {
+            nextAttemptAt = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+            running = false;
         }
     }
 

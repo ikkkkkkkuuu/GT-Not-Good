@@ -1343,7 +1343,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     @Override
     public boolean hideItemPanelSlot(int x, int y, int width, int height) {
-        if (intersects(x, y, width, height, guiLeft + BUTTON_COLUMN_X, guiTop, BUTTON_COLUMN_WIDTH, ySize)
+        if (intersects(x, y, width, height, guiLeft, guiTop, xSize, ySize)
+            || intersects(x, y, width, height, guiLeft + BUTTON_COLUMN_X, guiTop, BUTTON_COLUMN_WIDTH, ySize)
             || intersects(
                 x,
                 y,

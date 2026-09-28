@@ -29,7 +29,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * Provides the client-only Mods menu configuration entry and persists accepted edits.
- * Runtime fields remain unchanged until restart because some options control mixins and registration.
+ * Most runtime fields remain unchanged until restart because some options control mixins and registration.
  */
 public class GTNGConfigGuiFactory implements IModGuiFactory {
 
@@ -86,7 +86,7 @@ public class GTNGConfigGuiFactory implements IModGuiFactory {
 
     /**
      * Saves the existing Configuration objects after Forge applies the Done button's edits.
-     * Does not reload files or mutate live gameplay fields, including an integrated server's fields.
+     * Refreshes only the client taskbar option; gameplay fields, including an integrated server's fields, stay fixed.
      *
      * @param event configuration change accepted by the Forge GUI
      */
@@ -98,6 +98,7 @@ public class GTNGConfigGuiFactory implements IModGuiFactory {
                 .save();
             MainConfig.getConfiguration()
                 .save();
+            Config.refreshClientTaskbarButton();
         }
     }
 

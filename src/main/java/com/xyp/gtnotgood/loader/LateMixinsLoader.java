@@ -113,6 +113,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "AppliedEnergistics.MTEHatchCraftingInputMENameMixin",
                 "AppliedEnergistics.MTEHatchCraftingInputMEMultiBlockNameMixin",
                 "AppliedEnergistics.PatternMultiplierHelperMixin",
+                "AppliedEnergistics.MatrixWildcardPatternOptimizationMixin",
                 "AppliedEnergistics.SuperMTEHatchCraftingInputMEMixin");
         }
 

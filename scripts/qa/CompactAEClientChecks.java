@@ -61,6 +61,7 @@ public final class CompactAEClientChecks {
     private AssemblerMatrix matrix;
     private QuantumComputer computer;
     private Future<ICraftingJob> job;
+    private Future<ICraftingJob> secondJob;
     private TileDrive drive;
     private int requestedSticks;
     private int networkResumeTick;
@@ -256,16 +257,32 @@ public final class CompactAEClientChecks {
                 // Let startup structure checks finish before testing a second order on the reloaded matrix.
                 if (ticks < 400) return;
                 matrix.getProxy().getStorage().getItemInventory().injectItems(
-                    AEItemStack.create(new ItemStack(Blocks.planks, 64)), Actionable.MODULATE, new MachineSource(matrix));
+                    AEItemStack.create(new ItemStack(Blocks.planks, 128)), Actionable.MODULATE,
+                    new MachineSource(matrix));
                 job = matrix.getProxy().getCrafting().beginCraftingJob(
                     world, matrix.getProxy().getGrid(), new MachineSource(matrix),
                     AEItemStack.create(new ItemStack(Items.stick, requestedSticks)), null);
+                secondJob = matrix.getProxy().getCrafting().beginCraftingJob(
+                    world, matrix.getProxy().getGrid(), new MachineSource(matrix),
+                    AEItemStack.create(new ItemStack(Items.stick, requestedSticks)), null);
                 stage = 7;
-            } else if (stage == 7 && job.isDone()) {
+            } else if (stage == 7 && job.isDone() && secondJob.isDone()) {
                 require(!job.get().isSimulation(), "new order after idle reload has ingredients");
-                var link = matrix.getProxy().getCrafting().submitJob(
+                require(!secondJob.get().isSimulation(), "second independent order has ingredients");
+                int previousCpuCount = computer.cpus.size();
+                var firstLink = matrix.getProxy().getCrafting().submitJob(
                     job.get(), null, null, false, new MachineSource(matrix));
-                require(link != null, "new order after idle reload accepted");
+                require(firstLink != null, "first independent order accepted");
+                require(((CraftingGridCache) matrix.getProxy().getCrafting()).hasCpu(computer.virtualCPU),
+                    "replacement CPU is visible before the next AE tick");
+                var secondLink = matrix.getProxy().getCrafting().submitJob(
+                    secondJob.get(), null, null, false, new MachineSource(matrix));
+                require(secondLink != null, "second independent order accepted in the same tick");
+                require(computer.cpus.size() == previousCpuCount + 2,
+                    "independent orders receive separate accelerated CPUs");
+                require(computer.cpus.get(previousCpuCount).getCoProcessors() == Integer.MAX_VALUE
+                    && computer.cpus.get(previousCpuCount + 1).getCoProcessors() == Integer.MAX_VALUE,
+                    "both orders retain maximum coprocessors");
                 for (var cpu : computer.cpus) {
                     cpu.updateCraftingLogic(matrix.getProxy().getGrid(), matrix.getProxy().getEnergy(),
                         (CraftingGridCache) matrix.getProxy().getCrafting());
@@ -283,10 +300,10 @@ public final class CompactAEClientChecks {
             } else if (stage == 9) {
                 if (!matrix.isActive()) return;
                 var count = matrix.getProxy().getStorage().getItemInventory().extractItems(
-                    AEItemStack.create(new ItemStack(Items.stick, requestedSticks * 2)), Actionable.SIMULATE,
+                    AEItemStack.create(new ItemStack(Items.stick, requestedSticks * 3)), Actionable.SIMULATE,
                     new MachineSource(matrix));
-                if (count == null || count.getStackSize() < requestedSticks * 2) return;
-                require(count.getStackSize() == requestedSticks * 2,
+                if (count == null || count.getStackSize() < requestedSticks * 3) return;
+                require(count.getStackSize() == requestedSticks * 3,
                     "accepted work resumes after AE interruption without controller toggle");
                 player.playerNetServerHandler.setPlayerLocation(.5, 10, -1.5, 0, 15);
                 matrix.onRightclick(matrix.getBaseMetaTileEntity(), player);

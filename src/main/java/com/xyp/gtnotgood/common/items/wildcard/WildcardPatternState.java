@@ -8,6 +8,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
+import com.xyp.gtnotgood.common.items.wildcard.model.IWildcardIOComponent;
+import com.xyp.gtnotgood.common.items.wildcard.model.WildcardModelState;
+import com.xyp.gtnotgood.common.items.wildcard.model.io.FluidIOComponent;
+import com.xyp.gtnotgood.common.items.wildcard.model.io.PrefixIOComponent;
+import com.xyp.gtnotgood.common.items.wildcard.model.io.SimpleIOComponent;
+
 /**
  * 通配样板符状态管理
  * 负责保存和加载物品的配置数据
@@ -89,6 +95,11 @@ public final class WildcardPatternState {
 
     public static void applyBitModification(ItemStack stack, int bitMultiplier) {
         if (stack == null || bitMultiplier == 0) {
+            return;
+        }
+
+        if (WildcardModelState.isNewModel(stack)) {
+            applyModelBitModification(stack, bitMultiplier);
             return;
         }
 
@@ -184,6 +195,9 @@ public final class WildcardPatternState {
     }
 
     private static int getMaxBitModification(ItemStack stack, boolean dividing) {
+        if (WildcardModelState.isNewModel(stack)) {
+            return getModelMaxBitModification(stack, dividing);
+        }
         int result = 30;
         boolean found = false;
         for (WildcardPatternEntry entry : getInputEntries(stack)) {
@@ -199,6 +213,56 @@ public final class WildcardPatternState {
             }
         }
         return found ? result : 0;
+    }
+
+    /** Scales the shared component amounts, so every material expansion receives the same batch size. */
+    private static void applyModelBitModification(ItemStack stack, int bitMultiplier) {
+        boolean dividing = bitMultiplier < 0;
+        int bits = Math.min(30, Math.abs(bitMultiplier));
+        if (bits > getModelMaxBitModification(stack, dividing)) return;
+        long factor = 1L << bits;
+        List<IWildcardIOComponent> inputs = WildcardModelState.getInputs(stack);
+        List<IWildcardIOComponent> outputs = WildcardModelState.getOutputs(stack);
+        for (IWildcardIOComponent component : inputs) scaleComponent(component, factor, dividing);
+        for (IWildcardIOComponent component : outputs) scaleComponent(component, factor, dividing);
+        WildcardModelState.setInputs(stack, inputs);
+        WildcardModelState.setOutputs(stack, outputs);
+    }
+
+    private static void scaleComponent(IWildcardIOComponent component, long factor, boolean dividing) {
+        if (component == null || component.isEmpty()) return;
+        if (component instanceof PrefixIOComponent prefix) {
+            prefix.setAmount((int) (dividing ? prefix.getAmount() / factor : prefix.getAmount() * factor));
+        } else if (component instanceof FluidIOComponent fluid) {
+            fluid.setAmount(dividing ? fluid.getAmount() / factor : fluid.getAmount() * factor);
+        } else if (component instanceof SimpleIOComponent simple) {
+            simple.setAmount(dividing ? simple.getAmount() / factor : simple.getAmount() * factor);
+        }
+    }
+
+    private static int getModelMaxBitModification(ItemStack stack, boolean dividing) {
+        int result = 30;
+        boolean found = false;
+        for (IWildcardIOComponent component : WildcardModelState.getInputs(stack)) {
+            if (component != null && !component.isEmpty()) {
+                result = Math.min(result, getMaxBits(componentAmount(component), dividing));
+                found = true;
+            }
+        }
+        for (IWildcardIOComponent component : WildcardModelState.getOutputs(stack)) {
+            if (component != null && !component.isEmpty()) {
+                result = Math.min(result, getMaxBits(componentAmount(component), dividing));
+                found = true;
+            }
+        }
+        return found ? result : 0;
+    }
+
+    private static long componentAmount(IWildcardIOComponent component) {
+        if (component instanceof PrefixIOComponent prefix) return prefix.getAmount();
+        if (component instanceof FluidIOComponent fluid) return fluid.getAmount();
+        if (component instanceof SimpleIOComponent simple) return simple.getAmount();
+        return WildcardPatternEntry.MAX_AMOUNT;
     }
 
     private static int getMaxBits(long amount, boolean dividing) {

@@ -1,4 +1,4 @@
-package com.xyp.gtnotgood.common.items.wildcard;
+package com.xyp.gtnotgood.common.items.wildcard.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -10,23 +10,19 @@ import java.util.List;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.oredict.OreDictionary;
 
 import org.junit.Test;
 
-import com.xyp.gtnotgood.common.items.wildcard.model.IWildcardFilterComponent;
-import com.xyp.gtnotgood.common.items.wildcard.model.IWildcardIOComponent;
-import com.xyp.gtnotgood.common.items.wildcard.model.WildcardExpansion;
-import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 import com.xyp.gtnotgood.common.items.wildcard.model.filter.SimpleFilterComponent;
 import com.xyp.gtnotgood.common.items.wildcard.model.filter.StringFilterComponent;
-import com.xyp.gtnotgood.common.items.wildcard.model.io.PrefixIOComponent;
 
 import gregtech.api.enums.Materials;
-import gregtech.api.enums.OrePrefixes;
 
-/** Compares allocation-light counting with expansion for rejected, missing and empty components. */
+/** Checks expansion with a fixed material list so JUnit does not need a running Forge registry. */
 public class WildcardExpansionTest {
+
+    private static final String ADDON_NAME = "WildcardAddonTestium";
+    private static final List<String> MATERIAL_NAMES = Arrays.asList(Materials.Iron.mName, ADDON_NAME);
 
     @Test
     public void countsMatchExpansionAcrossFiltersAndUnavailableForms() {
@@ -36,8 +32,12 @@ public class WildcardExpansionTest {
         List<IWildcardFilterComponent> ironOnly = Collections
             .singletonList(new SimpleFilterComponent(Materials.Iron, true));
         assertTrue(
-            WildcardExpansion
-                .countExpanded(Collections.singletonList(valid), Collections.singletonList(valid), ironOnly) > 0);
+            WildcardExpansion.countExpanded(
+                Collections.singletonList(valid),
+                Collections.singletonList(valid),
+                ironOnly,
+                MATERIAL_NAMES,
+                false) > 0);
         assertCount(Collections.singletonList(valid), Collections.singletonList(valid), ironOnly, 1);
         assertCount(Arrays.asList(null, empty, valid), Collections.singletonList(valid), ironOnly, 1);
         assertCount(Collections.singletonList(unavailable), Collections.singletonList(valid), ironOnly, 0);
@@ -56,20 +56,18 @@ public class WildcardExpansionTest {
     }
 
     @Test
-    public void expandsAddonOreMaterialWithoutGtMaterialEntry() {
-        String name = "WildcardAddonTestium";
+    public void expandsAddonMaterialNameWithoutGtEntry() {
         Item ingot = new Item();
         Item dust = new Item();
-        OreDictionary.registerOre("ingot" + name, new ItemStack(ingot));
-        OreDictionary.registerOre("dust" + name, new ItemStack(dust));
-        List<IWildcardIOComponent> inputs = Collections.singletonList(new PrefixIOComponent(OrePrefixes.ingot, 2));
-        List<IWildcardIOComponent> outputs = Collections.singletonList(new PrefixIOComponent(OrePrefixes.dust, 1));
-        List<IWildcardFilterComponent> filters = Collections.singletonList(new StringFilterComponent(name, true, true));
+        List<IWildcardIOComponent> inputs = Collections.singletonList(new AddonFormComponent(ingot, 2));
+        List<IWildcardIOComponent> outputs = Collections.singletonList(new AddonFormComponent(dust, 1));
+        List<IWildcardFilterComponent> filters = Collections
+            .singletonList(new StringFilterComponent(ADDON_NAME, true, true));
 
-        assertCount(inputs, outputs, filters, 1);
-        WildcardExpansion.Expanded expanded = WildcardExpansion.expand(inputs, outputs, filters)
+        assertCount(inputs, outputs, filters, true, 1);
+        WildcardExpansion.Expanded expanded = WildcardExpansion.expand(inputs, outputs, filters, MATERIAL_NAMES, true)
             .get(0);
-        assertEquals(name, expanded.materialName);
+        assertEquals(ADDON_NAME, expanded.materialName);
         assertEquals(
             ingot,
             expanded.inputs.get(0)
@@ -79,20 +77,23 @@ public class WildcardExpansionTest {
             dust,
             expanded.outputs.get(0)
                 .getItem());
-        assertEquals(OrePrefixes.ingot, WildcardMaterials.parseItem(new ItemStack(ingot)).prefix);
     }
 
     private static void assertCount(List<IWildcardIOComponent> inputs, List<IWildcardIOComponent> outputs,
         List<IWildcardFilterComponent> filters, int expected) {
-        assertEquals(
-            expected,
-            WildcardExpansion.expand(inputs, outputs, filters)
-                .size());
-        assertEquals(expected, WildcardExpansion.countExpanded(inputs, outputs, filters));
+        assertCount(inputs, outputs, filters, false, expected);
     }
 
-    /** A predictable component independent of registered ore forms; missing forms return null. */
-    private static final class TestComponent implements IWildcardIOComponent {
+    private static void assertCount(List<IWildcardIOComponent> inputs, List<IWildcardIOComponent> outputs,
+        List<IWildcardFilterComponent> filters, boolean addonForms, int expected) {
+        assertEquals(
+            expected,
+            WildcardExpansion.expand(inputs, outputs, filters, MATERIAL_NAMES, addonForms)
+                .size());
+        assertEquals(expected, WildcardExpansion.countExpanded(inputs, outputs, filters, MATERIAL_NAMES, addonForms));
+    }
+
+    private static class TestComponent implements IWildcardIOComponent {
 
         private final boolean empty;
         private final boolean unavailable;
@@ -126,6 +127,23 @@ public class WildcardExpansionTest {
         @Override
         public NBTTagCompound writeData() {
             return new NBTTagCompound();
+        }
+    }
+
+    private static final class AddonFormComponent extends TestComponent {
+
+        private final Item item;
+        private final int amount;
+
+        private AddonFormComponent(Item item, int amount) {
+            super(false, false);
+            this.item = item;
+            this.amount = amount;
+        }
+
+        @Override
+        public ItemStack apply(String materialName) {
+            return ADDON_NAME.equals(materialName) ? new ItemStack(item, amount) : null;
         }
     }
 }

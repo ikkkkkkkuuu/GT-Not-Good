@@ -41,15 +41,26 @@ public final class WildcardExpansion {
      */
     public static List<Expanded> expand(List<IWildcardIOComponent> inputs, List<IWildcardIOComponent> outputs,
         List<IWildcardFilterComponent> filters) {
+        if (inputs == null || outputs == null || (!hasNonEmpty(inputs) && !hasNonEmpty(outputs)))
+            return new ArrayList<>();
+        return expand(
+            inputs,
+            outputs,
+            filters,
+            WildcardMaterials.expandableMaterialNames(),
+            hasMaterialForm(inputs) || hasMaterialForm(outputs));
+    }
+
+    /** Runs the same expansion against supplied names for tests without a Forge registry. */
+    static List<Expanded> expand(List<IWildcardIOComponent> inputs, List<IWildcardIOComponent> outputs,
+        List<IWildcardFilterComponent> filters, Iterable<String> materialNames, boolean addonForms) {
         List<Expanded> result = new ArrayList<>();
         if (inputs == null || outputs == null) return result;
 
         boolean hasInput = hasNonEmpty(inputs);
         boolean hasOutput = hasNonEmpty(outputs);
         if (!hasInput && !hasOutput) return result;
-        boolean addonForms = hasMaterialForm(inputs) || hasMaterialForm(outputs);
-
-        for (String materialName : WildcardMaterials.expandableMaterialNames()) {
+        for (String materialName : materialNames) {
             if (!addonForms && !WildcardMaterials.isRealMaterial(WildcardMaterials.findByName(materialName))) continue;
             if (!passesFilters(materialName, filters)) continue;
 
@@ -68,9 +79,20 @@ public final class WildcardExpansion {
     public static int countExpanded(List<IWildcardIOComponent> inputs, List<IWildcardIOComponent> outputs,
         List<IWildcardFilterComponent> filters) {
         if (inputs == null || outputs == null || (!hasNonEmpty(inputs) && !hasNonEmpty(outputs))) return 0;
+        return countExpanded(
+            inputs,
+            outputs,
+            filters,
+            WildcardMaterials.expandableMaterialNames(),
+            hasMaterialForm(inputs) || hasMaterialForm(outputs));
+    }
+
+    /** Counts against supplied names with the same rules as production expansion. */
+    static int countExpanded(List<IWildcardIOComponent> inputs, List<IWildcardIOComponent> outputs,
+        List<IWildcardFilterComponent> filters, Iterable<String> materialNames, boolean addonForms) {
+        if (inputs == null || outputs == null || (!hasNonEmpty(inputs) && !hasNonEmpty(outputs))) return 0;
         int count = 0;
-        boolean addonForms = hasMaterialForm(inputs) || hasMaterialForm(outputs);
-        for (String materialName : WildcardMaterials.expandableMaterialNames()) {
+        for (String materialName : materialNames) {
             if (!addonForms && !WildcardMaterials.isRealMaterial(WildcardMaterials.findByName(materialName))) continue;
             if (passesFilters(materialName, filters) && canApplyAll(inputs, materialName)
                 && canApplyAll(outputs, materialName)) count++;
