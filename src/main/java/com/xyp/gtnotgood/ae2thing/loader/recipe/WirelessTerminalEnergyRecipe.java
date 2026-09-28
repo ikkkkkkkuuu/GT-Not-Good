@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import com.xyp.gtnotgood.ae2thing.api.Constants;
+import com.xyp.gtnotgood.utils.enums.Itemlist;
 
 import appeng.util.Platform;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -56,7 +57,7 @@ public class WirelessTerminalEnergyRecipe extends ShapelessRecipes {
 
     public static void register(ItemStack terminal) {
         ItemStack card;
-        card = GameRegistry.findItemStack("ae2fc", "energy_card", 1);
+        card = Itemlist.AE2FluidCraftEnergyCard.get(1);
         if (card != null) {
             registerCard(card, terminal);
         }

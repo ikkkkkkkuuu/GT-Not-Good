@@ -7,13 +7,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
-import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.gtnotgood.utils.enums.Itemlist;
 
 import gregtech.api.enums.GTValues;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
 import gregtech.api.recipe.RecipeMaps;
-import gregtech.api.util.GTModHandler;
 
 /** Registers the ME container at the same assembler tier as this addon's existing ME bridges. */
 public final class MEContainerRecipes {
@@ -23,7 +22,7 @@ public final class MEContainerRecipes {
     public static void loadRecipes() {
         GTValues.RA.stdBuilder()
             .itemInputs(
-                GTModHandler.getModItem(ModList.AE2.getID(), "tile.BlockInterface", 1),
+                Itemlist.AE2MEInterface.get(1),
                 new ItemStack(Blocks.chest),
                 new ItemStack(Blocks.glass, 4),
                 new Object[] { OrePrefixes.circuit.get(Materials.LV), 1 })

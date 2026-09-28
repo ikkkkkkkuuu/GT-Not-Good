@@ -4,12 +4,13 @@ import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
 
+import com.xyp.gtnotgood.utils.enums.Itemlist;
+
 import bartworks.system.material.Werkstoff;
 import bartworks.system.material.WerkstoffLoader;
 import gregtech.api.enums.ItemList;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
-import gregtech.api.util.GTModHandler;
 import gregtech.api.util.GTOreDictUnificator;
 import gtPlusPlus.xmod.gregtech.api.enums.GregtechItemList;
 
@@ -107,10 +108,10 @@ public class MoldDataManager {
         // GTNH (NewHorizonsCoreMod) 特殊透镜
         // 这些透镜用于高阶激光雕刻/纳米锻造等 GTNH 特有配方
         {
-            ItemStack reinforcedGlassLense = GTModHandler.getModItem("dreamcraft", "ReinforcedGlassLense", 1);
-            ItemStack mysteriousCrystalLens = GTModHandler.getModItem("dreamcraft", "MysteriousCrystalLens", 1);
-            ItemStack radoxPolymerLens = GTModHandler.getModItem("dreamcraft", "RadoxPolymerLens", 1);
-            ItemStack chromaticLens = GTModHandler.getModItem("dreamcraft", "ChromaticLens", 1);
+            ItemStack reinforcedGlassLense = Itemlist.NHCoreModReinforcedGlassLens.get(1);
+            ItemStack mysteriousCrystalLens = Itemlist.NHCoreModMysteriousCrystalLens.get(1);
+            ItemStack radoxPolymerLens = Itemlist.NHCoreModRadoxPolymerLens.get(1);
+            ItemStack chromaticLens = Itemlist.NHCoreModChromaticLens.get(1);
             if (reinforcedGlassLense != null) items.add(reinforcedGlassLense);
             if (mysteriousCrystalLens != null) items.add(mysteriousCrystalLens);
             if (radoxPolymerLens != null) items.add(radoxPolymerLens);
@@ -118,10 +119,10 @@ public class MoldDataManager {
         }
 
         // AE2 压印模板 (Inscriber Presses)
-        items.add(GTModHandler.getModItem("appliedenergistics2", "item.ItemMultiMaterial", 1, 13)); // 运算压印模板
-        items.add(GTModHandler.getModItem("appliedenergistics2", "item.ItemMultiMaterial", 1, 14)); // 工程压印模板
-        items.add(GTModHandler.getModItem("appliedenergistics2", "item.ItemMultiMaterial", 1, 15)); // 逻辑压印模板
-        items.add(GTModHandler.getModItem("appliedenergistics2", "item.ItemMultiMaterial", 1, 19)); // 硅压印模板
+        items.add(Itemlist.AE2CalculationPress.get(1));
+        items.add(Itemlist.AE2EngineeringPress.get(1));
+        items.add(Itemlist.AE2LogicPress.get(1));
+        items.add(Itemlist.AE2SiliconPress.get(1));
 
         // 所有纳米蜂群 (OrePrefixes.nanite) - GT 原生材料
         // 纳米蜂群由纳米锻造机 (Nano Forge) 生产，用于 PCB 工厂、光学电路线、星门等
