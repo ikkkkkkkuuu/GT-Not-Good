@@ -70,6 +70,11 @@ public final class PrefixIOComponent implements IWildcardIOComponent {
     }
 
     @Override
+    public ItemStack apply(String materialName) {
+        return WildcardMaterials.makePrefixStack(prefix, materialName, amount);
+    }
+
+    @Override
     public ItemStack getDisplayStack() {
         // 用一个代表性材料（铁）展示前缀形态
         ItemStack display = WildcardMaterials.makePrefixStack(prefix, Materials.Iron, Math.max(1, amount));

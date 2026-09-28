@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
 
-import com.xyp.gtnotgood.utils.enums.Itemlist;
+import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 
 import bartworks.system.material.Werkstoff;
 import bartworks.system.material.WerkstoffLoader;
@@ -108,10 +108,10 @@ public class MoldDataManager {
         // GTNH (NewHorizonsCoreMod) 特殊透镜
         // 这些透镜用于高阶激光雕刻/纳米锻造等 GTNH 特有配方
         {
-            ItemStack reinforcedGlassLense = Itemlist.NHCoreModReinforcedGlassLens.get(1);
-            ItemStack mysteriousCrystalLens = Itemlist.NHCoreModMysteriousCrystalLens.get(1);
-            ItemStack radoxPolymerLens = Itemlist.NHCoreModRadoxPolymerLens.get(1);
-            ItemStack chromaticLens = Itemlist.NHCoreModChromaticLens.get(1);
+            ItemStack reinforcedGlassLense = ModsItemlist.NHCoreModReinforcedGlassLens.get(1);
+            ItemStack mysteriousCrystalLens = ModsItemlist.NHCoreModMysteriousCrystalLens.get(1);
+            ItemStack radoxPolymerLens = ModsItemlist.NHCoreModRadoxPolymerLens.get(1);
+            ItemStack chromaticLens = ModsItemlist.NHCoreModChromaticLens.get(1);
             if (reinforcedGlassLense != null) items.add(reinforcedGlassLense);
             if (mysteriousCrystalLens != null) items.add(mysteriousCrystalLens);
             if (radoxPolymerLens != null) items.add(radoxPolymerLens);
@@ -119,10 +119,10 @@ public class MoldDataManager {
         }
 
         // AE2 压印模板 (Inscriber Presses)
-        items.add(Itemlist.AE2CalculationPress.get(1));
-        items.add(Itemlist.AE2EngineeringPress.get(1));
-        items.add(Itemlist.AE2LogicPress.get(1));
-        items.add(Itemlist.AE2SiliconPress.get(1));
+        items.add(ModsItemlist.AE2CalculationPress.get(1));
+        items.add(ModsItemlist.AE2EngineeringPress.get(1));
+        items.add(ModsItemlist.AE2LogicPress.get(1));
+        items.add(ModsItemlist.AE2SiliconPress.get(1));
 
         // 所有纳米蜂群 (OrePrefixes.nanite) - GT 原生材料
         // 纳米蜂群由纳米锻造机 (Nano Forge) 生产，用于 PCB 工厂、光学电路线、星门等

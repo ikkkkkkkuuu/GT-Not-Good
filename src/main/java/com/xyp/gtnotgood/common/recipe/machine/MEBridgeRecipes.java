@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 
 import com.xyp.gtnotgood.loader.BlockLoader;
 import com.xyp.gtnotgood.loader.ItemsLoader;
-import com.xyp.gtnotgood.utils.enums.Itemlist;
+import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 
 import gregtech.api.enums.GTValues;
 import gregtech.api.enums.Materials;
@@ -26,7 +26,7 @@ public class MEBridgeRecipes {
     public static void loadRecipes() {
 
         // 基础 ME 接口 —— 体现"接入 ME 网络"主题的核心组件
-        final ItemStack ae2Interface = Itemlist.AE2MEInterface.get(1);
+        final ItemStack ae2Interface = ModsItemlist.AE2MEInterface.get(1);
 
         // 发起端网桥 —— LV 阶装配机配方
         GTValues.RA.stdBuilder()

@@ -4,7 +4,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 
+import gregtech.api.enums.FluidState;
 import gregtech.api.enums.Materials;
+import gregtech.api.enums.OrePrefixes;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -54,6 +56,54 @@ public final class PropertyFilterComponent extends AbstractFilterComponent {
     @Override
     protected boolean matches(Materials material) {
         return property != null && property.test(material);
+    }
+
+    @Override
+    public boolean test(String materialName) {
+        Materials material = WildcardMaterials.findByName(materialName);
+        if (WildcardMaterials.isRealMaterial(material)) return test(material);
+        boolean matches = false;
+        if (property != null && materialName != null) {
+            OrePrefixes prefix = null;
+            switch (property) {
+                case DUST:
+                    prefix = OrePrefixes.dust;
+                    break;
+                case METAL:
+                case INGOT:
+                    prefix = OrePrefixes.ingot;
+                    break;
+                case GEM:
+                    prefix = OrePrefixes.gem;
+                    break;
+                case ORE:
+                    prefix = OrePrefixes.ore;
+                    break;
+                case CELL:
+                    prefix = OrePrefixes.cell;
+                    break;
+                case GEAR:
+                    prefix = OrePrefixes.gearGt;
+                    break;
+                case TOOL:
+                case TOOL_HEAD:
+                    prefix = OrePrefixes.toolHeadHammer;
+                    break;
+                case FLUID_PIPE:
+                    prefix = OrePrefixes.pipeTiny;
+                    break;
+                default:
+                    break;
+            }
+            if (prefix != null) matches = WildcardMaterials.makePrefixStack(prefix, materialName, 1) != null;
+            else if (property == WildcardMaterials.Property.PLASMA || property == WildcardMaterials.Property.FLUID
+                || property == WildcardMaterials.Property.GAS) {
+                    FluidState state = property == WildcardMaterials.Property.PLASMA ? FluidState.PLASMA
+                        : property == WildcardMaterials.Property.GAS ? FluidState.GAS : FluidState.MOLTEN;
+                    matches = WildcardMaterials.makeFluidStack(state, materialName, 1) != null;
+                }
+        }
+        return materialName != null && isWhitelist() == matches;
     }
 
     @Override

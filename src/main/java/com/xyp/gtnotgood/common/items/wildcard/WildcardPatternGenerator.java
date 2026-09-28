@@ -20,7 +20,6 @@ import com.xyp.gtnotgood.common.items.wildcard.model.WildcardModelState;
 
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.storage.data.IAEItemStack;
-import gregtech.api.enums.Materials;
 
 /**
  * 通配样板符配方生成器（材料轴模型）。
@@ -86,7 +85,7 @@ public final class WildcardPatternGenerator {
 
         List<ICraftingPatternDetails> result = new ArrayList<>();
         for (WildcardExpansion.Expanded expanded : WildcardExpansion.expand(inputs, outputs, filters)) {
-            ItemStack generated = createPatternStack(stack, expanded.material, expanded.inputs, expanded.outputs);
+            ItemStack generated = createPatternStack(stack, expanded.materialName, expanded.inputs, expanded.outputs);
             if (generated == null) {
                 continue;
             }
@@ -195,7 +194,7 @@ public final class WildcardPatternGenerator {
     /**
      * 用输入/输出 stack 列表构建具体 AE2 加工样板物品（多槽）。
      */
-    private static ItemStack createPatternStack(ItemStack template, Materials material, List<ItemStack> inputs,
+    private static ItemStack createPatternStack(ItemStack template, String materialName, List<ItemStack> inputs,
         List<ItemStack> outputs) {
         if ((inputs == null || inputs.isEmpty()) && (outputs == null || outputs.isEmpty())) {
             return null;
@@ -210,7 +209,6 @@ public final class WildcardPatternGenerator {
         NBTTagCompound resultTag = getOrCreateTag(result);
         resultTag.setTag("in", inputList);
         resultTag.setTag("out", outputList);
-        String materialName = material == null ? "" : material.mName;
         resultTag.setString(KEY_SELECTED_MATERIAL, materialName);
         resultTag.setString(KEY_GENERATED_PATTERN_ID, buildGeneratedPatternId(materialName, inputs, outputs));
         resultTag.setBoolean("crafting", false);

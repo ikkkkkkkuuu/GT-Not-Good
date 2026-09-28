@@ -87,6 +87,11 @@ public final class SimpleIOComponent implements IWildcardIOComponent {
     }
 
     @Override
+    public ItemStack apply(String materialName) {
+        return apply((Materials) null);
+    }
+
+    @Override
     public ItemStack getDisplayStack() {
         return stack == null ? null : stack.copy();
     }

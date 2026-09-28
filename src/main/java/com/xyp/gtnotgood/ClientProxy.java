@@ -8,6 +8,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.xyp.gtnotgood.client.StructureCompassRenderer;
+import com.xyp.gtnotgood.client.WindowsTaskbarButton;
 import com.xyp.gtnotgood.client.flux.FluxConnectorRenderer;
 import com.xyp.gtnotgood.client.gui.LibraryDemoCommand;
 import com.xyp.gtnotgood.client.gui.wildcard.WildcardPreviewCommand;
@@ -166,6 +167,11 @@ public class ClientProxy extends CommonProxy {
             FMLCommonHandler.instance()
                 .bus()
                 .register(new com.xyp.gtnotgood.client.EdgeWindowIcon());
+        }
+        if (com.xyp.gtnotgood.config.Config.hideWindowsTaskbarButton) {
+            FMLCommonHandler.instance()
+                .bus()
+                .register(new WindowsTaskbarButton());
         }
         if (ModList.ThaumcraftResearchTweaks.isModLoaded()) {
             NetworkRegistry.INSTANCE.registerGuiHandler(

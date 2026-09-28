@@ -18,7 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import com.xyp.gtnotgood.ae2thing.api.Constants;
-import com.xyp.gtnotgood.utils.enums.Itemlist;
+import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 
 import appeng.util.Platform;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -51,11 +51,11 @@ public class WirelessTerminalQuantumBridgeRecipe extends ShapelessRecipes {
 
     public static void register(ItemStack terminal) {
         ItemStack card;
-        card = Itemlist.AE2WCTInfinityBoosterCard.get(1);
+        card = ModsItemlist.AE2WCTInfinityBoosterCard.get(1);
         if (card != null) {
             registerCard(card, terminal);
         }
-        card = Itemlist.AE2FluidCraftQuantumBridgeCard.get(1);
+        card = ModsItemlist.AE2FluidCraftQuantumBridgeCard.get(1);
         if (card != null) {
             registerCard(card, terminal);
         }

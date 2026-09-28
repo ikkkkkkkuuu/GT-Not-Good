@@ -16,7 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.dreammaster.item.NHItemList;
-import com.xyp.gtnotgood.utils.enums.Itemlist;
+import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 
 import appeng.api.AEApi;
 import appeng.api.util.AEColor;
@@ -53,23 +53,23 @@ public final class ShimmerRecoveryRules {
         inputBlacklist.add(new GTItemStack(CustomItemList.hatch_CreativeMaintenance.get(1)));
 
         if (Mods.Railcraft.isModLoaded()) {
-            inputBlacklist.add(new GTItemStack(Itemlist.RailcraftTrack.get(1)));
-            inputBlacklist.add(new GTItemStack(Itemlist.RailcraftTrackLegacyDamage736.get(1)));
-            inputBlacklist.add(new GTItemStack(Itemlist.RailcraftTrackLegacyDamage816.get(1)));
+            inputBlacklist.add(new GTItemStack(ModsItemlist.RailcraftTrack.get(1)));
+            inputBlacklist.add(new GTItemStack(ModsItemlist.RailcraftTrackLegacyDamage736.get(1)));
+            inputBlacklist.add(new GTItemStack(ModsItemlist.RailcraftTrackLegacyDamage816.get(1)));
         }
 
-        inputBlacklist.add(new GTItemStack(Itemlist.IC2MixedMetalIngot.get(1)));
-        inputBlacklist.add(new GTItemStack(Itemlist.RailcraftWaterTankWall.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.IC2MixedMetalIngot.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.RailcraftWaterTankWall.get(1)));
 
         // region transformer
         inputBlacklist.add(new GTItemStack(ItemList.Transformer_MV_LV.get(1L)));
-        inputBlacklist.add(new GTItemStack(Itemlist.IC2LVTransformer.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.IC2LVTransformer.get(1)));
         inputBlacklist.add(new GTItemStack(ItemList.Transformer_HV_MV.get(1L)));
-        inputBlacklist.add(new GTItemStack(Itemlist.IC2MVTransformer.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.IC2MVTransformer.get(1)));
         inputBlacklist.add(new GTItemStack(ItemList.Transformer_EV_HV.get(1L)));
-        inputBlacklist.add(new GTItemStack(Itemlist.IC2HVTransformer.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.IC2HVTransformer.get(1)));
         inputBlacklist.add(new GTItemStack(ItemList.Transformer_IV_EV.get(1L)));
-        inputBlacklist.add(new GTItemStack(Itemlist.IC2EVTransformer.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.IC2EVTransformer.get(1)));
         // endregion
 
         var aeParts = AEApi.instance()
@@ -87,7 +87,7 @@ public final class ShimmerRecoveryRules {
                     .stack(AEColor.Transparent, 1)));
 
         // Radiation Proof Plate
-        inputBlacklist.add(new GTItemStack(Itemlist.GoodGeneratorRadiationProtectionPlate.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.GoodGeneratorRadiationProtectionPlate.get(1)));
     }
 
     public static ObjectList<ItemStack> handleRecipeTransformation(ItemStack[] outputs,

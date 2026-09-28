@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.common.collect.Sets;
 import com.xyp.gtnotgood.GTNotGood;
@@ -69,6 +70,71 @@ public class OreProcessingRecipes {
         processOtherModOre(new ItemStack(Blocks.iron_ore), Materials.Iron, false);
 
         GTNotGood.LOG.info("Loaded large ore processor recipes");
+    }
+
+    /** Registers external ore forms whose materials are absent from GregTech's material registry. */
+    public static void loadExternalOreRecipes() {
+        for (String oreName : OreDictionary.getOreNames()) {
+            int dustAmount;
+            String materialName;
+            if (oreName.startsWith("oreNetherrack")) {
+                materialName = oreName.substring("oreNetherrack".length());
+                dustAmount = 16;
+            } else if (oreName.startsWith("oreEndstone")) {
+                materialName = oreName.substring("oreEndstone".length());
+                dustAmount = 16;
+            } else if (oreName.startsWith("rawOre")) {
+                materialName = oreName.substring("rawOre".length());
+                dustAmount = 8;
+            } else if (oreName.startsWith("oreBasalt")) {
+                materialName = oreName.substring("oreBasalt".length());
+                dustAmount = 8;
+            } else if (oreName.startsWith("oreBlackgranite")) {
+                materialName = oreName.substring("oreBlackgranite".length());
+                dustAmount = 8;
+            } else if (oreName.startsWith("oreRedgranite")) {
+                materialName = oreName.substring("oreRedgranite".length());
+                dustAmount = 8;
+            } else if (oreName.startsWith("oreMarble")) {
+                materialName = oreName.substring("oreMarble".length());
+                dustAmount = 8;
+            } else if (oreName.startsWith("ore")) {
+                materialName = oreName.substring("ore".length());
+                dustAmount = 8;
+            } else if (oreName.startsWith("crushedPurified")) {
+                materialName = oreName.substring("crushedPurified".length());
+                dustAmount = 8;
+            } else if (oreName.startsWith("crushedCentrifuged")) {
+                materialName = oreName.substring("crushedCentrifuged".length());
+                dustAmount = 8;
+            } else if (oreName.startsWith("crushed")) {
+                materialName = oreName.substring("crushed".length());
+                dustAmount = 8;
+            } else if (oreName.startsWith("dustImpure")) {
+                materialName = oreName.substring("dustImpure".length());
+                dustAmount = 6;
+            } else if (oreName.startsWith("dustPure")) {
+                materialName = oreName.substring("dustPure".length());
+                dustAmount = 7;
+            } else {
+                continue;
+            }
+            if (materialName.isEmpty()) continue;
+            List<ItemStack> dusts = OreDictionary.getOres("dust" + materialName);
+            if (dusts.isEmpty()) continue;
+            ItemStack dust = dusts.get(0);
+            if (dust == null || dust.getItem() == null) continue;
+
+            for (ItemStack input : OreDictionary.getOres(oreName)) {
+                if (input == null || input.getItem() == null) continue;
+                ItemStack singleInput = GTUtility.copyAmountUnsafe(1, input);
+                if (OreProcessingRecipes.findRecipeQuery()
+                    .items(singleInput)
+                    .notUnificated(true)
+                    .find() != null) continue;
+                addRecipe(singleInput, GTUtility.copyAmountUnsafe(dustAmount, dust));
+            }
+        }
     }
 
     /**

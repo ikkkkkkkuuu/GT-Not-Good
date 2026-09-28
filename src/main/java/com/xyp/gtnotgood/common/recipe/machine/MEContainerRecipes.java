@@ -7,7 +7,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
-import com.xyp.gtnotgood.utils.enums.Itemlist;
+import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 
 import gregtech.api.enums.GTValues;
 import gregtech.api.enums.Materials;
@@ -22,7 +22,7 @@ public final class MEContainerRecipes {
     public static void loadRecipes() {
         GTValues.RA.stdBuilder()
             .itemInputs(
-                Itemlist.AE2MEInterface.get(1),
+                ModsItemlist.AE2MEInterface.get(1),
                 new ItemStack(Blocks.chest),
                 new ItemStack(Blocks.glass, 4),
                 new Object[] { OrePrefixes.circuit.get(Materials.LV), 1 })

@@ -60,6 +60,11 @@ public final class FluidIOComponent implements IWildcardIOComponent {
     }
 
     @Override
+    public ItemStack apply(String materialName) {
+        return WildcardMaterials.makeFluidStack(state, materialName, amount);
+    }
+
+    @Override
     public ItemStack getDisplayStack() {
         return WildcardMaterials.makeFluidStack(state, Materials.Iron, Math.max(1L, amount));
     }

@@ -41,6 +41,12 @@ public final class SimpleFilterComponent extends AbstractFilterComponent {
     }
 
     @Override
+    public boolean test(String materialName) {
+        return materialName != null
+            && isWhitelist() == (material != null && material.mName.equalsIgnoreCase(materialName));
+    }
+
+    @Override
     public String describe() {
         return (isWhitelist() ? "+" : "-") + (material == null ? "?" : material.mName);
     }

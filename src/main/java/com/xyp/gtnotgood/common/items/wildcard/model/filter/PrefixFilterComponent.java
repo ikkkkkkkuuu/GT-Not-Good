@@ -40,6 +40,14 @@ public final class PrefixFilterComponent extends AbstractFilterComponent {
     }
 
     @Override
+    public boolean test(String materialName) {
+        Materials material = WildcardMaterials.findByName(materialName);
+        boolean matches = WildcardMaterials.isRealMaterial(material) ? matches(material)
+            : WildcardMaterials.makePrefixStack(prefix, materialName, 1) != null;
+        return materialName != null && isWhitelist() == matches;
+    }
+
+    @Override
     public String describe() {
         return (isWhitelist() ? "+" : "-") + (prefix == null ? "?" : prefix.name());
     }

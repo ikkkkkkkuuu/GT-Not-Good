@@ -41,6 +41,8 @@ public class Config {
     public static boolean enableRTSBuilding = false;
     /** Replaces the client window/taskbar icon after startup; never synchronized from a server. */
     public static boolean useEdgeWindowIcon = false;
+    /** Hides this client's Windows taskbar button after its window opens. */
+    public static boolean hideWindowsTaskbarButton = false;
     public static boolean enableAlwaysDisplayRecipeOwner = true;
     public static boolean enableAlwaysDisplayWailaAverageNS = true;
     public static boolean enableAlwaysDisplayNEIOriginalVoltage = true;
@@ -156,6 +158,14 @@ public class Config {
                 "useEdgeWindowIcon",
                 false,
                 "开启后将运行中的客户端窗口及任务栏图标替换为 Microsoft Edge 图标。默认关闭，修改后重启游戏生效。")
+            .setRequiresMcRestart(true)
+            .getBoolean(false);
+        hideWindowsTaskbarButton = configuration
+            .get(
+                CATEGORY_CLIENT,
+                "hideWindowsTaskbarButton",
+                false,
+                "开启后在 Windows 上自动隐藏本客户端的任务栏按钮；游戏窗口仍可正常使用。默认关闭，修改后重启游戏生效。")
             .setRequiresMcRestart(true)
             .getBoolean(false);
         configuration.addCustomCategoryComment(CATEGORY_CUT_CORNERS, "配方提速配置");

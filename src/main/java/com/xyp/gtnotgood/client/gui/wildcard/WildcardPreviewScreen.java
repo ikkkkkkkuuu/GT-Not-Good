@@ -45,8 +45,8 @@ public final class WildcardPreviewScreen extends GuiScreen {
         List<IWildcardFilterComponent> filters = WildcardModelState.getFilters(snapshot);
         List<String> preview = new ArrayList<>();
         for (WildcardExpansion.Expanded entry : WildcardExpansion.expand(inputs, outputs, filters)) {
-            preview.add(
-                entry.material.mName + ": " + describeStacks(entry.inputs) + " > " + describeStacks(entry.outputs));
+            preview
+                .add(entry.materialName + ": " + describeStacks(entry.inputs) + " > " + describeStacks(entry.outputs));
         }
         rows.add(preview);
         rows.add(describeIO(inputs));

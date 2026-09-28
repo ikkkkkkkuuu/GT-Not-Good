@@ -10,15 +10,20 @@ import java.util.List;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.oredict.OreDictionary;
 
 import org.junit.Test;
 
 import com.xyp.gtnotgood.common.items.wildcard.model.IWildcardFilterComponent;
 import com.xyp.gtnotgood.common.items.wildcard.model.IWildcardIOComponent;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardExpansion;
+import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 import com.xyp.gtnotgood.common.items.wildcard.model.filter.SimpleFilterComponent;
+import com.xyp.gtnotgood.common.items.wildcard.model.filter.StringFilterComponent;
+import com.xyp.gtnotgood.common.items.wildcard.model.io.PrefixIOComponent;
 
 import gregtech.api.enums.Materials;
+import gregtech.api.enums.OrePrefixes;
 
 /** Compares allocation-light counting with expansion for rejected, missing and empty components. */
 public class WildcardExpansionTest {
@@ -48,6 +53,33 @@ public class WildcardExpansionTest {
                 new SimpleFilterComponent(Materials.Iron, false)),
             0);
         assertCount(null, Collections.singletonList(valid), ironOnly, 0);
+    }
+
+    @Test
+    public void expandsAddonOreMaterialWithoutGtMaterialEntry() {
+        String name = "WildcardAddonTestium";
+        Item ingot = new Item();
+        Item dust = new Item();
+        OreDictionary.registerOre("ingot" + name, new ItemStack(ingot));
+        OreDictionary.registerOre("dust" + name, new ItemStack(dust));
+        List<IWildcardIOComponent> inputs = Collections.singletonList(new PrefixIOComponent(OrePrefixes.ingot, 2));
+        List<IWildcardIOComponent> outputs = Collections.singletonList(new PrefixIOComponent(OrePrefixes.dust, 1));
+        List<IWildcardFilterComponent> filters = Collections.singletonList(new StringFilterComponent(name, true, true));
+
+        assertCount(inputs, outputs, filters, 1);
+        WildcardExpansion.Expanded expanded = WildcardExpansion.expand(inputs, outputs, filters)
+            .get(0);
+        assertEquals(name, expanded.materialName);
+        assertEquals(
+            ingot,
+            expanded.inputs.get(0)
+                .getItem());
+        assertEquals(2, expanded.inputs.get(0).stackSize);
+        assertEquals(
+            dust,
+            expanded.outputs.get(0)
+                .getItem());
+        assertEquals(OrePrefixes.ingot, WildcardMaterials.parseItem(new ItemStack(ingot)).prefix);
     }
 
     private static void assertCount(List<IWildcardIOComponent> inputs, List<IWildcardIOComponent> outputs,

@@ -14,6 +14,12 @@ public interface IWildcardFilterComponent extends IWildcardComponent {
      */
     boolean test(Materials material);
 
+    /** Checks an ore-dictionary material that has no GT Materials entry. */
+    default boolean test(String materialName) {
+        Materials material = WildcardMaterials.findByName(materialName);
+        return WildcardMaterials.isRealMaterial(material) && test(material);
+    }
+
     boolean isWhitelist();
 
     void setWhitelist(boolean whitelist);

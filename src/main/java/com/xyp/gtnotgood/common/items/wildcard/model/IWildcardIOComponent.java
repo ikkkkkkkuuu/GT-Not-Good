@@ -18,6 +18,12 @@ public interface IWildcardIOComponent extends IWildcardComponent {
      */
     ItemStack apply(Materials material);
 
+    /** Resolves an ore-dictionary material that has no GT Materials entry. */
+    default ItemStack apply(String materialName) {
+        Materials material = WildcardMaterials.findByName(materialName);
+        return WildcardMaterials.isRealMaterial(material) ? apply(material) : null;
+    }
+
     /** 用于 GUI 显示的代表性 stack（可为 null）。 */
     ItemStack getDisplayStack();
 

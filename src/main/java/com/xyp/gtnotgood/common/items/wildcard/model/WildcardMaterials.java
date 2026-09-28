@@ -1,12 +1,17 @@
 package com.xyp.gtnotgood.common.items.wildcard.model;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import com.xyp.gtnotgood.common.compat.FluidDropCompat;
 
@@ -25,6 +30,8 @@ import gregtech.api.util.GTOreDictUnificator;
 public final class WildcardMaterials {
 
     private static final Map<String, Materials> MATERIAL_NAME_CACHE = new ConcurrentHashMap<>();
+    private static volatile List<String> cachedExpandableNames;
+    private static volatile int cachedOreNameCount = -1;
 
     private WildcardMaterials() {}
 
@@ -59,7 +66,11 @@ public final class WildcardMaterials {
             }
         }
         Materials material = MATERIAL_NAME_CACHE.get(normalized);
-        return material == null ? Materials._NULL : material;
+        if (material == null) {
+            MATERIAL_NAME_CACHE.putIfAbsent(normalized, Materials._NULL);
+            return Materials._NULL;
+        }
+        return material;
     }
 
     /**
@@ -78,6 +89,58 @@ public final class WildcardMaterials {
         return stack;
     }
 
+    /** Uses registered ore forms for addon materials absent from GT's Materials registry. */
+    public static ItemStack makePrefixStack(OrePrefixes prefix, String materialName, int amount) {
+        if (prefix == null || materialName == null || materialName.isEmpty() || amount <= 0) return null;
+        Materials material = findByName(materialName);
+        if (isRealMaterial(material)) return makePrefixStack(prefix, material, amount);
+        List<ItemStack> ores = OreDictionary.getOres(prefix.name() + materialName);
+        for (ItemStack ore : ores) {
+            if (ore != null && ore.getItem() != null) {
+                ItemStack stack = ore.copy();
+                stack.stackSize = amount;
+                return stack;
+            }
+        }
+        return null;
+    }
+
+    /** GT materials followed by addon materials identified by a registered GT ore prefix. */
+    public static synchronized List<String> expandableMaterialNames() {
+        String[] oreNames = OreDictionary.getOreNames();
+        if (cachedExpandableNames != null && cachedOreNameCount == oreNames.length) return cachedExpandableNames;
+        Map<String, String> names = new LinkedHashMap<>();
+        for (Materials material : Materials.getAll()) {
+            if (isExpandableMaterial(material)) names.put(material.mName.toLowerCase(Locale.ROOT), material.mName);
+        }
+        for (String oreName : oreNames) {
+            OrePrefixes prefix = prefixOfOreName(oreName);
+            if (prefix == null) continue;
+            String materialName = oreName.substring(
+                prefix.name()
+                    .length());
+            if (materialName.isEmpty() || isRealMaterial(findByName(materialName))) continue;
+            names.putIfAbsent(materialName.toLowerCase(Locale.ROOT), materialName);
+        }
+        cachedOreNameCount = oreNames.length;
+        cachedExpandableNames = java.util.Collections.unmodifiableList(new ArrayList<>(names.values()));
+        return cachedExpandableNames;
+    }
+
+    private static OrePrefixes prefixOfOreName(String oreName) {
+        if (oreName == null) return null;
+        OrePrefixes best = null;
+        for (OrePrefixes prefix : OrePrefixes.VALUES) {
+            String name = prefix.name();
+            if (!name.isEmpty() && oreName.startsWith(name)
+                && oreName.length() > name.length()
+                && (best == null || name.length() > best.name()
+                    .length()))
+                best = prefix;
+        }
+        return best;
+    }
+
     /**
      * 材料 + 流体状态 → AE2FC 的 ItemFluidDrop（CPU 通过 instanceof 识别流体请求）。找不到返回 null。
      */
@@ -87,6 +150,32 @@ public final class WildcardMaterials {
         if (fluid == null || fluid.getFluid() == null) return null;
         // [液滴分类] 必须留液滴：产出 ItemFluidDrop 作为样板流体请求，CPU 靠 instanceof 识别下单
         return FluidDropCompat.newStack(fluid);
+    }
+
+    /** Resolves addon fluids by the standard GTNH fluid registry names. */
+    public static ItemStack makeFluidStack(FluidState state, String materialName, long amount) {
+        if (state == null || materialName == null || materialName.isEmpty() || amount <= 0) return null;
+        Materials material = findByName(materialName);
+        if (isRealMaterial(material)) return makeFluidStack(state, material, amount);
+        String prefix;
+        switch (state) {
+            case MOLTEN:
+                prefix = "molten.";
+                break;
+            case PLASMA:
+                prefix = "plasma.";
+                break;
+            case GAS:
+                prefix = "gas.";
+                break;
+            case LIQUID:
+            default:
+                prefix = "liquid.";
+                break;
+        }
+        Fluid fluid = FluidRegistry.getFluid(prefix + materialName.toLowerCase(Locale.ROOT));
+        if (fluid == null) return null;
+        return FluidDropCompat.newStack(new FluidStack(fluid, (int) Math.min(Integer.MAX_VALUE, amount)));
     }
 
     /**
@@ -327,6 +416,16 @@ public final class WildcardMaterials {
         if (data != null && data.hasValidPrefixMaterialData()) {
             Materials material = data.mMaterial.mMaterial;
             return new PrefixMaterial(data.mPrefix, isRealMaterial(material) ? material : null);
+        }
+        for (int oreId : OreDictionary.getOreIDs(stack)) {
+            String oreName = OreDictionary.getOreName(oreId);
+            OrePrefixes prefix = prefixOfOreName(oreName);
+            if (prefix != null) {
+                String materialName = oreName.substring(
+                    prefix.name()
+                        .length());
+                return new PrefixMaterial(prefix, findByName(materialName));
+            }
         }
         return PrefixMaterial.EMPTY;
     }

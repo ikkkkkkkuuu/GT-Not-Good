@@ -55,11 +55,20 @@ public final class StringFilterComponent extends AbstractFilterComponent {
     @Override
     protected boolean matches(Materials material) {
         if (material == null || material.mName == null) return false;
+        return matchesName(material.mName);
+    }
+
+    @Override
+    public boolean test(String materialName) {
+        return materialName != null && isWhitelist() == matchesName(materialName);
+    }
+
+    private boolean matchesName(String materialName) {
         String value = pattern;
         if (value.isEmpty()) return false;
         // 归一化：去掉空格，让 "Stainless steel" 能匹配到内部名 "StainlessSteel"
         String normPattern = value.replace(" ", "");
-        String normName = material.mName.replace(" ", "");
+        String normName = materialName.replace(" ", "");
         if (exact) {
             return normName.equalsIgnoreCase(normPattern);
         }

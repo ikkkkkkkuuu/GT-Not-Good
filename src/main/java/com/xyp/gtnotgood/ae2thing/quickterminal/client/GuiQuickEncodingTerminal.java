@@ -2300,14 +2300,13 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         }
 
         private InterfacePatternTarget patternSlotAt(int mouseX, int mouseY) {
+            if (!isInsideViewport(mouseX, mouseY)) return null;
             Object masterList = objectField(this, MASTER_LIST);
             if (masterList == null) return null;
-            InterfacePatternTarget hovered = hoveredPatternTarget(masterList);
-            if (hovered != null) return hovered;
+            // AE2's hoveredEntry can still name a slot from the previous frame after an entry is hidden.
+            // Resolve the click against the current filtered section list instead.
             int relativeX = mouseX - guiLeft - 10;
             int relativeY = mouseY - guiTop - 52;
-            int viewHeight = VIEW_HEIGHT == null ? 0 : intField(this, VIEW_HEIGHT, 0);
-            if (relativeX < 0 || relativeX >= 174 || relativeY < 0 || relativeY >= viewHeight) return null;
 
             try {
                 Method visibleSections = masterList.getClass()
@@ -2336,17 +2335,6 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                 }
             } catch (ReflectiveOperationException ignored) {}
             return null;
-        }
-
-        /** Uses AE2's own per-frame hover result, so wrapped section titles and scrolling cannot skew the hit box. */
-        private InterfacePatternTarget hoveredPatternTarget(Object masterList) {
-            Object entry = objectField(masterList, findField(masterList.getClass(), "hoveredEntry"));
-            if (entry == null) return null;
-            int slot = intField(entry, "hoveredSlotIdx", -1);
-            int numSlots = intField(entry, "numSlots", 0);
-            if (slot < 0 || slot >= numSlots) return null;
-            long id = longField(entry, "id", -1);
-            return id < 0 ? null : new InterfacePatternTarget(id, slot);
         }
 
         private void clearHighlight() {

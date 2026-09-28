@@ -12,6 +12,7 @@ import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
 import com.xyp.gtnotgood.common.mebridge.MEBridgeEventHandler;
 import com.xyp.gtnotgood.common.mebridge.MEWirelessLinkEventHandler;
 import com.xyp.gtnotgood.common.packet.NetWorkHandler;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.config.MainConfig;
 import com.xyp.gtnotgood.loader.BlockLoader;
@@ -101,6 +102,7 @@ public class CommonProxy {
 
     public void complete(FMLLoadCompleteEvent event) {
         AE2Thing.onLoadComplete(event);
+        OreProcessingRecipes.loadExternalOreRecipes();
         com.xyp.gtnotgood.common.recipe.gtnotgood.CombProcessingRecipes.loadRecipes();
         com.xyp.gtnotgood.common.recipe.gtnotgood.TransmutationRecipes.load();
     }
