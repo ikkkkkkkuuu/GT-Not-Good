@@ -19,6 +19,9 @@
 - Add Javadoc immediately before each new class or enum. For special or non-obvious classes, methods, fields,
   and override points, write a full explanatory Javadoc block with behavior, constraints, `@param`, `@return`,
   and `@see` entries where useful, similar to the existing `utils.tr` method comments.
+- Keep code and review descriptions concise. Do not add redundant metadata comments, registry lookup explanations, or repeated comments that merely restate names or code. For external items, comment the verified Chinese item name; explain metadata only when it changes behavior and that distinction is not clear from the name.
+- Use consistent Java camel case: `UpperCamelCase` for types and enum constants, `lowerCamelCase` for methods and fields. Name item constants for the actual item or verified variant. Do not use placeholder names such as `UP_`, `Meta1`, or arbitrary `Variant1`, and do not add a mod or project prefix unless it prevents ambiguity.
+- Import referenced classes normally. Do not use fully qualified class names in Java code when a normal import is possible; use a qualified name only to resolve an actual name conflict.
 - Translation comment format:
 
 ```java
