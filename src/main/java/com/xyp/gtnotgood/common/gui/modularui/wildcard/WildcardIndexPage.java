@@ -13,6 +13,7 @@ import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardExpansion;
+import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import gregtech.api.enums.Materials;
@@ -29,7 +30,7 @@ public final class WildcardIndexPage extends ParentWidget<WildcardIndexPage> {
     private String search = "";
     private int ticks, index;
 
-    public WildcardIndexPage(Consumer<Materials> excludeMaterial) {
+    public WildcardIndexPage(Consumer<String> excludeMaterial) {
         size(158, 80);
         child(
             // #tr gui.wildcardpattern.available_count
@@ -49,7 +50,7 @@ public final class WildcardIndexPage extends ParentWidget<WildcardIndexPage> {
                     UITexture.builder()
                         .location(ModList.ModIds.GT_NOT_GOOD, "gui/ldlib/modern/close")
                         .build())
-                .onUpdateListener(button -> button.setEnabled(currentMaterial() != null))
+                .onUpdateListener(button -> button.setEnabled(currentMaterialName() != null))
                 .tooltipBuilder(
                     tooltip -> tooltip.addLine(
                         // #tr gui.wildcardpattern.exclude_current
@@ -58,8 +59,8 @@ public final class WildcardIndexPage extends ParentWidget<WildcardIndexPage> {
                         IKey.lang("gui.wildcardpattern.exclude_current")))
                 .onMousePressed(mouse -> {
                     if (mouse != 0) return false;
-                    Materials material = currentMaterial();
-                    if (material != null) excludeMaterial.accept(material);
+                    String materialName = currentMaterialName();
+                    if (materialName != null) excludeMaterial.accept(materialName);
                     return true;
                 }));
         for (int i = 0; i < 6; i++) {
@@ -109,12 +110,13 @@ public final class WildcardIndexPage extends ParentWidget<WildcardIndexPage> {
             .toLowerCase(Locale.ROOT);
         List<WildcardExpansion.Expanded> matches = new ArrayList<>();
         for (WildcardExpansion.Expanded pattern : allPatterns) {
-            Materials material = pattern.material;
-            if (query.isEmpty() || (material != null && (material.mName.toLowerCase(Locale.ROOT)
+            String materialName = pattern.materialName;
+            Materials material = WildcardMaterials.findByName(materialName);
+            if (query.isEmpty() || materialName.toLowerCase(Locale.ROOT)
                 .contains(query)
-                || material.getLocalizedName()
+                || (WildcardMaterials.isRealMaterial(material) && material.getLocalizedName()
                     .toLowerCase(Locale.ROOT)
-                    .contains(query))))
+                    .contains(query)))
                 matches.add(pattern);
         }
         patterns = matches;
@@ -129,8 +131,8 @@ public final class WildcardIndexPage extends ParentWidget<WildcardIndexPage> {
         return slot < stacks.size() ? stacks.get(slot) : null;
     }
 
-    private Materials currentMaterial() {
-        return patterns.isEmpty() ? null : patterns.get(index).material;
+    private String currentMaterialName() {
+        return patterns.isEmpty() ? null : patterns.get(index).materialName;
     }
 
     @Override

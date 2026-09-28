@@ -208,15 +208,15 @@ public class WildcardPatternGui {
     }
 
     /** Adds an exact-name blacklist entry once, saves through the existing C2S path and refreshes both views. */
-    private void excludePreviewMaterial(Materials material) {
-        if (material == null) return;
+    private void excludePreviewMaterial(String materialName) {
+        if (materialName == null) return;
         for (IWildcardFilterComponent filter : filters) {
             if (filter instanceof StringFilterComponent) {
                 StringFilterComponent name = (StringFilterComponent) filter;
-                if (name.isExact() && !name.isWhitelist() && material.mName.equalsIgnoreCase(name.getPattern())) return;
+                if (name.isExact() && !name.isWhitelist() && materialName.equalsIgnoreCase(name.getPattern())) return;
             }
         }
-        filters.add(StringFilterComponent.exactBlacklist(material.mName));
+        filters.add(StringFilterComponent.exactBlacklist(materialName));
         pushConfig();
         if (filterCards != null) rebuildFilterCards(filterCards);
     }
