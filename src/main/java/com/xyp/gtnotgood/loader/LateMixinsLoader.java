@@ -10,6 +10,8 @@ import com.gtnewhorizon.gtnhmixins.ILateMixinLoader;
 import com.gtnewhorizon.gtnhmixins.LateMixin;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
+import cpw.mods.fml.relauncher.FMLLaunchHandler;
+
 /**
  * Provides the late mixin config and conditionally lists ordinary late mixins.
  * <p>
@@ -84,7 +86,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "Gregtech.TransmutationShapedRecipeMixin",
                 "Gregtech.TransmutationShapelessRecipeMixin");
         }
-        if (cpw.mods.fml.relauncher.FMLLaunchHandler.side()
+        if (FMLLaunchHandler.side()
             .isClient() && loadedMods.contains(ModList.NotEnoughItems.getID())) {
             addAll(list, "texteffect.MixinNEIFormattedTextField");
         }
@@ -105,6 +107,16 @@ public class LateMixinsLoader implements ILateMixinLoader {
         }
 
         if (loadedMods.contains(ModList.AE2.getID())) {
+            if (FMLLaunchHandler.side()
+                .isClient()) {
+                addAll(
+                    list,
+                    "AppliedEnergistics.InvTweaksOrderCacheMixin",
+                    "AppliedEnergistics.ItemRepoSortNameCacheMixin",
+                    "AppliedEnergistics.ItemSortersNameCacheMixin",
+                    "AppliedEnergistics.InterfaceEntryViewportAccessor",
+                    "AppliedEnergistics.InterfaceTerminalViewportMixin");
+            }
             addAll(
                 list,
                 "AppliedEnergistics.DualityInterfaceMixin",

@@ -87,6 +87,7 @@ public class CommonProxy {
 
     // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
     public void postInit(FMLPostInitializationEvent event) {
+        RecipeLoader.loadPostInitRecipes();
         com.xyp.gtnotgood.loader.WirelessLaserLoader.bindNativeHatches();
         com.xyp.gtnotgood.common.recipe.machine.EasyWirelessRecipes.loadRecipes();
         AEApi.instance()

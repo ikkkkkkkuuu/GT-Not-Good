@@ -1315,7 +1315,16 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             encodeWithInventorySizes(9, -1);
             return;
         }
-        encodeWithInventorySizes(RecipeTransferPayload.SLOT_COUNT, RecipeTransferPayload.SLOT_COUNT);
+        encodeWithInventorySizes(processingInputSize(), RecipeTransferPayload.SLOT_COUNT);
+    }
+
+    /** Keeps occupied high slots and interior gaps, but avoids serializing hundreds of empty trailing NBT tags. */
+    private int processingInputSize() {
+        IAEStackInventory inputs = inputsSync.get();
+        for (int slot = inputs.getSizeInventory() - 1; slot >= 0; slot--) {
+            if (inputs.getAEStackInSlot(slot) != null) return slot + 1;
+        }
+        return 1;
     }
 
     private void quickEncodeAndMoveToInventory(boolean encodeWholeStack) {

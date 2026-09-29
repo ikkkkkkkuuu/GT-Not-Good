@@ -236,6 +236,36 @@ public final class QuickTerminalScrollClientChecks {
         var details = ((ICraftingPatternItem) encoded.getItem()).getPatternForItem(encoded, player.worldObj);
         checkStacks(details.getAEInputs(), 1234);
         checkStacks(details.getAEOutputs(), 4321);
+        require(
+            encoded.getTagCompound()
+                .getTagList("in", 10)
+                .tagCount() == 256,
+            "occupied last slot retained");
+        container.clear();
+        container.inputsSync.get()
+            .putAEStackInSlot(0, inputs[0]);
+        container.inputsSync.get()
+            .putAEStackInSlot(2, inputs[2]);
+        container.outputsSync.get()
+            .putAEStackInSlot(0, outputs[0]);
+        encode.invoke(container);
+        ItemStack compact = host.getInventoryByName("pattern")
+            .getStackInSlot(1);
+        require(
+            compact.getTagCompound()
+                .getTagList("in", 10)
+                .tagCount() == 3,
+            "empty input tail omitted");
+        require(
+            compact.getTagCompound()
+                .getTagList("in", 10)
+                .getCompoundTagAt(1)
+                .hasNoTags(),
+            "interior gap retained");
+        require(
+            container.inputsSync.get()
+                .getSizeInventory() == 256,
+            "full inventory restored after encoding");
         container.outputsSync.get()
             .putAEStackInSlot(255, outputs[255]);
         container.clear();
@@ -453,6 +483,9 @@ public final class QuickTerminalScrollClientChecks {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen != gui) return;
         if (++frames == 30) {
+            InvTweaksOrderCacheClientChecks.run();
+            ItemSortNameCacheClientChecks.run();
+            InterfaceViewportClientChecks.run(guiField("interfaceTerminal"));
             screenshot("top.png");
             VirtualMEPatternSlot first = ((VirtualMEPatternSlot[]) guiField("craftingSlots"))[0];
             int x = (Integer) guiField("guiLeft") + first.getX() + 2;

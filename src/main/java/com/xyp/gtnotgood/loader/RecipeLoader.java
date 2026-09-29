@@ -8,6 +8,7 @@ import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.CraftingTableRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FuelRodRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
+import com.xyp.gtnotgood.common.recipe.gregtech.MixerRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes;
@@ -37,6 +38,11 @@ import gregtech.api.enums.ItemList;
  * loader layout used by GT-Not-Cool.
  */
 public class RecipeLoader {
+
+    /** Registers recipes whose dimension display blocks are created during another mod's initialization. */
+    public static void loadPostInitRecipes() {
+        MixerRecipes.loadRecipes();
+    }
 
     /**
      * Registers all recipes owned by GT Not Good.
