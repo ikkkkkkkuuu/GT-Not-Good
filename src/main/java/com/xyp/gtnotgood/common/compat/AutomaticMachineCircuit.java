@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,8 +37,9 @@ import gregtech.common.items.ItemIntegratedCircuit;
 
 /**
  * Selects a virtual circuit from a complete AE processing pattern and accepts its resources atomically.
- * All calls run synchronously on the server. Repeated batches of one recipe can refill a working machine;
- * changing circuits or molds requires an idle machine with empty inputs. Recipe definitions are assumed
+ * All calls run synchronously on the server. Oversized batches retain their remaining inputs in the machine's
+ * persistent buffer and refill physical slots as processing frees capacity. Changing circuits or molds requires
+ * an idle machine with empty inputs. Recipe definitions are assumed
  * stable after pack startup, like the encoded pattern definitions cached by AE.
  */
 public final class AutomaticMachineCircuit {
@@ -100,7 +102,7 @@ public final class AutomaticMachineCircuit {
     }
 
     /**
-     * Validates recipe identity, actual CPU inputs, receiving-face permissions and space before committing anything.
+     * Validates recipe identity, actual CPU inputs and space for at least one runnable operation before committing.
      * A failed push leaves the circuit, input slots, tank and CPU table untouched. AE retries the complete batch.
      *
      * @param tile    receiving machine
@@ -119,6 +121,8 @@ public final class AutomaticMachineCircuit {
             || !(table instanceof MEInventoryCrafting aeTable)) return false;
         MTEBasicMachine machine = (MTEBasicMachine) tile.getMetaTileEntity();
         if (!tile.isAllowedToWork()) return false;
+        CircuitInputBufferState overflow = ((CircuitInputBuffer) machine).gtng$getCircuitInputBuffer();
+        if (!overflow.isEmpty()) return false;
         int first = machine.getInputSlot();
         Map<Ingredient, Long> buffered = new HashMap<>();
         for (int slot = first; slot < first + machine.mInputSlotCount; slot++) {
@@ -160,8 +164,13 @@ public final class AutomaticMachineCircuit {
         }
         Match selected = null;
         List<Match> candidates = matches(machine.getRecipeMap(), pattern);
+        Map<Ingredient, Long> expectedOutputs = new HashMap<>();
+        for (IAEStack<?> output : pattern.getAEOutputs())
+            if (output != null && !addAE(expectedOutputs, output, true)) return false;
         for (Match candidate : candidates) {
-            if (candidate.recipe.mEUt > GTValues.V[machine.mTier] || matchingInputs(candidate, actual) == 0) continue;
+            long expectedBatches = CircuitPatternQuantities.requestedOutputBatches(candidate.outputs, expectedOutputs);
+            if (candidate.recipe.mEUt > GTValues.V[machine.mTier] || expectedBatches <= 0
+                || matchingInputs(candidate, actual) != expectedBatches) continue;
             if (selected != null && !sameCircuit(selected.circuit, candidate.circuit))
                 return reportRejection(tile, pattern, aeTable, "ambiguous-circuit", candidates);
             // Several catalog lenses can produce the same encoded output from the same delivery.
@@ -183,26 +192,23 @@ public final class AutomaticMachineCircuit {
             sameRecipe(LAST_DELIVERIES.get(machine), selected),
             buffered.isEmpty() || matchingInputs(selected, buffered) > 0)) return false;
 
-        FluidStack combinedFluid = oldFluid == null ? null : oldFluid.copy();
-        if (fluid != null) {
-            if (combinedFluid == null || combinedFluid.amount <= 0) combinedFluid = fluid.copy();
-            else {
-                if (!combinedFluid.isFluidEqual(fluid)
-                    || (long) combinedFluid.amount + fluid.amount > Integer.MAX_VALUE) return false;
-                combinedFluid.amount += fluid.amount;
-            }
-        }
-
         // Simulate sequential slot insertion against a temporary inventory, including GT's multi-stack filter.
         // Restore the original array before notifying GT of the committed change.
         ItemStack[] original = machine.mInventory.clone();
         ItemStack[] staged = machine.mInventory;
         ItemStack[] committed;
+        List<ItemStack> pendingItems = new ArrayList<>();
+        FluidStack insertedFluid = null;
         ItemStack originalMold = VirtualMachineMolds.get(machine);
         staged[machine.getCircuitSlot()] = selected.circuit == null ? null : selected.circuit.copy();
         VirtualMachineMolds.set(machine, selected.mold);
         try {
-            if (fluid != null && tile.fill(side, fluid, false) != fluid.amount) return false;
+            if (fluid != null) {
+                int accepted = tile.fill(side, fluid, false);
+                if (accepted <= 0 || accepted > fluid.amount) return false;
+                insertedFluid = fluid.copy();
+                insertedFluid.amount = accepted;
+            }
             for (ItemStack item : items) {
                 int remaining = item.stackSize;
                 boolean allowedSlot = false;
@@ -223,7 +229,18 @@ public final class AutomaticMachineCircuit {
                 if (remaining != 0) {
                     if (!allowedSlot && buffered.isEmpty() && machine.mMaxProgresstime <= 0)
                         return reportRejection(tile, pattern, aeTable, "empty-machine-insertion-filter", candidates);
-                    return false;
+                    ItemStack pending = item.copy();
+                    pending.stackSize = remaining;
+                    pendingItems.add(pending);
+                }
+            }
+            FluidStack combinedFluid = oldFluid == null ? null : oldFluid.copy();
+            if (insertedFluid != null) {
+                if (combinedFluid == null || combinedFluid.amount <= 0) combinedFluid = insertedFluid.copy();
+                else {
+                    if (!combinedFluid.isFluidEqual(insertedFluid)
+                        || (long) combinedFluid.amount + insertedFluid.amount > Integer.MAX_VALUE) return false;
+                    combinedFluid.amount += insertedFluid.amount;
                 }
             }
             ItemStack[] recipeInputs = new ItemStack[machine.mInputSlotCount + 1];
@@ -251,14 +268,14 @@ public final class AutomaticMachineCircuit {
         }
         // There is no intervening tick between simulation and commit. Use the normal sided fluid handler;
         // guard against an inconsistent handler by restoring its input tank if it accepts only part of the batch.
-        if (fluid != null) {
+        if (insertedFluid != null) {
             ItemStack oldCircuit = machine.mInventory[machine.getCircuitSlot()];
             FluidStack originalFluid = oldFluid == null ? null : oldFluid.copy();
             machine.mInventory[machine.getCircuitSlot()] = committed[machine.getCircuitSlot()];
             VirtualMachineMolds.set(machine, selected.mold);
             boolean filled = false;
             try {
-                filled = tile.fill(side, fluid, true) == fluid.amount;
+                filled = tile.fill(side, insertedFluid, true) == insertedFluid.amount;
                 if (!filled) return false;
             } finally {
                 machine.mInventory[machine.getCircuitSlot()] = oldCircuit;
@@ -271,8 +288,55 @@ public final class AutomaticMachineCircuit {
         for (int slot = first; slot < first + machine.mInputSlotCount; slot++) {
             tile.setInventorySlotContents(slot, committed[slot]);
         }
+        FluidStack pendingFluid = null;
+        if (fluid != null && insertedFluid != null && fluid.amount > insertedFluid.amount) {
+            pendingFluid = fluid.copy();
+            pendingFluid.amount -= insertedFluid.amount;
+        }
+        overflow.replace(pendingItems, pendingFluid, side);
         LAST_DELIVERIES.put(machine, selected);
         return true;
+    }
+
+    /** Moves accepted overflow into physical machine inputs as processing frees capacity. */
+    public static void refill(MTEBasicMachine machine) {
+        if (!(machine.getBaseMetaTileEntity() instanceof BaseMetaTileEntity tile)) return;
+        CircuitInputBufferState overflow = ((CircuitInputBuffer) machine).gtng$getCircuitInputBuffer();
+        if (overflow.isEmpty() || overflow.getSide() == ForgeDirection.UNKNOWN) return;
+        ForgeDirection side = overflow.getSide();
+        boolean changed = false;
+        FluidStack remainingFluid = overflow.getFluid();
+        if (remainingFluid != null) {
+            int moved = tile.fill(side, remainingFluid, true);
+            if (moved > 0) {
+                remainingFluid.amount -= moved;
+                if (remainingFluid.amount <= 0) overflow.setFluid(null);
+                changed = true;
+            }
+        }
+        int first = machine.getInputSlot();
+        for (Iterator<ItemStack> iterator = overflow.getItems()
+            .iterator(); iterator.hasNext();) {
+            ItemStack pending = iterator.next();
+            for (int slot = first; slot < first + machine.mInputSlotCount && pending.stackSize > 0; slot++) {
+                if (!tile.canInsertItem(slot, pending, side.ordinal())) continue;
+                ItemStack existing = machine.getStackInSlot(slot);
+                if (existing != null && !sameItem(existing, pending)) continue;
+                int present = existing == null ? 0 : Math.max(0, existing.stackSize);
+                int moved = Math.min(
+                    pending.stackSize,
+                    Math.min(pending.getMaxStackSize(), tile.getInventoryStackLimit()) - present);
+                if (moved <= 0) continue;
+                ItemStack inserted = pending.copy();
+                inserted.stackSize = present + moved;
+                tile.setInventorySlotContents(slot, inserted);
+                pending.stackSize -= moved;
+                changed = true;
+            }
+            if (pending.stackSize <= 0) iterator.remove();
+        }
+        overflow.clearIfEmpty();
+        if (changed) tile.markDirty();
     }
 
     /**

@@ -4,6 +4,7 @@ import com.xyp.gtnotgood.common.advancedio.AdvancedIORecipes;
 import com.xyp.gtnotgood.common.beekeeping.WorkingApiaryRegistration;
 import com.xyp.gtnotgood.common.packaged.PackagedRecipes;
 import com.xyp.gtnotgood.common.patternsorter.PatternSorterRecipes;
+import com.xyp.gtnotgood.common.recipe.gregtech.AssemblerRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.CraftingTableRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FuelRodRecipes;
@@ -81,6 +82,7 @@ public class RecipeLoader {
         MechanicalUserRecipes.loadRecipes();
         FluxConnectorRecipes.loadRecipes();
         IntegratedProductionFactoryRecipes.loadRecipes();
+        AssemblerRecipes.loadRecipes();
         BenderRecipes.loadRecipes();
         FurnaceRecipes.loadRecipes();
         FuelRodRecipes.loadRecipes();
