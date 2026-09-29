@@ -93,6 +93,15 @@ public enum FactoryText {
     // # Waiting for materials or power for a whole deterministic batch
     // # zh_CN 等待确定性整批所需的材料或供电
     DeterministicBatch("factory.gtnotgood.deterministic_batch"),
+    // #tr factory.gtnotgood.preset_platinum_group
+    // # Complete platinum group / single page
+    // # zh_CN 完整铂族处理（单页）
+    PresetPlatinumGroup("factory.gtnotgood.preset_platinum_group"),
+    // #tr factory.gtnotgood.preset_platinum_group_help
+    // # All seven branches with shared recovery, balanced and settled as one line.
+    // # zh_CN 七条分支合为一页，共用回收工序，整线配平结算。
+    PresetPlatinumGroupHelp("factory.gtnotgood.preset_platinum_group_help"),
+
     // #tr factory.gtnotgood.preset_platinum
     // # Platinum / salt and calcium recovery
     // # zh_CN 铂／铂盐与钙回收
@@ -379,8 +388,8 @@ public enum FactoryText {
     // # zh_CN 安装能源仓时有线供电；无普通或特殊能源仓时使用归属玩家的无线电网。
     POWER_HELP("factory.gtnotgood.tooltip.power"),
     // #tr factory.gtnotgood.tooltip.graph
-    // # Up to 32 nodes; parallel up to 2,147,483,647. Linked materials stay inside; other products are exported.
-    // # zh_CN 最多32工序，默认1并行；物料自动衔接，其余产物排出。
+    // # Up to 64 nodes; parallel up to 2,147,483,647. Linked materials stay inside; other products are exported.
+    // # zh_CN 最多64工序，默认1并行；物料自动衔接，其余产物排出。
     GRAPH_HELP("factory.gtnotgood.tooltip.graph"),
     // #tr factory.gtnotgood.tooltip.safety
     // # Output jams stop producers. Power loss pauses jobs without refunding consumed inputs.

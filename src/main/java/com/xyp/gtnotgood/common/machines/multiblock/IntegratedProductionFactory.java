@@ -27,6 +27,7 @@ import com.xyp.gtnotgood.common.gui.modularui.multiblock.IntegratedProductionFac
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGCleanWirelessMultiMachineBase;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryBalancer;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryBatching;
+import com.xyp.gtnotgood.utils.machine.factory.FactoryControllers;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryCycles;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryGraph;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryInputs;
@@ -46,15 +47,12 @@ import gregtech.api.enums.HatchElement;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
-import gregtech.api.interfaces.tileentity.RecipeMapWorkable;
-import gregtech.api.metatileentity.implementations.MTEMultiBlockBase;
 import gregtech.api.render.TextureFactory;
 import gregtech.api.structure.error.StructureError;
 import gregtech.api.structure.error.StructureErrors;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.HatchElementBuilder;
 import gregtech.api.util.MultiblockTooltipBuilder;
-import gregtech.common.blocks.ItemMachines;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 import gregtech.common.misc.WirelessNetworkManager;
 import gtPlusPlus.xmod.gregtech.common.blocks.textures.TexturesGtBlock;
@@ -290,7 +288,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         return merged;
     }
 
-    /** Applies edits to the shared executor after in-flight work and deposits have safely drained. */
+    /** Applies edits after in-flight work drains, retaining deposits still needed by the pending pages. */
     private void refreshInstalledPages() {
         pending = mergedLockedPages();
         draining = true;
@@ -301,7 +299,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     public List<NBTTagCompound> getRequirementTags() {
         List<NBTTagCompound> result = new ArrayList<>();
         if (draining) {
-            for (ItemStack item : reservations.remaining()) {
+            for (ItemStack item : reservations.remainingUnused(pending)) {
                 NBTTagCompound key = new NBTTagCompound();
                 key.setTag("item", item.writeToNBT(new NBTTagCompound()));
                 addRequirement(result, key, false);
@@ -314,7 +312,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         for (FactoryGraph.Node node : graph.nodes) {
             FactoryRecipeCatalog.Entry entry = FactoryRecipeCatalog.get(node.recipe);
             if (entry == null) continue;
-            String map = entry.map.unlocalizedName;
+            String map = FactoryRecipeCatalog.controllerKey(entry.map.unlocalizedName);
             if (shownHosts.add(map)) {
                 NBTTagCompound host = new NBTTagCompound();
                 host.setString("map", map);
@@ -581,7 +579,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
             .anyMatch(job -> job.remaining == 1);
         runtime.advance();
         flushBuffers();
-        if (draining && runtime.empty() && reservations.refund(this::addOutputAtomic)) {
+        if (draining && runtime.empty() && reservations.refundUnused(pending, this::addOutputAtomic)) {
             installed = pending;
             patternRouting = null;
             patternFailure = null;
@@ -943,16 +941,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
      * Shared controller eligibility for deposits and the route-list machine icon.
      */
     public static boolean supportsHost(FactoryRecipeCatalog.Entry entry, ItemStack stack) {
-        if (stack == null || stack.stackSize <= 0 || !(stack.getItem() instanceof ItemMachines)) return false;
-        IMetaTileEntity meta = ItemMachines.getMetaTileEntity(stack);
-        if (!(meta instanceof MTEMultiBlockBase) || !(meta instanceof RecipeMapWorkable workable)) return false;
-        if (workable.getAvailableRecipeMaps() != null) {
-            for (gregtech.api.recipe.RecipeMap<?> map : workable.getAvailableRecipeMaps()) {
-                if (map != null && map.unlocalizedName.equals(entry.map.unlocalizedName)) return true;
-            }
-        }
-        return workable.getRecipeMap() != null
-            && workable.getRecipeMap().unlocalizedName.equals(entry.map.unlocalizedName);
+        return FactoryControllers.supports(entry.map.unlocalizedName, stack);
     }
 
     /** Saturates only buffer estimates; actual recipe consumption and output amounts still use checked arithmetic. */

@@ -11,7 +11,7 @@ import net.minecraft.nbt.NBTTagList;
 /** Bounded, server-owned production graph. Recipe identities refer to the server recipe catalog. */
 public final class FactoryGraph {
 
-    public static final int MAX_NODES = 32;
+    public static final int MAX_NODES = 64;
     public static final int MAX_ACTIVE_NODES = MAX_NODES * 99;
     public static final int MAX_PARALLEL = Integer.MAX_VALUE;
 

@@ -30,6 +30,7 @@ import com.xyp.gtnotgood.common.gui.modularui.GTNGGuiTextures;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.base.GTNGModernMultiBlockBaseGui;
 import com.xyp.gtnotgood.common.gui.modularui.widget.FactoryListScroll;
 import com.xyp.gtnotgood.common.machines.multiblock.IntegratedProductionFactory;
+import com.xyp.gtnotgood.utils.machine.factory.FactoryControllers;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryGraph;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryPresets;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryPreview;
@@ -255,8 +256,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         NBTTagCompound key = data.getCompoundTag("key");
         String name;
         if (key.hasKey("map")) {
-            name = FactoryText.CONTROLLER.text() + ": "
-                + net.minecraft.util.StatCollector.translateToLocal(key.getString("map"));
+            name = FactoryText.CONTROLLER.text() + ": " + FactoryControllers.displayName(key.getString("map"));
         } else {
             ItemStack item = ItemStack.loadItemStackFromNBT(key.getCompoundTag("item"));
             name = itemName(item);
@@ -311,9 +311,11 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
             .size(260, 215);
         panel.child(ButtonWidget.panelCloseButton());
         panel.child(
-            new TextWidget<>(IKey.dynamic(() -> FactoryText.EDIT.text() + ": " + visibleGraph.nodes.size() + "/32"))
-                .pos(25, 8)
-                .size(125, 12));
+            new TextWidget<>(
+                IKey.dynamic(
+                    () -> FactoryText.EDIT.text() + ": " + visibleGraph.nodes.size() + "/" + FactoryGraph.MAX_NODES))
+                        .pos(25, 8)
+                        .size(125, 12));
         panel.child(
             GTGuiTextures.OVERLAY_BUTTON_ALLOW_INPUT.asWidget()
                 .pos(5, 5)
@@ -536,7 +538,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
                 .size(320, 34));
         panel.child(
             new com.cleanroommc.modularui.widgets.textfield.TextFieldWidget().value(routingCode)
-                .setMaxLength(8192)
+                .setMaxLength(FactoryRouting.MAX_CODE_LENGTH)
                 .pos(10, 48)
                 .size(340, 18));
         panel.child(
@@ -738,7 +740,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
                     entry.recipe.mDuration,
                     node.parallel,
                     node.overclocks);
-                return net.minecraft.util.StatCollector.translateToLocal(entry.map.unlocalizedName) + "\n"
+                return FactoryControllers.displayName(entry.map.unlocalizedName) + "\n"
                     + timing[0]
                     + " EU/t | "
                     + timing[1]
@@ -838,23 +840,8 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         return index < entries.size() ? entries.get(index).item : null;
     }
 
-    private final java.util.Map<String, ItemStack> controllerIcons = new java.util.HashMap<>();
-
-    /** Find one compatible controller per recipe map, matching the same predicate as actual machine deposits. */
     private ItemStack controllerIcon(FactoryRecipeCatalog.Entry entry) {
-        if (!controllerIcons.containsKey(entry.map.unlocalizedName)) {
-            ItemStack found = null;
-            for (gregtech.api.interfaces.metatileentity.IMetaTileEntity meta : gregtech.api.GregTechAPI.METATILEENTITIES) {
-                if (!(meta instanceof gregtech.api.metatileentity.implementations.MTEMultiBlockBase)) continue;
-                ItemStack stack = meta.getStackForm(1);
-                if (IntegratedProductionFactory.supportsHost(entry, stack)) {
-                    found = stack;
-                    break;
-                }
-            }
-            controllerIcons.put(entry.map.unlocalizedName, found);
-        }
-        return controllerIcons.get(entry.map.unlocalizedName);
+        return FactoryControllers.representative(entry.map.unlocalizedName);
     }
 
     private FactoryRecipeCatalog.Entry selectedRecipe() {
@@ -945,7 +932,8 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
             int id = buf.readInt();
             int a = buf.readInt();
             int b = buf.readInt();
-            String recipe = buf.readStringFromBuffer((command == 17 || command == 5) ? 8192 : 256);
+            String recipe = buf
+                .readStringFromBuffer((command == 17 || command == 5) ? FactoryRouting.MAX_CODE_LENGTH : 256);
             if (page != factory.getRecipePage()) return;
             factory.edit(command, id, a, b, recipe);
         }

@@ -7,6 +7,7 @@ import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +36,7 @@ import com.cleanroommc.modularui.widget.ScrollWidget;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.IntegratedProductionFactoryGui;
 import com.xyp.gtnotgood.common.machines.multiblock.IntegratedProductionFactory;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.gtnotgood.utils.machine.factory.FactoryControllers;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryCycles;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryGraph;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryInputs;
@@ -43,6 +45,7 @@ import com.xyp.gtnotgood.utils.machine.factory.FactoryPatternRouting;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryPresets;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryPreview;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryRecipeCatalog;
+import com.xyp.gtnotgood.utils.machine.factory.FactoryReservations;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryRouting;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryRuntime;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryText;
@@ -99,6 +102,8 @@ public final class FactoryClientChecks {
             checkRecipes();
             checkPresets();
             checkPresetPageIsolation();
+            checkReservationUpdates();
+            checkIndustrialControllers();
             checkPatternRouting();
             checkNativePatternInventory();
             openEditor();
@@ -151,13 +156,41 @@ public final class FactoryClientChecks {
                     .scrollTo(list.getScrollArea(), Integer.MAX_VALUE);
                 stage = 4;
                 ticks = 0;
-            } else {
+            } else if (stage == 4) {
                 ScrollWidget<?> list = (ScrollWidget<?>) panel.getChildren()
                     .stream()
                     .filter(w -> w instanceof ScrollWidget)
                     .findFirst()
                     .get();
                 require(list.getScrollY() > 0, "last preset is reachable by scrolling");
+                openEditor(true);
+                stage = 5;
+                ticks = 0;
+            } else {
+                ScrollWidget<?> list = (ScrollWidget<?>) panel.getChildren()
+                    .stream()
+                    .filter(w -> w instanceof ScrollWidget)
+                    .findFirst()
+                    .get();
+                require(
+                    list.getChildren()
+                        .stream()
+                        .filter(w -> w.isEnabled())
+                        .count()
+                        == FactoryPresets.resolve(FactoryPresets.Preset.PlatinumGroup)
+                            .size(),
+                    "all platinum rows visible");
+                require(list.getScrollY() == 0, "large page reopens at top");
+                list.getScrollArea()
+                    .getScrollY()
+                    .scrollTo(list.getScrollArea(), Integer.MAX_VALUE);
+                require(list.getScrollY() > 0, "large page reaches final rows");
+                if (stage == 5) {
+                    openEditor(true);
+                    stage = 6;
+                    ticks = 0;
+                    return;
+                }
                 Files.write(new File(output, "result.txt").toPath(), "PASS".getBytes(StandardCharsets.UTF_8));
                 mc.shutdown();
             }
@@ -233,11 +266,44 @@ public final class FactoryClientChecks {
                             .size() == 11
                         && groups.get(0) != groups.get(offset),
                     "whole batches cannot cross pages");
-            } else {
+            } else if (preset != FactoryPresets.Preset.PlatinumGroup) {
                 require(
                     result.copy().nodes.stream()
                         .noneMatch(n -> n.wholeLineBatch),
                     "existing presets remain unchanged");
+            }
+            if (preset == FactoryPresets.Preset.PlatinumGroup) {
+                FactoryGraph whole = result.copy();
+                require(
+                    whole.nodes.size() > 32 && whole.nodes.size() <= FactoryGraph.MAX_NODES,
+                    "platinum exceeds old limit");
+                require(whole.copy().nodes.size() == whole.nodes.size(), "large page survives NBT");
+                require(
+                    FactoryRouting.decode(FactoryRouting.encode(whole)).nodes.size() == whole.nodes.size(),
+                    "large page route round trip");
+                require(
+                    whole.nodes.stream()
+                        .map(n -> n.recipe)
+                        .distinct()
+                        .count() == whole.nodes.size(),
+                    "recovery recipes deduplicated");
+                require(
+                    FactoryCycles.groups(whole)
+                        .get(whole.nodes.get(0).id)
+                        .size() == whole.nodes.size(),
+                    "platinum settles together");
+                FactoryGraph full = whole.copy();
+                while (full.nodes.size() < FactoryGraph.MAX_NODES) full.add(whole.nodes.get(0).recipe);
+                full.add(whole.nodes.get(0).recipe);
+                require(full.nodes.size() == FactoryGraph.MAX_NODES, "node cap is enforced");
+                for (FactoryGraph.Node node : full.nodes) {
+                    node.parallel = FactoryGraph.MAX_PARALLEL;
+                    node.customEUt = Long.MAX_VALUE;
+                }
+                require(full.copy().nodes.size() == FactoryGraph.MAX_NODES, "full page persists");
+                require(
+                    FactoryRouting.decode(FactoryRouting.encode(full)).nodes.size() == FactoryGraph.MAX_NODES,
+                    "full page with long counts imports without truncation");
             }
             if (preset == FactoryPresets.Preset.EpoxyPropene) {
                 require(result.size() == 5, "epoxy recovery stays on one page");
@@ -334,7 +400,9 @@ public final class FactoryClientChecks {
                     draft.write()
                         .toString()),
                 "failed insertion is atomic");
-            require(draft.nodes.size() <= 32 && draft.hasTargetsForAllComponents(), "normal graph limits");
+            require(
+                draft.nodes.size() <= FactoryGraph.MAX_NODES && draft.hasTargetsForAllComponents(),
+                "normal graph limits");
             for (FactoryGraph.Node node : draft.nodes) {
                 require(node.customEUt == -1 && node.overclocks == 0 && node.parallel > 0, "preset preserves costs");
                 require(FactoryRecipeCatalog.get(node.recipe) != null, "preset only references registered recipes");
@@ -374,6 +442,172 @@ public final class FactoryClientChecks {
             report.toString()
                 .getBytes(StandardCharsets.UTF_8));
         require(valid, report.toString());
+    }
+
+    private void checkIndustrialControllers() throws Exception {
+        var ordinary = Arrays.asList(
+            RecipeMaps.electrolyzerRecipes,
+            RecipeMaps.centrifugeRecipes,
+            RecipeMaps.mixerRecipes,
+            RecipeMaps.chemicalDehydratorRecipes,
+            RecipeMaps.chemicalReactorRecipes);
+        var industrial = Arrays.asList(
+            RecipeMaps.electrolyzerNonCellRecipes,
+            RecipeMaps.centrifugeNonCellRecipes,
+            RecipeMaps.mixerNonCellRecipes,
+            RecipeMaps.chemicalDehydratorNonCellRecipes,
+            RecipeMaps.multiblockChemicalReactorRecipes);
+        for (int i = 0; i < ordinary.size(); i++) {
+            String oldKey = ordinary.get(i).unlocalizedName, key = industrial.get(i).unlocalizedName;
+            ItemStack controller = FactoryControllers.representative(key);
+            require(
+                controller != null && FactoryControllers.supports(oldKey, controller)
+                    && FactoryControllers.supports(key, controller),
+                "industrial controller accepts both recipe maps: " + oldKey);
+            require(!FactoryControllers.supports(key, new ItemStack(Items.iron_ingot)), "non-controller rejected");
+            FactoryRecipeCatalog.Entry first = null, second = null;
+            for (GTRecipe recipe : ordinary.get(i)
+                .getAllRecipes()) {
+                first = FactoryRecipeCatalog.find(ordinary.get(i), recipe);
+                if (first != null) break;
+            }
+            for (GTRecipe recipe : industrial.get(i)
+                .getAllRecipes()) {
+                second = FactoryRecipeCatalog.find(industrial.get(i), recipe);
+                if (second != null) break;
+            }
+            require(first != null && second != null, "real recipes available");
+            FactoryReservations held = new FactoryReservations();
+            List<ItemStack> supply = new ArrayList<>();
+            supply.add(controller.copy());
+            held.collect(0, first, supply, stack -> FactoryControllers.supports(oldKey, stack));
+            require(supply.get(0).stackSize == 0 && held.hasHost(key) && held.hasHost(oldKey), "one controller shared");
+            ItemStack extra = controller.copy();
+            held.collect(1, second, Arrays.asList(extra), stack -> FactoryControllers.supports(key, stack));
+            require(extra.stackSize == 1, "second recipe map does not consume another controller");
+            FactoryGraph graph = new FactoryGraph();
+            graph.add(first.id);
+            graph.add(second.id);
+            IntegratedProductionFactory machine = new IntegratedProductionFactory("factory.qa.controllers");
+            Field installed = IntegratedProductionFactory.class.getDeclaredField("installed");
+            installed.setAccessible(true);
+            installed.set(machine, graph);
+            long rows = machine.getRequirementTags()
+                .stream()
+                .filter(
+                    row -> row.getCompoundTag("key")
+                        .hasKey("map"))
+                .count();
+            require(rows == 1, "ordinary and industrial requirements merge into one row");
+            NBTTagCompound saved = held.write();
+            NBTTagList hosts = saved.getTagList("hosts", 10);
+            hosts.getCompoundTagAt(0)
+                .setString("key", oldKey);
+            FactoryReservations migrated = new FactoryReservations();
+            migrated.read(saved);
+            require(
+                migrated.hasHost(key) && migrated.refundUnused(graph, stack -> false),
+                "old deposit migrated without refund");
+            NBTTagCompound duplicate = (NBTTagCompound) hosts.getCompoundTagAt(0)
+                .copy();
+            duplicate.setString("key", key);
+            hosts.appendTag(duplicate);
+            migrated.read(saved);
+            List<ItemStack> refunds = new ArrayList<>();
+            require(
+                migrated.remaining()
+                    .size() == 2,
+                "legacy duplicate preserved");
+            require(migrated.refundUnused(graph, stack -> {
+                refunds.add(stack);
+                return true;
+            }) && refunds.size() == 1
+                && migrated.remaining()
+                    .size() == 1
+                && migrated.hasHost(oldKey), "only redundant controller returned");
+        }
+        require(
+            FactoryControllers.representative(RecipeMaps.sifterRecipes.unlocalizedName) != null,
+            "sifter displays a real multiblock controller");
+        for (FactoryPresets.Preset preset : FactoryPresets.Preset.values())
+            for (FactoryGraph.Node node : FactoryPresets.resolve(preset)
+                .copy().nodes) {
+                    var entry = FactoryRecipeCatalog.get(node.recipe);
+                    ItemStack icon = FactoryControllers.representative(entry.map.unlocalizedName);
+                    require(
+                        icon != null && IntegratedProductionFactory.supportsHost(entry, icon),
+                        "preset machine icon and acceptance agree: " + preset + " / " + entry.map.unlocalizedName);
+                }
+    }
+
+    private void checkReservationUpdates() {
+        FactoryGraph expanded = FactoryPresets.resolve(FactoryPresets.Preset.RocketRp1)
+            .copy();
+        FactoryGraph old = new FactoryGraph();
+        old.add(expanded.nodes.get(0).recipe);
+        FactoryRecipeCatalog.Entry entry = FactoryRecipeCatalog.get(old.nodes.get(0).recipe);
+        FactoryReservations held = new FactoryReservations();
+        List<ItemStack> supplied = new ArrayList<>();
+        ItemStack machine = new ItemStack(Items.iron_ingot);
+        machine.setTagCompound(new NBTTagCompound());
+        machine.getTagCompound()
+            .setString("depositOwner", "old page");
+        supplied.add(machine);
+        for (ItemStack input : entry.recipe.mInputs) if (input != null && input.stackSize == 0) {
+            ItemStack copy = input.copy();
+            copy.stackSize = 1;
+            supplied.add(copy);
+        }
+        require(
+            held.collect(0, entry, supplied, stack -> stack.getItem() == Items.iron_ingot) == null,
+            "original page deposits collected");
+        NBTTagCompound before = held.write();
+        List<ItemStack> refunded = new ArrayList<>();
+        require(held.refundUnused(expanded, item -> {
+            refunded.add(item);
+            return true;
+        }), "append retains deposits");
+        require(
+            refunded.isEmpty() && before.equals(held.write()),
+            "adding pages never ejects previous machines or circuits");
+        require(
+            held.remainingUnused(expanded)
+                .isEmpty(),
+            "retained items hidden from refund list");
+        require(
+            held.collect(99, entry, new ArrayList<>(), stack -> false) == null,
+            "renumbered existing node needs no replacement machine");
+        FactoryRecipeCatalog.Entry added = FactoryRecipeCatalog.get(expanded.nodes.get(2).recipe);
+        require(
+            held.collect(2, added, new ArrayList<>(), stack -> false) == FactoryText.HOST,
+            "new map still requires its own machine");
+        FactoryReservations restored = new FactoryReservations();
+        restored.read(held.write());
+        require(
+            restored.refundUnused(expanded, item -> false) && before.equals(restored.write()),
+            "saved deposits survive page update with blocked output");
+        require(restored.refundUnused(old, item -> false), "removing a page preserves shared machines");
+        require(
+            !restored.refundUnused(new FactoryGraph(), item -> false) && before.equals(restored.write()),
+            "blocked refund never deletes deposits");
+        require(restored.refundUnused(new FactoryGraph(), item -> {
+            refunded.add(item);
+            return true;
+        }), "clearing last page refunds deposits");
+        require(
+            restored.remaining()
+                .isEmpty()
+                && refunded.stream()
+                    .anyMatch(
+                        item -> item.hasTagCompound() && "old page".equals(
+                            item.getTagCompound()
+                                .getString("depositOwner"))),
+            "actual tagged machine returned");
+        int count = refunded.size();
+        require(restored.refundUnused(new FactoryGraph(), item -> {
+            refunded.add(item);
+            return true;
+        }) && refunded.size() == count, "refund cannot duplicate items");
     }
 
     private void checkPresetPageIsolation() {
@@ -619,12 +853,20 @@ public final class FactoryClientChecks {
     }
 
     private void openEditor() throws Exception {
+        openEditor(false);
+    }
+
+    private void openEditor(boolean platinum) throws Exception {
         IntegratedProductionFactoryGui gui = new IntegratedProductionFactoryGui(
             new IntegratedProductionFactory("factory.qa"));
         Field graphField = IntegratedProductionFactoryGui.class.getDeclaredField("visibleGraph");
         graphField.setAccessible(true);
         FactoryGraph graph = (FactoryGraph) graphField.get(gui);
-        for (int i = 0; i < 4; i++) graph.add(recipeId);
+        if (platinum) graph.read(
+            FactoryPresets.resolve(FactoryPresets.Preset.PlatinumGroup)
+                .copy()
+                .write());
+        else for (int i = 0; i < 4; i++) graph.add(recipeId);
         Field lockedField = IntegratedProductionFactoryGui.class.getDeclaredField("locked");
         lockedField.setAccessible(true);
         lockedField.setBoolean(gui, true);

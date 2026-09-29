@@ -32,6 +32,7 @@ public final class FactoryPresets {
 
     public enum Preset {
 
+        PlatinumGroup(FactoryText.PresetPlatinumGroup, FactoryText.PresetPlatinumGroupHelp),
         Platinum(FactoryText.PresetPlatinum, FactoryText.PresetPlatinumHelp),
         Palladium(FactoryText.PresetPalladium, FactoryText.PresetPalladiumHelp),
         Residue(FactoryText.PresetResidue, FactoryText.PresetResidueHelp),
@@ -113,9 +114,17 @@ public final class FactoryPresets {
         return true;
     }
 
-    private static FactoryGraph build(Preset preset) {
+    private static List<Step> stepsFor(Preset preset) {
         List<Step> steps = new ArrayList<>();
         switch (preset) {
+            case PlatinumGroup:
+                Map<String, Step> unique = new LinkedHashMap<>();
+                for (Preset part : new Preset[] { Preset.Platinum, Preset.Palladium, Preset.Residue, Preset.Ruthenium,
+                    Preset.Osmium, Preset.Iridium, Preset.Rhodium }) {
+                    for (Step step : stepsFor(part)) unique.putIfAbsent(step.resolve().id, step);
+                }
+                steps.addAll(unique.values());
+                break;
             case Netherite:
                 ItemStack milledNetherrack = GTOreDictUnificator.get(milled, Materials.Netherrack, 1);
                 ItemStack scrap = ModsItemlist.EtFuturumRequiemNetheriteScrap.get(1);
@@ -591,9 +600,15 @@ public final class FactoryPresets {
         }
         if (preset == Preset.Ruthenium || preset == Preset.Rhodium)
             steps.add(step(electrolyzerRecipes, Materials.Salt.getDust(2), Materials.Sodium.getDust(1)));
+        return steps;
+    }
+
+    private static FactoryGraph build(Preset preset) {
+        List<Step> steps = stepsFor(preset);
         FactoryGraph graph = new FactoryGraph();
         for (Step step : steps) graph.add(step.resolve().id);
-        if (preset == Preset.Netherite) for (FactoryGraph.Node node : graph.nodes) node.wholeLineBatch = true;
+        if (preset == Preset.Netherite || preset == Preset.PlatinumGroup)
+            for (FactoryGraph.Node node : graph.nodes) node.wholeLineBatch = true;
         FactoryRouting.connect(graph);
         balanceRegisteredFlows(graph, steps, preset);
         if (FactoryPreview.describe(graph)
@@ -634,8 +649,8 @@ public final class FactoryPresets {
         for (int i = 1; i < steps.size(); i++) {
             Object input = steps.get(i).inputs[0];
             // Salt recovery only covers part of the sodium demand; the rest remains a real external input.
-            if (preset == Preset.Rhodium && input instanceof ItemStack item && same(item, Materials.Sodium.getDust(1)))
-                continue;
+            if ((preset == Preset.Rhodium || preset == Preset.PlatinumGroup) && input instanceof ItemStack item
+                && same(item, Materials.Sodium.getDust(1))) continue;
             // Nether air supplies the mud demand; surplus nefarious gas remains an exported byproduct.
             if (preset == Preset.Netherite && input instanceof FluidStack fluid
                 && fluid.isFluidEqual(Materials.NefariousGas.getFluid(1))) continue;
@@ -646,7 +661,7 @@ public final class FactoryPresets {
             intermediates.add(Materials.NefariousOil.getFluid(1));
             intermediates.add(Materials.PoorNetherWaste.getFluid(1));
         }
-        if (preset == Preset.Rhodium) intermediates.add(SodiumNitrate.get(dust));
+        if (preset == Preset.Rhodium || preset == Preset.PlatinumGroup) intermediates.add(SodiumNitrate.get(dust));
         if (preset == Preset.Polybenzimidazole) {
             intermediates.add(Materials.Diaminobenzidin.getFluid(1));
             intermediates.add(Materials.NitrationMixture.getFluid(1));

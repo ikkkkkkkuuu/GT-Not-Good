@@ -20,6 +20,8 @@ gradle.projectsEvaluated {
         java {
             target 'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryRecipeCatalog.java',
                 'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryGraph.java',
+                'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryControllers.java',
+                'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryReservations.java',
                 'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryRouting.java',
                 'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryInputs.java',
                 'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryRuntime.java',

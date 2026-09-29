@@ -8,6 +8,8 @@ import gregtech.api.util.GTRecipe;
 /** Adapts the BOX route-list workflow to server-owned recipes and the existing production scheduler. */
 public final class FactoryRouting {
 
+    public static final int MAX_CODE_LENGTH = 16384;
+
     private FactoryRouting() {}
 
     /** Rebuilds material links from GT matching rules; reserved catalysts never create a material dependency. */
@@ -63,7 +65,7 @@ public final class FactoryRouting {
 
     /** Fully validates a bounded route code before the caller replaces its draft. */
     public static FactoryGraph decode(String text) {
-        if (text.length() > 8192) throw new IllegalArgumentException();
+        if (text.length() > MAX_CODE_LENGTH) throw new IllegalArgumentException();
         String[] rows = text.trim()
             .split(";", -1);
         boolean extended = rows[0].equals("GTNG2");

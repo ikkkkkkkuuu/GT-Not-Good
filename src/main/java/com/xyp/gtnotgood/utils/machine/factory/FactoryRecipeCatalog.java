@@ -69,6 +69,20 @@ public final class FactoryRecipeCatalog {
 
     private FactoryRecipeCatalog() {}
 
+    /** Shared industrial controller identity only; recipe ids and container input/output semantics remain unchanged. */
+    public static String controllerKey(String map) {
+        if (RecipeMaps.electrolyzerRecipes.unlocalizedName.equals(map))
+            return RecipeMaps.electrolyzerNonCellRecipes.unlocalizedName;
+        if (RecipeMaps.centrifugeRecipes.unlocalizedName.equals(map))
+            return RecipeMaps.centrifugeNonCellRecipes.unlocalizedName;
+        if (RecipeMaps.mixerRecipes.unlocalizedName.equals(map)) return RecipeMaps.mixerNonCellRecipes.unlocalizedName;
+        if (RecipeMaps.chemicalDehydratorRecipes.unlocalizedName.equals(map))
+            return RecipeMaps.chemicalDehydratorNonCellRecipes.unlocalizedName;
+        if (RecipeMaps.chemicalReactorRecipes.unlocalizedName.equals(map))
+            return RecipeMaps.multiblockChemicalReactorRecipes.unlocalizedName;
+        return map;
+    }
+
     public static Entry get(String id) {
         return entries().get(id);
     }

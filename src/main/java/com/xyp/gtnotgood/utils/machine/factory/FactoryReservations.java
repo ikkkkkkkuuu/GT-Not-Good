@@ -1,8 +1,12 @@
 package com.xyp.gtnotgood.utils.machine.factory;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import net.minecraft.item.ItemStack;
@@ -21,8 +25,8 @@ public final class FactoryReservations {
     /** Collects one controller per recipe map and one of each circuit or catalyst across all locked pages. */
     public FactoryText collect(int node, FactoryRecipeCatalog.Entry entry, List<ItemStack> inputs,
         Predicate<ItemStack> host) {
-        String map = entry.map.unlocalizedName;
-        if (!hosts.containsKey(map)) {
+        String map = FactoryRecipeCatalog.controllerKey(entry.map.unlocalizedName);
+        if (!hasHost(map)) {
             ItemStack taken = take(inputs, host);
             if (taken != null) hosts.put(map, taken);
         }
@@ -37,7 +41,7 @@ public final class FactoryReservations {
             if (taken != null) catalysts.put(key, taken);
             else missing = true;
         }
-        return !hosts.containsKey(map) ? FactoryText.HOST : missing ? FactoryText.CATALYST_MISSING : null;
+        return !hasHost(map) ? FactoryText.HOST : missing ? FactoryText.CATALYST_MISSING : null;
     }
 
     /** Stable identity for one non-consumable item template, regardless of its recipe stack size. */
@@ -49,7 +53,9 @@ public final class FactoryReservations {
     }
 
     public boolean hasHost(String map) {
-        return hosts.containsKey(map);
+        return hosts.containsKey(FactoryRecipeCatalog.controllerKey(map)) || hosts.values()
+            .stream()
+            .anyMatch(stack -> FactoryControllers.supports(map, stack));
     }
 
     public boolean hasCatalyst(ItemStack input) {
@@ -70,9 +76,18 @@ public final class FactoryReservations {
 
     /** Removes each reservation only after the destination atomically accepts the actual item. */
     public boolean refund(Predicate<ItemStack> output) {
+        return refundExcept(Collections.emptySet(), Collections.emptySet(), output);
+    }
+
+    /** Keeps shared deposits still required by any pending page, independent of renumbered runtime node ids. */
+    public boolean refundUnused(FactoryGraph pending, Predicate<ItemStack> output) {
+        return refundExcept(retainedHostKeys(pending), requiredKeys(pending, false), output);
+    }
+
+    private boolean refundExcept(Set<String> keepHosts, Set<String> keepCatalysts, Predicate<ItemStack> output) {
         boolean empty = true;
-        empty &= refundMap(hosts, output);
-        empty &= refundMap(catalysts, output);
+        empty &= refundMap(hosts, keepHosts, output);
+        empty &= refundMap(catalysts, keepCatalysts, output);
         for (ItemStack[] slots : stored.values()) for (int i = 0; i < slots.length; i++) {
             if (slots[i] == null) continue;
             if (output.test(slots[i].copy())) slots[i] = null;
@@ -82,18 +97,55 @@ public final class FactoryReservations {
         return empty;
     }
 
-    private static boolean refundMap(Map<String, ItemStack> held, Predicate<ItemStack> output) {
+    private static boolean refundMap(Map<String, ItemStack> held, Set<String> keep, Predicate<ItemStack> output) {
         held.entrySet()
             .removeIf(
-                entry -> output.test(
+                entry -> !keep.contains(entry.getKey()) && output.test(
                     entry.getValue()
                         .copy()));
-        return held.isEmpty();
+        return keep.containsAll(held.keySet());
+    }
+
+    private static Set<String> requiredKeys(FactoryGraph graph, boolean controllers) {
+        Set<String> result = new HashSet<>();
+        for (FactoryGraph.Node node : graph.nodes) {
+            FactoryRecipeCatalog.Entry entry = FactoryRecipeCatalog.get(node.recipe);
+            if (entry == null) continue;
+            if (controllers) result.add(FactoryRecipeCatalog.controllerKey(entry.map.unlocalizedName));
+            else for (ItemStack input : entry.recipe.mInputs)
+                if (input != null && input.stackSize == 0) result.add(catalystKey(input));
+        }
+        return result;
+    }
+
+    /** One real multi-map controller may satisfy several requirements; never duplicate its stored stack. */
+    private Set<String> retainedHostKeys(FactoryGraph pending) {
+        Set<String> result = new HashSet<>();
+        for (String required : requiredKeys(pending, true)) {
+            if (hosts.containsKey(required)) result.add(required);
+            else for (Map.Entry<String, ItemStack> held : hosts.entrySet()) {
+                if (!FactoryControllers.supports(required, held.getValue())) continue;
+                result.add(held.getKey());
+                break;
+            }
+        }
+        return result;
+    }
+
+    /** Refund UI shows only items leaving storage; retained machines must not appear as awaiting return. */
+    public List<ItemStack> remainingUnused(FactoryGraph pending) {
+        Set<String> keepHosts = retainedHostKeys(pending), keepCatalysts = requiredKeys(pending, false);
+        List<ItemStack> result = new ArrayList<>();
+        hosts.forEach((key, item) -> { if (!keepHosts.contains(key)) result.add(item.copy()); });
+        catalysts.forEach((key, item) -> { if (!keepCatalysts.contains(key)) result.add(item.copy()); });
+        for (ItemStack[] slots : stored.values())
+            for (ItemStack item : slots) if (item != null && item.stackSize > 0) result.add(item.copy());
+        return result;
     }
 
     /** Copies only actual held deposits for drain progress; never returns original mutable inventory stacks. */
     public java.util.List<ItemStack> remaining() {
-        java.util.List<ItemStack> result = new java.util.ArrayList<>();
+        java.util.List<ItemStack> result = new ArrayList<>();
         for (ItemStack item : hosts.values()) result.add(item.copy());
         for (ItemStack item : catalysts.values()) result.add(item.copy());
         for (ItemStack[] slots : stored.values())
@@ -131,6 +183,11 @@ public final class FactoryReservations {
 
     public void read(NBTTagCompound tag) {
         readShared(hosts, tag.getTagList("hosts", 10));
+        // Move old ordinary-map deposits to the shared key. Existing duplicates remain real refundable items.
+        for (String key : new ArrayList<>(hosts.keySet())) {
+            String canonical = FactoryRecipeCatalog.controllerKey(key);
+            if (!key.equals(canonical) && !hosts.containsKey(canonical)) hosts.put(canonical, hosts.remove(key));
+        }
         readShared(catalysts, tag.getTagList("catalysts", 10));
         stored.clear();
         NBTTagList nodes = tag.getTagList("nodes", 10);
