@@ -222,9 +222,8 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
 
     /**
      * The previous quick-terminal layout allocated two pages (32 slots) per
-     * processing side. Keep one untouched backup before the new single-page
-     * 16+16 inventory is opened, so slots 17-32 are never destroyed merely by
-     * upgrading and opening the terminal.
+     * processing side. Retain the historical overflow backup independently of
+     * the current capacity; opening a terminal must never overwrite that backup.
      */
     private void archiveLegacy32SlotData() {
         NBTTagCompound data = Platform.openNbtData(getItemStack());
@@ -257,7 +256,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
     private static boolean hasInventoryOverflow(NBTTagCompound parent, String inventoryName) {
         if (!parent.hasKey(inventoryName, 10)) return false;
         NBTTagCompound inventory = parent.getCompoundTag(inventoryName);
-        for (int slot = RecipeTransferPayload.SLOT_COUNT; slot < 32; slot++) {
+        for (int slot = 16; slot < 32; slot++) {
             if (inventory.hasKey("#" + slot, 10)) return true;
         }
         return false;
@@ -273,7 +272,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
     private static boolean hasStackListOverflow(NBTTagList entries) {
         for (int index = 0; index < entries.tagCount(); index++) {
             if (entries.getCompoundTagAt(index)
-                .getInteger("Slot") >= RecipeTransferPayload.SLOT_COUNT) return true;
+                .getInteger("Slot") >= 16) return true;
         }
         return false;
     }

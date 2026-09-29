@@ -14,7 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 import gregtech.api.util.GTRecipe;
 
 /**
- * Per-node material buffers and prepaid-input jobs. Jobs retain rolled outputs across saves and power interruptions.
+ * Per-node material buffers and prepaid-input jobs. Reserved outputs survive saves and power interruptions.
  * Finished buffers remain visible while the next job runs; the controller bounds them using downstream watermarks.
  */
 public final class FactoryRuntime {
@@ -117,7 +117,44 @@ public final class FactoryRuntime {
         }
     }
 
-    /** Uses exact small-batch rolls and GT's large-batch chance calculation without a parallel-sized loop. */
+    /** Smallest recipe count for which every probability-weighted output is an integer. */
+    public static int outputBatch(GTRecipe recipe) {
+        int batch = 1;
+        for (int i = 0; i < recipe.mOutputs.length; i++) {
+            ItemStack output = recipe.mOutputs[i];
+            if (output == null || output.stackSize <= 0) continue;
+            long weight = (long) output.stackSize * Math.max(0, Math.min(10000, recipe.getOutputChance(i)));
+            int unit = 10000 / gcd(10000, (int) (weight % 10000));
+            batch = Math.multiplyExact(batch / gcd(batch, unit), unit);
+        }
+        return batch;
+    }
+
+    private static int gcd(int a, int b) {
+        while (b != 0) {
+            int next = a % b;
+            a = b;
+            b = next;
+        }
+        return a;
+    }
+
+    /** Common processing period that makes every node's recipe count and output integral. */
+    public static int batchPeriod(List<FactoryGraph.Node> nodes) {
+        int[] periods = new int[nodes.size()];
+        for (int i = 0; i < periods.length; i++) {
+            FactoryGraph.Node node = nodes.get(i);
+            FactoryRecipeCatalog.Entry entry = FactoryRecipeCatalog.get(node.recipe);
+            if (entry == null) throw new ArithmeticException("Missing recipe");
+            GTRecipe recipe = entry.recipe;
+            int ticks = (int) FactoryGraph.timing(0, recipe.mDuration, 1, node.overclocks)[1];
+            int unit = outputBatch(recipe);
+            periods[i] = Math.multiplyExact(ticks, unit / gcd(unit, Math.max(1, node.parallel)));
+        }
+        return FactoryCycles.commonPeriod(periods);
+    }
+
+    /** Probability is settled as exact weighted output in whole batches; no random rolls occur. */
     public static State prepare(GTRecipe recipe, int parallel, int overclocks, Random random) {
         return prepare(recipe, parallel, overclocks, random, recipe.mEUt);
     }
@@ -128,19 +165,14 @@ public final class FactoryRuntime {
         State state = new State();
         state.eut = timing[0];
         state.duration = state.remaining = (int) timing[1];
+        if (parallel <= 0 || parallel % outputBatch(recipe) != 0)
+            throw new ArithmeticException("Incomplete deterministic output batch");
         for (int i = 0; i < recipe.mOutputs.length; i++) {
             ItemStack template = recipe.mOutputs[i];
             if (template == null || template.stackSize <= 0) continue;
             int chance = recipe.getOutputChance(i);
-            long successes;
-            if (chance >= 10000) successes = parallel;
-            else if (parallel > 65536)
-                successes = gregtech.api.util.ParallelHelper.calculateIntegralChancedOutputMultiplier(chance, parallel);
-            else {
-                successes = 0;
-                for (int p = 0; p < parallel; p++) if (random.nextInt(10000) < chance) successes++;
-            }
-            int amount = Math.toIntExact(Math.multiplyExact(successes, template.stackSize));
+            long weight = (long) template.stackSize * Math.max(0, Math.min(10000, chance));
+            int amount = Math.toIntExact(Math.multiplyExact(weight, parallel) / 10000);
             if (amount > 0) {
                 ItemStack stack = template.copy();
                 stack.stackSize = amount;

@@ -5,6 +5,160 @@ import net.minecraft.util.StatCollector;
 /** Shared localized labels for the production controller and its ModularUI2 editor. */
 public enum FactoryText {
 
+    // #tr factory.gtnotgood.presets
+    // # Built-in lines
+    // # zh_CN 内置产线
+    Presets("factory.gtnotgood.presets"),
+    // #tr factory.gtnotgood.preset_netherite
+    // # Netherite / air and netherrack processing
+    // # zh_CN 下界合金／空气与地狱岩处理
+    PresetNetherite("factory.gtnotgood.preset_netherite"),
+    // #tr factory.gtnotgood.preset_netherite_help
+    // # Whole-line batch: feed nether air, glowstone, grade 2 water, lava and hellish metal; recycle scrap.
+    // # zh_CN 整线结算；供下界空气、荧石、二级净化水、岩浆和地狱金属，产出强键合纳米颗粒及副产物。
+    PresetNetheriteHelp("factory.gtnotgood.preset_netherite_help"),
+    // #tr factory.gtnotgood.preset_epoxy
+    // # Epoxy resin / propene recovery
+    // # zh_CN 环氧树脂／丙烯回收路线
+    PresetEpoxy("factory.gtnotgood.preset_epoxy"),
+    // #tr factory.gtnotgood.preset_epoxy_help
+    // # Feed propene, phenol, acetone, water and chlorine makeup; recycle salt water and excess acid.
+    // # zh_CN 输入丙烯、苯酚、丙酮、水并补充氯；回收盐水和多余氢氯酸，产出熔融环氧树脂。
+    PresetEpoxyHelp("factory.gtnotgood.preset_epoxy_help"),
+    // #tr factory.gtnotgood.preset_pbi
+    // # PBI / phenol, chlorine and acid recovery
+    // # zh_CN PBI／苯酚、氯与酸回收
+    PresetPbi("factory.gtnotgood.preset_pbi"),
+    // #tr factory.gtnotgood.preset_pbi_help
+    // # Feed benzene, methane, oxygen, ammonia, acids, Cu, Zn and dichromate; recycle phenol, chlorine and acid.
+    // # zh_CN 供苯、甲烷、氧、氨、酸、铜、锌和重铬酸钾；回收苯酚、氯及硫酸。
+    PresetPbiHelp("factory.gtnotgood.preset_pbi_help"),
+    // #tr factory.gtnotgood.preset_rp1
+    // # Rocket fuel / RP-1
+    // # zh_CN 火箭燃料／RP-1
+    PresetRp1("factory.gtnotgood.preset_rp1"),
+    // #tr factory.gtnotgood.preset_rp1_help
+    // # Feed diesel and liquid oxygen; includes kerosene and RP-1 refining.
+    // # zh_CN 供柴油和液氧；内含煤油、RP-1 精炼。
+    PresetRp1Help("factory.gtnotgood.preset_rp1_help"),
+    // #tr factory.gtnotgood.preset_hydrazine
+    // # Rocket fuel / dense hydrazine
+    // # zh_CN 火箭燃料／浓缩肼
+    PresetHydrazine("factory.gtnotgood.preset_hydrazine"),
+    // #tr factory.gtnotgood.preset_hydrazine_help
+    // # Feed hydrogen, oxygen, anthracene, ammonia and methanol; peroxide uses a recycling loop.
+    // # zh_CN 供氢、氧、蒽、氨和甲醇；内含过氧化氢循环。
+    PresetHydrazineHelp("factory.gtnotgood.preset_hydrazine_help"),
+    // #tr factory.gtnotgood.preset_cn_fuel
+    // # Rocket fuel / CN3H7O3
+    // # zh_CN 火箭燃料／CN3H7O3
+    PresetCnFuel("factory.gtnotgood.preset_cn_fuel"),
+    // #tr factory.gtnotgood.preset_cn_fuel_help
+    // # Feed hydrogen, oxygen, anthracene, ammonia, carbon and nitric acid; includes peroxide and hydrazine.
+    // # zh_CN 供氢、氧、蒽、氨、碳和硝酸；内含过氧化氢及肼合成。
+    PresetCnFuelHelp("factory.gtnotgood.preset_cn_fuel_help"),
+    // #tr factory.gtnotgood.preset_h8_fuel
+    // # Rocket fuel / H8N4C2O4
+    // # zh_CN 火箭燃料／H8N4C2O4
+    PresetH8Fuel("factory.gtnotgood.preset_h8_fuel"),
+    // #tr factory.gtnotgood.preset_h8_fuel_help
+    // # Feed hydrogen, oxygen, anthracene, ammonia, methanol and nitric acid; recycles copper and anthraquinone.
+    // # zh_CN 供氢、氧、蒽、氨、甲醇和硝酸；回收铜及蒽醌。
+    PresetH8FuelHelp("factory.gtnotgood.preset_h8_fuel_help"),
+    // #tr factory.gtnotgood.preset_cetane
+    // # Rocket fuel / cetane-boosted diesel
+    // # zh_CN 火箭燃料／高十六烷值柴油
+    PresetCetane("factory.gtnotgood.preset_cetane"),
+    // #tr factory.gtnotgood.preset_cetane_help
+    // # Feed light fuel, heavy fuel, ethenone and nitric acid; includes diesel and tetranitromethane.
+    // # zh_CN 供轻燃油、重燃油、乙烯酮和硝酸；内含柴油及四硝基甲烷合成。
+    PresetCetaneHelp("factory.gtnotgood.preset_cetane_help"),
+    // #tr factory.gtnotgood.preset_help
+    // # Load into an empty page, then preview and install. Route inter-page outputs externally.
+    // # zh_CN 载入空白页后预览安装；跨页中间产物需外部输送。
+    PresetHelp("factory.gtnotgood.preset_help"),
+    // #tr factory.gtnotgood.preset_loaded
+    // # Preset loaded; preview and confirm installation
+    // # zh_CN 预设已载入，请预览并确认安装
+    PresetLoaded("factory.gtnotgood.preset_loaded"),
+    // #tr factory.gtnotgood.preset_unavailable
+    // # Preset unavailable or page is not empty
+    // # zh_CN 预设配方不可用，或当前页不是空白页
+    PresetUnavailable("factory.gtnotgood.preset_unavailable"),
+    // #tr factory.gtnotgood.preset_chance
+    // # Auto-balanced recovery loops; weighted outputs settle in whole batches and support pattern export.
+    // # zh_CN 自动配平回收循环；概率折算为确定整批产出，可导出样板。
+    PresetChance("factory.gtnotgood.preset_chance"),
+    // #tr factory.gtnotgood.deterministic_batch
+    // # Waiting for materials or power for a whole deterministic batch
+    // # zh_CN 等待确定性整批所需的材料或供电
+    DeterministicBatch("factory.gtnotgood.deterministic_batch"),
+    // #tr factory.gtnotgood.preset_platinum
+    // # Platinum / salt and calcium recovery
+    // # zh_CN 铂／铂盐与钙回收
+    PresetPlatinum("factory.gtnotgood.preset_platinum"),
+    // #tr factory.gtnotgood.preset_platinum_help
+    // # Feed metallic platinum, aqua regia, ammonium chloride. Export Pt, Pd ammonia and residue.
+    // # zh_CN 供铂金属粉、王水、氯化铵；产铂、富钯氨及铂渣。
+    PresetPlatinumHelp("factory.gtnotgood.preset_platinum_help"),
+    // #tr factory.gtnotgood.preset_palladium
+    // # Palladium / salt loop
+    // # zh_CN 钯／钯盐循环
+    PresetPalladium("factory.gtnotgood.preset_palladium"),
+    // #tr factory.gtnotgood.preset_palladium_help
+    // # Feed Pd ammonia and formic acid. Export Pd and byproducts.
+    // # zh_CN 供富钯氨、甲酸；产钯及副产物。
+    PresetPalladiumHelp("factory.gtnotgood.preset_palladium_help"),
+    // #tr factory.gtnotgood.preset_residue
+    // # Platinum residue / branch separation
+    // # zh_CN 铂渣／分离后续支线
+    PresetResidue("factory.gtnotgood.preset_residue"),
+    // #tr factory.gtnotgood.preset_residue_help
+    // # Feed Pt residue and reagents. Export Ru salt, Os solution, Ir oxide and Rh solution.
+    // # zh_CN 供铂渣及辅料；产钌酸钠、酸性锇液、二氧化铱及硫酸铑液。
+    PresetResidueHelp("factory.gtnotgood.preset_residue_help"),
+    // #tr factory.gtnotgood.preset_ruthenium
+    // # Ruthenium / refining and salt recovery
+    // # zh_CN 钌／精炼与盐回收
+    PresetRuthenium("factory.gtnotgood.preset_ruthenium"),
+    // #tr factory.gtnotgood.preset_ruthenium_help
+    // # Feed sodium ruthenate, chlorine and hydrochloric acid. Export ruthenium.
+    // # zh_CN 供钌酸钠、氯、盐酸；产钌。
+    PresetRutheniumHelp("factory.gtnotgood.preset_ruthenium_help"),
+    // #tr factory.gtnotgood.preset_osmium
+    // # Osmium / distillation and reduction
+    // # zh_CN 锇／蒸馏还原
+    PresetOsmium("factory.gtnotgood.preset_osmium"),
+    // #tr factory.gtnotgood.preset_osmium_help
+    // # Feed acidic osmium solution and hydrochloric acid. Export osmium.
+    // # zh_CN 供酸性锇溶液、盐酸；产锇。
+    PresetOsmiumHelp("factory.gtnotgood.preset_osmium_help"),
+    // #tr factory.gtnotgood.preset_iridium
+    // # Iridium / calcium and residue recovery
+    // # zh_CN 铱／钙与泥渣回收
+    PresetIridium("factory.gtnotgood.preset_iridium"),
+    // #tr factory.gtnotgood.preset_iridium_help
+    // # Feed iridium dioxide, hydrochloric acid and ammonium chloride. Export iridium, copper and nickel.
+    // # zh_CN 供二氧化铱、盐酸、氯化铵；产铱、铜、镍。
+    PresetIridiumHelp("factory.gtnotgood.preset_iridium_help"),
+    // #tr factory.gtnotgood.preset_rhodium
+    // # Rhodium / zinc and salt recovery
+    // # zh_CN 铑／锌与盐回收
+    PresetRhodium("factory.gtnotgood.preset_rhodium"),
+    // #tr factory.gtnotgood.preset_rhodium_help
+    // # Feed rhodium sulfate solution and reagents. Export rhodium; keep outlets clear.
+    // # zh_CN 供硫酸铑溶液及辅料；产铑，注意排出剩余副产物。
+    PresetRhodiumHelp("factory.gtnotgood.preset_rhodium_help"),
+
+    // #tr factory.gtnotgood.pattern_mismatch
+    // # Pattern inputs do not match an installed process or page
+    // # zh_CN 样板输入与已安装工序或产线页不匹配
+    PatternMismatch("factory.gtnotgood.pattern_mismatch"),
+    // #tr factory.gtnotgood.pattern_ambiguous
+    // # Pattern inputs match multiple processes; no materials taken
+    // # zh_CN 样板输入匹配多个工序或页面，已暂停取料
+    PatternAmbiguous("factory.gtnotgood.pattern_ambiguous"),
+
     // #tr factory.gtnotgood.drain_running
     // # Finishing remaining jobs before refund
     // # zh_CN 正在完成剩余工序，随后退还
@@ -45,10 +199,6 @@ public enum FactoryText {
     // # No deposits waiting for return
     // # zh_CN 没有待退还的收纳物
     REFUND_EMPTY("factory.gtnotgood.refund_empty"),
-    // #tr factory.gtnotgood.pattern_chance
-    // # Expected chance output; AE export unavailable.
-    // # zh_CN 含概率期望产物，不能导出确定产出的AE样板。
-    PATTERN_CHANCE("factory.gtnotgood.pattern_chance"),
     // #tr factory.gtnotgood.pattern_internal
     // # ! marks retained surplus; balance before AE export.
     // # zh_CN ！标记内部余量；请先配平，再导出AE样板。

@@ -255,7 +255,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
 
     @Override
     public int getPatternInputsHeigh() {
-        return 4;
+        return RecipeTransferPayload.SLOT_COUNT / 4;
     }
 
     @Override
@@ -270,7 +270,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
 
     @Override
     public int getPatternOutputsHeigh() {
-        return 4;
+        return RecipeTransferPayload.SLOT_COUNT / 4;
     }
 
     @Override
@@ -1337,8 +1337,8 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     /**
      * PatternEncodingHelper serializes every slot reported by the backing AE
      * inventories. A crafting pattern must contain exactly the visible 3x3 input
-     * grid, while this terminal's processing layout contains one 4x4 page for
-     * inputs and one 4x4 page for outputs. Temporarily expose those logical sizes
+     * grid, while processing includes every slot behind both scrollable grids.
+     * Temporarily expose those logical sizes
      * while encoding without reallocating the backing inventories.
      */
     private void encodeWithInventorySizes(int inputSize, int outputSize) {

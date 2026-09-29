@@ -6,7 +6,7 @@ import net.minecraftforge.fluids.FluidStack;
 import gregtech.api.util.GTRecipe;
 
 /**
- * Bounds automatic execution batches before consuming inputs or rolling chance outputs.
+ * Bounds automatic execution batches before consuming inputs or reserving outputs.
  * Preview quantities remain the configured node quantities. Physical stacks and buffers still use
  * signed integers, so the advertised maximum is a ceiling rather than an unconditional batch size.
  */
@@ -52,7 +52,7 @@ public final class FactoryBatching {
 
     /**
      * Reserves worst-case output space, grouping duplicate outputs exactly as FactoryRuntime does.
-     * Chance rolls cannot subsequently turn a valid automatic batch into an overflow.
+     * This conservative bound also covers probability-weighted deterministic outputs.
      *
      * @param recipe    original node recipe, including chance outputs
      * @param previous  completed products still waiting in this node's buffer

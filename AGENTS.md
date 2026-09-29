@@ -1,5 +1,7 @@
 # Project Memory
 
+- Agent-launched Windows test clients must stay transparent, click-through, and hidden from the taskbar. Use the scoped helper in `scripts/qa/HideFactoryClient.ps1` for factory QA; never change windows belonging to the user's normal game client.
+
 - On the current GTNH/AE2 version, every processing recipe containing fluids uses the Ultimate Encoded Pattern. Read native fluid inputs from `MEInventoryCrafting#getAEStackInSlot`; its ItemStack view contains fluid packets, not legacy AE2FC fluid drops. Test fixtures must encode native fluid NBT in Ultimate Encoded Patterns.
 
 - For the AE2LT Packaged Pattern Provider port, preserve the actual upstream GUI, textures, icons, layout and interactions; rewrite incompatible APIs rather than redesigning the visible result. Inspect the pinned reference source and license before drawing or copying assets. Keep source/commit/license/destination/modification records in `reference/UPSTREAM_PORT_NOTES.md` and the packaged asset manifest. Reference checkouts must never participate in compilation or resource packaging. The user accepts noncommercial distribution under CC BY-NC-SA 3.0 for applicable upstream visual assets; these assets are not covered by the project's general MIT grant. The connector contract is normal right-click Provider to select, then Shift-right-click target to bind.

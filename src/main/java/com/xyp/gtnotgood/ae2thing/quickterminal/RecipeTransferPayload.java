@@ -19,7 +19,7 @@ import lombok.Getter;
  */
 public final class RecipeTransferPayload {
 
-    public static final int SLOT_COUNT = 16;
+    public static final int SLOT_COUNT = 256;
     public static final StreamCodec<RecipeTransferPayload> CODEC = StreamCodecs
         .of(RecipeTransferPayload.class.getName(), RecipeTransferPayload::write, RecipeTransferPayload::read);
 

@@ -43,15 +43,21 @@ public final class FactoryRouting {
 
     /** Portable recipe identities only: importing never trusts client-supplied inputs, outputs or recipe costs. */
     public static String encode(FactoryGraph graph) {
-        StringBuilder text = new StringBuilder("GTNG1");
-        for (FactoryGraph.Node node : graph.nodes) text.append(';')
-            .append(node.recipe)
-            .append(',')
-            .append(node.parallel)
-            .append(',')
-            .append(node.overclocks)
-            .append(',')
-            .append(node.customEUt);
+        boolean extended = graph.nodes.stream()
+            .anyMatch(node -> node.wholeLineBatch);
+        StringBuilder text = new StringBuilder(extended ? "GTNG2" : "GTNG1");
+        for (FactoryGraph.Node node : graph.nodes) {
+            text.append(';')
+                .append(node.recipe)
+                .append(',')
+                .append(node.parallel)
+                .append(',')
+                .append(node.overclocks)
+                .append(',')
+                .append(node.customEUt);
+            if (extended) text.append(',')
+                .append(node.wholeLineBatch ? 1 : 0);
+        }
         return text.toString();
     }
 
@@ -60,12 +66,15 @@ public final class FactoryRouting {
         if (text.length() > 8192) throw new IllegalArgumentException();
         String[] rows = text.trim()
             .split(";", -1);
-        if (!rows[0].equals("GTNG1") || rows.length < 2 || rows.length > FactoryGraph.MAX_NODES + 1)
+        boolean extended = rows[0].equals("GTNG2");
+        if ((!extended && !rows[0].equals("GTNG1")) || rows.length < 2 || rows.length > FactoryGraph.MAX_NODES + 1)
             throw new IllegalArgumentException();
         FactoryGraph graph = new FactoryGraph();
         for (int i = 1; i < rows.length; i++) {
             String[] parts = rows[i].split(",", -1);
-            if (parts.length != 4 || FactoryRecipeCatalog.get(parts[0]) == null) throw new IllegalArgumentException();
+            if (parts.length != (extended ? 5 : 4) || FactoryRecipeCatalog.get(parts[0]) == null)
+                throw new IllegalArgumentException();
+            if (extended && !parts[4].equals("0") && !parts[4].equals("1")) throw new IllegalArgumentException();
             int parallel = Integer.parseInt(parts[1]), oc = Integer.parseInt(parts[2]);
             long eut = Long.parseLong(parts[3]);
             if (parallel < 1 || parallel > FactoryGraph.MAX_PARALLEL || oc < 0 || oc > 14 || eut < -1)
@@ -75,6 +84,7 @@ public final class FactoryRouting {
             node.parallel = parallel;
             node.overclocks = oc;
             node.customEUt = eut;
+            node.wholeLineBatch = extended && parts[4].equals("1");
         }
         connect(graph);
         return graph;

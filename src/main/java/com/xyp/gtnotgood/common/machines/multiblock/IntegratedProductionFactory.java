@@ -31,6 +31,8 @@ import com.xyp.gtnotgood.utils.machine.factory.FactoryCycles;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryGraph;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryInputs;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryPatternExport;
+import com.xyp.gtnotgood.utils.machine.factory.FactoryPatternRouting;
+import com.xyp.gtnotgood.utils.machine.factory.FactoryPresets;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryPreview;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryProgress;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryRecipeCatalog;
@@ -141,6 +143,8 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
     private Map<Integer, List<FactoryGraph.Node>> cycleGroups;
     private final Map<Integer, FactoryCycles.Plan> cyclePlans = new HashMap<>();
     private FactoryText status = FactoryText.IDLE;
+    private FactoryPatternRouting patternRouting;
+    private FactoryText patternFailure;
     private FactoryText editorStatus;
     private long lastBalanceTick = Long.MIN_VALUE;
 
@@ -268,6 +272,7 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                 node.overclocks = source.overclocks;
                 node.customEUt = source.customEUt;
                 node.target = source.target;
+                node.wholeLineBatch = source.wholeLineBatch;
                 node.x = source.x;
                 node.y = source.y;
                 ids.put(source.id, node.id);
@@ -375,7 +380,8 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
 
     public String getFactoryStatus() {
         return (isWirelessModeActive() ? FactoryText.WIRELESS.text() : FactoryText.WIRED.text()) + " | "
-            + status.text();
+            + status.text()
+            + (patternFailure == null ? "" : " | " + patternFailure.text());
     }
 
     public String getNodeStatus(int id) {
@@ -403,6 +409,10 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         if (command != 9) editorStatus = null;
         FactoryGraph.Node node = draft.find(id);
         switch (command) {
+            case 21:
+                editorStatus = FactoryPresets.apply(draft, routingLocked, recipe) ? FactoryText.PresetLoaded
+                    : FactoryText.PresetUnavailable;
+                break;
             case 18:
                 exportPattern();
                 break;
@@ -573,6 +583,8 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         flushBuffers();
         if (draining && runtime.empty() && reservations.refund(this::addOutputAtomic)) {
             installed = pending;
+            patternRouting = null;
+            patternFailure = null;
             lineProgress = null;
             lineTimingUnavailable = false;
             savedLineProgress = new NBTTagCompound();
@@ -599,6 +611,8 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                 liveItems.removeIf(ghostCircuits::contains);
                 List<FluidStack> liveFluids = getStoredFluids();
                 List<FactoryInputs> craftingInputs = new ArrayList<>();
+                Map<FactoryInputs, FactoryPatternRouting.Binding> patternBindings = new HashMap<>();
+                patternFailure = null;
                 List<ItemStack> depositItems = new ArrayList<>(liveItems);
                 java.util.Set<ItemStack> depositRefs = java.util.Collections
                     .newSetFromMap(new java.util.IdentityHashMap<>());
@@ -616,8 +630,27 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                     }
                     for (var inventories = hatch.inventories(); inventories.hasNext();) {
                         gregtech.common.tileentities.machines.IDualInputInventory inventory = inventories.next();
-                        if (inventory != null && !inventory.isEmpty())
-                            craftingInputs.add(new FactoryInputs(shared, inventory));
+                        if (inventory != null && !inventory.isEmpty()) {
+                            FactoryInputs input = new FactoryInputs(shared, inventory);
+                            craftingInputs.add(input);
+                            if (input.patterned) {
+                                if (patternRouting == null) patternRouting = new FactoryPatternRouting(installed);
+                                FactoryPatternRouting.Binding binding = patternRouting.bind(input.pattern);
+                                patternBindings.put(input, binding);
+                                if (binding.failure != null) patternFailure = binding.failure;
+                                // Do not expose pattern inventory through a regular-hatch fallback or requirement
+                                // deposit.
+                                liveItems.removeIf(
+                                    item -> input.items.stream()
+                                        .anyMatch(value -> value == item));
+                                liveFluids.removeIf(
+                                    fluid -> input.fluids.stream()
+                                        .anyMatch(value -> value == fluid));
+                                depositItems.removeIf(
+                                    item -> input.items.stream()
+                                        .anyMatch(value -> value == item));
+                            }
+                        }
                     }
                 }
                 java.util.Set<Integer> readyPages = new java.util.HashSet<>();
@@ -639,6 +672,8 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                     if (!readyPages.contains(node.page)) continue;
                     FactoryText failure = null;
                     for (FactoryInputs input : craftingInputs) {
+                        FactoryPatternRouting.Binding binding = patternBindings.get(input);
+                        if (binding != null && !binding.nodes.contains(node.id)) continue;
                         tryStart(node, input.items, input.fluids);
                         if (runtime.state(node.id).remaining > 0) break;
                         FactoryText reason = nodeStatus.get(node.id);
@@ -784,8 +819,10 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
             }
             parallel = FactoryBatching.recipeLimit(entry.recipe, old, parallel);
             parallel = FactoryBatching.align(parallel, node.parallel);
+            int outputBatch = FactoryRuntime.outputBatch(entry.recipe);
+            parallel = parallel / outputBatch * outputBatch;
             if (parallel <= 0) {
-                nodeStatus.put(node.id, FactoryText.BLOCKED);
+                nodeStatus.put(node.id, outputBatch > 1 ? FactoryText.DeterministicBatch : FactoryText.BLOCKED);
                 return;
             }
             long[] timing = FactoryGraph.timing(
@@ -1078,6 +1115,8 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
         super.loadNBTData(tag);
         draft.read(tag.getCompoundTag("factoryDraft"));
         installed.readActive(tag.getCompoundTag("factoryInstalled"));
+        patternRouting = null;
+        patternFailure = null;
         cycleGroups = null;
         cyclePlans.clear();
         pending.readActive(tag.getCompoundTag("factoryPending"));

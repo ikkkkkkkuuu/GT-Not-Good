@@ -58,11 +58,11 @@ public final class FactoryPreview {
         public final List<Ingredient> inputs = new ArrayList<>();
         public final List<Ingredient> outputs = new ArrayList<>();
         public String info = "";
-        public boolean hasChance;
+        public int batchTicks;
 
-        /** A deterministic AE promise cannot include stochastic production or buffers that are retained internally. */
+        /** A pattern promises a complete executable period and only outputs that can actually leave the machine. */
         public FactoryText exportIssue() {
-            if (hasChance) return FactoryText.PATTERN_CHANCE;
+            if (batchTicks <= 0) return FactoryText.LIMIT;
             if (outputs.stream()
                 .anyMatch(entry -> entry.internal)) return FactoryText.PATTERN_INTERNAL;
             return null;
@@ -77,23 +77,20 @@ public final class FactoryPreview {
         List<Port> inputs = new ArrayList<>(), outputs = new ArrayList<>();
         long totalPower = 0;
         try {
+            result.batchTicks = FactoryRuntime.batchPeriod(graph.nodes);
             for (FactoryGraph.Node node : graph.nodes) {
                 FactoryRecipeCatalog.Entry entry = FactoryRecipeCatalog.get(node.recipe);
                 if (entry == null) {
                     result.info = FactoryText.PREVIEW_INVALID.text();
                     return result;
                 }
-                for (int i = 0; i < entry.recipe.mOutputs.length; i++)
-                    if (entry.recipe.mOutputs[i] != null && entry.recipe.mOutputs[i].stackSize > 0
-                        && entry.recipe.getOutputChance(i) > 0
-                        && entry.recipe.getOutputChance(i) < 10000) result.hasChance = true;
                 long[] timing = FactoryGraph.timing(
                     node.customEUt < 0 ? entry.recipe.mEUt : node.customEUt,
                     entry.recipe.mDuration,
                     Math.max(1, node.parallel),
                     node.overclocks);
                 totalPower = Math.addExact(totalPower, timing[0]);
-                double batches = (double) Math.max(1, node.parallel) / timing[1];
+                double batches = (double) Math.max(1, node.parallel) * result.batchTicks / timing[1];
                 for (GTRecipe.RecipeItemInput input : entry.consumableRecipe.getCachedCombinedItemInputs()) {
                     // Keep the representative from the original inputs for display, and GT's matcher for routing.
                     for (ItemStack item : entry.consumableRecipe.mInputs) if (input.matchesType(item)) {
@@ -114,6 +111,7 @@ public final class FactoryPreview {
                     if (fluid != null) outputs.add(port(node, null, fluid, fluid.amount * batches));
             }
         } catch (ArithmeticException invalid) {
+            result.batchTicks = 0;
             result.info = FactoryText.LIMIT.text();
             return result;
         }
@@ -145,6 +143,8 @@ public final class FactoryPreview {
             }
             addIngredient(result.outputs, outputs.get(o), supply[o], internal);
         }
+        for (Ingredient entry : result.inputs) entry.rate /= result.batchTicks;
+        for (Ingredient entry : result.outputs) entry.rate /= result.batchTicks;
         return result;
     }
 

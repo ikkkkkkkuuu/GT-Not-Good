@@ -21,8 +21,11 @@ public final class FactoryCycles {
     public static Map<Integer, List<FactoryGraph.Node>> groups(FactoryGraph graph) {
         int n = graph.nodes.size();
         boolean[][] reach = new boolean[n][n];
-        for (int a = 0; a < n; a++)
-            for (int b = 0; b < n; b++) reach[a][b] = graph.nodes.get(b).sources.contains(graph.nodes.get(a).id);
+        for (int a = 0; a < n; a++) for (int b = 0; b < n; b++) {
+            FactoryGraph.Node from = graph.nodes.get(a), to = graph.nodes.get(b);
+            reach[a][b] = to.sources.contains(from.id)
+                || (from.wholeLineBatch && to.wholeLineBatch && from.page == to.page);
+        }
         for (int k = 0; k < n; k++)
             for (int a = 0; a < n; a++) for (int b = 0; b < n; b++) reach[a][b] |= reach[a][k] && reach[k][b];
         Map<Integer, List<FactoryGraph.Node>> result = new HashMap<>();
@@ -72,7 +75,7 @@ public final class FactoryCycles {
             if (entry == null) throw new ArithmeticException("Missing cycle recipe");
             durations[i] = (int) FactoryGraph.timing(1, entry.recipe.mDuration, 1, node.overclocks)[1];
         }
-        int period = commonPeriod(durations);
+        int period = FactoryRuntime.batchPeriod(group);
         List<Port> inputs = new ArrayList<>(), outputs = new ArrayList<>();
         for (int i = 0; i < group.size(); i++) {
             FactoryGraph.Node node = group.get(i);

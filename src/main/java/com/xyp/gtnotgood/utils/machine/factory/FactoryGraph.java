@@ -36,6 +36,8 @@ public final class FactoryGraph {
         public int parallel = 1;
         public int overclocks;
         public boolean target;
+        /** Opt-in page batch: reserve and settle the whole line, including surplus internal materials. */
+        public boolean wholeLineBatch;
         /** -1 uses the imported recipe EU/t; non-negative values override the pre-overclock cost. */
         public long customEUt = -1;
         public final Set<Integer> sources = new HashSet<>();
@@ -51,6 +53,7 @@ public final class FactoryGraph {
             tag.setInteger("parallel", parallel);
             tag.setInteger("oc", overclocks);
             tag.setBoolean("target", target);
+            tag.setBoolean("wholeLineBatch", wholeLineBatch);
             tag.setLong("customEUt", customEUt);
             tag.setIntArray(
                 "sources",
@@ -116,6 +119,7 @@ public final class FactoryGraph {
             node.localId = data.hasKey("localId") ? data.getInteger("localId") : id;
             node.recipe = data.getString("recipe");
             node.target = data.getBoolean("target");
+            node.wholeLineBatch = data.getBoolean("wholeLineBatch");
             node.x = Math.max(0, Math.min(2048, data.getInteger("x")));
             node.y = Math.max(0, Math.min(2048, data.getInteger("y")));
             node.parallel = Math.max(1, data.getInteger("parallel"));

@@ -19,7 +19,10 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.fluids.FluidStack;
 
 import gregtech.api.recipe.RecipeMap;
+import gregtech.api.recipe.RecipeMaps;
+import gregtech.api.recipe.RecipeMetadataKey;
 import gregtech.api.util.GTRecipe;
+import gregtech.api.util.GTRecipeConstants;
 
 /**
  * Lazy catalog of ordinary GT recipes. Special-machine recipes are excluded until their requirements have an adapter.
@@ -92,23 +95,27 @@ public final class FactoryRecipeCatalog {
 
     /** Returns a precise reason instead of treating unadapted recipe features as missing recipes. */
     public static FactoryText unsupportedReason(RecipeMap<?> map, GTRecipe recipe) {
-        boolean ignoreHeat = map == gregtech.api.recipe.RecipeMaps.blastFurnaceRecipes
-            || map == gregtech.api.recipe.RecipeMaps.plasmaForgeRecipes;
+        boolean ignoreHeat = map == RecipeMaps.blastFurnaceRecipes || map == RecipeMaps.plasmaForgeRecipes
+            || map == RecipeMaps.vacuumFurnaceRecipes;
+        boolean ignoreMachineTier = map == RecipeMaps.chemicalPlantRecipes;
         if (recipe == null) return FactoryText.IMPORT_UNREGISTERED;
         if (recipe.mFakeRecipe) return FactoryText.IMPORT_VIRTUAL;
         if (!recipe.mEnabled || recipe.mHidden) return FactoryText.IMPORT_DISABLED;
         if (recipe.getClass() != GTRecipe.class) return FactoryText.IMPORT_CUSTOM;
-        // Explicitly authorized: blast-furnace and plasma-forge heat is ignored; other special conditions remain
-        // validated.
-        if (recipe.mSpecialItems != null || (recipe.mSpecialValue != 0 && !(ignoreHeat && recipe.mSpecialValue > 0)))
+        // Heat and chemical-plant casing tiers are waived; negative environment flags remain restricted.
+        if (recipe.mSpecialItems != null
+            || (recipe.mSpecialValue != 0 && !((ignoreHeat || ignoreMachineTier) && recipe.mSpecialValue > 0)))
             return FactoryText.IMPORT_SPECIAL;
         if (recipe.getMetadataStorage() != null) {
-            for (Map.Entry<gregtech.api.recipe.RecipeMetadataKey<?>, Object> metadata : recipe.getMetadataStorage()
+            for (Map.Entry<RecipeMetadataKey<?>, Object> metadata : recipe.getMetadataStorage()
                 .getEntries()) {
                 if (ignoreHeat && metadata.getKey()
-                    .equals(gregtech.api.util.GTRecipeConstants.COIL_HEAT)
-                    && metadata.getValue() instanceof Integer heat
-                    && heat >= 0) continue;
+                    .equals(GTRecipeConstants.COIL_HEAT) && metadata.getValue() instanceof Integer heat && heat >= 0)
+                    continue;
+                if (ignoreMachineTier && metadata.getKey()
+                    .equals(GTRecipeConstants.CHEMPLANT_CASING_TIER)
+                    && metadata.getValue() instanceof Integer tier
+                    && tier >= 0) continue;
                 if (!inactiveEnvironmentRequirement(metadata.getKey(), metadata.getValue()))
                     return FactoryText.IMPORT_METADATA;
             }
@@ -127,9 +134,9 @@ public final class FactoryRecipeCatalog {
     }
 
     /** Explicit false means the environment is not required (UniversalChemical adds CLEANROOM=false to LCR). */
-    static boolean inactiveEnvironmentRequirement(gregtech.api.recipe.RecipeMetadataKey<?> key, Object value) {
-        return Boolean.FALSE.equals(value) && (key.equals(gregtech.api.util.GTRecipeConstants.CLEANROOM)
-            || key.equals(gregtech.api.util.GTRecipeConstants.LOW_GRAVITY));
+    static boolean inactiveEnvironmentRequirement(RecipeMetadataKey<?> key, Object value) {
+        return Boolean.FALSE.equals(value)
+            && (key.equals(GTRecipeConstants.CLEANROOM) || key.equals(GTRecipeConstants.LOW_GRAVITY));
     }
 
     private static String fingerprint(GTRecipe recipe) {
@@ -143,7 +150,7 @@ public final class FactoryRecipeCatalog {
         tag.setIntArray("chance", chances);
         tag.setInteger("eut", recipe.mEUt);
         tag.setInteger("ticks", recipe.mDuration);
-        // Keep old ordinary recipe IDs stable while distinguishing newly supported heat-bearing recipes.
+        // Keep ordinary recipe IDs stable while distinguishing heat and machine-tier requirements.
         if (recipe.mSpecialValue != 0) tag.setInteger("special", recipe.mSpecialValue);
         tag.setBoolean("nbt", recipe.isNBTSensitive);
         try {

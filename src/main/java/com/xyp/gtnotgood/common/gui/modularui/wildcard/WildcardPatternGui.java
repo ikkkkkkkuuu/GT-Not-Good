@@ -10,6 +10,7 @@ import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
@@ -17,6 +18,7 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.PageButton;
@@ -51,7 +53,8 @@ import gregtech.api.enums.OrePrefixes;
  */
 public class WildcardPatternGui {
 
-    private static final int MAX_COMPONENTS = 6;
+    private static final int MAX_IO_COMPONENTS = 6;
+    private static final int MAX_FILTER_COMPONENTS = 64;
     private static final int PANEL_W = 192;
     private static final int PANEL_H = 292;
 
@@ -260,7 +263,7 @@ public class WildcardPatternGui {
     }
 
     private void addIO(ListWidget<IWidget, ?> cards, List<IWildcardIOComponent> list, IWildcardIOComponent component) {
-        if (list.size() < MAX_COMPONENTS) {
+        if (list.size() < MAX_IO_COMPONENTS) {
             list.add(component);
             rebuildIOCards(cards, list);
         }
@@ -417,7 +420,8 @@ public class WildcardPatternGui {
 
     private IWidget buildFilterPage() {
         ListWidget<IWidget, ?> cards = new ListWidget<>().pos(0, 3)
-            .size(156, 150);
+            .size(156, 150)
+            .scrollDirection(new VerticalScrollData(false, 4).texture(new Rectangle().color(0xFFAAAAAA)));
         filterCards = cards;
         rebuildFilterCards(cards);
         return new com.cleanroommc.modularui.widget.ParentWidget<>().size(158, 180)
@@ -445,7 +449,7 @@ public class WildcardPatternGui {
     }
 
     private void addFilter(ListWidget<IWidget, ?> cards, IWildcardFilterComponent component) {
-        if (filters.size() < MAX_COMPONENTS) {
+        if (filters.size() < MAX_FILTER_COMPONENTS) {
             filters.add(component);
             rebuildFilterCards(cards);
         }
@@ -461,7 +465,7 @@ public class WildcardPatternGui {
     private IWidget filterCard(ListWidget<IWidget, ?> cards, int index) {
         IWildcardFilterComponent component = filters.get(index);
         com.cleanroommc.modularui.widget.ParentWidget<?> row = new com.cleanroommc.modularui.widget.ParentWidget<>()
-            .size(156, 25)
+            .size(152, 25)
             .background(filterBackground(component));
         if (component instanceof StringFilterComponent)
             row.child(stringFilterEditor((StringFilterComponent) component));

@@ -14,9 +14,9 @@ import gregtech.api.util.GTRecipe;
  * 全局配方提速（仿 GTNH-CutCorners）。
  *
  * <p>
- * <b>原理</b>：所有 GregTech 配方在注册时都会经过 {@link RecipeMapBackend#compileRecipe(GTRecipe)}
- * 这一唯一中心入口。在它的 HEAD 拦一下、按 {@link Config#getModifiedRecipeDuration(int)} 改写传入配方的
- * {@code mDuration}（公开字段，此时配方尚未入库），即等效「一处改动，全部机器配方提速」。
+ * <b>原理</b>：普通 GregTech 配方表通过 {@link RecipeMapBackend#compileRecipe(GTRecipe)} 注册配方。
+ * 在它的 HEAD 按 {@link Config#getModifiedRecipeDuration(int)} 改写传入配方的 {@code mDuration}。
+ * 装配线使用独立配方类型，由 {@link AssemblyLineSpeedMixin} 在控制器读取时单独提速。
  *
  * <p>
  * <b>维护性</b>：只 hook 这一个稳定的配方系统入口，而非给每台机器单独写 mixin。上游(GT5U 594 → 2.9)

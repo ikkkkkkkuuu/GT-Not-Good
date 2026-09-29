@@ -121,6 +121,9 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     private static final int PATTERN_PROCESSING_GRID_X = 15;
     private static final int PATTERN_PROCESSING_GRID_Y = 11;
     private static final int PATTERN_PROCESSING_OUTPUT_GRID_Y = 106;
+    private static final int PATTERN_VISIBLE_ROWS = 4;
+    private static final int PATTERN_SCROLL_MAX = RecipeTransferPayload.SLOT_COUNT / 4 - PATTERN_VISIBLE_ROWS;
+    private static final int PATTERN_SCROLL_X = PATTERN_PROCESSING_GRID_X + 73;
     private static final int PATTERN_CRAFTING_GRID_X = 24;
     private static final int PATTERN_CRAFTING_GRID_Y = 20;
     private static final int PATTERN_CRAFTING_OUTPUT_Y = 98;
@@ -188,6 +191,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     private int storageScrollPosition;
     private boolean draggingStorageScrollBar;
     private boolean draggingInterfaceScrollBar;
+    private final int[] patternScrollRows = new int[2];
+    private int draggingPatternScrollBar = -1;
     private final Set<VirtualMEMonitorableSlot> draggedStorageSlots = Collections
         .newSetFromMap(new IdentityHashMap<>());
     private boolean storageShiftDrag;
@@ -629,8 +634,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                     }
                 } else {
                     int x = i % 4;
-                    int y = i / 4;
-                    slot.setHidden(i >= RecipeTransferPayload.SLOT_COUNT);
+                    int y = i / 4 - patternScrollRows[0];
+                    slot.setHidden(y < 0 || y >= PATTERN_VISIBLE_ROWS);
                     slot.setX(PATTERN_PANEL_X + PATTERN_PROCESSING_GRID_X + x * 18);
                     slot.setY(panelY + PATTERN_PROCESSING_GRID_Y + y * 18);
                 }
@@ -641,8 +646,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             for (int i = 0; i < outputSlots.length; i++) {
                 VirtualMEPatternSlot slot = outputSlots[i];
                 int x = i % 4;
-                int y = i / 4;
-                slot.setHidden(crafting || i >= RecipeTransferPayload.SLOT_COUNT);
+                int y = i / 4 - patternScrollRows[1];
+                slot.setHidden(crafting || y < 0 || y >= PATTERN_VISIBLE_ROWS);
                 slot.setX(PATTERN_PANEL_X + PATTERN_PROCESSING_GRID_X + x * 18);
                 slot.setY(panelY + PATTERN_PROCESSING_OUTPUT_GRID_Y + y * 18);
                 if (isArcaneWorkbenchView()) {
@@ -695,6 +700,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         if (interfaceSearch != null) pendingInterfaceSearch = interfaceSearch;
         pendingTargetSelectionTicks = 0;
         pendingAutoPlace = payload.shouldEncode();
+        Arrays.fill(patternScrollRows, 0);
         patternContainer.requestRecipeTransfer(payload);
         layoutPatternExtension();
     }
@@ -755,14 +761,14 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         if (mc.thePlayer == null) return;
         if (inputs) {
             // #tr gtnotgood.terminal.quick.too_many_processing_inputs
-            // # Processing pattern has more than 16 inputs
-            // # zh_CN 处理样板的输入超过 16 项
+            // # Processing pattern has more than 256 inputs
+            // # zh_CN 处理样板的输入超过 256 项
             mc.thePlayer
                 .addChatMessage(new ChatComponentTranslation("gtnotgood.terminal.quick.too_many_processing_inputs"));
         } else {
             // #tr gtnotgood.terminal.quick.too_many_processing_outputs
-            // # Processing pattern has more than 16 outputs
-            // # zh_CN 处理样板的输出超过 16 项
+            // # Processing pattern has more than 256 outputs
+            // # zh_CN 处理样板的输出超过 256 项
             mc.thePlayer
                 .addChatMessage(new ChatComponentTranslation("gtnotgood.terminal.quick.too_many_processing_outputs"));
         }
@@ -888,6 +894,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         int right = offsetX + PATTERN_PANEL_X;
         int patternTop = offsetY + patternPanelY();
         drawTexturedModalRect(right, patternTop, 0, 0, PATTERN_PANEL_WIDTH, patternPanelTextureHeight());
+        if (!crafting) drawPatternScrollBars(right, patternTop);
         drawViewCellPanel(offsetX, offsetY);
     }
 
@@ -1008,6 +1015,12 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         currentMouseY = mouseY;
         draggedStorageSlots.clear();
         storageShiftDrag = false;
+        int patternSide = patternScrollSide(mouseX, mouseY, true);
+        if (button == 0 && patternSide >= 0) {
+            draggingPatternScrollBar = patternSide;
+            dragPatternScrollBar(mouseY);
+            return;
+        }
         if (handleFluidCraftingControlClick(mouseX, mouseY, button)) return;
         // This tab is deliberately placed partly above the central GUI. Dispatch
         // it explicitly before the embedded interface viewport and GuiContainer
@@ -1153,6 +1166,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     @Override
     protected void mouseMovedOrUp(int mouseX, int mouseY, int state) {
+        if (state == 0 && draggingPatternScrollBar >= 0) {
+            draggingPatternScrollBar = -1;
+            return;
+        }
         super.mouseMovedOrUp(mouseX, mouseY, state);
         if (draggingStorageScrollBar && state == 0) {
             ((AccessorGuiScrollbar) getScrollBar()).setIsLatestClickOnScrollbar(false);
@@ -1173,6 +1190,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int button, long timeSinceLastClick) {
+        if (draggingPatternScrollBar >= 0 && button == 0) {
+            dragPatternScrollBar(mouseY);
+            return;
+        }
         if (draggingStorageScrollBar && button == 0) {
             updateItemScrollBar();
             getScrollBar().clickMove(mouseY - guiTop);
@@ -1230,6 +1251,11 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     @Override
     protected boolean mouseWheelEvent(int mouseX, int mouseY, int wheel) {
         if (isShiftKeyDown() && QuickTerminalRecipeTransferHandler.cycleRecipeIngredient(this, wheel)) return true;
+        int patternSide = patternScrollSide(mouseX, mouseY, false);
+        if (patternSide >= 0 && !isCtrlKeyDown() && !isShiftKeyDown()) {
+            setPatternScroll(patternSide, patternScrollRows[patternSide] - Integer.signum(wheel));
+            return true;
+        }
         if (handleStorageTransferWheel(wheel)) return true;
         if (isInsideStoragePanel(mouseX, mouseY)) {
             if (super.mouseWheelEvent(mouseX, mouseY, wheel)) return true;
@@ -1246,6 +1272,43 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             return true;
         }
         return super.mouseWheelEvent(mouseX, mouseY, wheel);
+    }
+
+    private static int patternGridY(int side) {
+        return side == 0 ? PATTERN_PROCESSING_GRID_Y : PATTERN_PROCESSING_OUTPUT_GRID_Y;
+    }
+
+    private void drawPatternScrollBars(int left, int top) {
+        for (int side = 0; side < 2; side++) {
+            int x = left + PATTERN_SCROLL_X;
+            int y = top + patternGridY(side);
+            drawRect(x, y, x + 5, y + 72, 0xFF171820);
+            int thumb = y + Math.round(patternScrollRows[side] * 60.0F / PATTERN_SCROLL_MAX);
+            drawRect(x, thumb, x + 5, thumb + 12, 0xFF92939D);
+            drawRect(x + 1, thumb + 1, x + 4, thumb + 11, 0xFFBBBCC5);
+        }
+    }
+
+    /** Resolves each viewport separately so input scrolling never moves outputs or ME storage. */
+    private int patternScrollSide(int mouseX, int mouseY, boolean trackOnly) {
+        if (isWorkbenchView()) return -1;
+        int x = mouseX - guiLeft - PATTERN_PANEL_X;
+        int y = mouseY - guiTop - patternPanelY();
+        if (x < (trackOnly ? PATTERN_SCROLL_X : PATTERN_PROCESSING_GRID_X) || x >= PATTERN_SCROLL_X + 5) return -1;
+        for (int side = 0; side < 2; side++) {
+            if (y >= patternGridY(side) && y < patternGridY(side) + 72) return side;
+        }
+        return -1;
+    }
+
+    private void dragPatternScrollBar(int mouseY) {
+        int y = mouseY - guiTop - patternPanelY() - patternGridY(draggingPatternScrollBar) - 6;
+        setPatternScroll(draggingPatternScrollBar, Math.round(y * PATTERN_SCROLL_MAX / 60.0F));
+    }
+
+    private void setPatternScroll(int side, int row) {
+        patternScrollRows[side] = Math.max(0, Math.min(PATTERN_SCROLL_MAX, row));
+        layoutPatternSlots();
     }
 
     private boolean handleStorageTransferWheel(int wheel) {

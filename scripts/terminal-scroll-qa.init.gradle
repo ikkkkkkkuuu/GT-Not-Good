@@ -1,0 +1,64 @@
+// Focused quick-terminal checks, excluded from release artifacts.
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(project.file('.gradle/terminal-scroll-qa-build'))
+}
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    // Pack-pinned development jar; opt-in QA only, never embedded in the addon.
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr.parentFile.mkdirs()
+        def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+        connection.connectTimeout = 30000
+        connection.readTimeout = 30000
+        def pending = new File(efr.parentFile, efr.name + '.pending')
+        connection.inputStream.withCloseable { input -> pending.withOutputStream { it << input } }
+        java.nio.file.Files.move(pending.toPath(), efr.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files(root.file('scripts/qa/QuickTerminalScrollClientChecks.java')))
+    }
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/ae2thing/quickterminal/RecipeTransferPayload.java',
+                'src/main/java/com/xyp/gtnotgood/ae2thing/quickterminal/ContainerQuickEncodingTerminal.java',
+                'src/main/java/com/xyp/gtnotgood/ae2thing/quickterminal/DualTerminalGuiObject.java',
+                'src/main/java/com/xyp/gtnotgood/ae2thing/quickterminal/client/GuiQuickEncodingTerminal.java',
+                'scripts/qa/QuickTerminalScrollClientChecks.java'
+        }
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn root.tasks.named('testClasses')
+        classpath += root.sourceSets.test.output
+        workingDir root.file('run/terminal-scroll-check')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.terminalScroll.qa', 'true'
+        // Optional third-party sound downloads must not stall the isolated recipe checks indefinitely.
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        systemProperty 'gtng.terminalScroll.qa.output', root.file('build/terminal-scroll-qa').absolutePath
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in terminal client checks')
+        doFirst {
+            root.file('build/terminal-scroll-qa').mkdirs()
+
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/terminal-scroll-qa/result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(root.file('build/terminal-scroll-qa/window-helper.log'))
+                    .start()
+            }
+        }
+        doLast {
+            def result = root.file('build/terminal-scroll-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Terminal client QA failed')
+        }
+    }
+}
+

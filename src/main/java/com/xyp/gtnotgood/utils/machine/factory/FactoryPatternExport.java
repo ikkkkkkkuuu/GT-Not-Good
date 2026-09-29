@@ -32,7 +32,7 @@ public final class FactoryPatternExport {
         double[] rates = all.stream()
             .mapToDouble(entry -> entry.rate)
             .toArray();
-        long[] counts = integerCounts(rates);
+        long[] counts = batchCounts(snapshot, rates);
         List<IAEStack<?>> inputs = new ArrayList<>(), outputs = new ArrayList<>();
         for (int i = 0; i < all.size(); i++) {
             FactoryPreview.Ingredient ingredient = all.get(i);
@@ -57,6 +57,21 @@ public final class FactoryPatternExport {
         if (pattern == null) throw new IllegalArgumentException("Pattern item unavailable");
         pattern.setTagCompound(encode(inputs, outputs, fluid));
         return pattern;
+    }
+
+    /** Retains a complete executable period; reducing the ratio could promise fractional recipe executions. */
+    static long[] batchCounts(FactoryPreview.Snapshot snapshot, double[] rates) {
+        if (snapshot.batchTicks <= 0) throw new ArithmeticException("Invalid batch period");
+        long[] counts = new long[rates.length];
+        for (int i = 0; i < rates.length; i++) {
+            double amount = rates[i] * snapshot.batchTicks;
+            if (!Double.isFinite(amount) || amount < 1
+                || amount > Integer.MAX_VALUE
+                || Math.abs(amount - Math.rint(amount)) > 0.00001)
+                throw new ArithmeticException("Unrepresentable batch amount");
+            counts[i] = Math.round(amount);
+        }
+        return counts;
     }
 
     /** Preserves all preview ratios while scaling fractional counts by one common, minimal integer multiplier. */
