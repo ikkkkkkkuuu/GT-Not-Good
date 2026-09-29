@@ -53,8 +53,8 @@ public class RecipeLoader {
     public static void loadRecipes() {
         GameRegistry.addShapelessRecipe(
             GTNGItemList.UniversalFluidPump.get(1),
-            ItemList.Pump_HV.get(1),
-            ItemList.Electric_Pump_HV.get(1));
+            ItemList.Pump_LV.get(1),
+            ItemList.Electric_Pump_LV.get(1));
         if (ModList.Forestry.isModLoaded()) {
             WorkingApiaryRegistration.registerRecipe();
         }

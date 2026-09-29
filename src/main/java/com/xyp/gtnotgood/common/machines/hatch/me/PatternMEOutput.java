@@ -140,10 +140,10 @@ public final class PatternMEOutput {
         fluids.flushCachedStack();
     }
 
-    /** Persists native long-sized cache entries without duplicating the master's AE node data. */
+    /** Persists long-sized cache entries, omitting empty caches so dropped hatches can stack with new ones. */
     public void save(NBTTagCompound tag) {
-        tag.setTag("patternMEItemOutput", items.saveCache());
-        tag.setTag("patternMEFluidOutput", fluids.saveCache());
+        items.saveCache(tag, "patternMEItemOutput");
+        fluids.saveCache(tag, "patternMEFluidOutput");
     }
 
     /** Replaces cache contents, including when loading an older hatch without output caches. */
@@ -241,14 +241,15 @@ public final class PatternMEOutput {
             return owner.getProxy();
         }
 
-        NBTTagList saveCache() {
+        void saveCache(NBTTagCompound tag, String key) {
             NBTTagList list = new NBTTagList();
             cache.iterateAll(
                 (stack, amount) -> list.appendTag(
                     environment.saveStackToNBT(
                         stack.copy()
                             .setStackSize(amount))));
-            return list;
+            if (list.tagCount() == 0) tag.removeTag(key);
+            else tag.setTag(key, list);
         }
 
         void loadCache(NBTTagList list) {

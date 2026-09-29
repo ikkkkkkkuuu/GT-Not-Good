@@ -29,7 +29,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.gui.modularui.singleblock.base.MTEBasicMachineBaseGui;
 
 /**
- * Pipe-free HV world-fluid pump. Scans loaded blocks below itself in bounded batches, consuming real fluid blocks.
+ * Pipe-free LV world-fluid pump. Scans loaded blocks below itself in bounded batches, consuming real fluid blocks.
  * The native GT output tank owns fluid persistence and sided extraction; this class persists only a scan offset.
  * No dimension filter is applied, so Nether lava is handled exactly like Overworld lava.
  */
@@ -44,12 +44,12 @@ public final class UniversalFluidPump extends MTEBasicMachine {
     private FakePlayer fakePlayer;
 
     public UniversalFluidPump(int id, String name, String localizedName) {
-        super(id, name, localizedName, 3, 1, description(), 0, 0, overlays());
+        super(id, name, localizedName, 1, 16, description(), 0, 0, overlays());
         mFluidTransfer = true;
     }
 
     private UniversalFluidPump(String name, String[] description, ITexture[][][] textures) {
-        super(name, 3, 1, description, textures, 0, 0);
+        super(name, 1, 16, description, textures, 0, 0);
         mFluidTransfer = true;
     }
 
@@ -99,6 +99,18 @@ public final class UniversalFluidPump extends MTEBasicMachine {
     @Override
     public int getCapacity() {
         return 16_000_000;
+    }
+
+    /** Supplies the unchanged 512 EU/t pumping budget at LV voltage (32 EU per packet). */
+    @Override
+    public long maxAmperesIn() {
+        return 16;
+    }
+
+    /** Preserves the original energy buffer independently of the lowered voltage tier. */
+    @Override
+    public long maxEUStore() {
+        return 32_768;
     }
 
     @Override

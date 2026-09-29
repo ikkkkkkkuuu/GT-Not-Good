@@ -105,7 +105,8 @@ import gregtech.common.items.ItemFluidDisplay;
  */
 public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements IInterfaceTerminalPostUpdate {
 
-    private static final int ITEM_PANEL_WIDTH = 101;
+    private static final int ITEM_COLUMNS = ContainerQuickEncodingTerminal.STORAGE_COLUMNS;
+    private static final int ITEM_PANEL_WIDTH = 29 + ITEM_COLUMNS * 18;
     private static final int BUTTON_COLUMN_WIDTH = 18;
     private static final int ITEM_PANEL_X = -ITEM_PANEL_WIDTH - BUTTON_COLUMN_WIDTH;
     private static final int BUTTON_COLUMN_X = -BUTTON_COLUMN_WIDTH;
@@ -134,7 +135,6 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     private static final int PROCESSING_PATTERN_ROW_Y = 198;
     private static final int CRAFTING_TAB_Y = 167;
     private static final int PROCESSING_TAB_Y = 226;
-    private static final int ITEM_COLUMNS = 4;
     private static final int DEFAULT_ITEM_ROWS = 4;
     private static final int DEFAULT_STORAGE_BUTTONS_PER_COLUMN = 4;
     private static final int GL_CLIENT_ALL_ATTRIB_BITS = 0xFFFFFFFF;
@@ -414,6 +414,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
         searchField.x = guiLeft + ITEM_PANEL_X + 3;
         searchField.y = guiTop + itemPanelY + 4;
+        searchField.w = ITEM_COLUMNS * 18 + 2;
         updateItemScrollBar();
         getScrollBar().setVisible(false);
     }
@@ -463,7 +464,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     /**
      * The server still allocates pins in AE2's native groups of nine, while this
-     * terminal exposes independently configured visual rows of four. Only the
+     * terminal exposes independently configured visual rows of six. Only the
      * requested prefix of each crafting/player section is visible; surplus
      * native capacity remains hidden and available to AE2's original backend.
      */
@@ -510,7 +511,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                 Math.max(0, (size - visibleItemSlots + ITEM_COLUMNS - 1) / ITEM_COLUMNS),
                 Math.max(1, itemRows / 6));
         // GuiMEMonitorable still recalculates this shared scrollbar with its native nine-column geometry whenever
-        // the repository view changes. That can clamp the compact panel's valid four-column position before this
+        // the repository view changes. That can clamp the compact panel's valid six-column position before this
         // method restores the correct range. Keep the compact position separately so it does not jump or lose rows.
         getScrollBar().setCurrentScroll(storageScrollPosition);
         rememberItemScrollPosition();
@@ -519,7 +520,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     /**
      * GuiMEMonitorable updates its repository during drawScreen and rebuilds the
      * shared scrollbar for AE2's native nine-column grid. Consume that deferred
-     * update before the parent draw so our four-column range cannot be clamped.
+     * update before the parent draw so our six-column range cannot be clamped.
      */
     private void applyPendingItemViewUpdate() {
         if (itemRepo == null || ITEM_VIEW_UPDATE_PENDING == null) return;
@@ -827,14 +828,14 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         getScrollBar().setVisible(false);
         super.drawScreen(mouseX, mouseY, partialTicks);
         // GuiMEMonitorable may update its repository during super.drawScreen and then restore the native nine-column
-        // range. The compact storage panel is four columns wide, so its final input state must use our own range.
+        // range. The compact storage panel is six columns wide, so its final input state must use our own range.
         updateItemScrollBar();
     }
 
     private void synchronizeNativePinRows() {
         int craftingGroups = (Math.max(0, patternContainer.craftingPinRowsSync.get()) * ITEM_COLUMNS + 8) / 9;
         int playerGroups = (Math.max(0, patternContainer.playerPinRowsSync.get()) * ITEM_COLUMNS + 8) / 9;
-        // The custom four-wide row values commonly arrive after AE2 has already
+        // The custom six-wide row values commonly arrive after AE2 has already
         // built its initial nine-wide virtual pin array. Updating AE2's private
         // row state through its public hook rebuilds that array on the first
         // synchronized frame; subsequent calls are no-ops.
@@ -877,11 +878,11 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             .bindTexture(ITEM_PANEL);
         int left = offsetX + ITEM_PANEL_X;
         int top = offsetY + itemPanelY;
-        drawTexturedModalRect(left, top, 0, 0, ITEM_PANEL_WIDTH, 18);
+        drawItemPanelStrip(left, top, 0, 18);
         for (int row = 0; row < itemRows; row++) {
-            drawTexturedModalRect(left, top + 18 + row * 18, 0, 18, ITEM_PANEL_WIDTH, 18);
+            drawItemPanelStrip(left, top + 18 + row * 18, 18, 18);
         }
-        drawTexturedModalRect(left, top + 18 + itemRows * 18, 0, 90, ITEM_PANEL_WIDTH, 6);
+        drawItemPanelStrip(left, top + 18 + itemRows * 18, 90, 6);
         searchField.drawTextBox();
 
         // MEGuiTextField changes the current GL color. Without restoring white,
@@ -1448,6 +1449,15 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                 return true;
         }
         return false;
+    }
+
+    /** Repeats the original slot column while preserving both borders and the scrollbar gutter. */
+    private void drawItemPanelStrip(int left, int top, int textureY, int height) {
+        drawTexturedModalRect(left, top, 0, textureY, 5, height);
+        for (int column = 0; column < ITEM_COLUMNS; column++) {
+            drawTexturedModalRect(left + 5 + column * 18, top, 5, textureY, 18, height);
+        }
+        drawTexturedModalRect(left + 5 + ITEM_COLUMNS * 18, top, 77, textureY, 24, height);
     }
 
     private void updateItemGeometry() {

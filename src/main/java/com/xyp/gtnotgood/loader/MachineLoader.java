@@ -206,8 +206,8 @@ public class MachineLoader {
 
     public static void registerbasicMachine() {
         // #tr gtng.pump.name
-        // # High-Speed Universal Fluid Pump (HV)
-        // # zh_CN 高速通用流体泵 (HV)
+        // # High-Speed Universal Fluid Pump (LV)
+        // # zh_CN 高速通用流体泵 (LV)
         GTNGItemList.UniversalFluidPump.set(
             new UniversalFluidPump(
                 GTNGMachineID.UNIVERSAL_FLUID_PUMP.ID,

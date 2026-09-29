@@ -95,6 +95,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
             addAll(
                 list,
                 "AppliedEnergistics.PatternMEOutputMultiblockMixin",
+                "AppliedEnergistics.CraftingPatternAlternativesMixin",
                 "AppliedEnergistics.compact.MixinCraftingGridCache",
                 "AppliedEnergistics.compact.MixinCraftingCPUCluster",
                 "AppliedEnergistics.compact.MixinInventoryCrafting",

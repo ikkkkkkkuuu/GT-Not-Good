@@ -69,6 +69,8 @@ import it.unimi.dsi.fastutil.objects.ObjectLongPair;
  */
 public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
 
+    public static final int STORAGE_COLUMNS = 6;
+
     private static final Field TRACKED_BY_ID = findTrackedById();
     private static final Field TRACKED = findField(ContainerInterfaceTerminal.class, "tracked");
     private static final Field CRAFTING_MATRIX = findField(ContainerPatternTerm.class, "craftingMatrix");
@@ -797,11 +799,11 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     }
 
     private static int clampVisualPinRows(int rows, int maxNativeGroups) {
-        return Math.max(0, Math.min(rows, maxNativeGroups * 9 / 4));
+        return Math.max(0, Math.min(rows, maxNativeGroups * 9 / STORAGE_COLUMNS));
     }
 
     private static int groupsForVisualPinRows(int rows) {
-        return (rows * 4 + 8) / 9;
+        return (rows * STORAGE_COLUMNS + 8) / 9;
     }
 
     private static int packPinRows(int craftingRows, int playerRows) {
@@ -1127,7 +1129,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     }
 
     /**
-     * This four-wide GUI temporarily maps its visual pin rows onto AE2's native
+     * This GUI temporarily maps its visual pin rows onto AE2's native
      * nine-wide pin sections. Restore the crafting terminal's independent row
      * settings before another container reads the shared terminal item NBT.
      */
