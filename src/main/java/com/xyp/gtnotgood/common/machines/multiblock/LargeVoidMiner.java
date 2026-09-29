@@ -108,6 +108,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
     private static final int DIMENSION_SLOT_COUNT = 25;
 
     public static final int CYCLE_TICKS = 400;
+    private static final int MAX_OVERCLOCK_LEVEL = 4;
     public static final long[] BASE_EUT = { 30L, 120L, 480L };
     private static final double[] GRADE_COEF = { 0.5d, 1.0d, 2.0d };
     private static final double[] OUTPUT_COEF = { 0.5d, 2.0d, 5.0d };
@@ -190,6 +191,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
     public int mCurrentDimId;
     public int mOreMode;
     public int mFortuneLevel = 3;
+    private int overclockLevel;
 
     private boolean mDefaultDimSupported;
     private final ItemStack[] mPluginSlots = new ItemStack[DIMENSION_SLOT_COUNT];
@@ -650,11 +652,11 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         double modeBonus = ORE_MODE_ENERGY_BONUS[clampOreMode()];
         double fortuneBonus = FORTUNE_ENERGY_BONUS[getFortuneIndex(mFortuneLevel)];
         if (mDirectionalMode) {
-            return (1.0d + modeBonus + fortuneBonus)
+            return (1.0d + modeBonus + fortuneBonus) * getOverclockMultiplier()
                 * (3.0d + SLOT_ENERGY_PER_EXTRA * Math.max(0, getDimensionSlotCount() - 1))
                 * getDirectionalFactor();
         }
-        return (1.0d + modeBonus + fortuneBonus)
+        return (1.0d + modeBonus + fortuneBonus) * getOverclockMultiplier()
             * (1.0d + SLOT_ENERGY_PER_EXTRA * Math.max(0, getDimensionSlotCount() - 1))
             * (1.0d + getFilterCostIncrease() / 100.0d);
     }
@@ -680,6 +682,24 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
             int idx = getFortuneIndex(mFortuneLevel);
             mFortuneLevel = FORTUNE_LEVELS[(idx + 1) % FORTUNE_LEVELS.length];
         }
+        markBaseDirty();
+    }
+
+    public int getOverclockLevel() {
+        return overclockLevel;
+    }
+
+    private int getOverclockMultiplier() {
+        return 1 << (2 * overclockLevel);
+    }
+
+    /** Whole-tick division stops at one tick; settings take effect when the next cycle starts. */
+    public int getCycleDurationTicks() {
+        return Math.max(1, CYCLE_TICKS / getOverclockMultiplier());
+    }
+
+    public void cycleOverclockLevel() {
+        overclockLevel = (overclockLevel + 1) % (MAX_OVERCLOCK_LEVEL + 1);
         markBaseDirty();
     }
 
@@ -721,7 +741,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         }
         mActiveGrade = getVoltageGrade();
         lEUt = -getEnergyCostPerTick();
-        mMaxProgresstime = CYCLE_TICKS;
+        mMaxProgresstime = getCycleDurationTicks();
         mEfficiency = 10000;
         mEfficiencyIncrease = 10000;
         mOutputItems = emptyItemStackArray;
@@ -960,6 +980,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         aNBT.setInteger("mCurrentDimId", mCurrentDimId);
         aNBT.setInteger("mOreMode", mOreMode);
         aNBT.setInteger("mFortuneLevel", mFortuneLevel);
+        aNBT.setInteger("overclockLevel", overclockLevel);
         aNBT.setInteger("mActiveGrade", mActiveGrade);
         NBTTagList pluginSlots = new NBTTagList();
         for (ItemStack stack : mPluginSlots) {
@@ -983,6 +1004,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         mCurrentDimId = aNBT.getInteger("mCurrentDimId");
         mOreMode = aNBT.getInteger("mOreMode");
         mFortuneLevel = aNBT.getInteger("mFortuneLevel");
+        overclockLevel = Math.max(0, Math.min(MAX_OVERCLOCK_LEVEL, aNBT.getInteger("overclockLevel")));
         mActiveGrade = aNBT.getInteger("mActiveGrade");
         if (mOreMode < 0 || mOreMode > 2) mOreMode = 0;
         if (mFortuneLevel < 3 || mFortuneLevel > 15 || mFortuneLevel % 2 == 0) mFortuneLevel = 3;

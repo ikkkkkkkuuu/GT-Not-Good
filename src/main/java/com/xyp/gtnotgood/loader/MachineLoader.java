@@ -9,6 +9,7 @@ import com.xyp.gtnotgood.common.machines.basicMachine.UniversalFluidPump;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputSlave;
 import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
+import com.xyp.gtnotgood.common.machines.hatch.me.MEDataAccessHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputBus;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputHatch;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeBeeBreeder;
@@ -138,6 +139,16 @@ public class MachineLoader {
                 GTNGMachineID.MAX_CAPACITY_ME_OUTPUT_HATCH.ID,
                 "MaxCapacityMEOutputHatch",
                 StatCollector.translateToLocal("NameMaxCapacityMEOutputHatch")));
+
+        // #tr NameMEDataAccessHatch
+        // # Data Access Hatch (ME, IV)
+        // # zh_CN 数据访问仓 (ME, IV)
+        GTNGItemList.MEDataAccessHatch.set(
+            new MEDataAccessHatch(
+                GTNGMachineID.MEDataAccessHatch.ID,
+                "MEDataAccessHatch",
+                StatCollector.translateToLocal("NameMEDataAccessHatch")));
+        addItemTooltip(GTNGItemList.MEDataAccessHatch.get(1), AnimatedText.GT_NOT_GOOD);
 
         // #tr NameSuperMTEHatchCraftingInputBusME
         // # Super Pattern Input Bus (ME)

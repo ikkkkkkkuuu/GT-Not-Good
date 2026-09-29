@@ -95,6 +95,11 @@ public final class VoidMinerGuiText {
     // # zh_CN 时运
     public static final String FORTUNE_LEVEL = "gui.gtnotgood.largeVoidMiner.config.fortune_level";
 
+    // #tr gui.gtnotgood.largeVoidMiner.config.overclock
+    // # Overclock
+    // # zh_CN 超频
+    public static final String OVERCLOCK = "gui.gtnotgood.largeVoidMiner.config.overclock";
+
     // #tr gui.gtnotgood.largeVoidMiner.config.slot1_hint
     // # Shared controller slot for a dimension display item
     // # zh_CN 可放维度显示物品的控制器共享槽

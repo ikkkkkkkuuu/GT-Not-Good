@@ -32,6 +32,7 @@ public enum GTNGMachineID {
     ASSEMBLER_MATRIX(MACHINE, 15),
     LARGE_TRANSMUTATION_MACHINE(MACHINE, 16),
     LARGE_COMB_PROCESSOR(MACHINE, 17),
+    MEDataAccessHatch(MACHINE, 18),
 
     Diesel_Generator_LV(BASIC_MACHINE, 0),
     Diesel_Generator_MV(BASIC_MACHINE, 1),

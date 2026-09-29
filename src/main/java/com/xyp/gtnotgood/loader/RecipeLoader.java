@@ -17,6 +17,7 @@ import com.xyp.gtnotgood.common.recipe.machine.LargeTransmutationMachineRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeVoidMinerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEBridgeRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEContainerRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.MEDataAccessRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MaxCapacityMEOutputRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MechanicalUserRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.NetworkRecipes;
@@ -82,6 +83,7 @@ public class RecipeLoader {
         OreProcessingRecipes.loadOreProcessingRecipes();
         MEBridgeRecipes.loadRecipes();
         MEContainerRecipes.loadRecipes();
+        MEDataAccessRecipes.loadRecipes();
         MaxCapacityMEOutputRecipes.loadRecipes();
         WildcardPatternRecipes.loadRecipes();
         PatternSorterRecipes.register();

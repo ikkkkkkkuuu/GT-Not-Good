@@ -1,5 +1,23 @@
 # AE2LT faithful port audit
 
+## Programmable Hatches ME data access hatch — 2026-09-29
+
+Source: https://github.com/reobf/Programmable-Hatches-Mod
+Pinned commit: `d035ae837db01d91a3a6bcc779dc5504459c4754` (`290-daily-latest`), MIT.
+Original: `src/main/java/reobf/proghatches/gt/metatileentity/DataHatchME.java`.
+Destination: `src/main/java/com/xyp/gtnotgood/common/machines/hatch/me/MEDataAccessHatch.java`
+and `MEDataStickSnapshot.java`; recipe in `common/recipe/machine/MEDataAccessRecipes.java`.
+The inspection checkout lives outside the project under the system temporary directory and is not a build input.
+Packaged license and modification record: `src/main/resources/META-INF/me-data-access-port/`.
+
+User requested IV tier and a recipe obtainable in IV. Uses EV data access hatch, ME interface,
+IV hull, two IV circuits, IV sensor/emitter and 576 mB soldering alloy; 20 seconds at IV.
+Preserves front-only ME connection, one channel, shared network data sticks and no GUI.
+Replaces reflection and persisted borrowed inventory with native GT recipe caching and an NBT-sensitive,
+defensively copied snapshot. Refreshes on relevant network changes, monitor replacement and a 400-tick fallback.
+Only actual stored stacks authorize recipes; disconnection clears research and notifies GT watchers.
+Uses the installed GT ME overlays and tier casing API; no copied image assets.
+
 ## RTS official Forge baseline — 2026-09-24
 
 Source: https://github.com/Hcrab/RTSbuilding/tree/forge-1.7.10

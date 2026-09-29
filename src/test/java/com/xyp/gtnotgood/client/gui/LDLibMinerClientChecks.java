@@ -4,6 +4,7 @@ import java.io.File;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
@@ -78,6 +79,7 @@ public final class LDLibMinerClientChecks {
             base.setOwnerUuid(viewer.getUniqueID());
             miner = (LargeVoidMiner) base.getMetaTileEntity();
             miner.forceRefreshPool();
+            checkOverclock();
             initialEnabled = base.isAllowedToWork();
             viewer.playerNetServerHandler.setPlayerLocation(3, 7, -3, 40, 15);
             viewer.capabilities.isFlying = true;
@@ -104,6 +106,46 @@ public final class LDLibMinerClientChecks {
         if (requested == 6 && miner.getOreEntries()
             .stream()
             .noneMatch(ore -> ore.aimed)) verified = 6;
+        if (requested >= 7 && requested <= 11 && miner.getOverclockLevel() == (requested - 6) % 5) {
+            verified = requested;
+        }
+    }
+
+    private void checkOverclock() {
+        int[] ticks = { 400, 100, 25, 6, 1 };
+        long baseEnergy = miner.getEnergyCostPerTick();
+        for (int level = 0; level < ticks.length; level++) {
+            if (miner.getOverclockLevel() != level || miner.getCycleDurationTicks() != ticks[level]
+                || miner.getEnergyCostPerTick() != baseEnergy * (1L << (level * 2))) {
+                throw new AssertionError("Incorrect overclock at level " + level);
+            }
+            if (!miner.checkProcessing()
+                .wasSuccessful() || miner.mMaxProgresstime != ticks[level]) {
+                throw new AssertionError("Overclock did not apply to processing at level " + level);
+            }
+            NBTTagCompound saved = new NBTTagCompound();
+            miner.saveNBTData(saved);
+            miner.cycleOverclockLevel();
+            if (miner.mMaxProgresstime != ticks[level]) throw new AssertionError("Changed active cycle duration");
+            miner.loadNBTData(saved);
+            if (miner.getOverclockLevel() != level) throw new AssertionError("Overclock save/load");
+            miner.cycleOverclockLevel();
+        }
+        if (miner.getOverclockLevel() != 0) throw new AssertionError("Overclock must wrap after 1 tick");
+        NBTTagCompound saved = new NBTTagCompound();
+        miner.saveNBTData(saved);
+        saved.setInteger("overclockLevel", Integer.MAX_VALUE);
+        miner.loadNBTData(saved);
+        if (miner.getCycleDurationTicks() != 1) throw new AssertionError("Unbounded overclock NBT");
+        saved.setInteger("overclockLevel", -1);
+        miner.loadNBTData(saved);
+        if (miner.getOverclockLevel() != 0) throw new AssertionError("Negative overclock NBT");
+        saved.removeTag("overclockLevel");
+        miner.loadNBTData(saved);
+        if (miner.getOverclockLevel() != 0) throw new AssertionError("Legacy save overclock default");
+        miner.mMaxProgresstime = 0;
+        miner.mProgresstime = 0;
+        System.out.println("LDLIB_MINER_OVERCLOCK_PASS processing, power, 1 tick limit, wrap, persistence, legacy NBT");
     }
 
     @SubscribeEvent
@@ -204,8 +246,23 @@ public final class LDLibMinerClientChecks {
                 break;
             case 16:
                 capture("scrolled-descending");
+                click(screen, 290, 36);
+                requested = 7;
+                break;
+            case 17:
+            case 18:
+            case 19:
+                click(screen, 290, 36);
+                requested++;
+                break;
+            case 20:
+                capture("overclock-max");
+                click(screen, 290, 36);
+                requested = 11;
+                break;
+            case 21:
                 System.out.println(
-                    "LDLIB_MINER_QA_PASS primary config entry; mode fortune directional power selection clear; categories and weight ordering");
+                    "LDLIB_MINER_QA_PASS primary config entry; mode fortune overclock directional power selection clear; categories and weight ordering");
                 mc.shutdown();
                 break;
             default:

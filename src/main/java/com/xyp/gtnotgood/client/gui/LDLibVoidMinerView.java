@@ -15,6 +15,7 @@ import static com.xyp.gtnotgood.common.gui.modularui.multiblock.VoidMinerGuiText
 import static com.xyp.gtnotgood.common.gui.modularui.multiblock.VoidMinerGuiText.ORE_MODE_CRUDE;
 import static com.xyp.gtnotgood.common.gui.modularui.multiblock.VoidMinerGuiText.ORE_MODE_CRUSHED;
 import static com.xyp.gtnotgood.common.gui.modularui.multiblock.VoidMinerGuiText.ORE_MODE_RAW;
+import static com.xyp.gtnotgood.common.gui.modularui.multiblock.VoidMinerGuiText.OVERCLOCK;
 import static com.xyp.gtnotgood.common.gui.modularui.multiblock.VoidMinerGuiText.REFRESH;
 import static com.xyp.gtnotgood.common.gui.modularui.multiblock.VoidMinerGuiText.SLOTS_TITLE;
 import static com.xyp.gtnotgood.common.gui.modularui.multiblock.VoidMinerGuiText.UU_COST;
@@ -78,15 +79,18 @@ public final class LDLibVoidMinerView extends UIElement {
             () -> 0xFFFFFF33);
         addChild(fortune);
         addChild(
-            new Label(
+            coloredButton(
                 241,
                 26,
-                224,
+                100,
                 20,
-                () -> tr(ENERGY_COST) + " "
-                    + number(model.energy.getDoubleValue())
-                    + " EU/t  x"
-                    + decimal(model.energyMult.getDoubleValue())));
+                () -> tr(
+                    OVERCLOCK) + " " + model.overclock.getIntValue() + " (" + model.cycleTicks.getIntValue() + "t)",
+                model.actions::sendCycleOverclock,
+                () -> 0xFFFFAA44));
+        addChild(new Label(347, 24, 118, 12, () -> number(model.energy.getDoubleValue()) + " EU/t"));
+        addChild(
+            new Label(347, 36, 118, 12, () -> tr(ENERGY_COST) + " x" + decimal(model.energyMult.getDoubleValue())));
         buildDimensions();
         buildBrowser();
         // #tr gui.gtnotgood.ldminer.hover

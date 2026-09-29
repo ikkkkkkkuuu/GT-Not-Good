@@ -40,7 +40,7 @@ public final class LargeVoidMinerConfigGui implements IGuiHolder<PosGuiData> {
     private final LargeVoidMiner miner;
     public GenericListSyncHandler<OreEntryInfo> ores;
     public LargeVoidMinerConfigGui.MinerActionSyncHandler actions;
-    public IntSyncValue oreMode, fortune;
+    public IntSyncValue oreMode, fortune, overclock, cycleTicks;
     public DoubleSyncValue energy, progress, energyMult, uu, weightIncrease, dimIncrease;
     public StringSyncValue dimension;
     public BooleanSyncValue directional, enabled;
@@ -61,6 +61,8 @@ public final class LargeVoidMinerConfigGui implements IGuiHolder<PosGuiData> {
         actions = new LargeVoidMinerConfigGui.MinerActionSyncHandler(miner);
         oreMode = new IntSyncValue(() -> miner.mOreMode);
         fortune = new IntSyncValue(() -> miner.mFortuneLevel);
+        overclock = new IntSyncValue(miner::getOverclockLevel);
+        cycleTicks = new IntSyncValue(miner::getCycleDurationTicks);
         energy = new DoubleSyncValue(() -> miner.getEnergyCostPerTick());
         progress = new DoubleSyncValue(
             () -> miner.mMaxProgresstime <= 0 ? 0 : (double) miner.mProgresstime / miner.mMaxProgresstime);
@@ -89,6 +91,8 @@ public final class LargeVoidMinerConfigGui implements IGuiHolder<PosGuiData> {
         sync.syncValue("actions", actions);
         sync.syncValue("oreMode", oreMode);
         sync.syncValue("fortune", fortune);
+        sync.syncValue("overclock", overclock);
+        sync.syncValue("cycleTicks", cycleTicks);
         sync.syncValue("energy", energy);
         sync.syncValue("progress", progress);
         sync.syncValue("directional", directional);
@@ -180,6 +184,7 @@ public final class LargeVoidMinerConfigGui implements IGuiHolder<PosGuiData> {
         private static final int ACTION_TOGGLE_DIRECTIONAL = 5;
         private static final int ACTION_TOGGLE_DIRECTIONAL_ORE = 6;
         private static final int ACTION_CLEAR_CONFIG = 7;
+        private static final int ACTION_CYCLE_OVERCLOCK = 8;
 
         private final LargeVoidMiner miner;
 
@@ -194,6 +199,10 @@ public final class LargeVoidMinerConfigGui implements IGuiHolder<PosGuiData> {
 
         public void sendCycleFortune() {
             syncToServer(ACTION_CYCLE_FORTUNE, buf -> {});
+        }
+
+        public void sendCycleOverclock() {
+            syncToServer(ACTION_CYCLE_OVERCLOCK, buf -> {});
         }
 
         public void sendToggleFilter(OreEntryInfo info) {
@@ -236,6 +245,9 @@ public final class LargeVoidMinerConfigGui implements IGuiHolder<PosGuiData> {
                     break;
                 case ACTION_CYCLE_FORTUNE:
                     miner.cycleFortuneLevel();
+                    break;
+                case ACTION_CYCLE_OVERCLOCK:
+                    miner.cycleOverclockLevel();
                     break;
                 case ACTION_TOGGLE_FILTER:
                     toggleOre(buf, false);

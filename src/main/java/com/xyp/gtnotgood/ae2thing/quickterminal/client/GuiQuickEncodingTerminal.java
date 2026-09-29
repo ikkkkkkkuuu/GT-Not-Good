@@ -1004,6 +1004,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) {
+        currentMouseX = mouseX;
+        currentMouseY = mouseY;
         draggedStorageSlots.clear();
         storageShiftDrag = false;
         if (handleFluidCraftingControlClick(mouseX, mouseY, button)) return;
@@ -1317,8 +1319,21 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     @Override
     public ItemStack getHoveredStack() {
-        ItemStack interfaceStack = interfaceTerminal.getHoveredStack();
-        return interfaceStack == null ? super.getHoveredStack() : interfaceStack;
+        if (isInsideInterfacePanel(currentMouseX, currentMouseY)) {
+            return interfaceTerminal.isInsideViewport(currentMouseX, currentMouseY)
+                ? interfaceTerminal.getHoveredStack()
+                : null;
+        }
+        return super.getHoveredStack();
+    }
+
+    @Override
+    public VirtualMESlot getVirtualMESlotUnderMouse() {
+        return isInsideInterfacePanel(currentMouseX, currentMouseY) ? null : super.getVirtualMESlotUnderMouse();
+    }
+
+    private boolean isInsideInterfacePanel(int mouseX, int mouseY) {
+        return mouseX >= guiLeft && mouseX < guiLeft + xSize && mouseY >= guiTop && mouseY < guiTop + ySize - 98;
     }
 
     @Override

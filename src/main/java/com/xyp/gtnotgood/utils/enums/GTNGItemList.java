@@ -211,6 +211,7 @@ public enum GTNGItemList implements IItemContainer {
     IntegratedProductionFactory,
     MaxCapacityMEOutputBus,
     MaxCapacityMEOutputHatch,
+    MEDataAccessHatch,
     MEBridgeSender,
     MEBridgeReceiver,
     MEContainer,
