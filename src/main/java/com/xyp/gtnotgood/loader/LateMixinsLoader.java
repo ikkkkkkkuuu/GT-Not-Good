@@ -170,6 +170,8 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "Gregtech.MixinMTEBrickedBlastFurnace",
                 "CutCorners.RecipeSpeedMixin",
                 "CutCorners.AssemblyLineSpeedMixin",
+                "CutCorners.PurificationPlantSpeedMixin",
+                "CutCorners.ExtremeEntityCrusherSpeedMixin",
                 "CutCorners.FurnaceBackendMixin",
                 "CutCorners.BasicMachineOutputMixin");
         }

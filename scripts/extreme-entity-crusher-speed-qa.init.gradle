@@ -1,0 +1,15 @@
+// Focused controller bytecode checks; QA dependencies are excluded from release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def bytecodeTools = root.configurations.create('crusherSpeedBytecodeTools')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm:9.8')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm-tree:9.8')
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files(root.file('scripts/qa/ExtremeEntityCrusherSpeedTargetTest.java')))
+        classpath = bytecodeTools + classpath
+    }
+    root.tasks.named('test').configure {
+        classpath = bytecodeTools + classpath
+        filter { includeTestsMatching '*ExtremeEntityCrusherSpeedTargetTest' }
+    }
+}

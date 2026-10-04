@@ -2,13 +2,57 @@ package com.xyp.gtnotgood.common.wireless;
 
 import static org.junit.Assert.*;
 
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Test;
 
+import com.google.common.io.ByteStreams;
+
 public class WirelessWorkTest {
+
+    public static class MissingSignatureType {
+    }
+
+    public static class SignatureFixture {
+
+        public void process() {}
+
+        public MissingSignatureType unrelated(MissingSignatureType value) {
+            return value;
+        }
+    }
+
+    @Test
+    public void absentOptionalMethodSignatureDoesNotRejectEntryPoint() throws Exception {
+        String fixtureName = SignatureFixture.class.getName();
+        String missingName = MissingSignatureType.class.getName();
+        ClassLoader isolated = new ClassLoader(getClass().getClassLoader()) {
+
+            @Override
+            protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+                if (name.equals(missingName)) throw new ClassNotFoundException(name);
+                if (!name.equals(fixtureName)) return super.loadClass(name, resolve);
+                Class<?> loaded = findLoadedClass(name);
+                if (loaded != null) return loaded;
+                try (InputStream bytes = getResourceAsStream(name.replace('.', '/') + ".class")) {
+                    byte[] data = ByteStreams.toByteArray(bytes);
+                    return defineClass(name, data, 0, data.length);
+                } catch (Exception failure) {
+                    throw new ClassNotFoundException(name, failure);
+                }
+            }
+        };
+        Class<?> fixture = isolated.loadClass(fixtureName);
+        try {
+            fixture.getDeclaredMethod("process");
+            fail("Fixture must reproduce optional signature linkage failure");
+        } catch (NoClassDefFoundError expected) {}
+        assertEquals(fixtureName, WirelessCompatibility.declaring(fixture, "process"));
+        assertEquals("", WirelessCompatibility.declaring(fixture, "absentEntry"));
+    }
 
     @Test
     public void exactCostAcrossAllDurations() {

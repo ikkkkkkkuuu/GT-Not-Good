@@ -1,0 +1,15 @@
+// Inspect the current GT multi-release bytecode with ASM 9; keep QA dependencies out of release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def bytecodeTools = root.configurations.create('purificationSpeedBytecodeTools')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm:9.8')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm-tree:9.8')
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files(root.file('scripts/qa/PurificationPlantSpeedTargetTest.java')))
+        classpath = bytecodeTools + classpath
+    }
+    root.tasks.named('test').configure {
+        classpath = bytecodeTools + classpath
+        filter { includeTestsMatching '*PurificationPlantSpeedTargetTest' }
+    }
+}
