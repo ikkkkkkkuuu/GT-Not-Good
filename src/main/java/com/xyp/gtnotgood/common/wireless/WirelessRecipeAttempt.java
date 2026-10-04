@@ -92,6 +92,8 @@ public final class WirelessRecipeAttempt {
     private CheckRecipeResult process(ProcessingLogic logic) {
         if (prepared != null) return CheckRecipeResultRegistry.NO_RECIPE;
         WirelessProcessingAccess access = (WirelessProcessingAccess) logic;
+        logic.setAvailableVoltage(Long.MAX_VALUE)
+            .setAvailableAmperage(1);
         ItemStack[] originalItems = access.gtng$getItems();
         FluidStack[] originalFluids = access.gtng$getFluids();
         ItemStack[] inputs = access.gtng$prepareCatalyst(originalItems == null ? new ItemStack[0] : originalItems);

@@ -130,6 +130,7 @@ public final class CrossWirelessClientChecks {
                     == Boolean.getBoolean("gtng.crossWireless.tst"),
                 "Optional TST presence");
             checkHatchRecipe();
+            checkAlloyBlastSmelter(world);
             checkMachine(world, findController("gregtech."));
             if (Boolean.getBoolean("gtng.crossWireless.gtnl")) checkMachine(world, findController("com.science.gtnl."));
             if (Boolean.getBoolean("gtng.crossWireless.tst"))
@@ -145,6 +146,86 @@ public final class CrossWirelessClientChecks {
             failure = error.toString();
             finished = true;
         }
+    }
+
+    private void checkAlloyBlastSmelter(WorldServer world) throws Exception {
+        IMetaTileEntity prototype = GregTechAPI.METATILEENTITIES[810];
+        require(
+            prototype != null && prototype.getClass()
+                .getSimpleName()
+                .equals("MTEAlloyBlastSmelter"),
+            "Screenshot controller 810 is the alloy blast smelter");
+        UUID owner = UUID.randomUUID();
+        WirelessNetworkManager.strongCheckOrAddUser(owner);
+        WirelessNetworkManager.setUserEU(owner, BigInteger.valueOf(1000));
+        BaseMetaTileEntity tile = place(world, prototype.getStackForm(1), owner);
+        MTEMultiBlockBase machine = (MTEMultiBlockBase) tile.getMetaTileEntity();
+        tile.enableWorking();
+        machine.mWrench = machine.mScrewdriver = machine.mSoftMallet = machine.mHardHammer = machine.mSolderingTool = machine.mCrowbar = true;
+        machine.mEfficiency = 10000;
+        CrossRecipeWirelessEnergyHatch hatch = (CrossRecipeWirelessEnergyHatch) place(
+            world,
+            GTNGItemList.CrossRecipeWirelessEnergyHatch.get(1),
+            owner).getMetaTileEntity();
+        hatch.setParallelLimit(1);
+        hatch.setDuration(3);
+        machine.mEnergyHatches.add(hatch);
+        MTEHatchInputBus input = (MTEHatchInputBus) place(world, findHatch(MTEHatchInputBus.class), owner)
+            .getMetaTileEntity();
+        machine.mInputBusses.add(input);
+        for (int i = 0; i < 2; i++) machine.mOutputHatches
+            .add((MTEHatchOutput) place(world, findHatch(MTEHatchOutput.class), owner).getMetaTileEntity());
+        require(
+            WirelessCompatibility.supports(machine, ((WirelessControllerAccess) machine).gtng$getProcessingLogic()),
+            "Alloy blast smelter supports wireless scheduling");
+        WirelessRecipeScheduler scheduler = ((WirelessControllerAccess) machine).gtng$getWirelessScheduler();
+        WirelessRecipeAttempt attempt = new WirelessRecipeAttempt(machine, scheduler, hatch, BigInteger.valueOf(1000));
+        WirelessRecipeAttempt.enter(attempt);
+        try {
+            require(
+                machine.getAverageInputVoltage() == Long.MAX_VALUE && machine.getMaxInputVoltage() == Long.MAX_VALUE,
+                "Native alloy voltage checks see unlimited voltage inside wireless admission");
+        } finally {
+            WirelessRecipeAttempt.leave();
+        }
+        require(machine.getAverageInputVoltage() != Long.MAX_VALUE, "Voltage override ends with transaction");
+        Config.recipeSpeedMode = 0;
+        ItemStack[] ingredients = { new ItemStack(INPUT_A), new ItemStack(INPUT_B) };
+        for (int i = 0; i < 2; i++) {
+            GTRecipe recipe = new GTRecipe(
+                false,
+                new ItemStack[] { ingredients[i].copy() },
+                new ItemStack[0],
+                null,
+                new int[0],
+                new int[0],
+                new int[0],
+                new int[] { 10000 },
+                new FluidStack[0],
+                new FluidStack[] { new FluidStack(i == 0 ? FluidRegistry.WATER : FluidRegistry.LAVA, 144) },
+                10,
+                i == 0 ? 4 : 6,
+                0);
+            machine.getRecipeMap()
+                .getBackend()
+                .compileRecipe(recipe);
+            input.setInventorySlotContents(i, ingredients[i].copy());
+        }
+        run(machine, tile, 100);
+        require(scheduler.size() == 2, "Two alloy recipes run concurrently: status=" + scheduler.status());
+        for (long tick = 101; tick <= 103; tick++) run(machine, tile, tick);
+        require(scheduler.size() == 0, "Both alloy recipes complete");
+        require(
+            WirelessNetworkManager.getUserEU(owner)
+                .equals(BigInteger.valueOf(900)),
+            "Exact alloy recipe cost");
+        require(
+            machine.mOutputHatches.stream()
+                .mapToInt(output -> output.getFluidAmount())
+                .sum() == 288,
+            "Both independent fluid outputs delivered");
+        System.out
+            .println("CROSS_WIRELESS_QA: alloy blast smelter, scoped voltage bypass and concurrent fluid recipes PASS");
     }
 
     private void checkHatchRecipe() {
