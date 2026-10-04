@@ -1,5 +1,16 @@
 # AE2LT faithful port audit
 
+## Wireless provider optimization toggle — 2026-09-30
+
+Adds an opt-in toggle through GTNH AE2 `IInterfaceViewable#allowsPatternOptimization`.
+New and legacy providers default to disabled; the choice is persisted in tile NBT.
+The existing toolbar gains one button at (-18, 111), without moving upstream controls.
+References the installed AE2 `guis/states.png` icons 178/194 at runtime, matching
+`GuiInterface` / `GuiToggleButton` inspected in the rv3-beta-1050-GTNH source reference
+(LGPL-3.0-or-later source headers). No assets are copied or modified and the packaged
+asset manifest remains unchanged. Destinations: `PackagedProviderGui.java` and
+`TilePackagedProvider.java`; server-side owner checks protect the toggle.
+
 ## Programmable Hatches ME data access hatch — 2026-09-29
 
 Source: https://github.com/reobf/Programmable-Hatches-Mod

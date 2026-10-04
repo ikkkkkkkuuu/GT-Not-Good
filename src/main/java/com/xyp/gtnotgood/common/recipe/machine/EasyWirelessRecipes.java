@@ -40,6 +40,12 @@ public final class EasyWirelessRecipes {
      * @return circuit 19-21 for multi-amp, 22 for regular, or 1-9 for laser
      */
     public static int circuitSetting(int amperes) {
+        int setting = findCircuitSetting(amperes);
+        if (setting == 0) throw new IllegalArgumentException("Unsupported wireless amperage: " + amperes);
+        return setting;
+    }
+
+    private static int findCircuitSetting(int amperes) {
         if (amperes == 2) return 22;
         if (amperes == 4) return 19;
         if (amperes == 16) return 20;
@@ -47,17 +53,26 @@ public final class EasyWirelessRecipes {
         for (int variant = 0; variant < 9; variant++) {
             if (amperes == (256 << (2 * variant))) return 1 + variant;
         }
-        throw new IllegalArgumentException("Unsupported wireless amperage: " + amperes);
+        return 0;
     }
 
-    /** Only native classes and our two adapters are included; other addons retain control of their own recipes. */
+    /** Addons also instantiate native classes, so both the class and its recipe rating must be supported. */
     public static boolean supports(IMetaTileEntity machine) {
         if (machine == null) return false;
         Class<?> type = machine.getClass();
-        return type == MTEWirelessEnergy.class || type == MTEHatchWirelessMulti.class
-            || type == MTEHatchWirelessDynamoMulti.class
-            || type == WirelessLaserEnergyHatch.class
-            || type == WirelessLaserDynamoHatch.class;
+        if (type != MTEWirelessEnergy.class && type != MTEHatchWirelessMulti.class
+            && type != MTEHatchWirelessDynamoMulti.class
+            && type != WirelessLaserEnergyHatch.class
+            && type != WirelessLaserDynamoHatch.class) return false;
+        MTEHatch hatch = (MTEHatch) machine;
+        int amperes = amperes(hatch);
+        return hatch.mTier >= (amperes > 64 ? VoltageIndex.LV : VoltageIndex.ULV) && hatch.mTier <= VoltageIndex.MAX
+            && findCircuitSetting(amperes) != 0;
+    }
+
+    private static int amperes(MTEHatch hatch) {
+        return hatch instanceof MTEHatchWirelessDynamoMulti dynamo ? dynamo.maxAmperes
+            : hatch instanceof MTEHatchWirelessMulti energy ? energy.maxAmperes : 2;
     }
 
     public static void loadRecipes() {
@@ -67,9 +82,7 @@ public final class EasyWirelessRecipes {
             if (!supports(machine)) continue;
             MTEHatch hatch = (MTEHatch) machine;
             boolean dynamo = hatch instanceof MTEHatchWirelessDynamoMulti;
-            int amps = dynamo ? ((MTEHatchWirelessDynamoMulti) hatch).maxAmperes
-                : hatch instanceof MTEHatchWirelessMulti ? ((MTEHatchWirelessMulti) hatch).maxAmperes : 2;
-            addRecipe(hatch, dynamo, amps);
+            addRecipe(hatch, dynamo, amperes(hatch));
             count++;
         }
         GTNotGood.LOG.info("Registered {} easy wireless energy recipes", count);

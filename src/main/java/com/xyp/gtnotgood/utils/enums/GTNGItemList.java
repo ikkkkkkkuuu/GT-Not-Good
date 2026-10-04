@@ -224,6 +224,7 @@ public enum GTNGItemList implements IItemContainer {
     WirelessDualInterfaceTerminal,
     SuperMTEHatchCraftingInputBusME,
     SuperMTEHatchCraftingInputME,
+    CompactSuperMTEHatchCraftingInputME,
     SuperMTEHatchCraftingInputSlave;
 
     public boolean mHasNotBeenSet;

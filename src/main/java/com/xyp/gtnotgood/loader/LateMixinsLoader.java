@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import com.gtnewhorizon.gtnhmixins.ILateMixinLoader;
 import com.gtnewhorizon.gtnhmixins.LateMixin;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.gtnotgood.utils.text.TextEffectsCompat;
 
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 
@@ -87,7 +88,8 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "Gregtech.TransmutationShapelessRecipeMixin");
         }
         if (FMLLaunchHandler.side()
-            .isClient() && loadedMods.contains(ModList.NotEnoughItems.getID())) {
+            .isClient() && loadedMods.contains(ModList.NotEnoughItems.getID())
+            && !TextEffectsCompat.hasUpstreamRenderer()) {
             addAll(list, "texteffect.MixinNEIFormattedTextField");
         }
 

@@ -3,9 +3,13 @@ package com.xyp.gtnotgood.mixins;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.launchwrapper.Launch;
+
 import org.spongepowered.asm.lib.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+
+import com.xyp.gtnotgood.utils.text.TextEffectsCompat;
 
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 
@@ -28,12 +32,14 @@ public final class GTNotGoodMixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        // Both engines intercept the same text markers and Angelica fields; only the original may own them.
+        if (mixinClassName.contains(".texteffect.") && TextEffectsCompat.hasUpstreamRenderer()) return false;
         // Check class resources without loading Angelica or its font renderer during early mixin discovery.
         if (mixinClassName.contains(".texteffect.angelica.")) {
             return FMLLaunchHandler.side()
                 .isClient()
-                && net.minecraft.launchwrapper.Launch.classLoader
-                    .getResource("com/gtnewhorizons/angelica/client/font/BatchingFontRenderer.class") != null;
+                && Launch.classLoader.getResource("com/gtnewhorizons/angelica/client/font/BatchingFontRenderer.class")
+                    != null;
         }
         return !mixinClassName.startsWith(CLIENT_RESEARCH_MIXIN_PACKAGE) || FMLLaunchHandler.side()
             .isClient();

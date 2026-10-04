@@ -172,6 +172,18 @@ public class MachineLoader {
                 true));
         addItemTooltip(GTNGItemList.SuperMTEHatchCraftingInputME.get(1), AnimatedText.GT_NOT_GOOD);
 
+        // #tr NameCompactSuperMTEHatchCraftingInputME
+        // # Compact Super Pattern Input Hatch (ME)
+        // # zh_CN 缩小超级样板输入总成 (ME)
+        GTNGItemList.CompactSuperMTEHatchCraftingInputME.set(
+            new SuperMTEHatchCraftingInputME(
+                GTNGMachineID.CompactSuperCraftingInputME.ID,
+                "CompactSuperMTEHatchCraftingInputME",
+                StatCollector.translateToLocal("NameCompactSuperMTEHatchCraftingInputME"),
+                true,
+                1));
+        addItemTooltip(GTNGItemList.CompactSuperMTEHatchCraftingInputME.get(1), AnimatedText.GT_NOT_GOOD);
+
         // #tr NameSuperMTEHatchCraftingInputSlave
         // # Super Pattern Input Mirror (ME)
         // # zh_CN 超级样板输入镜像 (ME)

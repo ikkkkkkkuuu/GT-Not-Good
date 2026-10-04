@@ -1,6 +1,5 @@
 package com.xyp.gtnotgood.common.gui.modularui.hatch;
 
-import static com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME.SLOT_MANUAL_START;
 import static gregtech.api.modularui2.GTGuis.createPopUpPanel;
 
 import net.minecraft.util.StatCollector;
@@ -28,14 +27,12 @@ import gregtech.common.modularui2.widget.builder.ItemSlotGridBuilder;
 
 /**
  * Complete GUI implementation for Super ME Crafting Input Bus
- * Supports 100 rows (900 pattern slots) with custom tooltips
+ * Shares controls between the full-size and single-row pattern hatches.
  */
 public class SuperMTEHatchCraftingInputMEGui extends MTEHatchBaseGui<SuperMTEHatchCraftingInputME> {
 
     private static final String PATTERN_INV_NAME = "pattern_inv";
     private static final String MANUAL_ITEM_INV_NAME = "manual_item_inv";
-    // Modified: Support for 100 rows instead of 4 (900 pattern slots total)
-    private static final int SUPER_PATTERN_SLOT_ROW = 100;
     private static final int PATTERN_SLOT_PER_ROW = 9;
     private static final int MANUAL_SLOT_ROW = 3;
     private static final int MANUAL_SLOT_PER_ROW = 3;
@@ -46,15 +43,11 @@ public class SuperMTEHatchCraftingInputMEGui extends MTEHatchBaseGui<SuperMTEHat
 
     @Override
     protected int getBasePanelHeight() {
-        // Only add SLOT_SIZE (one row height) like the original
-        // The grid will have 100 rows but panel only shows ~4 rows, enabling scrolling
-        return super.getBasePanelHeight() + SLOT_SIZE;
+        return super.getBasePanelHeight() + SLOT_SIZE - (4 - visiblePatternRows()) * SLOT_SIZE;
     }
 
-    @Override
-    protected int getBasePanelWidth() {
-        // Reset to original width - no need to add extra space
-        return super.getBasePanelWidth();
+    private int visiblePatternRows() {
+        return Math.min(4, machine.getPatternCount() / PATTERN_SLOT_PER_ROW);
     }
 
     @Override
@@ -63,16 +56,12 @@ public class SuperMTEHatchCraftingInputMEGui extends MTEHatchBaseGui<SuperMTEHat
     }
 
     private Grid createSlots(PanelSyncManager syncManager) {
-        // Register slot group with the extended row count for scrolling support
-        syncManager.registerSlotGroup(PATTERN_INV_NAME, SUPER_PATTERN_SLOT_ROW);
-
-        // Create a grid with all 100 rows and enable scrolling
-        // Set minColWidth to ensure each column has at least SLOT_SIZE width (18 pixels)
-        // This prevents columns from being compressed when scrolling is enabled
-        return new Grid().minColWidth(SLOT_SIZE) // Ensure each column is at least 18 pixels wide
+        int rows = machine.getPatternCount() / PATTERN_SLOT_PER_ROW;
+        syncManager.registerSlotGroup(PATTERN_INV_NAME, rows);
+        Grid grid = new Grid().minColWidth(SLOT_SIZE)
             .gridOfWidthHeight(
                 PATTERN_SLOT_PER_ROW,
-                SUPER_PATTERN_SLOT_ROW,
+                rows,
                 ($x, $y, index) -> new PatternSlot().slot(
                     new ModularSlot(machine.inventoryHandler, index)
                         .filter(itemStack -> itemStack.getItem() instanceof ICraftingPatternItem)
@@ -82,9 +71,8 @@ public class SuperMTEHatchCraftingInputMEGui extends MTEHatchBaseGui<SuperMTEHat
                             }
                         })
                         .slotGroup(PATTERN_INV_NAME)))
-            .size(PATTERN_SLOT_PER_ROW * SLOT_SIZE + 4, 4 * SLOT_SIZE) // Fixed visible area: 9 columns × 4 rows =
-                                                                       // 162×72
-            .scrollable(); // Enable scrolling!
+            .size(PATTERN_SLOT_PER_ROW * SLOT_SIZE + 4, visiblePatternRows() * SLOT_SIZE);
+        return rows > visiblePatternRows() ? grid.scrollable() : grid;
     }
 
     @Override
@@ -182,7 +170,7 @@ public class SuperMTEHatchCraftingInputMEGui extends MTEHatchBaseGui<SuperMTEHat
                 new ItemSlotGridBuilder(machine.inventoryHandler, syncManager)
                     .size(MANUAL_SLOT_PER_ROW, MANUAL_SLOT_ROW)
                     .slotGroupKey(MANUAL_ITEM_INV_NAME)
-                    .indexOffset(SLOT_MANUAL_START)
+                    .indexOffset(machine.getManualSlotStart())
                     .build()
                     .marginTop(16)
                     .horizontalCenter());

@@ -29,6 +29,7 @@ import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.gtnotgood.utils.event.SubscribeEventClientUtils;
 import com.xyp.gtnotgood.utils.event.ToolBeltClientEvents;
 import com.xyp.gtnotgood.utils.keybind.KeyBindManager;
+import com.xyp.gtnotgood.utils.text.TextEffectsCompat;
 
 import WayofTime.alchemicalWizardry.ModBlocks;
 import appeng.api.AEApi;
@@ -95,6 +96,7 @@ public class ClientProxy extends CommonProxy {
     private void initializeTextEffects() {
         BuiltinTextEffects.register();
         TextEffectPreferences.load();
+        if (TextEffectsCompat.hasUpstreamRenderer()) return;
         ((IReloadableResourceManager) Minecraft.getMinecraft()
             .getResourceManager()).registerReloadListener(EffectTextRenderer.INSTANCE);
         ClientCommandHandler.instance.registerCommand(new TextEffectPreviewCommand());

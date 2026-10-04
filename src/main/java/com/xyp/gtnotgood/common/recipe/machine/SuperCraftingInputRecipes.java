@@ -5,6 +5,7 @@ import static gregtech.api.util.GTRecipeBuilder.SECONDS;
 
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import gregtech.api.enums.ItemList;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
@@ -12,14 +13,14 @@ import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTRecipeBuilder;
 
 /**
- * Registers the assembler recipes for the super ME pattern input hatch family.
+ * Registers assembly and size-conversion recipes for the super ME pattern input hatch family.
  */
 public final class SuperCraftingInputRecipes {
 
     private SuperCraftingInputRecipes() {}
 
     /**
-     * Adds the three LV-tier assembler recipes copied from GT-Not-Cool.
+     * Adds LV-tier assembly recipes and one-to-one shapeless hatch size conversions.
      */
     public static void loadRecipes() {
         GTRecipeBuilder.builder()
@@ -54,5 +55,23 @@ public final class SuperCraftingInputRecipes {
             .duration(5 * SECONDS)
             .eut(32)
             .addTo(assemblerRecipes);
+
+        GTRecipeBuilder.builder()
+            .itemInputs(
+                ItemList.Hatch_Input_Bus_LV.get(1L),
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
+                GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
+            .circuit(24)
+            .itemOutputs(GTNGItemList.CompactSuperMTEHatchCraftingInputME.get(1))
+            .duration(5 * SECONDS)
+            .eut(32)
+            .addTo(assemblerRecipes);
+
+        GameRegistry.addShapelessRecipe(
+            GTNGItemList.CompactSuperMTEHatchCraftingInputME.get(1),
+            GTNGItemList.SuperMTEHatchCraftingInputME.get(1));
+        GameRegistry.addShapelessRecipe(
+            GTNGItemList.SuperMTEHatchCraftingInputME.get(1),
+            GTNGItemList.CompactSuperMTEHatchCraftingInputME.get(1));
     }
 }

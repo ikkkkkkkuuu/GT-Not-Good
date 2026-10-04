@@ -445,7 +445,6 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     // Modified: Changed from 4*9=36 to 100*9=900 pattern slots for massive crafting capacity
     private static final int MAX_PATTERN_COUNT = 100 * 9; // 900 个样板槽位，100 行
     private static final int SLOT_MANUAL_SIZE = 9;
-    private static final int MAX_INV_COUNT = MAX_PATTERN_COUNT + SLOT_MANUAL_SIZE + 2; // +1 circuit, +1 mold
     private static final int SLOT_CIRCUIT = MAX_PATTERN_COUNT;
     public static final int SLOT_MANUAL_START = SLOT_CIRCUIT + 1;
     public static final int SLOT_MOLD = SLOT_MANUAL_START + SLOT_MANUAL_SIZE;
@@ -480,11 +479,11 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
     // holds all internal inventories
     @SuppressWarnings("unchecked") // Java doesn't allow to create an array of a generic type.
-    private final PatternSlot<SuperMTEHatchCraftingInputME>[] internalInventory = new PatternSlot[MAX_PATTERN_COUNT];
+    private final PatternSlot<SuperMTEHatchCraftingInputME>[] internalInventory = new PatternSlot[getPatternCount()];
 
     // a hash map for faster lookup of pattern slots, not necessarily all valid.
     private final Map<ICraftingPatternDetails, PatternSlot<SuperMTEHatchCraftingInputME>> patternDetailsPatternSlotMap = new HashMap<>(
-        MAX_PATTERN_COUNT);
+        getPatternCount());
 
     private boolean needPatternSync = true;
     private boolean justHadNewItems = false;
@@ -499,14 +498,24 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     private ScheduledReason scheduledReason = ScheduledReason.UNDEFINED;
 
     public SuperMTEHatchCraftingInputME(int aID, String aName, String aNameRegional, boolean supportFluids) {
-        super(aID, aName, aNameRegional, supportFluids ? 10 : 6, MAX_INV_COUNT, null);
+        this(aID, aName, aNameRegional, supportFluids, MAX_PATTERN_COUNT / 9);
+    }
+
+    public SuperMTEHatchCraftingInputME(int aID, String aName, String aNameRegional, boolean supportFluids,
+        int patternRows) {
+        super(aID, aName, aNameRegional, supportFluids ? 10 : 6, patternRows * 9 + SLOT_MANUAL_SIZE + 2, null);
         disableSort = true;
         this.supportFluids = supportFluids;
     }
 
     public SuperMTEHatchCraftingInputME(String aName, int aTier, String[] aDescription, ITexture[][][] aTextures,
         boolean supportFluids) {
-        super(aName, aTier, MAX_INV_COUNT, aDescription, aTextures);
+        this(aName, aTier, aDescription, aTextures, supportFluids, MAX_PATTERN_COUNT / 9);
+    }
+
+    private SuperMTEHatchCraftingInputME(String aName, int aTier, String[] aDescription, ITexture[][][] aTextures,
+        boolean supportFluids, int patternRows) {
+        super(aName, aTier, patternRows * 9 + SLOT_MANUAL_SIZE + 2, aDescription, aTextures);
         this.supportFluids = supportFluids;
         disableSort = true;
     }
@@ -518,7 +527,13 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
     @Override
     public MetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
-        return new SuperMTEHatchCraftingInputME(mName, mTier, mDescriptionArray, mTextures, supportFluids);
+        return new SuperMTEHatchCraftingInputME(
+            mName,
+            mTier,
+            mDescriptionArray,
+            mTextures,
+            supportFluids,
+            getPatternCount() / 9);
     }
 
     @Override
@@ -692,7 +707,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         if ((lastNonNullIndex + 1) % 9 == 0) {
             calculatedRows++;
         }
-        return Math.min(calculatedRows, 100); // 最大 100 行
+        return Math.min(calculatedRows, getPatternCount() / 9);
     }
 
     @Override
@@ -788,7 +803,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         // ghost circuits and the mold slot so the interface name matches NEI's
         // auto-search rule (for example "Assembler 2 32"), instead of GT's
         // default server-localized "{English Item Name}" suffix.
-        for (int i = SLOT_MANUAL_START; i < SLOT_MANUAL_START + SLOT_MANUAL_SIZE; i++) {
+        for (int i = getManualSlotStart(); i < getManualSlotStart() + SLOT_MANUAL_SIZE; i++) {
             ItemStack manualStack = mInventory[i];
             if (manualStack == null) continue;
             try {
@@ -800,7 +815,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         // Also surface the phantom mold slot's item so the interface terminal name reflects the selected mold.
         // Show its meta value (item damage) rather than the display name, matching the ghost-circuit suffix style
         // (see CommonBaseMetaTileEntity.getInterfaceNameSuffix) so NEI-overwrite auto-naming stays consistent.
-        ItemStack mold = mInventory[SLOT_MOLD];
+        ItemStack mold = mInventory[getMoldSlot()];
         if (mold != null) {
             try {
                 metaSuffix.append(String.format(Gregtech.machines.ghostCircuitSuffixFormat, mold.getItemDamage()));
@@ -912,12 +927,14 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         int oldPatternCount = 4 * 8;
         int oldSlotManual = oldPatternCount + 1;
 
-        if (internalInventory[oldSlotManual] == null && mInventory[oldSlotManual] != null) {
-            mInventory[SLOT_MANUAL_START] = mInventory[oldSlotManual];
+        if (oldSlotManual < internalInventory.length && internalInventory[oldSlotManual] == null
+            && mInventory[oldSlotManual] != null) {
+            mInventory[getManualSlotStart()] = mInventory[oldSlotManual];
             mInventory[oldSlotManual] = null;
         }
-        if (internalInventory[oldPatternCount] == null && mInventory[oldPatternCount] != null) {
-            mInventory[SLOT_CIRCUIT] = mInventory[oldPatternCount];
+        if (oldPatternCount < internalInventory.length && internalInventory[oldPatternCount] == null
+            && mInventory[oldPatternCount] != null) {
+            mInventory[getCircuitSlot()] = mInventory[oldPatternCount];
             mInventory[oldPatternCount] = null;
         }
 
@@ -938,7 +955,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         updateAE2ProxyColor();
 
         // Sync inventories to ensure that the real inventory matches what AE2 is seeing.
-        for (int i = 0; i < MAX_PATTERN_COUNT; i++) {
+        for (int i = 0; i < getPatternCount(); i++) {
             if (internalInventory[i] == null) continue;
             mInventory[i] = internalInventory[i].pattern;
         }
@@ -1020,22 +1037,30 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         return false;
     }
 
+    public int getPatternCount() {
+        return mInventory.length - SLOT_MANUAL_SIZE - 2;
+    }
+
+    public int getManualSlotStart() {
+        return getCircuitSlot() + 1;
+    }
+
     @Override
     public int getCircuitSlot() {
-        return SLOT_CIRCUIT;
+        return getPatternCount();
     }
 
     public int getMoldSlot() {
-        return SLOT_MOLD;
+        return getManualSlotStart() + SLOT_MANUAL_SIZE;
     }
 
     public void setMold(@Nullable ItemStack selected) {
         ItemStack phantom = findMatchingMold(selected);
         if (inventoryHandler != null) {
-            inventoryHandler.setStackInSlot(SLOT_MOLD, phantom);
+            inventoryHandler.setStackInSlot(getMoldSlot(), phantom);
         }
         try {
-            setInventorySlotContents(SLOT_MOLD, phantom);
+            setInventorySlotContents(getMoldSlot(), phantom);
         } catch (Exception ignored) {}
         getBaseMetaTileEntity().markInventoryBeenModified();
     }
@@ -1069,13 +1094,12 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
     @Override
     public ModularPanel buildUI(PosGuiData data, PanelSyncManager syncManager, UISettings uiSettings) {
-        // Use custom GUI class that extends the original with support for 100 rows
         return new SuperMTEHatchCraftingInputMEGui(this).build(data, syncManager, uiSettings);
     }
 
     @Override
     public void updateSlots() {
-        for (int slotId = SLOT_MANUAL_START; slotId < SLOT_MANUAL_START + SLOT_MANUAL_SIZE; ++slotId) {
+        for (int slotId = getManualSlotStart(); slotId < getManualSlotStart() + SLOT_MANUAL_SIZE; ++slotId) {
             if (mInventory[slotId] != null && mInventory[slotId].stackSize <= 0) mInventory[slotId] = null;
         }
     }
@@ -1135,9 +1159,9 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     @Override
     public ItemStack[] getSharedItems() {
         ItemStack[] sharedItems = new ItemStack[SLOT_MANUAL_SIZE + 2];
-        sharedItems[0] = mInventory[SLOT_CIRCUIT];
-        sharedItems[1] = mInventory[SLOT_MOLD];
-        System.arraycopy(mInventory, SLOT_MANUAL_START, sharedItems, 2, SLOT_MANUAL_SIZE);
+        sharedItems[0] = mInventory[getCircuitSlot()];
+        sharedItems[1] = mInventory[getMoldSlot()];
+        System.arraycopy(mInventory, getManualSlotStart(), sharedItems, 2, SLOT_MANUAL_SIZE);
         return ArrayExt.withoutNulls(sharedItems, ItemStack[]::new);
     }
 
@@ -1274,9 +1298,9 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     public void onBlockDestroyed() {
         // 清除幽灵模具槽位，防止掉落
         if (inventoryHandler != null) {
-            inventoryHandler.setStackInSlot(SLOT_MOLD, null);
+            inventoryHandler.setStackInSlot(getMoldSlot(), null);
         }
-        mInventory[SLOT_MOLD] = null;
+        mInventory[getMoldSlot()] = null;
 
         refundAll(true);
         super.onBlockDestroyed();
@@ -1364,7 +1388,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     @Override
     public void setInventorySlotContents(int aIndex, ItemStack aStack) {
         super.setInventorySlotContents(aIndex, aStack);
-        if (aIndex >= MAX_PATTERN_COUNT) return;
+        if (aIndex >= getPatternCount()) return;
         onPatternChange(aIndex, aStack);
         needPatternSync = true;
     }

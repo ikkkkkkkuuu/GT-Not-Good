@@ -66,6 +66,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     int arcaneMissingUnits;
     int priority;
     boolean terminalVisible = true;
+    private boolean patternOptimization;
     PackagedCraftingLock craftingLock = PackagedCraftingLock.NONE;
     private boolean pulseLocked;
     private boolean previousRedstone;
@@ -496,6 +497,17 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     }
 
     @Override
+    public boolean allowsPatternOptimization() {
+        return patternOptimization;
+    }
+
+    public void setPatternOptimization(boolean enabled) {
+        if (!isServerSide() || patternOptimization == enabled) return;
+        patternOptimization = enabled;
+        markDirty();
+    }
+
+    @Override
     public ModularPanel buildUI(PosGuiData data, PanelSyncManager sync, UISettings settings) {
         settings.canInteractWith(this::isUseableByPlayer);
         return PackagedProviderGui.build(this, sync);
@@ -569,6 +581,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
         if (tag.hasKey("EssentiaIdentity")) essentiaIdentity = tag.getString("EssentiaIdentity");
         priority = tag.getInteger("Priority");
         terminalVisible = !tag.hasKey("TerminalVisible") || tag.getBoolean("TerminalVisible");
+        patternOptimization = tag.getBoolean("PatternOptimization");
         craftingLock = PackagedCraftingLock.read(tag.getInteger("CraftingLock"));
         pulseLocked = tag.getBoolean("PulseLocked");
         previousRedstone = tag.getBoolean("PreviousRedstone");
@@ -618,6 +631,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
         tag.setString("EssentiaIdentity", essentiaIdentity);
         tag.setInteger("Priority", priority);
         tag.setBoolean("TerminalVisible", terminalVisible);
+        tag.setBoolean("PatternOptimization", patternOptimization);
         tag.setInteger("CraftingLock", craftingLock.ordinal());
         tag.setBoolean("PulseLocked", pulseLocked);
         tag.setBoolean("PreviousRedstone", previousRedstone);

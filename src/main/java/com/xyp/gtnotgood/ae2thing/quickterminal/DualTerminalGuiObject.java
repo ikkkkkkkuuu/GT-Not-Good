@@ -28,6 +28,10 @@ import appeng.util.item.AEItemStack;
 
 public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObject implements IInterfaceTerminal {
 
+    // AE2 uses mode 2 for its paged processing terminal. GTNL resizes and truncates that mode's inventories;
+    // this terminal owns two independent 256-slot grids but retains AE2's non-crafting "pattern_ex" storage.
+    private static final int QUICK_TERMINAL_MODE = 3;
+
     private static final String QUICK_CRAFTING_MODE = "gtnhQolQuickCraftingMode";
     private static final String QUICK_PROCESSING_GRID_SIZE = "gtnhQolQuickProcessingGridSize";
     private static final String QUICK_CRAFTING_PIN_ROWS = "gtnhQolQuickCraftingPinRows";
@@ -83,6 +87,16 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
         } finally {
             encodingPattern = false;
         }
+    }
+
+    @Override
+    public void writeInventory() {
+        super.writeInventory();
+        NBTTagCompound data = Platform.openNbtData(getItemStack())
+            .getCompoundTag(NATIVE_PATTERN_DATA);
+        // AE2 writes these fields only for mode 2; retain them for the custom terminal mode as well.
+        data.setBoolean("inverted", isInverted());
+        data.setInteger("activePage", getActivePage());
     }
 
     /** Persists the pending processing recipe's layout across terminal closes and crafting-mode round trips. */
@@ -168,7 +182,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
 
     public DualTerminalGuiObject(IWirelessTermHandler handler, ItemStack stack, EntityPlayer player, World world,
         int slot) {
-        super(handler, stack, player, world, slot, 2, 0);
+        super(handler, stack, player, world, slot, QUICK_TERMINAL_MODE, 0);
         migrateLegacyTerminalData();
         if (!world.isRemote) {
             archiveLegacy32SlotData();

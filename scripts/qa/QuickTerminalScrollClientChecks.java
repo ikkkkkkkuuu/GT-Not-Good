@@ -42,6 +42,7 @@ import appeng.container.sync.SyncEndpoint;
 import appeng.container.sync.SyncManager;
 import appeng.container.sync.SyncMode;
 import appeng.helpers.WirelessTerminalGuiObject;
+import appeng.items.contents.WirelessPatternTerminalGuiObject;
 import appeng.tile.networking.TileWireless;
 import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
@@ -74,6 +75,7 @@ public final class QuickTerminalScrollClientChecks {
     private volatile List<RecipeTransferPayload> neiPayloads;
     private volatile boolean neiChecked;
     private GTRecipe neiRecipe;
+    private int startupTicks;
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
@@ -86,13 +88,23 @@ public final class QuickTerminalScrollClientChecks {
     public void client(TickEvent.ClientTickEvent event) throws Exception {
         if (event.phase != TickEvent.Phase.END) return;
         Minecraft mc = Minecraft.getMinecraft();
-        if (!started && mc.currentScreen instanceof GuiMainMenu) {
+        if (!started && ++startupTicks % 200 == 0) {
+            System.out.println(
+                "TERMINAL_QA_WAITING: " + (mc.currentScreen == null ? "null"
+                    : mc.currentScreen.getClass()
+                        .getName()));
+        }
+        if (!started
+            && (mc.currentScreen instanceof GuiMainMenu || mc.currentScreen != null && mc.currentScreen.getClass()
+                .getName()
+                .equals("galaxyspace.core.gui.GSGuiMainMenu"))) {
             started = true;
             mc.launchIntegratedServer(
                 "scroll-qa-" + System.currentTimeMillis(),
                 "Scroll QA",
                 new WorldSettings(24L, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT));
         }
+        if (!started && startupTicks > 1200) throw new AssertionError("QA did not reach the main menu");
         if (!checked || gui != null) return;
         if (failure != null) throw new AssertionError("Server checks failed", failure);
         DualTerminalGuiObject host = host(mc.thePlayer);
@@ -177,6 +189,21 @@ public final class QuickTerminalScrollClientChecks {
                 name.equals("targetGrid") ? grid : name.equals("sg") ? grid.getCache(IStorageGrid.class) : accessPoint);
         }
         ContainerQuickEncodingTerminal container = new ContainerQuickEncodingTerminal(player.inventory, host);
+        Field mode = WirelessPatternTerminalGuiObject.class.getDeclaredField("mode");
+        mode.setAccessible(true);
+        require(mode.getInt(host) != 2, "custom grids must not enter GTNL's native processing-mode hooks");
+        require(
+            container.inputsSync.get()
+                .getSizeInventory() == RecipeTransferPayload.SLOT_COUNT,
+            "input inventory matches the crafting matrix");
+        require(
+            container.outputsSync.get()
+                .getSizeInventory() == RecipeTransferPayload.SLOT_COUNT,
+            "output inventory retains the full custom grid");
+        container.setCraftingMode(true);
+        container.detectAndSendChanges();
+        container.setCraftingMode(false);
+        container.detectAndSendChanges();
         IAEStack<?>[] inputs = new IAEStack<?>[RecipeTransferPayload.SLOT_COUNT];
         IAEStack<?>[] outputs = new IAEStack<?>[RecipeTransferPayload.SLOT_COUNT];
         for (int i = 0; i < 20; i++) {
@@ -483,6 +510,23 @@ public final class QuickTerminalScrollClientChecks {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen != gui) return;
         if (++frames == 30) {
+            if (Boolean.getBoolean("gtng.gtnlCompat.qa")) {
+                Class<?> batcher = Class.forName("com.gtnewhorizons.angelica.client.font.BatchingFontRenderer");
+                require(
+                    Class.forName("com.science.gtnl.client.text.compat.FontBatchBridge")
+                        .isAssignableFrom(batcher),
+                    "GTNL owns Angelica text effects");
+                require(
+                    !Class.forName("com.xyp.gtnotgood.client.text.compat.FontBatchBridge")
+                        .isAssignableFrom(batcher),
+                    "duplicate GTNG font mixin is disabled");
+                String credit = "\u00a7{exotic_rainbow}" + ModList.Names.GT_NOT_GOOD + "\u00a7r";
+                require(
+                    mc.fontRenderer.getStringWidth(credit) == mc.fontRenderer.getStringWidth(ModList.Names.GT_NOT_GOOD),
+                    "GTNL measures GTNG credit without displaying formatting markers");
+                mc.fontRenderer.drawStringWithShadow(credit, 4, 4, 0xffffff);
+                System.out.println("GTNL_TEXT_QA: upstream renderer ownership, width and draw PASS");
+            }
             InvTweaksOrderCacheClientChecks.run();
             ItemSortNameCacheClientChecks.run();
             InterfaceViewportClientChecks.run(guiField("interfaceTerminal"));

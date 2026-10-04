@@ -37,6 +37,8 @@ public final class PackagedProviderGui {
     private static final UITexture CORE_FRAME = texture("extra_panels", 128, 128, 0, 0, 28, 30);
     private static final UITexture BUTTON = texture("states", 256, 256, 176, 128, 18, 20);
     private static final UITexture HOVER = texture("states", 256, 256, 212, 128, 18, 20);
+    private static final UITexture OPTIMIZATION_ON = optimizationIcon(178);
+    private static final UITexture OPTIMIZATION_OFF = optimizationIcon(194);
 
     private PackagedProviderGui() {}
 
@@ -50,6 +52,14 @@ public final class PackagedProviderGui {
 
     private static UITexture icon(String name) {
         return texture(name, 16, 16, 0, 0, 16, 16);
+    }
+
+    private static UITexture optimizationIcon(int index) {
+        return UITexture.builder()
+            .location(ModList.AE2.getResourceLocation(), "guis/states")
+            .imageSize(256, 256)
+            .subAreaXYWH(index % 16 * 16, index / 16 * 16, 16, 16)
+            .build();
     }
 
     static ModularPanel build(TilePackagedProvider tile, PanelSyncManager sync) {
@@ -71,6 +81,8 @@ public final class PackagedProviderGui {
         IntSyncValue lock = new IntSyncValue(() -> tile.craftingLock.ordinal());
         BooleanSyncValue locked = new BooleanSyncValue(tile::craftingLocked);
         BooleanSyncValue visible = new BooleanSyncValue(() -> tile.terminalVisible);
+        BooleanSyncValue optimization = new BooleanSyncValue(tile::allowsPatternOptimization);
+        sync.syncValue("patternOptimization", optimization);
         sync.syncValue("lock", lock);
         sync.syncValue("locked", locked);
         sync.syncValue("terminalVisible", visible);
@@ -266,6 +278,20 @@ public final class PackagedProviderGui {
                 if (mouse.mouseButton == 0) tile.setNetworkEssentia(!tile.networkEssentia);
                 else if (mouse.mouseButton == 1) tile.cycleEssentiaSpeed();
             })));
+        IDrawable optimizationIcon = (context, x, y, w, h,
+            theme) -> (optimization.getBoolValue() ? OPTIMIZATION_ON : OPTIMIZATION_OFF)
+                .draw(context, x, y, w, h, theme);
+        panel.child(toolbar(-18, 111, optimizationIcon, () -> {
+            // #tr gui.packaged.pattern_optimization
+            // # Allow pattern optimization: %s
+            // # zh_CN 允许样板优化：%s
+            return StatCollector
+                .translateToLocalFormatted("gui.packaged.pattern_optimization", state(optimization.getBoolValue()));
+        }, () -> {
+            if (tile.canConfigure(sync.getPlayer())) {
+                tile.setPatternOptimization(!tile.allowsPatternOptimization());
+            }
+        }).name("pattern_optimization"));
         panel.child(toolbar(152, -5, texture("states", 256, 256, 144, 64, 16, 16), () -> {
             // #tr gui.packaged.priority
             // # Priority: %s
