@@ -42,6 +42,8 @@ gradle.projectsEvaluated {
                 'src/main/java/com/xyp/gtnotgood/mixins/late/Gregtech/wireless/*.java',
                 'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
                 'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
+                'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',
+                'src/main/java/com/xyp/gtnotgood/common/recipe/machine/CrossRecipeWirelessEnergyHatchRecipes.java',
                 'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
                 'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
                 'src/main/java/com/xyp/gtnotgood/utils/enums/ModList.java',

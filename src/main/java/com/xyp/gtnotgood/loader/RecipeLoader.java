@@ -11,6 +11,7 @@ import com.xyp.gtnotgood.common.recipe.gregtech.FuelRodRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.MixerRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.CrossRecipeWirelessEnergyHatchRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeBeeBreederRecipes;
@@ -83,6 +84,7 @@ public class RecipeLoader {
         FluxConnectorRecipes.loadRecipes();
         IntegratedProductionFactoryRecipes.loadRecipes();
         AssemblerRecipes.loadRecipes();
+        CrossRecipeWirelessEnergyHatchRecipes.loadRecipes();
         BenderRecipes.loadRecipes();
         FurnaceRecipes.loadRecipes();
         FuelRodRecipes.loadRecipes();

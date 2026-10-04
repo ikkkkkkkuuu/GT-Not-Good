@@ -46,6 +46,7 @@ import gregtech.api.metatileentity.implementations.MTEHatchInputBus;
 import gregtech.api.metatileentity.implementations.MTEHatchOutput;
 import gregtech.api.metatileentity.implementations.MTEHatchOutputBus;
 import gregtech.api.metatileentity.implementations.MTEMultiBlockBase;
+import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.util.GTRecipe;
 import gregtech.common.misc.WirelessNetworkManager;
 
@@ -128,6 +129,7 @@ public final class CrossWirelessClientChecks {
                 Loader.isModLoaded(ModList.TwistSpaceTechnology.getID())
                     == Boolean.getBoolean("gtng.crossWireless.tst"),
                 "Optional TST presence");
+            checkHatchRecipe();
             checkMachine(world, findController("gregtech."));
             if (Boolean.getBoolean("gtng.crossWireless.gtnl")) checkMachine(world, findController("com.science.gtnl."));
             if (Boolean.getBoolean("gtng.crossWireless.tst"))
@@ -143,6 +145,51 @@ public final class CrossWirelessClientChecks {
             failure = error.toString();
             finished = true;
         }
+    }
+
+    private void checkHatchRecipe() {
+        ItemStack hatch = GTNGItemList.CrossRecipeWirelessEnergyHatch.get(1);
+        GTRecipe recipe = RecipeMaps.assemblerRecipes.getAllRecipes()
+            .stream()
+            .filter(
+                candidate -> Arrays.stream(candidate.mOutputs)
+                    .anyMatch(hatch::isItemEqual))
+            .findFirst()
+            .orElseThrow(() -> new AssertionError("Missing wireless hatch assembler recipe"));
+        require(recipe.mInputs.length == 6, "Five ingredients and programmed circuit");
+        require(
+            Arrays.stream(recipe.mInputs)
+                .allMatch(input -> input != null && input.getItem() != null),
+            "No missing recipe ingredients");
+        require(recipe.mOutputs.length == 1 && recipe.mOutputs[0].stackSize == 1, "One hatch output");
+        require(
+            recipe.mDuration == Config.getModifiedRecipeDuration(2000) && recipe.mFluidInputs.length == 1
+                && recipe.mFluidInputs[0].amount == 2880,
+            "Duration respects speed configuration and solder cost is 2880 L");
+        ItemStack[] inputs = Arrays.stream(recipe.mInputs)
+            .map(ItemStack::copy)
+            .toArray(ItemStack[]::new);
+        for (ItemStack input : inputs) {
+            if (input.stackSize == 0) input.stackSize = 1;
+        }
+        FluidStack[] fluids = Arrays.stream(recipe.mFluidInputs)
+            .map(FluidStack::copy)
+            .toArray(FluidStack[]::new);
+        require(
+            RecipeMaps.assemblerRecipes.findRecipeQuery()
+                .items(inputs)
+                .fluids(fluids)
+                .voltage(recipe.mEUt)
+                .find() == recipe,
+            "Native assembler recipe lookup");
+        require(recipe.isRecipeInputEqual(true, fluids, inputs), "Native ingredient consumption");
+        require(fluids[0].amount == 0, "Solder consumed");
+        require(
+            Arrays.stream(inputs)
+                .mapToInt(input -> input.stackSize)
+                .sum() == 1,
+            "Only programmed circuit remains");
+        System.out.println("CROSS_WIRELESS_QA: hatch assembler recipe lookup and consumption PASS");
     }
 
     private void checkMachine(WorldServer world, ItemStack controller) throws Exception {
