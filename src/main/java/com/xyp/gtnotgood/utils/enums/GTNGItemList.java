@@ -80,6 +80,7 @@ public enum GTNGItemList implements IItemContainer {
     FluxLogisticsPlug,
 
     VaultPortHatch,
+    CrossRecipeWirelessEnergyHatch,
     WirelessLaserEnergyLV_256,
     WirelessLaserEnergyLV_1024,
     WirelessLaserEnergyLV_4096,

@@ -1,0 +1,89 @@
+// Isolated cross-recipe accounting, real mixin and GUI checks; no QA code enters release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar'))
+    if (root.hasProperty('crossWirelessGtnl')) {
+        root.dependencies.add('runtimeOnlyNonPublishable', root.files('build/gtnl-compat-dependencies/sciencenotleisure-0.2.7-rc1-dev.jar'))
+        root.dependencies.add('runtimeOnlyNonPublishable', 'com.github.ABKQPO:BetterQuestingAPI:1.1.3:dev') { transitive = false }
+        ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+            'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+            root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+        }
+    }
+    if (root.hasProperty('crossWirelessTst')) {
+        root.dependencies.add('runtimeOnlyNonPublishable', root.files('build/cross-wireless-qa-dependencies/TwistSpaceTechnology-0.8.0-RC1.3-dev.jar'))
+        ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+            'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'AspectRecipeIndex'].each {
+            root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+        }
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Electro-Magic-Tools') as String) { transitive = false }
+        root.dependencies.add('runtimeOnlyNonPublishable', root.dependencies.rfg.deobf('curse.maven:advsolar-362768:2885953'))
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('supersolarpanels') as String) { transitive = false }
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('NewHorizonsCoreMod') as String) { transitive = false }
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Yamcl') as String) { transitive = false }
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Eternal-Singularity') as String) { transitive = false }
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Universal-Singularities') as String) { transitive = false }
+        ['MagicBees', 'WitcheryExtras', 'twilightforest', 'Natura', 'Hodgepodge'].each {
+            root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String) { transitive = false }
+        }
+        root.dependencies.add('runtimeOnlyNonPublishable', root.dependencies.rfg.deobf('curse.maven:witchery-69673:2234410'))
+        root.dependencies.add('runtimeOnlyNonPublishable', root.dependencies.rfg.deobf('curse.maven:BiomesOPlenty-220318:2499612'))
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/WirelessWorkTest.java', 'scripts/qa/CrossWirelessClientChecks.java'))
+    }
+    root.tasks.named('test').configure { filter { includeTestsMatching '*WirelessWorkTest' } }
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/common/wireless/*.java',
+                'src/main/java/com/xyp/gtnotgood/common/machines/hatch/CrossRecipeWirelessEnergyHatch.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/Gregtech/wireless/*.java',
+                'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
+                'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/ModList.java',
+                'scripts/qa/WirelessWorkTest.java', 'scripts/qa/CrossWirelessClientChecks.java'
+        }
+    }
+    def qaClasses = root.tasks.register('snapshotCrossWirelessQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/CrossWirelessClientChecks*.class'
+        into root.layout.buildDirectory.dir('cross-wireless-qa-runtime/test')
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir('cross-wireless-qa-runtime/test'))
+        workingDir root.file('run/cross-wireless-check')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.crossWireless.qa', 'true'
+        systemProperty 'gtng.crossWireless.gtnl', root.hasProperty('crossWirelessGtnl').toString()
+        systemProperty 'gtng.crossWireless.tst', root.hasProperty('crossWirelessTst').toString()
+        systemProperty 'gtng.crossWireless.output', root.file('build/cross-wireless-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in client integration checks')
+        doFirst {
+            root.file('build/cross-wireless-qa').mkdirs()
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/cross-wireless-qa/result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(root.file('build/cross-wireless-qa/window-helper.log')).start()
+            }
+        }
+        doLast {
+            def result = root.file('build/cross-wireless-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Cross-recipe wireless QA failed')
+        }
+    }
+}

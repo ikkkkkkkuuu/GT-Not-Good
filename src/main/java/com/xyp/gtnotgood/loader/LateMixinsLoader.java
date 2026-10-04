@@ -83,6 +83,17 @@ public class LateMixinsLoader implements ILateMixinLoader {
         if (loadedMods.contains(ModList.GregTech.getID())) {
             addAll(
                 list,
+                "Gregtech.wireless.WirelessProcessingAccess",
+                "Gregtech.wireless.CrossRecipeProcessingMixin",
+                "Gregtech.wireless.CrossRecipeControllerMixin");
+            if (loadedMods.contains(ModList.GTNotLeisure.getID())) {
+                addAll(
+                    list,
+                    "Gregtech.wireless.GtnlCrossRecipeProcessingMixin",
+                    "Gregtech.wireless.GtnlCrossRecipeControllerMixin");
+            }
+            addAll(
+                list,
                 "Gregtech.AssemblyLineDataAccessMixin",
                 "Gregtech.TransmutationShapedRecipeMixin",
                 "Gregtech.TransmutationShapelessRecipeMixin");

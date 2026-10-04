@@ -6,6 +6,7 @@ import net.minecraft.util.StatCollector;
 
 import com.xyp.gtnotgood.common.machines.basicMachine.SteamTurbine;
 import com.xyp.gtnotgood.common.machines.basicMachine.UniversalFluidPump;
+import com.xyp.gtnotgood.common.machines.hatch.CrossRecipeWirelessEnergyHatch;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputSlave;
 import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
@@ -39,6 +40,11 @@ public class MachineLoader {
      * and tooltip credit registration in one predictable place.
      */
     public static void registerMachines() {
+        GTNGItemList.CrossRecipeWirelessEnergyHatch.set(
+            new CrossRecipeWirelessEnergyHatch(
+                GTNGMachineID.CrossRecipeWirelessEnergyHatch.ID,
+                "CrossRecipeWirelessEnergyHatch"));
+        addItemTooltip(GTNGItemList.CrossRecipeWirelessEnergyHatch.get(1), AnimatedText.GT_NOT_GOOD);
         // #tr gtng.comb.name
         // # Comb Processor
         // # zh_CN 蜂窝处理机
