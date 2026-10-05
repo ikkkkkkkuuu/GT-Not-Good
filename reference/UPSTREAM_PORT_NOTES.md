@@ -1,5 +1,14 @@
 # AE2LT faithful port audit
 
+## Super Advanced Stocking Input Bus (ME) — 2026-10-05
+
+- Uses the same pinned GT5-Unofficial `5.09.54.183` source artifact and LGPL-3.0 license below.
+- Adapted native `MTEHatchInputBusME` and its GUI into `SuperAdvancedMEInputBus` and its GUI.
+- Extends the fluid variant's 900 marks, reserve and fixed availability policies to items,
+  preserving native circuit/manual slots and metadata/NBT identity. No ME item buffer.
+- Source/destination/modification records are in `META-INF/super-storage-input-port/NOTICE.md`.
+- Native item-slot adapters and textures are referenced at runtime; no artwork is copied.
+
 ## Super Advanced Stocking Input Hatch (ME) — 2026-10-05
 
 - Reference: GTNewHorizons/GT5-Unofficial tag `5.09.54.183`, sources artifact SHA-1

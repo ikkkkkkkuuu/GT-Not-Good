@@ -13,6 +13,7 @@ import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.MEDataAccessHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputBus;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputHatch;
+import com.xyp.gtnotgood.common.machines.hatch.me.SuperAdvancedMEInputBus;
 import com.xyp.gtnotgood.common.machines.hatch.me.SuperAdvancedMEInputHatch;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeBeeBreeder;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeCropBreeder;
@@ -50,6 +51,15 @@ public class MachineLoader {
                 "SuperAdvancedMEInputHatch",
                 StatCollector.translateToLocal("NameSuperAdvancedMEInputHatch")));
         addItemTooltip(GTNGItemList.SuperAdvancedMEInputHatch.get(1), AnimatedText.GT_NOT_GOOD);
+        // #tr NameSuperAdvancedMEInputBus
+        // # Super Advanced Stocking Input Bus (ME)
+        // # zh_CN 超级进阶存储输入总线 (ME)
+        GTNGItemList.SuperAdvancedMEInputBus.set(
+            new SuperAdvancedMEInputBus(
+                GTNGMachineID.SuperAdvancedMEInputBus.ID,
+                "SuperAdvancedMEInputBus",
+                StatCollector.translateToLocal("NameSuperAdvancedMEInputBus")));
+        addItemTooltip(GTNGItemList.SuperAdvancedMEInputBus.get(1), AnimatedText.GT_NOT_GOOD);
         GTNGItemList.CrossRecipeWirelessEnergyHatch.set(
             new CrossRecipeWirelessEnergyHatch(
                 GTNGMachineID.CrossRecipeWirelessEnergyHatch.ID,

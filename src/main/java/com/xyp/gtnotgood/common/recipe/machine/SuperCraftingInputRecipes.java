@@ -34,6 +34,15 @@ public final class SuperCraftingInputRecipes {
             .addTo(assemblerRecipes);
         GTRecipeBuilder.builder()
             .itemInputs(
+                ItemList.Hatch_Input_Bus_ME_Advanced.get(1L),
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
+                GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
+            .itemOutputs(GTNGItemList.SuperAdvancedMEInputBus.get(1))
+            .duration(5 * SECONDS)
+            .eut(32)
+            .addTo(assemblerRecipes);
+        GTRecipeBuilder.builder()
+            .itemInputs(
                 ItemList.Hatch_Input_Bus_LV.get(1L),
                 new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
