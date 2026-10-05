@@ -29,6 +29,9 @@ import appeng.tile.crafting.TileCraftingTile;
  */
 public class ECraftingCPUCluster extends CraftingCPUCluster {
 
+    // Native processing mediums accept one craft per push, even with effectively unlimited accelerators.
+    private static final int maxDispatchesPerTick = 1024;
+
     @Nullable
     private QuantumComputer virtualCPUOwner = null;
 
@@ -132,7 +135,7 @@ public class ECraftingCPUCluster extends CraftingCPUCluster {
         this.remainingOperations = (int) Math.max(
             0L,
             Math.min(
-                Integer.MAX_VALUE,
+                maxDispatchesPerTick,
                 (long) this.accelerator + 1L - ((long) this.usedOps[0] + this.usedOps[1] + this.usedOps[2])));
         final int started = this.remainingOperations;
 

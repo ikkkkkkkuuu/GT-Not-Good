@@ -23,8 +23,10 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.xyp.gtnotgood.GTNotGood;
+import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
 import com.xyp.gtnotgood.utils.DireCraftingPatternDetails;
+import com.xyp.gtnotgood.utils.ECraftingCPUCluster;
 import com.xyp.gtnotgood.utils.LargeInventoryCrafting;
 import com.xyp.gtnotgood.utils.crafting.CraftingBatchPlanner;
 import com.xyp.gtnotgood.utils.crafting.CraftingBatchPlanner.BatchPlan;
@@ -36,6 +38,7 @@ import com.xyp.gtnotgood.utils.crafting.CraftingBatchPlanner.SessionSegment;
 import com.xyp.gtnotgood.utils.crafting.CraftingBatchPlannerImpl;
 
 import appeng.api.config.Actionable;
+import appeng.api.config.PowerMultiplier;
 import appeng.api.networking.crafting.ICraftingMedium;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.networking.energy.IEnergyGrid;
@@ -105,13 +108,23 @@ public abstract class MixinCraftingCPUCluster {
         BatchDispatchContext context = contextRef.get();
         if (expandedInputs == null || context == null || context.taskProgress == null) return expandedInputs;
 
+        boolean physicalHatch = !(details instanceof DireCraftingPatternDetails);
+        long requestedCrafts = context.taskProgress.getValue();
+        if (physicalHatch) {
+            requestedCrafts = CraftingBatchPlannerImpl.limitPhysicalInputs(requestedCrafts, expandedInputs);
+            if (!(cluster instanceof ECraftingCPUCluster)) {
+                requestedCrafts = Math.min(requestedCrafts, this.remainingOperations);
+            }
+        }
+        boolean freeDispatch = cluster instanceof ECraftingCPUCluster || !physicalHatch;
         BatchPlan plan = GTNL$BATCH_PLANNER.plan(
-            context.taskProgress.getValue(),
+            requestedCrafts,
             context.mediumStrategy,
             expandedInputs,
             details.getCondensedAEOutputs(),
             this.inventory,
-            requested -> requested);
+            requested -> freeDispatch ? requested
+                : eg.extractAEPower(requested, Actionable.SIMULATE, PowerMultiplier.CONFIG));
         context.resetForPlan(plan);
         if (!plan.isBatched()) return expandedInputs;
 
@@ -282,7 +295,10 @@ public abstract class MixinCraftingCPUCluster {
 
     @Unique
     private static boolean gtng$isCompatiblePair(ICraftingPatternDetails details, ICraftingMedium medium) {
-        return (details instanceof DireCraftingPatternDetails && medium instanceof AssemblerMatrix);
+        return (details instanceof DireCraftingPatternDetails && medium instanceof AssemblerMatrix)
+            || (medium instanceof SuperMTEHatchCraftingInputME && !details.isCraftable()
+                && !details.isInputOnly()
+                && !details.canSubstitute());
     }
 
     @Unique

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.crafting.MECraftingInventory;
@@ -40,7 +41,7 @@ public final class CraftingBatchPlannerImpl implements CraftingBatchPlanner {
         Objects.requireNonNull(inventory, "inventory");
         Objects.requireNonNull(energySimulation, "energySimulation");
 
-        if (!hasValidItemStacks(expandedInputs) || !hasValidItemStacks(condensedOutputs)) {
+        if (!hasValidStacks(expandedInputs) || !hasValidStacks(condensedOutputs)) {
             return new BatchPlan(1, LimitingFactor.STACK_CONTRACT);
         }
 
@@ -196,19 +197,37 @@ public final class CraftingBatchPlannerImpl implements CraftingBatchPlanner {
         return new SessionConsumption<>(Collections.unmodifiableList(allocations), consumedCrafts);
     }
 
-    private static boolean hasValidItemStacks(Iterable<IAEStack<?>> stacks) {
+    /**
+     * Bounds a physical hatch batch before extraction. Its GT inventories contain int-sized stacks;
+     * limiting each input avoids allocating a number of physical stacks proportional to a long-sized order.
+     */
+    public static long limitPhysicalInputs(long requestedCrafts, Iterable<IAEStack<?>> inputs) {
+        long limit = requestedCrafts;
+        for (IAEStack<?> input : inputs) {
+            if (input == null) continue;
+            if (input.getStackSize() <= 0) return 1;
+            limit = Math.min(limit, Integer.MAX_VALUE / input.getStackSize());
+        }
+        return Math.max(1, limit);
+    }
+
+    private static boolean hasValidStacks(Iterable<IAEStack<?>> stacks) {
         for (IAEStack<?> stack : stacks) {
-            if (stack != null && (!(stack instanceof IAEItemStack) || stack.getStackSize() <= 0)) return false;
+            if (stack != null && !isValidStack(stack)) return false;
         }
         return true;
     }
 
-    private static boolean hasValidItemStacks(IAEStack<?>[] stacks) {
+    private static boolean hasValidStacks(IAEStack<?>[] stacks) {
         if (stacks.length == 0) return false;
         for (IAEStack<?> stack : stacks) {
-            if (!(stack instanceof IAEItemStack) || stack.getStackSize() <= 0) return false;
+            if (!isValidStack(stack)) return false;
         }
         return true;
+    }
+
+    private static boolean isValidStack(IAEStack<?> stack) {
+        return (stack instanceof IAEItemStack || stack instanceof IAEFluidStack) && stack.getStackSize() > 0;
     }
 
     private static long arithmeticLimit(Map<Object, AggregatedDemand> requirements, long[] outputAmounts) {

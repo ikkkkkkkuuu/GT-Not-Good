@@ -1,5 +1,12 @@
 # AE2LT faithful port audit
 
+## Processing batch dispatch reference — 2026-10-05
+
+- Inspected `2824799/Apeiron`, commit `2b84f3ef8e720e629e039db934d75e5f57e53657`, particularly `PatternBatchDispatch` and its CPU mixin. Its original code is GPL-3.0-only; no source or assets were copied.
+- Extended this project's existing `CraftingBatchPlannerImpl` and `MixinCraftingCPUCluster` to handle native AE fluid stacks and this mod's processing hatches. The existing batch transaction and diagnostics accounting remain in use.
+- Physical hatch batches are bounded by their int-sized GT input stacks. Quantum CPUs retain a per-update work budget for native dispatch; ordinary AE CPUs retain their operation and energy limits. This is long-count batching, not Apeiron's arbitrary-precision inventory implementation.
+- `reference/Apeiron` is an ignored inspection checkout outside compilation and resource source sets. Regression fixture: `scripts/qa/ProcessingBatchChecks.java`, launched with `scripts/processing-batch-qa.init.gradle`.
+
 ## Super Advanced Stocking Input Bus (ME) — 2026-10-05
 
 - Uses the same pinned GT5-Unofficial `5.09.54.183` source artifact and LGPL-3.0 license below.

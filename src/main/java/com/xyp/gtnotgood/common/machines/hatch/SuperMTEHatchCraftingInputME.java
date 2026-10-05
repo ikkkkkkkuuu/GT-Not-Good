@@ -347,65 +347,39 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         }
 
         private void insertItem(IAEItemStack inserted) {
-            final List<ItemStack> temp = new ArrayList<>();
-            for (ItemStack itemStack : itemInventory) {
-                if (GTUtility.areStacksEqual(inserted.getItemStack(), itemStack)) {
-                    if (itemStack.stackSize > Integer.MAX_VALUE - inserted.getStackSize()) {
-                        inserted.decStackSize(Integer.MAX_VALUE - itemStack.stackSize);
-                        itemStack.stackSize = Integer.MAX_VALUE;
-
-                        if (inserted.getStackSize() > Integer.MAX_VALUE) {
-                            inserted.decStackSize(Integer.MAX_VALUE);
-                            temp.add(itemStack.copy());
-                        }
-                    } else {
-                        itemStack.stackSize += (int) inserted.getStackSize();
-                        return;
-                    }
-                }
+            long remaining = inserted.getStackSize();
+            ItemStack template = inserted.getItemStack();
+            for (ItemStack existing : itemInventory) {
+                if (!GTUtility.areStacksEqual(template, existing)) continue;
+                int added = (int) Math.min(remaining, (long) Integer.MAX_VALUE - existing.stackSize);
+                existing.stackSize += added;
+                remaining -= added;
+                if (remaining == 0) return;
             }
-
-            while (inserted.getStackSize() > Integer.MAX_VALUE) {
-                temp.add(inserted.getItemStack());
-                inserted.decStackSize(Integer.MAX_VALUE);
+            while (remaining > 0) {
+                ItemStack stack = template.copy();
+                stack.stackSize = (int) Math.min(remaining, Integer.MAX_VALUE);
+                itemInventory.add(stack);
+                remaining -= stack.stackSize;
             }
-
-            if (inserted.getStackSize() > 0) {
-                itemInventory.add(inserted.getItemStack());
-            }
-
-            if (!temp.isEmpty()) itemInventory.addAll(temp);
         }
 
         private void insertFluid(IAEFluidStack inserted) {
-            final List<FluidStack> temp = new ArrayList<>();
-            for (FluidStack fluidStack : fluidInventory) {
-                if (GTUtility.areFluidsEqual(inserted.getFluidStack(), fluidStack)) {
-                    if (fluidStack.amount > Integer.MAX_VALUE - inserted.getStackSize()) {
-                        inserted.decStackSize(Integer.MAX_VALUE - fluidStack.amount);
-                        fluidStack.amount = Integer.MAX_VALUE;
-
-                        if (inserted.getStackSize() > Integer.MAX_VALUE) {
-                            inserted.decStackSize(Integer.MAX_VALUE);
-                            temp.add(fluidStack.copy());
-                        }
-                    } else {
-                        fluidStack.amount += (int) inserted.getStackSize();
-                        return;
-                    }
-                }
+            long remaining = inserted.getStackSize();
+            FluidStack template = inserted.getFluidStack();
+            for (FluidStack existing : fluidInventory) {
+                if (!GTUtility.areFluidsEqual(template, existing)) continue;
+                int added = (int) Math.min(remaining, (long) Integer.MAX_VALUE - existing.amount);
+                existing.amount += added;
+                remaining -= added;
+                if (remaining == 0) return;
             }
-
-            while (inserted.getStackSize() > Integer.MAX_VALUE) {
-                temp.add(inserted.getFluidStack());
-                inserted.decStackSize(Integer.MAX_VALUE);
+            while (remaining > 0) {
+                FluidStack stack = template.copy();
+                stack.amount = (int) Math.min(remaining, Integer.MAX_VALUE);
+                fluidInventory.add(stack);
+                remaining -= stack.amount;
             }
-
-            if (inserted.getStackSize() > 0) {
-                fluidInventory.add(inserted.getFluidStack());
-            }
-
-            if (!temp.isEmpty()) fluidInventory.addAll(temp);
         }
 
         public boolean insertItemsAndFluids(MEInventoryCrafting inventoryCrafting) {
