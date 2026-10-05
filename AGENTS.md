@@ -1,5 +1,7 @@
 # Project Memory
 
+- After feature updates or fixes, the user's phrase “提交并更新” authorizes the full release workflow: format the code, run the required checks, commit and push changes, create the next appropriate version tag following the repository's version convention, and push the tag. Complete this workflow without asking for repeated confirmation. Create or update the corresponding GitHub Release and write concrete Chinese release notes describing that version's features and fixes in its body; a compare link alone is insufficient. If CI creates the release, wait for it and ensure the release body contains these notes.
+
 - Agent-launched Windows test clients must stay transparent, click-through, and hidden from the taskbar. Use the scoped helper in `scripts/qa/HideFactoryClient.ps1` for factory QA; never change windows belonging to the user's normal game client.
 
 - On the current GTNH/AE2 version, every processing recipe containing fluids uses the Ultimate Encoded Pattern. Read native fluid inputs from `MEInventoryCrafting#getAEStackInSlot`; its ItemStack view contains fluid packets, not legacy AE2FC fluid drops. Test fixtures must encode native fluid NBT in Ultimate Encoded Patterns.
