@@ -1,6 +1,8 @@
 package com.xyp.gtnotgood.common.gui.modularui.widget;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -11,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -49,6 +52,7 @@ import com.xyp.gtnotgood.utils.machine.factory.FactoryReservations;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryRouting;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryRuntime;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryText;
+import com.xyp.gtnotgood.utils.machine.factory.FactoryWholeBatch;
 
 import appeng.api.AEApi;
 import appeng.api.implementations.ICraftingPatternItem;
@@ -99,6 +103,13 @@ public final class FactoryClientChecks {
                     new WorldSettings(83171L, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT));
             }
             if (mc.theWorld == null || mc.thePlayer == null || ++ticks < 100) return;
+            if (Boolean.getBoolean("gtng.factory.qa.platinum")) {
+                checkPlatinumExecution();
+                openEditor(true);
+                stage = 5;
+                ticks = 0;
+                return;
+            }
             checkRecipes();
             checkPresets();
             checkPresetPageIsolation();
@@ -166,6 +177,13 @@ public final class FactoryClientChecks {
                 openEditor(true);
                 stage = 5;
                 ticks = 0;
+            } else if (stage == 7) {
+                openWholePreview();
+                stage = 8;
+                ticks = 0;
+            } else if (stage == 8) {
+                Files.write(new File(output, "result.txt").toPath(), "PASS".getBytes(StandardCharsets.UTF_8));
+                mc.shutdown();
             } else {
                 ScrollWidget<?> list = (ScrollWidget<?>) panel.getChildren()
                     .stream()
@@ -191,12 +209,104 @@ public final class FactoryClientChecks {
                     ticks = 0;
                     return;
                 }
+                if (Boolean.getBoolean("gtng.factory.qa.platinum")) {
+                    openWholeDetails();
+                    stage = 7;
+                    ticks = 0;
+                    return;
+                }
                 Files.write(new File(output, "result.txt").toPath(), "PASS".getBytes(StandardCharsets.UTF_8));
                 mc.shutdown();
             }
         } else if (stage == 2 && ticks == 5) {
             openEditor();
         }
+    }
+
+    private void checkPlatinumExecution() throws Exception {
+        File output = new File(System.getProperty("gtng.factory.qa.output"));
+        output.mkdirs();
+        StringBuilder report = new StringBuilder();
+        FactoryPresets.Result preset = FactoryPresets.resolve(FactoryPresets.Preset.PlatinumGroup);
+        report.append("Preset available: ")
+            .append(preset.available())
+            .append(' ')
+            .append(preset.problem)
+            .append('\n');
+        require(preset.available(), "platinum preset resolves");
+        FactoryGraph graph = preset.copy();
+        report.append(FactoryRouting.encode(graph))
+            .append('\n');
+        int[] reported = { 6187500, 962500, 13200000, 4180000, 41250, 40140, 1237500, 5280000, 68750, 550000, 30000,
+            57000, 85500, 171000, 7695, 42750, 384750, 427500, 338580, 615600, 305280, 128250, 25650, 256500, 256500,
+            256500, 92340, 12825, 297000, 29700, 297000, 89100, 178200, 4752, 356400, 169290, 169290, 169290 };
+        boolean match = graph.nodes.size() == reported.length;
+        for (int i = 0; i < graph.nodes.size() && i < reported.length; i++)
+            match &= graph.nodes.get(i).parallel == reported[i];
+        report.append("Reported parallel vector matches preset: ")
+            .append(match)
+            .append('\n');
+        try {
+            int period = FactoryRuntime.batchPeriod(graph.nodes);
+            report.append("Common period: ")
+                .append(period)
+                .append(" ticks\n");
+            for (FactoryGraph.Node node : graph.nodes) {
+                GTRecipe recipe = FactoryRecipeCatalog.get(node.recipe).recipe;
+                long repetitions = (long) node.parallel * (period / Math.max(1, recipe.mDuration));
+                report.append("Node ")
+                    .append(node.id)
+                    .append(" parallel=")
+                    .append(node.parallel)
+                    .append(" duration=")
+                    .append(recipe.mDuration)
+                    .append(" repetitions=")
+                    .append(repetitions)
+                    .append('\n');
+                for (FluidStack fluid : recipe.mFluidInputs)
+                    if ((long) fluid.amount * repetitions > Integer.MAX_VALUE) report.append("OVERFLOW input ")
+                        .append(
+                            fluid.getFluid()
+                                .getName())
+                        .append(' ')
+                        .append(fluid.amount)
+                        .append(" * ")
+                        .append(repetitions)
+                        .append(" = ")
+                        .append((long) fluid.amount * repetitions)
+                        .append('\n');
+                for (FluidStack fluid : recipe.mFluidOutputs)
+                    if ((long) fluid.amount * repetitions > Integer.MAX_VALUE) report.append("OVERFLOW output ")
+                        .append(
+                            fluid.getFluid()
+                                .getName())
+                        .append(' ')
+                        .append(fluid.amount)
+                        .append(" * ")
+                        .append(repetitions)
+                        .append(" = ")
+                        .append((long) fluid.amount * repetitions)
+                        .append('\n');
+            }
+            FactoryCycles.Plan plan = FactoryCycles.prepare(graph.nodes, 1, new Random(1));
+            report.append("Runtime batch preparation: PASS, EU/t=")
+                .append(plan.eut)
+                .append('\n');
+        } catch (ArithmeticException failure) {
+            report.append("Runtime batch preparation: FAIL\n");
+            StringWriter trace = new StringWriter();
+            failure.printStackTrace(new PrintWriter(trace));
+            report.append(trace);
+        }
+        try {
+            FactoryWholeBatchChecks.check(graph, report);
+        } finally {
+            Files.write(
+                new File(output, "platinum-execution.txt").toPath(),
+                report.toString()
+                    .getBytes(StandardCharsets.UTF_8));
+        }
+        Files.write(new File(output, "result.txt").toPath(), "PASS".getBytes(StandardCharsets.UTF_8));
     }
 
     private void checkPresets() throws Exception {
@@ -365,7 +475,10 @@ public final class FactoryClientChecks {
                 GTDualInputPattern patternInputs = nativeInputs(details.getAEInputs());
                 var binding = new FactoryPatternRouting(result.copy()).bind(patternInputs);
                 require(binding.failure == null && binding.nodes.size() == result.size(), "export binds whole preset");
-                var plan = FactoryCycles.prepare(result.copy().nodes, 1, new java.util.Random(1));
+                FactoryGraph exported = result.copy();
+                var plan = exported.nodes.stream()
+                    .allMatch(node -> node.wholeLineBatch) ? FactoryWholeBatch.prepare(exported.nodes)
+                        : FactoryCycles.prepare(exported.nodes, 1, new Random(1));
                 require(
                     FactoryPatternRouting.matches(
                         new GTDualInputPattern(plan.inputs.mInputs, plan.inputs.mFluidInputs),
@@ -411,14 +524,14 @@ public final class FactoryClientChecks {
                 if (batch > 1) {
                     boolean rejected = false;
                     try {
-                        FactoryRuntime.prepare(recipe, batch - 1, 0, new java.util.Random(1));
+                        FactoryRuntime.prepare(recipe, batch - 1, 0, new Random(1));
                     } catch (ArithmeticException incomplete) {
                         rejected = true;
                     }
                     require(rejected, "fractional batch is rejected, never rounded or randomly completed");
                 }
-                var first = FactoryRuntime.prepare(recipe, batch, 0, new java.util.Random(1));
-                var second = FactoryRuntime.prepare(recipe, batch, 0, new java.util.Random(999));
+                var first = FactoryRuntime.prepare(recipe, batch, 0, new Random(1));
+                var second = FactoryRuntime.prepare(recipe, batch, 0, new Random(999));
                 require(
                     FactoryRecipeCatalog.items(first.pendingItems.toArray(new ItemStack[0]))
                         .equals(FactoryRecipeCatalog.items(second.pendingItems.toArray(new ItemStack[0]))),
@@ -427,7 +540,7 @@ public final class FactoryClientChecks {
             for (var cycle : new java.util.HashSet<>(
                 FactoryCycles.groups(draft)
                     .values())) {
-                var plan = FactoryCycles.prepare(cycle, 1, new java.util.Random(1));
+                var plan = FactoryCycles.prepare(cycle, 1, new Random(1));
                 require(
                     plan.eut > 0 && plan.jobs.size() == cycle.size(),
                     "preset cycle has a valid bounded execution plan");
@@ -854,6 +967,39 @@ public final class FactoryClientChecks {
 
     private void openEditor() throws Exception {
         openEditor(false);
+    }
+
+    private void openWholeDetails() throws Exception {
+        IntegratedProductionFactoryGui gui = new IntegratedProductionFactoryGui(
+            new IntegratedProductionFactory("factory.qa.details"));
+        Field graphField = IntegratedProductionFactoryGui.class.getDeclaredField("visibleGraph");
+        graphField.setAccessible(true);
+        FactoryGraph graph = (FactoryGraph) graphField.get(gui);
+        graph.read(
+            FactoryPresets.resolve(FactoryPresets.Preset.PlatinumGroup)
+                .copy()
+                .write());
+        Field selected = IntegratedProductionFactoryGui.class.getDeclaredField("selected");
+        selected.setAccessible(true);
+        selected.setInt(gui, graph.nodes.get(0).id);
+        Method create = IntegratedProductionFactoryGui.class.getDeclaredMethod("createDetails");
+        create.setAccessible(true);
+        panel = (ModularPanel) create.invoke(gui);
+        ClientGUI.open(new ModularScreen(ModList.GTNotGood.getID(), panel));
+    }
+
+    private void openWholePreview() throws Exception {
+        IntegratedProductionFactoryGui gui = new IntegratedProductionFactoryGui(
+            new IntegratedProductionFactory("factory.qa.preview"));
+        FactoryGraph graph = FactoryPresets.resolve(FactoryPresets.Preset.PlatinumGroup)
+            .copy();
+        Field snapshot = IntegratedProductionFactoryGui.class.getDeclaredField("previewSnapshot");
+        snapshot.setAccessible(true);
+        snapshot.set(gui, FactoryPreview.describe(graph));
+        Method create = IntegratedProductionFactoryGui.class.getDeclaredMethod("createPreview");
+        create.setAccessible(true);
+        panel = (ModularPanel) create.invoke(gui);
+        ClientGUI.open(new ModularScreen(ModList.GTNotGood.getID(), panel));
     }
 
     private void openEditor(boolean platinum) throws Exception {

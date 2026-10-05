@@ -93,7 +93,11 @@ public final class FactoryCanvasWidget extends Widget<FactoryCanvasWidget> imple
                 + " "
                 + (entry == null ? FactoryText.EMPTY.text() : entry.title());
             text(title, x + 4, y + 4, 0xffedf5ff);
-            text("P " + node.parallel + " / OC " + node.overclocks, x + 4, y + 16, 0xff9ccce3);
+            text(
+                node.wholeLineBatch ? "OC " + node.overclocks : "P " + node.parallel + " / OC " + node.overclocks,
+                x + 4,
+                y + 16,
+                0xff9ccce3);
             text(status.apply(node.id), x + 4, y + 28, 0xffb2d2b9);
         }
     }

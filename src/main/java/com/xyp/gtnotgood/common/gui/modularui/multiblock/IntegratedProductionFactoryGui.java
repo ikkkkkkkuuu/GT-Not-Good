@@ -20,6 +20,7 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
+import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.ScrollWidget;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -160,7 +161,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         com.cleanroommc.modularui.screen.UISettings settings) {
         ModularPanel panel = super.build(data, manager, settings).size(480, 260);
         panel.child(
-            new com.cleanroommc.modularui.widget.ParentWidget<>().pos(200, 4)
+            new ParentWidget<>().pos(200, 4)
                 .size(276, 222)
                 .background(new com.cleanroommc.modularui.drawable.Rectangle().color(0xff192331)));
         card(panel, 200, 4, 276, 20, 0xff304762);
@@ -329,8 +330,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
                 .size(110, 180);
         for (int i = 0; i < FactoryGraph.MAX_NODES; i++) {
             final int index = i;
-            com.cleanroommc.modularui.widget.ParentWidget<?> row = new com.cleanroommc.modularui.widget.ParentWidget<>()
-                .pos(0, i * 20)
+            ParentWidget<?> row = new ParentWidget<>().pos(0, i * 20)
                 .size(110, 20)
                 .setEnabledIf(w -> index < visibleGraph.nodes.size());
             row.child(new ItemDisplayWidget().item(new ObjectValue.Dynamic<>(ItemStack.class, () -> {
@@ -610,7 +610,8 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         panel.child(
             new TextWidget<>(
                 IKey.dynamic(
-                    () -> previewSnapshot.exportIssue() == null ? FactoryText.PREVIEW_NOTE.text()
+                    () -> previewSnapshot.exportIssue() == null
+                        ? (previewSnapshot.exactBatch ? FactoryText.AtomicNote : FactoryText.PREVIEW_NOTE).text()
                         : "§e" + previewSnapshot.exportIssue()
                             .text())).pos(10, 50)
                                 .size(490, 26)
@@ -623,7 +624,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
                 new TextWidget<>(
                     IKey.dynamic(
                         () -> (column == 0 ? FactoryText.EXTERNAL_INPUT.text() : FactoryText.OUTPUTS.text()) + " ("
-                            + FactoryText.PER_TICK.text()
+                            + (previewSnapshot.exactBatch ? FactoryText.PerBatch : FactoryText.PER_TICK).text()
                             + ")")).pos(x + 4, 82)
                                 .size(224, 14)
                                 .color(column == 0 ? 0xff92d3ff : 0xff9be9c7)
@@ -706,8 +707,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
                 .size(340, 148);
         for (int i = 0; i < 96; i++) {
             final int index = i;
-            com.cleanroommc.modularui.widget.ParentWidget<?> row = new com.cleanroommc.modularui.widget.ParentWidget<>()
-                .pos(0, i * 20)
+            ParentWidget<?> row = new ParentWidget<>().pos(0, i * 20)
                 .size(330, 20)
                 .background(
                     new com.cleanroommc.modularui.drawable.Rectangle().color(i % 2 == 0 ? 0xffdce1e7 : 0xffcbd2dd))
@@ -738,7 +738,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
                 long[] timing = FactoryGraph.timing(
                     node.customEUt < 0 ? entry.recipe.mEUt : node.customEUt,
                     entry.recipe.mDuration,
-                    node.parallel,
+                    node.wholeLineBatch ? 1 : node.parallel,
                     node.overclocks);
                 return FactoryControllers.displayName(entry.map.unlocalizedName) + "\n"
                     + timing[0]
@@ -751,23 +751,29 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
             }
         })).pos(10, 184)
             .size(340, 30));
-        panel.child(
+        ParentWidget<?> parallelControls = new ParentWidget<>().pos(0, 0)
+            .size(180, 244)
+            .setEnabledIf(w -> {
+                FactoryGraph.Node node = visibleGraph.find(selected);
+                return !locked && node != null && !node.wholeLineBatch;
+            });
+        panel.child(parallelControls);
+        parallelControls.child(
             new TextWidget<>(IKey.dynamic(FactoryText.PARALLEL::text)).pos(10, 224)
                 .size(50, 15));
         // MUI2's dragged-root background pass ignores disabled direct children. A backgroundless
         // disabled parent stops traversal before its editing fields/buttons can paint their backgrounds.
-        com.cleanroommc.modularui.widget.ParentWidget<?> editing = new com.cleanroommc.modularui.widget.ParentWidget<>()
-            .pos(0, 0)
+        ParentWidget<?> editing = new ParentWidget<>().pos(0, 0)
             .size(360, 304)
             .setEnabledIf(w -> !locked);
         panel.child(editing);
-        editing.child(
+        parallelControls.child(
             new com.cleanroommc.modularui.widgets.textfield.TextFieldWidget().value(routeParallel)
                 .setMaxLength(10)
                 .pos(64, 222)
                 .size(52, 18)
                 .setEnabledIf(w -> !locked));
-        editing.child(button(FactoryText.SET::text, 122, 222, 52, () -> {
+        parallelControls.child(button(FactoryText.SET::text, 122, 222, 52, () -> {
             FactoryGraph.Node node = visibleGraph.find(selected);
             if (node == null) return;
             try {

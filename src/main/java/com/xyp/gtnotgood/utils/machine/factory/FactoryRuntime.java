@@ -31,6 +31,12 @@ public final class FactoryRuntime {
         public int remaining;
         public int duration;
         public long eut;
+        public int extraEnergyTicks;
+
+        /** Pays the integer remainder once per batch, including after a save or power interruption. */
+        public long tickEUt() {
+            return Math.addExact(eut, remaining > duration - extraEnergyTicks ? 1L : 0L);
+        }
 
         public boolean empty() {
             compact();
@@ -57,7 +63,7 @@ public final class FactoryRuntime {
 
     public long totalEUt() {
         long total = 0;
-        for (State state : states.values()) if (state.remaining > 0) total = Math.addExact(total, state.eut);
+        for (State state : states.values()) if (state.remaining > 0) total = Math.addExact(total, state.tickEUt());
         return total;
     }
 
@@ -198,6 +204,7 @@ public final class FactoryRuntime {
             data.setInteger("remaining", state.remaining);
             data.setInteger("duration", state.duration);
             data.setLong("eut", state.eut);
+            data.setInteger("extraEnergyTicks", state.extraEnergyTicks);
             data.setTag("items", FactoryRecipeCatalog.items(state.items.toArray(new ItemStack[0])));
             data.setTag("fluids", FactoryRecipeCatalog.fluids(state.fluids.toArray(new FluidStack[0])));
             data.setTag("pendingItems", FactoryRecipeCatalog.items(state.pendingItems.toArray(new ItemStack[0])));
@@ -216,7 +223,8 @@ public final class FactoryRuntime {
             State state = state(data.getInteger("id"));
             state.duration = Math.max(1, data.getInteger("duration"));
             state.remaining = Math.max(0, Math.min(state.duration, data.getInteger("remaining")));
-            state.eut = Math.max(1, data.getLong("eut"));
+            state.eut = Math.max(0, data.getLong("eut"));
+            state.extraEnergyTicks = Math.max(0, Math.min(state.duration, data.getInteger("extraEnergyTicks")));
             NBTTagList items = data.getTagList("items", 10);
             for (int j = 0; j < Math.min(16, items.tagCount()); j++) {
                 NBTTagCompound value = items.getCompoundTagAt(j);

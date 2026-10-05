@@ -52,7 +52,10 @@ public final class FactoryProgress {
                 durations[i] = (int) FactoryGraph.timing(0, baseDuration.applyAsInt(member), 1, member.overclocks)[1];
                 byNode.put(member.id, stage);
             }
-            stage.duration = FactoryCycles.commonPeriod(durations);
+            stage.duration = members.stream()
+                .allMatch(member -> member.wholeLineBatch)
+                    ? FactoryWholeBatch.prepare(members).jobs.get(stage.id).duration
+                    : FactoryCycles.commonPeriod(durations);
             stages.add(stage);
         }
         for (FactoryGraph.Node node : graph.nodes) {

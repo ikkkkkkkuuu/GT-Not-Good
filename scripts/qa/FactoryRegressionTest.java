@@ -6,8 +6,30 @@ import org.junit.Test;
 
 import com.cleanroommc.modularui.widget.scroll.ScrollArea;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
+import com.xyp.gtnotgood.utils.machine.factory.FactoryBatchDuration;
+import com.xyp.gtnotgood.utils.machine.factory.FactoryGraph;
 
 public class FactoryRegressionTest {
+
+    @Test
+    public void atomicBatchUsesLongestSerialPathAndOneRoundPerCycle() {
+        FactoryGraph graph = new FactoryGraph();
+        for (int i = 0; i < 4; i++) graph.add("");
+        // 20 -> {40, 60} -> 40 = 120 ticks, regardless of page batching or parallel counts.
+        int[] durations = { 20, 40, 60, 40 };
+        graph.nodes.get(1).sources.add(0);
+        graph.nodes.get(2).sources.add(0);
+        graph.nodes.get(3).sources.add(1);
+        graph.nodes.get(3).sources.add(2);
+        for (FactoryGraph.Node node : graph.nodes) {
+            node.wholeLineBatch = true;
+            node.parallel = Integer.MAX_VALUE;
+        }
+        assertEquals(120, FactoryBatchDuration.ticks(graph.nodes, n -> durations[n.id]));
+        graph.nodes.get(0).sources.add(2);
+        // Cycle {0,2} costs 80, followed by node 1 (40), then node 3 (40).
+        assertEquals(160, FactoryBatchDuration.ticks(graph.nodes, n -> durations[n.id]));
+    }
 
     @Test
     public void openingFourExistingRoutesBeforeLayoutKeepsThemVisible() {

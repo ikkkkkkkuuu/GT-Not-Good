@@ -891,19 +891,12 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                 for (FactoryGraph.Node node : cycle) nodeStatus.put(node.id, FactoryText.POWER);
                 return;
             }
-            batches = FactoryBatching.inputLimit(plan.inputs, batches);
-            for (FactoryGraph.Node member : cycle) {
-                GTRecipe recipe = FactoryRecipeCatalog.get(member.recipe).recipe;
-                int duration = (int) FactoryGraph.timing(0, recipe.mDuration, 1, member.overclocks)[1];
-                long repetitions = (long) member.parallel * (plan.jobs.get(member.id).duration / duration);
-                int capacity = FactoryBatching.recipeLimit(recipe, runtime.state(member.id), Integer.MAX_VALUE);
-                batches = (int) Math.min(batches, capacity / repetitions);
-            }
+            batches = FactoryCycles.capacity(plan, runtime, batches);
             if (batches <= 0) {
                 for (FactoryGraph.Node node : cycle) nodeStatus.put(node.id, FactoryText.BLOCKED);
                 return;
             }
-            if (batches > 1) plan = FactoryCycles.prepare(cycle, batches, random);
+            plan = FactoryCycles.scale(plan, batches);
             if (plan.inputs.maxParallelCalculatedByInputs(1, fluidRefs, itemRefs) < 1) {
                 for (FactoryGraph.Node node : cycle) nodeStatus.put(node.id, FactoryText.INPUT);
                 return;
@@ -921,7 +914,6 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
                 runtime.start(node.id, plan.jobs.get(node.id));
                 nodeStatus.put(node.id, FactoryText.RUNNING);
             }
-            cyclePlans.remove(leader);
         } catch (ArithmeticException invalid) {
             for (FactoryGraph.Node node : cycle) nodeStatus.put(node.id, FactoryText.LIMIT);
         }

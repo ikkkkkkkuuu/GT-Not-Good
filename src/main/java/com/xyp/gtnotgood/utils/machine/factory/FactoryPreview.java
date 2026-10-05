@@ -12,7 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import gregtech.api.util.GTRecipe;
 
-/** Read-only expected-rate preview. Material transfers follow actual graph edges rather than global cancellation. */
+/** Read-only material preview: rates for independent nodes, batch quantities for atomic pages. */
 public final class FactoryPreview {
 
     private FactoryPreview() {}
@@ -36,6 +36,7 @@ public final class FactoryPreview {
         public ItemStack display;
         public double rate;
         public boolean internal;
+        public long batchAmount;
 
         public String name() {
             return item != null ? item.getDisplayName() : fluid.getLocalizedName();
@@ -59,6 +60,7 @@ public final class FactoryPreview {
         public final List<Ingredient> outputs = new ArrayList<>();
         public String info = "";
         public int batchTicks;
+        public boolean exactBatch;
 
         /** A pattern promises a complete executable period and only outputs that can actually leave the machine. */
         public FactoryText exportIssue() {
@@ -73,6 +75,8 @@ public final class FactoryPreview {
      * Describes the configured node ratios only; runtime automatic batching never changes the preview or AE pattern.
      */
     public static Snapshot describe(FactoryGraph graph) {
+        if (!graph.nodes.isEmpty() && graph.nodes.stream()
+            .allMatch(node -> node.wholeLineBatch)) return describeWhole(graph);
         Snapshot result = new Snapshot();
         List<Port> inputs = new ArrayList<>(), outputs = new ArrayList<>();
         long totalPower = 0;
@@ -145,6 +149,38 @@ public final class FactoryPreview {
         }
         for (Ingredient entry : result.inputs) entry.rate /= result.batchTicks;
         for (Ingredient entry : result.outputs) entry.rate /= result.batchTicks;
+        return result;
+    }
+
+    /** Preview and AE export share the executor's rounded batch quantities and full processing duration. */
+    private static Snapshot describeWhole(FactoryGraph graph) {
+        Snapshot result = new Snapshot();
+        try {
+            FactoryCycles.Plan plan = FactoryWholeBatch.prepare(graph.nodes);
+            result.batchTicks = plan.jobs.values()
+                .iterator()
+                .next().duration;
+            result.exactBatch = true;
+            result.info = plan.eut + " EU/t | " + FactoryText.BatchDuration.text() + ": " + result.batchTicks + " t";
+            for (ItemStack item : plan.inputs.mInputs)
+                addIngredient(result.inputs, port(null, item, null, 0), item.stackSize, false);
+            for (FluidStack fluid : plan.inputs.mFluidInputs)
+                addIngredient(result.inputs, port(null, null, fluid, 0), fluid.amount, false);
+            for (FactoryRuntime.State job : plan.jobs.values()) {
+                for (ItemStack item : job.pendingItems)
+                    addIngredient(result.outputs, port(null, item, null, 0), item.stackSize, false);
+                for (FluidStack fluid : job.pendingFluids)
+                    addIngredient(result.outputs, port(null, null, fluid, 0), fluid.amount, false);
+            }
+            List<Ingredient> all = new ArrayList<>(result.inputs);
+            all.addAll(result.outputs);
+            for (Ingredient ingredient : all) {
+                ingredient.batchAmount = (long) ingredient.rate;
+            }
+        } catch (ArithmeticException invalid) {
+            result.batchTicks = 0;
+            result.info = FactoryText.LIMIT.text();
+        }
         return result;
     }
 

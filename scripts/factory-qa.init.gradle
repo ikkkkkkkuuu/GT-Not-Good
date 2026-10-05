@@ -14,7 +14,13 @@ gradle.projectsEvaluated {
     }
     root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
     root.tasks.named('compileTestJava').configure {
-        setSource(root.files(root.file('scripts/qa/FactoryRegressionTest.java'), root.file('scripts/qa/FactoryClientChecks.java')))
+        setSource(root.files(root.file('scripts/qa/FactoryRegressionTest.java'), root.file('scripts/qa/FactoryClientChecks.java'), root.file('scripts/qa/FactoryWholeBatchChecks.java')))
+    }
+    def qaClasses = root.tasks.register('isolateFactoryQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/FactoryClientChecks*.class', '**/FactoryWholeBatchChecks*.class'
+        into root.layout.buildDirectory.dir('factory-qa/classes')
     }
     root.spotless {
         java {
@@ -26,6 +32,11 @@ gradle.projectsEvaluated {
                 'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryInputs.java',
                 'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryRuntime.java',
                 'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryCycles.java',
+                'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryWholeBatch.java',
+                'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryBatchDuration.java',
+                'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryProgress.java',
+                'src/main/java/com/xyp/gtnotgood/common/gui/modularui/widget/FactoryCanvasWidget.java',
+                'src/main/java/com/xyp/gtnotgood/common/gui/modularui/widget/FactoryIngredientWidget.java',
                 'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryPreview.java',
                 'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryPatternExport.java',
                 'src/main/java/com/xyp/gtnotgood/utils/machine/factory/FactoryPatternRouting.java',
@@ -34,14 +45,16 @@ gradle.projectsEvaluated {
                 'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/IntegratedProductionFactory.java',
                 'src/main/java/com/xyp/gtnotgood/common/gui/modularui/widget/FactoryListScroll.java',
                 'src/main/java/com/xyp/gtnotgood/common/gui/modularui/multiblock/IntegratedProductionFactoryGui.java',
-                'scripts/qa/FactoryRegressionTest.java', 'scripts/qa/FactoryClientChecks.java'
+                'scripts/qa/FactoryRegressionTest.java', 'scripts/qa/FactoryClientChecks.java', 'scripts/qa/FactoryWholeBatchChecks.java'
         }
     }
     root.tasks.named('runClient').configure {
-        dependsOn root.tasks.named('testClasses')
-        classpath += root.sourceSets.test.output
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir('factory-qa/classes'))
+        if (root.hasProperty('factoryNoAngelica')) classpath = classpath.filter { !it.name.toLowerCase().contains('angelica') }
         workingDir root.file('run/factory-check')
         systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.factory.qa.platinum', root.hasProperty('factoryPlatinumQA').toString()
         // Optional third-party sound downloads must not stall the isolated recipe checks indefinitely.
         systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
         systemProperty 'sun.net.client.defaultReadTimeout', '15000'

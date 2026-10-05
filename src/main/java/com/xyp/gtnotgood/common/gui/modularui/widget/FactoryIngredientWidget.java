@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.common.gui.modularui.widget;
 
+import java.math.BigDecimal;
 import java.util.function.Supplier;
 
 import net.minecraft.item.ItemStack;
@@ -38,9 +39,10 @@ public final class FactoryIngredientWidget extends ItemDisplayWidget {
             if (entry == null) return;
             tooltip.addLine(entry.name());
             tooltip.addLine(
-                java.math.BigDecimal.valueOf(entry.rate)
+                BigDecimal.valueOf(entry.rate)
                     .stripTrailingZeros()
-                    .toPlainString() + (entry.fluid == null ? " " : " L") + FactoryText.PER_TICK.text());
+                    .toPlainString() + (entry.fluid == null ? " " : " L")
+                    + (entry.batchAmount > 0 ? FactoryText.PerBatch : FactoryText.PER_TICK).text());
             if (entry.internal) tooltip.addLine(FactoryText.INTERNAL_SURPLUS.text());
         });
     }

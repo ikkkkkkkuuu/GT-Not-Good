@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.utils.machine.factory;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -67,6 +68,8 @@ public final class FactoryCycles {
 
     /** Builds a whole number of each node's batches over the least common period, with exact overflow checks. */
     public static Plan prepare(List<FactoryGraph.Node> group, int multiplier, Random random) {
+        if (!group.isEmpty() && group.stream()
+            .allMatch(node -> node.wholeLineBatch)) return scale(FactoryWholeBatch.prepare(group), multiplier);
         Plan plan = new Plan();
         int[] durations = new int[group.size()];
         for (int i = 0; i < group.size(); i++) {
@@ -151,6 +154,65 @@ public final class FactoryCycles {
             job.pendingFluids.removeIf(fluid -> fluid.amount <= 0);
         }
         return plan;
+    }
+
+    /** Copies a cached net batch; runtime buffers must never mutate the reusable plan. */
+    public static Plan scale(Plan base, int multiplier) {
+        if (multiplier < 1) throw new ArithmeticException("Invalid batch multiplier");
+        Plan plan = new Plan();
+        plan.voltage = base.voltage;
+        plan.inputs = base.inputs.copy();
+        for (ItemStack item : plan.inputs.mInputs) item.stackSize = Math.multiplyExact(item.stackSize, multiplier);
+        for (FluidStack fluid : plan.inputs.mFluidInputs) fluid.amount = Math.multiplyExact(fluid.amount, multiplier);
+        for (Map.Entry<Integer, FactoryRuntime.State> entry : base.jobs.entrySet()) {
+            FactoryRuntime.State original = entry.getValue(), job = new FactoryRuntime.State();
+            job.duration = job.remaining = original.duration;
+            BigInteger energy = BigInteger.valueOf(original.eut)
+                .multiply(BigInteger.valueOf(original.duration))
+                .add(BigInteger.valueOf(original.extraEnergyTicks))
+                .multiply(BigInteger.valueOf(multiplier));
+            BigInteger[] parts = energy.divideAndRemainder(BigInteger.valueOf(job.duration));
+            job.eut = parts[0].longValueExact();
+            job.extraEnergyTicks = parts[1].intValueExact();
+            for (ItemStack output : original.pendingItems) {
+                ItemStack item = output.copy();
+                item.stackSize = Math.multiplyExact(item.stackSize, multiplier);
+                job.pendingItems.add(item);
+            }
+            for (FluidStack output : original.pendingFluids) {
+                FluidStack fluid = output.copy();
+                fluid.amount = Math.multiplyExact(fluid.amount, multiplier);
+                job.pendingFluids.add(fluid);
+            }
+            plan.jobs.put(entry.getKey(), job);
+            plan.eut = Math.addExact(plan.eut, job.tickEUt());
+        }
+        return plan;
+    }
+
+    /** Bounds net output amounts, including duplicate outputs and previously completed stock. */
+    public static int capacity(Plan plan, FactoryRuntime runtime, int requested) {
+        int limit = FactoryBatching.inputLimit(plan.inputs, requested);
+        for (Map.Entry<Integer, FactoryRuntime.State> entry : plan.jobs.entrySet()) {
+            FactoryRuntime.State job = entry.getValue(), previous = runtime.state(entry.getKey());
+            for (ItemStack output : job.pendingItems) {
+                long amount = 0, stored = 0;
+                for (ItemStack item : job.pendingItems)
+                    if (item.isItemEqual(output) && ItemStack.areItemStackTagsEqual(item, output))
+                        amount += item.stackSize;
+                for (ItemStack item : previous.items)
+                    if (item.isItemEqual(output) && ItemStack.areItemStackTagsEqual(item, output))
+                        stored += item.stackSize;
+                limit = FactoryBatching.amountLimit(limit, amount, stored);
+            }
+            for (FluidStack output : job.pendingFluids) {
+                long amount = 0, stored = 0;
+                for (FluidStack fluid : job.pendingFluids) if (fluid.isFluidEqual(output)) amount += fluid.amount;
+                for (FluidStack fluid : previous.fluids) if (fluid.isFluidEqual(output)) stored += fluid.amount;
+                limit = FactoryBatching.amountLimit(limit, amount, stored);
+            }
+        }
+        return limit;
     }
 
     /** Exact common period rejects combinations that cannot fit the persisted job duration. */

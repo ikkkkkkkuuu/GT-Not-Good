@@ -63,6 +63,12 @@ public final class FactoryPatternExport {
     static long[] batchCounts(FactoryPreview.Snapshot snapshot, double[] rates) {
         if (snapshot.batchTicks <= 0) throw new ArithmeticException("Invalid batch period");
         long[] counts = new long[rates.length];
+        if (snapshot.exactBatch) {
+            List<FactoryPreview.Ingredient> all = new ArrayList<>(snapshot.inputs);
+            all.addAll(snapshot.outputs);
+            for (int i = 0; i < counts.length; i++) counts[i] = all.get(i).batchAmount;
+            return counts;
+        }
         for (int i = 0; i < rates.length; i++) {
             double amount = rates[i] * snapshot.batchTicks;
             if (!Double.isFinite(amount) || amount < 1

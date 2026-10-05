@@ -218,8 +218,8 @@ public enum FactoryText {
     // # zh_CN 导出AE样板
     PATTERN_EXPORT("factory.gtnotgood.pattern_export"),
     // #tr factory.gtnotgood.pattern_help
-    // # Creates a free pattern from preview quantities; fractions are scaled together.
-    // # zh_CN 免费生成预览对应的样板；小数数量会整组同比放大。
+    // # Creates a free pattern matching the displayed batch quantities.
+    // # zh_CN 免费生成与预览批次数量一致的样板。
     PATTERN_HELP("factory.gtnotgood.pattern_help"),
     // #tr factory.gtnotgood.pattern_lock_first
     // # Lock the line and wait for installation before exporting.
@@ -468,9 +468,21 @@ public enum FactoryText {
     // # zh_CN 缺少
     MISSING("factory.gtnotgood.missing"),
     // #tr factory.gtnotgood.auto_parallel
-    // # Auto parallel (max 2,147,483,647); preview uses node settings.
-    // # zh_CN 自动并行（上限2,147,483,647）；预览按节点设置计算。
+    // # Batches adapt to supplies, power and output capacity.
+    // # zh_CN 批量随供料、供电和输出容量自动调整。
     AUTO_PARALLEL("factory.gtnotgood.auto_parallel"),
+    // #tr factory.gtnotgood.batch_duration
+    // # Batch duration
+    // # zh_CN 整批加工时间
+    BatchDuration("factory.gtnotgood.batch_duration"),
+    // #tr factory.gtnotgood.per_batch
+    // # Per batch
+    // # zh_CN 每批
+    PerBatch("factory.gtnotgood.per_batch"),
+    // #tr factory.gtnotgood.atomic_note
+    // # Inputs are consumed at start; outputs release together when processing finishes.
+    // # zh_CN 启动时一次性扣料，加工完成后统一输出；小数数量向上取整。
+    AtomicNote("factory.gtnotgood.atomic_note"),
     // #tr factory.gtnotgood.node_eut
     // # Base EU/t
     // # zh_CN 基础耗电 EU/t
