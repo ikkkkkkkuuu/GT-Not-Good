@@ -17,6 +17,7 @@ public class Config {
     private static final String CATEGORY_CUT_CORNERS = "CutCorners";
     private static final String CATEGORY_CROPSNH = "CropsNH";
     private static final String CATEGORY_FORESTRY = "Forestry";
+    private static final String CATEGORY_RAILCRAFT = "Railcraft";
     private static final String CATEGORY_GREGTECH = "GregTech";
     private static final String CATEGORY_SPICE_OF_LIFE = "SpiceOfLife";
     private static final String CATEGORY_FUEL_ROD = "Fuel_Rod";
@@ -58,6 +59,8 @@ public class Config {
     public static int recipeSpeedFixedDuration = 1;
     public static float recipeSpeedMultiplier = 0.1F;
     public static boolean recipeSpeedFullFluidOutput = true;
+    public static boolean railcraftBoilerInstantHeat = true;
+    public static float railcraftBoilerSteamMultiplier = 10F;
     public static boolean enableCropInstantGrowth = true;
     public static boolean enableCropMaxStats = true;
     public static boolean enableCropGuaranteedSeedDrop = true;
@@ -170,6 +173,7 @@ public class Config {
         configuration.addCustomCategoryComment(CATEGORY_CUT_CORNERS, "配方提速配置");
         configuration.addCustomCategoryComment(CATEGORY_CROPSNH, "CropsNH 作物配置");
         configuration.addCustomCategoryComment(CATEGORY_FORESTRY, "Forestry 蜜蜂杂交配置");
+        configuration.addCustomCategoryComment(CATEGORY_RAILCRAFT, "Railcraft 多方块锅炉配置，独立于 GregTech 配方提速。");
         configuration.addCustomCategoryComment(CATEGORY_GREGTECH, "GregTech 机器、工具与客户端显示配置");
         configuration.addCustomCategoryComment(CATEGORY_SPICE_OF_LIFE, "Spice of Life 食物收益配置");
         configuration.addCustomCategoryComment(CATEGORY_FUEL_ROD, "铁燃料棒参数。修改后重启游戏生效，服务器和客户端应使用相同数值。");
@@ -252,6 +256,19 @@ public class Config {
 
         enableCropInstantGrowth = configuration
             .getBoolean("enableInstantGrowth", CATEGORY_CROPSNH, enableCropInstantGrowth, "开启后,CropsNH 作物棒在生长判定时直接成熟。");
+
+        railcraftBoilerInstantHeat = configuration.getBoolean(
+            "boilerInstantHeat",
+            CATEGORY_RAILCRAFT,
+            railcraftBoilerInstantHeat,
+            "开启后，高压和低压多方块锅炉在燃烧时瞬间升至最高温度；仍需燃料和水。");
+        railcraftBoilerSteamMultiplier = configuration.getFloat(
+            "boilerSteamMultiplier",
+            CATEGORY_RAILCRAFT,
+            railcraftBoilerSteamMultiplier,
+            1F,
+            1000F,
+            "多方块锅炉蒸汽产量倍率，默认 10；耗水和耗燃料规则不变，实际输出受储罐和管道限制。");
 
         enableCropMaxStats = configuration.getBoolean(
             "enableMaxStats",

@@ -39,6 +39,7 @@ def elytraModpackVersion = project.extensions.getByName("elytraModpackVersion")
 // The plugin extension is loaded dynamically; declare its dependency coordinates as strings for IDE type checking.
 
 dependencies {
+    compileOnly(elytraModpackVersion.gtnhdev("Railcraft") as String) { transitive = false }
     compileOnly(elytraModpackVersion.gtnhdev("Roguelike-Dungeons") as String) { transitive = false }
     compileOnly(elytraModpackVersion.gtnhdev("LootGames") as String) { transitive = false }
     runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("Roguelike-Dungeons") as String) { transitive = false }

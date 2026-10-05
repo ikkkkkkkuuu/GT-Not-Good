@@ -64,6 +64,9 @@ public class LateMixinsLoader implements ILateMixinLoader {
     @Nonnull
     public List<String> getMixins(Set<String> loadedMods) {
         List<String> list = new ArrayList<>();
+        if (loadedMods.contains(ModList.Railcraft.getID())) {
+            addAll(list, "Railcraft.MultiblockBoilerMixin");
+        }
         if (loadedMods.contains(ModList.Roguelike.getID())) {
             addAll(list, "compass.RoguelikeWorldAccessor", "compass.RoguelikeHouseMixin");
         }
@@ -87,6 +90,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "Gregtech.wireless.CrossRecipeProcessingMixin",
                 "Gregtech.wireless.CrossRecipeControllerMixin",
                 "Gregtech.wireless.CrossRecipeVoltageMixin");
+            addAll(list, "Gregtech.wireless.CrossRecipeGuiMixin");
             if (loadedMods.contains(ModList.GTNotLeisure.getID())) {
                 addAll(
                     list,
@@ -169,6 +173,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "Gregtech.BasicMachineMoldGuiMixin",
                 "Gregtech.MixinMTEBrickedBlastFurnace",
                 "CutCorners.RecipeSpeedMixin",
+                "CutCorners.ScannerSpeedMixin",
                 "CutCorners.AssemblyLineSpeedMixin",
                 "CutCorners.PurificationPlantSpeedMixin",
                 "CutCorners.ExtremeEntityCrusherSpeedMixin",

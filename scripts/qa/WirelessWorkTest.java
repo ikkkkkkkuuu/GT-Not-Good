@@ -7,11 +7,33 @@ import java.math.BigInteger;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
 
 public class WirelessWorkTest {
+
+    @Test
+    public void displayKeepsAmountsBeyondLongAndBacklogHasNoProductionRate() {
+        BigInteger quantity = BigInteger.TEN.pow(50)
+            .add(BigInteger.valueOf(73));
+        NBTTagCompound row = new NBTTagCompound();
+        row.setString("amount", quantity.toString());
+        row.setInteger("ticks", 128);
+        assertEquals(
+            quantity.toString(),
+            WirelessRecipeDisplay.amount(row, false)
+                .replace(",", ""));
+        assertTrue(
+            WirelessRecipeDisplay.amount(row, true)
+                .length() < 24);
+        row.setInteger("ticks", 0);
+        assertEquals("0/s", WirelessRecipeDisplay.rate(row, false));
+        row.setTag("fluid", new NBTTagCompound());
+        assertEquals("0 L/s", WirelessRecipeDisplay.rate(row, false));
+    }
 
     public static class MissingSignatureType {
     }

@@ -28,6 +28,15 @@ public final class WirelessRecipeScheduler {
     private final List<WirelessWork> tasks = new ArrayList<>();
     private long lastTick = Long.MIN_VALUE;
     private int status;
+    private BigInteger displayedEU = BigInteger.ZERO;
+
+    public BigInteger displayedEU() {
+        return displayedEU;
+    }
+
+    public List<NBTTagCompound> displayedOutputs(int limit) {
+        return WirelessRecipeDisplay.rows(tasks, limit);
+    }
 
     public int size() {
         return tasks.size();
@@ -66,6 +75,7 @@ public final class WirelessRecipeScheduler {
         if (!tile.isServerSide()) return false;
         if (lastTick == tick) return true;
         lastTick = tick;
+        displayedEU = BigInteger.ZERO;
         WirelessControllerAccess access = (WirelessControllerAccess) machine;
         if (hatch == null || GlobalEnergyWorldSavedData.INSTANCE == null) {
             status = 2;
@@ -100,8 +110,11 @@ public final class WirelessRecipeScheduler {
                     status = 2;
                     continue;
                 }
-                if (!work.finished()
-                    && !work.tick(cost -> WirelessNetworkManager.addEUToGlobalEnergyMap(work.owner, cost.negate()))) {
+                if (!work.finished() && !work.tick(cost -> {
+                    boolean paid = WirelessNetworkManager.addEUToGlobalEnergyMap(work.owner, cost.negate());
+                    if (paid) displayedEU = displayedEU.add(cost);
+                    return paid;
+                })) {
                     status = 1;
                     continue;
                 }
@@ -170,6 +183,7 @@ public final class WirelessRecipeScheduler {
     public void load(NBTTagCompound tag) {
         tasks.clear();
         lastTick = Long.MIN_VALUE;
+        displayedEU = BigInteger.ZERO;
         NBTTagList list = tag.getTagList("tasks", 10);
         for (int i = 0; i < list.tagCount(); i++) tasks.add(WirelessWork.load(list.getCompoundTagAt(i)));
     }

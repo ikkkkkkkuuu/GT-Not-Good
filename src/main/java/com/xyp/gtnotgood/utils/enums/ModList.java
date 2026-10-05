@@ -24,6 +24,7 @@ public enum ModList {
     CropsNH(ModIds.CROPSNH, Names.CROPSNH),
     SpiceOfLife(ModIds.SPICE_OF_LIFE, Names.SPICE_OF_LIFE),
     Forestry(ModIds.FORESTRY, Names.FORESTRY),
+    Railcraft(ModIds.RAILCRAFT, Names.RAILCRAFT),
     GregTech(ModIds.GREGTECH, Names.GREGTECH),
     Thaumcraft(ModIds.THAUMCRAFT, Names.THAUMCRAFT),
     ThaumcraftResearchTweaks(ModIds.THAUMCRAFT_RESEARCH_TWEAKS, Names.THAUMCRAFT_RESEARCH_TWEAKS),
@@ -51,6 +52,7 @@ public enum ModList {
         public static final String CROPSNH = "cropsnh";
         public static final String SPICE_OF_LIFE = "SpiceOfLife";
         public static final String FORESTRY = "Forestry";
+        public static final String RAILCRAFT = "Railcraft";
         public static final String GREGTECH = "gregtech";
         public static final String THAUMCRAFT = "Thaumcraft";
         public static final String THAUMCRAFT_RESEARCH_TWEAKS = "ThaumcraftResearchTweaks";
@@ -78,6 +80,7 @@ public enum ModList {
         public static final String CROPSNH = "CropsNH";
         public static final String SPICE_OF_LIFE = "Spice of Life";
         public static final String FORESTRY = "Forestry";
+        public static final String RAILCRAFT = "Railcraft";
         public static final String GREGTECH = "GregTech";
         public static final String THAUMCRAFT = "Thaumcraft";
         public static final String THAUMCRAFT_RESEARCH_TWEAKS = "Thaumcraft Research Tweaks";

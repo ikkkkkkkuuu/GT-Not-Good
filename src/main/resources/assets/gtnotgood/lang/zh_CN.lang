@@ -749,6 +749,7 @@ gtng.cross_wireless.power=已暂停：无线电网电量不足
 gtng.cross_wireless.missing=已暂停：需要原仓主的无线能源仓
 gtng.cross_wireless.unsupported=此特殊控制器尚未适配跨配方运行
 gtng.cross_wireless.output=已完成的产物正在等待输出空间
+gtng.cross_wireless.eu=当前耗电：%s EU/t（无线电网）
 key.toolbelt.open=打开工具腰带菜单
 key.toolbelt.cycle.left=左切换
 key.toolbelt.cycle.right=右切换

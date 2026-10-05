@@ -66,6 +66,7 @@ gradle.projectsEvaluated {
         systemProperty 'gtng.crossWireless.qa', 'true'
         systemProperty 'gtng.crossWireless.gtnl', root.hasProperty('crossWirelessGtnl').toString()
         systemProperty 'gtng.crossWireless.tst', root.hasProperty('crossWirelessTst').toString()
+        systemProperty 'gtng.crossWireless.display', root.hasProperty('crossWirelessDisplay').toString()
         systemProperty 'gtng.crossWireless.output', root.file('build/cross-wireless-qa').absolutePath
         systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
         systemProperty 'sun.net.client.defaultReadTimeout', '15000'

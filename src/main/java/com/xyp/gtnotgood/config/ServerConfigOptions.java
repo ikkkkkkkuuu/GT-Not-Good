@@ -33,6 +33,8 @@ public final class ServerConfigOptions {
         add(options, false, "CutCorners", "fixedDuration", "recipeSpeedFixedDuration", false);
         add(options, false, "CutCorners", "multiplier", "recipeSpeedMultiplier", false);
         add(options, false, "CutCorners", "fullFluidOutput", "recipeSpeedFullFluidOutput", true);
+        add(options, false, "Railcraft", "boilerInstantHeat", "railcraftBoilerInstantHeat", true);
+        add(options, false, "Railcraft", "boilerSteamMultiplier", "railcraftBoilerSteamMultiplier", true);
         add(
             options,
             false,

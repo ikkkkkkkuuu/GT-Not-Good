@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
@@ -106,14 +107,33 @@ public final class CrossWirelessClientChecks {
 
     @SubscribeEvent
     public void server(TickEvent.ServerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || finished) return;
+        if (event.phase != TickEvent.Phase.END) return;
+        if (guiTile != null && Boolean.getBoolean("gtng.crossWireless.display")) {
+            // Keep the synthetic controller usable through capture; no real structure is built in this display fixture.
+            MTEMultiBlockBase display = (MTEMultiBlockBase) guiTile.getMetaTileEntity();
+            display.mMachine = true;
+            display.mUpdated = false;
+            display.mUpdate = -10000;
+            guiTile.enableWorking();
+            guiTile.setShutdownStatus(false);
+            guiTile.setActive(true);
+            try {
+                var errors = MTEMultiBlockBase.class.getDeclaredField("structureErrors");
+                errors.setAccessible(true);
+                ((List<?>) errors.get(display)).clear();
+            } catch (ReflectiveOperationException error) {
+                throw new IllegalStateException(error);
+            }
+        }
+        if (finished) return;
         var server = FMLCommonHandler.instance()
             .getMinecraftServerInstance();
         if (server.getConfigurationManager().playerEntityList.isEmpty()) return;
         if (checked) {
             if (++guiDelay == 40) {
                 EntityPlayerMP player = (EntityPlayerMP) server.getConfigurationManager().playerEntityList.get(0);
-                ((CrossRecipeWirelessEnergyHatch) guiTile.getMetaTileEntity()).onRightclick(guiTile, player);
+                guiTile.getMetaTileEntity()
+                    .onRightclick(guiTile, player, ForgeDirection.NORTH, 0.5f, 0.5f, 0.5f);
                 finished = true;
             }
             return;
@@ -140,12 +160,93 @@ public final class CrossWirelessClientChecks {
                 GTNGItemList.CrossRecipeWirelessEnergyHatch.get(1),
                 player.getUniqueID());
             guiTile = gui;
-            player.setPositionAndUpdate(gui.xCoord + 1, 7, gui.zCoord + 2);
+            if (Boolean.getBoolean("gtng.crossWireless.display")) guiTile = prepareDisplay(world, player);
+            player.setPositionAndUpdate(guiTile.xCoord + 1, 7, guiTile.zCoord + 2);
         } catch (Throwable error) {
             error.printStackTrace();
             failure = error.toString();
             finished = true;
         }
+    }
+
+    private BaseMetaTileEntity prepareDisplay(WorldServer world, EntityPlayerMP player) throws Exception {
+        UUID owner = player.getUniqueID();
+        WirelessNetworkManager.strongCheckOrAddUser(owner);
+        WirelessNetworkManager.setUserEU(owner, BigInteger.valueOf(2000000));
+        BaseMetaTileEntity tile = place(world, findController("gregtech."), owner);
+        MTEMultiBlockBase machine = (MTEMultiBlockBase) tile.getMetaTileEntity();
+        machine.mMachine = true;
+        machine.mUpdated = false;
+        machine.mUpdate = -10000;
+        machine.mWrench = machine.mScrewdriver = machine.mSoftMallet = machine.mHardHammer = machine.mSolderingTool = machine.mCrowbar = true;
+        machine.mEfficiency = 10000;
+        var startup = MTEMultiBlockBase.class.getDeclaredField("mStartUpCheck");
+        startup.setAccessible(true);
+        startup.setInt(machine, -10000);
+        tile.enableWorking();
+        CrossRecipeWirelessEnergyHatch hatch = (CrossRecipeWirelessEnergyHatch) place(
+            world,
+            GTNGItemList.CrossRecipeWirelessEnergyHatch.get(1),
+            owner).getMetaTileEntity();
+        machine.mEnergyHatches.add(hatch);
+        // Placing the adjacent hatch schedules a native structure check; this fixture tests display synchronization.
+        machine.mUpdated = false;
+        machine.mUpdate = -10000;
+        WirelessRecipeScheduler scheduler = ((WirelessControllerAccess) machine).gtng$getWirelessScheduler();
+        NBTTagCompound tag = new NBTTagCompound();
+        NBTTagList tasks = new NBTTagList();
+        tasks.appendTag(
+            new WirelessWork(
+                owner,
+                "display-diamond",
+                BigInteger.valueOf(16384),
+                128,
+                BigInteger.valueOf(640),
+                new WirelessOutputs(new ItemStack[] { new ItemStack(Items.diamond, 640) }, null)).save());
+        tasks.appendTag(
+            new WirelessWork(
+                owner,
+                "display-fluid",
+                BigInteger.valueOf(8192),
+                256,
+                BigInteger.valueOf(80),
+                new WirelessOutputs(
+                    new ItemStack[] { new ItemStack(Items.emerald, 80) },
+                    new FluidStack[] { new FluidStack(FluidRegistry.WATER, 1440) })).save());
+        tag.setTag("tasks", tasks);
+        scheduler.load(tag);
+        run(machine, tile, 900);
+        require(
+            scheduler.displayedEU()
+                .equals(BigInteger.valueOf(160)),
+            "Display sums actual independent EU debits");
+        require(
+            machine.mEUt == 0 && machine.mOutputItems == null && machine.mOutputFluids == null,
+            "Display never populates executable native fields");
+        var rows = scheduler.displayedOutputs(128);
+        require(
+            rows.size() == 3 && rows.get(0)
+                .getString("amount")
+                .equals("640"),
+            "Item and fluid display rows");
+        require(
+            WirelessRecipeDisplay.rate(rows.get(0), false)
+                .equals("100/s"),
+            "First task rate uses its duration");
+        require(
+            WirelessRecipeDisplay.rate(rows.get(1), false)
+                .equals("6.25/s"),
+            "Second task has its own rate");
+        NBTTagCompound hud = new NBTTagCompound();
+        machine.getWailaNBTData(player, tile, hud, world, tile.xCoord, tile.yCoord, tile.zCoord);
+        require(
+            hud.getString("gtngCrossEU")
+                .equals("160")
+                && hud.getTagList("gtngCrossOutputs", 10)
+                    .tagCount() == 3,
+            "Waila receives exact wireless EU and output snapshots");
+        System.out.println("CROSS_WIRELESS_QA: independent display rates, real EU debit and Waila snapshots PASS");
+        return tile;
     }
 
     private void checkAlloyBlastSmelter(WorldServer world) throws Exception {

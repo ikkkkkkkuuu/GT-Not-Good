@@ -749,6 +749,7 @@ gtng.cross_wireless.power=Paused: insufficient wireless EU
 gtng.cross_wireless.missing=Paused: original owner's wireless hatch required
 gtng.cross_wireless.unsupported=This custom controller needs a cross-recipe adapter
 gtng.cross_wireless.output=Completed outputs waiting for space
+gtng.cross_wireless.eu=Current consumption: %s EU/t (wireless)
 key.toolbelt.open=Open Tool Belt Menu
 key.toolbelt.cycle.left=Cycle Left
 key.toolbelt.cycle.right=Cycle Right

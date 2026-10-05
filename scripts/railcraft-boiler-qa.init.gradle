@@ -1,0 +1,25 @@
+// Focused native Railcraft bytecode and output checks, excluded from release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def bytecodeTools = root.configurations.create('railcraftBoilerBytecodeTools')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm-tree:9.8')
+    root.dependencies.add(bytecodeTools.name, root.extensions.getByName('elytraModpackVersion').gtnhdev('Railcraft') as String)
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/RailcraftBoilerTest.java'))
+        classpath = bytecodeTools + classpath
+    }
+    root.tasks.named('test').configure {
+        classpath = bytecodeTools + classpath
+        filter { includeTestsMatching '*RailcraftBoilerTest' }
+    }
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/mixins/late/Railcraft/MultiblockBoilerMixin.java',
+                'src/main/java/com/xyp/gtnotgood/config/Config.java',
+                'src/main/java/com/xyp/gtnotgood/config/ServerConfigOptions.java',
+                'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/ModList.java',
+                'scripts/qa/RailcraftBoilerTest.java'
+        }
+    }
+}

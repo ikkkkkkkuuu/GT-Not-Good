@@ -1,13 +1,17 @@
 package com.xyp.gtnotgood.mixins.late.Gregtech.wireless;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -21,14 +25,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.xyp.gtnotgood.common.wireless.WirelessCompatibility;
 import com.xyp.gtnotgood.common.wireless.WirelessControllerAccess;
 import com.xyp.gtnotgood.common.wireless.WirelessRecipeAttempt;
+import com.xyp.gtnotgood.common.wireless.WirelessRecipeDisplay;
 import com.xyp.gtnotgood.common.wireless.WirelessRecipeScheduler;
 
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.logic.ProcessingLogic;
 import gregtech.api.metatileentity.implementations.MTEMultiBlockBase;
 import gregtech.api.recipe.check.CheckRecipeResultRegistry;
+import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTWaila;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcp.mobius.waila.overlay.tooltiprenderers.TTRenderStack;
 
 @Mixin(value = MTEMultiBlockBase.class, remap = false)
 public abstract class CrossRecipeControllerMixin implements WirelessControllerAccess {
@@ -113,6 +121,13 @@ public abstract class CrossRecipeControllerMixin implements WirelessControllerAc
             return;
         tag.setInteger("gtngCrossCount", gtng$wireless.size());
         tag.setString(
+            "gtngCrossEU",
+            gtng$wireless.displayedEU()
+                .toString());
+        NBTTagList display = new NBTTagList();
+        for (NBTTagCompound row : gtng$wireless.displayedOutputs(3)) display.appendTag(row);
+        tag.setTag("gtngCrossOutputs", display);
+        tag.setString(
             "gtngCrossParallels",
             gtng$wireless.parallelCount()
                 .toString());
@@ -128,6 +143,37 @@ public abstract class CrossRecipeControllerMixin implements WirelessControllerAc
         IWailaConfigHandler config, CallbackInfo ci) {
         NBTTagCompound tag = accessor.getNBTData();
         if (!tag.hasKey("gtngCrossCount")) return;
+        if (tag.getInteger("gtngCrossCount") > 0) {
+            int position = lines.indexOf(
+                GTWaila.getMachineProgressString(
+                    tag.getBoolean("isActive"),
+                    tag.getBoolean("isAllowedToWork"),
+                    tag.getInteger("maxProgress"),
+                    tag.getInteger("progress")));
+            if (position < 0) position = lines.size();
+            lines.add(
+                position++,
+                StatCollector.translateToLocalFormatted(
+                    "gtng.cross_wireless.eu",
+                    WirelessRecipeDisplay.number(new BigInteger(tag.getString("gtngCrossEU")), true)));
+            NBTTagList outputs = tag.getTagList("gtngCrossOutputs", 10);
+            if (outputs.tagCount() > 0) lines.add(position++, StatCollector.translateToLocal("GT5U.waila.producing"));
+            for (int i = 0; i < outputs.tagCount(); i++) {
+                NBTTagCompound row = outputs.getCompoundTagAt(i);
+                ItemStack icon = row.hasKey("item") ? ItemStack.loadItemStackFromNBT(row.getCompoundTag("item"))
+                    : GTUtility
+                        .getFluidDisplayStack(FluidStack.loadFluidStackFromNBT(row.getCompoundTag("fluid")), false);
+                lines.add(
+                    position++,
+                    "  " + TTRenderStack.create(icon, true)
+                        + EnumChatFormatting.AQUA
+                        + WirelessRecipeDisplay.name(row)
+                        + EnumChatFormatting.WHITE
+                        + " x "
+                        + EnumChatFormatting.GOLD
+                        + WirelessRecipeDisplay.amount(row, true));
+            }
+        }
         // #tr gtng.cross_wireless.running
         // # Concurrent wireless recipes: %s
         // # zh_CN 无线配方任务数：%s
