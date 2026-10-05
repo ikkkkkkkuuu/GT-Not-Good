@@ -172,6 +172,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "CutCorners.AssemblyLineSpeedMixin",
                 "CutCorners.PurificationPlantSpeedMixin",
                 "CutCorners.ExtremeEntityCrusherSpeedMixin",
+                "CutCorners.ThermalBoilerSpeedMixin",
                 "CutCorners.FurnaceBackendMixin",
                 "CutCorners.BasicMachineOutputMixin");
         }

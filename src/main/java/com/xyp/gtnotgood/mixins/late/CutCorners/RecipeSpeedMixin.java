@@ -19,6 +19,7 @@ import gregtech.api.util.GTRecipe;
  * 装配线使用独立配方类型，由 {@link AssemblyLineSpeedMixin} 在控制器读取时单独提速。
  * 净化水线使用主控制器统一周期，由 {@link PurificationPlantSpeedMixin} 在启动周期时提速。
  * 怪物屠宰场使用独立怪物配方，由 {@link ExtremeEntityCrusherSpeedMixin} 在处理检查成功后提速。
+ * 地热锅炉的批量模式由 {@link ThermalBoilerSpeedMixin} 约束最终固定时长。
  *
  * <p>
  * <b>维护性</b>：只 hook 这一个稳定的配方系统入口，而非给每台机器单独写 mixin。上游(GT5U 594 → 2.9)
