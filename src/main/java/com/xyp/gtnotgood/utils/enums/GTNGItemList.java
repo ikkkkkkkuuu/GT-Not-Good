@@ -226,7 +226,8 @@ public enum GTNGItemList implements IItemContainer {
     SuperMTEHatchCraftingInputBusME,
     SuperMTEHatchCraftingInputME,
     CompactSuperMTEHatchCraftingInputME,
-    SuperMTEHatchCraftingInputSlave;
+    SuperMTEHatchCraftingInputSlave,
+    SuperAdvancedMEInputHatch;
 
     public boolean mHasNotBeenSet;
     public boolean mDeprecated;

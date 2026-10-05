@@ -132,7 +132,7 @@ final class AdvancedIOGui {
                     .background(IDrawable.EMPTY)
                     .overlay((context, x, y, w, h, theme) -> {
                         if (amount.getIntValue() <= 0) return;
-                        String text = shortAmount(amount.getIntValue(), fluid.getBoolValue());
+                        String text = shortAmount(amount.getIntValue());
                         var font = net.minecraft.client.Minecraft.getMinecraft().fontRenderer;
                         org.lwjgl.opengl.GL11.glPushMatrix();
                         org.lwjgl.opengl.GL11.glScalef(0.666f, 0.666f, 1);
@@ -144,7 +144,7 @@ final class AdvancedIOGui {
                         org.lwjgl.opengl.GL11.glPopMatrix();
                     })
                     .tooltip(
-                        t -> t.addLine(IKey.dynamic(() -> amount.getIntValue() + (fluid.getBoolValue() ? " mB" : "")))
+                        t -> t.addLine(IKey.dynamic(() -> amount.getIntValue() + (fluid.getBoolValue() ? " L" : "")))
                             .addLine(IKey.lang("gui.advancedio.amount_hint")))
                     .setEnabledIf(widget -> index < enabled.getIntValue())
                     .pos(7 + i % 9 * 18, 28 + i / 9 * 18));
@@ -251,15 +251,15 @@ final class AdvancedIOGui {
                 .getStackSize() };
         var quantity = new IntSyncValue(() -> draft[0], value -> draft[0] = Math.max(0, value)).allowC2S();
         sync.syncValue("quantity", quantity);
-        var unit = new IntSyncValue(
+        var fluidAmount = new BooleanSyncValue(
             () -> part.filter(index) != null && part.filter(index)
-                .isFluid() ? 1000 : 1);
-        sync.syncValue("amountUnit", unit);
+                .isFluid());
+        sync.syncValue("fluidAmount", fluidAmount);
         var displayQuantity = new com.cleanroommc.modularui.value.sync.DoubleSyncValue(
-            () -> (double) draft[0] / unit.getIntValue(),
+            () -> (double) draft[0],
             value -> {
-                if (Double.isFinite(value)) draft[0] = (int) Math
-                    .max(0, Math.min(Integer.MAX_VALUE - 1L, Math.round(value * unit.getIntValue())));
+                if (Double.isFinite(value))
+                    draft[0] = (int) Math.max(0, Math.min(Integer.MAX_VALUE - 1L, Math.round(value)));
             }) {
 
             @Override
@@ -273,7 +273,7 @@ final class AdvancedIOGui {
         var panel = ModularPanel.defaultPanel("advanced_io_amount", 176, 107)
             .background(texture("craft_amt", 256, 256, 0, 0, 176, 107))
             .disableHoverBackground();
-        unit.setChangeListener(panel::scheduleResize);
+        fluidAmount.setChangeListener(panel::scheduleResize);
         // #tr gui.advancedio.set_amount
         // # Set Amount
         // # zh_CN 设置数量
@@ -319,7 +319,7 @@ final class AdvancedIOGui {
                 return result;
             }
         }.value(displayQuantity)
-            .numbersDouble(() -> 0, () -> (Integer.MAX_VALUE - 1.0) / unit.getIntValue())
+            .numbersDouble(() -> 0, () -> Integer.MAX_VALUE - 1.0)
             .autoUpdateOnChange(true)
             .setFocusOnGuiOpen(true)
             .background(IDrawable.EMPTY)
@@ -327,10 +327,10 @@ final class AdvancedIOGui {
             .pos(48, 55)
             .height(12)
             .width(
-                () -> unit.getIntValue() == 1000 ? 57 : 66,
+                () -> fluidAmount.getBoolValue() ? 57 : 66,
                 com.cleanroommc.modularui.widget.sizer.Unit.Measure.PIXEL));
         panel.child(
-            IKey.dynamic(() -> unit.getIntValue() == 1000 ? "B" : "")
+            IKey.dynamic(() -> fluidAmount.getBoolValue() ? "L" : "")
                 .color(0xff404040)
                 .asWidget()
                 .pos(108, 57));
@@ -347,10 +347,8 @@ final class AdvancedIOGui {
                         0,
                         Math.min(
                             Integer.MAX_VALUE - 1L,
-                            (long) draft[0]
-                                + (long) sign * unit.getIntValue()
-                                    * (mouse.shift || mouse.ctrl ? stacks[step] : decimal[step])
-                                - (sign > 0 && step > 0 && draft[0] == unit.getIntValue() ? unit.getIntValue() : 0))),
+                            (long) draft[0] + (long) sign * (mouse.shift || mouse.ctrl ? stacks[step] : decimal[step])
+                                - (sign > 0 && step > 0 && draft[0] == 1 ? 1 : 0))),
                     true,
                     true);
             });
@@ -409,9 +407,9 @@ final class AdvancedIOGui {
                     .shadow(false));
     }
 
-    /** Slot labels use bucket quantities and compact magnitudes as in AE2's small stack labels. */
-    private static String shortAmount(int amount, boolean fluid) {
-        double value = amount / (fluid ? 1000.0 : 1.0);
+    /** Slot labels abbreviate item counts or GTNH liters with compact magnitudes. */
+    private static String shortAmount(int amount) {
+        double value = amount;
         String suffix = "";
         if (value >= 1000000) {
             value /= 1000000;

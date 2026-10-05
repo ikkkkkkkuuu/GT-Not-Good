@@ -1,5 +1,17 @@
 # AE2LT faithful port audit
 
+## Super Advanced Stocking Input Hatch (ME) — 2026-10-05
+
+- Reference: GTNewHorizons/GT5-Unofficial tag `5.09.54.183`, sources artifact SHA-1
+  `b0f3eb42604cfc3ad88d56c50d0dbfa375d89419`. Inspected native input hatch, GUI,
+  slot serialization and the pinned LGPL-3.0 license before adapting source.
+- Destinations and modifications are recorded in `META-INF/super-storage-input-port/NOTICE.md`.
+- Independent native stocking-hatch subclass with 900 marks, per-fluid reserves,
+  fixed per-check available quantities and no physical buffer. Mining clears marks
+  and configuration so drops stack with fresh hatches. Existing hatch definitions stay intact.
+- Native textures/icons are resolved from installed GregTech. No artwork copied.
+- Extracted sources in `build/storage-input-reference` do not participate in compilation or packaging.
+
 ## Wireless provider optimization toggle — 2026-09-30
 
 Adds an opt-in toggle through GTNH AE2 `IInterfaceViewable#allowsPatternOptimization`.

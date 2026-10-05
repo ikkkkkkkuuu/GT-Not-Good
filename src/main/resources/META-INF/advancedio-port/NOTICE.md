@@ -35,6 +35,8 @@ GTNH adaptations:
 - Unexpected remainders are persisted until ME can accept them, and returned as drops when broken.
 - The GUI preserves the original 176x253 layout, external upgrade strip, icon toolbar and 176x107
   middle-click quantity sub-screen. MUI2 replaces incompatible APIs; no GTNG theme substitution.
+  Fluid amounts, slot labels and editor increments use GTNH liters (one native mB equals one L),
+  replacing upstream bucket display and its 1,000-unit input scaling.
 - A local recipe uses four import buses, two export buses, two calculation processors and one engineering processor.
 - Front/back/side textures are unchanged upstream PNG files; their mappings and hashes are in ASSET_MANIFEST.json.
   GTNH's export-bus rendering geometry is inherited/adapted from the installed AE2 implementation.

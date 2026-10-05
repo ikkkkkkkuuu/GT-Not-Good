@@ -1,0 +1,55 @@
+// Checks super storage transactions, persistence and GUI in an isolated, hidden client.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr.parentFile.mkdirs()
+        def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+        connection.connectTimeout = 30000
+        connection.readTimeout = 30000
+        connection.inputStream.withCloseable { input -> efr.withOutputStream { it << input } }
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/SuperStorageInputChecks.java'))
+    }
+    def snapshot = root.tasks.register('snapshotSuperStorageInputQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/SuperStorageInputChecks*.class'
+        into root.layout.buildDirectory.dir('super-storage-input-qa/classes')
+    }
+    root.extensions.findByName('spotless')?.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/machines/hatch/me/SuperAdvancedMEInputHatch.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/hatch/me/SuperAdvancedMEInputHatchGui.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/SuperCraftingInputRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
+            'scripts/qa/SuperStorageInputChecks.java'
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn snapshot
+        classpath += root.files(root.layout.buildDirectory.dir('super-storage-input-qa/classes'))
+        workingDir root.file('run/super-storage-input-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('isolated reproduction')
+        doFirst {
+            workingDir.mkdirs()
+            java.nio.file.Files.deleteIfExists(new File(workingDir, 'result.txt').toPath())
+            new File(workingDir, 'options.txt').setText('lang:en_US\npauseOnLostFocus:false\n', 'UTF-8')
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(root.file('build/super-storage-input-qa/window-helper.log')).start()
+        }
+        doLast {
+            def result = new File(workingDir, 'result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('Super storage input QA failed; inspect SUPER_STORAGE_QA in the client log.')
+            }
+        }
+    }
+}

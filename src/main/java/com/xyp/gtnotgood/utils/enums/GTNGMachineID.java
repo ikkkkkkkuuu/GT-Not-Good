@@ -35,6 +35,7 @@ public enum GTNGMachineID {
     MEDataAccessHatch(MACHINE, 18),
     CompactSuperCraftingInputME(MACHINE, 19),
     CrossRecipeWirelessEnergyHatch(MACHINE, 20),
+    SuperAdvancedMEInputHatch(MACHINE, 21),
 
     Diesel_Generator_LV(BASIC_MACHINE, 0),
     Diesel_Generator_MV(BASIC_MACHINE, 1),

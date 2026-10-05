@@ -13,6 +13,7 @@ import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.MEDataAccessHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputBus;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputHatch;
+import com.xyp.gtnotgood.common.machines.hatch.me.SuperAdvancedMEInputHatch;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeBeeBreeder;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeCropBreeder;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeOreProcessor;
@@ -40,6 +41,15 @@ public class MachineLoader {
      * and tooltip credit registration in one predictable place.
      */
     public static void registerMachines() {
+        // #tr NameSuperAdvancedMEInputHatch
+        // # Super Advanced Stocking Input Hatch (ME)
+        // # zh_CN 超级进阶存储输入仓 (ME)
+        GTNGItemList.SuperAdvancedMEInputHatch.set(
+            new SuperAdvancedMEInputHatch(
+                GTNGMachineID.SuperAdvancedMEInputHatch.ID,
+                "SuperAdvancedMEInputHatch",
+                StatCollector.translateToLocal("NameSuperAdvancedMEInputHatch")));
+        addItemTooltip(GTNGItemList.SuperAdvancedMEInputHatch.get(1), AnimatedText.GT_NOT_GOOD);
         GTNGItemList.CrossRecipeWirelessEnergyHatch.set(
             new CrossRecipeWirelessEnergyHatch(
                 GTNGMachineID.CrossRecipeWirelessEnergyHatch.ID,
