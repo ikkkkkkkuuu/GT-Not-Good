@@ -32,7 +32,7 @@ public final class FactoryWholeBatch {
             if (entry == null) throw new ArithmeticException("Missing page recipe");
             GTRecipe recipe = entry.recipe;
             BigInteger unit = BigInteger.valueOf(FactoryRuntime.outputBatch(recipe));
-            BigInteger ticks = BigInteger.valueOf(FactoryGraph.timing(0, recipe.mDuration, 1, node.overclocks)[1]);
+            BigInteger ticks = BigInteger.valueOf(Math.max(1, recipe.mDuration));
             BigInteger required = ticks.multiply(unit.divide(unit.gcd(BigInteger.valueOf(node.parallel))));
             period = period.divide(period.gcd(required))
                 .multiply(required);
@@ -45,7 +45,8 @@ public final class FactoryWholeBatch {
             GTRecipe recipe = entry.recipe;
             long[] timing = FactoryGraph
                 .timing(node.customEUt < 0 ? recipe.mEUt : node.customEUt, recipe.mDuration, 1, node.overclocks);
-            BigInteger repetitions = period.divide(BigInteger.valueOf(timing[1]))
+            // Material ratios use the unoverclocked recipe; OC changes only processing time and energy.
+            BigInteger repetitions = period.divide(BigInteger.valueOf(Math.max(1, recipe.mDuration)))
                 .multiply(BigInteger.valueOf(node.parallel));
             energies.add(
                 period.multiply(BigInteger.valueOf(timing[0]))

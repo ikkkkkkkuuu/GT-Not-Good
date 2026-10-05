@@ -87,6 +87,7 @@ final class FactoryWholeBatchChecks {
                 .equals(batchEnergy),
             "batch energy is unchanged by duration");
         report.append("PASS boundary rounding after cancellation and exact total batch energy\n");
+        checkOverclocks(graph, base, report);
         FactoryGraph huge = graph.copy();
         for (FactoryGraph.Node node : huge.nodes) node.parallel = Math.multiplyExact(node.parallel, 2);
         FactoryCycles.Plan hugePlan = FactoryWholeBatch.prepare(huge.nodes);
@@ -307,6 +308,58 @@ final class FactoryWholeBatchChecks {
             .append(" L, duration=")
             .append(duration)
             .append(" ticks; one debit, no early output, reload/pause, final simultaneous settlement\n");
+    }
+
+    private static void checkOverclocks(FactoryGraph graph, FactoryCycles.Plan base, StringBuilder report) {
+        ItemStack originalPattern = FactoryPatternExport.create(graph);
+        for (int index = 0; index < graph.nodes.size(); index++) {
+            for (int oc : new int[] { 1, 3, 14 }) {
+                FactoryGraph changed = graph.copy();
+                FactoryGraph.Node node = changed.nodes.get(index);
+                node.overclocks = oc;
+                FactoryCycles.Plan plan = FactoryWholeBatch.prepare(changed.nodes);
+                require(
+                    boundary(plan).equals(boundary(base)),
+                    "OC must preserve every net material: " + index + "/" + oc);
+                require(
+                    ItemStack.areItemStackTagsEqual(originalPattern, FactoryPatternExport.create(changed)),
+                    "OC must preserve AE input/output quantities: " + index + "/" + oc);
+                GTRecipe recipe = FactoryRecipeCatalog.get(node.recipe).recipe;
+                long cost = node.customEUt < 0 ? recipe.mEUt : node.customEUt;
+                long oldPower = FactoryGraph.timing(cost, recipe.mDuration, 1, graph.nodes.get(index).overclocks)[0];
+                long newPower = FactoryGraph.timing(cost, recipe.mDuration, 1, oc)[0];
+                BigInteger expected = energy(base).add(
+                    BigInteger.valueOf(newPower - oldPower)
+                        .multiply(BigInteger.valueOf(node.parallel)));
+                require(energy(plan).equals(expected), "only changed node contributes OC energy change");
+                require(
+                    plan.jobs.values()
+                        .iterator()
+                        .next().duration
+                        <= base.jobs.values()
+                            .iterator()
+                            .next().duration,
+                    "OC never lengthens the processing path");
+                if (index == 0 && oc == 1) report.append("First node OC 0 -> 1: duration ")
+                    .append(
+                        base.jobs.values()
+                            .iterator()
+                            .next().duration)
+                    .append(" -> ")
+                    .append(
+                        plan.jobs.values()
+                            .iterator()
+                            .next().duration)
+                    .append(" ticks; batch materials unchanged\n");
+            }
+        }
+        FactoryGraph all = graph.copy();
+        for (FactoryGraph.Node node : all.nodes) node.overclocks = 1;
+        require(
+            ItemStack.areItemStackTagsEqual(originalPattern, FactoryPatternExport.create(all)),
+            "whole-line OC preserves batch quantities");
+        report.append(
+            "PASS all 38 nodes individually at OC 1/3/14 and whole-line OC: materials and AE patterns unchanged\n");
     }
 
     private static Field field(String name) throws Exception {
