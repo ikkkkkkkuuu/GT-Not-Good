@@ -38,7 +38,7 @@ public abstract class ThermalBoilerSpeedMixin {
      * @param duration duration after ordinary recipe and batch calculations
      * @return duration limited to the configured fixed time, or unchanged outside fixed mode
      */
-    static int limitBatchDuration(int duration) {
+    private static int limitBatchDuration(int duration) {
         if (Config.recipeSpeedMode != 1 || duration <= 0) return duration;
         return Math.min(duration, Config.getModifiedRecipeDuration(duration));
     }

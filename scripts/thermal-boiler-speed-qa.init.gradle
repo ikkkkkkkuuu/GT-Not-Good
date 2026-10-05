@@ -4,6 +4,12 @@ gradle.projectsEvaluated {
     def bytecodeTools = root.configurations.create('boilerSpeedBytecodeTools')
     root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm:9.8')
     root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm-tree:9.8')
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/mixins/late/CutCorners/ThermalBoilerSpeedMixin.java',
+                'scripts/qa/ThermalBoilerSpeedTest.java'
+        }
+    }
     root.tasks.named('compileTestJava').configure {
         setSource(root.files(root.file('scripts/qa/ThermalBoilerSpeedTest.java')))
         classpath = bytecodeTools + classpath

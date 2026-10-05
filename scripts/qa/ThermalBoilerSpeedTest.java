@@ -3,6 +3,8 @@ package com.xyp.gtnotgood.mixins.late.CutCorners;
 import static org.junit.Assert.*;
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
@@ -22,18 +24,29 @@ public class ThermalBoilerSpeedTest {
         try {
             Config.recipeSpeedMode = 1;
             Config.recipeSpeedFixedDuration = 1;
-            assertEquals(1, ThermalBoilerSpeedMixin.limitBatchDuration(128));
+            assertEquals(1, limitBatchDuration(128));
             Config.recipeSpeedFixedDuration = 5;
-            assertEquals(5, ThermalBoilerSpeedMixin.limitBatchDuration(128));
-            assertEquals(1, ThermalBoilerSpeedMixin.limitBatchDuration(1));
-            assertEquals(0, ThermalBoilerSpeedMixin.limitBatchDuration(0));
+            assertEquals(5, limitBatchDuration(128));
+            assertEquals(1, limitBatchDuration(1));
+            assertEquals(0, limitBatchDuration(0));
             Config.recipeSpeedMode = 2;
-            assertEquals(256, ThermalBoilerSpeedMixin.limitBatchDuration(256));
+            assertEquals(256, limitBatchDuration(256));
             Config.recipeSpeedMode = 0;
-            assertEquals(2560, ThermalBoilerSpeedMixin.limitBatchDuration(2560));
+            assertEquals(2560, limitBatchDuration(2560));
         } finally {
             Config.recipeSpeedMode = mode;
             Config.recipeSpeedFixedDuration = fixed;
+        }
+    }
+
+    private static int limitBatchDuration(int duration) {
+        try {
+            Method method = ThermalBoilerSpeedMixin.class.getDeclaredMethod("limitBatchDuration", int.class);
+            assertTrue("Mixin static helpers must be private", Modifier.isPrivate(method.getModifiers()));
+            method.setAccessible(true);
+            return (Integer) method.invoke(null, duration);
+        } catch (ReflectiveOperationException failure) {
+            throw new AssertionError(failure);
         }
     }
 
@@ -42,7 +55,8 @@ public class ThermalBoilerSpeedTest {
         for (String name : new String[] { "gregtech/common/tileentities/machines/multi/MTEThermalBoiler",
             "gtPlusPlus/xmod/gregtech/common/tileentities/machines/multi/production/MTEThermalBoilerLegacy" }) {
             ClassNode node = new ClassNode();
-            try (InputStream source = getClass().getClassLoader().getResourceAsStream(name + ".class")) {
+            try (InputStream source = getClass().getClassLoader()
+                .getResourceAsStream(name + ".class")) {
                 assertNotNull(name, source);
                 new ClassReader(source).accept(node, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
             }
