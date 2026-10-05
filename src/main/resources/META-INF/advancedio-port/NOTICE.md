@@ -21,13 +21,15 @@ Destinations: `com.xyp.gtnotgood.common.advancedio.PartAdvancedIOBus`, `Advanced
 `ItemAdvancedIOBus`. These are Minecraft 1.7.10 rewrites/adaptations, not unchanged modern classes.
 Retained behavior: exact item/fluid targets, optional excess regulation (default on), import of unlisted
 products, 18 base configuration slots plus 9 per capacity card (maximum 63), eight upgrade slots,
-and 8x transfer budget. Remainders smaller than one fluid operation are transferred exactly.
+and 8x acceleration bonuses. Remainders smaller than one fluid operation are transferred exactly.
 
 GTNH adaptations:
 - Native AE item/fluid inventories, sided inventories and Forge IFluidHandler replace modern transfer strategies.
 - Supports GTNH standard, super and superluminal acceleration (maximum four each), capacity (five)
   and redstone (one), sharing eight upgrade slots. Native PartExportBus computes the additive acceleration
-  tiers; this bus applies the upstream eightfold multiplier to that budget.
+  tiers; this bus applies the upstream eightfold multiplier to upgrade bonuses above the native base.
+  The unupgraded budget is 1,048,584 operations per direction per work cycle, equal to the former
+  single-superluminal-card budget. Installed acceleration cards add their bonuses to this new base.
   Crafting, fuzzy, inverter, chemical strategies and pulse mode are not advertised/supported by this port.
 - Default, round-robin and random export scheduling; disabled capacity rows stay protected from unlisted-product import.
 - Unexpected remainders are persisted until ME can accept them, and returned as drops when broken.

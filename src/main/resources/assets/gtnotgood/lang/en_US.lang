@@ -131,6 +131,7 @@ gui.advancedio.redstone_ignore=Redstone: ignore signal
 item.advanced_io_bus.name=ME Advanced IO Bus
 tooltip.advancedio.stock=Maintains selected item/fluid amounts; imports unlisted outputs.
 tooltip.advancedio.regulate=Optional excess recovery. Respects the connected machine face.
+tooltip.advancedio.speed=Base speed equals one superluminal card; acceleration cards add to it.
 tooltip.advancedio.cards=8 upgrade slots: acceleration, capacity and redstone cards.
 tile.working_apiary.0.name=Working Apiary
 tile.mebridge.receiver.name=ME Bridge Receiver

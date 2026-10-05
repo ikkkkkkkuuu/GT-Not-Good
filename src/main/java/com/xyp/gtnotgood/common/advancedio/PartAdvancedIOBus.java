@@ -36,13 +36,15 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Maintains exact item/fluid stock and imports unlisted products through one cable-mounted machine face.
- * The two directions have independent upstream-style 8x operation budgets. Unexpected transfer remainders
+ * Each direction starts at one superluminal card's throughput and adds eightfold native upgrade bonuses.
+ * Unexpected transfer remainders
  * are persisted in escrow and block new transfers until returned to ME, including across save/reload.
  * Unlike recipe providers this bus never bypasses GT sided inventory or fluid access rules.
  */
 public final class PartAdvancedIOBus extends PartExportBus {
 
     public static final int CONFIG_SLOTS = 63;
+    private static final int baseTransferAmount = 1_048_584;
     private final IAEStackInventory stockConfig = new IAEStackInventory(this, CONFIG_SLOTS, StorageName.CONFIG);
     private IAEStack<?> pending;
     private boolean regulate = true;
@@ -64,10 +66,10 @@ public final class PartAdvancedIOBus extends PartExportBus {
         return Math.min(CONFIG_SLOTS, 18 + 9 * getInstalledUpgrades(Upgrades.CAPACITY));
     }
 
-    /** Retains GTNH's native additive upgrade tiers before applying AdvancedAE's eightfold budget. */
+    /** Gives an unupgraded bus one superluminal card's throughput, retaining native additive upgrade bonuses. */
     @Override
     public int calculateAmountToSend() {
-        return 8 * super.calculateAmountToSend();
+        return baseTransferAmount + 8 * (super.calculateAmountToSend() - 1);
     }
 
     @Override

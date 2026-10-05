@@ -74,6 +74,10 @@ public final class ItemAdvancedIOBus extends Item implements IPartItem {
         // # Optional excess recovery. Respects the connected machine face.
         // # zh_CN 可开关超量回收；遵循所连接机器面的输入输出限制。
         lines.add(StatCollector.translateToLocal("tooltip.advancedio.regulate"));
+        // #tr tooltip.advancedio.speed
+        // # Base speed equals one superluminal card; acceleration cards add to it.
+        // # zh_CN 无卡速率等同原来一张超级光速卡；加速卡可继续叠加。
+        lines.add(StatCollector.translateToLocal("tooltip.advancedio.speed"));
         // #tr tooltip.advancedio.cards
         // # 8 upgrade slots: acceleration, capacity and redstone cards.
         // # zh_CN 8 个升级槽：支持加速卡、容量卡与红石卡。
