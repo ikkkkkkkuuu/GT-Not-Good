@@ -19,5 +19,9 @@ defensive copies, removal of debug provenance storage, optional live GTNL conver
 Fallback preserves assembler/assembly-line/space-assembler/GT-machine-crafting ordering and
 upstream blacklist/material replacement rules. Hard overrides for recipes added/changed by GTNL are supplied by its installed conversion table;
 without GTNL, recovery follows the recipes registered by the installed pack.
+An empty installed GTNL conversion table (including disabled Shimmer disassembly) also uses
+local recovery generation, without changing GTNL's configuration or populating its table.
+With GTNL installed, a one-shot lowest-priority client/server END tick handler waits for its
+deferred recipe registration, then unregisters itself and refreshes the native NEI recipe cache.
 No upstream textures are copied. Reference checkouts are not compiled or packaged.
 

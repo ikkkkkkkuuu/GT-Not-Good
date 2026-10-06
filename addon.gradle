@@ -151,6 +151,8 @@ tasks.withType(JavaExec).configureEach {
 
 tasks.withType(Test).configureEach {
     useJUnit()
+    // Forge's ASM 5 cannot inspect the pack's multi-release GT classes; tests use the existing ASM 9 dependency.
+    classpath = classpath.filter { !it.name.startsWith('asm-debug-all-') }
     if (System.getProperty('os.name').startsWith('Windows')) {
         systemProperty 'jdk.net.unixdomain.tmpdir', new File(System.getenv('SystemRoot') ?: 'C:/Windows', 'Temp').absolutePath
     }

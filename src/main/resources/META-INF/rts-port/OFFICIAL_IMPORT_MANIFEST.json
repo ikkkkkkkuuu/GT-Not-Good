@@ -3929,7 +3929,7 @@
       "destination": "src/vendor/rtsbuilding/java/com/rtsbuilding/rtsbuilding/platform/nbt/NbtCompat.java",
       "license": "LGPL-3.0-only",
       "upstreamSha256": "c9ea30c64090a24a6adeda9df48884514f705a0eeddbd63f15465976a0fcb432",
-      "modified": false
+      "modified": true
     },
     {
       "source": "src/main/java/com/rtsbuilding/rtsbuilding/platform/player/PlayerCompat.java",

@@ -81,6 +81,17 @@ definitions; use the registered GTNG instance for remote chunk tickets.
 Unchanged upstream translations are imported verbatim; new GTNG translations continue
 to use adjacent Java `#tr` declarations.
 
+Issue #3 follow-up (2026-10-06): the platform NBT block-state adapter now preserves
+Forge's case-sensitive registry names instead of normalizing mod domains through
+ResourceLocation. Mining history encoding filters air/unregistered blocks; detached
+completion and cancellation skip unavailable or malformed snapshots with one warning
+per batch. Restore discards empty history entries while retaining task progress and
+valid snapshots. Modified sources: platform/nbt/NbtCompat.java,
+server/task/mining/MiningTaskCodec.java and server/service/mining/RtsMiningStateMachine.java
+under the pinned vendor destination above. LGPL-3.0-only and existing assets are retained.
+Headless regression fixtures reproduce the original failures using the native Forge
+registry and verify mixed-case names, metadata, tile NBT, and persisted-task recovery.
+
 The older RTS staged-port section below is historical and does not describe this import.
 
 ## RTS Building staged port (2026-09-24)
@@ -487,6 +498,11 @@ remains outside compilation/resource inputs. Validation details: docs/testing/ld
 - Ported blacklist/material transformations and recipe-source selection. Full source/destination,
   modification and license records: `src/main/resources/META-INF/shimmer-port/NOTICE.md`.
 - Installed GTNL is loaded first and supplies its real conversion table, including hard overrides.
+- 2026-10-06, issue #4: an empty GTNL RC1 table now falls back to local recovery generation;
+  disabling Shimmer no longer disables this powered machine. GTNL settings and its table stay unchanged.
+- Verified published GTNL 0.2.7-rc1 `LoadCompleteRecipeScheduler`: conversions are deferred until
+  the first client/server END tick. GTNG now loads once at LOWEST priority after that scheduler,
+  unregisters the hook and refreshes GregTech's NEI cache. No GTNL scheduler source was copied.
 - Adaptations: EV power, exact batches, native fluid output hatches, GT NBT matching/output protection.
 - Standard machine GUI and NEI only; no dedicated LDLib screen or browser button.
 - Structure uses existing GT/BartWorks/vanilla blocks; no upstream artwork is copied.

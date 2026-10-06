@@ -1,5 +1,6 @@
 package com.rtsbuilding.rtsbuilding.server.task.mining;
 
+import com.rtsbuilding.rtsbuilding.RtsbuildingMod;
 import com.rtsbuilding.rtsbuilding.server.history.HistoryBlockRecord;
 import com.rtsbuilding.rtsbuilding.server.task.MiningTaskPayload;
 import com.rtsbuilding.rtsbuilding.server.task.persistence.DimensionIdCodec;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.init.Blocks;
 import com.rtsbuilding.rtsbuilding.platform.block.BlockState;
 import net.minecraftforge.common.util.Constants;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,9 +78,19 @@ public final class MiningTaskCodec {
         NBTTagList encodedHistory = tag.getTagList("history", Constants.NBT.TAG_COMPOUND);
         if (encodedHistory.tagCount() > MAX_TARGETS * 7) throw new IllegalArgumentException("mining history 越界");
         List<NBTTagCompound> history = new ArrayList<NBTTagCompound>(encodedHistory.tagCount());
+        int emptyHistory = 0;
         for (int i = 0; i < encodedHistory.tagCount(); i++) {
+            NBTTagCompound entry = encodedHistory.getCompoundTagAt(i);
+            if (com.rtsbuilding.rtsbuilding.platform.nbt.NbtCompat.isEmpty(entry)) {
+                emptyHistory++;
+                continue;
+            }
             history.add(com.rtsbuilding.rtsbuilding.platform.nbt.NbtCompat.copyCompound(
-                    encodedHistory.getCompoundTagAt(i)));
+                    entry));
+        }
+        if (emptyHistory > 0) {
+            RtsbuildingMod.LOGGER.warn("Skipped {} empty mining history records while restoring task for player {}",
+                    emptyHistory, NbtCompat.getUuid(tag, "owner"));
         }
         int workflow = tag.getInteger("workflow");
         MiningTaskState state = new MiningTaskState(
@@ -91,25 +103,46 @@ public final class MiningTaskCodec {
                 DimensionIdCodec.toDimension(dimensionId), workflow, state);
     }
 
-    public static NBTTagCompound encodeHistory(HistoryBlockRecord record) {
+    /**
+     * 编码可撤回的挖掘快照；调用方只追加非空结果。
+     *
+     * @param record 挖掘前捕获的方块记录
+     * @return 已编码记录；空气、空记录或未注册方块返回 {@code null}
+     */
+    @Nullable
+    public static NBTTagCompound encodeHistory(@Nullable HistoryBlockRecord record) {
+        if (record == null || record.state().getBlock() == Blocks.air) return null;
+        NBTTagCompound state = com.rtsbuilding.rtsbuilding.platform.nbt.NbtCompat
+                .writeBlockState(record.state());
+        if ("minecraft:air".equals(state.getString("id"))) return null;
         NBTTagCompound tag = new NBTTagCompound();
         tag.setLong("pos", record.pos().toLong());
-        tag.setTag("state", com.rtsbuilding.rtsbuilding.platform.nbt.NbtCompat
-                .writeBlockState(record.state()));
+        tag.setTag("state", state);
         if (record.blockEntityData() != null) tag.setTag("block_entity",
                 com.rtsbuilding.rtsbuilding.platform.nbt.NbtCompat.copyCompound(
                         record.blockEntityData()));
         return tag;
     }
 
-    public static HistoryBlockRecord decodeHistory(NBTTagCompound tag) {
+    /**
+     * 读取历史快照，不依赖该坐标当前的世界状态；无效记录不应中断任务收尾。
+     *
+     * @param tag 持久化的历史记录
+     * @return 有效方块记录；字段损坏、空气或方块已不可用时返回 {@code null}
+     */
+    @Nullable
+    public static HistoryBlockRecord decodeHistory(@Nullable NBTTagCompound tag) {
         if (tag == null || !NbtCompat.hasType(tag, "pos", Constants.NBT.TAG_LONG)
                 || !NbtCompat.hasType(tag, "state", Constants.NBT.TAG_COMPOUND)) {
-            throw new IllegalArgumentException("mining history record 不完整");
+            return null;
         }
+        NBTTagCompound encodedState = tag.getCompoundTag("state");
+        if (!NbtCompat.hasType(encodedState, "id", Constants.NBT.TAG_STRING)
+                || !NbtCompat.hasType(encodedState, "meta", Constants.NBT.TAG_INT)
+                || encodedState.getInteger("meta") < 0 || encodedState.getInteger("meta") > 15) return null;
         BlockState state = com.rtsbuilding.rtsbuilding.platform.nbt.NbtCompat
-                .readBlockState(tag.getCompoundTag("state"));
-        if (state.getBlock() == Blocks.air) throw new IllegalArgumentException("mining history 不能记录空气");
+                .readBlockState(encodedState);
+        if (state.getBlock() == Blocks.air) return null;
         NBTTagCompound blockEntity = NbtCompat.hasType(tag, "block_entity", Constants.NBT.TAG_COMPOUND)
                 ? com.rtsbuilding.rtsbuilding.platform.nbt.NbtCompat.copyCompound(
                         tag.getCompoundTag("block_entity")) : null;

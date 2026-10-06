@@ -22,4 +22,10 @@ and modified-source flags. Integration modifications include host lifecycle,
 GTNG item ownership, separate packet channel, early mixin relocation,
 GTNH AE2 rv3 API adaptation, and opt-in client regression checks.
 
+Issue #3 mining-history changes (2026-10-06): preserve case-sensitive Forge block
+registry names in platform/nbt/NbtCompat.java; filter air/unregistered blocks and
+skip malformed or unavailable history during task restoration and finalization in
+server/task/mining/MiningTaskCodec.java and server/service/mining/RtsMiningStateMachine.java.
+These adapted sources retain LGPL-3.0-only; no visual/audio assets changed.
+
 The earlier staged preview implementation has been removed. Historical provenance remains in reference/RTS_LEGACY_ASSET_MANIFEST.json in the source repository.

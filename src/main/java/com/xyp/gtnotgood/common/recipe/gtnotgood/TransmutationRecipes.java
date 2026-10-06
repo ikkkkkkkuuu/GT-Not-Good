@@ -18,6 +18,11 @@ import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import gregtech.GTMod;
 import gregtech.api.enums.TierEU;
 import gregtech.api.objects.GTItemStack;
 import gregtech.api.recipe.RecipeMaps;
@@ -31,12 +36,43 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 public final class TransmutationRecipes {
 
     private static final Map<Item, List<ItemStack>> REGISTERED = new HashMap<>();
+    private static final TransmutationRecipes deferred = new TransmutationRecipes();
     private static boolean loaded;
+    private static boolean scheduled;
 
     private TransmutationRecipes() {}
 
-    /** Runs after recipe registration; an installed GTNL supplies its actual conversion table. */
+    /** Waits for GTNL's first END tick recipe registration before reading its conversion table. */
     public static void load() {
+        if (loaded || scheduled) return;
+        if (ModList.GTNotLeisure.isModLoaded()) {
+            scheduled = true;
+            FMLCommonHandler.instance()
+                .bus()
+                .register(deferred);
+        } else loadRecipes();
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        loadAfterGtnl(event.phase);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onServerTick(TickEvent.ServerTickEvent event) {
+        loadAfterGtnl(event.phase);
+    }
+
+    private void loadAfterGtnl(TickEvent.Phase phase) {
+        if (phase != TickEvent.Phase.END) return;
+        FMLCommonHandler.instance()
+            .bus()
+            .unregister(this);
+        loadRecipes();
+        GTMod.proxy.reloadNEICache();
+    }
+
+    private static void loadRecipes() {
         if (loaded) return;
         loaded = true;
         if (!importShimmer()) {
@@ -67,13 +103,17 @@ public final class TransmutationRecipes {
                 .size());
     }
 
-    /** Optional reflection keeps GTNL absent-safe while honoring all its hard overrides and configuration. */
+    /** Imports GTNL's hard overrides when available; disabled Shimmer leaves local recovery independent. */
     private static boolean importShimmer() {
         if (!ModList.GTNotLeisure.isModLoaded()) return false;
         try {
             Class<?> owner = Class.forName("com.science.gtnl.common.recipe.gtnl.ShimmerRecipes");
             Map<?, ?> conversions = (Map<?, ?>) owner.getField("conversionMap")
                 .get(null);
+            if (conversions.isEmpty()) {
+                GTNotGood.LOG.info("GTNL Shimmer conversions are empty; generating local transmutation recipes");
+                return false;
+            }
             for (Object entries : conversions.values()) for (Object entry : (Iterable<?>) entries) {
                 ItemStack input = (ItemStack) entry.getClass()
                     .getMethod("input")

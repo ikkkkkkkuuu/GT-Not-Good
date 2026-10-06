@@ -1,12 +1,13 @@
 package com.rtsbuilding.rtsbuilding.platform.nbt;
 
 import cpw.mods.fml.relauncher.ReflectionHelper;
+import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import com.rtsbuilding.rtsbuilding.platform.block.BlockState;
-import net.minecraft.util.ResourceLocation;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -101,23 +102,21 @@ public final class NbtCompat {
         return new UUID(most, least);
     }
 
-    /** 方块状态在旧版以注册名 + metadata 保存，避免运行时数字 ID 漂移。 */
+    /** 保留 1.7.10 注册名的大小写；ResourceLocation 的单参数构造会把模组域名转成小写。 */
     public static NBTTagCompound writeBlockState(BlockState state) {
         NBTTagCompound tag = new NBTTagCompound();
-        BlockState safe = state == null ? BlockState.defaultState(net.minecraft.init.Blocks.air) : state;
-        ResourceLocation id = com.rtsbuilding.rtsbuilding.platform.registry.RtsRegistries.BLOCKS
-                .getNameForObject(safe.getBlock());
-        tag.setString("id", id == null ? "minecraft:air" : id.toString());
+        BlockState safe = state == null ? BlockState.defaultState(Blocks.air) : state;
+        String id = GameData.getBlockRegistry().getNameForObject(safe.getBlock());
+        tag.setString("id", id == null ? "minecraft:air" : id);
         tag.setInteger("meta", safe.getMetadata());
         return tag;
     }
 
     public static BlockState readBlockState(NBTTagCompound tag) {
-        if (tag == null || !tag.hasKey("id", 8)) {
-            return BlockState.defaultState(net.minecraft.init.Blocks.air);
+        if (tag == null || !tag.hasKey("id", 8) || tag.getString("id").isEmpty()) {
+            return BlockState.defaultState(Blocks.air);
         }
-        Block block = com.rtsbuilding.rtsbuilding.platform.registry.RtsRegistries.BLOCKS
-                .getValue(new ResourceLocation(tag.getString("id")));
+        Block block = GameData.getBlockRegistry().getObject(tag.getString("id"));
         return BlockState.of(block, tag.getInteger("meta"));
     }
 }

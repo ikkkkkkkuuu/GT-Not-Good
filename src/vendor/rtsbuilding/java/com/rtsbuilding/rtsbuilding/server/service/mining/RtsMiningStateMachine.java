@@ -272,7 +272,7 @@ public final class RtsMiningStateMachine {
         int succeeded = Math.max(0, Math.min(cursor, mining.ultimineBrokenTargets));
         int total = Math.max(cursor + remaining.size(), Math.max(1, mining.ultimineTotalTargets));
         List<NBTTagCompound> history = new ArrayList<NBTTagCompound>();
-        for (HistoryBlockRecord record : mining.ultimineProcessedPositions) history.add(MiningTaskCodec.encodeHistory(record));
+        for (HistoryBlockRecord record : mining.ultimineProcessedPositions) appendMiningHistory(history, record);
         return new MiningTaskState(
                 mode, mining.workflowEntryId, remaining,
                 total, cursor, succeeded, Math.max(0, cursor - succeeded),
@@ -483,15 +483,20 @@ public final class RtsMiningStateMachine {
         List<HistoryBlockRecord> neighbors = MultiBlockTracker.captureNeighborRecords(player.getServerForPlayer(), target);
         MiningBreakResult result = destroyMinedBlock(player, session, target, session.mining.miningToolSlot);
         if (!result.broken()) return false;
-        if (before != null) history.add(MiningTaskCodec.encodeHistory(before));
+        appendMiningHistory(history, before);
         for (HistoryBlockRecord neighbor : neighbors) {
             if (!neighbor.pos().equals(target)
                     && BlockState.fromWorld(player.getServerForPlayer(), neighbor.pos()).getBlock() == Blocks.air
                     && neighbor.state().getBlock() != Blocks.air) {
-                history.add(MiningTaskCodec.encodeHistory(neighbor));
+                appendMiningHistory(history, neighbor);
             }
         }
         return true;
+    }
+
+    private static void appendMiningHistory(List<NBTTagCompound> history, @Nullable HistoryBlockRecord record) {
+        NBTTagCompound encoded = MiningTaskCodec.encodeHistory(record);
+        if (encoded != null) history.add(encoded);
     }
 
     private static void clearDetachedProgress(EntityPlayerMP player, BlockPos target) {
@@ -514,7 +519,16 @@ public final class RtsMiningStateMachine {
     private static List<HistoryBlockRecord> decodeDetachedHistory(
             EntityPlayerMP player, List<NBTTagCompound> history) {
         List<HistoryBlockRecord> decoded = new ArrayList<HistoryBlockRecord>();
-        for (NBTTagCompound tag : history) decoded.add(MiningTaskCodec.decodeHistory(tag));
+        int skipped = 0;
+        for (NBTTagCompound tag : history) {
+            HistoryBlockRecord record = MiningTaskCodec.decodeHistory(tag);
+            if (record != null) decoded.add(record);
+            else skipped++;
+        }
+        if (skipped > 0) {
+            RtsbuildingMod.LOGGER.warn("Skipped {} invalid or unavailable mining history records for player {}",
+                    skipped, player == null ? "unknown" : player.getUniqueID());
+        }
         return decoded;
     }
 

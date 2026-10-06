@@ -1,0 +1,71 @@
+// Real Forge recipe registration with GTNL Shimmer enabled, disabled, or absent.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def mode = root.findProperty('issue4Mode') ?: 'disabled'
+    if (!(mode in ['enabled', 'disabled', 'absent'])) throw new GradleException('Unknown issue4Mode: ' + mode)
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Run the factory QA dependency setup first: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    if (mode != 'absent') {
+        def gtnl = root.file('build/gtnl-compat-dependencies/sciencenotleisure-0.2.7-rc1-dev.jar')
+        if (!gtnl.exists()) throw new GradleException('Run the GTNL compatibility dependency setup first: ' + gtnl)
+        def digest = java.security.MessageDigest.getInstance('SHA-256').digest(gtnl.bytes).encodeHex().toString()
+        if (digest != 'c36ff329db26dd5df3d70e825bb2741c12fe1818c9d67d4a7b4323cd6ed6e8cc') {
+            throw new GradleException('GTNL RC1 development jar checksum mismatch')
+        }
+        root.dependencies.add('runtimeOnlyNonPublishable', root.files(gtnl))
+        root.dependencies.add('runtimeOnlyNonPublishable', 'com.github.ABKQPO:BetterQuestingAPI:1.1.3:dev') { transitive = false }
+    }
+    // Keep the same pack dependencies in every mode; only GTNL presence/configuration varies.
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/Issue4RecipeChecks.java'))
+    }
+    root.spotless.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/recipe/gregtech/AssemblerRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/gtnotgood/TransmutationRecipes.java',
+            'scripts/qa/Issue4RecipeChecks.java'
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn root.tasks.named('testClasses')
+        classpath += root.sourceSets.test.output
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir root.file('run/issue-4-' + mode)
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.issue4.qa.mode', mode
+        systemProperty 'gtng.issue4.qa.output', root.file('build/issue-4-qa/' + mode + '.txt').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('Isolated Forge startup checks')
+        args '--width', '640', '--height', '480'
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/issue-4-qa').mkdirs()
+            java.nio.file.Files.deleteIfExists(root.file('build/issue-4-qa/' + mode + '.txt').toPath())
+            new File(workingDir, 'options.txt').setText('lang:en_US\npauseOnLostFocus:false\n', 'UTF-8')
+            if (mode != 'absent') {
+                def config = new File(workingDir, 'config/GTNotLeisure/GTNotLeisure.cfg')
+                config.parentFile.mkdirs()
+                // Seed the full known RC1 config so startup keeps the same unrelated settings.
+                def source = root.file('run/gtnl-compat-check/config/GTNotLeisure/GTNotLeisure.cfg')
+                if (!source.exists()) throw new GradleException('Missing isolated RC1 config: ' + source)
+                config.setText(source.getText('UTF-8').replaceAll(
+                    /B:enableShimmerDisassemblyRecipes=(true|false)/,
+                    'B:enableShimmerDisassemblyRecipes=' + (mode == 'enabled')), 'UTF-8')
+            }
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(root.file('build/issue-4-qa/window-' + mode + '.log')).start()
+        }
+        doLast {
+            def result = root.file('build/issue-4-qa/' + mode + '.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) throw new GradleException('Issue #4 QA failed: ' + mode)
+        }
+    }
+}
