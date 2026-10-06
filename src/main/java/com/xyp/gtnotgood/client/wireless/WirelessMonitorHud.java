@@ -161,12 +161,12 @@ public final class WirelessMonitorHud extends Gui {
 
     private String[] lines() {
         // #tr hud.gtnotgood.wireless.realtime
-        // # Real-time grid status:
-        // # zh_CN 实时电网状态：
+        // # Real-time:
+        // # zh_CN 实时：
         String realtime = StatCollector.translateToLocal("hud.gtnotgood.wireless.realtime");
         // #tr hud.gtnotgood.wireless.average
-        // # Average grid status:
-        // # zh_CN 平均电网状态：
+        // # Average:
+        // # zh_CN 平均：
         String average = StatCollector.translateToLocal("hud.gtnotgood.wireless.average");
         // #tr hud.gtnotgood.wireless.energy
         // # Wireless network:

@@ -1,0 +1,54 @@
+// Native sifting imports and batch output checks in an isolated, hidden Forge client.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/OreSiftingChecks.java'))
+    }
+    def qaClasses = root.tasks.register('isolateOreSiftingQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/OreSiftingChecks*.class'
+        into root.layout.buildDirectory.dir('ore-sifting-qa/classes')
+    }
+    root.spotless.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/recipe/gtnotgood/OreProcessingRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/LargeOreProcessor.java',
+            'scripts/qa/OreSiftingChecks.java'
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir('ore-sifting-qa/classes'))
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir root.file('run/ore-sifting-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.oreSifting.qa', 'true'
+        systemProperty 'gtng.oreSifting.output', root.file('build/ore-sifting-qa/result.txt').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('Isolated native recipe checks')
+        args '--width', '640', '--height', '480'
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/ore-sifting-qa').mkdirs()
+            java.nio.file.Files.deleteIfExists(root.file('build/ore-sifting-qa/result.txt').toPath())
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\npauseOnLostFocus:false\n', 'UTF-8')
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(root.file('build/ore-sifting-qa/window-helper.log')).start()
+        }
+        doLast {
+            def result = root.file('build/ore-sifting-qa/result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) throw new GradleException('Ore sifting QA failed')
+        }
+    }
+}

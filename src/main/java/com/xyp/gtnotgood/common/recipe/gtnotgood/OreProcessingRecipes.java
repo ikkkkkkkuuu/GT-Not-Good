@@ -1,7 +1,9 @@
 package com.xyp.gtnotgood.common.recipe.gtnotgood;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -16,8 +18,11 @@ import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
 import gregtech.api.GregTechAPI;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
+import gregtech.api.objects.ItemData;
 import gregtech.api.recipe.RecipeMap;
+import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.util.GTOreDictUnificator;
+import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTRecipeBuilder;
 import gregtech.api.util.GTUtility;
 
@@ -72,7 +77,7 @@ public class OreProcessingRecipes {
         GTNotGood.LOG.info("Loaded large ore processor recipes");
     }
 
-    /** Registers external ore forms whose materials are absent from GregTech's material registry. */
+    /** Registers external ores and imports sifting byproducts after native recipe registration completes. */
     public static void loadExternalOreRecipes() {
         for (String oreName : OreDictionary.getOreNames()) {
             int dustAmount;
@@ -135,6 +140,95 @@ public class OreProcessingRecipes {
                 addRecipe(singleInput, GTUtility.copyAmountUnsafe(dustAmount, dust));
             }
         }
+        addSiftingOutputs();
+    }
+
+    /**
+     * Supplements simplified ore recipes with native purified-ore sifting outputs. Existing dust and gem yields take
+     * precedence; missing products retain their independent native rolls, including repeated output slots.
+     */
+    private static void addSiftingOutputs() {
+        Map<String, GTRecipe> siftingRecipes = new HashMap<>();
+        for (GTRecipe recipe : RecipeMaps.sifterRecipes.getAllRecipes()) {
+            if (!recipe.mEnabled || recipe.mInputs.length != 1
+                || recipe.mInputs[0] == null
+                || recipe.mInputs[0].stackSize != 1
+                || recipe.mFluidInputs.length != 0
+                || recipe.mFluidOutputs.length != 0
+                || recipe.mSpecialItems != null) continue;
+            for (int oreId : OreDictionary.getOreIDs(recipe.mInputs[0])) {
+                String oreName = OreDictionary.getOreName(oreId);
+                if (oreName.startsWith("crushedPurified")) {
+                    String materialName = oreName.substring("crushedPurified".length());
+                    if (matchesMaterial(recipe.mInputs[0], materialName)) {
+                        siftingRecipes.putIfAbsent(materialName, recipe);
+                    }
+                }
+            }
+        }
+
+        int supplemented = 0;
+        for (GTRecipe recipe : OreProcessingRecipes.getAllRecipes()) {
+            ItemStack input = recipe.mInputs[0];
+            for (int oreId : OreDictionary.getOreIDs(input)) {
+                String oreName = OreDictionary.getOreName(oreId);
+                String materialName = getSiftingMaterial(oreName);
+                if (!matchesMaterial(input, materialName)) continue;
+                GTRecipe sifting = siftingRecipes.get(materialName);
+                if (sifting == null) continue;
+
+                List<ItemStack> outputs = new ArrayList<>();
+                List<Integer> chances = new ArrayList<>();
+                for (int i = 0; i < recipe.mOutputs.length; i++) {
+                    outputs.add(recipe.mOutputs[i]);
+                    chances.add(recipe.getOutputChance(i));
+                }
+                int multiplier = oreName.startsWith("oreNetherrack") || oreName.startsWith("oreEndstone") ? 2 : 1;
+                for (int i = 0; i < sifting.mOutputs.length; i++) {
+                    ItemStack output = sifting.mOutputs[i];
+                    if (output == null || output.stackSize <= 0 || sifting.getOutputChance(i) <= 0) continue;
+                    boolean existing = false;
+                    for (ItemStack original : recipe.mOutputs) {
+                        if (GTUtility.areStacksEqual(original, output)) {
+                            existing = true;
+                            break;
+                        }
+                    }
+                    if (existing) continue;
+                    outputs.add(GTUtility.copyAmountUnsafe(output.stackSize * multiplier, output));
+                    chances.add(sifting.getOutputChance(i));
+                }
+                if (outputs.size() > recipe.mOutputs.length) {
+                    recipe.mOutputs = outputs.toArray(new ItemStack[0]);
+                    recipe.mOutputChances = chances.stream()
+                        .mapToInt(Integer::intValue)
+                        .toArray();
+                    supplemented++;
+                }
+                break;
+            }
+        }
+        GTNotGood.LOG.info("Added native sifting products to {} large ore processor recipes", supplemented);
+    }
+
+    /** Broad ore-dictionary groups such as AnyCarbon must not share one material's sifting products. */
+    private static boolean matchesMaterial(ItemStack input, String materialName) {
+        ItemData association = GTOreDictUnificator.getAssociation(input);
+        return association == null || association.mMaterial == null
+            || association.mMaterial.mMaterial == null
+            || association.mMaterial.mMaterial.mName.equals(materialName);
+    }
+
+    /** Only inputs before the sifting branch can receive sifting products; dusts and centrifuged ores cannot. */
+    private static String getSiftingMaterial(String oreName) {
+        if (oreName.startsWith("crushedCentrifuged")) return null;
+        for (OrePrefixes prefix : new OrePrefixes[] { OrePrefixes.crushedPurified, OrePrefixes.crushed,
+            OrePrefixes.rawOre, OrePrefixes.oreNetherrack, OrePrefixes.oreEndstone, OrePrefixes.oreBasalt,
+            OrePrefixes.oreBlackgranite, OrePrefixes.oreRedgranite, OrePrefixes.oreMarble, OrePrefixes.ore }) {
+            String name = prefix.name();
+            if (oreName.startsWith(name)) return oreName.substring(name.length());
+        }
+        return null;
     }
 
     /**

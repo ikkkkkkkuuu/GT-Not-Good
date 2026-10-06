@@ -40,10 +40,17 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.2.9          | [![1.2.9](https://img.shields.io/badge/release-1.2.9-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.2.9) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.3.0          | [![1.3.0](https://img.shields.io/badge/release-1.3.0-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.0) |         ✔️         |
 
-最新版本：[1.2.9 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.2.9)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.2.9/gtnotgood-1.2.9.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.2.9/gtnotgood-1.2.9-sources.jar)。
+最新版本：[1.3.0 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.0)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.0/gtnotgood-1.3.0.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.0/gtnotgood-1.3.0-sources.jar)。
+
+### 大型矿石处理机
+
+保留原有粉末和宝石产量，按原生筛选配方补齐缺失产物，覆盖原矿、粗磨矿、洗净矿和下界/末地富矿。
+例如方钍石保留 8 个原粉，并追加独立的钍粉（6%、3%）和钍-232粉（1%）；富矿产量翻倍，概率不变。
+按实际材料匹配配方，避免石墨等矿石通过矿辞分组继承其他材料的产物。
+已核对当前开发环境的 67 种材料、580 条输入配方，详见 [矿石筛选产物与验证说明](docs/testing/ore-sifting.md)。
 
 ### 电路样板总成（ME）
 

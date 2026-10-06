@@ -102,9 +102,16 @@ public class SteamTurbine extends MTEBasicGenerator implements IAddGregtechLogo 
         return mDescriptionArray;
     }
 
+    /**
+     * Stores 2 L/EU for the nominal energy buffer so the 10-tick fuel cycle can sustain 32 A.
+     *
+     * @return capacity in liters, retaining the original tier capacity as a lower bound
+     * @see #maxEUStore()
+     */
     @Override
     public int getCapacity() {
-        return 640000 * this.mTier;
+        long steamForEnergyBuffer = V[mTier] * 1280L * 2L;
+        return (int) Math.min(Integer.MAX_VALUE, Math.max(640000L * mTier, steamForEnergyBuffer));
     }
 
     @Override

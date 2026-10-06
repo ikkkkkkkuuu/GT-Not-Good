@@ -45,6 +45,7 @@ import gregtech.api.structure.error.StructureErrors;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
+import gregtech.api.util.ParallelHelper;
 import gregtech.common.ores.OreInfo;
 import gregtech.common.ores.OreManager;
 
@@ -282,7 +283,7 @@ public class LargeOreProcessor extends GTNGMultiBlockBase<LargeOreProcessor> imp
      * @return generated output collection ready to apply to the machine
      */
     private ProcessingResult processInputs(List<ItemStack> inputs, RecipeMap<?> recipeMap) {
-        List<ItemStack> outputs = new ArrayList<>();
+        ArrayList<ItemStack> outputs = new ArrayList<>();
         int totalParallel = 0;
 
         for (ItemStack input : inputs) {
@@ -349,23 +350,21 @@ public class LargeOreProcessor extends GTNGMultiBlockBase<LargeOreProcessor> imp
      * Applies one found recipe for a chosen parallel count and appends multiplied outputs.
      * <p>
      * The input stack is reduced in place because GregTech stored-input lists are mutable working copies. Output
-     * amounts
-     * are multiplied manually instead of invoking the normal overclocking/parallel logic, matching this machine's
-     * custom
-     * all-at-once behavior.
+     * chances use GregTech's batch roll calculation. Long output amounts are split before storing them in ItemStacks.
      *
      * @param input    mutable input stack being consumed
      * @param recipe   matching recipe from the custom ore-processing map
      * @param parallel number of input items to process
      * @param outputs  mutable output accumulator
      */
-    private void processRecipe(ItemStack input, GTRecipe recipe, int parallel, List<ItemStack> outputs) {
+    private void processRecipe(ItemStack input, GTRecipe recipe, int parallel, ArrayList<ItemStack> outputs) {
         input.stackSize -= parallel;
 
-        for (ItemStack output : recipe.mOutputs) {
-            if (output != null) {
-                outputs.add(GTUtility.copyAmountUnsafe(output.stackSize * parallel, output));
-            }
+        for (int i = 0; i < recipe.mOutputs.length; i++) {
+            ItemStack output = recipe.mOutputs[i];
+            if (output == null || output.stackSize <= 0) continue;
+            long rolls = ParallelHelper.calculateIntegralChancedOutputMultiplier(recipe.getOutputChance(i), parallel);
+            ParallelHelper.addItemsLong(outputs, output, output.stackSize * rolls);
         }
     }
 
