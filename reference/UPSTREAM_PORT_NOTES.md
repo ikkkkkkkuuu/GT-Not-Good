@@ -1,5 +1,27 @@
 # AE2LT faithful port audit
 
+## ME stock controls — 2026-10-06
+
+Inspected ExtendedAE `76691dbd5636c16ba05684f4b8d1cd98adc923aa` (26.1.2-neoforge, LGPL-3.0)
+and ME Requester `95fbd4b6bfded008c65425bc0c52aec4f07b3ede` (26.1, LGPL-3.0), including licenses,
+threshold parts, requester lifecycle, screens and asset models before adapting behavior/copying original PNGs.
+Inspected AppliedEnergistics/Applied-Energistics-2 tag `v26.1.12-beta`, commit
+`b7cf5822d9c128a61d9291cb2c1f92319253e4f0`, LICENSE and README license before copying shared GUI assets.
+Its textures/models are CC BY-NC-SA 3.0, credited to Ridanisaurus Rid (2020), AlgorithmX2 et al (2013-2020);
+these are excluded from the project's general MIT grant, with noncommercial distribution accepted by the user.
+Inspected GTNH AE2 `rv3-beta-1073-GTNH`, sources SHA-1 `12f114eb4e27c346d0278fcff7a09b5a3067b86`.
+Native exact resource queries, stack watchers and grid-cache APIs replace modern AEKey/capability APIs.
+Destinations: `common/mestock/`; the requester has a newly authored, per-network bounded scheduler and
+automatic deficit batching, shared CPU accounting and authorized inline terminal editing.
+GUI APIs are rewritten for ModularUI2: original threshold bus/amount/emitter frames and toolbar crops,
+requester row layout, state/submit/status widgets, grouped search/scroll and four adaptive terminal height modes.
+Fluid fields display GTNH liters (L); exact native long amounts have no bucket scaling, as requested by the user.
+Submit packets validate live identity.
+Original PNGs remain unchanged and atlas/9-slice coordinates preserve native pixels; GTNH part geometry is reused.
+Packaged source/asset/license/destination/modification/hash records: `META-INF/me-stock-port/`.
+Inspection checkouts are in the OS temporary directory and native sources in `build/aestock-reference`,
+outside source/resource inputs. Usage and TPS design are documented in `docs/ME_STOCK_CONTROLS.md`.
+
 ## Processing batch dispatch reference — 2026-10-05
 
 - Inspected `2824799/Apeiron`, commit `2b84f3ef8e720e629e039db934d75e5f57e53657`, particularly `PatternBatchDispatch` and its CPU mixin. Its original code is GPL-3.0-only; no source or assets were copied.

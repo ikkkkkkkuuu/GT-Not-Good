@@ -40,7 +40,17 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.2.0          | [![1.2.0](https://img.shields.io/badge/release-v1.2.0-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.2.0) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.2.8          | [![1.2.8](https://img.shields.io/badge/release-1.2.8-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.2.8) |         ✔️         |
+
+最新版本：[1.2.8 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.2.8)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.2.8/gtnotgood-1.2.8.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.2.8/gtnotgood-1.2.8-sources.jar)。
+
+### 🔌 ME 库存控制
+
+1.2.8 新增阈值输出总线、双阈值发信器、ME 自动请求器与自动请求终端，支持物品和 GTNH 原生流体。
+阈值总线按网络保留量输出，双阈值发信器在上下限之间保持状态，请求器通过 AE 合成 CPU 自动补齐目标库存。
+四个界面使用上游原贴图、布局和交互；流体以 L 输入和显示，1000 就是 1000 L，不做桶单位换算。
+大量放置时采用资源监听、休眠、通知合并和每网限额队列。详细用法与测试范围见 [ME 库存控制说明](docs/ME_STOCK_CONTROLS.md)。
 
 
 ### 🔌 ME 网桥 / ME Bridge
@@ -126,6 +136,5 @@ x
 
 
 先写到这
-
 
 

@@ -20,13 +20,13 @@ import appeng.util.item.AEItemStack;
  * One adjacent, already-loaded machine face. Item and fluid adapters stay separate so a GT tank's fluid API
  * cannot hide its item inventory. Every mutation uses the machine's ordinary sided insertion/extraction API.
  */
-final class BusTarget {
+public final class BusTarget {
 
     private final InventoryAdaptor items;
     private final IFluidHandler fluids;
     private final ForgeDirection face;
 
-    BusTarget(TileEntity tile, ForgeDirection face) {
+    public BusTarget(TileEntity tile, ForgeDirection face) {
         this.face = face;
         items = InventoryAdaptor.getAdaptor(
             tile,
@@ -35,7 +35,7 @@ final class BusTarget {
         fluids = tile instanceof IFluidHandler handler ? handler : null;
     }
 
-    boolean available() {
+    public boolean available() {
         return items != null || fluids != null;
     }
 
@@ -71,7 +71,7 @@ final class BusTarget {
     }
 
     /** @return accepted quantity; the supplied identity/quantity is never mutated */
-    long insert(IAEStack<?> stack, boolean simulate) {
+    public long insert(IAEStack<?> stack, boolean simulate) {
         if (stack instanceof IAEItemStack && items != null) {
             var rest = simulate ? items.simulateAddStack(stack.copy(), InsertionMode.DEFAULT)
                 : items.addStack(stack.copy(), InsertionMode.DEFAULT);

@@ -1,0 +1,191 @@
+[
+  {
+    "project": "ExtendedAE",
+    "commit": "76691dbd5636c16ba05684f4b8d1cd98adc923aa",
+    "source": "src/main/resources/assets/extendedae/textures/part/threshold_export_bus.png",
+    "destination": "assets/gtnotgood/textures/blocks/threshold_export_bus.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified PNG; rendered with native GTNH geometry.",
+    "sha256": "f9b6f525c2a01e3d8845fe922ced99bb9f7bcc27f831a95f2886d38c9db496c1"
+  },
+  {
+    "project": "ExtendedAE",
+    "commit": "76691dbd5636c16ba05684f4b8d1cd98adc923aa",
+    "source": "src/main/resources/assets/extendedae/textures/part/threshold_emitter.png",
+    "destination": "assets/gtnotgood/textures/blocks/threshold_level_emitter.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified PNG; rendered with native GTNH geometry.",
+    "sha256": "7fd50cae8801d0a33004fd9ba1c29d12bc79138d53c3dfaa10265e07494631b2"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/textures/block/requester.png",
+    "destination": "assets/gtnotgood/textures/blocks/me_requester.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified PNG; rendered with native GTNH geometry.",
+    "sha256": "4cd91435cd575338b13609f0b446acec5640058a57b910362b9bc9cf2a2c7a2b"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/textures/part/requester_terminal.png",
+    "destination": "assets/gtnotgood/textures/blocks/requester_terminal.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified PNG; rendered with native GTNH geometry.",
+    "sha256": "5abf8d710b3735fc349a7c8561dbbbe2b5fc8b9363d2fb166987ab22959c3425"
+  },
+  {
+    "project": "ExtendedAE",
+    "commit": "76691dbd5636c16ba05684f4b8d1cd98adc923aa",
+    "source": "src/main/resources/assets/ae2/textures/guis/threshold_level_emitter.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/threshold_level_emitter.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified PNG; original atlas coordinates and native pixel sizes preserved.",
+    "sha256": "86f0023f1069b4e6195803d0322bf4c4e81a30811d4abe661064bcf748767201"
+  },
+  {
+    "project": "ExtendedAE",
+    "commit": "76691dbd5636c16ba05684f4b8d1cd98adc923aa",
+    "source": "src/main/resources/assets/extendedae/textures/guis/nicons.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/nicons.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified PNG; original atlas coordinates and native pixel sizes preserved.",
+    "sha256": "933cb7c5a71b7516f4493a476c5fac6e093697f12975674045e513399149ccde"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/textures/gui/requester.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/requester.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified PNG; original atlas coordinates and native pixel sizes preserved.",
+    "sha256": "07a2c36664b599688e307c8a4f7701c2c69f2bfa8804f1be1016fce7b5fd1ab8"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/textures/gui/requester_terminal.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/requester_terminal.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified PNG; original atlas coordinates and native pixel sizes preserved.",
+    "sha256": "9bbd2fcbb7ae657485b9b4bef122dc100c7f8de155f5fdfda67f9ac6fe50069e"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/textures/gui/state_box.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/state_box.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified PNG; original atlas coordinates and native pixel sizes preserved.",
+    "sha256": "a5fea6cb2e848e51b15e76bcb5a1cc85238a3b62c6b242c673de98f9bfc04eb5"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/textures/gui/submit_button.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/submit_button.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified PNG; original atlas coordinates and native pixel sizes preserved.",
+    "sha256": "8584a7ca087a96e7f87a18f493e3fa26bb827208c0db80c7406d4354567319b1"
+  },
+  {
+    "project": "AE2-modern",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/guis/storagebus.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/storagebus.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified PNG; original atlas coordinates and native pixel sizes preserved.",
+    "sha256": "434aaf794ad206a5c0d247e24fdbc5c8f9f7ad1c96c37ea5ae6e75f4d30bd599"
+  },
+  {
+    "project": "AE2-modern",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/guis/craft_amt.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/craft_amt.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified PNG; original atlas coordinates and native pixel sizes preserved.",
+    "sha256": "4d1a8a0528db8fec9fb8732a2c68b47322b027448ac96b9c23ff8ea170c11343"
+  },
+  {
+    "project": "AE2-modern",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/guis/extra_panels.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/extra_panels.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified PNG; original atlas coordinates and native pixel sizes preserved.",
+    "sha256": "c67fed0f98c9ca67a0602b5589a5191d59d5dd2bd3848c62de0e209e0e44b8b0"
+  },
+  {
+    "project": "AE2-modern",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/guis/states.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/states.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified PNG; original atlas coordinates and native pixel sizes preserved.",
+    "sha256": "0996b0084c7bf37f65a97a745982ab681ebd86f142fade526f14c823c4727e55"
+  },
+  {
+    "project": "AE2-modern",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/big_scroller.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/big_scroller.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified PNG; original pixel sizes and nine-slice borders preserved.",
+    "sha256": "583732b6abe3ccea373213b1ecf62217b724d3b2acd71b07070ec7f2e7aa13d3"
+  },
+  {
+    "project": "AE2-modern",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/big_scroller_disabled.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/big_scroller_disabled.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified PNG; original pixel sizes and nine-slice borders preserved.",
+    "sha256": "49e033a0736e52117a81e0f10715720f82cc82286fd072303702c757220cb374"
+  },
+  {
+    "project": "AE2-modern",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/button.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/button.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified PNG; original pixel sizes and nine-slice borders preserved.",
+    "sha256": "5e815b235384d3ad4422e61e044804c097e486ffdb61fade6056965069c8f382"
+  },
+  {
+    "project": "AE2-modern",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/button_highlighted.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/button_highlighted.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified PNG; original pixel sizes and nine-slice borders preserved.",
+    "sha256": "5f2bda04a241ebfd4dac3799c42b413c2653f6607757c95e41d86eb73b3f7ca9"
+  },
+  {
+    "project": "AE2-modern",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/button_disabled.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/button_disabled.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified PNG; original pixel sizes and nine-slice borders preserved.",
+    "sha256": "d45e7b6314c216b81489f576c3c06e736d34502ef3c6db1430308e1bb34227f2"
+  },
+  {
+    "project": "AE2-modern",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/vertical_buttons_bg.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/vertical_buttons_bg.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified PNG; original pixel sizes and nine-slice borders preserved.",
+    "sha256": "62150f9869ee17cbd15bda963542287bf798482ceed1f18f0e24dd82381f7715"
+  },
+  {
+    "project": "AE2-modern",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/guis/text_field.png",
+    "destination": "assets/gtnotgood/textures/gui/me_stock/text_field.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified PNG; original focused/unfocused crops and horizontal borders preserved.",
+    "sha256": "73bba41174d3ec15d83947e439915873611735fe436ad0cbc7653eca15e23ad1"
+  }
+]

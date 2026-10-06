@@ -11,6 +11,7 @@ import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
 import com.xyp.gtnotgood.common.mebridge.MEBridgeEventHandler;
 import com.xyp.gtnotgood.common.mebridge.MEWirelessLinkEventHandler;
+import com.xyp.gtnotgood.common.mestock.StockRegistration;
 import com.xyp.gtnotgood.common.packet.NetWorkHandler;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
 import com.xyp.gtnotgood.config.Config;
@@ -54,6 +55,7 @@ public class CommonProxy {
             .bus()
             .register(StructureSearch.INSTANCE);
         BlockLoader.registry();
+        StockRegistration.preInit();
         MachineLoader.registry();
         AE2Thing.preInit(event, GTNotGood.instance);
 
@@ -81,6 +83,7 @@ public class CommonProxy {
         GuiManager.registerFactory(com.xyp.gtnotgood.common.advancedio.AdvancedIOGuiFactory.INSTANCE);
         GuiManager.registerFactory(LargeVoidMinerConfigGuiFactory.INSTANCE);
         RecipeLoader.loadRecipes();
+        StockRegistration.init();
         AE2Thing.init(event);
         com.xyp.gtnotgood.commandtree.CommandTreeBootstrap.init();
     }

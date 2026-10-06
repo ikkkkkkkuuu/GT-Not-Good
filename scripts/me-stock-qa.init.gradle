@@ -1,0 +1,44 @@
+// Real item/fluid stock controls, GUI, restart and bounded large-queue checks; fixtures never enter release jars.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (efr.exists()) root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.tasks.named('compileTestJava').configure { setSource(root.files('scripts/qa/MEStockClientChecks.java')) }
+    root.extensions.findByName('spotless')?.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/mestock/*.java',
+            'src/main/java/com/xyp/gtnotgood/common/advancedio/BusTarget.java',
+            'src/main/java/com/xyp/gtnotgood/CommonProxy.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+            'scripts/qa/MEStockClientChecks.java'
+    }
+    def snapshot = root.tasks.register('snapshotMEStockQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/MEStockClientChecks*.class'
+        into root.layout.buildDirectory.dir('me-stock-qa/classes')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn snapshot
+        classpath += root.files(root.layout.buildDirectory.dir('me-stock-qa/classes'))
+        workingDir root.file('run/me-stock-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.meStock.resume', root.findProperty('meStockResume') ?: ''
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('isolated stock-control QA')
+        doFirst {
+            workingDir.mkdirs()
+            java.nio.file.Files.deleteIfExists(new File(workingDir, 'result.txt').toPath())
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\npauseOnLostFocus:false\nguiScale:2\n', 'UTF-8')
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(root.file('build/me-stock-qa-window-helper.log')).start()
+        }
+        doLast {
+            def result = new File(workingDir, 'result.txt')
+            if (!result.exists() || !['PASS', 'SAVED'].contains(result.text.trim())) {
+                throw new GradleException('ME stock QA failed; inspect ME_STOCK_QA in the client log.')
+            }
+        }
+    }
+}

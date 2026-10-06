@@ -1,5 +1,7 @@
 # Project Memory
 
+- As part of every “提交并更新” release workflow, update README release and version-specific download links to point to the new release and its matching assets, including any displayed version text. Include these README changes in the release commit and verify the links after the release is published.
+
 - After feature updates or fixes, the user's phrase “提交并更新” authorizes the full release workflow: format the code, run the required checks, commit and push changes, create the next appropriate version tag following the repository's version convention, and push the tag. Complete this workflow without asking for repeated confirmation. Create or update the corresponding GitHub Release and write concrete Chinese release notes describing that version's features and fixes in its body; a compare link alone is insufficient. If CI creates the release, wait for it and ensure the release body contains these notes.
 
 - Release notes must summarize all accumulated changes since the previous published release tag through the new release, including work across earlier conversations and commits plus changes being committed now. Inspect the full Git log and diff for that range and summarize the resulting features, improvements, and fixes in Chinese, consolidating duplicates and excluding reverted changes. Never limit the notes to the current conversation, latest commit, or most recent feature, even if a long time has passed since the user last said “提交并更新”.
