@@ -3,6 +3,7 @@ package com.xyp.gtnotgood;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.loader.QuestLoader;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
@@ -132,6 +133,7 @@ public class GTNotGood {
     /** Clears connection-scoped RTS state before another integrated or dedicated server starts. */
     @Mod.EventHandler
     public void serverStopped(cpw.mods.fml.common.event.FMLServerStoppedEvent event) {
+        WirelessMonitorService.reset();
         if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
             com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.onServerStopped(event);
     }

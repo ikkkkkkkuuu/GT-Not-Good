@@ -1,0 +1,23 @@
+{
+  "extendedae:part/threshold_export_bus": "threshold_export_bus",
+  "ae2:part/export_bus_sides": "mestock/ae2/part/export_bus_sides",
+  "ae2:part/monitor_back_no_status": "mestock/ae2/part/monitor_back_no_status",
+  "ae2:part/monitor_sides_status": "mestock/ae2/part/monitor_sides_status",
+  "extendedae:part/threshold_emitter": "threshold_level_emitter",
+  "ae2:part/monitor_sides": "mestock/ae2/part/monitor_sides",
+  "ae2:part/monitor_front": "mestock/ae2/part/monitor_front",
+  "ae2:part/monitor_back": "mestock/ae2/part/monitor_back",
+  "merequester:part/requester_terminal_bright": "mestock/merequester/part/requester_terminal_bright",
+  "ae2:part/monitor_colored": "mestock/ae2/part/monitor_colored",
+  "merequester:part/requester_terminal_medium": "mestock/merequester/part/requester_terminal_medium",
+  "merequester:part/requester_terminal_dark": "mestock/merequester/part/requester_terminal_dark",
+  "ae2:block/generics/side": "mestock/ae2/block/generics/side",
+  "ae2:block/generics/back": "mestock/ae2/block/generics/back",
+  "ae2:block/generics/top": "mestock/ae2/block/generics/top",
+  "ae2:block/generics/bottom": "mestock/ae2/block/generics/bottom",
+  "merequester:block/requester": "me_requester",
+  "merequester:block/requester_active": "mestock/merequester/block/requester_active",
+  "ae2:part/monitor_sides_status_off": "mestock/ae2/part/monitor_sides_status_off",
+  "ae2:part/monitor_sides_status_on": "mestock/ae2/part/monitor_sides_status_on",
+  "ae2:part/monitor_sides_status_has_channel": "mestock/ae2/part/monitor_sides_status_has_channel"
+}

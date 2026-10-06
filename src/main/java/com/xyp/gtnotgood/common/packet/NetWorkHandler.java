@@ -45,8 +45,10 @@ public final class NetWorkHandler {
         registerMessage(
             com.xyp.gtnotgood.commandtree.network.CommandTreePacket.class,
             com.xyp.gtnotgood.commandtree.network.CommandTreePacket.Handler.class,
-            id,
+            id++,
             Side.CLIENT);
+        registerMessage(WirelessMonitorRequest.class, WirelessMonitorRequest.Handler.class, id++, Side.SERVER);
+        registerMessage(WirelessMonitorSnapshot.class, WirelessMonitorSnapshot.Handler.class, id, Side.CLIENT);
     }
 
     private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<REQ> messageClass,

@@ -38,6 +38,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
     private static final String QUICK_PLAYER_PIN_ROWS = "gtnhQolQuickPlayerPinRows";
     private static final String QUICK_COMBINE = "gtnotgoodQuickCombine";
     private static final String QUICK_PRIORITIZE_FLUIDS = "gtnotgoodQuickPrioritize";
+    private static final String QUICK_KEEP_NON_CONSUMABLES = "gtnotgoodQuickKeepNonConsumables";
     private static final String QUICK_PROCESSING_FLUID_INPUTS = "gtnhQolQuickProcessingFluidInputs";
     private static final String QUICK_CRAFTING_SNAPSHOT = "gtnhQolQuickCraftingSnapshot";
     private static final String QUICK_PROCESSING_SNAPSHOT = "gtnhQolQuickProcessingSnapshot";
@@ -378,6 +379,16 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
     public void setPrioritizeFluids(boolean prioritizeFluids) {
         Platform.openNbtData(getItemStack())
             .setBoolean(QUICK_PRIORITIZE_FLUIDS, prioritizeFluids);
+    }
+
+    public boolean shouldKeepNonConsumables() {
+        return Platform.openNbtData(getItemStack())
+            .getBoolean(QUICK_KEEP_NON_CONSUMABLES);
+    }
+
+    public void setKeepNonConsumables(boolean keep) {
+        Platform.openNbtData(getItemStack())
+            .setBoolean(QUICK_KEEP_NON_CONSUMABLES, keep);
     }
 
     public int getCraftingPinRows(int fallback) {

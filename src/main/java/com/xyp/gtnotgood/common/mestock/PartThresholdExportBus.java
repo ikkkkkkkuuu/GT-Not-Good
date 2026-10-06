@@ -4,6 +4,7 @@ package com.xyp.gtnotgood.common.mestock;
 import java.util.Arrays;
 import java.util.List;
 
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
 
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.xyp.gtnotgood.client.mestock.StockModelRenderer;
 import com.xyp.gtnotgood.common.advancedio.BusTarget;
 
 import appeng.api.config.Actionable;
@@ -24,6 +26,7 @@ import appeng.api.networking.storage.IStackWatcher;
 import appeng.api.networking.storage.IStackWatcherHost;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
+import appeng.api.parts.IPartRenderHelper;
 import appeng.api.storage.IMEInventory;
 import appeng.api.storage.StorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
@@ -34,6 +37,8 @@ import appeng.me.GridAccessException;
 import appeng.parts.automation.PartExportBus;
 import appeng.util.Platform;
 import appeng.util.SettingsFrom;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Exports resources according to their network stock, preserving the exact reserve in above-threshold mode.
@@ -55,6 +60,20 @@ public final class PartThresholdExportBus extends PartExportBus implements Stock
 
     public PartThresholdExportBus(ItemStack stack) {
         super(stack);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderInventory(IPartRenderHelper helper, RenderBlocks renderer) {
+        StockModelRenderer.inventory("extendedae:item/threshold_export_bus");
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderStatic(int x, int y, int z, IPartRenderHelper helper, RenderBlocks renderer) {
+        StockModelRenderer.part("extendedae:part/threshold_export_bus_base", x, y, z, helper, renderer, getColor());
+        StockModelRenderer
+            .part(StockModelRenderer.indicator("export_bus", getClientFlags()), x, y, z, helper, renderer, getColor());
     }
 
     @Override

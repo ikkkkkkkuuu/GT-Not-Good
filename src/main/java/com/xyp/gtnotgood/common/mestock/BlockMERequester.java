@@ -11,17 +11,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import com.xyp.gtnotgood.client.GTNGCreativeTabs;
-import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.gtnotgood.client.mestock.StockModelRenderer;
 
-import appeng.api.AEApi;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 /** Requester configuration survives relocation; completed products belong to the ME network. */
 public final class BlockMERequester extends Block {
+
+    public static int renderId;
 
     public BlockMERequester() {
         super(Material.iron);
@@ -60,6 +62,13 @@ public final class BlockMERequester extends Block {
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack stack) {
         if (!world.isRemote && world.getTileEntity(x, y, z) instanceof TileMERequester tile) {
+            int direction = MathHelper.floor_double(placer.rotationYaw * 4 / 360 + 0.5) & 3;
+            world.setBlockMetadataWithNotify(x, y, z, switch (direction) {
+                case 0 -> 2;
+                case 1 -> 5;
+                case 2 -> 3;
+                default -> 4;
+            }, 2);
             if (placer instanceof EntityPlayer player) tile.setOwnerName(player.getCommandSenderName());
             if (stack.hasTagCompound()) tile.readSettings(stack.getTagCompound());
             if (stack.hasDisplayName()) tile.setName(stack.getDisplayName());
@@ -94,19 +103,36 @@ public final class BlockMERequester extends Block {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister register) {
-        blockIcon = register.registerIcon(ModList.GTNotGood.getResourcePath("me_requester"));
+        StockModelRenderer.registerIcons(register);
+        blockIcon = StockModelRenderer.icon("merequester:block/requester");
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public IIcon getIcon(int side, int metadata) {
-        return side == 3 ? blockIcon
-            : AEApi.instance()
-                .definitions()
-                .blocks()
-                .iface()
-                .maybeBlock()
-                .get()
-                .getIcon(side, 0);
+        if (side == front(metadata)) return blockIcon;
+        return StockModelRenderer.icon(
+            "ae2:block/generics/"
+                + (side == 0 ? "bottom" : side == 1 ? "top" : side == (front(metadata) ^ 1) ? "back" : "side"));
+    }
+
+    /** Legacy metadata zero keeps its original south-facing front. */
+    public static int front(int metadata) {
+        return metadata >= 2 && metadata <= 5 ? metadata : 3;
+    }
+
+    @Override
+    public int getRenderType() {
+        return renderId;
+    }
+
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
     }
 }

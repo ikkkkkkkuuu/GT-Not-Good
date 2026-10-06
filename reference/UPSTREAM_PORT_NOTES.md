@@ -1,5 +1,32 @@
 # AE2LT faithful port audit
 
+## GTL circuit pattern buffer — 2026-10-06
+
+- Behavioral reference: https://github.com/GNSW/GTLCore, commit `478601a3ca554af3df5c2ad7ffb8e2a6d8e0228b`.
+  Inspected `MEPatternBufferPartMachine`, `MEBufferPatternHelper`, `PatternCircuitConfigurator`, base and recipe traits.
+- This snapshot has no root license and GitHub reports no license. No upstream implementation or visual assets are
+  copied or packaged. Reference Java files are stored in ignored `reference/gtl-pattern-buffer`, outside source sets.
+- Independent GTNH implementation: `common/machines/hatch/me/{CircuitMEPatternBuffer,CircuitPatternCodec}.java`;
+  shared MUI2 hatch GUI, central item/machine registration and existing LV assembler progression. Long buffering
+  is implemented in `common/machines/hatch/me/LongCircuitBuffer.java` without upstream code.
+- Behavior: automatically reads per-pattern integrated circuits, native AE input requests with circuits removed,
+  900 pattern slots, 64 item and 64 fluid types per pattern, each bounded
+  to `Long.MAX_VALUE`. Stable int-sized recipe views settle GT debits into the long reserve and refill on access.
+  Whole CPU batches are rejected atomically if a type limit or long quantity limit is exceeded.
+- Native AE Ultimate Encoded Pattern fluid NBT remains intact. Runtime circuit identity is serialized in native
+  pattern NBT to distinguish equal materials with different circuits and survive CPU task reload.
+- Existing GT textures and MUI2 controls are referenced from the installed dependency; no new bitmap assets.
+- Circuit configuration controls and shared fallback are omitted by user request; physical patterns are never edited.
+- This circuit variant also omits the virtual mold control and only shares physical manual item slots. Its previous
+  int save format migrates on load. Failed long refunds remain in a saved queue; dropped hatches retain these reserves
+  for ME refund after replacement instead of creating billions of int-sized item entities. Waila aggregates use
+  exact counters so totals across multiple full long buffers cannot wrap negative.
+- Native AE2 `Platform.poweredInsert` uses a ceiling division that adds the unit divisor before subtracting one.
+  Extreme refunds reserve that headroom and send the remaining tail separately; the buffer still stores the full
+  signed-long maximum. Real item/fluid storage-cell tests verify exact partial-refund remainders.
+- The quick terminal has an opt-in NEI import control for zero-sized circuits and current virtual mold selector items.
+  It reuses the selector's matcher, encodes these inputs as one item, and continues omitting other non-consumables.
+
 ## ME stock controls — 2026-10-06
 
 Inspected ExtendedAE `76691dbd5636c16ba05684f4b8d1cd98adc923aa` (26.1.2-neoforge, LGPL-3.0)
@@ -17,7 +44,15 @@ GUI APIs are rewritten for ModularUI2: original threshold bus/amount/emitter fra
 requester row layout, state/submit/status widgets, grouped search/scroll and four adaptive terminal height modes.
 Fluid fields display GTNH liters (L); exact native long amounts have no bucket scaling, as requested by the user.
 Submit packets validate live identity.
-Original PNGs remain unchanged and atlas/9-slice coordinates preserve native pixels; GTNH part geometry is reused.
+Original PNGs remain unchanged and atlas/9-slice coordinates preserve native pixels.
+Item and placed-device rendering now uses the pinned upstream cuboids, face UVs, rotations and state layers.
+Destinations: `client/mestock/StockModelRenderer.java`, `META-INF/me-stock-port/models/` and
+`assets/gtnotgood/textures/blocks/mestock/`. The 27 model JSONs retain their geometry/UV data; only line endings
+and trailing whitespace are normalized. All PNGs are copied unchanged, including the requester active texture
+and its animation metadata. Generated binding/root lists adapt the original resource names to this mod.
+The three cable items register the native AE bus item renderer; the requester uses a client-only block renderer.
+Texture-stitch completion publishes immutable baked quads for Angelica workers and rebuilds them on resource reload.
+Requester power/channel events synchronize only a changed visual flag, without additional tick polling.
 Packaged source/asset/license/destination/modification/hash records: `META-INF/me-stock-port/`.
 Inspection checkouts are in the OS temporary directory and native sources in `build/aestock-reference`,
 outside source/resource inputs. Usage and TPS design are documented in `docs/ME_STOCK_CONTROLS.md`.
@@ -563,3 +598,33 @@ remains outside compilation/resource inputs. Validation details: docs/testing/ld
 - Cross-recipe processing retains summed duration/EU/t, with remaining-power checks and a 256-group bound. Output protection uses a single native transaction; cross-recipe grouping requires both output types to allow overflow. Fluid outputs remain separate stacks to avoid integer overflow.
 - Structure: original 15 x 17 x 15 arrangement; short source rows padded on the right, preserving block positions. Controller offset (7, 8, 0).
 - No new visual assets copied. Sibling/reference source trees are not compilation or resource inputs.
+
+## Personal wireless network HUD (2026-10-06)
+
+- Functional reference: https://github.com/MIAOKATZE/GT-Simple-Wireless-Network, inspected HEAD
+  `c311328a32ab58750f928a9e5980a1adc55b2d68`, README, `WirelessMonitorHUD`, `HudController`,
+  `EUDataSet`, request/reply packets and `LICENSE` (AGPL-3.0).
+- Independently implemented the three-line display from its public behavior using the installed
+  GT5U 5.09.54.183 `WirelessNetworkManager` / `SpaceProjectManager` APIs. No upstream implementation
+  source, artwork, textures or bundled code is copied or packaged. The reference checkout is under
+  ignored `build/upstream-wireless-monitor`, outside all source and resource sets.
+- Destinations: `client/wireless`, `common/wireless/monitor`, `common/packet/WirelessMonitor*`.
+  Uses the existing local animated-text engine and preview; its existing license records remain applicable.
+- Adaptations: available to every player without an item, one configurable toggle key, client-local
+  persistent settings, own/team-only server snapshots, exact arbitrary-precision balance arithmetic,
+  five-minute rolling net EU/t and animated palettes/speed independent of machine-credit settings.
+- Coexistence: distinct packages, namespaced translations, original GTNG packet channel and client
+  configuration, no upstream mixins or registrations. Default position is at the bottom left, away from
+  the upstream monitor's food-bar anchor. Original GTSWN functionality is not intercepted.
+- QA uses the published `gtswn-v1.8.16-dev.jar` as an opt-in runtime dependency only; it is never
+  embedded or added to production dependency declarations.
+- Verified: formatting/compilation/resources, eight focused JUnit checks and hidden client integration
+  checks with GTSWN v1.8.16 installed. Empty-inventory activation, charging/discharging, disabled polling,
+  saved effect settings, independent machine-credit settings, both HUDs visible and upstream-only HUD
+  after disabling GTNG all passed. Screenshots/results are in ignored `build/wireless-monitor-qa`.
+- Position editing: inspected the installed GT5U 5.09.54.183 power-goggles keybind and HUD-config
+  interactions as a behavior reference; no source or assets copied. Independent Home-key editor
+  drags the complete HUD using its shared render bounds, clamps it inside the screen, resets its
+  position and saves existing X/Y offsets on exit. It does not change the goggles or GTSWN settings.
+- Additional hidden-client QA passed: edit key opens/closes, drag offset preserved, saved position
+  reloads, out-of-screen dragging clamps, reset persists, Esc exits, and both mods continue to coexist.

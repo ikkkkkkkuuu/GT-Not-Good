@@ -187,5 +187,419 @@
     "license": "CC-BY-NC-SA-3.0",
     "modifications": "Unmodified PNG; original focused/unfocused crops and horizontal borders preserved.",
     "sha256": "73bba41174d3ec15d83947e439915873611735fe436ad0cbc7653eca15e23ad1"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/item/part_base.json",
+    "destination": "META-INF/me-stock-port/models/ae2/item/part_base.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "9d4339a2d865b5e754d7d8abccd5b87ca6bc9e929a9280df406dce65699ce74e"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/item/export_bus.json",
+    "destination": "META-INF/me-stock-port/models/ae2/item/export_bus.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "b9573e2fa944450a2aa4b1ad8a5c0edba31c85e721ba33bafa795ae596aa74e8"
+  },
+  {
+    "project": "ExtendedAE",
+    "commit": "76691dbd5636c16ba05684f4b8d1cd98adc923aa",
+    "source": "src/main/resources/assets/extendedae/models/item/threshold_export_bus.json",
+    "destination": "META-INF/me-stock-port/models/extendedae/item/threshold_export_bus.json",
+    "license": "LGPL-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "d6172cc391ace626eebe72f3e37830658671383cf70bb91021ef472a769c2d0b"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/part/export_bus_sides.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/part/export_bus_sides.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "42258704787b218b51520efee04a7703719f5eb531f989bcaf58f93e6d8a0a42"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/export_bus_base.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/export_bus_base.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "0613756bde14cbccf29a8e3f7779fe75c02cbd4f31233a3317cb719a570d2116"
+  },
+  {
+    "project": "ExtendedAE",
+    "commit": "76691dbd5636c16ba05684f4b8d1cd98adc923aa",
+    "source": "src/main/resources/assets/extendedae/models/part/threshold_export_bus_base.json",
+    "destination": "META-INF/me-stock-port/models/extendedae/part/threshold_export_bus_base.json",
+    "license": "LGPL-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "5ce636230773d665ad1198264e6d84c4ea5258c516b8ad2325585e463cdc598c"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/part/monitor_back_no_status.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/part/monitor_back_no_status.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "5731fe2cab599da90e249b39259794f4de9253338828603921765439d82c9029"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/part/monitor_sides_status.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/part/monitor_sides_status.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "6919534933452d822a8db16e3bb78a385163a24a73f221c9c937f22167049829"
+  },
+  {
+    "project": "ExtendedAE",
+    "commit": "76691dbd5636c16ba05684f4b8d1cd98adc923aa",
+    "source": "src/main/resources/assets/extendedae/models/item/threshold_level_emitter.json",
+    "destination": "META-INF/me-stock-port/models/extendedae/item/threshold_level_emitter.json",
+    "license": "LGPL-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "32bb7aecde77e163d6777859a69f5ce1b0403ea693fb7fff1d1b8dd7ef3ef0e2"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/level_emitter_base_off.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/level_emitter_base_off.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "9fc4c51e08046b42041a565874ffa94b7a479313143c50ab44261cae81381cac"
+  },
+  {
+    "project": "ExtendedAE",
+    "commit": "76691dbd5636c16ba05684f4b8d1cd98adc923aa",
+    "source": "src/main/resources/assets/extendedae/models/part/threshold_level_emitter_base_off.json",
+    "destination": "META-INF/me-stock-port/models/extendedae/part/threshold_level_emitter_base_off.json",
+    "license": "LGPL-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "0c24e1efeb47acd411c79cb49f1f4f6ffc03ac81409ff500ae2bc32db71025b1"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/part/monitor_sides.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/part/monitor_sides.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "7f801e1df17b380a42ae7501c89ceeb2fbcf5338e68cb5c32e986cd915dcac7e"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/level_emitter_base_on.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/level_emitter_base_on.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "16f02715da33b11e4bc9d26dacc75b2877c05db6442f19f41202986fd730df90"
+  },
+  {
+    "project": "ExtendedAE",
+    "commit": "76691dbd5636c16ba05684f4b8d1cd98adc923aa",
+    "source": "src/main/resources/assets/extendedae/models/part/threshold_level_emitter_base_on.json",
+    "destination": "META-INF/me-stock-port/models/extendedae/part/threshold_level_emitter_base_on.json",
+    "license": "LGPL-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "21e7ff8f81892001aa2fd9ffd249bd2178ab9ad246e217a12b8d574d9f89aa09"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/item/display_base.json",
+    "destination": "META-INF/me-stock-port/models/ae2/item/display_base.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "51781bbb754c45340f0bc4a45d68ec0512e72f3898e7730fc1490927330af8e2"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/models/item/requester_terminal.json",
+    "destination": "META-INF/me-stock-port/models/merequester/item/requester_terminal.json",
+    "license": "LGPL-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "ca9422021b9c8e76588684a805c1e5737aa1885d97df2f0f8e1802e89f49975e"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/part/monitor_front.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/part/monitor_front.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "0c304dd14ab433eab35115eedaf411278ab9c79786252f461ac525ea337852a6"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/part/monitor_back.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/part/monitor_back.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "0fbd8a8743d7c56fcbc5ecf3957e3c6b7b50d67b43169129eccfefb5605e0af5"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/textures/part/requester_terminal_bright.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/merequester/part/requester_terminal_bright.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "b91949b6837088b9fcb553329cdc10fbedaabac627401e9eb4372165458be487"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/part/monitor_colored.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/part/monitor_colored.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "0a55d056f3db2f501922aefb00f8da66605262ee8e95c413da1c1be057ccf7d2"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/textures/part/requester_terminal_medium.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/merequester/part/requester_terminal_medium.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "c0ad05e903d754857f51f0e6b55501e7b1c59a6000460dda89338b1828069e18"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/textures/part/requester_terminal_dark.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/merequester/part/requester_terminal_dark.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "0e8f691f4ecd780e73dfedcaacaecc312558b49baea28ad4572b1f227354ff17"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/display_off.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/display_off.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "978c759531c9bd90b0832f77c4b19a926fed9d450869604f2f40d382ccfe67f6"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/models/part/requester_terminal_off.json",
+    "destination": "META-INF/me-stock-port/models/merequester/part/requester_terminal_off.json",
+    "license": "LGPL-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "f45ca419b4841a1b25f5ccdaef77725ffc635146e89c98c2817f5222025f10b3"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/models/part/requester_terminal_on.json",
+    "destination": "META-INF/me-stock-port/models/merequester/part/requester_terminal_on.json",
+    "license": "LGPL-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "c2f20e21732a229ce8d405447d922058da30d021913d55d9b426bf62a0eb9158"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/models/block/requester.json",
+    "destination": "META-INF/me-stock-port/models/merequester/block/requester.json",
+    "license": "LGPL-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "80fb8c36f46cba8d9cdc755768e2edf2a0e9a207018c155f58da939d180e2b17"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/block/generics/side.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/block/generics/side.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "ff1ba98262fe5722cd8a1015e7c026f1e902e7a42879e1f4309e854c27022812"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/block/generics/back.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/block/generics/back.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "8d035a9a9dec872ff8a5c6a46c46f422b365097d6422b440b23cb8c59883bd4e"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/block/generics/top.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/block/generics/top.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "598aa145bdeebbbdd7cefdd63b6ea7a42325e63399f1f3fa45c2056885bfd7d5"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/block/generics/bottom.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/block/generics/bottom.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "ecb2cee5ead9c1303a6ecd65adce2110974ac488b3eedcd30f370af7ebc6ac42"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/models/block/requester_active.json",
+    "destination": "META-INF/me-stock-port/models/merequester/block/requester_active.json",
+    "license": "LGPL-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "51ef43720369e490ffc9491abddb852ebc7818ae73a50cc8641225afe853b26d"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/textures/block/requester_active.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/merequester/block/requester_active.png",
+    "license": "LGPL-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "17c42cf6d648b9114f26ff087502d00ba0ed3f2682c5dd35f392912990ecaa52"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/display_base.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/display_base.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "3a183c2ce37f453540333b5c25ed73cc77090bf00365345151757868e7030efd"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/export_bus_off.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/export_bus_off.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "9c19812e0f65882fb89e88d39886e680de8f4902e52b5d183c0dbf63f473b33d"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/part/monitor_sides_status_off.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/part/monitor_sides_status_off.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "7fcf547a4b40cdd91686354a120422d0868ea05bf4ac3d635d89e86e8b169892"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/export_bus_on.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/export_bus_on.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "65782814338c5686b4d1495dead9d18c91b884e2349d8700a4da133ae9d95b9a"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/part/monitor_sides_status_on.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/part/monitor_sides_status_on.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "5dda081025a4d57b25ea404aeecac6ebe73776432402591069282586e50cc0ea"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/export_bus_has_channel.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/export_bus_has_channel.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "5962aeb3ca105d6fc2da36592f69c9cc3ae729ad755c4038c13b97ab6e973392"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/textures/part/monitor_sides_status_has_channel.png",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/ae2/part/monitor_sides_status_has_channel.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "Unmodified upstream asset; original geometry and UVs rendered by the Forge 1.7.10 adapter.",
+    "sha256": "5bdc442ac0fa9d38c79c036d0b6ad732da0187109209ddf3b7497df932b525f1"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/level_emitter_status_off.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/level_emitter_status_off.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "c51535754e7ab7279f9b7e30d58e80e70bfd132f7a5e13b3406e5f3a2ff9cf78"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/level_emitter_status_on.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/level_emitter_status_on.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "1a6306203378e9d4dacb23496b08b11b6443ba986f343b4dd053b073b980d8eb"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/level_emitter_status_has_channel.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/level_emitter_status_has_channel.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "57d5cc192fdb408c41389cba003543b511ca93a4260b660f2b838df1fdc8db58"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/display_status_off.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/display_status_off.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "fe477a338059df0cc323d813830207a4a0d63488d9e2a6dfc7b84a638e48cf7e"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/display_status_on.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/display_status_on.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "94023c7e2d54697bc1b62749ff8ea75729e26effee75e97a4499898db35a33a7"
+  },
+  {
+    "project": "AppliedEnergistics/Applied-Energistics-2",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "source": "src/main/resources/assets/ae2/models/part/display_status_has_channel.json",
+    "destination": "META-INF/me-stock-port/models/ae2/part/display_status_has_channel.json",
+    "license": "CC-BY-NC-SA-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "b5e5d1504b8a28d93301f2888de02c2dd0a04f729cd5b3077b6c3017bd72b79d"
+  },
+  {
+    "project": "merequester",
+    "commit": "95fbd4b6bfded008c65425bc0c52aec4f07b3ede",
+    "source": "src/main/resources/assets/merequester/textures/block/requester_active.png.mcmeta",
+    "destination": "assets/gtnotgood/textures/blocks/mestock/merequester/block/requester_active.png.mcmeta",
+    "license": "LGPL-3.0",
+    "modifications": "JSON line endings/trailing whitespace normalized; original data unchanged.",
+    "sha256": "99387eef582677bdd82e49bca147d4ba0f5f13aecb33b234eb7db5efde6fa482"
   }
 ]

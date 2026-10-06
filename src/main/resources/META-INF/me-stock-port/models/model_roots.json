@@ -1,0 +1,24 @@
+{
+  "models": [
+    "extendedae:item/threshold_export_bus",
+    "extendedae:part/threshold_export_bus_base",
+    "extendedae:item/threshold_level_emitter",
+    "extendedae:part/threshold_level_emitter_base_off",
+    "extendedae:part/threshold_level_emitter_base_on",
+    "merequester:item/requester_terminal",
+    "merequester:part/requester_terminal_off",
+    "merequester:part/requester_terminal_on",
+    "merequester:block/requester",
+    "merequester:block/requester_active",
+    "ae2:part/display_base",
+    "ae2:part/export_bus_off",
+    "ae2:part/export_bus_on",
+    "ae2:part/export_bus_has_channel",
+    "ae2:part/level_emitter_status_off",
+    "ae2:part/level_emitter_status_on",
+    "ae2:part/level_emitter_status_has_channel",
+    "ae2:part/display_status_off",
+    "ae2:part/display_status_on",
+    "ae2:part/display_status_has_channel"
+  ]
+}

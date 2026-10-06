@@ -14,7 +14,8 @@ Behavior references inspected before implementation:
   io-bus/set-stock-amount screen styles, upgrade panels, number entry, toolbar and scrollbar widgets.
   Source: LGPL-3.0-or-later; API: MIT; textures: CC BY-NC-SA 3.0.
 
-Destinations: `com/xyp/gtnotgood/common/mestock/`. Threshold semantics are adapted under LGPL-3.0-only.
+Destinations: `com/xyp/gtnotgood/common/mestock/` and `com/xyp/gtnotgood/client/mestock/`.
+Threshold semantics are adapted under LGPL-3.0-only.
 The requester scheduler, registration and persistence are newly authored for GTNH.
 `StockGui`, `StockGuiAssets` and `StockNumbers` adapt the pinned screen/widget behavior under LGPL-3.0-only,
 replacing incompatible client/menu APIs with ModularUI2 while preserving original pixel layouts and artwork.
@@ -39,7 +40,14 @@ Differences from modern upstream:
 - Terminal: original grouped inline list, right-click-cleared search, wheel/drag scrollbar and four adaptive
   height modes. Synchronization covers visible rows (at most 64); directory rebuilds occur only on changes.
   Remote editing validates distance, live row/device identity, loaded network membership and BUILD permission.
-- Native GTNH cable/block geometry. All PNGs in the manifest are byte-identical copies of pinned upstream
+- Original part/block cuboids, face UVs, rotations and state layers use a newly authored Forge 1.7.10 adapter.
+  The three cable items register the native AE bus item renderer. The requester retains its recessed front,
+  original generic sides, active animation metadata, and horizontal placement orientation; old metadata zero
+  remains south-facing. Power/channel transitions synchronize only a changed visual flag.
+  Model JSONs are packaged under `models/`; only line endings/trailing whitespace are normalized.
+  Generated texture bindings/root lists map source names to this mod. Immutable baked quad batches are
+  rebuilt after texture stitching/resource reload, without model parsing in chunk worker rendering.
+  All PNGs in the manifest are byte-identical copies of pinned upstream
   assets. The submit hover uses the correct right-half crop of the original 24x12 image.
   ExtendedAE artwork is credited to Sea_Kerman; requester artwork/model to Almost Reliable.
   AE2 textures/models: (c) 2020 Ridanisaurus Rid, (c) 2013-2020 AlgorithmX2 et al,

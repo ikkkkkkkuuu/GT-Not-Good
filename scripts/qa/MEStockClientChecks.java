@@ -8,6 +8,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -23,6 +26,8 @@ import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
+import net.minecraftforge.client.IItemRenderer.ItemRenderType;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -32,6 +37,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.GuiContainerWrapper;
@@ -75,6 +81,7 @@ public final class MEStockClientChecks {
     private int ticks, stage, frames;
     private volatile int screen;
     private volatile boolean captured;
+    private boolean texturesReloaded;
     private String save;
     private Block targetBlock;
     private Block providerBlock;
@@ -143,6 +150,7 @@ public final class MEStockClientChecks {
         if (ticks > 1200) throw new AssertionError(
             "Timed out at stage " + stage + ", requester status=" + (requester == null ? -1 : requester.status(0)));
         World world = player.worldObj;
+        if (resumed && ticks == 1) player.playerNetServerHandler.setPlayerLocation(4.5, 9, 6.5, 180, 10);
         if (ticks == 1) {
             require(
                 StockNumbers.format(2500)
@@ -465,10 +473,72 @@ public final class MEStockClientChecks {
                                 + cache.deviceVisits
                                 + " plans="
                                 + cache.plansStarted);
-                        finish("SAVED");
+                        player.closeScreen();
+                        screen = 10;
+                        frames = 0;
                     }
                     stage++;
                 }
+        if (stage == 10 && captured) {
+            textureShowcase(world, player);
+            player.closeScreen();
+            player.capabilities.isFlying = true;
+            player.sendPlayerAbilities();
+            player.playerNetServerHandler.setPlayerLocation(15.5, 9.5, 14.5, 180, 12);
+            world.setWorldTime(6000);
+            captured = false;
+            frames = 0;
+            screen = 11;
+            stage = 11;
+        } else if (stage == 11 && captured) {
+            screen = 0;
+            finish("SAVED");
+        }
+    }
+
+    private void textureShowcase(World world, EntityPlayerMP player) {
+        var definitions = AEApi.instance()
+            .definitions();
+        for (int x = 9; x <= 23; x++) for (int z = 2; z <= 11; z++) world.setBlock(x, 7, z, Blocks.stone);
+        GTNGItemList[] parts = { GTNGItemList.ThresholdExportBus, GTNGItemList.ThresholdLevelEmitter,
+            GTNGItemList.MERequesterTerminal };
+        int[] positions = { 11, 14, 20 };
+        for (int i = 0; i < parts.length; i++) {
+            int x = positions[i];
+            world.setBlock(
+                x,
+                8,
+                5,
+                definitions.blocks()
+                    .multiPart()
+                    .maybeBlock()
+                    .get());
+            IPartHost host = (IPartHost) world.getTileEntity(x, 8, 5);
+            host.addPart(
+                definitions.parts()
+                    .cableGlass()
+                    .stack(AEColor.Transparent, 1),
+                ForgeDirection.UNKNOWN,
+                player);
+            host.addPart(parts[i].get(1), ForgeDirection.SOUTH, player);
+            world.setBlock(
+                x,
+                8,
+                4,
+                definitions.blocks()
+                    .energyCellCreative()
+                    .maybeBlock()
+                    .get());
+        }
+        world.setBlock(17, 8, 5, Block.getBlockFromItem(GTNGItemList.MERequester.getItem()), 3, 3);
+        world.setBlock(
+            17,
+            8,
+            4,
+            definitions.blocks()
+                .energyCellCreative()
+                .maybeBlock()
+                .get());
     }
 
     private void setup(World world, EntityPlayerMP player) {
@@ -633,7 +703,31 @@ public final class MEStockClientChecks {
         if (event.phase != TickEvent.Phase.END || screen == 0 || captured || finished || ++frames < 40) return;
         try {
             Minecraft mc = Minecraft.getMinecraft();
-            if (frames == 40) require(mc.currentScreen instanceof GuiContainerWrapper, "GUI opens " + screen);
+            if (screen == 10) {
+                if (!(mc.currentScreen instanceof TextureProbeGui)) {
+                    for (GTNGItemList part : new GTNGItemList[] { GTNGItemList.ThresholdExportBus,
+                        GTNGItemList.ThresholdLevelEmitter, GTNGItemList.MERequesterTerminal })
+                        require(
+                            MinecraftForgeClient.getItemRenderer(part.get(1), ItemRenderType.INVENTORY) != null,
+                            "registered 3D part item renderer: " + part);
+                    mc.displayGuiScreen(new TextureProbeGui());
+                    frames = 0;
+                    return;
+                }
+                if (!texturesReloaded) {
+                    mc.refreshResources();
+                    texturesReloaded = true;
+                    frames = 0;
+                    return;
+                }
+            } else if (screen == 11) {
+                if (mc.currentScreen != null) {
+                    mc.displayGuiScreen(null);
+                    frames = 0;
+                    return;
+                }
+                if (frames < 120) return;
+            } else if (frames == 40) require(mc.currentScreen instanceof GuiContainerWrapper, "GUI opens " + screen);
             if (screen == 5) {
                 var sync = ((GuiContainerWrapper) mc.currentScreen).getScreen()
                     .getSyncManager()
@@ -712,6 +806,38 @@ public final class MEStockClientChecks {
         } catch (Throwable error) {
             error.printStackTrace();
             finish("FAIL GUI: " + error);
+        }
+    }
+
+    private static final class TextureProbeGui extends GuiScreen {
+
+        private final RenderItem renderItem = new RenderItem();
+
+        @Override
+        public boolean doesGuiPauseGame() {
+            return false;
+        }
+
+        @Override
+        public void drawScreen(int mouseX, int mouseY, float partialTick) {
+            drawRect(0, 0, width, height, 0xff303238);
+            drawCenteredString(fontRendererObj, "ME 库存控制 · 物品模型", width / 2, height / 2 - 100, 0xffffff);
+            GTNGItemList[] items = { GTNGItemList.ThresholdExportBus, GTNGItemList.ThresholdLevelEmitter,
+                GTNGItemList.MERequester, GTNGItemList.MERequesterTerminal };
+            String[] names = { "阈值输出总线", "双阈值发信器", "自动请求器", "自动请求终端" };
+            for (int i = 0; i < items.length; i++) {
+                int x = width / 2 - 200 + 110 * i, y = height / 2 - 40;
+                drawRect(x - 3, y - 3, x + 67, y + 67, 0xffd0d0d0);
+                drawRect(x, y, x + 64, y + 64, 0xff888888);
+                GL11.glPushMatrix();
+                GL11.glTranslatef(x, y, 0);
+                GL11.glScalef(4, 4, 4);
+                RenderHelper.enableGUIStandardItemLighting();
+                renderItem.renderItemAndEffectIntoGUI(fontRendererObj, mc.getTextureManager(), items[i].get(1), 0, 0);
+                RenderHelper.disableStandardItemLighting();
+                GL11.glPopMatrix();
+                drawCenteredString(fontRendererObj, names[i], x + 32, y + 80, 0xffffff);
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package com.xyp.gtnotgood.ae2thing.nei;
 
 import static com.xyp.gtnotgood.ae2thing.nei.NEI_TH_Config.getConfigValue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,6 +23,7 @@ import com.xyp.gtnotgood.ae2thing.proxy.ClientProxy;
 import com.xyp.gtnotgood.ae2thing.quickterminal.RecipeTransferPayload;
 import com.xyp.gtnotgood.ae2thing.quickterminal.client.GuiQuickEncodingTerminal;
 import com.xyp.gtnotgood.ae2thing.util.GTUtil;
+import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 
 import appeng.api.AEApi;
 import appeng.api.storage.data.AEStackTypeRegistry;
@@ -36,6 +38,7 @@ import codechicken.nei.api.IOverlayHandler;
 import codechicken.nei.recipe.GuiOverlayButton;
 import codechicken.nei.recipe.IRecipeHandler;
 import gregtech.common.items.ItemFluidDisplay;
+import gregtech.common.items.ItemIntegratedCircuit;
 
 /** Transfers NEI recipes directly into the native-AE2 quick terminal container. */
 public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler {
@@ -67,7 +70,9 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
             String interfaceSearch = getConfigValue(ButtonConstants.DUAL_INTERFACE_TERMINAL)
                 ? interfaceSearchText(recipe, namedInputs, crafting)
                 : null;
-            List<OrderStack<?>> transferInputs = namedInputs;
+            List<OrderStack<?>> transferInputs = !crafting && terminal.shouldKeepNonConsumables()
+                ? retainSupportedNonConsumables(namedInputs)
+                : namedInputs;
             List<OrderStack<?>> transferOutputs = FluidRecipe
                 .getPackageOutputs(recipe, recipeIndex, useOtherStacks(recipe));
             if (!crafting) {
@@ -107,6 +112,23 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
         } catch (RuntimeException | LinkageError failure) {
             AELog.warn(failure, "Failed to transfer an NEI recipe to the GT-Not-Cool quick terminal");
         }
+    }
+
+    /** Promote only zero-sized circuits and items supported by the virtual mold selector, before zero filtering. */
+    private static List<OrderStack<?>> retainSupportedNonConsumables(List<OrderStack<?>> inputs) {
+        List<OrderStack<?>> result = new ArrayList<>();
+        for (OrderStack<?> order : inputs) {
+            if (order == null) continue;
+            if (order.getStack() instanceof ItemStack item) {
+                ItemStack copy = item.copy();
+                if (copy.stackSize == 0 && (copy.getItem() instanceof ItemIntegratedCircuit
+                    || SuperMTEHatchCraftingInputME.findMatchingMold(copy) != null)) copy.stackSize = 1;
+                result.add(new OrderStack<>(copy, order.getIndex()));
+            } else {
+                result.add(order);
+            }
+        }
+        return result;
     }
 
     private static String interfaceSearchText(IRecipeHandler recipe, List<OrderStack<?>> inputs, boolean crafting) {

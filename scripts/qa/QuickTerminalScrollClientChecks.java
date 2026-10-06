@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -21,9 +22,11 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.ae2thing.nei.QuickTerminalRecipeTransferHandler;
+import com.xyp.gtnotgood.ae2thing.nei.object.OrderStack;
 import com.xyp.gtnotgood.ae2thing.quickterminal.ContainerQuickEncodingTerminal;
 import com.xyp.gtnotgood.ae2thing.quickterminal.DualTerminalGuiObject;
 import com.xyp.gtnotgood.ae2thing.quickterminal.RecipeTransferPayload;
+import com.xyp.gtnotgood.common.utils.MoldDataManager;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
@@ -35,8 +38,10 @@ import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.client.gui.slots.VirtualMEPatternSlot;
+import appeng.client.gui.widgets.GuiImgButton;
 import appeng.container.sync.AbstractSyncHandler;
 import appeng.container.sync.ActionHandler;
+import appeng.container.sync.StreamCodecs;
 import appeng.container.sync.SyncDirection;
 import appeng.container.sync.SyncEndpoint;
 import appeng.container.sync.SyncManager;
@@ -52,9 +57,11 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import gregtech.api.enums.ItemList;
 import gregtech.api.enums.Materials;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.util.GTRecipe;
+import gregtech.api.util.GTUtility;
 import gregtech.nei.GTNEIDefaultHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -73,6 +80,7 @@ public final class QuickTerminalScrollClientChecks {
     private GuiQuickEncodingTerminal gui;
     private int frames;
     private volatile List<RecipeTransferPayload> neiPayloads;
+    private volatile List<RecipeTransferPayload> nonConsumablePayloads;
     private volatile boolean neiChecked;
     private GTRecipe neiRecipe;
     private int startupTicks;
@@ -405,9 +413,108 @@ public final class QuickTerminalScrollClientChecks {
             for (int i = 0; i < inputs.length; i++) inputs[i] = payload.getInput(i);
             checkRecipeInputs(inputs);
         }
-        transfer.set(container, action);
         System.out.println("TERMINAL_NEI_QA: recipe output " + neiRecipe.mOutputs[0].getDisplayName());
-        neiPayloads = captured;
+        List<RecipeTransferPayload> standardPayloads = new ArrayList<>(captured);
+        captured.clear();
+        checkNonConsumablesImport(container, captured);
+        nonConsumablePayloads = new ArrayList<>(captured);
+        transfer.set(container, action);
+        neiPayloads = standardPayloads;
+    }
+
+    private void checkNonConsumablesImport(ContainerQuickEncodingTerminal container,
+        List<RecipeTransferPayload> captured) throws Exception {
+        var handler = new GTNEIDefaultHandler(RecipeMaps.assemblerRecipes.getDefaultRecipeCategory());
+        ItemStack circuit = GTUtility.getIntegratedCircuit(4);
+        circuit.stackSize = 0;
+        ItemStack mold = ItemList.Shape_Mold_Ingot.get(0);
+        var recipe = new GTRecipe(
+            false,
+            new ItemStack[] { new ItemStack(Items.iron_ingot, 3), circuit, mold, new ItemStack(Items.blaze_rod, 0),
+                ItemList.Shape_Mold_Bottle.get(2) },
+            new ItemStack[] { new ItemStack(Items.apple) },
+            null,
+            null,
+            null,
+            null,
+            null,
+            new FluidStack[] { new FluidStack(FluidRegistry.WATER, 1234) },
+            null,
+            20,
+            8,
+            0);
+        handler.arecipes.clear();
+        handler.arecipes.add(handler.new CachedDefaultRecipe(recipe));
+        for (int variant = 0; variant < 3; variant++) {
+            container.keepNonConsumablesSync.setLocalValue(variant != 0);
+            container.combineSync.setLocalValue(variant == 2);
+            container.prioritizeFluidsSync.setLocalValue(variant == 2);
+            QuickTerminalRecipeTransferHandler.INSTANCE.overlayRecipe(gui, handler, 0, true);
+            require(captured.size() == variant + 1, "non-consumable fixture transfers");
+            List<IAEStack<?>> inputs = new ArrayList<>();
+            for (int i = 0; i < RecipeTransferPayload.SLOT_COUNT; i++) if (captured.get(variant)
+                .getInput(i) != null)
+                inputs.add(
+                    captured.get(variant)
+                        .getInput(i));
+            checkNonConsumableInputs(inputs.toArray(new IAEStack<?>[0]), variant != 0);
+        }
+        require(circuit.stackSize == 0 && mold.stackSize == 0, "NEI recipe source quantities are unchanged");
+        Method retain = QuickTerminalRecipeTransferHandler.class
+            .getDeclaredMethod("retainSupportedNonConsumables", List.class);
+        retain.setAccessible(true);
+        List<OrderStack<?>> virtualMolds = new ArrayList<>();
+        for (ItemStack supported : MoldDataManager.getMolds()) {
+            ItemStack copy = supported.copy();
+            copy.stackSize = 0;
+            virtualMolds.add(new OrderStack<>(copy, virtualMolds.size()));
+        }
+        List<OrderStack<?>> retained = (List<OrderStack<?>>) retain.invoke(null, virtualMolds);
+        require(retained.size() == virtualMolds.size(), "all entries use the current virtual mold list");
+        for (int i = 0; i < retained.size(); i++) {
+            require(
+                ((ItemStack) retained.get(i)
+                    .getStack()).stackSize == 1,
+                "supported catalyst is retained");
+            require(
+                ((ItemStack) virtualMolds.get(i)
+                    .getStack()).stackSize == 0,
+                "source catalyst is unchanged");
+        }
+        container.keepNonConsumablesSync.setLocalValue(false);
+        System.out.println("TERMINAL_CATALYST_QA: toggle, whitelist, combine and native fluids PASS");
+    }
+
+    private static void checkNonConsumableInputs(IAEStack<?>[] inputs, boolean keep) {
+        require(inputs.length == (keep ? 5 : 3), "only requested non-consumables change import size");
+        boolean circuit = false, mold = false, consumedMold = false, fluid = false, ingredient = false;
+        for (IAEStack<?> input : inputs) {
+            if (input instanceof IAEFluidStack water) {
+                require(
+                    water.getFluidStack()
+                        .getFluid() == FluidRegistry.WATER && water.getStackSize() == 1234,
+                    "native fluid identity and amount preserved");
+                fluid = true;
+            } else if (input instanceof IAEItemStack item) {
+                require(item.getItem() != Items.blaze_rod, "unsupported non-consumable is omitted");
+                if (item.isSameType(AEItemStack.create(GTUtility.getIntegratedCircuit(4)))) {
+                    circuit = true;
+                    require(item.getStackSize() == 1, "circuit imports as one with correct configuration");
+                } else if (item.isSameType(AEItemStack.create(ItemList.Shape_Mold_Ingot.get(1)))) {
+                    mold = true;
+                    require(item.getStackSize() == 1, "virtual mold imports as one");
+                } else if (item.isSameType(AEItemStack.create(ItemList.Shape_Mold_Bottle.get(1)))) {
+                    consumedMold = true;
+                    require(item.getStackSize() == 2, "consumed mold quantity remains unchanged");
+                } else if (item.getItem() == Items.iron_ingot) {
+                    ingredient = true;
+                    require(item.getStackSize() == 3, "consumed input quantity remains unchanged");
+                }
+            }
+        }
+        require(
+            circuit == keep && mold == keep && consumedMold && ingredient && fluid,
+            "only circuits and current virtual mold items are retained");
     }
 
     private void checkNeiEncoding(EntityPlayerMP player) throws Exception {
@@ -465,6 +572,46 @@ public final class QuickTerminalScrollClientChecks {
                     && outputs[0].getStackSize() == neiRecipe.mOutputs[0].stackSize,
                 "output identity and quantity");
         }
+        require(!container.isKeepNonConsumablesEnabled(), "retention defaults to disabled");
+        ByteBuf setting = Unpooled.buffer();
+        try {
+            setting.writeBoolean(true);
+            container.setKeepNonConsumablesAction.readIncoming(SyncEndpoint.CLIENT, SyncMode.FULL, setting);
+        } finally {
+            setting.release();
+        }
+        require(
+            host.shouldKeepNonConsumables() && container.isKeepNonConsumablesEnabled(),
+            "retention action updates server and terminal NBT");
+        container.onContainerClosed(player);
+        container = new ContainerQuickEncodingTerminal(player.inventory, host);
+        require(container.isKeepNonConsumablesEnabled(), "retention setting persists after reopen");
+        host.getInventoryByName("pattern")
+            .setInventorySlotContents(
+                0,
+                AEApi.instance()
+                    .definitions()
+                    .materials()
+                    .blankPattern()
+                    .maybeStack(3)
+                    .get());
+        for (int variant = 0; variant < nonConsumablePayloads.size(); variant++) {
+            host.getInventoryByName("pattern")
+                .setInventorySlotContents(1, null);
+            ByteBuf buffer = Unpooled.buffer();
+            try {
+                RecipeTransferPayload.CODEC.write(buffer, nonConsumablePayloads.get(variant));
+                container.transferRecipeAction.readIncoming(SyncEndpoint.CLIENT, SyncMode.FULL, buffer);
+            } finally {
+                buffer.release();
+            }
+            ItemStack encoded = host.getInventoryByName("pattern")
+                .getStackInSlot(1);
+            require(encoded != null, "retained inputs auto-encode on server");
+            var details = ((ICraftingPatternItem) encoded.getItem()).getPatternForItem(encoded, player.worldObj);
+            checkNonConsumableInputs(details.getCondensedAEInputs(), variant != 0);
+        }
+        System.out.println("TERMINAL_CATALYST_QA: server action, persistence and native pattern encoding PASS");
         container.onContainerClosed(player);
         Files.write(
             new File(System.getProperty("gtng.terminalScroll.qa.output"), "nei-result.txt").toPath(),
@@ -510,6 +657,7 @@ public final class QuickTerminalScrollClientChecks {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen != gui) return;
         if (++frames == 30) {
+            checkNonConsumablesButton();
             if (Boolean.getBoolean("gtng.gtnlCompat.qa")) {
                 Class<?> batcher = Class.forName("com.gtnewhorizons.angelica.client.font.BatchingFontRenderer");
                 require(
@@ -558,6 +706,42 @@ public final class QuickTerminalScrollClientChecks {
         VirtualMEPatternSlot[] slots = (VirtualMEPatternSlot[]) guiField(name);
         for (int i = 0; i < slots.length; i++)
             require(slots[i].isHidden() == (i < first || i >= first + 16), name + " visibility " + i);
+    }
+
+    private void checkNonConsumablesButton() throws Exception {
+        ContainerQuickEncodingTerminal container = (ContainerQuickEncodingTerminal) gui.inventorySlots;
+        GuiImgButton button = (GuiImgButton) guiField("keepNonConsumablesButton");
+        require(button.visible, "retention button is visible in processing view");
+        ActionHandler<Boolean> action = container.setKeepNonConsumablesAction;
+        Field manager = AbstractSyncHandler.class.getDeclaredField("manager");
+        manager.setAccessible(true);
+        List<Boolean> requested = new ArrayList<>();
+        ActionHandler<Boolean> capture = new ActionHandler<Boolean>(
+            (SyncManager) manager.get(action),
+            action.getKey(),
+            action.getFullKey(),
+            SyncDirection.CLIENT_TO_SERVER,
+            StreamCodecs.booleanValue()) {
+
+            @Override
+            public void send(Boolean value) {
+                requested.add(value);
+            }
+        };
+        Field setter = ContainerQuickEncodingTerminal.class.getDeclaredField("setKeepNonConsumablesAction");
+        setter.setAccessible(true);
+        setter.set(container, capture);
+        container.keepNonConsumablesSync.setLocalValue(false);
+        gui.mouseClicked(button.xPosition + 3, button.yPosition + 3, 0);
+        require(gui.shouldKeepNonConsumables() && requested.equals(Arrays.asList(true)), "button enables retention");
+        gui.drawScreen(button.xPosition + 3, button.yPosition + 3, 0);
+        screenshot("keep-non-consumables.png");
+        gui.mouseClicked(button.xPosition + 3, button.yPosition + 3, 0);
+        require(
+            !gui.shouldKeepNonConsumables() && requested.equals(Arrays.asList(true, false)),
+            "button disables retention");
+        setter.set(container, action);
+        System.out.println("TERMINAL_CATALYST_QA: GUI toggle and tooltip PASS");
     }
 
     private Object guiField(String name) throws Exception {

@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import com.xyp.gtnotgood.client.text.EffectTextLayout;
 import com.xyp.gtnotgood.client.text.TextEffectPreferences;
 import com.xyp.gtnotgood.client.text.TextEffectRegistry;
+import com.xyp.gtnotgood.client.wireless.WirelessMonitorPreferences;
 import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.gtnotgood.utils.text.AnimatedText;
 import com.xyp.gtnotgood.utils.text.effect.TextEffectFormat;
@@ -33,20 +34,35 @@ public class TextEffectPreview extends GuiScreen {
     private boolean italic;
     private int page;
     private int selectedIndex = -1;
+    private final boolean wirelessMonitor;
+
+    public TextEffectPreview() {
+        this(false);
+    }
+
+    public TextEffectPreview(boolean wirelessMonitor) {
+        this.wirelessMonitor = wirelessMonitor;
+    }
+
+    private TextEffectStyle activeStyle() {
+        return wirelessMonitor ? WirelessMonitorPreferences.style() : AnimatedText.creditStyle();
+    }
 
     @Override
     public void initGui() {
         List<Entry> registered = new ArrayList<>();
         for (String identifier : TextEffectRegistry.identifiers()) {
-            TextEffectStyle style = new TextEffectStyle(identifier, ImmutableList.of(), 1);
+            TextEffectStyle style = new TextEffectStyle(
+                identifier,
+                ImmutableList.of(),
+                wirelessMonitor ? activeStyle().speed() : 1);
             String alias = TextEffectFormat.aliasFor(identifier);
             String name = effectName(style);
             registered.add(new Entry(style, alias.isEmpty() ? name : "[" + alias + "] " + name));
         }
         entries = ImmutableList.copyOf(registered);
         if (selectedIndex < 0 || selectedIndex >= entries.size()) {
-            String active = AnimatedText.creditStyle()
-                .rendererId();
+            String active = activeStyle().rendererId();
             selectedIndex = 0;
             for (int i = 0; i < entries.size(); i++) {
                 if (entries.get(i)
@@ -57,13 +73,15 @@ public class TextEffectPreview extends GuiScreen {
                     break;
                 }
             }
-            customPalette = TextEffectPreferences.customPalette();
-            bold = AnimatedText.creditBold();
-            italic = AnimatedText.creditItalic();
+            customPalette = wirelessMonitor ? WirelessMonitorPreferences.customPalette
+                : TextEffectPreferences.customPalette();
+            bold = wirelessMonitor ? WirelessMonitorPreferences.bold : AnimatedText.creditBold();
+            italic = wirelessMonitor ? WirelessMonitorPreferences.italic : AnimatedText.creditItalic();
             page = selectedIndex / PAGE_SIZE;
         }
         page = Math.min(page, pageCount() - 1);
-        String previous = sample == null ? "Animated text / 动态文字" : sample.getText();
+        String previous = sample == null ? (wirelessMonitor ? "EU/t +29,500,080 EU / 无线电网" : "Animated text / 动态文字")
+            : sample.getText();
         sample = new GuiTextField(fontRendererObj, 18, 28, Math.max(80, width - 36), 18);
         sample.setMaxStringLength(160);
         sample.setText(previous);
@@ -113,9 +131,16 @@ public class TextEffectPreview extends GuiScreen {
                 // #tr gtnotgood.text_effect.apply
                 // # Apply to machine credits
                 // # zh_CN 应用到机器署名
-                StatCollector.translateToLocal("gtnotgood.text_effect.apply")));
+                wirelessMonitor ? wirelessApplyText() : StatCollector.translateToLocal("gtnotgood.text_effect.apply")));
         buttonList.add(new GuiButton(2, width - 70, 50, 24, 20, "<"));
         buttonList.add(new GuiButton(3, width - 42, 50, 24, 20, ">"));
+    }
+
+    private String wirelessApplyText() {
+        // #tr gtnotgood.wireless_monitor.apply_effect
+        // # Apply to wireless HUD
+        // # zh_CN 应用到无线 HUD
+        return StatCollector.translateToLocal("gtnotgood.wireless_monitor.apply_effect");
     }
 
     @Override
@@ -166,12 +191,16 @@ public class TextEffectPreview extends GuiScreen {
         for (int i = page * PAGE_SIZE; i < Math.min(entries.size(), (page + 1) * PAGE_SIZE); i++) {
             Entry entry = entries.get(i);
             TextEffectStyle preset = entry.style();
-            TextEffectStyle style = customPalette ? preset.withColors(0x33CCFF, 0xFFAA33, 0xDD77FF) : preset;
+            TextEffectStyle style = customPalette
+                ? (wirelessMonitor ? new TextEffectStyle(
+                    preset.rendererId(),
+                    WirelessMonitorPreferences.paletteStyle()
+                        .colors(),
+                    preset.speed()) : preset.withColors(0x33CCFF, 0xFFAA33, 0xDD77FF))
+                : preset;
             String prefix = entry.style()
                 .rendererId()
-                .equals(
-                    AnimatedText.creditStyle()
-                        .rendererId()) ? "* " : "  ";
+                .equals(activeStyle().rendererId()) ? "* " : "  ";
             String name = fontRendererObj.trimStringToWidth(prefix + entry.label(), textX - 30);
             fontRendererObj.drawString(name, 18, (int) y, i == selectedIndex ? 0xFFFF55 : 0xB0B0B0);
             String rendered = TextEffects.format(style) + value;
@@ -218,7 +247,14 @@ public class TextEffectPreview extends GuiScreen {
             selectedIndex = Math.min(page * PAGE_SIZE, entries.size() - 1);
         }
         if (button.id == 5 && selectedIndex >= 0 && selectedIndex < entries.size()) {
-            TextEffectPreferences.apply(
+            if (wirelessMonitor) WirelessMonitorPreferences.apply(
+                entries.get(selectedIndex)
+                    .style()
+                    .rendererId(),
+                customPalette,
+                bold,
+                italic);
+            else TextEffectPreferences.apply(
                 entries.get(selectedIndex)
                     .style()
                     .rendererId(),

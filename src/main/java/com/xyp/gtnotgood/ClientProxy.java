@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.ClientCommandHandler;
@@ -13,6 +14,7 @@ import com.xyp.gtnotgood.client.flux.FluxConnectorRenderer;
 import com.xyp.gtnotgood.client.gui.LibraryDemoCommand;
 import com.xyp.gtnotgood.client.gui.wildcard.WildcardPreviewCommand;
 import com.xyp.gtnotgood.client.mebridge.MEWirelessNodeRenderer;
+import com.xyp.gtnotgood.client.mestock.StockModelRenderer;
 import com.xyp.gtnotgood.client.nei.FactoryRecipeImport;
 import com.xyp.gtnotgood.client.network.NetworkBlockRenderer;
 import com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer;
@@ -21,9 +23,13 @@ import com.xyp.gtnotgood.client.text.EffectTextRenderer;
 import com.xyp.gtnotgood.client.text.TextEffectPreferences;
 import com.xyp.gtnotgood.client.text.effect.BuiltinTextEffects;
 import com.xyp.gtnotgood.client.text.preview.TextEffectPreviewCommand;
+import com.xyp.gtnotgood.client.wireless.WirelessMonitorHud;
+import com.xyp.gtnotgood.client.wireless.WirelessMonitorPreferences;
 import com.xyp.gtnotgood.common.flux.BlockFluxConnector;
 import com.xyp.gtnotgood.common.gui.BlockIcons;
+import com.xyp.gtnotgood.common.mestock.BlockMERequester;
 import com.xyp.gtnotgood.common.network.BlockNetwork;
+import com.xyp.gtnotgood.common.packet.WirelessMonitorSnapshot;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.gtnotgood.utils.event.SubscribeEventClientUtils;
@@ -57,6 +63,13 @@ public class ClientProxy extends CommonProxy {
             .func_152344_a(() -> com.xyp.gtnotgood.client.config.ServerSettingsScreen.receive(message));
     }
 
+    @Override
+    public void receiveWirelessMonitor(WirelessMonitorSnapshot message) {
+        Minecraft mc = Minecraft.getMinecraft();
+        NetHandlerPlayClient source = mc.getNetHandler();
+        mc.func_152344_a(() -> WirelessMonitorHud.INSTANCE.receive(message, source));
+    }
+
     /**
      * Initializes client-only research automation after the shared config has
      * been loaded by {@link CommonProxy}.
@@ -79,6 +92,7 @@ public class ClientProxy extends CommonProxy {
             .registerItemRenderer(GTNGItemList.StructureCompass.getItem(), new StructureCompassRenderer());
         registerAEPartRenderer();
         initializeTextEffects();
+        WirelessMonitorPreferences.load();
         registerPackagedCoreRenderers();
         registerPreviewCommands();
         registerBlockRenderers();
@@ -88,9 +102,16 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void registerAEPartRenderer() {
-        AEApi.instance()
-            .partHelper()
-            .setItemBusRenderer((IPartItem) GTNGItemList.AdvancedIOBus.getItem());
+        for (GTNGItemList part : new GTNGItemList[] { GTNGItemList.AdvancedIOBus, GTNGItemList.ThresholdExportBus,
+            GTNGItemList.ThresholdLevelEmitter, GTNGItemList.MERequesterTerminal }) {
+            AEApi.instance()
+                .partHelper()
+                .setItemBusRenderer((IPartItem) part.getItem());
+        }
+        BlockMERequester.renderId = RenderingRegistry.getNextAvailableRenderId();
+        StockModelRenderer stockRenderer = new StockModelRenderer();
+        RenderingRegistry.registerBlockHandler(stockRenderer);
+        MinecraftForge.EVENT_BUS.register(stockRenderer);
     }
 
     private void initializeTextEffects() {
@@ -154,6 +175,10 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new MEWirelessNodeRenderer());
         MinecraftForge.EVENT_BUS.register(new WirelessConnectorRenderer());
         MinecraftForge.EVENT_BUS.register(new FactoryRecipeImport());
+        MinecraftForge.EVENT_BUS.register(WirelessMonitorHud.INSTANCE);
+        FMLCommonHandler.instance()
+            .bus()
+            .register(WirelessMonitorHud.INSTANCE);
     }
 
     /**

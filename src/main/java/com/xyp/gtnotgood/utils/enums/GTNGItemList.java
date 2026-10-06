@@ -81,6 +81,7 @@ public enum GTNGItemList implements IItemContainer {
 
     VaultPortHatch,
     CrossRecipeWirelessEnergyHatch,
+    CircuitMEPatternBuffer,
     WirelessLaserEnergyLV_256,
     WirelessLaserEnergyLV_1024,
     WirelessLaserEnergyLV_4096,

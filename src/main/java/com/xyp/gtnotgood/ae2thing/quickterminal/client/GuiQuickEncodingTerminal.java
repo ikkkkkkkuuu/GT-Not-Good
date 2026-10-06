@@ -176,6 +176,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     private GuiFCImgButton combineDisabledButton;
     private GuiFCImgButton prioritizeEnabledButton;
     private GuiFCImgButton prioritizeDisabledButton;
+    private KeepNonConsumablesButton keepNonConsumablesButton;
     private GuiImgButton pinStateButton;
     private ModeButton craftingModeButton;
     private ModeButton processing4ModeButton;
@@ -276,6 +277,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         buttonList.add(combineDisabledButton);
         buttonList.add(prioritizeEnabledButton);
         buttonList.add(prioritizeDisabledButton);
+        keepNonConsumablesButton = new KeepNonConsumablesButton();
+        buttonList.add(keepNonConsumablesButton);
 
         configureItemPanel();
         registerCraftableIngredientOverlays();
@@ -601,6 +604,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             }
         }
         int processingControlY = panelTop + 84;
+        if (keepNonConsumablesButton != null) {
+            keepNonConsumablesButton.xPosition = right + 43;
+            keepNonConsumablesButton.yPosition = processingControlY;
+        }
         layoutFluidCraftingButtonPair(combineEnabledButton, combineDisabledButton, right + 59, processingControlY);
         layoutFluidCraftingButtonPair(
             prioritizeEnabledButton,
@@ -683,6 +690,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             prioritizeEnabledButton.visible = !crafting && patternContainer.isPrioritizeFluidsEnabled();
         if (prioritizeDisabledButton != null)
             prioritizeDisabledButton.visible = !crafting && !patternContainer.isPrioritizeFluidsEnabled();
+        updateNonConsumablesButton();
     }
 
     private void synchronizeNativeCraftingMode(boolean crafting) {
@@ -718,6 +726,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     public boolean shouldPrioritizeFluids() {
         return patternContainer.isPrioritizeFluidsEnabled();
+    }
+
+    public boolean shouldKeepNonConsumables() {
+        return patternContainer.isKeepNonConsumablesEnabled();
     }
 
     public IAEStack<?> getHoveredRecipeInput() {
@@ -994,6 +1006,11 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             if (changesTerminalStyle) setWorldAndResolution(mc, width, height);
             return;
         }
+        if (button == keepNonConsumablesButton) {
+            patternContainer.requestKeepNonConsumables(!shouldKeepNonConsumables());
+            updateNonConsumablesButton();
+            return;
+        }
         if (button == combineEnabledButton || button == combineDisabledButton) {
             patternContainer.requestCombine(!patternContainer.isCombineEnabled());
             layoutPatternSlots();
@@ -1086,6 +1103,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     private boolean handleFluidCraftingControlClick(int mouseX, int mouseY, int mouseButton) {
         if (isWorkbenchView() || mouseButton != 0 && mouseButton != 1) return false;
+        if (isOverHalfSizeButton(keepNonConsumablesButton, mouseX, mouseY)) {
+            actionPerformed(keepNonConsumablesButton);
+            return true;
+        }
         if (isOverHalfSizeButton(combineEnabledButton, mouseX, mouseY)) {
             patternContainer.requestCombine(!patternContainer.isCombineEnabled());
             layoutPatternSlots();
@@ -1368,6 +1389,13 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             prioritizeEnabledButton.visible = processing && patternContainer.isPrioritizeFluidsEnabled();
         if (prioritizeDisabledButton != null)
             prioritizeDisabledButton.visible = processing && !patternContainer.isPrioritizeFluidsEnabled();
+        updateNonConsumablesButton();
+    }
+
+    private void updateNonConsumablesButton() {
+        if (keepNonConsumablesButton == null) return;
+        keepNonConsumablesButton.visible = !isWorkbenchView();
+        keepNonConsumablesButton.set(shouldKeepNonConsumables() ? ItemSubstitution.ENABLED : ItemSubstitution.DISABLED);
     }
 
     @Override
@@ -1582,6 +1610,35 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             overlay.setCraftable(true);
             overlay.drawOverlayInGui(minecraft, ingredientSlot.getX(), ingredientSlot.getY(), false, false, true, true);
             return false;
+        }
+    }
+
+    private final class KeepNonConsumablesButton extends GuiImgButton {
+
+        private KeepNonConsumablesButton() {
+            super(0, 0, Settings.ACTIONS, ItemSubstitution.DISABLED);
+            setHalfSize(true);
+        }
+
+        @Override
+        public String getMessage() {
+            // #tr gtnotgood.terminal.quick.keep_non_consumables
+            // # Keep circuits and virtual mold items
+            // # zh_CN 保留电路与虚拟模具物品
+            String title = StatCollector.translateToLocal("gtnotgood.terminal.quick.keep_non_consumables");
+            // #tr gtnotgood.terminal.quick.keep_non_consumables.on
+            // # Enabled
+            // # zh_CN 已开启
+            String enabled = StatCollector.translateToLocal("gtnotgood.terminal.quick.keep_non_consumables.on");
+            // #tr gtnotgood.terminal.quick.keep_non_consumables.off
+            // # Disabled
+            // # zh_CN 已关闭
+            String disabled = StatCollector.translateToLocal("gtnotgood.terminal.quick.keep_non_consumables.off");
+            // #tr gtnotgood.terminal.quick.keep_non_consumables.detail
+            // # NEI imports zero-sized circuits and supported virtual mold items as 1; other catalysts are omitted.
+            // # zh_CN NEI导入时将不消耗的电路及虚拟模具槽支持物品记为1；其他不消耗物品仍忽略。
+            String detail = StatCollector.translateToLocal("gtnotgood.terminal.quick.keep_non_consumables.detail");
+            return title + "\n" + (shouldKeepNonConsumables() ? enabled : disabled) + "\n" + detail;
         }
     }
 

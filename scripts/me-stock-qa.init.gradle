@@ -7,6 +7,8 @@ gradle.projectsEvaluated {
     root.extensions.findByName('spotless')?.java {
         target 'src/main/java/com/xyp/gtnotgood/common/mestock/*.java',
             'src/main/java/com/xyp/gtnotgood/common/advancedio/BusTarget.java',
+            'src/main/java/com/xyp/gtnotgood/client/mestock/*.java',
+            'src/main/java/com/xyp/gtnotgood/ClientProxy.java',
             'src/main/java/com/xyp/gtnotgood/CommonProxy.java',
             'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
             'scripts/qa/MEStockClientChecks.java'

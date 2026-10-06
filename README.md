@@ -40,10 +40,38 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.2.8          | [![1.2.8](https://img.shields.io/badge/release-1.2.8-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.2.8) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.2.9          | [![1.2.9](https://img.shields.io/badge/release-1.2.9-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.2.9) |         ✔️         |
 
-最新版本：[1.2.8 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.2.8)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.2.8/gtnotgood-1.2.8.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.2.8/gtnotgood-1.2.8-sources.jar)。
+最新版本：[1.2.9 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.2.9)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.2.9/gtnotgood-1.2.9.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.2.9/gtnotgood-1.2.9-sources.jar)。
+
+### 电路样板总成（ME）
+
+支持 **900 个样板槽**，每个样板独立缓冲 **64 种物品和 64 种流体**，每种上限 **2⁶³−1**。
+将不同编程电路的处理样板放进同一个总成，总成自动读取各自电路，AE 下单不需要提供实物编程电路。
+已注册到接口终端，名称随连接的多方块主机配方图更新，支持无线二合一接口终端上传与取回样板。
+界面只保留手动物品槽，不提供虚拟模具槽、手动电路配置和批量写电路按钮。
+GT 每次读取的物品与流体数量仍受 `int` 限制，消耗后从 `long` 缓冲继续补充。
+存档、拆除、放回和退料保留完整数量，ME 暂时拒收的材料会保留并重试退回。
+
+无线二合一接口终端新增“保留电路与虚拟模具物品”开关，默认关闭。
+开启后，NEI 导入处理配方时保留不消耗的编程电路，以及当前虚拟模具列表中允许的物品；其他不消耗物品仍跳过。
+允许列表直接使用现有虚拟模具数据，后续更新自动生效；含流体配方仍使用 GTNH 原生至尊编码样板。
+
+### 无线电网 HUD
+
+每位玩家均可使用，默认按 **P** 开关，不需要物品或饰品；可在控制设置中改键。
+默认按 **Home** 进入位置编辑，左键拖动整块 HUD；再次按 Home、Esc 或“保存并退出”保存位置。
+编辑界面可恢复默认位置，关闭 HUD 时也能预览调整；编辑按键可在控制设置中修改。
+显示所属 GT 无线电网的电量、实时净 EU/t、最近五分钟平均净 EU/t，以及安培数和电压等级。
+每 100 tick 同步一次，首次开启先采样；关闭后停止请求。
+
+使用 `/gtngtexteffects wireless` 打开滚动颜色预览，或绑定“配置无线 HUD 滚动颜色”按键。
+配色、特效、粗体与斜体独立保存，不影响机器“添加者”署名。
+`config/GTNOTGOOD/gtnotgood-wireless-monitor.cfg` 可配置 `Speed`、`Palette`、`CustomPalette`、
+`AnimatedColors`、`AnimateValues`、`Scale`、`XOffset`、`YOffset` 和科学计数法；文件中的手动修改重启客户端生效。
+默认整行动态颜色；设置 `AnimateValues=false` 后仅标题滚动，净功率保留绿增红减。
+默认放在左下方，可与 GT-Simple-Wireless-Network 同时安装，各自的开关与配置独立。
 
 ### 🔌 ME 库存控制
 
@@ -136,5 +164,3 @@ x
 
 
 先写到这
-
-

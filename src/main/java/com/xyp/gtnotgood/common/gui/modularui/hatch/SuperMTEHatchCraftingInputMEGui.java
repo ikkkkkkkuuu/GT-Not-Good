@@ -77,12 +77,13 @@ public class SuperMTEHatchCraftingInputMEGui extends MTEHatchBaseGui<SuperMTEHat
 
     @Override
     protected Flow createBottomLeftCornerFlow(ModularPanel panel, PanelSyncManager syncManager) {
-        return super.createBottomLeftCornerFlow(panel, syncManager).child(createOptimizerButton())
+        Flow flow = super.createBottomLeftCornerFlow(panel, syncManager).child(createOptimizerButton())
             .child(createShowPatternButton())
             .child(createExportButton())
             .child(createDoublePatternButton())
-            .child(createManualItemsButton(syncManager))
-            .child(createMoldSlotButton(syncManager));
+            .child(createManualItemsButton(syncManager));
+        if (machine.hasVirtualMoldSlot()) flow.child(createMoldSlotButton(syncManager));
+        return flow;
     }
 
     private ToggleButton createOptimizerButton() {

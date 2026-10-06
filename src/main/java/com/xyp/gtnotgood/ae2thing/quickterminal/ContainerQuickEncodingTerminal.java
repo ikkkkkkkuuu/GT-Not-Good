@@ -88,6 +88,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     public final BooleanSyncHandler arcaneWorkbenchViewSync;
     public final BooleanSyncHandler combineSync;
     public final BooleanSyncHandler prioritizeFluidsSync;
+    public final BooleanSyncHandler keepNonConsumablesSync;
     public final IntSyncHandler activePageSync;
     public final IntSyncHandler processingGridSizeSync;
     public final IntSyncHandler craftingPinRowsSync;
@@ -95,6 +96,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     public final ActionHandler<Boolean> setInvertedAction;
     public final ActionHandler<Boolean> setCombineAction;
     public final ActionHandler<Integer> setPrioritizeFluidsAction;
+    public final ActionHandler<Boolean> setKeepNonConsumablesAction;
     public final ActionHandler<Integer> setProcessingGridSizeAction;
     public final ActionHandler<Integer> setPinRowsAction;
     public final ActionHandler<Void> refreshPinsAction;
@@ -156,6 +158,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             .onServerChange((oldValue, newValue) -> getExtendedPatternTerminal().setInverted(newValue));
         combineSync = sync.booleanSync("combine");
         prioritizeFluidsSync = sync.booleanSync("prioritizeFluids");
+        keepNonConsumablesSync = sync.booleanSync("keepNonConsumables");
         activePageSync = sync.intSync("activePage")
             .onServerChange((oldValue, newValue) -> getExtendedPatternTerminal().setActivePage(newValue));
         processingGridSizeSync = sync.intSync("processingGridSize");
@@ -167,6 +170,8 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             .onServerAction(this::applyCombine);
         setPrioritizeFluidsAction = sync.actionC2S("setPrioritizeFluids", StreamCodecs.intValue())
             .onServerAction(this::applyPrioritizeFluids);
+        setKeepNonConsumablesAction = sync.actionC2S("setKeepNonConsumables", StreamCodecs.booleanValue())
+            .onServerAction(this::applyKeepNonConsumables);
         setProcessingGridSizeAction = sync.actionC2S("setProcessingGridSize", StreamCodecs.intValue())
             .onServerAction(this::applyProcessingGridSize);
         setPinRowsAction = sync.actionC2S("setPinRows", StreamCodecs.intValue())
@@ -208,6 +213,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             invertedSync.set(false);
             combineSync.set(getDualTerminal().shouldCombine());
             prioritizeFluidsSync.set(getDualTerminal().shouldPrioritizeFluids());
+            keepNonConsumablesSync.set(getDualTerminal().shouldKeepNonConsumables());
             activePageSync.set(0);
             processingGridSizeSync.set(getDualTerminal().getProcessingGridSize());
             int craftingPinRows = getDualTerminal().getCraftingPinRows(getCraftingPinsRows().ordinal());
@@ -234,6 +240,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             invertedSync.set(terminal.isInverted());
             combineSync.set(getDualTerminal().shouldCombine());
             prioritizeFluidsSync.set(getDualTerminal().shouldPrioritizeFluids());
+            keepNonConsumablesSync.set(getDualTerminal().shouldKeepNonConsumables());
             activePageSync.set(terminal.getActivePage());
             processingGridSizeSync.set(getDualTerminal().getProcessingGridSize());
             craftingPinRowsSync.set(getDualTerminal().getCraftingPinRows(getCraftingPinsRows().ordinal()));
@@ -314,6 +321,15 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
 
     public boolean isPrioritizeFluidsEnabled() {
         return prioritizeFluidsSync.get();
+    }
+
+    public boolean isKeepNonConsumablesEnabled() {
+        return keepNonConsumablesSync.get();
+    }
+
+    public void requestKeepNonConsumables(boolean keep) {
+        keepNonConsumablesSync.setLocalValue(keep);
+        setKeepNonConsumablesAction.send(keep);
     }
 
     public void requestPrioritizeFluids(boolean prioritizeFluids, boolean sortOnly) {
@@ -734,6 +750,11 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     private void applyCombine(boolean combine) {
         getDualTerminal().setCombine(combine);
         combineSync.set(combine);
+    }
+
+    private void applyKeepNonConsumables(boolean keep) {
+        getDualTerminal().setKeepNonConsumables(keep);
+        keepNonConsumablesSync.set(keep);
     }
 
     private void applyPrioritizeFluids(int action) {

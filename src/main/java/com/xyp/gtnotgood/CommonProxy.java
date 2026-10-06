@@ -8,12 +8,15 @@ import com.xyp.gtnotgood.common.compass.StructureSearch;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.LargeVoidMinerConfigGuiFactory;
 import com.xyp.gtnotgood.common.items.toolbelt.common.BeltEvents;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
+import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
 import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
 import com.xyp.gtnotgood.common.mebridge.MEBridgeEventHandler;
 import com.xyp.gtnotgood.common.mebridge.MEWirelessLinkEventHandler;
 import com.xyp.gtnotgood.common.mestock.StockRegistration;
 import com.xyp.gtnotgood.common.packet.NetWorkHandler;
+import com.xyp.gtnotgood.common.packet.WirelessMonitorSnapshot;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
+import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.config.MainConfig;
 import com.xyp.gtnotgood.loader.BlockLoader;
@@ -44,6 +47,9 @@ public class CommonProxy {
 
         GTNotGood.channel = NetworkRegistry.INSTANCE.newSimpleChannel(GTNotGood.MODID);
         NetWorkHandler.registerAllMessage();
+        FMLCommonHandler.instance()
+            .bus()
+            .register(new WirelessMonitorService());
         com.xyp.gtnotgood.commandtree.CommandTreeBootstrap.preInit();
         FMLCommonHandler.instance()
             .bus()
@@ -100,6 +106,10 @@ public class CommonProxy {
         AEApi.instance()
             .registries()
             .interfaceTerminal()
+            .register(CircuitMEPatternBuffer.class);
+        AEApi.instance()
+            .registries()
+            .interfaceTerminal()
             .register(AssemblerMatrix.class);
         AE2Thing.postInit(event);
     }
@@ -116,5 +126,8 @@ public class CommonProxy {
 
     /** Receives a server settings reply on the client proxy; dedicated servers have no settings screen. */
     public void receiveServerConfig(com.xyp.gtnotgood.common.packet.ServerConfigMessage message) {}
+
+    /** Forwards a balance snapshot only on the client; dedicated servers have no HUD renderer. */
+    public void receiveWirelessMonitor(WirelessMonitorSnapshot message) {}
 
 }

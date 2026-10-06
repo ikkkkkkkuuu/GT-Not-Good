@@ -8,6 +8,8 @@ import static gregtech.api.enums.Textures.BlockIcons.OVERLAY_ME_CRAFTING_INPUT_B
 import static gregtech.api.enums.Textures.BlockIcons.OVERLAY_ME_CRAFTING_INPUT_BUS;
 import static gregtech.api.objects.XSTR.XSTR_INSTANCE;
 
+import java.math.BigInteger;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -88,12 +91,13 @@ import appeng.me.GridAccessException;
 import appeng.me.cache.CraftingGridCache;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.IGridProxyable;
-import appeng.util.IWideReadableNumberConverter;
 import appeng.util.PatternMultiplierHelper;
 import appeng.util.Platform;
 import appeng.util.ReadableNumberConverter;
 import appeng.util.ScheduledReason;
 import appeng.util.inv.MEInventoryCrafting;
+import appeng.util.item.AEFluidStack;
+import appeng.util.item.AEItemStack;
 import gregtech.GTLoggers;
 import gregtech.api.enums.Dyes;
 import gregtech.api.enums.GTValues;
@@ -142,12 +146,21 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         }
 
         public PatternSlot(ItemStack pattern, NBTTagCompound nbt, P parent) {
+            this(
+                pattern,
+                nbt,
+                parent,
+                ((ICraftingPatternItem) pattern.getItem()).getPatternForItem(
+                    pattern,
+                    parent.getBaseMetaTileEntity()
+                        .getWorld()));
+        }
+
+        protected PatternSlot(ItemStack pattern, NBTTagCompound nbt, P parent,
+            @Nullable ICraftingPatternDetails details) {
             this.pattern = pattern;
             this.parentMTE = parent;
-            this.patternDetails = ((ICraftingPatternItem) Objects.requireNonNull(pattern.getItem())).getPatternForItem(
-                pattern,
-                parent.getBaseMetaTileEntity()
-                    .getWorld());
+            this.patternDetails = details;
             this.itemInventory = new ArrayList<>();
             this.fluidInventory = new ArrayList<>();
             this.patternItemId = GTUtility.ItemId.create(pattern);
@@ -233,6 +246,21 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         public FluidStack[] getFluidInputs() {
             if (isEmpty()) return GTValues.emptyFluidStackArray;
             return fluidInventory.toArray(new FluidStack[0]);
+        }
+
+        /** Full buffered quantities for diagnostics; specialized slots can expose long reserves beyond recipe views. */
+        public List<IAEItemStack> getStoredItems() {
+            updateSlotItems();
+            return itemInventory.stream()
+                .map(AEItemStack::create)
+                .collect(Collectors.toList());
+        }
+
+        public List<IAEFluidStack> getStoredFluids() {
+            updateSlotFluids();
+            return fluidInventory.stream()
+                .map(AEFluidStack::create)
+                .collect(Collectors.toList());
         }
 
         @Nullable
@@ -487,7 +515,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         this(aName, aTier, aDescription, aTextures, supportFluids, MAX_PATTERN_COUNT / 9);
     }
 
-    private SuperMTEHatchCraftingInputME(String aName, int aTier, String[] aDescription, ITexture[][][] aTextures,
+    protected SuperMTEHatchCraftingInputME(String aName, int aTier, String[] aDescription, ITexture[][][] aTextures,
         boolean supportFluids, int patternRows) {
         super(aName, aTier, patternRows * 9 + SLOT_MANUAL_SIZE + 2, aDescription, aTextures);
         this.supportFluids = supportFluids;
@@ -789,7 +817,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         // Also surface the phantom mold slot's item so the interface terminal name reflects the selected mold.
         // Show its meta value (item damage) rather than the display name, matching the ghost-circuit suffix style
         // (see CommonBaseMetaTileEntity.getInterfaceNameSuffix) so NEI-overwrite auto-naming stays consistent.
-        ItemStack mold = mInventory[getMoldSlot()];
+        ItemStack mold = hasVirtualMoldSlot() ? mInventory[getMoldSlot()] : null;
         if (mold != null) {
             try {
                 metaSuffix.append(String.format(Gregtech.machines.ghostCircuitSuffixFormat, mold.getItemDamage()));
@@ -889,7 +917,9 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             NBTTagCompound patternSlotNBT = internalInventorySlotNBT.getCompoundTag("patternSlotNBT");
             ItemStack pattern = ItemStack.loadItemStackFromNBT(patternSlotNBT.getCompoundTag("pattern"));
             if (pattern != null) {
-                internalInventory[patternSlot] = new PatternSlot<>(pattern, patternSlotNBT, this);
+                if (patternSlot >= 0 && patternSlot < internalInventory.length) {
+                    internalInventory[patternSlot] = createPatternSlot(pattern, patternSlotNBT);
+                }
             } else {
                 GTLoggers.GT_FML_LOGGER.warn(
                     "An error occurred while loading contents of ME Crafting Input Bus. This pattern has been voided: "
@@ -965,34 +995,41 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         for (PatternSlot<SuperMTEHatchCraftingInputME> slot : internalInventory) {
             if (slot == null) continue;
             if (slot.getPatternDetails() == null) continue;
-            IWideReadableNumberConverter nc = ReadableNumberConverter.INSTANCE;
-
             i += 1;
             ret.add(
                 StatCollector.translateToLocalFormatted(
                     "GT5U.infodata.hatch.internal_inventory.slot",
                     i,
                     EnumChatFormatting.BLUE + describePattern(slot.getPatternDetails()) + EnumChatFormatting.RESET));
-            Map<GTUtility.ItemId, Long> itemMap = GTUtility.convertItemListToMap(slot.itemInventory);
-            for (Map.Entry<GTUtility.ItemId, Long> entry : itemMap.entrySet()) {
+            Map<GTUtility.ItemId, BigInteger> itemMap = new HashMap<>();
+            for (IAEItemStack stack : slot.getStoredItems()) {
+                ItemStack item = stack.copy()
+                    .setStackSize(1)
+                    .getItemStack();
+                itemMap.merge(GTUtility.ItemId.create(item), BigInteger.valueOf(stack.getStackSize()), BigInteger::add);
+            }
+            for (Map.Entry<GTUtility.ItemId, BigInteger> entry : itemMap.entrySet()) {
                 ItemStack item = entry.getKey()
                     .getItemStack();
-                long amount = entry.getValue();
+                BigInteger amount = entry.getValue();
                 ret.add(
                     item.getItem()
                         .getItemStackDisplayName(item) + ": "
                         + EnumChatFormatting.GOLD
-                        + nc.toWideReadableForm(amount)
+                        + readableAmount(amount)
                         + EnumChatFormatting.RESET);
             }
-            Map<Fluid, Long> fluidMap = GTUtility.convertFluidListToMap(slot.fluidInventory);
-            for (Map.Entry<Fluid, Long> entry : fluidMap.entrySet()) {
+            Map<Fluid, BigInteger> fluidMap = new HashMap<>();
+            for (IAEFluidStack stack : slot.getStoredFluids()) {
+                fluidMap.merge(stack.getFluid(), BigInteger.valueOf(stack.getStackSize()), BigInteger::add);
+            }
+            for (Map.Entry<Fluid, BigInteger> entry : fluidMap.entrySet()) {
                 FluidStack fluid = new FluidStack(entry.getKey(), 1);
-                long amount = entry.getValue();
+                BigInteger amount = entry.getValue();
                 ret.add(
                     fluid.getLocalizedName() + ": "
                         + EnumChatFormatting.AQUA
-                        + nc.toWideReadableForm(amount)
+                        + readableAmount(amount)
                         + EnumChatFormatting.RESET);
             }
         }
@@ -1028,7 +1065,12 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         return getManualSlotStart() + SLOT_MANUAL_SIZE;
     }
 
+    public boolean hasVirtualMoldSlot() {
+        return true;
+    }
+
     public void setMold(@Nullable ItemStack selected) {
+        if (!hasVirtualMoldSlot()) return;
         ItemStack phantom = findMatchingMold(selected);
         if (inventoryHandler != null) {
             inventoryHandler.setStackInSlot(getMoldSlot(), phantom);
@@ -1095,6 +1137,15 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
                 try {
                     originalPattern.refund(getProxy(), getRequest(), true);
                 } catch (GridAccessException ignored) {}
+                if (patternDetailsPatternSlotMap.remove(originalPattern.getPatternDetails(), originalPattern)) {
+                    for (PatternSlot<SuperMTEHatchCraftingInputME> duplicate : internalInventory) {
+                        if (duplicate != null && duplicate != originalPattern
+                            && Objects.equals(duplicate.getPatternDetails(), originalPattern.getPatternDetails())) {
+                            patternDetailsPatternSlotMap.put(duplicate.getPatternDetails(), duplicate);
+                            break;
+                        }
+                    }
+                }
                 internalInventory[index] = null;
                 needPatternSync = true;
             } else {
@@ -1105,7 +1156,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         // original does not exist or has changed
         if (newItem == null || !(newItem.getItem() instanceof ICraftingPatternItem)) return;
 
-        PatternSlot<SuperMTEHatchCraftingInputME> patternSlot = new PatternSlot<>(newItem, this);
+        PatternSlot<SuperMTEHatchCraftingInputME> patternSlot = createPatternSlot(newItem, null);
         internalInventory[index] = patternSlot;
         if (patternSlot.getPatternDetails() != null) {
             patternDetailsPatternSlotMap.put(patternSlot.getPatternDetails(), patternSlot);
@@ -1113,6 +1164,15 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         needPatternSync = true;
 
         refreshLastNonNullIndex(); // 更新最后非空索引
+    }
+
+    /** Allows specialized hatches to decode and expose a separate recipe inventory for each pattern. */
+    protected PatternSlot<SuperMTEHatchCraftingInputME> createPatternSlot(ItemStack pattern, NBTTagCompound saved) {
+        return new PatternSlot<>(pattern, saved, this);
+    }
+
+    protected PatternSlot<SuperMTEHatchCraftingInputME> getPatternSlot(int index) {
+        return internalInventory[index];
     }
 
     /**
@@ -1153,12 +1213,9 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             for (int i = 0; i < inventory.tagCount(); ++i) {
                 NBTTagCompound item = inventory.getCompoundTagAt(i);
                 String name = item.getString("name");
-                long amount = item.getLong("amount");
-                currenttip.add(
-                    name + ": "
-                        + EnumChatFormatting.GOLD
-                        + ReadableNumberConverter.INSTANCE.toWideReadableForm(amount)
-                        + EnumChatFormatting.RESET);
+                String amount = item.hasKey("amountText") ? item.getString("amountText")
+                    : ReadableNumberConverter.INSTANCE.toWideReadableForm(item.getLong("amount"));
+                currenttip.add(name + ": " + EnumChatFormatting.GOLD + amount + EnumChatFormatting.RESET);
             }
         }
         super.getWailaBody(itemStack, currenttip, accessor, config);
@@ -1169,26 +1226,28 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         int z) {
         tag.setBoolean("showPattern", showPattern);
         NBTTagList inventory = new NBTTagList();
-        HashMap<String, Long> nameToAmount = new HashMap<>();
+        HashMap<String, BigInteger> nameToAmount = new HashMap<>();
         for (Iterator<PatternSlot<SuperMTEHatchCraftingInputME>> it = inventories(); it.hasNext();) {
             PatternSlot<SuperMTEHatchCraftingInputME> i = it.next();
-            for (ItemStack item : i.itemInventory) {
-                if (item != null && item.stackSize > 0) {
-                    String name = item.getDisplayName();
-                    nameToAmount.merge(name, (long) item.stackSize, Long::sum);
-                }
+            for (IAEItemStack item : i.getStoredItems()) {
+                String name = item.copy()
+                    .setStackSize(1)
+                    .getItemStack()
+                    .getDisplayName();
+                nameToAmount.merge(name, BigInteger.valueOf(item.getStackSize()), BigInteger::add);
             }
-            for (FluidStack fluid : i.fluidInventory) {
-                if (fluid != null && fluid.amount > 0) {
-                    String name = fluid.getLocalizedName();
-                    nameToAmount.merge(name, (long) fluid.amount, Long::sum);
-                }
+            for (IAEFluidStack fluid : i.getStoredFluids()) {
+                String name = fluid.copy()
+                    .setStackSize(1)
+                    .getFluidStack()
+                    .getLocalizedName();
+                nameToAmount.merge(name, BigInteger.valueOf(fluid.getStackSize()), BigInteger::add);
             }
         }
-        for (Map.Entry<String, Long> entry : nameToAmount.entrySet()) {
+        for (Map.Entry<String, BigInteger> entry : nameToAmount.entrySet()) {
             NBTTagCompound item = new NBTTagCompound();
             item.setString("name", entry.getKey());
-            item.setLong("amount", entry.getValue());
+            item.setString("amountText", readableAmount(entry.getValue()));
             inventory.appendTag(item);
         }
 
@@ -1197,6 +1256,12 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             tag.setString("name", getName());
         }
         super.getWailaNBTData(player, tile, tag, world, x, y, z);
+    }
+
+    private static String readableAmount(BigInteger amount) {
+        return amount.bitLength() <= 63 ? ReadableNumberConverter.INSTANCE.toWideReadableForm(amount.longValue())
+            : NumberFormat.getIntegerInstance(Locale.ROOT)
+                .format(amount);
     }
 
     @Override
@@ -1234,8 +1299,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             return false;
         }
 
-        if (!patternDetailsPatternSlotMap.get(patternDetails)
-            .insertItemsAndFluids(meic)) {
+        PatternSlot<SuperMTEHatchCraftingInputME> slot = patternDetailsPatternSlotMap.get(patternDetails);
+        if (slot == null || !slot.insertItemsAndFluids(meic)) {
             scheduledReason = ScheduledReason.SOMETHING_STUCK;
             return false;
         }

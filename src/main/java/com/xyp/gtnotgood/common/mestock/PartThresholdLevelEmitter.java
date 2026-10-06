@@ -7,6 +7,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
 
+import com.xyp.gtnotgood.client.mestock.StockModelRenderer;
+
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.events.MENetworkChannelsChanged;
 import appeng.api.networking.events.MENetworkEventSubscribe;
@@ -202,18 +204,29 @@ public final class PartThresholdLevelEmitter extends PartBasicState
     @Override
     @SideOnly(Side.CLIENT)
     public void renderInventory(IPartRenderHelper helper, RenderBlocks renderer) {
-        helper.setTexture(getItemStack().getIconIndex());
-        helper.setBounds(7, 7, 11, 9, 9, 16);
-        helper.renderInventoryBox(renderer);
+        StockModelRenderer.inventory("extendedae:item/threshold_level_emitter");
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void renderStatic(int x, int y, int z, IPartRenderHelper helper, RenderBlocks renderer) {
-        helper.setTexture(getItemStack().getIconIndex());
-        helper.setBounds(7, 7, 11, 9, 9, 16);
-        helper.renderBlock(x, y, z, renderer);
-        renderLights(x, y, z, helper, renderer);
+        StockModelRenderer.part(
+            output() ? "extendedae:part/threshold_level_emitter_base_on"
+                : "extendedae:part/threshold_level_emitter_base_off",
+            x,
+            y,
+            z,
+            helper,
+            renderer,
+            getColor());
+        StockModelRenderer.part(
+            StockModelRenderer.indicator("level_emitter_status", getClientFlags()),
+            x,
+            y,
+            z,
+            helper,
+            renderer,
+            getColor());
     }
 
     @Override

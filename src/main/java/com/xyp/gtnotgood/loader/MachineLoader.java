@@ -10,6 +10,7 @@ import com.xyp.gtnotgood.common.machines.hatch.CrossRecipeWirelessEnergyHatch;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputSlave;
 import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
+import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
 import com.xyp.gtnotgood.common.machines.hatch.me.MEDataAccessHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputBus;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputHatch;
@@ -42,6 +43,15 @@ public class MachineLoader {
      * and tooltip credit registration in one predictable place.
      */
     public static void registerMachines() {
+        // #tr NameCircuitMEPatternBuffer
+        // # Circuit Pattern Buffer (ME)
+        // # zh_CN 电路样板总成 (ME)
+        GTNGItemList.CircuitMEPatternBuffer.set(
+            new CircuitMEPatternBuffer(
+                GTNGMachineID.CircuitMEPatternBuffer.ID,
+                "CircuitMEPatternBuffer",
+                StatCollector.translateToLocal("NameCircuitMEPatternBuffer")));
+        addItemTooltip(GTNGItemList.CircuitMEPatternBuffer.get(1), AnimatedText.GT_NOT_GOOD);
         // #tr NameSuperAdvancedMEInputHatch
         // # Super Advanced Stocking Input Hatch (ME)
         // # zh_CN 超级进阶存储输入仓 (ME)

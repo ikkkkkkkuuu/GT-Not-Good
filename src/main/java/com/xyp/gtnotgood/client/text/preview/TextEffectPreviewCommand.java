@@ -14,6 +14,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 public class TextEffectPreviewCommand extends CommandBase {
 
     private boolean pending;
+    private boolean wirelessMonitor;
 
     @Override
     public String getCommandName() {
@@ -22,7 +23,7 @@ public class TextEffectPreviewCommand extends CommandBase {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "/gtngtexteffects";
+        return "/gtngtexteffects [wireless]";
     }
 
     @Override
@@ -33,6 +34,7 @@ public class TextEffectPreviewCommand extends CommandBase {
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
         if (pending) return;
+        wirelessMonitor = args.length > 0 && args[0].equalsIgnoreCase("wireless");
         pending = true;
         FMLCommonHandler.instance()
             .bus()
@@ -48,6 +50,6 @@ public class TextEffectPreviewCommand extends CommandBase {
             .unregister(this);
         // GuiChat closes its screen after dispatching a command, so open after input processing.
         Minecraft.getMinecraft()
-            .displayGuiScreen(new TextEffectPreview());
+            .displayGuiScreen(new TextEffectPreview(wirelessMonitor));
     }
 }

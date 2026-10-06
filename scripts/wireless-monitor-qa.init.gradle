@@ -1,0 +1,65 @@
+// Focused wireless HUD checks, excluded from release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String)
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/WirelessMonitorTest.java', 'scripts/qa/WirelessMonitorClientChecks.java'))
+    }
+    root.tasks.named('test').configure { filter { includeTestsMatching '*WirelessMonitorTest' } }
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/client/wireless/*.java',
+                'src/main/java/com/xyp/gtnotgood/common/wireless/monitor/*.java',
+                'src/main/java/com/xyp/gtnotgood/common/packet/WirelessMonitor*.java',
+                'src/main/java/com/xyp/gtnotgood/common/packet/NetWorkHandler.java',
+                'src/main/java/com/xyp/gtnotgood/ClientProxy.java',
+                'src/main/java/com/xyp/gtnotgood/CommonProxy.java',
+                'src/main/java/com/xyp/gtnotgood/GTNotGood.java',
+                'src/main/java/com/xyp/gtnotgood/utils/keybind/KeyBindManager.java',
+                'src/main/java/com/xyp/gtnotgood/client/text/preview/TextEffectPreview*.java',
+                'scripts/qa/WirelessMonitorTest.java', 'scripts/qa/WirelessMonitorClientChecks.java'
+        }
+    }
+    def snapshot = root.tasks.register('snapshotWirelessMonitorQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/WirelessMonitorClientChecks*.class'
+        into root.layout.buildDirectory.dir('wireless-monitor-qa/classes')
+    }
+    if (root.hasProperty('wirelessMonitorUpstream')) {
+        root.dependencies.add('runtimeOnlyNonPublishable', root.files('build/wireless-monitor-qa-dependencies/gtswn.jar'))
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar'))
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        dependsOn snapshot
+        classpath += root.files(root.layout.buildDirectory.dir('wireless-monitor-qa/classes'))
+        workingDir root.file('run/wireless-monitor-check')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.wirelessMonitor.qa', 'true'
+        systemProperty 'gtng.wirelessMonitor.upstream', root.hasProperty('wirelessMonitorUpstream').toString()
+        systemProperty 'gtng.wirelessMonitor.output', root.file('build/wireless-monitor-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in wireless HUD integration checks')
+        doFirst {
+            root.file('build/wireless-monitor-qa').mkdirs()
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/wireless-monitor-qa/result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(root.file('build/wireless-monitor-qa/window-helper.log')).start()
+            }
+        }
+        doLast {
+            def result = root.file('build/wireless-monitor-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Wireless HUD QA failed')
+        }
+    }
+}

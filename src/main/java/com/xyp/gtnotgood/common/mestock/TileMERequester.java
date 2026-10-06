@@ -4,6 +4,9 @@ import java.util.Arrays;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 
 import com.xyp.gtnotgood.common.mebridge.TileMEBridgeBase;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -36,6 +39,7 @@ public final class TileMERequester extends TileMEBridgeBase implements StockHost
     private String name = "";
     private int redstoneMode;
     private int cursor;
+    private boolean renderActive;
     public long stockLookups;
 
     @Override
@@ -146,16 +150,50 @@ public final class TileMERequester extends TileMEBridgeBase implements StockHost
 
     @MENetworkEventSubscribe
     public void stockPowerChanged(MENetworkPowerStatusChange event) {
+        updateRenderState();
         wake();
     }
 
     @MENetworkEventSubscribe
     public void stockChannelChanged(MENetworkChannelsChanged event) {
+        updateRenderState();
         wake();
     }
 
     public void neighborChanged() {
         wake();
+    }
+
+    @Override
+    protected void onProxyReady() {
+        updateRenderState();
+    }
+
+    public boolean renderActive() {
+        return isServerSide() ? getProxy().isActive() : renderActive;
+    }
+
+    /** Sends only a visual flag when power/channel state changes; no inventory or per-tick packets. */
+    private void updateRenderState() {
+        if (!isServerSide()) return;
+        boolean active = getProxy().isActive();
+        if (active == renderActive) return;
+        renderActive = active;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    @Override
+    public Packet getDescriptionPacket() {
+        NBTTagCompound data = new NBTTagCompound();
+        data.setBoolean("active", renderActive());
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, data);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
+        renderActive = packet.func_148857_g()
+            .getBoolean("active");
+        worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
     }
 
     void service(StockGridCache cache) {
