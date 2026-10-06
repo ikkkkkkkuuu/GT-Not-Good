@@ -364,6 +364,15 @@ Connector overlay validation: compileJava and focused compileTestJava passed. A 
 
 Independent of the AE2LT port above. Source: https://github.com/ABKQPO/GT-Not-Leisure/tree/52345d2c059c871febec1365d6012424c7d64547 . Requested commits: d28217f, 9bd2f59, 52345d2. Inspected upstream LICENSE.txt (LGPL-3.0) and bundled MIT shader notices before copying. Source/destination/modification records and licenses are packaged in src/main/resources/META-INF/text-effects-port/NOTICE.md; shader hashes are in asset-manifest.json. Reference downloads reside in the OS temporary directory and are not compiled or packaged.
 
+Coexistence correction (2026-10-06): GTNL retains ownership of shared font hooks, while
+`/gtngtexteffects` and its wireless preview remain registered. GTNG maps its preset namespace to
+GTNL only when encoding displayed tooltips, previews and HUD text. Stored renderer IDs, palette,
+speed, bold and italic settings remain independent; no new upstream source or assets are copied.
+Verified with GTNG alone and the complete published GTNL `0.2.7-rc1` development jar plus
+Angelica: both command registrations, GTNG machine/wireless preview dispatch, all twelve preset
+IDs, immediate preference application, saved preference reload, tooltip/HUD rendering and resource
+reload passed. Two focused namespace/palette/speed JUnit checks passed. Hidden-client screenshots
+and results are in ignored `build/text-effects-qa/{angelica,gtnl}`.
 
 ## GTNL compact AE machines (2026-09-22)
 

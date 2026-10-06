@@ -57,6 +57,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.xyp.gtnotgood.ae2thing.quickterminal.ITerminalVisibilityToggle;
 import com.xyp.gtnotgood.common.gui.modularui.hatch.SuperMTEHatchCraftingInputMEGui;
+import com.xyp.gtnotgood.common.machines.hatch.me.ChatComponentInterfaceNameSuffix;
 import com.xyp.gtnotgood.common.machines.hatch.me.PatternMEOutput;
 import com.xyp.gtnotgood.common.utils.MoldDataManager;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -119,6 +120,7 @@ import gregtech.common.tileentities.machines.IDualInputHatch;
 import gregtech.common.tileentities.machines.IDualInputHatchWithPattern;
 import gregtech.common.tileentities.machines.IDualInputInventory;
 import gregtech.common.tileentities.machines.IDualInputInventoryWithPattern;
+import gregtech.crossmod.ae2.ChatComponentGhostCircuitSuffix;
 import lombok.Setter;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -797,6 +799,12 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             suffix = nameProvider.getInterfaceNameSuffix();
         }
 
+        IChatComponent preferred = null;
+        ItemStack circuit = allowSelectCircuit() ? mInventory[getCircuitSlot()] : null;
+        if (circuit != null && circuit.getItemDamage() > 0) {
+            preferred = new ChatComponentGhostCircuitSuffix(Collections.singletonList(circuit.getItemDamage()));
+        }
+
         // The meta values below are plain numbers, so a literal component is enough — there is nothing for the client
         // to localize, unlike the provider suffix above.
         StringBuilder metaSuffix = new StringBuilder();
@@ -827,9 +835,12 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         if (metaSuffix.length() > 0) {
             IChatComponent metaComponent = new ChatComponentText(metaSuffix.toString());
             suffix = suffix == null ? metaComponent : suffix.appendSibling(metaComponent);
+            IChatComponent preferredMeta = new ChatComponentText(metaSuffix.toString());
+            preferred = preferred == null ? preferredMeta : preferred.appendSibling(preferredMeta);
         }
 
-        return suffix;
+        if (hasCustomName() || suffix == null && preferred == null) return suffix;
+        return new ChatComponentInterfaceNameSuffix(suffix, preferred);
     }
 
     @Override

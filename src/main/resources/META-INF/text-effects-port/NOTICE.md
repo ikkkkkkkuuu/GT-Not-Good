@@ -23,6 +23,8 @@ client initialization, resource reload, optional mixin loading and generated tra
 renamed preview command to gtngtexteffects; connected machine tooltip credits to EXOTIC_RAINBOW.
 GT-Not-Good later added a client-only preference and an apply button to change those machine credits
 immediately; these additions are project code built on the ported effect API.
+Modified 2026-10-06 for GTNL coexistence: retain the GTNG preview command, translate preset
+namespaces only when displaying text through GTNL, and keep client preferences independent.
 GLSL rendering algorithms and the final upstream sampling fix are retained.
 
 Editable source is included in this project's source tree and sources artifact. When distributing

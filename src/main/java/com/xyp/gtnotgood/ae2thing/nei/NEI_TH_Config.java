@@ -135,6 +135,16 @@ public class NEI_TH_Config implements IConfigureNEI {
         API.addOption(new BaseToggleButton(ButtonConstants.ULTRA_TERMINAL_MODE));
         API.addOption(new BaseToggleButton(ButtonConstants.DUAL_INTERFACE_TERMINAL, false));
         API.addOption(new BaseToggleButton(ButtonConstants.DUAL_INTERFACE_TERMINAL_APPEND_CIRCUIT_DAMAGE));
+        // #tr nei.options.gtnotgood.prefer_own_interface_names
+        // # Prefer this mod's automatic interface names
+        // # zh_CN 优先使用本模组接口自动命名
+        // #tr nei.options.gtnotgood.prefer_own_interface_names.true
+        // # Yes
+        // # zh_CN 是
+        // #tr nei.options.gtnotgood.prefer_own_interface_names.false
+        // # No
+        // # zh_CN 否
+        API.addOption(new BaseToggleButton(ButtonConstants.PREFER_OWN_INTERFACE_NAMES, false));
         // API.addOption(new BaseToggleButton(ButtonConstants.PINNED_BAR)); //remove
         // API.addOption(new BaseToggleButton(ButtonConstants.PINNED_BAR_REMOVE));
         // API.addOption(new BaseToggleButton(ButtonConstants.PINNED_BAR_CRAFTING_STATE));
@@ -148,8 +158,12 @@ public class NEI_TH_Config implements IConfigureNEI {
     }
 
     public static boolean getConfigValue(String identifier) {
+        return getConfigValue(identifier, true);
+    }
+
+    public static boolean getConfigValue(String identifier, boolean defaultValue) {
         return tag.getTag(identifier)
-            .getBooleanValue(true);
+            .getBooleanValue(defaultValue);
     }
 
     @Override

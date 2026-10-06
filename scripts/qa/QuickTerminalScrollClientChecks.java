@@ -174,6 +174,7 @@ public final class QuickTerminalScrollClientChecks {
     }
 
     private static void checkServer(EntityPlayerMP player) throws Exception {
+        InterfaceNameClientChecks.checkServer(player);
         DualTerminalGuiObject host = host(player);
         player.worldObj.setBlock(
             0,
@@ -678,6 +679,7 @@ public final class QuickTerminalScrollClientChecks {
             InvTweaksOrderCacheClientChecks.run();
             ItemSortNameCacheClientChecks.run();
             InterfaceViewportClientChecks.run(guiField("interfaceTerminal"));
+            InterfaceNameClientChecks.run(guiField("interfaceTerminal"));
             screenshot("top.png");
             VirtualMEPatternSlot first = ((VirtualMEPatternSlot[]) guiField("craftingSlots"))[0];
             int x = (Integer) guiField("guiLeft") + first.getX() + 2;

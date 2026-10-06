@@ -19,9 +19,9 @@ import com.xyp.gtnotgood.client.text.TextEffectRegistry;
 import com.xyp.gtnotgood.client.wireless.WirelessMonitorPreferences;
 import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.gtnotgood.utils.text.AnimatedText;
+import com.xyp.gtnotgood.utils.text.TextEffectsCompat;
 import com.xyp.gtnotgood.utils.text.effect.TextEffectFormat;
 import com.xyp.gtnotgood.utils.text.effect.TextEffectStyle;
-import com.xyp.gtnotgood.utils.text.effect.TextEffects;
 
 /** Interactive rendering sample using the same entry points as ordinary GUI text. */
 public class TextEffectPreview extends GuiScreen {
@@ -203,7 +203,7 @@ public class TextEffectPreview extends GuiScreen {
                 .equals(activeStyle().rendererId()) ? "* " : "  ";
             String name = fontRendererObj.trimStringToWidth(prefix + entry.label(), textX - 30);
             fontRendererObj.drawString(name, 18, (int) y, i == selectedIndex ? 0xFFFF55 : 0xB0B0B0);
-            String rendered = TextEffects.format(style) + value;
+            String rendered = TextEffectsCompat.format(style) + value;
             fontRendererObj.drawStringWithShadow(
                 fontRendererObj.trimStringToWidth(rendered, (int) availableWidth - textX - 20),
                 textX,
@@ -212,7 +212,7 @@ public class TextEffectPreview extends GuiScreen {
             y += rowHeight;
         }
         if (!entries.isEmpty() && y + 77 + 30 < height - 25) {
-            String mixed = "Plain + " + TextEffects.apply(
+            String mixed = "Plain + " + TextEffectsCompat.apply(
                 value,
                 entries.get(page * PAGE_SIZE)
                     .style())

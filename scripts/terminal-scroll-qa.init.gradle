@@ -21,7 +21,8 @@ gradle.projectsEvaluated {
         setSource(root.files(root.file('scripts/qa/QuickTerminalScrollClientChecks.java'),
             root.file('scripts/qa/InvTweaksOrderCacheClientChecks.java'),
             root.file('scripts/qa/ItemSortNameCacheClientChecks.java'),
-            root.file('scripts/qa/InterfaceViewportClientChecks.java')))
+            root.file('scripts/qa/InterfaceViewportClientChecks.java'),
+            root.file('scripts/qa/InterfaceNameClientChecks.java')))
     }
     root.spotless {
         java {
@@ -34,6 +35,7 @@ gradle.projectsEvaluated {
                 'scripts/qa/InvTweaksOrderCacheClientChecks.java',
                 'scripts/qa/ItemSortNameCacheClientChecks.java',
                 'scripts/qa/InterfaceViewportClientChecks.java',
+                'scripts/qa/InterfaceNameClientChecks.java',
                 'src/main/java/com/xyp/gtnotgood/mixins/late/AppliedEnergistics/InterfaceEntryViewportAccessor.java',
                 'src/main/java/com/xyp/gtnotgood/mixins/late/AppliedEnergistics/InterfaceTerminalViewportMixin.java',
                 'src/main/java/com/xyp/gtnotgood/ae2thing/quickterminal/client/ItemSortNameCache.java',

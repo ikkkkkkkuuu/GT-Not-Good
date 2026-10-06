@@ -32,9 +32,8 @@ final class StockRequesterView {
         String search = query.toLowerCase(Locale.ROOT);
         Map<String, List<TileMERequester>> groups = new TreeMap<>();
         for (TileMERequester tile : cache.listing()) {
-            String name = tile.name()
-                .isEmpty() ? StockText.Requester.text() : tile.name();
-            boolean matches = name.toLowerCase(Locale.ROOT)
+            String name = tile.name();
+            boolean matches = (name.isEmpty() ? StockText.Requester.text() : name).toLowerCase(Locale.ROOT)
                 .contains(search);
             if (!matches && !search.isEmpty()) for (int row = 0; row < tile.stockConfig()
                 .size(); row++) {
@@ -53,11 +52,9 @@ final class StockRequesterView {
                 new Line(
                     null,
                     -1,
-                    group.getKey() + (group.getValue()
-                        .size() > 1 ? " ("
-                            + group.getValue()
-                                .size()
-                            + ")" : "")));
+                    group.getKey(),
+                    group.getValue()
+                        .size()));
             for (TileMERequester tile : group.getValue()) for (int row = 0; row < tile.stockConfig()
                 .size(); row++) lines.add(new Line(tile, row, ""));
         }
@@ -90,11 +87,17 @@ final class StockRequesterView {
         final TileMERequester tile;
         final int row;
         final String header;
+        final int groupCount;
 
         Line(TileMERequester tile, int row, String header) {
+            this(tile, row, header, 0);
+        }
+
+        Line(TileMERequester tile, int row, String header, int groupCount) {
             this.tile = tile;
             this.row = row;
             this.header = header;
+            this.groupCount = groupCount;
         }
 
         String token() {

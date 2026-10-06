@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.ae2thing.nei;
 
+import com.xyp.gtnotgood.utils.enums.ModList;
+
 public interface ButtonConstants {
 
     String HISTORY = "gtnotgood.history";
@@ -12,5 +14,6 @@ public interface ButtonConstants {
     String DUAL_INTERFACE_TERMINAL = "gtnotgood.dual_interface_terminal_fill_search_names";
     String DUAL_INTERFACE_TERMINAL_FILL_CIRCUIT = "gtnotgood.dual_interface_terminal_fill_circuit";
     String DUAL_INTERFACE_TERMINAL_APPEND_CIRCUIT_DAMAGE = "gtnotgood.dual_interface_terminal_append_circuit_damage";
+    String PREFER_OWN_INTERFACE_NAMES = ModList.GTNotGood.getID() + ".prefer_own_interface_names";
     String NEI_CRAFT_ITEM = "gtnotgood.nei_craft_item";
 }

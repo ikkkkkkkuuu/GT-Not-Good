@@ -1,32 +1,112 @@
 // Opt-in render checks at the main menu; no save is opened or modified.
+def withGtnl = System.getProperty('gtng.text.withGtnl') == 'true'
+def noAngelica = System.getProperty('gtng.text.noAngelica') == 'true'
+def variant = withGtnl ? 'gtnl' : noAngelica ? 'vanilla' : 'angelica'
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(project.file('.gradle/text-effects-' + variant + '-qa-build'))
+}
 gradle.projectsEvaluated {
     def root = gradle.rootProject
-    root.tasks.named('runClient').configure {
-        dependsOn root.tasks.named('testClasses')
-        classpath += root.sourceSets.test.output
-        if (System.getProperty('gtng.text.noAngelica') == 'true') {
-            classpath = classpath.filter { !it.name.toLowerCase().contains('angelica') }
+    def artifacts = [
+        'build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar':
+            'https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar'
+    ]
+    if (withGtnl) artifacts['build/gtnl-compat-dependencies/sciencenotleisure-0.2.7-rc1-dev.jar'] =
+        'https://github.com/ABKQPO/GT-Not-Leisure/releases/download/0.2.7-rc1/sciencenotleisure-0.2.7-rc1-dev.jar'
+    artifacts.each { path, url ->
+        def artifact = root.file(path)
+        if (!artifact.exists()) {
+            artifact.parentFile.mkdirs()
+            def connection = new URI(url).toURL().openConnection()
+            connection.connectTimeout = 30000
+            connection.readTimeout = 60000
+            connection.inputStream.withCloseable { input -> artifact.withOutputStream { it << input } }
         }
-        systemProperty 'gtng.text.qa', 'true'
-        systemProperty 'gtng.text.qa.output', new File(root.projectDir, 'build/text-effects-qa').absolutePath
-        // Freeze project outputs while the client is running, including FML's resource-pack jar.
-        // Other local tasks may rebuild the shared build directory during a resource reload.
-        doFirst {
-            def snapshot = java.nio.file.Files.createTempDirectory('gtng-text-qa-').toFile()
-            def projectBuild = root.layout.buildDirectory.get().asFile.toPath()
-            def entries = classpath.files.collect { entry ->
-                if (!entry.exists() || !entry.toPath().startsWith(projectBuild)) return entry
-                def target = new File(snapshot, projectBuild.relativize(entry.toPath()).toString())
-                if (entry.isDirectory()) {
-                    root.copy { from entry; into target }
-                } else {
-                    target.parentFile.mkdirs()
-                    java.nio.file.Files.copy(entry.toPath(), target.toPath())
-                }
-                return target
+        root.dependencies.add('runtimeOnlyNonPublishable', root.files(artifact))
+    }
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String)
+    if (withGtnl) {
+        def gtnl = root.file('build/gtnl-compat-dependencies/sciencenotleisure-0.2.7-rc1-dev.jar')
+        def digest = java.security.MessageDigest.getInstance('SHA-256').digest(gtnl.bytes).encodeHex().toString()
+        if (digest != 'c36ff329db26dd5df3d70e825bb2741c12fe1818c9d67d4a7b4323cd6ed6e8cc') {
+            throw new GradleException('GTNL RC1 development jar checksum mismatch: ' + gtnl)
+        }
+        root.dependencies.add('runtimeOnlyNonPublishable', 'com.github.ABKQPO:BetterQuestingAPI:1.1.3:dev') { transitive = false }
+        ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+            'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'AspectRecipeIndex'].each {
+            root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+        }
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files(root.file('scripts/qa/TextEffectsClientChecks.java'),
+            root.file('scripts/qa/TextEffectsCompatTest.java')))
+    }
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/ClientProxy.java',
+                'src/main/java/com/xyp/gtnotgood/utils/text/TextEffectsCompat.java',
+                'src/main/java/com/xyp/gtnotgood/utils/text/AnimatedText.java',
+                'src/main/java/com/xyp/gtnotgood/utils/text/AnimatedTooltipHandler.java',
+                'src/main/java/com/xyp/gtnotgood/client/text/preview/TextEffectPreview.java',
+                'src/main/java/com/xyp/gtnotgood/client/wireless/WirelessMonitorPreferences.java',
+                'scripts/qa/TextEffectsCompatTest.java',
+                'scripts/qa/TextEffectsClientChecks.java'
+        }
+    }
+    ['runClient', 'runClient17'].each { taskName ->
+        root.tasks.named(taskName).configure {
+            if (taskName == 'runClient17') {
+                javaLauncher.set(root.javaToolchains.launcherFor {
+                    languageVersion = JavaLanguageVersion.of(21)
+                })
+                classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
             }
-            classpath = root.files(entries)
+            dependsOn root.tasks.named('testClasses')
+            classpath += root.sourceSets.test.output
+            if (noAngelica) classpath = classpath.filter { !it.name.toLowerCase().contains('angelica') }
+            workingDir root.file('run/text-effects-' + variant + '-check')
+            def output = root.file('build/text-effects-qa/' + variant)
+            systemProperty 'gtng.factory.qa', 'true'
+            systemProperty 'gtng.text.qa', 'true'
+            systemProperty 'gtng.text.qa.output', output.absolutePath
+            systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+            systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+            // Freeze project outputs while the client is running, including FML's resource-pack jar.
+            doFirst {
+                workingDir.mkdirs()
+                output.mkdirs()
+                new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+                java.nio.file.Files.deleteIfExists(new File(output, 'result.txt').toPath())
+                def snapshot = java.nio.file.Files.createTempDirectory('gtng-text-qa-').toFile()
+                def projectBuild = root.layout.buildDirectory.get().asFile.toPath()
+                def entries = classpath.files.collect { entry ->
+                    if (!entry.exists() || !entry.toPath().startsWith(projectBuild)) return entry
+                    def target = new File(snapshot, projectBuild.relativize(entry.toPath()).toString())
+                    if (entry.isDirectory()) {
+                        root.copy { from entry; into target }
+                    } else {
+                        target.parentFile.mkdirs()
+                        java.nio.file.Files.copy(entry.toPath(), target.toPath())
+                    }
+                    return target
+                }
+                classpath = root.files(entries)
+                if (System.getProperty('os.name').startsWith('Windows')) {
+                    new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                        '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                        '-Workspace', root.projectDir.absolutePath)
+                        .redirectErrorStream(true)
+                        .redirectOutput(new File(output, 'window-helper.log'))
+                        .start()
+                }
+            }
+            doLast {
+                def result = new File(output, 'result.txt')
+                if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Text effects client QA failed')
+            }
+            args '--width', '1280', '--height', '850'
+            notCompatibleWithConfigurationCache('Opt-in text effects client checks')
         }
-        args '--width', '1280', '--height', '850'
     }
 }

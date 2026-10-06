@@ -14,6 +14,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 import com.gtnewhorizon.gtnhlib.eventbus.EventBusSubscriber;
 import com.gtnewhorizon.gtnhlib.util.map.ItemStackMap;
+import com.xyp.gtnotgood.utils.text.effect.TextEffectStyle;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -39,10 +40,8 @@ public class AnimatedTooltipHandler {
      * @param style shader and palette to apply
      * @return supplier of the encoded, closed effect span
      */
-    public static Supplier<String> renderedText(String text,
-        com.xyp.gtnotgood.utils.text.effect.TextEffectStyle style) {
-        String rendered = com.xyp.gtnotgood.utils.text.effect.TextEffects.apply(text, style);
-        return () -> rendered;
+    public static Supplier<String> renderedText(String text, TextEffectStyle style) {
+        return () -> TextEffectsCompat.apply(text, style);
     }
 
     /**
@@ -52,9 +51,8 @@ public class AnimatedTooltipHandler {
      * @param style shader and palette to apply
      * @return supplier of a closed effect span
      */
-    public static Supplier<String> renderedText(Supplier<String> text,
-        com.xyp.gtnotgood.utils.text.effect.TextEffectStyle style) {
-        return () -> com.xyp.gtnotgood.utils.text.effect.TextEffects.apply(text.get(), style);
+    public static Supplier<String> renderedText(Supplier<String> text, TextEffectStyle style) {
+        return () -> TextEffectsCompat.apply(text.get(), style);
     }
 
     /**

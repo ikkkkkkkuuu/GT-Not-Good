@@ -59,7 +59,7 @@ public class AnimatedText {
      */
     private static String machineCredit() {
         String formatting = (creditBold ? "\u00a7l" : "") + (creditItalic ? "\u00a7o" : "");
-        return TextEffects.apply(formatting + ModList.GTNotGood.getDisplayName(), creditStyle) + "\u00a7r";
+        return TextEffectsCompat.apply(formatting + ModList.GTNotGood.getDisplayName(), creditStyle) + "\u00a7r";
     }
 
     /**

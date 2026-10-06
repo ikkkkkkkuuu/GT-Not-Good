@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.common.mestock;
 
+import net.minecraft.util.StatCollector;
+
 import com.cleanroommc.modularui.api.drawable.IKey;
 
 enum StockText {
@@ -173,6 +175,7 @@ enum StockText {
     }
 
     String text() {
-        return label().get();
+        // LangKey.get() loads ClientScreenHandler; shared GUI construction also runs on physical servers.
+        return StatCollector.translateToLocal(key);
     }
 }

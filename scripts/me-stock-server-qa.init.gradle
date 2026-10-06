@@ -1,0 +1,21 @@
+// Exercise the shared GUI factory on a physical dedicated server; this fixture never enters release jars.
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(project.file('.gradle/me-stock-server-qa-build'))
+}
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/MEStockServerChecks.java'))
+    }
+    root.tasks.named('jar').configure {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        archiveFileName = 'gtnotgood-me-stock-server-qa.jar'
+    }
+    root.extensions.findByName('spotless')?.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/mestock/StockText.java',
+            'src/main/java/com/xyp/gtnotgood/common/mestock/StockGui.java',
+            'src/main/java/com/xyp/gtnotgood/common/mestock/StockRequesterView.java',
+            'scripts/qa/MEStockServerChecks.java'
+    }
+}

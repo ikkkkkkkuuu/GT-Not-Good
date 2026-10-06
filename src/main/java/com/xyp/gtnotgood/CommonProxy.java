@@ -3,11 +3,13 @@ package com.xyp.gtnotgood;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.cleanroommc.modularui.factory.GuiManager;
+import com.gtnewhorizon.gtnhlib.chat.ChatComponentCustomRegistry;
 import com.xyp.gtnotgood.ae2thing.AE2Thing;
 import com.xyp.gtnotgood.common.compass.StructureSearch;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.LargeVoidMinerConfigGuiFactory;
 import com.xyp.gtnotgood.common.items.toolbelt.common.BeltEvents;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
+import com.xyp.gtnotgood.common.machines.hatch.me.ChatComponentInterfaceNameSuffix;
 import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
 import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
 import com.xyp.gtnotgood.common.mebridge.MEBridgeEventHandler;
@@ -41,6 +43,7 @@ public class CommonProxy {
     // preInit "Run before anything else. Read your config, create blocks, items, etc., and register them with the
     // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
+        ChatComponentCustomRegistry.register(ChatComponentInterfaceNameSuffix::new);
         Config.synchronizeConfiguration(event.getSuggestedConfigurationFile());
         MainConfig.ensureLoaded();
         if (Config.enableRTSBuilding) com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.preInit(event);
@@ -129,5 +132,10 @@ public class CommonProxy {
 
     /** Forwards a balance snapshot only on the client; dedicated servers have no HUD renderer. */
     public void receiveWirelessMonitor(WirelessMonitorSnapshot message) {}
+
+    /** Server-side names preserve the standard suffix without loading NEI client configuration. */
+    public boolean preferOwnInterfaceNames() {
+        return false;
+    }
 
 }

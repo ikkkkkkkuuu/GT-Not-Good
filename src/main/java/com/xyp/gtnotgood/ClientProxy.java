@@ -8,6 +8,8 @@ import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
+import com.xyp.gtnotgood.ae2thing.nei.ButtonConstants;
+import com.xyp.gtnotgood.ae2thing.nei.NEI_TH_Config;
 import com.xyp.gtnotgood.client.StructureCompassRenderer;
 import com.xyp.gtnotgood.client.WindowsTaskbarButton;
 import com.xyp.gtnotgood.client.flux.FluxConnectorRenderer;
@@ -56,6 +58,11 @@ import thaumcraft.common.config.ConfigBlocks;
  */
 @SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
+
+    @Override
+    public boolean preferOwnInterfaceNames() {
+        return NEI_TH_Config.getConfigValue(ButtonConstants.PREFER_OWN_INTERFACE_NAMES, false);
+    }
 
     @Override
     public void receiveServerConfig(com.xyp.gtnotgood.common.packet.ServerConfigMessage message) {
@@ -117,9 +124,10 @@ public class ClientProxy extends CommonProxy {
     private void initializeTextEffects() {
         BuiltinTextEffects.register();
         TextEffectPreferences.load();
-        if (TextEffectsCompat.hasUpstreamRenderer()) return;
-        ((IReloadableResourceManager) Minecraft.getMinecraft()
-            .getResourceManager()).registerReloadListener(EffectTextRenderer.INSTANCE);
+        if (!TextEffectsCompat.hasUpstreamRenderer()) {
+            ((IReloadableResourceManager) Minecraft.getMinecraft()
+                .getResourceManager()).registerReloadListener(EffectTextRenderer.INSTANCE);
+        }
         ClientCommandHandler.instance.registerCommand(new TextEffectPreviewCommand());
     }
 

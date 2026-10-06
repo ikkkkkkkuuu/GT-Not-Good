@@ -413,13 +413,13 @@ final class StockGui {
     private static ModularPanel requester(TileMERequester tile, StockGuiFactory.Data data, PanelSyncManager sync) {
         int rows = tile.stockConfig()
             .size();
-        var title = new StringSyncValue(
-            () -> tile.name()
-                .isEmpty() ? StockText.Requester.text() : tile.name());
+        var title = new StringSyncValue(tile::name);
         sync.syncValue("title", title);
         var panel = panel(
             "me_requester",
-            IKey.dynamic(title::getValue),
+            IKey.dynamic(
+                () -> title.getValue()
+                    .isEmpty() ? StockText.Requester.text() : title.getValue()),
             195,
             120 + rows * 19,
             StockGuiAssets.requester(false, () -> rows, index -> true),
@@ -543,16 +543,25 @@ final class StockGui {
                 var line = view.line(row);
                 return line == null ? "" : line.header;
             });
+            var groupCount = new IntSyncValue(() -> {
+                var line = view.line(row);
+                return line == null ? 0 : line.groupCount;
+            });
             sync.syncValue("header", i, header);
-            panel.child(
-                IKey.dynamic(header::getValue)
-                    .color(0xff404040)
-                    .asWidget()
-                    .alignment(Alignment.TopLeft)
-                    .shadow(false)
-                    .pos(10, 26 + i * 19)
-                    .size(156, 9)
-                    .setEnabledIf(w -> row < rowCount.getIntValue() && kinds[row].getIntValue() == 1));
+            sync.syncValue("groupCount", i, groupCount);
+            panel.child(IKey.dynamic(() -> {
+                String name = header.getValue()
+                    .isEmpty() ? StockText.Requester.text() : header.getValue();
+                int count = groupCount.getIntValue();
+                return name + (count > 1 ? " (" + count + ")" : "");
+            })
+                .color(0xff404040)
+                .asWidget()
+                .alignment(Alignment.TopLeft)
+                .shadow(false)
+                .pos(10, 26 + i * 19)
+                .size(156, 9)
+                .setEnabledIf(w -> row < rowCount.getIntValue() && kinds[row].getIntValue() == 1));
             requestRow(
                 panel,
                 data,

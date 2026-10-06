@@ -7,6 +7,7 @@ import net.minecraftforge.common.config.Configuration;
 import com.xyp.gtnotgood.client.text.TextEffectRegistry;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.gtnotgood.utils.text.TextEffectsCompat;
 import com.xyp.gtnotgood.utils.text.effect.TextEffectFormat;
 import com.xyp.gtnotgood.utils.text.effect.TextEffectStyle;
 import com.xyp.gtnotgood.utils.text.effect.TextEffects;
@@ -107,6 +108,6 @@ public final class WirelessMonitorPreferences {
 
     public static String decorate(String text) {
         String formatting = (bold ? "\u00a7l" : "") + (italic ? "\u00a7o" : "");
-        return animatedColors ? TextEffects.apply(formatting + text, style()) + "\u00a7r" : formatting + text;
+        return animatedColors ? TextEffectsCompat.apply(formatting + text, style()) + "\u00a7r" : formatting + text;
     }
 }
