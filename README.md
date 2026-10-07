@@ -43,10 +43,10 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.3.2          | [![1.3.2](https://img.shields.io/badge/release-1.3.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.2) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.3.3          | [![1.3.3](https://img.shields.io/badge/release-1.3.3-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.3) |         ✔️         |
 
-最新版本：[1.3.2 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.2)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.2/gtnotgood-1.3.2.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.2/gtnotgood-1.3.2-sources.jar)。
+最新版本：[1.3.3 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.3)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.3/gtnotgood-1.3.3.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.3/gtnotgood-1.3.3-sources.jar)。
 
 ### 大型矿石处理机
 
@@ -136,7 +136,7 @@ ME 无线收发器
 NEI → GTNotGood 新增“优先使用本模组接口自动命名”，默认“否”。
 开启后，超级样板输入总成等使用自己的自动名称，忽略 GTNL 等模组追加的命名后缀，保留电路、手动槽和模头编号。
 各玩家独立保存设置，切换后重新打开接口终端生效。
-修复 GTNL 部分多方块主机的动态名称解析，例如化工厂总成显示“化工厂 9”，保留编号和自定义名称。
+总成按已连接主机的当前配方池命名，名称与 NEI 配方类别一致；换池后名称跟随更新，保留编号和自定义名称。
 
 ### 🔌 Xnet
 

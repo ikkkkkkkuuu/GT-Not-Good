@@ -110,6 +110,7 @@ import gregtech.api.interfaces.modularui.IAddGregtechLogo;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.implementations.MTEHatchInputBus;
+import gregtech.api.metatileentity.implementations.MTEMultiBlockBase;
 import gregtech.api.objects.GTDualInputPattern;
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.render.TextureFactory;
@@ -766,18 +767,22 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     }
 
     /**
-     * The untranslated recipe-category name key of the controller's recipe map (translated client-side to e.g.
-     * "Assembler"), or null if this hatch isn't bound to a recipe map. The controller sets {@code mRecipeMap} on each
-     * hatch when the multiblock forms (MTEMultiBlockBase), and it's the same map NEI uses, so the interface-terminal
-     * name lines up with the NEI-overwrite auto-fill name. Priority (custom name > recipe map > machine icon) is
-     * enforced by the callers.
+     * Reads the accepted controller's current recipe category, including mode changes that bypass
+     * {@code setMachineMode}. Registered hatch watchers avoid a world scan; membership excludes controllers that
+     * registered a watcher but rejected this input. Unbound hatches retain the captured-map fallback.
+     *
+     * @return untranslated recipe-category key for client-side localization, or null when no map is available
      */
     private String getRecipeMapNameKey() {
         RecipeMap<?> map = this.mRecipeMap != null ? this.mRecipeMap : this.controllerRecipeMap;
-        if (map == null) {
-            return null;
+        for (var watcher : watchers) {
+            if (watcher instanceof MTEMultiBlockBase controller && controller.isValid()
+                && controller.mDualInputHatches.contains(this)) {
+                map = controller.getRecipeMap();
+                break;
+            }
         }
-        return map.getDefaultRecipeCategory().unlocalizedName;
+        return map == null ? null : map.getDefaultRecipeCategory().unlocalizedName;
     }
 
     /**

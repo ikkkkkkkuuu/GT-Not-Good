@@ -37,16 +37,13 @@ public abstract class MTEHatchCraftingInputMEMultiBlockNameMixin {
 
     // ── structure formation ──────────────────────────────────────────────────
 
-    @Inject(method = "addToMachineList", at = @At("RETURN"))
+    // Fluid-capable dual inputs can be accepted as an input hatch before the input-bus adder is tried.
+    @Inject(
+        method = { "addToMachineList", "addInputBusToMachineList", "addInputHatchToMachineList" },
+        at = @At("RETURN"))
     private void gtnotgood$captureRecipeMapOnAdd(IGregTechTileEntity aTileEntity, int aBaseCasingIndex,
         CallbackInfoReturnable<Boolean> cir) {
-        gtnotgood$feedRecipeMap(aTileEntity);
-    }
-
-    @Inject(method = "addInputBusToMachineList", at = @At("RETURN"))
-    private void gtnotgood$captureRecipeMapOnAddBus(IGregTechTileEntity aTileEntity, int aBaseCasingIndex,
-        CallbackInfoReturnable<Boolean> cir) {
-        gtnotgood$feedRecipeMap(aTileEntity);
+        if (cir.getReturnValueZ()) gtnotgood$feedRecipeMap(aTileEntity);
     }
 
     @Unique
