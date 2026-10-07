@@ -28,7 +28,7 @@ public final class SuperCraftingInputRecipes {
                 GTNGItemList.SuperMTEHatchCraftingInputME.get(1),
                 new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
-            .circuit(20)
+            .circuit(23)
             .itemOutputs(GTNGItemList.CircuitMEPatternBuffer.get(1))
             .duration(5 * SECONDS)
             .eut(32)

@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -44,8 +46,11 @@ import com.xyp.gtnotgood.utils.enums.ModList;
 
 import appeng.api.AEApi;
 import appeng.api.config.Actionable;
+import appeng.api.networking.crafting.ICraftingJob;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.parts.IPartHost;
+import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.api.util.AEColor;
 import appeng.container.implementations.ContainerInterfaceTerminal;
@@ -66,6 +71,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import gregtech.api.GregTechAPI;
+import gregtech.api.enums.ItemList;
 import gregtech.api.interfaces.tileentity.IVoidable;
 import gregtech.api.logic.ProcessingLogic;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
@@ -87,9 +93,11 @@ public final class CircuitPatternBufferChecks {
 
     private boolean started, finished;
     private volatile boolean opened;
+    private volatile boolean moldPlansVerified;
     private int ticks, frames;
     private CircuitMEPatternBuffer hatch;
     private ItemStack firstPattern, secondPattern;
+    private final List<Future<ICraftingJob>> moldPlans = new ArrayList<>();
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
@@ -129,6 +137,8 @@ public final class CircuitPatternBufferChecks {
                 hatch.onRightclick(hatch.getBaseMetaTileEntity(), player);
                 opened = true;
             }
+            if (ticks == 160) startMoldPlans(player);
+            if (!moldPlansVerified && !moldPlans.isEmpty()) checkMoldPlans();
         } catch (Throwable failure) {
             failure.printStackTrace();
             finish("FAIL");
@@ -396,6 +406,308 @@ public final class CircuitPatternBufferChecks {
         checkLongPersistence(player, largeSlot);
         checkManualSlots();
         checkNativeRefund(player, largeSlot);
+        checkVirtualMolds(player);
+    }
+
+    private void checkVirtualMolds(EntityPlayerMP player) throws GridAccessException {
+        ItemStack blockMold = ItemList.Shape_Mold_Block.get(1);
+        ItemStack plateMold = ItemList.Shape_Mold_Plate.get(1);
+        ItemStack ingotMold = ItemList.Shape_Mold_Ingot.get(1);
+        ItemStack consumedMold = ItemList.Shape_Extruder_Rod.get(3);
+        require(
+            SuperMTEHatchCraftingInputME.findMatchingMold(blockMold) != null
+                && SuperMTEHatchCraftingInputME.findMatchingMold(plateMold) != null
+                && SuperMTEHatchCraftingInputME.findMatchingMold(ingotMold) != null,
+            "regression molds use the existing supported virtual-mold registry");
+        for (ItemStack template : new ItemStack[] { plateMold, ingotMold }) {
+            ItemStack mold = template.copy();
+            mold.stackSize = 0;
+            require(
+                !GTRecipeBuilder.builder()
+                    .itemInputs(mold)
+                    .fluidInputs(new FluidStack(FluidRegistry.WATER, 144))
+                    .itemOutputs(new ItemStack(Items.sugar))
+                    .duration(20)
+                    .eut(8)
+                    .addTo(RecipeMaps.fluidSolidifierRecipes)
+                    .isEmpty(),
+                "nonconsumed mold fixture is registered before the Ultimate encoded pattern");
+        }
+        ItemStack circuitMoldTemplate = plateMold.copy();
+        circuitMoldTemplate.stackSize = 0;
+        require(
+            !GTRecipeBuilder.builder()
+                .itemInputs(circuitMoldTemplate)
+                .circuit(21)
+                .fluidInputs(new FluidStack(FluidRegistry.WATER, 144))
+                .itemOutputs(new ItemStack(Items.blaze_rod))
+                .duration(20)
+                .eut(8)
+                .addTo(RecipeMaps.mixerRecipes)
+                .isEmpty(),
+            "circuit-plus-nonconsumed-mold fixture is registered before encoding");
+        require(
+            !GTRecipeBuilder.builder()
+                .itemInputs(consumedMold.copy())
+                .fluidInputs(new FluidStack(FluidRegistry.WATER, 144))
+                .itemOutputs(new ItemStack(Items.quartz))
+                .duration(20)
+                .eut(8)
+                .addTo(RecipeMaps.fluidSolidifierRecipes)
+                .isEmpty(),
+            "consumed mold fixture uses a catalog item with a positive recipe quantity");
+        ItemStack[] patterns = { moldPattern(plateMold, -1, new ItemStack(Items.sugar)),
+            moldPattern(ingotMold, -1, new ItemStack(Items.sugar)),
+            moldPattern(consumedMold, -1, new ItemStack(Items.quartz)),
+            moldPattern(plateMold, 21, new ItemStack(Items.blaze_rod)),
+            moldPattern(blockMold, -1, new ItemStack(Blocks.snow), 1000) };
+        ItemStack[] templates = { plateMold, ingotMold, consumedMold, plateMold, blockMold };
+        for (int i = 0; i < patterns.length; i++) hatch.setInventorySlotContents(10 + i, patterns[i]);
+        var plate = slotAt(hatch, 10);
+        var sameOutputIngot = slotAt(hatch, 11);
+        var circuitMold = slotAt(hatch, 13);
+        require(
+            !plate.getPatternDetails()
+                .equals(sameOutputIngot.getPatternDetails()),
+            "equal native-fluid materials and output with different molds retain separate AE runtime identities");
+        for (int i = 0; i < patterns.length; i++) {
+            if (i == 2) continue;
+            var slot = slotAt(hatch, 10 + i);
+            var details = slot.getPatternDetails();
+            var raw = CircuitPatternCodec.decode(patterns[i], player.worldObj);
+            require(
+                raw.getAEInputs()[1] instanceof IAEFluidStack && details.getCondensedAEInputs().length == 1
+                    && details.getCondensedAEInputs()[0] instanceof IAEFluidStack,
+                "Ultimate encoded mold pattern " + i + " retains native water while AE omits mold and circuit");
+            var redecoded = CircuitPatternCodec.decode(
+                details.getPattern()
+                    .copy(),
+                player.worldObj);
+            require(
+                details.equals(redecoded) && details.hashCode() == redecoded.hashCode(),
+                "native runtime pattern NBT preserves mold identity " + i);
+            require(
+                slot.isEmpty() && slot.getItemInputs().length == 0 && slot.getFluidInputs().length == 0,
+                "virtual mold and circuit cannot make an empty buffer runnable");
+            ItemStack[] signature = slot.getPatternInputs().inputItems;
+            require(
+                hasVirtualMold(signature, templates[i]) && signature.length == (i == 3 ? 2 : 1)
+                    && slot.getPatternInputs().inputFluid[0].amount == (i == 4 ? 1000 : 144),
+                "GT recipe signature restores each pattern's own mold and optional circuit");
+        }
+        require(
+            countItem(circuitMold.getPatternInputs().inputItems, GTUtility.getIntegratedCircuit(21)) == 1,
+            "circuit-plus-mold GT signature preserves programmed circuit 21");
+        require(
+            circuitMold.getPatternDetails()
+                .equals(
+                    CircuitPatternCodec
+                        .runtime(moldPattern(plateMold, 21, new ItemStack(Items.blaze_rod), 144, 0), player.worldObj)),
+            "zero-size encoded GT circuit resolves the same reusable mold as a GUI-sized circuit");
+        for (int index : new int[] { 10, 11 }) {
+            var slot = slotAt(hatch, index);
+            ItemStack mold = templates[index - 10];
+            require(
+                !solidifierLogic(slot, 1).process()
+                    .wasSuccessful(),
+                "an empty mold-only buffer cannot execute the native fluid-solidifier recipe");
+            require(
+                hatch.pushPattern(
+                    slot.getPatternDetails(),
+                    table(AEFluidStack.create(new FluidStack(FluidRegistry.WATER, 432)))),
+                "native CPU batch supplies only fluid, with no physical mold");
+            var logic = solidifierLogic(slot, 2);
+            require(
+                logic.process()
+                    .wasSuccessful() && logic.getOutputItems()[0].getItem() == Items.sugar
+                    && logic.getOutputItems()[0].stackSize == 2,
+                "native GT fluid-solidifier executes a two-recipe batch using the correct virtual mold");
+            require(
+                slot.getStoredItems()
+                    .isEmpty()
+                    && slot.getStoredFluids()
+                        .get(0)
+                        .getStackSize() == 144
+                    && hasVirtualMold(slot.getItemInputs(), mold),
+                "batch processing debits only water and retains the nonconsumed virtual mold");
+            ItemStack exposed = slot.getItemInputs()[0];
+            exposed.stackSize = 64;
+            require(
+                hasVirtualMold(slot.getItemInputs(), mold),
+                "each GT item view receives a fresh zero-size mold copy");
+            require(
+                solidifierLogic(slot, 1).process()
+                    .wasSuccessful() && slot.isEmpty() && slot.getItemInputs().length == 0,
+                "consuming the final fluid batch hides virtual items from the empty live buffer");
+            require(
+                hatch.pushPattern(
+                    slot.getPatternDetails(),
+                    table(AEFluidStack.create(new FluidStack(FluidRegistry.WATER, 144)))),
+                "the same pattern can receive another fluid batch without requesting its mold");
+        }
+        require(
+            hatch.pushPattern(
+                circuitMold.getPatternDetails(),
+                table(AEFluidStack.create(new FluidStack(FluidRegistry.WATER, 432))))
+                && circuitMold.getStoredItems()
+                    .isEmpty()
+                && circuitMold.getItemInputs().length == 2
+                && hasVirtualMold(circuitMold.getItemInputs(), plateMold)
+                && countItem(circuitMold.getItemInputs(), GTUtility.getIntegratedCircuit(21)) == 1,
+            "fluid-only CPU batch restores both the per-pattern circuit and mold for GT");
+        var block = slotAt(hatch, 14);
+        require(
+            hatch.pushPattern(
+                block.getPatternDetails(),
+                table(AEFluidStack.create(new FluidStack(FluidRegistry.WATER, 1000))))
+                && hasVirtualMold(block.getItemInputs(), blockMold),
+            "native block-mold snow pattern receives water without any physical block mold");
+        var consumed = slotAt(hatch, 12);
+        require(
+            consumed.getPatternDetails()
+                .getCondensedAEInputs().length == 2 && consumed.getPatternDetails()
+                    .equals(CircuitPatternCodec.decode(patterns[2], player.worldObj))
+                && consumed.getPatternInputs().inputItems[0].stackSize == 3,
+            "a catalog mold consumed by the actual recipe remains a physical AE requirement");
+        require(
+            hatch.pushPattern(
+                consumed.getPatternDetails(),
+                table(
+                    AEItemStack.create(consumedMold.copy())
+                        .setStackSize(6),
+                    AEFluidStack.create(new FluidStack(FluidRegistry.WATER, 288)))),
+            "CPU may push the physically consumed mold with its native fluid");
+        var consumedLogic = solidifierLogic(consumed, 1);
+        require(
+            consumedLogic.process()
+                .wasSuccessful() && consumedLogic.getOutputItems()[0].getItem() == Items.quartz
+                && consumed.getStoredItems()
+                    .get(0)
+                    .getStackSize() == 3
+                && consumed.getStoredFluids()
+                    .get(0)
+                    .getStackSize() == 144,
+            "native GT consumes the positive-quantity mold and water exactly once");
+        NBTTagCompound saved = new NBTTagCompound();
+        ((BaseMetaTileEntity) hatch.getBaseMetaTileEntity()).writeToNBT(saved);
+        BaseMetaTileEntity restoredTile = new BaseMetaTileEntity();
+        restoredTile.setWorldObj(player.worldObj);
+        restoredTile.readFromNBT(saved);
+        var restored = (CircuitMEPatternBuffer) restoredTile.getMetaTileEntity();
+        for (int i = 0; i < patterns.length; i++) {
+            var original = slotAt(hatch, 10 + i);
+            var reloaded = slotAt(restored, 10 + i);
+            require(
+                ItemStack.areItemStacksEqual(patterns[i], hatch.getStackInSlot(10 + i)) && original.getPatternDetails()
+                    .equals(reloaded.getPatternDetails())
+                    && original.getPatternDetails()
+                        .hashCode()
+                        == reloaded.getPatternDetails()
+                            .hashCode()
+                    && (i == 2 ? reloaded.getPatternInputs().inputItems[0].stackSize == 3
+                        : hasVirtualMold(reloaded.getPatternInputs().inputItems, templates[i])),
+                "tile NBT reload retains original encoded mold and distinct runtime identity " + i);
+        }
+        var reloaded = slotAt(restored, 13);
+        require(
+            reloaded.getStoredItems()
+                .isEmpty()
+                && reloaded.getStoredFluids()
+                    .get(0)
+                    .getStackSize() == 432
+                && hasVirtualMold(reloaded.getItemInputs(), plateMold)
+                && countItem(reloaded.getItemInputs(), GTUtility.getIntegratedCircuit(21)) == 1,
+            "tile NBT reload retains fluid quantity and independently reconstructs mold and circuit");
+    }
+
+    private static ProcessingLogic solidifierLogic(SuperMTEHatchCraftingInputME.PatternSlot<?> slot, int parallel) {
+        return new ProcessingLogic().setRecipeMapSupplier(() -> RecipeMaps.fluidSolidifierRecipes)
+            .setMachine(
+                (IVoidable) GregTechAPI.METATILEENTITIES[GTNGItemList.AssemblerMatrix.get(1)
+                    .getItemDamage()])
+            .setVoidProtection(false, false)
+            .setAvailableVoltage(32)
+            .setAvailableAmperage(1)
+            .setMaxParallel(parallel)
+            .setInputItems(slot.getItemInputs())
+            .setInputFluids(slot.getFluidInputs());
+    }
+
+    private void startMoldPlans(EntityPlayerMP player) throws GridAccessException {
+        var cache = (CraftingGridCache) hatch.getProxy()
+            .getCrafting();
+        for (int i = 10; i <= 14; i++) require(
+            cache.getMediums(slotAt(hatch, i).getPatternDetails())
+                .contains(hatch),
+            "each independent mold runtime pattern is registered after the native AE cache refresh");
+        var source = hatch.getMEOutputActionSource();
+        var storage = hatch.getProxy()
+            .getStorage();
+        for (ItemStack item : new ItemStack[] { ItemList.Shape_Mold_Block.get(1), ItemList.Shape_Mold_Plate.get(1),
+            ItemList.Shape_Mold_Ingot.get(1), ItemList.Shape_Extruder_Rod.get(1), GTUtility.getIntegratedCircuit(21) })
+            require(
+                storage.getItemInventory()
+                    .extractItems(AEItemStack.create(item), Actionable.SIMULATE, source) == null,
+                "real crafting network has no physical " + item.getDisplayName());
+        for (ItemStack output : new ItemStack[] { new ItemStack(Items.sugar), new ItemStack(Items.blaze_rod),
+            new ItemStack(Blocks.snow), new ItemStack(Items.quartz) })
+            moldPlans.add(
+                hatch.getProxy()
+                    .getCrafting()
+                    .beginCraftingJob(
+                        player.worldObj,
+                        hatch.getProxy()
+                            .getGrid(),
+                        source,
+                        AEItemStack.create(output)
+                            .setStackSize(4),
+                        null));
+    }
+
+    private void checkMoldPlans() throws Exception {
+        for (Future<ICraftingJob> job : moldPlans) if (!job.isDone()) return;
+        for (int index = 0; index < moldPlans.size(); index++) {
+            var result = moldPlans.get(index)
+                .get();
+            require(
+                result.isSimulation() == (index == 3),
+                "real AE plan only reports missing material for the physically consumed mold");
+            var plan = AEApi.instance()
+                .storage()
+                .createAEStackList();
+            result.populatePlan(plan);
+            boolean nativeWater = false;
+            boolean missingConsumedMold = false;
+            for (IAEStack<?> entry : plan) {
+                if (entry instanceof IAEItemStack item) {
+                    if (index == 3
+                        && GTUtility.areStacksEqual(item.getItemStack(), ItemList.Shape_Extruder_Rod.get(1), true))
+                        missingConsumedMold |= item.getStackSize() >= 12;
+                    else require(
+                        SuperMTEHatchCraftingInputME.findMatchingMold(item.getItemStack()) == null
+                            && !CircuitPatternCodec.isCircuit(entry),
+                        "real AE crafting plan has no missing or indexed virtual item");
+                } else if (entry instanceof IAEFluidStack fluid) nativeWater |= fluid.getFluid() == FluidRegistry.WATER
+                    && fluid.getStackSize() >= (index == 2 ? 4000 : 576);
+            }
+            require(nativeWater, "real AE crafting plan indexes the native fluid needed for all four outputs");
+            require(
+                missingConsumedMold == (index == 3),
+                "positive-quantity mold stays in the real missing-material plan while nonconsumed molds are absent");
+        }
+        moldPlansVerified = true;
+    }
+
+    private static int countItem(ItemStack[] inputs, ItemStack item) {
+        int count = 0;
+        for (ItemStack input : inputs) if (GTUtility.areStacksEqual(input, item, true)) count++;
+        return count;
+    }
+
+    private static boolean hasVirtualMold(ItemStack[] inputs, ItemStack mold) {
+        for (ItemStack input : inputs)
+            if (GTUtility.areStacksEqual(input, mold, true) && input.stackSize == 0) return true;
+        return false;
     }
 
     private void checkNativeRefund(EntityPlayerMP player, SuperMTEHatchCraftingInputME.PatternSlot<?> largeSlot)
@@ -700,7 +1012,7 @@ public final class CircuitPatternBufferChecks {
 
     @SubscribeEvent
     public void render(TickEvent.RenderTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !opened || finished || ++frames < 40) return;
+        if (event.phase != TickEvent.Phase.END || !opened || !moldPlansVerified || finished || ++frames < 40) return;
         try {
             Minecraft mc = Minecraft.getMinecraft();
             if (!(mc.currentScreen instanceof GuiContainerWrapper gui)) return;
@@ -785,6 +1097,48 @@ public final class CircuitPatternBufferChecks {
         AEItemStack.create(new ItemStack(Items.apple))
             .writeToNBTGeneric(output);
         out.appendTag(output);
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setTag("in", in);
+        tag.setTag("out", out);
+        tag.setBoolean("crafting", false);
+        tag.setBoolean("beSubstitute", true);
+        pattern.setTagCompound(tag);
+        return pattern;
+    }
+
+    private static ItemStack moldPattern(ItemStack mold, int circuit, ItemStack output) {
+        return moldPattern(mold, circuit, output, 144);
+    }
+
+    private static ItemStack moldPattern(ItemStack mold, int circuit, ItemStack output, int fluidAmount) {
+        return moldPattern(mold, circuit, output, fluidAmount, 1);
+    }
+
+    private static ItemStack moldPattern(ItemStack mold, int circuit, ItemStack output, int fluidAmount,
+        int circuitCount) {
+        ItemStack pattern = AEApi.instance()
+            .definitions()
+            .items()
+            .encodedUltimatePattern()
+            .maybeStack(1)
+            .get();
+        List<IAEStack<?>> inputs = new ArrayList<>();
+        inputs.add(AEItemStack.create(mold.copy()));
+        inputs.add(AEFluidStack.create(new FluidStack(FluidRegistry.WATER, fluidAmount)));
+        if (circuit >= 0) inputs.add(
+            AEItemStack.create(GTUtility.getIntegratedCircuit(circuit))
+                .setStackSize(circuitCount));
+        NBTTagList in = new NBTTagList();
+        for (IAEStack<?> input : inputs) {
+            NBTTagCompound entry = new NBTTagCompound();
+            input.writeToNBTGeneric(entry);
+            in.appendTag(entry);
+        }
+        NBTTagList out = new NBTTagList();
+        NBTTagCompound entry = new NBTTagCompound();
+        AEItemStack.create(output)
+            .writeToNBTGeneric(entry);
+        out.appendTag(entry);
         NBTTagCompound tag = new NBTTagCompound();
         tag.setTag("in", in);
         tag.setTag("out", out);

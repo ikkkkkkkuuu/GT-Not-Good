@@ -1,4 +1,4 @@
-// Checks per-pattern circuits, atomic input limits, persistence, mirrors and the GUI in a hidden client.
+// Checks per-pattern circuits and reusable molds, native AE plans, input limits, persistence and the GUI.
 gradle.projectsEvaluated {
     def root = gradle.rootProject
     def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
@@ -30,6 +30,7 @@ gradle.projectsEvaluated {
             'src/main/java/com/xyp/gtnotgood/common/machines/hatch/me/CircuitMEPatternBuffer.java',
             'src/main/java/com/xyp/gtnotgood/common/machines/hatch/me/LongCircuitBuffer.java',
             'src/main/java/com/xyp/gtnotgood/common/machines/hatch/me/CircuitPatternCodec.java',
+            'src/main/java/com/xyp/gtnotgood/common/compat/CircuitPatternMolds.java',
             'scripts/qa/CircuitPatternBufferChecks.java'
     }
     root.tasks.named('runClient').configure {

@@ -610,6 +610,23 @@ public enum ModsItemlist {
     // 鲸鱼座T星E藻类（形态六）
     GalaxySpaceCetiESeaweedFormVI(Mods.GalaxySpace.ID, "tcetiedandelions", 5),
 
+    // 铸件（一次性锉）
+    SingleUseFileMold(Mods.GGFab.ID, "gt.ggfab.d1", 30),
+    // 铸件（一次性扳手）
+    SingleUseWrenchMold(Mods.GGFab.ID, "gt.ggfab.d1", 31),
+    // 铸件（一次性撬棍）
+    SingleUseCrowbarMold(Mods.GGFab.ID, "gt.ggfab.d1", 32),
+    // 铸件（一次性剪线钳）
+    SingleUseWireCutterMold(Mods.GGFab.ID, "gt.ggfab.d1", 33),
+    // 铸件（一次性锻造锤）
+    SingleUseHardHammerMold(Mods.GGFab.ID, "gt.ggfab.d1", 34),
+    // 铸件（一次性软锤）
+    SingleUseSoftMalletMold(Mods.GGFab.ID, "gt.ggfab.d1", 35),
+    // 铸件（一次性螺丝刀）
+    SingleUseScrewdriverMold(Mods.GGFab.ID, "gt.ggfab.d1", 36),
+    // 铸件（一次性锯子）
+    SingleUseSawMold(Mods.GGFab.ID, "gt.ggfab.d1", 37),
+
     // 防辐射板
     GoodGeneratorRadiationProtectionPlate(Mods.GoodGenerator.ID, "radiationProtectionPlate"),
 

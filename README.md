@@ -28,6 +28,9 @@ ae 两个接口对单方块机器下单 直接会在推料之前修改单方块�
 
 本mod还对单方块机器添加了自己的虚拟模具槽 处于电路槽上方 可参与配方合成
 
+虚拟模具列表新增 GGFab 的八种一次性工具铸件：锉、扳手、撬棍、剪线钳、锻造锤、软锤、螺丝刀和锯子。
+单方块机器和超级样板输入总成均可在虚拟模具选择器中使用。
+
 
 mixin关闭了配方超净间需求
 
@@ -40,10 +43,10 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.3.1          | [![1.3.1](https://img.shields.io/badge/release-1.3.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.1) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.3.2          | [![1.3.2](https://img.shields.io/badge/release-1.3.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.2) |         ✔️         |
 
-最新版本：[1.3.1 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.1)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.1/gtnotgood-1.3.1.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.1/gtnotgood-1.3.1-sources.jar)。
+最新版本：[1.3.2 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.2)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.2/gtnotgood-1.3.2.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.2/gtnotgood-1.3.2-sources.jar)。
 
 ### 大型矿石处理机
 
@@ -56,8 +59,11 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 
 支持 **900 个样板槽**，每个样板独立缓冲 **64 种物品和 64 种流体**，每种上限 **2⁶³−1**。
 将不同编程电路的处理样板放进同一个总成，总成自动读取各自电路，AE 下单不需要提供实物编程电路。
+每份样板也会独立识别模具目录中、对应 GT 配方不消耗的工具，AE 下单无需提供这些工具；实际消耗的模具仍需供料。
+按配方输入、输出和数量共同核对；无法确认或存在消耗歧义时保留实体材料需求。
 已注册到接口终端，名称随连接的多方块主机配方图更新，支持无线二合一接口终端上传与取回样板。
 界面只保留手动物品槽，不提供虚拟模具槽、手动电路配置和批量写电路按钮。
+总成合成配方的编程电路编号改为 **23**。
 GT 每次读取的物品与流体数量仍受 `int` 限制，消耗后从 `long` 缓冲继续补充。
 存档、拆除、放回和退料保留完整数量，ME 暂时拒收的材料会保留并重试退回。
 
@@ -130,6 +136,7 @@ ME 无线收发器
 NEI → GTNotGood 新增“优先使用本模组接口自动命名”，默认“否”。
 开启后，超级样板输入总成等使用自己的自动名称，忽略 GTNL 等模组追加的命名后缀，保留电路、手动槽和模头编号。
 各玩家独立保存设置，切换后重新打开接口终端生效。
+修复 GTNL 部分多方块主机的动态名称解析，例如化工厂总成显示“化工厂 9”，保留编号和自定义名称。
 
 ### 🔌 Xnet
 

@@ -28,7 +28,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.objects.GTDualInputPattern;
 import gregtech.api.util.GTUtility;
 
-/** Per-pattern virtual circuits and bounded, atomic ingredient buffers using GTNH's native dual-input API. */
+/** Per-pattern virtual circuits and molds with atomic ingredient buffers using GTNH's native dual-input API. */
 public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
 
     public static final int patternCount = 900;
@@ -52,15 +52,18 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
     @Override
     protected PatternSlot<SuperMTEHatchCraftingInputME> createPatternSlot(ItemStack pattern, NBTTagCompound saved) {
         World world = getBaseMetaTileEntity().getWorld();
+        ICraftingPatternDetails original = CircuitPatternCodec.decode(pattern, world);
+        ItemStack[] molds = CircuitPatternCodec.molds(original);
         return new CircuitSlot(
             pattern,
             saved,
             this,
-            CircuitPatternCodec.runtime(pattern, world),
-            CircuitPatternCodec.circuit(CircuitPatternCodec.decode(pattern, world)));
+            CircuitPatternCodec.runtime(pattern, world, original, molds),
+            CircuitPatternCodec.circuit(original),
+            molds);
     }
 
-    /** Each pattern supplies its own circuit; only physical manual slots are shared. */
+    /** Each pattern supplies its own circuit and molds; only physical manual slots are shared. */
     @Override
     public ItemStack[] getSharedItems() {
         List<ItemStack> items = new ArrayList<>();
@@ -188,8 +191,8 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
     @Override
     public String[] getDescription() {
         // #tr tooltip.gtng.circuit_buffer.virtual
-        // # Automatically reads each pattern's circuit; AE does not request circuits.
-        // # zh_CN 自动读取每份样板中的电路编号，AE下单不索取电路。
+        // # Reads each pattern's circuit and reusable molds; AE does not request these tools.
+        // # zh_CN 自动读取每份样板的电路和不消耗模具，AE下单不索取这些工具。
         String circuit = StatCollector.translateToLocal("tooltip.gtng.circuit_buffer.virtual");
         // #tr tooltip.gtng.circuit_buffer.capacity
         // # 900 patterns; each buffers 64 item types and 64 fluid types, up to 2^63-1 each.
@@ -202,16 +205,18 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
         return ArrayUtils.addAll(super.getDescription(), circuit, capacity, recipeView);
     }
 
-    /** Live stacks are debited by GT; the phantom circuit never makes an empty buffer runnable. */
+    /** Live stacks are debited by GT; phantom tools never make an empty buffer runnable. */
     public static final class CircuitSlot extends PatternSlot<SuperMTEHatchCraftingInputME> {
 
         private final int circuit;
+        private final ItemStack[] molds;
         private final LongCircuitBuffer buffer;
 
         private CircuitSlot(ItemStack pattern, NBTTagCompound saved, CircuitMEPatternBuffer parent,
-            ICraftingPatternDetails details, int circuit) {
+            ICraftingPatternDetails details, int circuit, ItemStack[] molds) {
             super(pattern, null, parent, details);
             this.circuit = circuit;
+            this.molds = molds;
             buffer = new LongCircuitBuffer(saved, parent::markDirty);
         }
 
@@ -255,15 +260,17 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
             buffer.refund(proxy, source);
         }
 
-        private ItemStack recipeCircuit() {
-            return circuit >= 0 ? GTUtility.getIntegratedCircuit(circuit) : null;
+        private ItemStack[] recipeTools() {
+            List<ItemStack> tools = new ArrayList<>();
+            if (circuit >= 0) tools.add(GTUtility.getIntegratedCircuit(circuit));
+            for (ItemStack mold : molds) tools.add(mold.copy());
+            return tools.toArray(new ItemStack[0]);
         }
 
         @Override
         public ItemStack[] getItemInputs() {
             ItemStack[] inputs = super.getItemInputs();
-            ItemStack circuit = recipeCircuit();
-            return isEmpty() || circuit == null ? inputs : ArrayUtils.add(inputs, circuit);
+            return isEmpty() ? inputs : ArrayUtils.addAll(inputs, recipeTools());
         }
 
         @Override
@@ -275,14 +282,13 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
         @Override
         public GTDualInputPattern getPatternInputs() {
             GTDualInputPattern inputs = super.getPatternInputs();
-            ItemStack circuit = recipeCircuit();
-            if (circuit != null) inputs.inputItems = ArrayUtils.add(inputs.inputItems, circuit);
+            inputs.inputItems = ArrayUtils.addAll(inputs.inputItems, recipeTools());
             return inputs;
         }
 
         @Override
         public boolean insertItemsAndFluids(MEInventoryCrafting table) {
-            return patternDetails != null && buffer.insert(table);
+            return patternDetails != null && buffer.insert(table, molds);
         }
     }
 }

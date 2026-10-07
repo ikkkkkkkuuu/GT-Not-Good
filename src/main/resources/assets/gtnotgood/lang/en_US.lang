@@ -367,7 +367,7 @@ gtng.cross_wireless.duration=Completion time (ticks)
 gtng.cross_wireless.tasks=Concurrent recipes
 gtng.cross_wireless.parallels=Parallel limit (0 = unlimited)
 tooltip.gtng.circuit_buffer.refunds=Pending input refunds: %s buffers; reconnect ME to return them.
-tooltip.gtng.circuit_buffer.virtual=Automatically reads each pattern's circuit; AE does not request circuits.
+tooltip.gtng.circuit_buffer.virtual=Reads each pattern's circuit and reusable molds; AE does not request these tools.
 tooltip.gtng.circuit_buffer.capacity=900 patterns; each buffers 64 item types and 64 fluid types, up to 2^63-1 each.
 tooltip.gtng.circuit_buffer.recipe_view=GT sees up to 2^31-1 of each type per recipe check; the long reserve refills it.
 tooltip.gtnotgood.maxCapacityMEOutputBus.0=Item Output for Multiblocks

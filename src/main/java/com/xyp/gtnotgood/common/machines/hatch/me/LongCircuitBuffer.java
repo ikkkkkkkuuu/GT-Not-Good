@@ -70,13 +70,14 @@ final class LongCircuitBuffer {
     }
 
     /** Stages both channels together so a late type-limit or long overflow rejects the entire CPU delivery. */
-    boolean insert(MEInventoryCrafting table) {
+    boolean insert(MEInventoryCrafting table, ItemStack[] virtualMolds) {
         List<IAEItemStack> stagedItems = items.stacks();
         List<IAEFluidStack> stagedFluids = fluids.stacks();
         for (int i = 0; i < table.getSizeInventory(); i++) {
             IAEStack<?> stack = table.getAEStackInSlot(i);
             if (stack == null || stack.getStackSize() == 0) continue;
-            if (stack.getStackSize() < 0 || CircuitPatternCodec.isCircuit(stack)) return false;
+            if (stack.getStackSize() < 0 || CircuitPatternCodec.isCircuit(stack)
+                || CircuitPatternCodec.isMold(stack, virtualMolds)) return false;
             if (stack instanceof IAEItemStack item) {
                 if (!add(stagedItems, item)) return false;
             } else if (stack instanceof IAEFluidStack fluid) {

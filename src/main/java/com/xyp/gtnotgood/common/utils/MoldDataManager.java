@@ -16,7 +16,7 @@ import gtPlusPlus.xmod.gregtech.api.enums.GregtechItemList;
 
 /**
  * 模具数据管理类
- * 统一管理所有可选择的模具列表（Shape_Mold_*、Shape_Extruder_*、所有透镜物品 以及 所有纳米蜂群）
+ * 统一管理所有可选择的模具列表（普通模具、一次性工具模具、挤出模头、透镜和纳米蜂群）
  * 将模具列表从SuperMTEHatchCraftingInputME中提取出来，便于维护和扩展
  */
 public class MoldDataManager {
@@ -55,6 +55,16 @@ public class MoldDataManager {
         items.add(ItemList.Shape_Mold_Pipe_Large.get(1));
         items.add(ItemList.Shape_Mold_Pipe_Huge.get(1));
         items.add(ItemList.Shape_Mold_ToolHeadDrill.get(1));
+
+        // GGFab 一次性工具模具
+        items.add(ModsItemlist.SingleUseFileMold.get(1));
+        items.add(ModsItemlist.SingleUseWrenchMold.get(1));
+        items.add(ModsItemlist.SingleUseCrowbarMold.get(1));
+        items.add(ModsItemlist.SingleUseWireCutterMold.get(1));
+        items.add(ModsItemlist.SingleUseHardHammerMold.get(1));
+        items.add(ModsItemlist.SingleUseSoftMalletMold.get(1));
+        items.add(ModsItemlist.SingleUseScrewdriverMold.get(1));
+        items.add(ModsItemlist.SingleUseSawMold.get(1));
 
         // 挤出机模头 (Shape_Extruder_*)
         items.add(ItemList.Shape_Extruder_Axe.get(1));

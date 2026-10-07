@@ -37,6 +37,7 @@ import codechicken.nei.config.OptionToggleButton;
 import cpw.mods.fml.common.Loader;
 import gregtech.api.GregTechAPI;
 import gregtech.api.enums.ItemList;
+import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.util.GTUtility;
@@ -50,6 +51,9 @@ final class InterfaceNameClientChecks {
     private static String standardText;
     private static ItemStack selfRep;
     private static NBTTagList patternItems;
+    private static String chemicalPlantRawName;
+    private static String chemicalPlantSuffix;
+    private static ItemStack chemicalPlantRep;
 
     static void checkServer(EntityPlayerMP player) {
         player.worldObj.setBlock(6, 10, 0, GregTechAPI.sBlockMachines, 0, 3);
@@ -102,12 +106,16 @@ final class InterfaceNameClientChecks {
         for (int i = 0; i < 9; i++) {
             patternItems.appendTag(i == 0 ? pattern.writeToNBT(new NBTTagCompound()) : new NBTTagCompound());
         }
+        if (Loader.isModLoaded(ModList.GTNotLeisure.getID())) {
+            checkGtnlController(hatch);
+        }
         hatch.setCustomName("Named Assembly");
         require(
             hatch.getRawName()
                 .equals("Named Assembly"),
             "custom name preserved");
         require(!(hatch.getNameSuffix() instanceof ChatComponentInterfaceNameSuffix), "custom name bypasses policy");
+        require(hatch.getDisplayRep() == null, "custom name bypasses controller display-name fallback");
     }
 
     static void run(Object terminal) throws Exception {
@@ -158,8 +166,83 @@ final class InterfaceNameClientChecks {
         } finally {
             tag.setBooleanValue(false);
         }
+        checkGtnlDisplayName(terminal);
         System.out.println(
             "TERMINAL_NAME_QA: default no, native and combined names, GTNL suffix, circuits/manual/mold, custom name PASS");
+    }
+
+    private static void checkGtnlController(SuperMTEHatchCraftingInputME hatch) {
+        for (IMetaTileEntity machine : GregTechAPI.METATILEENTITIES) {
+            if (machine == null || !machine.getMetaName()
+                .equals("chemicalplant")) continue;
+            hatch.mRecipeMap = null;
+            hatch.setControllerRecipeMap(null);
+            hatch.updateCraftingIcon(machine.getStackForm(1));
+            hatch.setInventorySlotContents(hatch.getCircuitSlot(), GTUtility.getIntegratedCircuit(9));
+            hatch.setInventorySlotContents(hatch.getManualSlotStart(), null);
+            hatch.setInventorySlotContents(hatch.getMoldSlot(), null);
+            chemicalPlantRep = hatch.getDisplayRep();
+            require(
+                chemicalPlantRep != null && chemicalPlantRep.isItemEqual(machine.getStackForm(1)),
+                "GTNL controller display representation supplied to AE2");
+            chemicalPlantRawName = hatch.getRawName();
+            chemicalPlantSuffix = IChatComponent.Serializer.func_150696_a(hatch.getNameSuffix());
+            return;
+        }
+        throw new AssertionError("GTNL chemical plant fixture registered");
+    }
+
+    private static void checkGtnlDisplayName(Object terminal) throws Exception {
+        if (chemicalPlantRep == null) return;
+        Method translate = GuiInterfaceTerminal.class
+            .getDeclaredMethod("translateRawName", String.class, String.class, ItemStack.class);
+        translate.setAccessible(true);
+        require(
+            translate.invoke(null, chemicalPlantRawName, "", null)
+                .equals(chemicalPlantRawName),
+            "GTNL raw key reproduces the untranslated name without its display representation");
+        String localized = chemicalPlantRep.getDisplayName();
+        require(
+            localized.equals(StatCollector.translateToLocal("gtnl.machine.chemical_plant.name")),
+            "GTNL controller name resolved in the client's language");
+        var tag = NEIClientConfig.global.config.getTag(ButtonConstants.PREFER_OWN_INTERFACE_NAMES);
+        try {
+            for (boolean preferred : new boolean[] { false, true, false }) {
+                tag.setBooleanValue(preferred);
+                String nativeName = (String) translate
+                    .invoke(null, chemicalPlantRawName, chemicalPlantSuffix, chemicalPlantRep);
+                require(
+                    nativeName.startsWith(localized + " ") && nativeName.contains("9"),
+                    "native GTNL name and circuit");
+                var update = new PacketInterfaceTerminalUpdate();
+                if (!entries(terminal).containsKey(9878L)) {
+                    update.addNewEntry(9878L, chemicalPlantRawName, true)
+                        .setTerminalVisible(true)
+                        .setItems(1, 9, 9, patternItems)
+                        .setSupportedStackTypes(new IAEStackType<?>[] { ITEM_STACK_TYPE })
+                        .setReps(selfRep, chemicalPlantRep)
+                        .setSuffix(chemicalPlantSuffix);
+                } else {
+                    update.addRenamedEntry(9878L, chemicalPlantRawName, chemicalPlantSuffix, chemicalPlantRep);
+                }
+                Field commands = PacketInterfaceTerminalUpdate.class.getDeclaredField("commands");
+                commands.setAccessible(true);
+                ((GuiInterfaceTerminal) terminal)
+                    .postUpdate((List<PacketInterfaceTerminalUpdate.PacketEntry>) commands.get(update), 0);
+                String combined = entryName(terminal, 9878L);
+                require(
+                    combined.startsWith(localized + " ") && combined.contains("9")
+                        && !combined.contains(chemicalPlantRawName),
+                    "combined GTNL name, circuit and grouping");
+                if (preferred) require(combined.equals(localized + " 9"), "own GTNL name retains only circuit 9");
+                Minecraft.getMinecraft().currentScreen.drawScreen(-10000, -10000, 0);
+                screenshot(preferred ? "gtnl-chemical-plant-own-name.png" : "gtnl-chemical-plant-default-name.png");
+            }
+        } finally {
+            tag.setBooleanValue(false);
+        }
+        System.out
+            .println("TERMINAL_GTNL_NAME_QA: real controller, client localization, add/rename and circuit 9 PASS");
     }
 
     private static void checkOption() {
@@ -201,7 +284,11 @@ final class InterfaceNameClientChecks {
     }
 
     private static String entryName(Object terminal) throws Exception {
-        Object entry = entries(terminal).get(9877L);
+        return entryName(terminal, 9877L);
+    }
+
+    private static String entryName(Object terminal, long id) throws Exception {
+        Object entry = entries(terminal).get(id);
         Field name = entry.getClass()
             .getDeclaredField("dispName");
         name.setAccessible(true);

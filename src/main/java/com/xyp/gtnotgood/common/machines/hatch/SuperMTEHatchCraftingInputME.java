@@ -877,6 +877,12 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         return this.getStackForm(1);
     }
 
+    /** Supplies AE2's controller-name fallback; custom names must remain literal rather than use the icon's name. */
+    @Override
+    public ItemStack getDisplayRep() {
+        return hasCustomName() ? null : getCrafterIcon();
+    }
+
     @Override
     public void gridChanged() {
         needPatternSync = true;

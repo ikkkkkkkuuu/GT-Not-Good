@@ -367,7 +367,7 @@ gtng.cross_wireless.duration=完成时间（tick）
 gtng.cross_wireless.tasks=同时运行的配方数
 gtng.cross_wireless.parallels=单配方并行上限（0=无限制）
 tooltip.gtng.circuit_buffer.refunds=待退料缓冲：%s份；接回ME网络后自动退回。
-tooltip.gtng.circuit_buffer.virtual=自动读取每份样板中的电路编号，AE下单不索取电路。
+tooltip.gtng.circuit_buffer.virtual=自动读取每份样板的电路和不消耗模具，AE下单不索取这些工具。
 tooltip.gtng.circuit_buffer.capacity=900个样板槽；每份缓冲64种物品和64种流体，每种上限2^63-1。
 tooltip.gtng.circuit_buffer.recipe_view=单次配方检查每种最多提供2^31-1，剩余long库存自动补充。
 tooltip.gtnotgood.maxCapacityMEOutputBus.0=多方块物品输出
