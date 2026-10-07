@@ -195,8 +195,8 @@ public final class StockIOGui {
         // # zh_CN 固定
         IKey fixedLabel = IKey.lang("gui.stock_io.fixed");
         // #tr gui.stock_io.fixed_help
-        // # Offer the configured quantity per recipe check; wait if ME has less.
-        // # zh_CN 每次配方检查提供设定量，ME 不足该数量则等待。
+        // # Offer the configured amount per recipe or fuel check; wait if ME has less.
+        // # zh_CN 每次配方或燃料检查提供设定量，ME 不足则等待。
         IKey fixedHelp = IKey.lang("gui.stock_io.fixed_help");
         panel.child(
             toggle(toggleValue("fixed", logic::isFixedMode, logic::setFixedMode), fixedLabel, fixedHelp).pos(186, 157));
@@ -448,8 +448,8 @@ public final class StockIOGui {
                 .setMaxLength(19)
                 .width(192));
         // #tr gui.stock_io.fixed_quantity
-        // # Available per recipe check (items / mB)
-        // # zh_CN 每次配方检查可用量（个 / mB）
+        // # Per check (items / mB)
+        // # zh_CN 单次检查可用量（个 / mB）
         content.child(
             IKey.lang("gui.stock_io.fixed_quantity")
                 .asWidget());
@@ -460,8 +460,8 @@ public final class StockIOGui {
                 .setMaxLength(10)
                 .width(192));
         // #tr gui.stock_io.fixed_hint
-        // # Waits for the full amount; recipes consume only what they need.
-        // # zh_CN 不足设定量则等待，配方只扣除实际消耗。
+        // # Waits for the full amount; recipes and fuels debit only actual use.
+        // # zh_CN 不足设定量则等待，只扣除配方或燃料的实际消耗。
         content.child(
             IKey.lang("gui.stock_io.fixed_hint")
                 .asWidget()

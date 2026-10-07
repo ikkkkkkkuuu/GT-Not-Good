@@ -1,0 +1,50 @@
+// Real native GT generator / ME checks in a disposable hidden client.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Prepare the existing factory QA Et Futurum runtime first')
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def qaClasses = root.layout.buildDirectory.dir('stockio-generator-qa/test-classes')
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(qaClasses)
+        setSource(root.files('scripts/qa/StockIOGeneratorClientChecks.java'))
+    }
+    def runtimeJar = root.tasks.register('jarStockIOGeneratorQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'stockio-generator-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('stockio-generator-qa')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn runtimeJar, root.tasks.named('testClasses')
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(runtimeJar.flatMap { it.archiveFile }, qaClasses)
+        workingDir root.file('run/stockio-generator-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.stockio.generator.qa', 'true'
+        systemProperty 'gtng.stockio.generator.qa.output', root.file('build/stockio-generator-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in real native GT generator client QA')
+        doFirst {
+            root.file('build/stockio-generator-qa').mkdirs()
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/stockio-generator-qa/result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(root.file('build/stockio-generator-qa/window-helper.log')).start()
+            }
+        }
+        doLast {
+            def result = root.file('build/stockio-generator-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('Stock IO generator QA failed; inspect STOCK_IO_GENERATOR_QA in the client log')
+            }
+        }
+    }
+}

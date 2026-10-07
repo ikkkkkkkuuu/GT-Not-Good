@@ -1,0 +1,15 @@
+gradle.projectsEvaluated {
+    rootProject.tasks.named('compileTestJava').configure {
+        setSource(rootProject.files(
+            'scripts/qa/VeinMiningBackfillTest.java',
+            'src/test/java/com/xyp/gtnotgood/utils/HeadlessBlockRegistry.java'
+        ))
+    }
+    rootProject.tasks.named('test').configure {
+        // The GT dev jar expects Forge access transformers, which plain headless JUnit does not apply.
+        jvmArgs '-noverify'
+        filter {
+            includeTestsMatching 'com.xyp.gtnotgood.common.items.veinmining.VeinMiningBackfillTest'
+        }
+    }
+}

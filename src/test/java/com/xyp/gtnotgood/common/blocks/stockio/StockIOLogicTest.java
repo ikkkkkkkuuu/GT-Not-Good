@@ -78,6 +78,69 @@ public class StockIOLogicTest {
     }
 
     @Test
+    public void machineEffectRunsOnceOnlyAfterCompleteFuelDebit() {
+        Host host = configuredHost();
+        StockIOSnapshot snapshot = host.logic.startRecipe();
+        snapshot.fluids[0].amount -= 1000;
+        int[] effects = { 0 };
+        assertTrue(host.logic.endRecipe(snapshot, () -> {
+            assertEquals(4000, host.fluids.amount(fluid()));
+            effects[0]++;
+            return true;
+        }));
+        assertEquals(1, effects[0]);
+        assertEquals(128, host.items.amount(item()));
+        assertFalse(host.logic.endRecipe(snapshot, () -> {
+            effects[0]++;
+            return true;
+        }));
+        assertEquals(1, effects[0]);
+    }
+
+    @Test
+    public void shortFuelExtractionNeverGrantsMachineEffects() {
+        Host host = configuredHost();
+        StockIOSnapshot snapshot = host.logic.startRecipe();
+        snapshot.fluids[0].amount -= 1000;
+        host.fluids.extractionLimit = 9;
+        int[] effects = { 0 };
+        assertFalse(host.logic.endRecipe(snapshot, () -> {
+            effects[0]++;
+            return true;
+        }));
+        assertEquals(0, effects[0]);
+        assertEquals(5000, host.fluids.amount(fluid()));
+        assertFalse(host.logic.hasPending());
+    }
+
+    @Test
+    public void rejectedMachineEffectsRefundFuelOrPreserveDurableEscrow() {
+        Host host = configuredHost();
+        StockIOSnapshot snapshot = host.logic.startRecipe();
+        snapshot.fluids[0].amount -= 1000;
+        assertFalse(host.logic.endRecipe(snapshot, () -> false));
+        assertEquals(5000, host.fluids.amount(fluid()));
+        assertFalse(host.logic.hasPending());
+
+        host.fluids.acceptInsert = false;
+        snapshot = host.logic.startRecipe();
+        snapshot.fluids[0].amount -= 1000;
+        assertFalse(host.logic.endRecipe(snapshot, () -> false));
+        assertEquals(4000, host.fluids.amount(fluid()));
+        assertTrue(host.logic.hasPending());
+        assertNull(host.logic.startRecipe());
+        NBTTagCompound contents = new NBTTagCompound();
+        host.logic.writeContents(contents);
+        Host restored = new Host();
+        restored.fluids.set(fluid(), 4000);
+        restored.logic.readContents(contents);
+        assertTrue(restored.logic.hasPending());
+        restored.logic.tick();
+        assertFalse(restored.logic.hasPending());
+        assertEquals(5000, restored.fluids.amount(fluid()));
+    }
+
+    @Test
     public void reserveAndFixedAvailabilityRecheckAtCommit() {
         Host host = configuredHost();
         host.logic.getPolicy(false, 0).reserve = 80;

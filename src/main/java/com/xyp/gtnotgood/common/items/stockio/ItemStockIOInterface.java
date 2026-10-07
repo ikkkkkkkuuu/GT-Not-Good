@@ -65,8 +65,8 @@ public final class ItemStockIOInterface extends GTNGItem implements IPartItem {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advanced) {
         // #tr tooltip.stock_io_interface.direct
-        // # GT recipe inputs come directly from ME; only consumed resources are extracted.
-        // # zh_CN GT 单方块配方直接读取 ME；仅在开工时扣除实际消耗。
+        // # Native GT recipes and generators read ME; only actual consumption is extracted.
+        // # zh_CN GT 原生加工与发电直接读取 ME；只扣除实际消耗。
         lines.add(StatCollector.translateToLocal("tooltip.stock_io_interface.direct"));
         // #tr tooltip.stock_io_interface.slots
         // # 900 item + 900 fluid marks; reserve, fixed availability and output recovery.

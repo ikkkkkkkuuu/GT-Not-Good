@@ -43,12 +43,12 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.3.5          | [![1.3.5](https://img.shields.io/badge/release-1.3.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.5) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.3.6          | [![1.3.6](https://img.shields.io/badge/release-1.3.6-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.6) |         ✔️         |
 
-最新版本：[1.3.5 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.5)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.5/gtnotgood-1.3.5.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.5/gtnotgood-1.3.5-sources.jar)。
+最新版本：[1.3.6 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.6)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.6/gtnotgood-1.3.6.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.6/gtnotgood-1.3.6-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.3.5。
+1.3.4 因启动错误已撤回，请更新到 1.3.6。
 
 ### 大型矿石处理机
 
@@ -152,11 +152,13 @@ NEI → GTNotGood 新增“优先使用本模组接口自动命名”，默认�
 
 ### 🔌 库存 IO 接口 (ME)
 
-完整方块或线缆贴面紧贴 GT 单方块机器，配方直接使用 AE 网络里的物品与流体，开工时扣除实际消耗，不提前填入机器输入槽。
+完整方块或线缆贴面紧贴 GT 单方块机器，加工配方或发电燃料直接使用 AE 网络里的物品与流体，只扣除实际消耗，不提前填入机器输入槽或燃料罐。
 物品、流体各 900 个标记，合并分页 GUI，支持网络保留量、固定可用量、自动标记和产物回收。
 回收遵守机器面与覆盖板权限，只取明确输出槽、输出罐；已标记产物也能回收，输入保持不动。
-使用 ME 接口模型与高级 IO 总线的紫色配色，ME 接口与高级 IO 总线无序合成，两种形态可无序互转并保留配置。
-当前支持使用 GT 原生通用配方流程的单方块机器；特殊独立配方逻辑和其他模组容器尚未接入。详见 [库存 IO 接口说明](docs/stock-io-interface.md)。
+使用 ME 接口模型与高级 IO 总线的紫色配色，ME 接口与高级 IO 总线无序合成。
+完整方块与线缆面板可 1:1 无序互转，完整保留配置与待退回的物品、流体；NEI 的配方和用途查询均可查看双向转换配方。
+支持 `MTEBasicMachine` 原生加工流程与 `MTEBasicGenerator` 原生燃料流程，包括沿用该流程的蒸汽、燃油和燃气发电机；特殊独立配方／燃烧逻辑和其他模组容器尚未接入。详见 [库存 IO 接口说明](docs/stock-io-interface.md)。
+发电机优先燃烧本地燃料，本轮本地燃烧成功时不扣 ME；未能本地燃烧时直接从 ME 消耗一种燃料，遵守网络保留量、固定可用量和原生能量容量限制。
 
 ### 🔌 ME容器/ ME Container
 

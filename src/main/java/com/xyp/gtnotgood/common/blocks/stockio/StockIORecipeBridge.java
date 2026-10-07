@@ -31,7 +31,7 @@ public final class StockIORecipeBridge {
         if (base.isServerSide() && tick % 20 == 0
             && machine.mMaxProgresstime <= 0
             && base.isAllowedToWork()
-            && find(machine) != null) base.markInventoryBeenModified();
+            && find(base) != null) base.markInventoryBeenModified();
     }
 
     /**
@@ -43,7 +43,7 @@ public final class StockIORecipeBridge {
      */
     public static int checkRecipe(MTEBasicMachine machine, IntSupplier original) {
         if (active.get() != null) return original.getAsInt();
-        StockIOLogic logic = find(machine);
+        StockIOLogic logic = find(machine.getBaseMetaTileEntity());
         if (logic == null) return original.getAsInt();
         StockIOSnapshot snapshot = logic.startRecipe();
         if (snapshot == null) return original.getAsInt();
@@ -77,8 +77,7 @@ public final class StockIORecipeBridge {
     }
 
     /** Finds one already-loaded interface whose machine-facing side touches this controller. */
-    private static StockIOLogic find(MTEBasicMachine machine) {
-        IGregTechTileEntity base = machine.getBaseMetaTileEntity();
+    static StockIOLogic find(IGregTechTileEntity base) {
         if (base == null || !base.isServerSide()) return null;
         World world = base.getWorld();
         if (world == null) return null;

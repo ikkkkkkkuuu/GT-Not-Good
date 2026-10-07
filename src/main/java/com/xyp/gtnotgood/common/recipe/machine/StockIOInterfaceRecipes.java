@@ -1,10 +1,11 @@
 package com.xyp.gtnotgood.common.recipe.machine;
 
+import java.util.Collections;
+
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
@@ -30,51 +31,26 @@ public final class StockIOInterfaceRecipes {
     }
 
     /** Form conversion preserves ghost settings and real unsettled refunds; ordinary crafting would discard them. */
-    private static final class Conversion implements IRecipe {
-
-        private final GTNGItemList input;
-        private final GTNGItemList output;
+    private static final class Conversion extends ShapelessRecipes {
 
         private Conversion(GTNGItemList input, GTNGItemList output) {
-            this.input = input;
-            this.output = output;
-        }
-
-        private ItemStack source(InventoryCrafting inventory) {
-            ItemStack found = null;
-            for (int slot = 0; slot < inventory.getSizeInventory(); slot++) {
-                ItemStack stack = inventory.getStackInSlot(slot);
-                if (stack == null) continue;
-                if (found != null || stack.getItem() != input.getItem()) return null;
-                found = stack;
-            }
-            return found;
-        }
-
-        @Override
-        public boolean matches(InventoryCrafting inventory, World world) {
-            return source(inventory) != null;
+            super(output.get(1), Collections.singletonList(input.get(1)));
         }
 
         @Override
         public ItemStack getCraftingResult(InventoryCrafting inventory) {
-            ItemStack source = source(inventory);
-            if (source == null) return null;
-            ItemStack result = output.get(1);
-            if (source.hasTagCompound()) result.setTagCompound(
-                (NBTTagCompound) source.getTagCompound()
-                    .copy());
+            if (!matches(inventory, null)) return null;
+            ItemStack result = super.getCraftingResult(inventory);
+            for (int slot = 0; slot < inventory.getSizeInventory(); slot++) {
+                ItemStack source = inventory.getStackInSlot(slot);
+                if (source != null && source.hasTagCompound()) {
+                    result.setTagCompound(
+                        (NBTTagCompound) source.getTagCompound()
+                            .copy());
+                    break;
+                }
+            }
             return result;
-        }
-
-        @Override
-        public int getRecipeSize() {
-            return 1;
-        }
-
-        @Override
-        public ItemStack getRecipeOutput() {
-            return output.get(1);
         }
     }
 }

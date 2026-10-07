@@ -17,6 +17,7 @@ import appeng.util.InventoryAdaptor;
 import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
+import gregtech.api.metatileentity.implementations.MTEBasicGenerator;
 import gregtech.api.metatileentity.implementations.MTEBasicMachine;
 
 /**
@@ -30,6 +31,7 @@ public final class BusTarget {
     private final ForgeDirection face;
     private final BaseMetaTileEntity nativeTile;
     private final MTEBasicMachine nativeMachine;
+    private final MTEBasicGenerator nativeGenerator;
 
     public BusTarget(TileEntity tile, ForgeDirection face) {
         this(tile, face, false);
@@ -46,8 +48,14 @@ public final class BusTarget {
             InventoryAdaptor.ALLOW_ITEMS | InventoryAdaptor.FOR_INSERTS | InventoryAdaptor.FOR_EXTRACTS);
         fluids = tile instanceof IFluidHandler handler ? handler : null;
         nativeTile = nativeOutputsOnly && tile instanceof BaseMetaTileEntity base
-            && base.getMetaTileEntity() instanceof MTEBasicMachine ? base : null;
-        nativeMachine = nativeTile == null ? null : (MTEBasicMachine) nativeTile.getMetaTileEntity();
+            && (base.getMetaTileEntity() instanceof MTEBasicMachine
+                || base.getMetaTileEntity() instanceof MTEBasicGenerator) ? base : null;
+        nativeMachine = nativeTile != null && nativeTile.getMetaTileEntity() instanceof MTEBasicMachine machine
+            ? machine
+            : null;
+        nativeGenerator = nativeTile != null && nativeTile.getMetaTileEntity() instanceof MTEBasicGenerator generator
+            ? generator
+            : null;
     }
 
     public boolean available() {
@@ -55,18 +63,18 @@ public final class BusTarget {
     }
 
     public boolean hasNativeOutputs() {
-        return nativeMachine != null;
+        return nativeTile != null;
     }
 
     /** Returns distinct resource identities and total visible stock, including non-extractable input slots. */
     public List<IAEStack<?>> stock() {
         List<IAEStack<?>> result = new ArrayList<>();
-        if (nativeMachine != null) {
-            for (int slot = nativeMachine.getOutputSlot(); slot < nativeOutputEnd(); slot++) {
+        if (nativeTile != null) {
+            for (int slot = nativeOutputStart(); slot < nativeOutputEnd(); slot++) {
                 ItemStack stack = nativeTile.getStackInSlot(slot);
                 if (canExtractNativeOutput(slot, stack)) add(result, AEItemStack.create(stack));
             }
-            FluidStack output = nativeMachine.getDrainableStack();
+            FluidStack output = nativeMachine == null ? null : nativeMachine.getDrainableStack();
             if (output != null && allowsUntypedDrain(output)) {
                 FluidStack offered = fluids.drain(face, output.amount, false);
                 if (offered != null && offered.isFluidEqual(output)) add(result, AEFluidStack.create(offered));
@@ -116,7 +124,7 @@ public final class BusTarget {
 
     /** @return what the connected face actually allowed to be extracted, or null */
     public IAEStack<?> extract(IAEStack<?> stack, boolean simulate) {
-        if (stack instanceof IAEItemStack item && nativeMachine != null) return extractNativeOutput(item, simulate);
+        if (stack instanceof IAEItemStack item && nativeTile != null) return extractNativeOutput(item, simulate);
         if (stack instanceof IAEItemStack item && items != null) {
             return AEItemStack.create(
                 simulate ? items.simulateRemove((int) stack.getStackSize(), item.getItemStack(), null)
@@ -124,7 +132,8 @@ public final class BusTarget {
         }
         if (stack instanceof IAEFluidStack fluid && fluids != null) {
             FluidStack requested = fluid.getFluidStack();
-            if (nativeMachine != null) {
+            if (nativeTile != null) {
+                if (nativeMachine == null) return null;
                 FluidStack output = nativeMachine.getDrainableStack();
                 if (output == null || !output.isFluidEqual(requested) || !allowsUntypedDrain(requested)) return null;
                 FluidStack offered = fluids.drain(face, requested.amount, false);
@@ -146,9 +155,13 @@ public final class BusTarget {
         return null;
     }
 
+    private int nativeOutputStart() {
+        return nativeMachine == null ? nativeGenerator.getOutputSlot() : nativeMachine.getOutputSlot();
+    }
+
     private int nativeOutputEnd() {
-        return nativeMachine.getOutputSlot()
-            + (nativeMachine.mOutputItems == null ? 0 : nativeMachine.mOutputItems.length);
+        return nativeOutputStart()
+            + (nativeMachine == null ? 1 : nativeMachine.mOutputItems == null ? 0 : nativeMachine.mOutputItems.length);
     }
 
     private boolean canExtractNativeOutput(int slot, ItemStack stack) {
@@ -162,7 +175,7 @@ public final class BusTarget {
     private IAEItemStack extractNativeOutput(IAEItemStack requested, boolean simulate) {
         long remaining = Math.min(Integer.MAX_VALUE, requested.getStackSize());
         long taken = 0;
-        for (int slot = nativeMachine.getOutputSlot(); slot < nativeOutputEnd() && remaining > 0; slot++) {
+        for (int slot = nativeOutputStart(); slot < nativeOutputEnd() && remaining > 0; slot++) {
             ItemStack stack = nativeTile.getStackInSlot(slot);
             if (!canExtractNativeOutput(slot, stack) || !requested.isSameType(AEItemStack.create(stack))) continue;
             int quantity = (int) Math.min(remaining, stack.stackSize);

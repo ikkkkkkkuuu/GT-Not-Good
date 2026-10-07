@@ -2,19 +2,24 @@ package com.xyp.gtnotgood.common.items.veinmining;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockOre;
+import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
@@ -29,6 +34,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.github.bsideup.jabel.Desugar;
@@ -40,12 +46,15 @@ import com.xyp.gtnotgood.utils.item.ItemUtils;
 import com.xyp.gtnotgood.utils.item.SubtitleDisplay;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.items.MetaGeneratedTool;
+import gregtech.common.blocks.GTBlockOre;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -54,6 +63,9 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
 
     /** Players currently being processed by the synchronous vein-harvest pass. */
     private final Set<UUID> activePlayers = new HashSet<>();
+
+    /** Deferred until the outer harvest completes, so it cannot mine the replacement stone again. */
+    private final Map<World, Set<BackfillPosition>> pendingBackfill = new HashMap<>();
 
     /** The six axis-aligned neighbors used by the breadth-first scan. */
     private static final int[][] NEIGHBOR_OFFSETS = { { 1, 0, 0 }, { -1, 0, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 0, 1 },
@@ -107,6 +119,11 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
         // # Amount: %d
         // # zh_CN 数量: %d
         toolTip.add(StatCollector.translateToLocalFormatted("Tooltip_VeinMiningPickaxe_01", amount));
+
+        // #tr Tooltip_VeinMiningPickaxe_Backfill
+        // # Mined ores are automatically replaced with stone
+        // # zh_CN 挖掘矿石后自动用石头回填
+        toolTip.add(StatCollector.translateToLocal("Tooltip_VeinMiningPickaxe_Backfill"));
 
         // #tr Tooltip_VeinMiningPickaxe_PreciseMode_On
         // # §aPrecise Mode: ON
@@ -198,16 +215,19 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
         return stack;
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onBlockBreak(BlockEvent.BreakEvent event) {
         EntityPlayer player = event.getPlayer();
-        World world = player.worldObj;
-        if (world.isRemote || !(player instanceof EntityPlayerMP playerMP)) return;
+        World world = event.world;
+        if (event.isCanceled() || world.isRemote || !(player instanceof EntityPlayerMP playerMP)) return;
+        ItemStack heldItem = playerMP.getCurrentEquippedItem();
+        if (heldItem == null || !(heldItem.getItem() instanceof VeinMiningPickaxe)) return;
+        if (isOre(world, event.x, event.y, event.z, event.block)) {
+            pendingBackfill.computeIfAbsent(world, ignored -> new HashSet<>())
+                .add(new BackfillPosition(event.x, event.y, event.z));
+        }
         if (playerMP.isSneaking()) {
-            ItemStack stack = playerMP.getCurrentEquippedItem();
-            if (stack == null || !(stack.getItem() instanceof VeinMiningPickaxe)) {
-                return;
-            }
+            ItemStack stack = heldItem;
             int range = 3;
             int amount = 327670;
             boolean preciseMode = false;
@@ -243,6 +263,37 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
                     preciseMode);
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END || pendingBackfill.isEmpty()) return;
+        Map<World, Set<BackfillPosition>> backfill = new HashMap<>(pendingBackfill);
+        pendingBackfill.clear();
+        backfill.forEach((world, positions) -> {
+            for (BackfillPosition position : positions) {
+                if (world.blockExists(position.x, position.y, position.z)
+                    && world.isAirBlock(position.x, position.y, position.z)) {
+                    world.setBlock(position.x, position.y, position.z, Blocks.stone, 0, 3);
+                }
+            }
+        });
+    }
+
+    @SubscribeEvent
+    public void onWorldUnload(WorldEvent.Unload event) {
+        if (!event.world.isRemote) pendingBackfill.remove(event.world);
+    }
+
+    private static boolean isOre(World world, int x, int y, int z, Block block) {
+        // Small GT ores are not registered as ordinary ore-dictionary stacks.
+        if (block instanceof GTBlockOre || block instanceof BlockOre || block instanceof BlockRedstoneOre) return true;
+        if (block == null || Item.getItemFromBlock(block) == null) return false;
+        ItemStack oreStack = new ItemStack(block, 1, block.getDamageValue(world, x, y, z));
+        for (String name : oreNames(oreStack)) {
+            if (name.startsWith("ore")) return true;
+        }
+        return false;
     }
 
     public void clearConnectedBlocks(EntityPlayerMP player, ItemStack stack, int x, int y, int z, Block targetBlock,
@@ -444,6 +495,9 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
         }
         return false;
     }
+
+    @Desugar
+    private record BackfillPosition(int x, int y, int z) {}
 
     @Desugar
     private record Node(int x, int y, int z, int gap) {}

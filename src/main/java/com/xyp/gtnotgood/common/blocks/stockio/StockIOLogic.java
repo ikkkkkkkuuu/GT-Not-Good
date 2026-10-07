@@ -3,6 +3,8 @@ package com.xyp.gtnotgood.common.blocks.stockio;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.BooleanSupplier;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -440,12 +442,24 @@ public final class StockIOLogic {
 
     /** Begins one recipe check with mutable virtual inputs; no resource leaves ME at this stage. */
     public StockIOSnapshot startRecipe() {
+        return prepareRecipe(-1, false);
+    }
+
+    /** Begins a fuel check for one admitted resource without querying the other configured marks. */
+    public StockIOSnapshot startRecipe(boolean fluid, int slot) {
+        checkSlot(slot);
+        return prepareRecipe(slot, fluid);
+    }
+
+    private StockIOSnapshot prepareRecipe(int selectedSlot, boolean fluidOnly) {
         if (!isServerSide() || !enabled || !isOnline() || transferring || activeRecipe != null || !pending.isEmpty())
             return null;
         StockIOSnapshot snapshot = new StockIOSnapshot(this);
         try {
-            for (int slot = 0; slot < SLOT_COUNT; slot++) {
-                if (itemFilters[slot] != null) {
+            int firstSlot = Math.max(0, selectedSlot);
+            int endSlot = selectedSlot < 0 ? SLOT_COUNT : selectedSlot + 1;
+            for (int slot = firstSlot; slot < endSlot; slot++) {
+                if ((selectedSlot < 0 || !fluidOnly) && itemFilters[slot] != null) {
                     int offered = getPolicy(false, slot)
                         .offered(available(AEItemStack.create(itemFilters[slot])), limitedMode, fixedMode);
                     if (offered > 0) {
@@ -454,7 +468,7 @@ public final class StockIOLogic {
                         snapshot.originalItems[slot] = snapshot.items[slot].copy();
                     }
                 }
-                if (fluidFilters[slot] != null) {
+                if ((selectedSlot < 0 || fluidOnly) && fluidFilters[slot] != null) {
                     int offered = getPolicy(true, slot)
                         .offered(available(AEFluidStack.create(fluidFilters[slot])), limitedMode, fixedMode);
                     if (offered > 0) {
@@ -489,8 +503,21 @@ public final class StockIOLogic {
      *
      * @return whether all recipe consumption reached ME; the caller must reject outputs on false
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public boolean endRecipe(StockIOSnapshot snapshot) {
+        return endRecipe(snapshot, () -> true);
+    }
+
+    /**
+     * Extracts the complete consumption ledger before granting the caller's result.
+     *
+     * @param snapshot     mutable inputs owned by the current transaction
+     * @param commitEffect returns true once the result is granted and fuel cannot be refunded; on false,
+     *                     the caller must have undone every result mutation before the ledger is refunded
+     * @return whether both extraction and the result commit succeeded; refused refunds remain in durable escrow
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public boolean endRecipe(StockIOSnapshot snapshot, BooleanSupplier commitEffect) {
+        Objects.requireNonNull(commitEffect, "commitEffect");
         if (!isServerSide() || snapshot == null
             || snapshot.closed
             || snapshot != activeRecipe
@@ -516,6 +543,10 @@ public final class StockIOLogic {
                     rollback(extracted);
                     return false;
                 }
+            }
+            if (!commitEffect.getAsBoolean()) {
+                rollback(extracted);
+                return false;
             }
             refreshRequested = true;
             return true;

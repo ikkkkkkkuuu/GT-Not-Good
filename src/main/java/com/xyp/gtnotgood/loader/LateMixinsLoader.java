@@ -113,6 +113,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
             addAll(
                 list,
                 "gregtech.BasicMachineStockIOMixin",
+                "gregtech.BasicGeneratorStockIOMixin",
                 "appliedenergistics.PatternMEOutputMultiblockMixin",
                 "appliedenergistics.CraftingPatternAlternativesMixin",
                 "appliedenergistics.compact.MixinCraftingGridCache",

@@ -4,14 +4,21 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
@@ -40,8 +47,11 @@ import appeng.api.parts.IPartHost;
 import appeng.api.util.AEColor;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.tile.storage.TileDrive;
+import appeng.util.Platform;
 import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
+import codechicken.nei.PositionedStack;
+import codechicken.nei.recipe.ShapelessRecipeHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -63,6 +73,8 @@ public final class StockIOClientChecks {
     private int ticks;
     private int automaticStart;
     private int blockFrames;
+    private volatile NBTTagCompound conversionTag;
+    private boolean neiConversionsChecked;
     private PartStockIOInterface part;
     private TileStockIOInterface block;
     private Fixture partFixture;
@@ -85,6 +97,14 @@ public final class StockIOClientChecks {
             mc.launchIntegratedServer("stockio-qa-" + System.currentTimeMillis(), "Stock IO QA",
                 new WorldSettings(39L, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT));
         }
+        if (!finished && !neiConversionsChecked && mc.theWorld != null && conversionTag != null) {
+            try {
+                verifyNEIConversions(conversionTag);
+                neiConversionsChecked = true;
+            } catch (Throwable failure) {
+                fail(failure);
+            }
+        }
     }
 
     @SubscribeEvent
@@ -98,6 +118,8 @@ public final class StockIOClientChecks {
             if (ticks == 1) {
                 verifyTransactions();
                 setup(player);
+                conversionTag = conversionData(partFixture);
+                verifyConversions(player.worldObj, conversionTag);
             }
             if (ticks > 1600) throw new AssertionError("Stock IO QA timed out at stage " + stage);
             if (stage == 0 && ticks >= 100 && partFixture.proxy.isActive() && blockFixture.proxy.isActive()) {
@@ -153,8 +175,163 @@ public final class StockIOClientChecks {
     private static void verifyTransactions() {
         Result result = JUnitCore.runClasses(StockIOLogicTest.class);
         for (var failure : result.getFailures()) System.err.println(failure.getTrace());
-        require(result.getRunCount() == 8 && result.getIgnoreCount() == 0 && result.getFailureCount() == 0,
-            "all eight native ME transaction tests execute and pass in the Forge client");
+        require(result.getRunCount() == 11 && result.getIgnoreCount() == 0 && result.getFailureCount() == 0,
+            "all eleven native ME transaction tests execute and pass in the Forge client");
+    }
+
+    private static NBTTagCompound conversionData(Fixture fixture) {
+        NBTTagCompound original = new NBTTagCompound();
+        fixture.logic.writeContents(original);
+        try {
+            configure(fixture);
+            ItemStack marked = new ItemStack(Items.apple);
+            marked.setTagCompound(new NBTTagCompound());
+            NBTTagCompound identity = new NBTTagCompound();
+            identity.setString("value", "original");
+            marked.getTagCompound().setTag("qaIdentity", identity);
+            fixture.logic.setItemFilter(0, marked);
+            fixture.logic.getPolicy(false, 0).reserve = 10_000_000_000L;
+            fixture.logic.getPolicy(false, 0).batch = 7;
+            fixture.logic.setEnabled(false);
+            fixture.logic.setAutoPullItems(true);
+            fixture.logic.setAutoPullFluids(true);
+            fixture.logic.setRefreshTime(7);
+            fixture.logic.setMinItemAutoPull(13);
+            fixture.logic.setMinFluidAutoPull(99);
+            NBTTagCompound tag = new NBTTagCompound();
+            fixture.logic.writeContents(tag);
+            NBTTagCompound itemRefund = new NBTTagCompound();
+            Platform.writeStackNBT(AEItemStack.create(marked).setStackSize(6_000_000_000L), itemRefund, true);
+            itemRefund.setBoolean("rollback", true);
+            NBTTagCompound fluidRefund = new NBTTagCompound();
+            Platform.writeStackNBT(AEFluidStack.create(water(1)).setStackSize(9_000_000_000L), fluidRefund, true);
+            fluidRefund.setBoolean("rollback", false);
+            NBTTagList refunds = new NBTTagList();
+            refunds.appendTag(itemRefund);
+            refunds.appendTag(fluidRefund);
+            tag.setTag("stockIOEscrow", refunds);
+            require(Platform.readStackNBT(itemRefund, false).getStackSize() == 6_000_000_000L
+                && Platform.readStackNBT(fluidRefund, false).getStackSize() == 9_000_000_000L,
+                "conversion fixture contains native long-sized item and fluid refunds");
+            return tag;
+        } finally {
+            fixture.logic.readContents(original);
+        }
+    }
+
+    private static void verifyConversions(World world, NBTTagCompound tag) {
+        verifyConversion(world, GTNGItemList.StockIOInterface, GTNGItemList.StockIOInterfacePart);
+        verifyConversion(world, GTNGItemList.StockIOInterfacePart, GTNGItemList.StockIOInterface);
+        InventoryCrafting inventory = craftingGrid(3);
+        ItemStack original = GTNGItemList.StockIOInterface.get(1);
+        original.setTagCompound((NBTTagCompound) tag.copy());
+        inventory.setInventorySlotContents(8, original);
+        ItemStack panel = CraftingManager.getInstance().findMatchingRecipe(inventory, world);
+        require(sameType(panel, GTNGItemList.StockIOInterfacePart.get(1)) && panel.stackSize == 1
+            && tag.equals(panel.getTagCompound()) && panel.getTagCompound() != original.getTagCompound(),
+            "registered block-to-panel crafting preserves all configuration and refunds independently");
+        inventory.setInventorySlotContents(8, null);
+        inventory.setInventorySlotContents(4, panel);
+        ItemStack roundTrip = CraftingManager.getInstance().findMatchingRecipe(inventory, world);
+        require(sameType(roundTrip, original) && roundTrip.stackSize == 1
+            && tag.equals(roundTrip.getTagCompound()) && roundTrip.getTagCompound() != panel.getTagCompound(),
+            "registered block-to-panel-to-block crafting preserves all configuration and refunds");
+        NBTTagCompound nested = roundTrip.getTagCompound().getTagList("stockIOItems", 10).getCompoundTagAt(0)
+            .getCompoundTag("item").getCompoundTag("tag").getCompoundTag("qaIdentity");
+        require("original".equals(nested.getString("value")), "converted ghost retains its nested item identity NBT");
+        nested.setString("value", "changed");
+        roundTrip.getTagCompound().getTagList("stockIOEscrow", 10).getCompoundTagAt(0).setBoolean("rollback", false);
+        require(!tag.equals(roundTrip.getTagCompound()) && tag.equals(panel.getTagCompound())
+            && tag.equals(original.getTagCompound()), "nested settings/refund edits cannot mutate either crafting ingredient");
+    }
+
+    private static void verifyConversion(World world, GTNGItemList input, GTNGItemList output) {
+        ItemStack sourceType = input.get(1);
+        ItemStack outputType = output.get(1);
+        InventoryCrafting probe = craftingGrid(2);
+        probe.setInventorySlotContents(0, sourceType);
+        IRecipe registered = null;
+        int matches = 0;
+        for (Object entry : CraftingManager.getInstance().getRecipeList()) {
+            IRecipe recipe = (IRecipe) entry;
+            if (sameType(recipe.getRecipeOutput(), outputType) && recipe.matches(probe, world)) {
+                registered = recipe;
+                matches++;
+            }
+        }
+        require(matches == 1 && registered.getRecipeSize() == 1 && registered.getRecipeOutput().stackSize == 1,
+            input + " has exactly one registered one-to-one conversion to " + output);
+        require(!registered.getRecipeOutput().hasTagCompound(), "registered conversion output is an unconfigured template");
+        for (int width : new int[] {2, 3}) {
+            for (int slot = 0; slot < width * width; slot++) {
+                InventoryCrafting inventory = craftingGrid(width);
+                ItemStack source = input.get(3);
+                inventory.setInventorySlotContents(slot, source);
+                ItemStack result = CraftingManager.getInstance().findMatchingRecipe(inventory, world);
+                require(sameType(result, outputType) && result.stackSize == 1
+                    && source.stackSize == 3 && !result.hasTagCompound(),
+                    input + " converts one unit in " + width + "x" + width + " slot " + slot);
+            }
+            InventoryCrafting invalid = craftingGrid(width);
+            invalid.setInventorySlotContents(0, sourceType.copy());
+            for (ItemStack extra : new ItemStack[] {new ItemStack(Items.feather), sourceType.copy()}) {
+                invalid.setInventorySlotContents(width * width - 1, extra);
+                require(!registered.matches(invalid, world) && registered.getCraftingResult(invalid) == null
+                    && CraftingManager.getInstance().findMatchingRecipe(invalid, world) == null,
+                    input + " conversion rejects extra " + extra.getItem() + " in " + width + "x" + width);
+            }
+        }
+    }
+
+    private static InventoryCrafting craftingGrid(int width) {
+        return new InventoryCrafting(new Container() {
+            @Override
+            public boolean canInteractWith(EntityPlayer player) {
+                return true;
+            }
+        }, width, width);
+    }
+
+    private static void verifyNEIConversions(NBTTagCompound tag) {
+        for (GTNGItemList input : new GTNGItemList[] {GTNGItemList.StockIOInterface, GTNGItemList.StockIOInterfacePart}) {
+            GTNGItemList output = input == GTNGItemList.StockIOInterface
+                ? GTNGItemList.StockIOInterfacePart : GTNGItemList.StockIOInterface;
+            for (boolean configured : new boolean[] {false, true}) {
+                ItemStack ingredient = input.get(1);
+                ItemStack result = output.get(1);
+                if (configured) {
+                    ingredient.setTagCompound((NBTTagCompound) tag.copy());
+                    result.setTagCompound((NBTTagCompound) tag.copy());
+                }
+                ShapelessRecipeHandler crafting = new ShapelessRecipeHandler();
+                crafting.loadCraftingRecipes(result);
+                requireNativeConversion(crafting, ingredient, result, "crafting", configured);
+                ShapelessRecipeHandler usage = new ShapelessRecipeHandler();
+                usage.loadUsageRecipes(ingredient);
+                requireNativeConversion(usage, ingredient, result, "usage", configured);
+            }
+        }
+    }
+
+    private static void requireNativeConversion(ShapelessRecipeHandler handler, ItemStack input, ItemStack output,
+        String query, boolean configured) {
+        int matches = 0;
+        for (int index = 0; index < handler.numRecipes(); index++) {
+            PositionedStack result = handler.getResultStack(index);
+            List<PositionedStack> ingredients = handler.getIngredientStacks(index);
+            if (result == null || !sameType(result.item, output) || ingredients.size() != 1) continue;
+            PositionedStack ingredient = ingredients.get(0);
+            if (!Arrays.stream(ingredient.items).anyMatch(stack -> sameType(stack, input))) continue;
+            require(result.item.stackSize == 1 && ingredient.item.stackSize == 1 && handler.isRecipe2x2(index),
+                "native NEI conversion displays exactly one input/output and supports the player crafting grid");
+            matches++;
+        }
+        require(matches == 1, "native NEI " + query + " query exposes " + input.getItem() + ":" + input.getItemDamage()
+            + " -> " + output.getItem() + ":" + output.getItemDamage() + " (configured=" + configured + ")");
+    }
+
+    private static boolean sameType(ItemStack left, ItemStack right) {
+        return left != null && right != null && left.isItemEqual(right);
     }
 
     private void setup(EntityPlayerMP player) {
@@ -369,6 +546,7 @@ public final class StockIOClientChecks {
                 }
                 if (blockFrames == 60) {
                     StockIOGuiClientChecks.captureModelProbe(outputDirectory());
+                    require(neiConversionsChecked, "native client NEI conversion queries ran before final QA success");
                     Files.write(new File(outputDirectory(), "result.txt").toPath(),
                         "PASS".getBytes(StandardCharsets.UTF_8));
                     finished = true;

@@ -5,6 +5,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
+import com.xyp.gtnotgood.utils.enums.ModList;
 
 import appeng.api.AEApi;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -13,10 +14,22 @@ import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
 import gregtech.api.util.GTModHandler;
 import gregtech.api.util.GTOreDictUnificator;
+import tectech.thing.CustomItemList;
 
 public class CraftingTableRecipes {
 
     public static void loadRecipes() {
+        if (!ModList.GTNotLeisure.isModLoaded()) {
+            GTModHandler.addCraftingRecipe(
+                CustomItemList.hatch_CreativeMaintenance.get(1),
+                GTModHandler.RecipeBits.MIRRORED | GTModHandler.RecipeBits.KEEPNBT
+                    | GTModHandler.RecipeBits.BUFFERED
+                    | GTModHandler.RecipeBits.DISMANTLEABLE,
+                new Object[] { "ABA", "CDC", "ABA", 'A', OrePrefixes.circuit.get(Materials.HV), 'B',
+                    ItemList.Hatch_Maintenance.get(1), 'C', ItemList.Robot_Arm_HV.get(1), 'D',
+                    ItemList.Hull_HV.get(1) });
+        }
+
         // spotless:off
 
         var ae = AEApi.instance().definitions();
