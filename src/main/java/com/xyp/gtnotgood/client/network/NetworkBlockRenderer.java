@@ -8,7 +8,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
-import com.xyp.gtnotgood.common.network.BlockNetwork;
+import com.xyp.gtnotgood.common.blocks.network.BlockNetwork;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 

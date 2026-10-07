@@ -1,0 +1,28 @@
+{
+  "assets": [],
+  "runtimeReferences": [
+    {
+      "upstream": "https://github.com/pedroksl/AdvancedAE",
+      "commit": "5ad43ee1e5f7a8b9fe7a1eacfaebdd44b61b624c",
+      "license": "LGPL-3.0",
+      "author": "pedroksl and AdvancedAE contributors",
+      "paths": [
+        "assets/gtnotgood/textures/blocks/advancedio/advanced_io_bus.png",
+        "assets/gtnotgood/textures/blocks/advancedio/advanced_io_bus_sides.png",
+        "assets/gtnotgood/textures/blocks/advancedio/advanced_io_bus_back.png"
+      ],
+      "hashManifest": "META-INF/advancedio-port/ASSET_MANIFEST.json",
+      "destination": "common/parts/stockio/PartStockIOInterface.java",
+      "modification": "Unchanged existing textures mapped to native ME interface cuboids"
+    },
+    {
+      "upstream": "https://github.com/GTNewHorizons/Applied-Energistics-2-Unofficial",
+      "tag": "rv3-beta-1073-GTNH",
+      "commit": "151550f6d558a663eee792f0bfa22e12a53c0e54",
+      "sourceArtifactSha1": "12f114eb4e27c346d0278fcff7a09b5a3067b86",
+      "source": "assets/appliedenergistics2/textures/blocks/interface/BlockInterface_Purple.png",
+      "destination": "common/blocks/stockio/BlockStockIOInterface.java",
+      "modification": "Runtime texture reference; no copied or modified PNG"
+    }
+  ]
+}

@@ -60,8 +60,8 @@ import com.xyp.gtnotgood.common.api.gui.OreEntryInfo;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.LargeVoidMinerConfigGuiFactory;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.LargeVoidMinerGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiBlockBase;
-import com.xyp.gtnotgood.common.utils.OreCrushedUtil;
-import com.xyp.gtnotgood.common.utils.VoidMinerUtilityShim;
+import com.xyp.gtnotgood.utils.machine.OreCrushedUtil;
+import com.xyp.gtnotgood.utils.machine.VoidMinerUtilityShim;
 
 import bwcrossmod.galacticgreg.VoidMinerUtility;
 import cpw.mods.fml.common.Loader;
@@ -170,7 +170,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
     private static Boolean pluginLoaded;
     private static Class<?> itemDimDisplayClass;
     private static java.lang.reflect.Method getDimensionMethod;
-    private static IStructureDefinition<LargeVoidMiner> STRUCTURE_DEFINITION;
+    private static IStructureDefinition<LargeVoidMiner> structureDefinition;
 
     private static final String[][] SHAPE = new String[][] {
         { "       ", "       ", "       ", "   B   ", "       ", "       ", "       " },
@@ -220,8 +220,8 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
 
     @Override
     public IStructureDefinition<LargeVoidMiner> getStructureDefinition() {
-        if (STRUCTURE_DEFINITION == null) {
-            STRUCTURE_DEFINITION = StructureDefinition.<LargeVoidMiner>builder()
+        if (structureDefinition == null) {
+            structureDefinition = StructureDefinition.<LargeVoidMiner>builder()
                 .addShape(STRUCTURE_PIECE_MAIN, transpose(SHAPE))
                 .addElement('A', ofBlock(sBlockCasings2, 13))
                 .addElement('B', buildSteelCasingElement(1))
@@ -230,7 +230,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
                 .addElement('E', buildSteelCasingElement(2))
                 .build();
         }
-        return STRUCTURE_DEFINITION;
+        return structureDefinition;
     }
 
     private static com.gtnewhorizon.structurelib.structure.IStructureElement<LargeVoidMiner> buildSteelCasingElement(

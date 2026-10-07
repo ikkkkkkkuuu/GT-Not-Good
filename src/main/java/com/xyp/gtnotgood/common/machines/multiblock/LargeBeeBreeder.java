@@ -110,7 +110,7 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
     /** 玻璃等级（每级+1%成功率） */
     private int glassTier = -1;
 
-    private IStructureDefinition<LargeBeeBreeder> STRUCTURE_DEFINITION = null;
+    private IStructureDefinition<LargeBeeBreeder> structureDefinition = null;
 
     // 15 wide (x), 17 tall (y), 15 deep (z)
     // A=glass, B=dirt/grass, G=casing+hatches, H=wood planks, I=wood slabs, J/K/L/N/O/P=bronze frame
@@ -313,8 +313,8 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
 
     @Override
     public IStructureDefinition<LargeBeeBreeder> getStructureDefinition() {
-        if (STRUCTURE_DEFINITION == null) {
-            STRUCTURE_DEFINITION = StructureDefinition.<LargeBeeBreeder>builder()
+        if (structureDefinition == null) {
+            structureDefinition = StructureDefinition.<LargeBeeBreeder>builder()
                 .addShape(STRUCTURE_PIECE_MAIN, shape)
                 .addElement('A', chainAllGlasses(-1, (te, t) -> te.glassTier = t, te -> te.glassTier))
                 .addElement('B', ofChain(ofBlockAnyMeta(Blocks.dirt, 0), ofBlock(Blocks.grass, 0)))
@@ -337,7 +337,7 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
                 .addElement('P', ofBlock(gregtech.api.GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
                 .build();
         }
-        return STRUCTURE_DEFINITION;
+        return structureDefinition;
     }
 
     @Override

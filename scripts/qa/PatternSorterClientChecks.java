@@ -1,4 +1,4 @@
-package com.xyp.gtnotgood.common.patternsorter;
+package com.xyp.gtnotgood.common.items.patternsorter;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;

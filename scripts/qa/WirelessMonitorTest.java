@@ -14,8 +14,8 @@ import net.minecraft.util.EnumChatFormatting;
 import org.junit.Test;
 
 import com.xyp.gtnotgood.client.wireless.WirelessMonitorFormat;
-import com.xyp.gtnotgood.common.packet.WirelessMonitorRequest;
-import com.xyp.gtnotgood.common.packet.WirelessMonitorSnapshot;
+import com.xyp.gtnotgood.common.network.WirelessMonitorRequest;
+import com.xyp.gtnotgood.common.network.WirelessMonitorSnapshot;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

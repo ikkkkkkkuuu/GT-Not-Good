@@ -17,7 +17,7 @@ import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 
 import com.xyp.gtnotgood.GTNotGood;
-import com.xyp.gtnotgood.common.packet.ServerConfigMessage;
+import com.xyp.gtnotgood.common.network.ServerConfigMessage;
 import com.xyp.gtnotgood.config.ServerConfigOptions.Option;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;

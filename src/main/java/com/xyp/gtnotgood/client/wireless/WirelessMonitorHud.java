@@ -14,8 +14,8 @@ import org.lwjgl.opengl.GL11;
 
 import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.client.text.preview.TextEffectPreview;
-import com.xyp.gtnotgood.common.packet.WirelessMonitorRequest;
-import com.xyp.gtnotgood.common.packet.WirelessMonitorSnapshot;
+import com.xyp.gtnotgood.common.network.WirelessMonitorRequest;
+import com.xyp.gtnotgood.common.network.WirelessMonitorSnapshot;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessEnergyHistory;
 import com.xyp.gtnotgood.utils.keybind.KeyBindManager;
 

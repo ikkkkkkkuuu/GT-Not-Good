@@ -1,5 +1,23 @@
 # AE2LT faithful port audit
 
+## ME stock IO interface — 2026-10-07
+
+- Pinned renderer reference: GTNH AE2 `rv3-beta-1073-GTNH`, sources SHA-1
+  commit `151550f6d558a663eee792f0bfa22e12a53c0e54`,
+  `12f114eb4e27c346d0278fcff7a09b5a3067b86`; inspected native `PartInterface` geometry
+  and AlgorithmX2 LGPL-3.0-or-later headers before adaptation.
+- Destination: `common/parts/stockio/PartStockIOInterface.java`. Interface cuboids and cable depth
+  remain native; front/side/back reuse the existing AdvancedAE IO artwork unchanged.
+  AdvancedAE commit/license/source/hashes remain in `META-INF/advancedio-port/`.
+  Full-block appearance references native AE2's purple interface texture at runtime.
+- The item/fluid GUI combines this project's super advanced ME input layout with 900 marks per type,
+  independent automatic selection, per-resource reserves and fixed availability, using installed GT textures.
+- GT5-Unofficial `5.09.54.183` native singleblock recipe checks are wrapped with independent input copies
+  and transactional ME consumption. Inputs are never staged into the target. Output recycling uses the
+  existing sided inventory/fluid adapter; unsettled resources stay durable across removal/conversion.
+- Packaged records: `META-INF/stockio-interface/NOTICE.md` and `ASSET_MANIFEST.json`.
+  References remain outside compiled source/resource sets. Usage: `docs/stock-io-interface.md`.
+
 ## GTL circuit pattern buffer — 2026-10-06
 
 - Behavioral reference: https://github.com/GNSW/GTLCore, commit `478601a3ca554af3df5c2ad7ffb8e2a6d8e0228b`.
@@ -590,7 +608,7 @@ remains outside compilation/resource inputs. Validation details: docs/testing/ld
 
 - Source: https://github.com/GTNewHorizons/ForestryMC, tag `4.11.38`, commit `0bd9a7978a3852c3a815e41a16e678176344aa3d`.
 - Inspected the matching Gradle sources artifact (SHA-1 `7434384c6402bc8669354baff0ae61dc0ce781c1`) and the pinned repository `LICENSE.txt` before implementation. Upstream implementation license: LGPL-3.0; API source headers identify MIT.
-- Destination: `src/main/java/com/xyp/gtnotgood/common/beekeeping/` and `mixins/late/Forestry/MixinWorkingApiaryProducts.java`.
+- Destination: `src/main/java/com/xyp/gtnotgood/common/blocks/beekeeping/` and `mixins/late/Forestry/MixinWorkingApiaryProducts.java`.
 - Integration: subclass native `BlockApiculture`/`TileApiary`, delegate texture lookup to the installed apiary, reuse `ItemBlockForestry`, native containers, GUI, bee logic, inventories and packets. Independent machine definition and registry entry; do not mutate upstream definitions.
 - Modifications: separate name, server clock multiplier, successful ordinary/specialty product quantity multipliers, lifespan/mutation modifiers and conversion recipe. Defaults: 1x speed/mutation, 5x ordinary/specialty quantities (preserved concurrent workspace edits), user-requested 2,147,436x lifespan.
 - Assets: no upstream textures, icons, GUI files or source implementations are copied or packaged. Runtime assets stay in the separately installed Forestry mod and retain its license. Resource-pack substitutions remain effective. Reference sources were extracted outside the project source sets and are not compiled or packaged.
@@ -637,3 +655,47 @@ remains outside compilation/resource inputs. Validation details: docs/testing/ld
   position and saves existing X/Y offsets on exit. It does not change the goggles or GTSWN settings.
 - Additional hidden-client QA passed: edit key opens/closes, drag offset preserved, saved position
   reloads, out-of-screen dragging clamps, reset persists, Esc exits, and both mods continue to coexist.
+
+## Current local package layout — 2026-10-07
+
+The structure refactor relocated host Java sources by responsibility. Earlier dated
+entries retain their original local paths; upstream source paths, pinned revisions,
+licenses and resource provenance are unchanged. Paths in this table are relative to
+`src/main/java/com/xyp/gtnotgood/`.
+
+| Previous local location | Current local location |
+| --- | --- |
+| `common/packaged/`, except the item, packet and recipe classes below | `common/blocks/packaged/` |
+| `common/packaged/ItemPackagedCore.java`, `ItemWirelessConnector.java` | `common/items/packaged/ItemPackagedCore.java`, `ItemWirelessConnector.java` |
+| `common/packaged/MessagePackagedConnector.java` | `common/network/packaged/MessagePackagedConnector.java` |
+| `common/packaged/PackagedRecipes.java` | `common/recipe/gtnotgood/PackagedRecipes.java` |
+| `common/advancedio/`, except its item and recipes | `common/parts/advancedio/` |
+| `common/advancedio/ItemAdvancedIOBus.java` | `common/items/advancedio/ItemAdvancedIOBus.java` |
+| `common/advancedio/AdvancedIORecipes.java` | `common/recipe/gtnotgood/AdvancedIORecipes.java` |
+| `common/mestock/`, except the item and requester block classes below | `common/parts/mestock/` |
+| `common/mestock/ItemStockPart.java` | `common/items/mestock/ItemStockPart.java` |
+| `common/mestock/BlockMERequester.java`, `TileMERequester.java`, `ItemRequesterBlock.java` | `common/blocks/mestock/BlockMERequester.java`, `TileMERequester.java`, `ItemRequesterBlock.java` |
+| `common/compass/` | `common/items/compass/` |
+| `common/beekeeping/` | `common/blocks/beekeeping/` |
+| `common/patternsorter/`, except its recipes | `common/items/patternsorter/` |
+| `common/patternsorter/PatternSorterRecipes.java` | `common/recipe/gtnotgood/PatternSorterRecipes.java` |
+| `common/flux/`, `common/mecontainer/` | `common/blocks/flux/`, `common/blocks/mecontainer/` |
+| `common/mebridge/`, except the item and packet classes below | `common/blocks/mebridge/` |
+| `common/mebridge/ItemMEWirelessTransceiver.java`, `MEWirelessTransceiverGui.java` | `common/items/mebridge/ItemMEWirelessTransceiver.java`, `MEWirelessTransceiverGui.java` |
+| `common/mebridge/MessageMEWirelessNodeAction.java`, `MessageMEWirelessVisualization.java` | `common/network/mebridge/MessageMEWirelessNodeAction.java`, `MessageMEWirelessVisualization.java` |
+| `common/user/`, except its speed upgrade item | `common/blocks/mechanicaluser/` |
+| `common/user/ItemUserSpeedUpgrade.java` | `common/items/mechanicaluser/ItemUserSpeedUpgrade.java` |
+| `common/network/` programmable network sources | `common/blocks/network/` |
+| `common/packet/` | `common/network/` |
+| `common/machines/basicMachine/` | `common/machines/basic/` |
+| `mixins/late/AppliedEnergistics/`, `Gregtech/`, `Forestry/` | `mixins/late/appliedenergistics/`, `gregtech/`, `forestry/` |
+
+The other late mixin package segments formerly named `Accessor`, `BloodMagic`,
+`CropsNH`, `CutCorners`, `EOH`, `EnderIO`, `FOG`, `Railcraft`, `SpiceOfLife`,
+`TreatedWater`, `Thaumcraft` and `WarpTheory` now use their all-lowercase forms.
+The public provider extension API is
+`com.xyp.gtnotgood.common.blocks.packaged.PackagedCoreRegistry.Adapter`;
+its `TilePackagedProvider` and `PackagedTarget` signature types share that package.
+External integrations using the former `com.xyp.gtnotgood.common.packaged` API
+must update their Java paths and rebuild. The corresponding source-license notice
+in `META-INF/ae2lt-port/CODE_PORT_NOTES.md` covers all relocated port sources.

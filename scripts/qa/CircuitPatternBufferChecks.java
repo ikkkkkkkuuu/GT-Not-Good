@@ -40,7 +40,7 @@ import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputSlave;
 import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
 import com.xyp.gtnotgood.common.machines.hatch.me.CircuitPatternCodec;
-import com.xyp.gtnotgood.common.utils.MoldDataManager;
+import com.xyp.gtnotgood.utils.machine.MoldDataManager;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 

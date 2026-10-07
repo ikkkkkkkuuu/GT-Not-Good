@@ -65,7 +65,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
     public List<String> getMixins(Set<String> loadedMods) {
         List<String> list = new ArrayList<>();
         if (loadedMods.contains(ModList.Railcraft.getID())) {
-            addAll(list, "Railcraft.MultiblockBoilerMixin");
+            addAll(list, "railcraft.MultiblockBoilerMixin");
         }
         if (loadedMods.contains(ModList.Roguelike.getID())) {
             addAll(list, "compass.RoguelikeWorldAccessor", "compass.RoguelikeHouseMixin");
@@ -81,27 +81,27 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "lootgames.MaximumRewardsMixin");
         }
         if (loadedMods.contains(ModList.BloodMagic.getID())) {
-            addAll(list, "BloodMagic.MixinPackagedBloodAltar");
+            addAll(list, "bloodmagic.MixinPackagedBloodAltar");
         }
         if (loadedMods.contains(ModList.GregTech.getID())) {
             addAll(
                 list,
-                "Gregtech.wireless.WirelessProcessingAccess",
-                "Gregtech.wireless.CrossRecipeProcessingMixin",
-                "Gregtech.wireless.CrossRecipeControllerMixin",
-                "Gregtech.wireless.CrossRecipeVoltageMixin");
-            addAll(list, "Gregtech.wireless.CrossRecipeGuiMixin");
+                "gregtech.wireless.WirelessProcessingAccess",
+                "gregtech.wireless.CrossRecipeProcessingMixin",
+                "gregtech.wireless.CrossRecipeControllerMixin",
+                "gregtech.wireless.CrossRecipeVoltageMixin");
+            addAll(list, "gregtech.wireless.CrossRecipeGuiMixin");
             if (loadedMods.contains(ModList.GTNotLeisure.getID())) {
                 addAll(
                     list,
-                    "Gregtech.wireless.GtnlCrossRecipeProcessingMixin",
-                    "Gregtech.wireless.GtnlCrossRecipeControllerMixin");
+                    "gregtech.wireless.GtnlCrossRecipeProcessingMixin",
+                    "gregtech.wireless.GtnlCrossRecipeControllerMixin");
             }
             addAll(
                 list,
-                "Gregtech.AssemblyLineDataAccessMixin",
-                "Gregtech.TransmutationShapedRecipeMixin",
-                "Gregtech.TransmutationShapelessRecipeMixin");
+                "gregtech.AssemblyLineDataAccessMixin",
+                "gregtech.TransmutationShapedRecipeMixin",
+                "gregtech.TransmutationShapelessRecipeMixin");
         }
         if (FMLLaunchHandler.side()
             .isClient() && loadedMods.contains(ModList.NotEnoughItems.getID())
@@ -112,17 +112,18 @@ public class LateMixinsLoader implements ILateMixinLoader {
         if (loadedMods.contains(ModList.AE2.getID()) && loadedMods.contains(ModList.GregTech.getID())) {
             addAll(
                 list,
-                "AppliedEnergistics.PatternMEOutputMultiblockMixin",
-                "AppliedEnergistics.CraftingPatternAlternativesMixin",
-                "AppliedEnergistics.compact.MixinCraftingGridCache",
-                "AppliedEnergistics.compact.MixinCraftingCPUCluster",
-                "AppliedEnergistics.compact.MixinInventoryCrafting",
-                "AppliedEnergistics.compact.AccessorTaskProgress",
-                "AppliedEnergistics.compact.AccessorSessionCraftCount",
-                "AppliedEnergistics.compact.CompactCraftingEnergyMixin",
-                "AppliedEnergistics.compact.MatrixInterfaceTerminalVisibilityMixin",
-                "AppliedEnergistics.compact.MatrixPatternPersistenceMixin",
-                "AppliedEnergistics.AutomaticMachineCircuitMixin");
+                "gregtech.BasicMachineStockIOMixin",
+                "appliedenergistics.PatternMEOutputMultiblockMixin",
+                "appliedenergistics.CraftingPatternAlternativesMixin",
+                "appliedenergistics.compact.MixinCraftingGridCache",
+                "appliedenergistics.compact.MixinCraftingCPUCluster",
+                "appliedenergistics.compact.MixinInventoryCrafting",
+                "appliedenergistics.compact.AccessorTaskProgress",
+                "appliedenergistics.compact.AccessorSessionCraftCount",
+                "appliedenergistics.compact.CompactCraftingEnergyMixin",
+                "appliedenergistics.compact.MatrixInterfaceTerminalVisibilityMixin",
+                "appliedenergistics.compact.MatrixPatternPersistenceMixin",
+                "appliedenergistics.AutomaticMachineCircuitMixin");
         }
 
         if (loadedMods.contains(ModList.AE2.getID())) {
@@ -130,102 +131,102 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 .isClient()) {
                 addAll(
                     list,
-                    "AppliedEnergistics.InvTweaksOrderCacheMixin",
-                    "AppliedEnergistics.ItemRepoSortNameCacheMixin",
-                    "AppliedEnergistics.ItemSortersNameCacheMixin",
-                    "AppliedEnergistics.InterfaceEntryViewportAccessor",
-                    "AppliedEnergistics.InterfaceTerminalViewportMixin");
+                    "appliedenergistics.InvTweaksOrderCacheMixin",
+                    "appliedenergistics.ItemRepoSortNameCacheMixin",
+                    "appliedenergistics.ItemSortersNameCacheMixin",
+                    "appliedenergistics.InterfaceEntryViewportAccessor",
+                    "appliedenergistics.InterfaceTerminalViewportMixin");
             }
             addAll(
                 list,
-                "AppliedEnergistics.DualityInterfaceMixin",
-                "AppliedEnergistics.ItemEncodedPatternMixin",
-                "AppliedEnergistics.MTEHatchCraftingInputMEMixin",
-                "AppliedEnergistics.MTEHatchCraftingInputMENameMixin",
-                "AppliedEnergistics.MTEHatchCraftingInputMEMultiBlockNameMixin",
-                "AppliedEnergistics.PatternMultiplierHelperMixin",
-                "AppliedEnergistics.MatrixWildcardPatternOptimizationMixin",
-                "AppliedEnergistics.SuperMTEHatchCraftingInputMEMixin");
+                "appliedenergistics.DualityInterfaceMixin",
+                "appliedenergistics.ItemEncodedPatternMixin",
+                "appliedenergistics.MTEHatchCraftingInputMEMixin",
+                "appliedenergistics.MTEHatchCraftingInputMENameMixin",
+                "appliedenergistics.MTEHatchCraftingInputMEMultiBlockNameMixin",
+                "appliedenergistics.PatternMultiplierHelperMixin",
+                "appliedenergistics.MatrixWildcardPatternOptimizationMixin",
+                "appliedenergistics.SuperMTEHatchCraftingInputMEMixin");
         }
 
         if (loadedMods.contains(ModList.GregTech.getID())) {
             addAll(
                 list,
-                "Accessor.Grade4WaterPurificationAccessor",
-                "TreatedWater.Grade1WaterPurificationMixin",
-                "TreatedWater.Grade2WaterPurificationMixin",
-                "TreatedWater.Grade3WaterPurificationMixin",
-                "TreatedWater.Grade4WaterPurificationMixin",
-                "TreatedWater.Grade5WaterPurificationMixin",
-                "TreatedWater.Grade6WaterPurificationMixin",
-                "TreatedWater.Grade7WaterPurificationMixin",
-                "TreatedWater.Grade8WaterPurificationMixin",
-                "Gregtech.BlackHoleCompressorMixin",
-                "FOG.FOGShardsAvailable",
-                "EOH.EyeOfHarmonySuccessRateControl",
-                "EOH.EyeOfHarmonyGas",
-                "Accessor.EyeOfHarmonyAccessor",
-                "Gregtech.ModifySomeConfigs",
-                "Gregtech.CleanroomRequirementMixin",
-                "Gregtech.GTMetaTools",
-                "Gregtech.MixinMTEBasicMachineFacing",
-                "Gregtech.BasicMachineVirtualMoldMixin",
-                "Gregtech.BasicMachineMoldGuiMixin",
-                "Gregtech.MixinMTEBrickedBlastFurnace",
-                "CutCorners.RecipeSpeedMixin",
-                "CutCorners.ScannerSpeedMixin",
-                "CutCorners.AssemblyLineSpeedMixin",
-                "CutCorners.PurificationPlantSpeedMixin",
-                "CutCorners.ExtremeEntityCrusherSpeedMixin",
-                "CutCorners.ThermalBoilerSpeedMixin",
-                "CutCorners.FurnaceBackendMixin",
-                "CutCorners.BasicMachineOutputMixin");
+                "accessor.Grade4WaterPurificationAccessor",
+                "treatedwater.Grade1WaterPurificationMixin",
+                "treatedwater.Grade2WaterPurificationMixin",
+                "treatedwater.Grade3WaterPurificationMixin",
+                "treatedwater.Grade4WaterPurificationMixin",
+                "treatedwater.Grade5WaterPurificationMixin",
+                "treatedwater.Grade6WaterPurificationMixin",
+                "treatedwater.Grade7WaterPurificationMixin",
+                "treatedwater.Grade8WaterPurificationMixin",
+                "gregtech.BlackHoleCompressorMixin",
+                "fog.FOGShardsAvailable",
+                "eoh.EyeOfHarmonySuccessRateControl",
+                "eoh.EyeOfHarmonyGas",
+                "accessor.EyeOfHarmonyAccessor",
+                "gregtech.ModifySomeConfigs",
+                "gregtech.CleanroomRequirementMixin",
+                "gregtech.GTMetaTools",
+                "gregtech.MixinMTEBasicMachineFacing",
+                "gregtech.BasicMachineVirtualMoldMixin",
+                "gregtech.BasicMachineMoldGuiMixin",
+                "gregtech.MixinMTEBrickedBlastFurnace",
+                "cutcorners.RecipeSpeedMixin",
+                "cutcorners.ScannerSpeedMixin",
+                "cutcorners.AssemblyLineSpeedMixin",
+                "cutcorners.PurificationPlantSpeedMixin",
+                "cutcorners.ExtremeEntityCrusherSpeedMixin",
+                "cutcorners.ThermalBoilerSpeedMixin",
+                "cutcorners.FurnaceBackendMixin",
+                "cutcorners.BasicMachineOutputMixin");
         }
-        if (loadedMods.contains(ModList.ENDER_IO.getID())) {
+        if (loadedMods.contains(ModList.EnderIO.getID())) {
             addAll(
                 list,
-                "EnderIO.MixinNetworkedInventory",
-                "EnderIO.MixinNetworkedInventory",
-                "EnderIO.MixinItemSoulVessel",
-                "EnderIO.MixinSoulVesselConfig");
+                "enderio.MixinNetworkedInventory",
+                "enderio.MixinNetworkedInventory",
+                "enderio.MixinItemSoulVessel",
+                "enderio.MixinSoulVesselConfig");
         }
 
         if (loadedMods.contains(ModList.Forestry.getID())) {
-            addAll(list, "Forestry.MixinWorkingApiaryProducts");
-            addAll(list, "Forestry.MixinBee", "Forestry.MixinMutationConditions", "Forestry.MixinBeeHomozygous");
+            addAll(list, "forestry.MixinWorkingApiaryProducts");
+            addAll(list, "forestry.MixinBee", "forestry.MixinMutationConditions", "forestry.MixinBeeHomozygous");
         }
 
         if (loadedMods.contains(ModList.GregTech.getID()) && loadedMods.contains(ModList.Forestry.getID())) {
-            addAll(list, "Gregtech.MixinGTBeeMutation");
+            addAll(list, "gregtech.MixinGTBeeMutation");
         }
 
         if (loadedMods.contains(ModList.CropsNH.getID())) {
-            addAll(list, "CropsNH.MixinTileEntityCropSticks", "CropsNH.MixinSeedStats");
+            addAll(list, "cropsnh.MixinTileEntityCropSticks", "cropsnh.MixinSeedStats");
         }
 
         if (loadedMods.contains(ModList.SpiceOfLife.getID())) {
-            addAll(list, "SpiceOfLife.MixinFoodModifier");
+            addAll(list, "spiceoflife.MixinFoodModifier");
         }
 
         if (loadedMods.contains(ModList.Thaumcraft.getID())) {
             if (loadedMods.contains(ModList.AE2.getID())) {
                 addAll(
                     list,
-                    "Thaumcraft.MixinPackagedEssentiaHandler",
-                    "Thaumcraft.MixinPackagedInfusionSource",
-                    "Thaumcraft.MixinPackagedCrucible");
+                    "thaumcraft.MixinPackagedEssentiaHandler",
+                    "thaumcraft.MixinPackagedInfusionSource",
+                    "thaumcraft.MixinPackagedCrucible");
             }
             addAll(
                 list,
-                "Thaumcraft.MixinWarpEvents",
-                "Thaumcraft.MixinResearchManager",
-                "Thaumcraft.MixinPlayerKnowledge",
-                "Thaumcraft.MixinTileInfusionMatrix",
-                "Thaumcraft.MixinVisNetHandler");
+                "thaumcraft.MixinWarpEvents",
+                "thaumcraft.MixinResearchManager",
+                "thaumcraft.MixinPlayerKnowledge",
+                "thaumcraft.MixinTileInfusionMatrix",
+                "thaumcraft.MixinVisNetHandler");
         }
 
         if (loadedMods.contains(ModList.WarpTheory.getID())) {
-            addAll(list, "WarpTheory.MixinWarpEventHandler");
+            addAll(list, "warptheory.MixinWarpEventHandler");
         }
 
         return list;

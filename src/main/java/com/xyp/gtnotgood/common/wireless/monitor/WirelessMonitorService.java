@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 
 import com.xyp.gtnotgood.GTNotGood;
-import com.xyp.gtnotgood.common.packet.WirelessMonitorSnapshot;
+import com.xyp.gtnotgood.common.network.WirelessMonitorSnapshot;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;

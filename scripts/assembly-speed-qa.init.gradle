@@ -2,7 +2,7 @@
 gradle.projectsEvaluated {
     def root = gradle.rootProject
     root.tasks.named('compileTestJava').configure {
-        setSource(root.files('src/test/java/com/xyp/gtnotgood/common/packaged/AssemblyLineSpeedTargetTest.java'))
+        setSource(root.files('src/test/java/com/xyp/gtnotgood/common/blocks/packaged/AssemblyLineSpeedTargetTest.java'))
     }
     root.tasks.named('test').configure {
         // Forge's ASM 5 cannot parse the current GT development jar; use the existing ASM 9 dependency.

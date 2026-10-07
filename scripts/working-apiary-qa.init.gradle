@@ -38,8 +38,8 @@ gradle.projectsEvaluated {
     }
     root.spotless {
         java {
-            target 'src/main/java/com/xyp/gtnotgood/common/beekeeping/*.java',
-                'src/main/java/com/xyp/gtnotgood/mixins/late/Forestry/MixinWorkingApiaryProducts.java',
+            target 'src/main/java/com/xyp/gtnotgood/common/blocks/beekeeping/*.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/forestry/MixinWorkingApiaryProducts.java',
                 'src/main/java/com/xyp/gtnotgood/config/Config.java',
                 'src/main/java/com/xyp/gtnotgood/loader/BlockLoader.java',
                 'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',

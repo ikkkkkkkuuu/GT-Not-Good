@@ -39,4 +39,12 @@ addon.local.gradle.kts
 addon.late.local.gradle
 addon.late.local.gradle.kts
 layout.json
-/src/test/
+/src/test/**
+!/src/test/**/
+!/src/test/java/com/xyp/gtnotgood/common/blocks/flux/FluxDropDataTest.java
+!/src/test/java/com/xyp/gtnotgood/common/blocks/mecontainer/MEContainerTest.java
+!/src/test/java/com/xyp/gtnotgood/common/blocks/stockio/StockIOLogicTest.java
+!/src/test/java/com/xyp/gtnotgood/common/blocks/stockio/StockIORecipeBridgeTest.java
+!/src/test/java/com/xyp/gtnotgood/common/blocks/packaged/ArcaneWorkbenchClientChecks.java
+!/src/test/java/com/xyp/gtnotgood/common/blocks/packaged/AssemblyLineSpeedTargetTest.java
+!/src/test/java/com/xyp/gtnotgood/common/blocks/packaged/PurificationPlantSpeedTargetTest.java

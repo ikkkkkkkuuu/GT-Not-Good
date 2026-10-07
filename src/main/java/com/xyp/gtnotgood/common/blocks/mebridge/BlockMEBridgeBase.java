@@ -54,7 +54,7 @@ public abstract class BlockMEBridgeBase extends Block {
         super.onBlockPlacedBy(world, x, y, z, placer, stack);
         if (!world.isRemote && placer instanceof EntityPlayer player) {
             TileEntity te = world.getTileEntity(x, y, z);
-            if (te instanceof com.xyp.gtnotgood.common.mebridge.TileMEBridgeBase bridge) {
+            if (te instanceof com.xyp.gtnotgood.common.blocks.mebridge.TileMEBridgeBase bridge) {
                 bridge.setOwnerName(player.getCommandSenderName());
             }
         }

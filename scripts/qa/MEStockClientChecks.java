@@ -1,4 +1,6 @@
-package com.xyp.gtnotgood.common.mestock;
+package com.xyp.gtnotgood.common.parts.mestock;
+
+import com.xyp.gtnotgood.common.blocks.mestock.TileMERequester;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -46,7 +48,7 @@ import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.glodblock.github.loader.ItemAndBlockHolder;
-import com.xyp.gtnotgood.common.mebridge.TileMEBridgeBase;
+import com.xyp.gtnotgood.common.blocks.mebridge.TileMEBridgeBase;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 

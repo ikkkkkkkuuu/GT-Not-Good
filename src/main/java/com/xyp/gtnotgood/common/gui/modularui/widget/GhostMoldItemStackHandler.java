@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.utils.item.IItemHandlerModifiable;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
-import com.xyp.gtnotgood.common.utils.MoldDataManager;
+import com.xyp.gtnotgood.utils.machine.MoldDataManager;
 
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.util.GTUtility;

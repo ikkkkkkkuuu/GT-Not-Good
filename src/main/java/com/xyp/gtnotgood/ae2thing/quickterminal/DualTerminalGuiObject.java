@@ -7,8 +7,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 
+import com.xyp.gtnotgood.common.blocks.packaged.ArcaneWorkbenchPatterns;
 import com.xyp.gtnotgood.common.compat.FluidDropCompat;
-import com.xyp.gtnotgood.common.packaged.ArcaneWorkbenchPatterns;
 
 import appeng.api.features.IWirelessTermHandler;
 import appeng.api.networking.energy.IEnergySource;

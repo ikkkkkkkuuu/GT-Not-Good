@@ -14,7 +14,10 @@ Behavior references inspected before implementation:
   io-bus/set-stock-amount screen styles, upgrade panels, number entry, toolbar and scrollbar widgets.
   Source: LGPL-3.0-or-later; API: MIT; textures: CC BY-NC-SA 3.0.
 
-Destinations: `com/xyp/gtnotgood/common/mestock/` and `com/xyp/gtnotgood/client/mestock/`.
+Current destinations (2026-10-07): `com/xyp/gtnotgood/common/parts/mestock/` for parts and shared stock controls,
+`com/xyp/gtnotgood/common/items/mestock/ItemStockPart.java` for cable items,
+`com/xyp/gtnotgood/common/blocks/mestock/` for `BlockMERequester`, `TileMERequester` and `ItemRequesterBlock`,
+and `com/xyp/gtnotgood/client/mestock/` for client rendering.
 Threshold semantics are adapted under LGPL-3.0-only.
 The requester scheduler, registration and persistence are newly authored for GTNH.
 `StockGui`, `StockGuiAssets` and `StockNumbers` adapt the pinned screen/widget behavior under LGPL-3.0-only,

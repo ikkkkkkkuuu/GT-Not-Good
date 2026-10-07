@@ -15,7 +15,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.xyp.gtnotgood.common.compat.VirtualMachineMolds;
-import com.xyp.gtnotgood.common.utils.MoldDataManager;
+import com.xyp.gtnotgood.utils.machine.MoldDataManager;
 
 import gregtech.api.metatileentity.implementations.MTEBasicMachine;
 import gregtech.api.modularui2.GTGuiTextures;

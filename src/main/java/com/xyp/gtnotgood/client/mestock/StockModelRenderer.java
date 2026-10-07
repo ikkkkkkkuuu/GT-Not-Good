@@ -22,8 +22,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.xyp.gtnotgood.common.mestock.BlockMERequester;
-import com.xyp.gtnotgood.common.mestock.TileMERequester;
+import com.xyp.gtnotgood.common.blocks.mestock.BlockMERequester;
+import com.xyp.gtnotgood.common.blocks.mestock.TileMERequester;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import appeng.api.parts.IPartRenderHelper;

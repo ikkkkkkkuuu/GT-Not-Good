@@ -13,22 +13,22 @@ public final class RtsItemBindings {
 
     /** Assigns each registered RTS handle without depending on enum naming conventions or reflection. */
     public static void bind() {
-        GTNGItemList.RTS_RTS_CONTROL_CORE.set(RtsItems.RTS_CONTROL_CORE.get());
-        GTNGItemList.RTS_REMOTE_CONTROL_PLUGIN.set(RtsItems.REMOTE_CONTROL_PLUGIN.get());
-        GTNGItemList.RTS_STORAGE_INTEGRATION_PLUGIN.set(RtsItems.STORAGE_INTEGRATION_PLUGIN.get());
-        GTNGItemList.RTS_CRAFT_TERMINAL_PLUGIN.set(RtsItems.CRAFT_TERMINAL_PLUGIN.get());
-        GTNGItemList.RTS_CHAIN_BREAK_PLUGIN.set(RtsItems.CHAIN_BREAK_PLUGIN.get());
-        GTNGItemList.RTS_AREA_DESTROY_PLUGIN.set(RtsItems.AREA_DESTROY_PLUGIN.get());
-        GTNGItemList.RTS_BLUEPRINT_PLUGIN.set(RtsItems.BLUEPRINT_PLUGIN.get());
-        GTNGItemList.RTS_RANGE_CULLING_PLUGIN.set(RtsItems.RANGE_CULLING_PLUGIN.get());
-        GTNGItemList.RTS_FIELD_DEPLOYMENT_PLUGIN.set(RtsItems.FIELD_DEPLOYMENT_PLUGIN.get());
-        GTNGItemList.RTS_RANGE_EXTENSION_I.set(RtsItems.RANGE_EXTENSION_I.get());
-        GTNGItemList.RTS_RANGE_EXTENSION_II.set(RtsItems.RANGE_EXTENSION_II.get());
-        GTNGItemList.RTS_RANGE_EXTENSION_III.set(RtsItems.RANGE_EXTENSION_III.get());
-        GTNGItemList.RTS_RANGE_EXTENSION_MAX.set(RtsItems.RANGE_EXTENSION_MAX.get());
-        GTNGItemList.RTS_HARVEST_TIER_STONE.set(RtsItems.HARVEST_TIER_STONE.get());
-        GTNGItemList.RTS_HARVEST_TIER_IRON.set(RtsItems.HARVEST_TIER_IRON.get());
-        GTNGItemList.RTS_HARVEST_TIER_DIAMOND.set(RtsItems.HARVEST_TIER_DIAMOND.get());
-        GTNGItemList.RTS_HARVEST_TIER_UNLIMITED.set(RtsItems.HARVEST_TIER_UNLIMITED.get());
+        GTNGItemList.RtsControlCore.set(RtsItems.RTS_CONTROL_CORE.get());
+        GTNGItemList.RemoteControlCore.set(RtsItems.REMOTE_CONTROL_PLUGIN.get());
+        GTNGItemList.StorageIntegrationPlugin.set(RtsItems.STORAGE_INTEGRATION_PLUGIN.get());
+        GTNGItemList.CraftTerminalPlugin.set(RtsItems.CRAFT_TERMINAL_PLUGIN.get());
+        GTNGItemList.ChainBreakPlugin.set(RtsItems.CHAIN_BREAK_PLUGIN.get());
+        GTNGItemList.AreaDestroyPlugin.set(RtsItems.AREA_DESTROY_PLUGIN.get());
+        GTNGItemList.BlueprintPlugin.set(RtsItems.BLUEPRINT_PLUGIN.get());
+        GTNGItemList.RangeHidingPlugin.set(RtsItems.RANGE_CULLING_PLUGIN.get());
+        GTNGItemList.FieldDeploymentPlugin.set(RtsItems.FIELD_DEPLOYMENT_PLUGIN.get());
+        GTNGItemList.RangeExtensionI.set(RtsItems.RANGE_EXTENSION_I.get());
+        GTNGItemList.RangeExtensionII.set(RtsItems.RANGE_EXTENSION_II.get());
+        GTNGItemList.RangeExtensionIII.set(RtsItems.RANGE_EXTENSION_III.get());
+        GTNGItemList.RangeExtensionMax.set(RtsItems.RANGE_EXTENSION_MAX.get());
+        GTNGItemList.StoneHarvestPlugin.set(RtsItems.HARVEST_TIER_STONE.get());
+        GTNGItemList.IronHarvestPlugin.set(RtsItems.HARVEST_TIER_IRON.get());
+        GTNGItemList.DiamondHarvestPlugin.set(RtsItems.HARVEST_TIER_DIAMOND.get());
+        GTNGItemList.UnlimitedHarvestPlugin.set(RtsItems.HARVEST_TIER_UNLIMITED.get());
     }
 }

@@ -22,7 +22,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.multiblock.QuantumComputer;
-import com.xyp.gtnotgood.mixins.late.AppliedEnergistics.compact.AccessorTaskProgress;
+import com.xyp.gtnotgood.mixins.late.appliedenergistics.compact.AccessorTaskProgress;
 import com.xyp.gtnotgood.utils.ECraftingCPUCluster;
 import com.xyp.gtnotgood.utils.crafting.CraftingBatchPlanner.MediumStrategy;
 import com.xyp.gtnotgood.utils.crafting.CraftingBatchPlannerImpl;

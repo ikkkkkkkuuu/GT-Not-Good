@@ -1,4 +1,4 @@
-package com.xyp.gtnotgood.common.patternsorter;
+package com.xyp.gtnotgood.common.items.patternsorter;
 
 import static org.junit.Assert.*;
 

@@ -19,7 +19,7 @@ gradle.projectsEvaluated {
         setSource(root.files(root.file('scripts/qa/VirtualMoldClientChecks.java')))
     }
     root.extensions.findByName('spotless')?.java {
-        target 'src/main/java/com/xyp/gtnotgood/common/utils/MoldDataManager.java',
+        target 'src/main/java/com/xyp/gtnotgood/utils/machine/MoldDataManager.java',
             'src/main/java/com/xyp/gtnotgood/utils/enums/ModsItemlist.java',
             'scripts/qa/VirtualMoldClientChecks.java'
     }

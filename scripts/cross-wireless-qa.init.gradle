@@ -39,7 +39,7 @@ gradle.projectsEvaluated {
         java {
             target 'src/main/java/com/xyp/gtnotgood/common/wireless/*.java',
                 'src/main/java/com/xyp/gtnotgood/common/machines/hatch/CrossRecipeWirelessEnergyHatch.java',
-                'src/main/java/com/xyp/gtnotgood/mixins/late/Gregtech/wireless/*.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/gregtech/wireless/*.java',
                 'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
                 'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
                 'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',

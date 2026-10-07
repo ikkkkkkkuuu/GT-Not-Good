@@ -56,20 +56,20 @@ public final class ServerConfigOptions {
         add(options, false, "Thaumcraft", "scanIgnoreParentAspects", "tcScanIgnoreParentAspects", false);
         add(options, false, "Thaumcraft", "infusionNoInstability", "tcInfusionNoInstability", true);
         add(options, false, "Thaumcraft", "infiniteVis", "tcInfiniteVis", true);
-        add(options, true, "鸿蒙之眼", "GasInPut", "GasInPut", true);
-        add(options, true, "鸿蒙之眼", "EOHSuccessRateControls", "EOHSuccessRateControls", true);
-        add(options, true, "鸿蒙之眼", "RecipeChance", "RecipeChance", true);
-        add(options, true, "诸神之锻炉", "FOGUpDate", "FOGUpDate", true);
-        add(options, true, "黑洞压缩机", "BlackHoleCompressorStabilityLock", "BlackHoleCompressorStabilityLock", true);
-        add(options, true, "净化水", "Water", "Water", false);
-        add(options, true, "净化水", "Grade1WaterPurificationEnabled", "Grade1WaterPurificationEnabled", true);
-        add(options, true, "净化水", "Grade2WaterPurificationEnabled", "Grade2WaterPurificationEnabled", false);
-        add(options, true, "净化水", "Grade3WaterPurificationEnabled", "Grade3WaterPurificationEnabled", true);
-        add(options, true, "净化水", "Grade4WaterPurificationEnabled", "Grade4WaterPurificationEnabled", true);
-        add(options, true, "净化水", "Grade5WaterPurificationEnabled", "Grade5WaterPurificationEnabled", true);
-        add(options, true, "净化水", "Grade6WaterPurificationEnabled", "Grade6WaterPurificationEnabled", true);
-        add(options, true, "净化水", "Grade7WaterPurificationEnabled", "Grade7WaterPurificationEnabled", true);
-        add(options, true, "净化水", "Grade8WaterPurificationEnabled", "Grade8WaterPurificationEnabled", true);
+        add(options, true, "鸿蒙之眼", "GasInPut", "gasInput", true);
+        add(options, true, "鸿蒙之眼", "EOHSuccessRateControls", "eohSuccessRateControls", true);
+        add(options, true, "鸿蒙之眼", "RecipeChance", "recipeChance", true);
+        add(options, true, "诸神之锻炉", "FOGUpDate", "fogUpdate", true);
+        add(options, true, "黑洞压缩机", "BlackHoleCompressorStabilityLock", "blackHoleCompressorStabilityLock", true);
+        add(options, true, "净化水", "Water", "water", false);
+        add(options, true, "净化水", "Grade1WaterPurificationEnabled", "grade1WaterPurificationEnabled", true);
+        add(options, true, "净化水", "Grade2WaterPurificationEnabled", "grade2WaterPurificationEnabled", false);
+        add(options, true, "净化水", "Grade3WaterPurificationEnabled", "grade3WaterPurificationEnabled", true);
+        add(options, true, "净化水", "Grade4WaterPurificationEnabled", "grade4WaterPurificationEnabled", true);
+        add(options, true, "净化水", "Grade5WaterPurificationEnabled", "grade5WaterPurificationEnabled", true);
+        add(options, true, "净化水", "Grade6WaterPurificationEnabled", "grade6WaterPurificationEnabled", true);
+        add(options, true, "净化水", "Grade7WaterPurificationEnabled", "grade7WaterPurificationEnabled", true);
+        add(options, true, "净化水", "Grade8WaterPurificationEnabled", "grade8WaterPurificationEnabled", true);
         return options;
     }
 

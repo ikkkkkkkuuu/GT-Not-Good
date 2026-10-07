@@ -17,7 +17,7 @@ import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Property;
 
 import com.xyp.gtnotgood.GTNotGood;
-import com.xyp.gtnotgood.common.packet.ServerConfigMessage;
+import com.xyp.gtnotgood.common.network.ServerConfigMessage;
 import com.xyp.gtnotgood.config.ServerConfigOptions;
 import com.xyp.gtnotgood.config.ServerConfigOptions.Option;
 import com.xyp.gtnotgood.config.ServerConfigService;

@@ -11,6 +11,8 @@ Optional adapters invoke the installed mods' generation predicates. Mixins recor
 Local read-only references: `reference/structure-compass/`, ignored by Git and outside all source/resource sets.
 Build dependencies follow the project's pack manifest; validation resolved Roguelike-Dungeons `1.6.6-GTNH` and LootGames `2.2.12`.
 Original integration destination: `common/compass`, `mixins/late/compass`, `client/StructureCompassRenderer`.
+Current integration destination (2026-10-07), relative to `src/main/java/com/xyp/gtnotgood/`:
+`common/items/compass/`, `mixins/late/compass/` and `client/StructureCompassRenderer.java`.
 Roguelike's seed editor overrides vanilla region random creation solely to avoid mutating the live world's RNG.
 
 Compatibility inspection also used the installed EndlessIDs `1.7.3` source JAR (`BlockIDManager`, LGPL-3.0-only).

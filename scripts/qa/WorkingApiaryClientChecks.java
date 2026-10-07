@@ -1,4 +1,4 @@
-package com.xyp.gtnotgood.common.beekeeping;
+package com.xyp.gtnotgood.common.blocks.beekeeping;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;

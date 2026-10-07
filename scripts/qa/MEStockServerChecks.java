@@ -1,4 +1,6 @@
-package com.xyp.gtnotgood.common.mestock;
+package com.xyp.gtnotgood.common.parts.mestock;
+
+import com.xyp.gtnotgood.common.blocks.mestock.TileMERequester;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

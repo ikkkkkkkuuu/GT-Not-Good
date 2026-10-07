@@ -15,16 +15,16 @@ import gregtech.common.blocks.BlockCasingsAbstract;
 public class StructureUtils {
 
     // 基础路径
-    public static String BASE_PATH = "/assets/";
-    public static ConcurrentHashMap<String, String[][]> MULTIBLOCK_CACHE = new ConcurrentHashMap<>();
+    public static String basePath = "/assets/";
+    public static ConcurrentHashMap<String, String[][]> multiblockCache = new ConcurrentHashMap<>();
 
     /**
      * 从文件读取多方块结构 (优先 .mbs 二进制, 回退 .mb 文本)
      */
     public static String[][] readStructureFromFile(String fileName) {
-        return MULTIBLOCK_CACHE.computeIfAbsent(fileName, name -> {
-            String pathMbs = BASE_PATH + name.replace(':', '/') + ".mbs";
-            String pathMb = BASE_PATH + name.replace(':', '/') + ".mb";
+        return multiblockCache.computeIfAbsent(fileName, name -> {
+            String pathMbs = basePath + name.replace(':', '/') + ".mbs";
+            String pathMb = basePath + name.replace(':', '/') + ".mb";
             try {
                 InputStream mbsStream = StructureUtils.class.getResourceAsStream(pathMbs);
                 if (mbsStream != null) {

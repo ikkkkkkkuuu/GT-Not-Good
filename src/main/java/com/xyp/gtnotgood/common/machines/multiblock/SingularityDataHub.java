@@ -111,21 +111,21 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     public static NumberFormat nf = NumberFormat.getNumberInstance();
 
-    public IItemList<IAEItemStack> STORE_ITEM = AEApi.instance()
+    public IItemList<IAEItemStack> storedItems = AEApi.instance()
         .storage()
         .createItemList();
 
-    public IItemList<IAEFluidStack> STORE_FLUID = AEApi.instance()
+    public IItemList<IAEFluidStack> storedFluids = AEApi.instance()
         .storage()
         .createFluidList();
 
     public long getUsedStorageBytes() {
         long used = 0;
-        for (IAEItemStack item : STORE_ITEM) {
+        for (IAEItemStack item : storedItems) {
             used = saturatingAdd(used, BYTES_PER_TYPE);
             used = saturatingAdd(used, bytesForAmount(item.getStackSize(), ITEMS_PER_BYTE));
         }
-        for (IAEFluidStack fluid : STORE_FLUID) {
+        for (IAEFluidStack fluid : storedFluids) {
             used = saturatingAdd(used, BYTES_PER_TYPE);
             used = saturatingAdd(used, bytesForAmount(fluid.getStackSize(), FLUID_MB_PER_BYTE));
         }
@@ -471,7 +471,7 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
                 + EnumChatFormatting.RESET);
 
         int i = 0;
-        for (IAEItemStack tank : STORE_ITEM) {
+        for (IAEItemStack tank : storedItems) {
             String localizedName = Objects.requireNonNull(
                 tank.getItem()
                     .getItemStackDisplayName(tank.getItemStack()));
@@ -489,7 +489,7 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
                 + EnumChatFormatting.RESET);
 
         int j = 0;
-        for (IAEFluidStack tank : STORE_FLUID) {
+        for (IAEFluidStack tank : storedFluids) {
             String localizedName = Objects.requireNonNull(
                 tank.getFluid()
                     .getLocalizedName(tank.getFluidStack()));
@@ -598,13 +598,13 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
         NBTTagCompound storeRoot = new NBTTagCompound();
         NBTTagList itemNbt = new NBTTagList();
-        for (IAEItemStack aeItem : STORE_ITEM) {
+        for (IAEItemStack aeItem : storedItems) {
             NBTTagCompound nbt = new NBTTagCompound();
             aeItem.writeToNBT(nbt);
             itemNbt.appendTag(nbt);
         }
         NBTTagList fluidNbt = new NBTTagList();
-        for (IAEFluidStack aeFluid : STORE_FLUID) {
+        for (IAEFluidStack aeFluid : storedFluids) {
             NBTTagCompound nbt = new NBTTagCompound();
             aeFluid.writeToNBT(nbt);
             fluidNbt.appendTag(nbt);
@@ -634,12 +634,12 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
         aNBT.setTag("STORE_ITEM", itemNbt);
         NBTTagList fluidNbt = new NBTTagList();
         aNBT.setTag("STORE_FLUID", fluidNbt);
-        for (IAEItemStack aeItem : STORE_ITEM) {
+        for (IAEItemStack aeItem : storedItems) {
             var nbt = new NBTTagCompound();
             aeItem.writeToNBT(nbt);
             itemNbt.appendTag(nbt);
         }
-        for (IAEFluidStack aeFluid : STORE_FLUID) {
+        for (IAEFluidStack aeFluid : storedFluids) {
             var nbt = new NBTTagCompound();
             aeFluid.writeToNBT(nbt);
             fluidNbt.appendTag(nbt);
@@ -665,11 +665,11 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
                     NBTTagList fluidNbt = fileNBT.getTagList("STORE_FLUID", 10);
 
                     for (int i = 0; i < itemNbt.tagCount(); i++) {
-                        STORE_ITEM.add(AEItemStack.loadItemStackFromNBT(itemNbt.getCompoundTagAt(i)));
+                        storedItems.add(AEItemStack.loadItemStackFromNBT(itemNbt.getCompoundTagAt(i)));
                     }
 
                     for (int i = 0; i < fluidNbt.tagCount(); i++) {
-                        STORE_FLUID.add(AEFluidStack.loadFluidStackFromNBT(fluidNbt.getCompoundTagAt(i)));
+                        storedFluids.add(AEFluidStack.loadFluidStackFromNBT(fluidNbt.getCompoundTagAt(i)));
                     }
 
                     if (!vaultFile.delete()) {
@@ -683,13 +683,13 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
         NBTTagList itemNbt = aNBT.getTagList("STORE_ITEM", 10);
         if (itemNbt != null) {
             for (int i = 0; i < itemNbt.tagCount(); i++) {
-                STORE_ITEM.add(AEItemStack.loadItemStackFromNBT(itemNbt.getCompoundTagAt(i)));
+                storedItems.add(AEItemStack.loadItemStackFromNBT(itemNbt.getCompoundTagAt(i)));
             }
         }
         NBTTagList fluidNbt = aNBT.getTagList("STORE_FLUID", 10);
         if (fluidNbt != null) {
             for (int i = 0; i < fluidNbt.tagCount(); i++) {
-                STORE_FLUID.add(AEFluidStack.loadFluidStackFromNBT(fluidNbt.getCompoundTagAt(i)));
+                storedFluids.add(AEFluidStack.loadFluidStackFromNBT(fluidNbt.getCompoundTagAt(i)));
             }
         }
         super.loadNBTData(aNBT);
@@ -704,7 +704,7 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
         if (accepted <= 0) return doVoidExcess ? aItem.stackSize : 0;
         if (doInput) {
             if (aeItem == null) {
-                STORE_ITEM.addStorage(
+                storedItems.addStorage(
                     AEItemStack.create(aItem)
                         .setStackSize(accepted));
             } else {
@@ -724,7 +724,7 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
         if (accepted <= 0) return doVoidExcess ? aItem.getStackSize() : 0;
         if (doInput) {
             if (aeItem == null) {
-                STORE_ITEM.addStorage(
+                storedItems.addStorage(
                     aItem.copy()
                         .setStackSize(accepted));
             } else {
@@ -744,7 +744,7 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
         if (accepted <= 0) return doVoidExcess ? aFluid.amount : 0;
         if (doInput) {
             if (aeFluid == null) {
-                STORE_FLUID.addStorage(
+                storedFluids.addStorage(
                     AEFluidStack.create(aFluid)
                         .setStackSize(accepted));
             } else {
@@ -764,7 +764,7 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
         if (accepted <= 0) return doVoidExcess ? aFluid.getStackSize() : 0;
         if (doInput) {
             if (aeFluid == null) {
-                STORE_FLUID.addStorage(
+                storedFluids.addStorage(
                     aFluid.copy()
                         .setStackSize(accepted));
             } else {
@@ -821,24 +821,24 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public long itemsCount() {
-        return STORE_ITEM.size();
+        return storedItems.size();
     }
 
     @Override
     public long fluidsCount() {
-        return STORE_FLUID.size();
+        return storedFluids.size();
     }
 
     @Override
     public IAEItemStack getStoredItem(@Nullable ItemStack aItem) {
         if (aItem == null) return null;
-        return STORE_ITEM.findPrecise(AEItemStack.create(aItem));
+        return storedItems.findPrecise(AEItemStack.create(aItem));
     }
 
     @Override
     public IAEFluidStack getStoredFluid(@Nullable FluidStack aFluid) {
         if (aFluid == null) return null;
-        return STORE_FLUID.findPrecise(AEFluidStack.create(aFluid));
+        return storedFluids.findPrecise(AEFluidStack.create(aFluid));
     }
 
     @Override
@@ -853,7 +853,7 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     public BigInteger getItemStoredAmount() {
         BigInteger amount = BigInteger.ZERO;
-        for (IAEItemStack item : STORE_ITEM) {
+        for (IAEItemStack item : storedItems) {
             amount = amount.add(BigInteger.valueOf(item.getStackSize()));
         }
         return amount;
@@ -861,7 +861,7 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     public BigInteger getFluidStoredAmount() {
         BigInteger amount = BigInteger.ZERO;
-        for (IAEFluidStack fluid : STORE_FLUID) {
+        for (IAEFluidStack fluid : storedFluids) {
             amount = amount.add(BigInteger.valueOf(fluid.getStackSize()));
         }
         return amount;
@@ -869,12 +869,12 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public IItemList<IAEItemStack> getStoreItems() {
-        return STORE_ITEM;
+        return storedItems;
     }
 
     @Override
     public IItemList<IAEFluidStack> getStoreFluids() {
-        return STORE_FLUID;
+        return storedFluids;
     }
 
     @Override

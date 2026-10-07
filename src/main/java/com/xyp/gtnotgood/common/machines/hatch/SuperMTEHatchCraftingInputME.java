@@ -59,8 +59,8 @@ import com.xyp.gtnotgood.ae2thing.quickterminal.ITerminalVisibilityToggle;
 import com.xyp.gtnotgood.common.gui.modularui.hatch.SuperMTEHatchCraftingInputMEGui;
 import com.xyp.gtnotgood.common.machines.hatch.me.ChatComponentInterfaceNameSuffix;
 import com.xyp.gtnotgood.common.machines.hatch.me.PatternMEOutput;
-import com.xyp.gtnotgood.common.utils.MoldDataManager;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
+import com.xyp.gtnotgood.utils.machine.MoldDataManager;
 
 import appeng.api.AEApi;
 import appeng.api.implementations.ICraftingPatternItem;

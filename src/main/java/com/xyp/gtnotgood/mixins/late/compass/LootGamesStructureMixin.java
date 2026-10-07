@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.xyp.gtnotgood.common.compass.StructureLocations;
+import com.xyp.gtnotgood.common.items.compass.StructureLocations;
 
 import eu.usrv.legacylootgames.StructureGenerator;
 

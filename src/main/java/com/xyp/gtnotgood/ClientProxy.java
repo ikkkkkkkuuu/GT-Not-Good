@@ -27,11 +27,11 @@ import com.xyp.gtnotgood.client.text.effect.BuiltinTextEffects;
 import com.xyp.gtnotgood.client.text.preview.TextEffectPreviewCommand;
 import com.xyp.gtnotgood.client.wireless.WirelessMonitorHud;
 import com.xyp.gtnotgood.client.wireless.WirelessMonitorPreferences;
-import com.xyp.gtnotgood.common.flux.BlockFluxConnector;
+import com.xyp.gtnotgood.common.blocks.flux.BlockFluxConnector;
+import com.xyp.gtnotgood.common.blocks.mestock.BlockMERequester;
+import com.xyp.gtnotgood.common.blocks.network.BlockNetwork;
 import com.xyp.gtnotgood.common.gui.BlockIcons;
-import com.xyp.gtnotgood.common.mestock.BlockMERequester;
-import com.xyp.gtnotgood.common.network.BlockNetwork;
-import com.xyp.gtnotgood.common.packet.WirelessMonitorSnapshot;
+import com.xyp.gtnotgood.common.network.WirelessMonitorSnapshot;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.gtnotgood.utils.event.SubscribeEventClientUtils;
@@ -65,7 +65,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void receiveServerConfig(com.xyp.gtnotgood.common.packet.ServerConfigMessage message) {
+    public void receiveServerConfig(com.xyp.gtnotgood.common.network.ServerConfigMessage message) {
         Minecraft.getMinecraft()
             .func_152344_a(() -> com.xyp.gtnotgood.client.config.ServerSettingsScreen.receive(message));
     }
@@ -109,8 +109,8 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void registerAEPartRenderer() {
-        for (GTNGItemList part : new GTNGItemList[] { GTNGItemList.AdvancedIOBus, GTNGItemList.ThresholdExportBus,
-            GTNGItemList.ThresholdLevelEmitter, GTNGItemList.MERequesterTerminal }) {
+        for (GTNGItemList part : new GTNGItemList[] { GTNGItemList.AdvancedIOBus, GTNGItemList.StockIOInterfacePart,
+            GTNGItemList.ThresholdExportBus, GTNGItemList.ThresholdLevelEmitter, GTNGItemList.MERequesterTerminal }) {
             AEApi.instance()
                 .partHelper()
                 .setItemBusRenderer((IPartItem) part.getItem());

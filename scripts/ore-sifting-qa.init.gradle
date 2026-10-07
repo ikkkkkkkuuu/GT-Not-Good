@@ -1,4 +1,4 @@
-// Native sifting imports and batch output checks in an isolated, hidden Forge client.
+// Native ore byproduct imports and batch output checks in an isolated, hidden Forge client.
 gradle.projectsEvaluated {
     def root = gradle.rootProject
     def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')

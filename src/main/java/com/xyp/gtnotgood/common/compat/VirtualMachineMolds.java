@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import net.minecraft.item.ItemStack;
 
-import com.xyp.gtnotgood.common.utils.MoldDataManager;
+import com.xyp.gtnotgood.utils.machine.MoldDataManager;
 
 import gregtech.api.metatileentity.implementations.MTEBasicMachine;
 import gregtech.api.util.GTUtility;

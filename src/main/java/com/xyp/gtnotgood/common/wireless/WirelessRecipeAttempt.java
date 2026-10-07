@@ -17,7 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.common.machines.hatch.CrossRecipeWirelessEnergyHatch;
-import com.xyp.gtnotgood.mixins.late.Gregtech.wireless.WirelessProcessingAccess;
+import com.xyp.gtnotgood.mixins.late.gregtech.wireless.WirelessProcessingAccess;
 
 import gregtech.api.logic.ProcessingLogic;
 import gregtech.api.metatileentity.implementations.MTEMultiBlockBase;

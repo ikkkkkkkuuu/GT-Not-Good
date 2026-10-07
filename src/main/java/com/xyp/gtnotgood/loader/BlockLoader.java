@@ -5,31 +5,33 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.xyp.gtnotgood.GTNotGood;
-import com.xyp.gtnotgood.common.beekeeping.WorkingApiaryRegistration;
+import com.xyp.gtnotgood.common.blocks.beekeeping.WorkingApiaryRegistration;
+import com.xyp.gtnotgood.common.blocks.flux.BlockFluxConnector;
+import com.xyp.gtnotgood.common.blocks.flux.BlockFluxLogistics;
+import com.xyp.gtnotgood.common.blocks.flux.FluxChunkLoading;
+import com.xyp.gtnotgood.common.blocks.flux.FluxTransferScheduler;
+import com.xyp.gtnotgood.common.blocks.flux.ItemBlockFluxConnector;
+import com.xyp.gtnotgood.common.blocks.flux.TileFluxLogistics;
+import com.xyp.gtnotgood.common.blocks.flux.TileFluxPlug;
+import com.xyp.gtnotgood.common.blocks.flux.TileFluxPoint;
 import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeReceiver;
 import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeSender;
 import com.xyp.gtnotgood.common.blocks.mebridge.ItemBlockMEBridge;
-import com.xyp.gtnotgood.common.flux.BlockFluxConnector;
-import com.xyp.gtnotgood.common.flux.BlockFluxLogistics;
-import com.xyp.gtnotgood.common.flux.FluxChunkLoading;
-import com.xyp.gtnotgood.common.flux.FluxTransferScheduler;
-import com.xyp.gtnotgood.common.flux.ItemBlockFluxConnector;
-import com.xyp.gtnotgood.common.flux.TileFluxLogistics;
-import com.xyp.gtnotgood.common.flux.TileFluxPlug;
-import com.xyp.gtnotgood.common.flux.TileFluxPoint;
-import com.xyp.gtnotgood.common.mebridge.TileMEBridgeReceiver;
-import com.xyp.gtnotgood.common.mebridge.TileMEBridgeSender;
-import com.xyp.gtnotgood.common.mecontainer.BlockMEContainer;
-import com.xyp.gtnotgood.common.mecontainer.TileMEContainer;
-import com.xyp.gtnotgood.common.network.BlockNetwork;
-import com.xyp.gtnotgood.common.network.NetworkTopology;
-import com.xyp.gtnotgood.common.network.TileNetworkController;
-import com.xyp.gtnotgood.common.network.TileNetworkNode;
-import com.xyp.gtnotgood.common.packaged.BlockPackagedProvider;
-import com.xyp.gtnotgood.common.packaged.PackagedServerActions;
-import com.xyp.gtnotgood.common.packaged.TilePackagedProvider;
-import com.xyp.gtnotgood.common.user.BlockMechanicalUser;
-import com.xyp.gtnotgood.common.user.TileMechanicalUser;
+import com.xyp.gtnotgood.common.blocks.mebridge.TileMEBridgeReceiver;
+import com.xyp.gtnotgood.common.blocks.mebridge.TileMEBridgeSender;
+import com.xyp.gtnotgood.common.blocks.mechanicaluser.BlockMechanicalUser;
+import com.xyp.gtnotgood.common.blocks.mechanicaluser.TileMechanicalUser;
+import com.xyp.gtnotgood.common.blocks.mecontainer.BlockMEContainer;
+import com.xyp.gtnotgood.common.blocks.mecontainer.TileMEContainer;
+import com.xyp.gtnotgood.common.blocks.network.BlockNetwork;
+import com.xyp.gtnotgood.common.blocks.network.NetworkTopology;
+import com.xyp.gtnotgood.common.blocks.network.TileNetworkController;
+import com.xyp.gtnotgood.common.blocks.network.TileNetworkNode;
+import com.xyp.gtnotgood.common.blocks.packaged.BlockPackagedProvider;
+import com.xyp.gtnotgood.common.blocks.packaged.PackagedServerActions;
+import com.xyp.gtnotgood.common.blocks.packaged.TilePackagedProvider;
+import com.xyp.gtnotgood.common.blocks.stockio.BlockStockIOInterface;
+import com.xyp.gtnotgood.common.blocks.stockio.TileStockIOInterface;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
@@ -75,6 +77,7 @@ public final class BlockLoader {
 
     public static final BlockMEBridgeSender blockMEBridgeSender = new BlockMEBridgeSender();
     public static final BlockMEContainer meContainer = new BlockMEContainer();
+    public static final BlockStockIOInterface stockIOInterface = new BlockStockIOInterface();
     public static final BlockMEBridgeReceiver blockMEBridgeReceiver = new BlockMEBridgeReceiver();
 
     private BlockLoader() {}
@@ -90,6 +93,7 @@ public final class BlockLoader {
         registerMechanicalUser();
         registerFluxBlocks();
         registerMEContainer();
+        registerStockIOInterface();
         registerNetworkBlocks();
         registerMEBridgeBlocks();
     }
@@ -137,6 +141,13 @@ public final class BlockLoader {
         GameRegistry.registerBlock(meContainer, ItemBlockMEBridge.class, "me_container");
         GameRegistry.registerTileEntity(TileMEContainer.class, ModList.GTNotGood.getResourcePath("me_container"));
         GTNGItemList.MEContainer.set(new ItemStack(meContainer));
+    }
+
+    private static void registerStockIOInterface() {
+        GameRegistry.registerBlock(stockIOInterface, ItemBlockMEBridge.class, "stock_io_interface");
+        GameRegistry
+            .registerTileEntity(TileStockIOInterface.class, ModList.GTNotGood.getResourcePath("stock_io_interface"));
+        GTNGItemList.StockIOInterface.set(new ItemStack(stockIOInterface));
     }
 
     private static void registerNetworkBlocks() {

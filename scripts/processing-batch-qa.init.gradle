@@ -23,7 +23,7 @@ gradle.projectsEvaluated {
         target 'src/main/java/com/xyp/gtnotgood/common/machines/hatch/SuperMTEHatchCraftingInputME.java',
             'src/main/java/com/xyp/gtnotgood/utils/ECraftingCPUCluster.java',
             'src/main/java/com/xyp/gtnotgood/utils/crafting/CraftingBatchPlannerImpl.java',
-            'src/main/java/com/xyp/gtnotgood/mixins/late/AppliedEnergistics/compact/MixinCraftingCPUCluster.java',
+            'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/compact/MixinCraftingCPUCluster.java',
 
             'scripts/qa/ProcessingBatchChecks.java'
     }

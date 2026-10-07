@@ -131,7 +131,7 @@ tasks.register('networkRegression', JavaExec) {
     description = 'Checks programmable network transfer bounds and persistence without launching a client.'
     dependsOn tasks.named('testClasses')
     classpath = sourceSets.test.runtimeClasspath
-    mainClass = 'com.xyp.gtnotgood.common.network.NetworkRegressionChecks'
+    mainClass = 'com.xyp.gtnotgood.common.blocks.network.NetworkRegressionChecks'
 }
 
 // Windows JDK 25 selectors can fail to connect through the default user temp path.

@@ -1,16 +1,16 @@
 package com.xyp.gtnotgood.loader;
 
-import com.xyp.gtnotgood.common.advancedio.AdvancedIORecipes;
-import com.xyp.gtnotgood.common.beekeeping.WorkingApiaryRegistration;
-import com.xyp.gtnotgood.common.packaged.PackagedRecipes;
-import com.xyp.gtnotgood.common.patternsorter.PatternSorterRecipes;
+import com.xyp.gtnotgood.common.blocks.beekeeping.WorkingApiaryRegistration;
 import com.xyp.gtnotgood.common.recipe.gregtech.AssemblerRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.CraftingTableRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FuelRodRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.MixerRecipes;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.AdvancedIORecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.PackagedRecipes;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.PatternSorterRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.CrossRecipeWirelessEnergyHatchRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes;
@@ -25,6 +25,7 @@ import com.xyp.gtnotgood.common.recipe.machine.MaxCapacityMEOutputRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MechanicalUserRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.NetworkRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SingularityDataHubRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.StockIOInterfaceRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SuperCraftingInputRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.WildcardPatternRecipes;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -79,6 +80,7 @@ public class RecipeLoader {
         }
         LargeTransmutationMachineRecipes.loadRecipes();
         AdvancedIORecipes.register();
+        StockIOInterfaceRecipes.register();
         PackagedRecipes.register();
         MechanicalUserRecipes.loadRecipes();
         FluxConnectorRecipes.loadRecipes();

@@ -9,8 +9,8 @@ import net.minecraftforge.client.event.MouseEvent;
 import org.lwjgl.input.Mouse;
 
 import com.xyp.gtnotgood.GTNotGood;
-import com.xyp.gtnotgood.common.items.VeinMiningPickaxe.VeinMiningPickaxe;
-import com.xyp.gtnotgood.common.packet.SyncVeinPickaxeNBT;
+import com.xyp.gtnotgood.common.items.veinmining.VeinMiningPickaxe;
+import com.xyp.gtnotgood.common.network.SyncVeinPickaxeNBT;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.utils.item.SubtitleDisplay;
 

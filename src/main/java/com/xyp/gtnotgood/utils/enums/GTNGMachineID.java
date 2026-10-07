@@ -11,55 +11,55 @@ public enum GTNGMachineID {
      * The nearby {@code 28001-28055} range is occupied by CropsNH in the GTNH environment, so this mod starts at
      * {@code 28100} to keep its private machine IDs away from that shipped addon range.
      */
-    MACHINE(28500),
-    BASIC_MACHINE(28600),
+    Machine(28500),
+    BasicMachine(28600),
     /** LV through MAX: seven laser inputs and one dynamo slot per tier, 28700-28811. */
-    WIRELESS_LASER(28700),
+    WirelessLaser(28700),
 
-    LARGE_ORE_PROCESSOR(MACHINE, 0),
-    MAX_CAPACITY_ME_OUTPUT_BUS(MACHINE, 1),
-    MAX_CAPACITY_ME_OUTPUT_HATCH(MACHINE, 2),
-    SUPER_CRAFTING_INPUT_BUS_ME(MACHINE, 3),
-    SUPER_CRAFTING_INPUT_ME(MACHINE, 4),
-    SUPER_CRAFTING_INPUT_SLAVE(MACHINE, 5),
-    LARGE_VOID_MINER(MACHINE, 6),
-    LARGE_BEE_BREEDER(MACHINE, 7),
-    LARGE_CROP_BREEDER(MACHINE, 8),
-    SINGULARITY_DATA_HUB(MACHINE, 11),
-    VAULT_PORT_HATCH(MACHINE, 12),
-    INTEGRATED_PRODUCTION_FACTORY(MACHINE, 13),
-    QUANTUM_COMPUTER(MACHINE, 14),
-    ASSEMBLER_MATRIX(MACHINE, 15),
-    LARGE_TRANSMUTATION_MACHINE(MACHINE, 16),
-    LARGE_COMB_PROCESSOR(MACHINE, 17),
-    MEDataAccessHatch(MACHINE, 18),
-    CompactSuperCraftingInputME(MACHINE, 19),
-    CrossRecipeWirelessEnergyHatch(MACHINE, 20),
-    SuperAdvancedMEInputHatch(MACHINE, 21),
-    SuperAdvancedMEInputBus(MACHINE, 22),
-    CircuitMEPatternBuffer(MACHINE, 23),
+    LargeOreProcessor(Machine, 0),
+    MaxCapacityMEOutputBus(Machine, 1),
+    MaxCapacityMEOutputHatch(Machine, 2),
+    SuperCraftingInputBusME(Machine, 3),
+    SuperCraftingInputME(Machine, 4),
+    SuperCraftingInputSlave(Machine, 5),
+    LargeVoidMiner(Machine, 6),
+    LargeBeeBreeder(Machine, 7),
+    LargeCropBreeder(Machine, 8),
+    SingularityDataHub(Machine, 11),
+    VaultPortHatch(Machine, 12),
+    IntegratedProductionFactory(Machine, 13),
+    QuantumComputer(Machine, 14),
+    AssemblerMatrix(Machine, 15),
+    LargeTransmutationMachine(Machine, 16),
+    LargeCombProcessor(Machine, 17),
+    MEDataAccessHatch(Machine, 18),
+    CompactSuperCraftingInputME(Machine, 19),
+    CrossRecipeWirelessEnergyHatch(Machine, 20),
+    SuperAdvancedMEInputHatch(Machine, 21),
+    SuperAdvancedMEInputBus(Machine, 22),
+    CircuitMEPatternBuffer(Machine, 23),
 
-    Diesel_Generator_LV(BASIC_MACHINE, 0),
-    Diesel_Generator_MV(BASIC_MACHINE, 1),
-    Diesel_Generator_HV(BASIC_MACHINE, 2),
-    Diesel_Generator_EV(BASIC_MACHINE, 3),
-    STEAM_TURBINE_LV(BASIC_MACHINE, 4),
-    STEAM_TURBINE_MV(BASIC_MACHINE, 5),
-    STEAM_TURBINE_HV(BASIC_MACHINE, 6),
-    STEAM_TURBINE_EV(BASIC_MACHINE, 7),
-    STEAM_TURBINE_IV(BASIC_MACHINE, 8),
-    STEAM_TURBINE_LUV(BASIC_MACHINE, 9),
-    ESSENTIA_DISASSEMBLER(BASIC_MACHINE, 10),
-    UNIVERSAL_FLUID_PUMP(BASIC_MACHINE, 11);
+    DieselGeneratorLV(BasicMachine, 0),
+    DieselGeneratorMV(BasicMachine, 1),
+    DieselGeneratorHV(BasicMachine, 2),
+    DieselGeneratorEV(BasicMachine, 3),
+    SteamTurbineLV(BasicMachine, 4),
+    SteamTurbineMV(BasicMachine, 5),
+    SteamTurbineHV(BasicMachine, 6),
+    SteamTurbineEV(BasicMachine, 7),
+    SteamTurbineIV(BasicMachine, 8),
+    SteamTurbineLuV(BasicMachine, 9),
+    EssentiaDisassembler(BasicMachine, 10),
+    UniversalFluidPump(BasicMachine, 11);
 
-    public final int ID;
+    public final int id;
     private static final int META_INCREMENT = 1;
 
-    GTNGMachineID(int ID) {
-        this.ID = ID;
+    GTNGMachineID(int id) {
+        this.id = id;
     }
 
     GTNGMachineID(GTNGMachineID base, int offset) {
-        this.ID = base.ID + (offset * META_INCREMENT);
+        this.id = base.id + (offset * META_INCREMENT);
     }
 }

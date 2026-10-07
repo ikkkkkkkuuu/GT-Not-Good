@@ -74,7 +74,7 @@ public final class LDLibMinerClientChecks {
             var world = server.worldServerForDimension(0);
             world.setBlock(0, 6, 0, GregTechAPI.sBlockMachines, 0, 3);
             BaseMetaTileEntity base = (BaseMetaTileEntity) world.getTileEntity(0, 6, 0);
-            base.setInitialValuesAsNBT(null, (short) GTNGMachineID.LARGE_VOID_MINER.ID);
+            base.setInitialValuesAsNBT(null, (short) GTNGMachineID.LargeVoidMiner.id);
             base.setOwnerName(viewer.getCommandSenderName());
             base.setOwnerUuid(viewer.getUniqueID());
             miner = (LargeVoidMiner) base.getMetaTileEntity();

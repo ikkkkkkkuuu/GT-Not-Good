@@ -7,7 +7,7 @@ Copyright: ABKQPO and GT Not Leisure contributors.
 
 Adapted files: QuantumComputer, AssemblerMatrix, their ModularUI GUIs, ECraftingCPUCluster,
 DireCraftingPatternDetails, LargeInventoryCrafting, AssemblerMatrixPatternState, CraftingBatchPlanner,
-CraftingBatchPlannerImpl and the attributed mixins under AppliedEnergistics/compact.
+CraftingBatchPlannerImpl and the attributed mixins under appliedenergistics/compact.
 
 Changes: GTNH Java 8/API compatibility, local registries and GUI assets, 3x2x1 structures,
 144 matrix pattern slots, fixed maximum performance, one-tick assembly, removal of energy costs,

@@ -10,8 +10,8 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import org.lwjgl.opengl.GL11;
 
-import com.xyp.gtnotgood.common.mebridge.ItemMEWirelessTransceiver;
-import com.xyp.gtnotgood.common.mebridge.MessageMEWirelessVisualization;
+import com.xyp.gtnotgood.common.items.mebridge.ItemMEWirelessTransceiver;
+import com.xyp.gtnotgood.common.network.mebridge.MessageMEWirelessVisualization;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;

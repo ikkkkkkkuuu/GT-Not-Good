@@ -5,8 +5,8 @@ gradle.projectsEvaluated {
     if (efr.exists()) root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
     root.tasks.named('compileTestJava').configure { setSource(root.files('scripts/qa/MEStockClientChecks.java')) }
     root.extensions.findByName('spotless')?.java {
-        target 'src/main/java/com/xyp/gtnotgood/common/mestock/*.java',
-            'src/main/java/com/xyp/gtnotgood/common/advancedio/BusTarget.java',
+        target 'src/main/java/com/xyp/gtnotgood/common/parts/mestock/*.java',
+            'src/main/java/com/xyp/gtnotgood/common/parts/advancedio/BusTarget.java',
             'src/main/java/com/xyp/gtnotgood/client/mestock/*.java',
             'src/main/java/com/xyp/gtnotgood/ClientProxy.java',
             'src/main/java/com/xyp/gtnotgood/CommonProxy.java',

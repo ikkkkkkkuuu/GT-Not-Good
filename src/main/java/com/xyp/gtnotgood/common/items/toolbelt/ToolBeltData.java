@@ -11,7 +11,7 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.util.Constants;
 
 import com.xyp.gtnotgood.GTNotGood;
-import com.xyp.gtnotgood.common.packet.SyncToolBeltData;
+import com.xyp.gtnotgood.common.network.SyncToolBeltData;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 import lombok.Getter;

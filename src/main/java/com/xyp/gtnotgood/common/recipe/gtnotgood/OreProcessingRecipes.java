@@ -45,6 +45,12 @@ public class OreProcessingRecipes {
 
     private static final int EUT = 0;
     private static final int DURATION_TICKS = 20;
+    private static final OrePrefixes[] byproductStages = { OrePrefixes.crushed, OrePrefixes.crushedPurified,
+        OrePrefixes.crushedCentrifuged, OrePrefixes.dustImpure, OrePrefixes.dustPure };
+    private static final OrePrefixes[] inputForms = { OrePrefixes.crushedPurified, OrePrefixes.crushedCentrifuged,
+        OrePrefixes.crushed, OrePrefixes.dustImpure, OrePrefixes.dustPure, OrePrefixes.rawOre,
+        OrePrefixes.oreNetherrack, OrePrefixes.oreEndstone, OrePrefixes.oreBasalt, OrePrefixes.oreBlackgranite,
+        OrePrefixes.oreRedgranite, OrePrefixes.oreMarble, OrePrefixes.ore };
 
     public static final Set<OrePrefixes> BASIC_STONE_TYPES = Sets.newHashSet(
         OrePrefixes.ore,
@@ -77,7 +83,7 @@ public class OreProcessingRecipes {
         GTNotGood.LOG.info("Loaded large ore processor recipes");
     }
 
-    /** Registers external ores and imports sifting byproducts after native recipe registration completes. */
+    /** Registers external ores and imports native mechanical byproducts after recipe registration completes. */
     public static void loadExternalOreRecipes() {
         for (String oreName : OreDictionary.getOreNames()) {
             int dustAmount;
@@ -141,6 +147,194 @@ public class OreProcessingRecipes {
             }
         }
         addSiftingOutputs();
+        addMechanicalByproducts();
+    }
+
+    /**
+     * Adds missing native grinding and centrifuging products without combining alternative processing routes.
+     * Existing yields, including sifting products, take precedence. For each new item, the native slot group with the
+     * highest expected amount wins; repeated slots inside that recipe remain independent.
+     */
+    private static void addMechanicalByproducts() {
+        Map<String, List<GTRecipe>> sources = new HashMap<>();
+        for (RecipeMap<?> map : new RecipeMap<?>[] { RecipeMaps.maceratorRecipes, RecipeMaps.thermalCentrifugeRecipes,
+            RecipeMaps.centrifugeRecipes }) {
+            for (GTRecipe source : map.getAllRecipes()) {
+                if (!source.mEnabled || source.mInputs.length != 1
+                    || source.mInputs[0] == null
+                    || source.mInputs[0].stackSize != 1
+                    || source.mOutputs.length < 2
+                    || source.mFluidInputs.length != 0
+                    || source.mFluidOutputs.length != 0
+                    || source.mSpecialItems != null) continue;
+                for (int oreId : OreDictionary.getOreIDs(source.mInputs[0])) {
+                    String name = OreDictionary.getOreName(oreId);
+                    OrePrefixes prefix = inputPrefix(name);
+                    if (prefix == null || BASIC_STONE_TYPES.contains(prefix) || prefix == OrePrefixes.rawOre) continue;
+                    if (!matchesMaterial(
+                        source.mInputs[0],
+                        name.substring(
+                            prefix.name()
+                                .length())))
+                        continue;
+                    sources.computeIfAbsent(name, ignored -> new ArrayList<>())
+                        .add(source);
+                }
+            }
+        }
+
+        int supplemented = 0;
+        for (GTRecipe recipe : OreProcessingRecipes.getAllRecipes()) {
+            if (recipe.mInputs.length != 1 || recipe.mInputs[0] == null) continue;
+            for (int oreId : OreDictionary.getOreIDs(recipe.mInputs[0])) {
+                String name = OreDictionary.getOreName(oreId);
+                OrePrefixes prefix = inputPrefix(name);
+                if (prefix == null) continue;
+                String material = name.substring(
+                    prefix.name()
+                        .length());
+                if (!matchesMaterial(recipe.mInputs[0], material)) continue;
+                List<ByproductGroup> selected = new ArrayList<>();
+                boolean found = false;
+                for (OrePrefixes stage : remainingStages(prefix)) {
+                    List<GTRecipe> stageRecipes = sources.get(stage.name() + material);
+                    if (stageRecipes == null) continue;
+                    found = true;
+                    for (GTRecipe source : stageRecipes) {
+                        List<ByproductGroup> groups = new ArrayList<>();
+                        for (int slot = 1; slot < source.mOutputs.length; slot++) {
+                            ItemStack output = source.mOutputs[slot];
+                            if (output == null || output.stackSize <= 0
+                                || source.getOutputChance(slot) <= 0
+                                || isGangue(output)
+                                || hasOutput(recipe.mOutputs, output)) continue;
+                            ByproductGroup group = findGroup(groups, output);
+                            if (group == null) {
+                                group = new ByproductGroup(source, output);
+                                groups.add(group);
+                            }
+                            group.slots.add(slot);
+                            group.expectedAmount += (long) output.stackSize * source.getOutputChance(slot);
+                        }
+                        for (ByproductGroup group : groups) {
+                            ByproductGroup current = findGroup(selected, group.item);
+                            if (current == null) selected.add(group);
+                            else if (group.expectedAmount > current.expectedAmount) {
+                                selected.set(selected.indexOf(current), group);
+                            }
+                        }
+                    }
+                }
+                if (!found) continue;
+                if (!selected.isEmpty()) {
+                    List<ItemStack> outputs = new ArrayList<>();
+                    List<Integer> chances = new ArrayList<>();
+                    for (int slot = 0; slot < recipe.mOutputs.length; slot++) {
+                        outputs.add(recipe.mOutputs[slot]);
+                        chances.add(recipe.getOutputChance(slot));
+                    }
+                    int multiplier = isRichOre(prefix) ? 2 : 1;
+                    for (ByproductGroup group : selected) {
+                        for (int slot : group.slots) {
+                            outputs.add(
+                                GTUtility.copyAmountUnsafe(
+                                    group.source.mOutputs[slot].stackSize * multiplier,
+                                    group.source.mOutputs[slot]));
+                            chances.add(group.source.getOutputChance(slot));
+                        }
+                    }
+                    recipe.mOutputs = outputs.toArray(new ItemStack[0]);
+                    recipe.mOutputChances = chances.stream()
+                        .mapToInt(Integer::intValue)
+                        .toArray();
+                    supplemented++;
+                }
+                break;
+            }
+        }
+        GTNotGood.LOG
+            .info("Added native grinding and centrifuging products to {} large ore processor recipes", supplemented);
+    }
+
+    /** Progressed inputs must not collect byproducts from stages they have already passed. */
+    private static OrePrefixes[] remainingStages(OrePrefixes input) {
+        if (input == OrePrefixes.crushedPurified) {
+            return new OrePrefixes[] { OrePrefixes.crushedPurified, OrePrefixes.crushedCentrifuged,
+                OrePrefixes.dustPure };
+        }
+        if (input == OrePrefixes.crushedCentrifuged || input == OrePrefixes.dustPure
+            || input == OrePrefixes.dustImpure) {
+            return new OrePrefixes[] { input };
+        }
+        return byproductStages;
+    }
+
+    private static OrePrefixes inputPrefix(String name) {
+        for (OrePrefixes prefix : inputForms) {
+            if (name.startsWith(prefix.name())) return prefix;
+        }
+        return null;
+    }
+
+    /** Existing full dust also covers smaller dust fractions of the same registered material. */
+    private static boolean hasOutput(ItemStack[] outputs, ItemStack candidate) {
+        ItemData expected = GTOreDictUnificator.getAssociation(candidate);
+        for (ItemStack output : outputs) {
+            if (output == null) continue;
+            if (GTUtility.areStacksEqual(output, candidate)) return true;
+            ItemData existing = GTOreDictUnificator.getAssociation(output);
+            if (existing != null && expected != null
+                && isDust(existing.mPrefix)
+                && isDust(expected.mPrefix)
+                && existing.mMaterial != null
+                && expected.mMaterial != null
+                && expected.mMaterial.mMaterial != null
+                && existing.mMaterial.mMaterial == expected.mMaterial.mMaterial
+                && (long) output.stackSize * existing.mPrefix.getMaterialAmount()
+                    >= (long) candidate.stackSize * expected.mPrefix.getMaterialAmount())
+                return true;
+        }
+        return false;
+    }
+
+    private static boolean isDust(OrePrefixes prefix) {
+        return prefix == OrePrefixes.dust || prefix == OrePrefixes.dustSmall || prefix == OrePrefixes.dustTiny;
+    }
+
+    /** Host-rock waste is not a valuable ore byproduct. */
+    private static boolean isGangue(ItemStack output) {
+        for (int oreId : OreDictionary.getOreIDs(output)) {
+            String name = OreDictionary.getOreName(oreId);
+            for (String prefix : new String[] { "dustSmall", "dustTiny", "dust" }) {
+                if (!name.startsWith(prefix)) continue;
+                String material = name.substring(prefix.length());
+                if (material.equals("Stone") || material.equals("Netherrack") || material.equals("Endstone"))
+                    return true;
+                break;
+            }
+        }
+        return false;
+    }
+
+    private static ByproductGroup findGroup(List<ByproductGroup> groups, ItemStack item) {
+        for (ByproductGroup group : groups) {
+            if (GTUtility.areStacksEqual(group.item, item)) return group;
+        }
+        return null;
+    }
+
+    /** One source recipe's independent slots for a single byproduct item. */
+    private static final class ByproductGroup {
+
+        private final GTRecipe source;
+        private final ItemStack item;
+        private final List<Integer> slots = new ArrayList<>();
+        private long expectedAmount;
+
+        private ByproductGroup(GTRecipe source, ItemStack item) {
+            this.source = source;
+            this.item = item;
+        }
     }
 
     /**

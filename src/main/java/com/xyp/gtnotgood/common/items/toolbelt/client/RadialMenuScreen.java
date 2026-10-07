@@ -21,7 +21,7 @@ import com.xyp.gtnotgood.common.items.toolbelt.client.radial.GenericRadialMenu;
 import com.xyp.gtnotgood.common.items.toolbelt.client.radial.IRadialMenuHost;
 import com.xyp.gtnotgood.common.items.toolbelt.client.radial.ItemStackRadialMenuItem;
 import com.xyp.gtnotgood.common.items.toolbelt.client.radial.TextRadialMenuItem;
-import com.xyp.gtnotgood.common.packet.SwapItems;
+import com.xyp.gtnotgood.common.network.SwapItems;
 import com.xyp.gtnotgood.utils.keybind.KeyBindManager;
 
 public class RadialMenuScreen extends GuiScreen {

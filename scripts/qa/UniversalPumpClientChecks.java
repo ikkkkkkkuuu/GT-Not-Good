@@ -1,4 +1,4 @@
-package com.xyp.gtnotgood.common.machines.basicMachine;
+package com.xyp.gtnotgood.common.machines.basic;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;

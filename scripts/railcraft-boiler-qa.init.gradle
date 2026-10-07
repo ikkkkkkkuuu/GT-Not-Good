@@ -14,7 +14,7 @@ gradle.projectsEvaluated {
     }
     root.spotless {
         java {
-            target 'src/main/java/com/xyp/gtnotgood/mixins/late/Railcraft/MultiblockBoilerMixin.java',
+            target 'src/main/java/com/xyp/gtnotgood/mixins/late/railcraft/MultiblockBoilerMixin.java',
                 'src/main/java/com/xyp/gtnotgood/config/Config.java',
                 'src/main/java/com/xyp/gtnotgood/config/ServerConfigOptions.java',
                 'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',

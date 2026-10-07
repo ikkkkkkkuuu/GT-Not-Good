@@ -10,7 +10,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.PhantomItemSlotSH;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
-import com.xyp.gtnotgood.common.utils.MoldDataManager;
+import com.xyp.gtnotgood.utils.machine.MoldDataManager;
 
 import lombok.Getter;
 

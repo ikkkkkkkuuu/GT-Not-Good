@@ -89,7 +89,7 @@ public class LargeCombProcessor extends GTNGMultiBlockBase<LargeCombProcessor> i
 
     private int mCountCasing = 0;
 
-    private IStructureDefinition<LargeCombProcessor> STRUCTURE_DEFINITION = null;
+    private IStructureDefinition<LargeCombProcessor> structureDefinition = null;
 
     // 15 wide (x), 17 tall (y), 15 deep (z)
     // A=glass, B=dirt/grass, G=casing+hatches, H=wood planks, I=wood slabs, J/K/L/N/O/P=bronze frame
@@ -149,8 +149,8 @@ public class LargeCombProcessor extends GTNGMultiBlockBase<LargeCombProcessor> i
 
     @Override
     public IStructureDefinition<LargeCombProcessor> getStructureDefinition() {
-        if (STRUCTURE_DEFINITION == null) {
-            STRUCTURE_DEFINITION = StructureDefinition.<LargeCombProcessor>builder()
+        if (structureDefinition == null) {
+            structureDefinition = StructureDefinition.<LargeCombProcessor>builder()
                 .addShape(STRUCTURE_PIECE_MAIN, shape)
                 .addElement('A', chainAllGlasses())
                 .addElement('B', ofChain(ofBlockAnyMeta(Blocks.dirt, 0), ofBlock(Blocks.grass, 0)))
@@ -173,7 +173,7 @@ public class LargeCombProcessor extends GTNGMultiBlockBase<LargeCombProcessor> i
                 .addElement('P', ofBlock(GregTechAPI.sBlockFrames, Materials.Bronze.mMetaItemSubID))
                 .build();
         }
-        return STRUCTURE_DEFINITION;
+        return structureDefinition;
     }
 
     @Override

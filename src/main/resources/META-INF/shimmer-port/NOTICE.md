@@ -7,12 +7,12 @@ Copyright ABKQPO and GT-Not-Leisure contributors. LGPL-3.0; see
 META-INF/licenses/GT-Not-Leisure-LGPL-3.0.txt and GT-Not-Leisure-GPL-3.0.txt.
 The ported code is not covered by this project's general MIT grant.
 
-Source -> destination under com/xyp/gtnotgood:
+Source -> current destination under com/xyp/gtnotgood (2026-10-07):
 - utils/recipes/DisassemblerHelper.java -> common/recipe/gtnotgood/ShimmerRecoveryRules.java
 - its collection logic and common/recipe/gtnl/ShimmerRecipes.java -> TransmutationRecipes.java
 - utils/recipes/ReversedRecipeRegistry.java -> ShimmerCraftingRegistry.java
 - mixins/late/gregtech/MixinGTShapedRecipe.java and MixinGTShapelessRecipe.java ->
-  mixins/late/Gregtech/TransmutationShapedRecipeMixin.java and TransmutationShapelessRecipeMixin.java
+  mixins/late/gregtech/TransmutationShapedRecipeMixin.java and TransmutationShapelessRecipeMixin.java
 
 Modifications: package names, powered GT machine recipe registration, native fluid hatch outputs,
 defensive copies, removal of debug provenance storage, optional live GTNL conversion-table import.

@@ -1,4 +1,4 @@
-package com.xyp.gtnotgood.common.machines.basicMachine;
+package com.xyp.gtnotgood.common.machines.basic;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -69,7 +69,7 @@ public final class EssentiaClientChecks {
         if (++ticks == 1) {
             world.setBlock(4, 8, 4, GregTechAPI.sBlockMachines, 0, 3);
             base = (BaseMetaTileEntity) world.getTileEntity(4, 8, 4);
-            base.setInitialValuesAsNBT(null, (short) GTNGMachineID.ESSENTIA_DISASSEMBLER.ID);
+            base.setInitialValuesAsNBT(null, (short) GTNGMachineID.EssentiaDisassembler.id);
             base.setFrontFacing(net.minecraftforge.common.util.ForgeDirection.NORTH);
             machine = (EssentiaDisassembler) base.getMetaTileEntity();
             var blocks = AEApi.instance().definitions().blocks();

@@ -1,4 +1,4 @@
-package com.xyp.gtnotgood.common.packaged;
+package com.xyp.gtnotgood.common.blocks.packaged;
 
 import static org.junit.Assert.*;
 

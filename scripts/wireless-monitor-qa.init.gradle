@@ -11,8 +11,8 @@ gradle.projectsEvaluated {
         java {
             target 'src/main/java/com/xyp/gtnotgood/client/wireless/*.java',
                 'src/main/java/com/xyp/gtnotgood/common/wireless/monitor/*.java',
-                'src/main/java/com/xyp/gtnotgood/common/packet/WirelessMonitor*.java',
-                'src/main/java/com/xyp/gtnotgood/common/packet/NetWorkHandler.java',
+                'src/main/java/com/xyp/gtnotgood/common/network/WirelessMonitor*.java',
+                'src/main/java/com/xyp/gtnotgood/common/network/NetworkHandler.java',
                 'src/main/java/com/xyp/gtnotgood/ClientProxy.java',
                 'src/main/java/com/xyp/gtnotgood/CommonProxy.java',
                 'src/main/java/com/xyp/gtnotgood/GTNotGood.java',

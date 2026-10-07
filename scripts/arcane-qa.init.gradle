@@ -2,7 +2,7 @@
 gradle.projectsEvaluated {
     def root = gradle.rootProject
     root.tasks.named('compileTestJava').configure {
-        setSource(root.fileTree('src/test/java/com/xyp/gtnotgood/common/packaged') { include 'ArcaneWorkbenchClientChecks.java' })
+        setSource(root.fileTree('src/test/java/com/xyp/gtnotgood/common/blocks/packaged') { include 'ArcaneWorkbenchClientChecks.java' })
     }
     def mainSnapshot = root.layout.buildDirectory.dir('arcane-qa-runtime/main')
     def testSnapshot = root.layout.buildDirectory.dir('arcane-qa-runtime/test')

@@ -26,7 +26,7 @@ import com.xyp.gtnotgood.ae2thing.nei.object.OrderStack;
 import com.xyp.gtnotgood.ae2thing.quickterminal.ContainerQuickEncodingTerminal;
 import com.xyp.gtnotgood.ae2thing.quickterminal.DualTerminalGuiObject;
 import com.xyp.gtnotgood.ae2thing.quickterminal.RecipeTransferPayload;
-import com.xyp.gtnotgood.common.utils.MoldDataManager;
+import com.xyp.gtnotgood.utils.machine.MoldDataManager;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 

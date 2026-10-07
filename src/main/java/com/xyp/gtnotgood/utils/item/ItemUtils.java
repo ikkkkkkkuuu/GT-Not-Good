@@ -95,11 +95,11 @@ public class ItemUtils {
         return true;
     }
 
-    public static Materials[] TIER = { Materials.LV, Materials.MV, Materials.HV, Materials.EV, Materials.IV,
+    public static Materials[] tiers = { Materials.LV, Materials.MV, Materials.HV, Materials.EV, Materials.IV,
         Materials.LuV, Materials.ZPM, Materials.UV, Materials.UHV, Materials.UEV, Materials.UIV, Materials.UMV,
         Materials.UXV, Materials.MAX };
 
-    public static Materials[] TIER_MATERIAL = { Materials.Steel, // LV
+    public static Materials[] tierMaterials = { Materials.Steel, // LV
         Materials.Aluminium, // MV
         Materials.StainlessSteel, // HV
         Materials.Titanium, // EV

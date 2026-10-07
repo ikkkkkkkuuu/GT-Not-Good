@@ -4,8 +4,8 @@ import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.addItemTooltip
 
 import net.minecraft.util.StatCollector;
 
-import com.xyp.gtnotgood.common.machines.basicMachine.SteamTurbine;
-import com.xyp.gtnotgood.common.machines.basicMachine.UniversalFluidPump;
+import com.xyp.gtnotgood.common.machines.basic.SteamTurbine;
+import com.xyp.gtnotgood.common.machines.basic.UniversalFluidPump;
 import com.xyp.gtnotgood.common.machines.hatch.CrossRecipeWirelessEnergyHatch;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputSlave;
@@ -48,7 +48,7 @@ public class MachineLoader {
         // # zh_CN 电路样板总成 (ME)
         GTNGItemList.CircuitMEPatternBuffer.set(
             new CircuitMEPatternBuffer(
-                GTNGMachineID.CircuitMEPatternBuffer.ID,
+                GTNGMachineID.CircuitMEPatternBuffer.id,
                 "CircuitMEPatternBuffer",
                 StatCollector.translateToLocal("NameCircuitMEPatternBuffer")));
         addItemTooltip(GTNGItemList.CircuitMEPatternBuffer.get(1), AnimatedText.GT_NOT_GOOD);
@@ -57,7 +57,7 @@ public class MachineLoader {
         // # zh_CN 超级进阶存储输入仓 (ME)
         GTNGItemList.SuperAdvancedMEInputHatch.set(
             new SuperAdvancedMEInputHatch(
-                GTNGMachineID.SuperAdvancedMEInputHatch.ID,
+                GTNGMachineID.SuperAdvancedMEInputHatch.id,
                 "SuperAdvancedMEInputHatch",
                 StatCollector.translateToLocal("NameSuperAdvancedMEInputHatch")));
         addItemTooltip(GTNGItemList.SuperAdvancedMEInputHatch.get(1), AnimatedText.GT_NOT_GOOD);
@@ -66,13 +66,13 @@ public class MachineLoader {
         // # zh_CN 超级进阶存储输入总线 (ME)
         GTNGItemList.SuperAdvancedMEInputBus.set(
             new SuperAdvancedMEInputBus(
-                GTNGMachineID.SuperAdvancedMEInputBus.ID,
+                GTNGMachineID.SuperAdvancedMEInputBus.id,
                 "SuperAdvancedMEInputBus",
                 StatCollector.translateToLocal("NameSuperAdvancedMEInputBus")));
         addItemTooltip(GTNGItemList.SuperAdvancedMEInputBus.get(1), AnimatedText.GT_NOT_GOOD);
         GTNGItemList.CrossRecipeWirelessEnergyHatch.set(
             new CrossRecipeWirelessEnergyHatch(
-                GTNGMachineID.CrossRecipeWirelessEnergyHatch.ID,
+                GTNGMachineID.CrossRecipeWirelessEnergyHatch.id,
                 "CrossRecipeWirelessEnergyHatch"));
         addItemTooltip(GTNGItemList.CrossRecipeWirelessEnergyHatch.get(1), AnimatedText.GT_NOT_GOOD);
         // #tr gtng.comb.name
@@ -80,7 +80,7 @@ public class MachineLoader {
         // # zh_CN 蜂窝处理机
         GTNGItemList.LargeCombProcessor.set(
             new com.xyp.gtnotgood.common.machines.multiblock.LargeCombProcessor(
-                GTNGMachineID.LARGE_COMB_PROCESSOR.ID,
+                GTNGMachineID.LargeCombProcessor.id,
                 "LargeCombProcessor",
                 StatCollector.translateToLocal("gtng.comb.name")));
         addItemTooltip(GTNGItemList.LargeCombProcessor.get(1), AnimatedText.GT_NOT_GOOD);
@@ -90,7 +90,7 @@ public class MachineLoader {
         // # zh_CN 大型嬗变机
         GTNGItemList.LargeTransmutationMachine.set(
             new com.xyp.gtnotgood.common.machines.multiblock.LargeTransmutationMachine(
-                GTNGMachineID.LARGE_TRANSMUTATION_MACHINE.ID,
+                GTNGMachineID.LargeTransmutationMachine.id,
                 "LargeTransmutationMachine",
                 StatCollector.translateToLocal("gtng.LargeTransmutationMachine.name")));
         addItemTooltip(GTNGItemList.LargeTransmutationMachine.get(1), AnimatedText.GT_NOT_GOOD);
@@ -99,7 +99,7 @@ public class MachineLoader {
         // # zh_CN 量子计算机
         GTNGItemList.QuantumComputer.set(
             new com.xyp.gtnotgood.common.machines.multiblock.QuantumComputer(
-                GTNGMachineID.QUANTUM_COMPUTER.ID,
+                GTNGMachineID.QuantumComputer.id,
                 "QuantumComputer",
                 StatCollector.translateToLocal("gtng.QuantumComputer.name")));
         addItemTooltip(GTNGItemList.QuantumComputer.get(1), AnimatedText.GT_NOT_GOOD);
@@ -108,13 +108,13 @@ public class MachineLoader {
         // # zh_CN 装配矩阵
         GTNGItemList.AssemblerMatrix.set(
             new com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix(
-                GTNGMachineID.ASSEMBLER_MATRIX.ID,
+                GTNGMachineID.AssemblerMatrix.id,
                 "AssemblerMatrix",
                 StatCollector.translateToLocal("gtng.AssemblerMatrix.name")));
         addItemTooltip(GTNGItemList.AssemblerMatrix.get(1), AnimatedText.GT_NOT_GOOD);
         GTNGItemList.IntegratedProductionFactory.set(
             new com.xyp.gtnotgood.common.machines.multiblock.IntegratedProductionFactory(
-                GTNGMachineID.INTEGRATED_PRODUCTION_FACTORY.ID,
+                GTNGMachineID.IntegratedProductionFactory.id,
                 "IntegratedProductionFactory",
                 FactoryText.NAME.text()));
         addItemTooltip(GTNGItemList.IntegratedProductionFactory.get(1), AnimatedText.GT_NOT_GOOD);
@@ -123,7 +123,7 @@ public class MachineLoader {
         // # zh_CN 大型矿石处理器
         GTNGItemList.LargeOreProcessor.set(
             new LargeOreProcessor(
-                GTNGMachineID.LARGE_ORE_PROCESSOR.ID,
+                GTNGMachineID.LargeOreProcessor.id,
                 "LargeOreProcessor",
                 StatCollector.translateToLocal("NameLargeOreProcessor")));
         addItemTooltip(GTNGItemList.LargeOreProcessor.get(1), AnimatedText.GT_NOT_GOOD);
@@ -133,7 +133,7 @@ public class MachineLoader {
         // # zh_CN 大型虚空矿机
         GTNGItemList.LargeVoidMiner.set(
             new LargeVoidMiner(
-                GTNGMachineID.LARGE_VOID_MINER.ID,
+                GTNGMachineID.LargeVoidMiner.id,
                 "LargeVoidMiner",
                 StatCollector.translateToLocal("NameLargeVoidMiner")));
         addItemTooltip(GTNGItemList.LargeVoidMiner.get(1), AnimatedText.GT_NOT_GOOD);
@@ -143,7 +143,7 @@ public class MachineLoader {
         // # zh_CN 大型蜜蜂杂交机
         GTNGItemList.LargeBeeBreeder.set(
             new LargeBeeBreeder(
-                GTNGMachineID.LARGE_BEE_BREEDER.ID,
+                GTNGMachineID.LargeBeeBreeder.id,
                 "LargeBeeBreeder",
                 StatCollector.translateToLocal("NameLargeBeeBreeder")));
         addItemTooltip(GTNGItemList.LargeBeeBreeder.get(1), AnimatedText.GT_NOT_GOOD);
@@ -153,7 +153,7 @@ public class MachineLoader {
         // # zh_CN 大型作物杂交机
         GTNGItemList.LargeCropBreeder.set(
             new LargeCropBreeder(
-                GTNGMachineID.LARGE_CROP_BREEDER.ID,
+                GTNGMachineID.LargeCropBreeder.id,
                 "LargeCropBreeder",
                 StatCollector.translateToLocal("NameLargeCropBreeder")));
         addItemTooltip(GTNGItemList.LargeCropBreeder.get(1), AnimatedText.GT_NOT_GOOD);
@@ -163,7 +163,7 @@ public class MachineLoader {
         // # zh_CN 最大容量ME输出总线
         GTNGItemList.MaxCapacityMEOutputBus.set(
             new MaxCapacityMEOutputBus(
-                GTNGMachineID.MAX_CAPACITY_ME_OUTPUT_BUS.ID,
+                GTNGMachineID.MaxCapacityMEOutputBus.id,
                 "MaxCapacityMEOutputBus",
                 StatCollector.translateToLocal("NameMaxCapacityMEOutputBus")));
 
@@ -172,7 +172,7 @@ public class MachineLoader {
         // # zh_CN 最大容量ME输出仓
         GTNGItemList.MaxCapacityMEOutputHatch.set(
             new MaxCapacityMEOutputHatch(
-                GTNGMachineID.MAX_CAPACITY_ME_OUTPUT_HATCH.ID,
+                GTNGMachineID.MaxCapacityMEOutputHatch.id,
                 "MaxCapacityMEOutputHatch",
                 StatCollector.translateToLocal("NameMaxCapacityMEOutputHatch")));
 
@@ -181,7 +181,7 @@ public class MachineLoader {
         // # zh_CN 数据访问仓 (ME, IV)
         GTNGItemList.MEDataAccessHatch.set(
             new MEDataAccessHatch(
-                GTNGMachineID.MEDataAccessHatch.ID,
+                GTNGMachineID.MEDataAccessHatch.id,
                 "MEDataAccessHatch",
                 StatCollector.translateToLocal("NameMEDataAccessHatch")));
         addItemTooltip(GTNGItemList.MEDataAccessHatch.get(1), AnimatedText.GT_NOT_GOOD);
@@ -191,7 +191,7 @@ public class MachineLoader {
         // # zh_CN 超级样板输入总线 (ME)
         GTNGItemList.SuperMTEHatchCraftingInputBusME.set(
             new SuperMTEHatchCraftingInputME(
-                GTNGMachineID.SUPER_CRAFTING_INPUT_BUS_ME.ID,
+                GTNGMachineID.SuperCraftingInputBusME.id,
                 "SuperMTEHatchCraftingInputBusME",
                 StatCollector.translateToLocal("NameSuperMTEHatchCraftingInputBusME"),
                 false));
@@ -202,7 +202,7 @@ public class MachineLoader {
         // # zh_CN 超级样板输入总成 (ME)
         GTNGItemList.SuperMTEHatchCraftingInputME.set(
             new SuperMTEHatchCraftingInputME(
-                GTNGMachineID.SUPER_CRAFTING_INPUT_ME.ID,
+                GTNGMachineID.SuperCraftingInputME.id,
                 "SuperMTEHatchCraftingInputME",
                 StatCollector.translateToLocal("NameSuperMTEHatchCraftingInputME"),
                 true));
@@ -213,7 +213,7 @@ public class MachineLoader {
         // # zh_CN 缩小超级样板输入总成 (ME)
         GTNGItemList.CompactSuperMTEHatchCraftingInputME.set(
             new SuperMTEHatchCraftingInputME(
-                GTNGMachineID.CompactSuperCraftingInputME.ID,
+                GTNGMachineID.CompactSuperCraftingInputME.id,
                 "CompactSuperMTEHatchCraftingInputME",
                 StatCollector.translateToLocal("NameCompactSuperMTEHatchCraftingInputME"),
                 true,
@@ -225,7 +225,7 @@ public class MachineLoader {
         // # zh_CN 超级样板输入镜像 (ME)
         GTNGItemList.SuperMTEHatchCraftingInputSlave.set(
             new SuperMTEHatchCraftingInputSlave(
-                GTNGMachineID.SUPER_CRAFTING_INPUT_SLAVE.ID,
+                GTNGMachineID.SuperCraftingInputSlave.id,
                 "SuperCraftingInputProxy",
                 StatCollector.translateToLocal("NameSuperMTEHatchCraftingInputSlave")).getStackForm(1L));
         addItemTooltip(GTNGItemList.SuperMTEHatchCraftingInputSlave.get(1), AnimatedText.GT_NOT_GOOD);
@@ -235,7 +235,7 @@ public class MachineLoader {
         // # zh_CN 奇点数据枢纽
         GTNGItemList.SingularityDataHub.set(
             new SingularityDataHub(
-                GTNGMachineID.SINGULARITY_DATA_HUB.ID,
+                GTNGMachineID.SingularityDataHub.id,
                 "SingularityDataHub",
                 StatCollector.translateToLocal("NameSingularityDataHub")));
         addItemTooltip(GTNGItemList.SingularityDataHub.get(1), AnimatedText.GT_NOT_GOOD);
@@ -245,7 +245,7 @@ public class MachineLoader {
         // # zh_CN 仓库端口仓
         GTNGItemList.VaultPortHatch.set(
             new VaultPortHatch(
-                GTNGMachineID.VAULT_PORT_HATCH.ID,
+                GTNGMachineID.VaultPortHatch.id,
                 "VaultPortHatch",
                 StatCollector.translateToLocal("NameVaultPortHatch")));
         addItemTooltip(GTNGItemList.VaultPortHatch.get(1), AnimatedText.GT_NOT_GOOD);
@@ -258,7 +258,7 @@ public class MachineLoader {
         // # zh_CN 高速通用流体泵 (LV)
         GTNGItemList.UniversalFluidPump.set(
             new UniversalFluidPump(
-                GTNGMachineID.UNIVERSAL_FLUID_PUMP.ID,
+                GTNGMachineID.UniversalFluidPump.id,
                 "UniversalFluidPump",
                 StatCollector.translateToLocal("gtng.pump.name")));
         addItemTooltip(GTNGItemList.UniversalFluidPump.get(1), AnimatedText.GT_NOT_GOOD);
@@ -269,8 +269,8 @@ public class MachineLoader {
             // # Advanced Essentia Disassembler
             // # zh_CN 高级源质分解机
             GTNGItemList.EssentiaDisassembler.set(
-                new com.xyp.gtnotgood.common.machines.basicMachine.EssentiaDisassembler(
-                    GTNGMachineID.ESSENTIA_DISASSEMBLER.ID,
+                new com.xyp.gtnotgood.common.machines.basic.EssentiaDisassembler(
+                    GTNGMachineID.EssentiaDisassembler.id,
                     "essentia_disassembler",
                     StatCollector.translateToLocal("gtng.EssentiaDisassembler.name")));
         }
@@ -280,7 +280,7 @@ public class MachineLoader {
         // # zh_CN 基础蒸汽轮机
         GTNGItemList.SteamTurbineLV.set(
             new SteamTurbine(
-                GTNGMachineID.STEAM_TURBINE_LV.ID,
+                GTNGMachineID.SteamTurbineLV.id,
                 "SteamTurbineLV",
                 StatCollector.translateToLocal("SteamTurbineLV"),
                 1));
@@ -291,7 +291,7 @@ public class MachineLoader {
         // # zh_CN 进阶蒸汽轮机
         GTNGItemList.SteamTurbineMV.set(
             new SteamTurbine(
-                GTNGMachineID.STEAM_TURBINE_MV.ID,
+                GTNGMachineID.SteamTurbineMV.id,
                 "SteamTurbineMV",
                 StatCollector.translateToLocal("SteamTurbineMV"),
                 2));
@@ -302,7 +302,7 @@ public class MachineLoader {
         // # zh_CN 进阶蒸汽轮机 II
         GTNGItemList.SteamTurbineHV.set(
             new SteamTurbine(
-                GTNGMachineID.STEAM_TURBINE_HV.ID,
+                GTNGMachineID.SteamTurbineHV.id,
                 "SteamTurbineHV",
                 StatCollector.translateToLocal("SteamTurbineHV"),
                 3));
@@ -313,7 +313,7 @@ public class MachineLoader {
         // # zh_CN 进阶蒸汽轮机 III
         GTNGItemList.SteamTurbineEV.set(
             new SteamTurbine(
-                GTNGMachineID.STEAM_TURBINE_EV.ID,
+                GTNGMachineID.SteamTurbineEV.id,
                 "SteamTurbineEV",
                 StatCollector.translateToLocal("SteamTurbineEV"),
                 4));
@@ -324,7 +324,7 @@ public class MachineLoader {
         // # zh_CN 进阶蒸汽轮机 IV
         GTNGItemList.SteamTurbineIV.set(
             new SteamTurbine(
-                GTNGMachineID.STEAM_TURBINE_IV.ID,
+                GTNGMachineID.SteamTurbineIV.id,
                 "SteamTurbineIV",
                 StatCollector.translateToLocal("SteamTurbineIV"),
                 5));
@@ -335,7 +335,7 @@ public class MachineLoader {
         // # zh_CN 进阶蒸汽轮机 V
         GTNGItemList.SteamTurbineLuV.set(
             new SteamTurbine(
-                GTNGMachineID.STEAM_TURBINE_LUV.ID,
+                GTNGMachineID.SteamTurbineLuV.id,
                 "SteamTurbineLuV",
                 StatCollector.translateToLocal("SteamTurbineLuV"),
                 6));

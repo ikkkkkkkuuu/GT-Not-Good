@@ -3,8 +3,6 @@ package com.xyp.gtnotgood.common.blocks.mebridge;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import com.xyp.gtnotgood.common.mebridge.TileMEBridgeSender;
-
 /** 跨维度 ME 网桥 - 发起端方块（写频道名广播）。 */
 public class BlockMEBridgeSender extends BlockMEBridgeBase {
 

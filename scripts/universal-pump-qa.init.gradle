@@ -5,8 +5,8 @@ gradle.projectsEvaluated {
         setSource(root.fileTree('scripts/qa') { include 'UniversalPumpClientChecks.java' })
     }
     root.spotless.java {
-        target root.file('src/main/java/com/xyp/gtnotgood/common/machines/basicMachine/UniversalFluidPump.java'),
-            root.file('src/main/java/com/xyp/gtnotgood/common/machines/basicMachine/PumpScanCursor.java'),
+        target root.file('src/main/java/com/xyp/gtnotgood/common/machines/basic/UniversalFluidPump.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/common/machines/basic/PumpScanCursor.java'),
             root.file('scripts/qa/UniversalPumpClientChecks.java'),
             root.file('src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java'),
             root.file('src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java'),

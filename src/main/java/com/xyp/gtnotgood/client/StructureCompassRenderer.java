@@ -8,7 +8,7 @@ import net.minecraftforge.client.IItemRenderer;
 
 import org.lwjgl.opengl.GL11;
 
-import com.xyp.gtnotgood.common.compass.StructureCompassItem;
+import com.xyp.gtnotgood.common.items.compass.StructureCompassItem;
 
 /** Original code-drawn compass face. Each stack's needle uses its own destination, including in the inventory. */
 public final class StructureCompassRenderer implements IItemRenderer {

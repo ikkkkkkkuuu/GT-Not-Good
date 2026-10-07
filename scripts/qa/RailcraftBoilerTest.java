@@ -1,4 +1,4 @@
-package com.xyp.gtnotgood.mixins.late.Railcraft;
+package com.xyp.gtnotgood.mixins.late.railcraft;
 
 import static org.junit.Assert.*;
 

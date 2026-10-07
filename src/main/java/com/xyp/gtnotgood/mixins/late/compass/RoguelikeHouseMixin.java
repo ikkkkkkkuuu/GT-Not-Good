@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.xyp.gtnotgood.common.compass.StructureLocations;
+import com.xyp.gtnotgood.common.items.compass.StructureLocations;
 
 import greymerk.roguelike.dungeon.towers.HouseTower;
 import greymerk.roguelike.theme.ITheme;

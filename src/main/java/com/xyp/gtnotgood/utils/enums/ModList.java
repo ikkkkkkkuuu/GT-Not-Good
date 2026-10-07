@@ -31,7 +31,7 @@ public enum ModList {
     Baubles(ModIds.BAUBLES, Names.BAUBLES),
     BloodMagic(ModIds.BLOOD_MAGIC, Names.BLOOD_MAGIC),
     ThaumicEnergistics(ModIds.THAUMIC_ENERGISTICS, Names.THAUMIC_ENERGISTICS),
-    ENDER_IO(ModIds.ENDER_IO, Names.ENDER_IO),
+    EnderIO(ModIds.ENDER_IO, Names.ENDER_IO),
     BetterQuestingAPI(ModIds.BETTER_QUESTING_API, Names.BETTER_QUESTING_API),
     WarpTheory(ModIds.WARP_THEORY, Names.WARP_THEORY);
 
@@ -93,22 +93,25 @@ public enum ModList {
         private Names() {}
     }
 
-    @Getter
-    private final String ID;
+    private final String id;
     private final String resourceDomain;
     @Getter
     private final String displayName;
     private Boolean modLoaded;
 
-    ModList(String ID, String displayName) {
-        this.ID = ID;
-        this.resourceDomain = ID.toLowerCase(Locale.ENGLISH);
+    ModList(String id, String displayName) {
+        this.id = id;
+        this.resourceDomain = id.toLowerCase(Locale.ENGLISH);
         this.displayName = displayName;
+    }
+
+    public String getID() {
+        return id;
     }
 
     public boolean isModLoaded() {
         if (this.modLoaded == null) {
-            this.modLoaded = Loader.isModLoaded(ID);
+            this.modLoaded = Loader.isModLoaded(id);
         }
         return this.modLoaded;
     }

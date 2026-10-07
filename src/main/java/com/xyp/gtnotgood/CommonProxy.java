@@ -5,18 +5,19 @@ import net.minecraftforge.common.MinecraftForge;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.gtnewhorizon.gtnhlib.chat.ChatComponentCustomRegistry;
 import com.xyp.gtnotgood.ae2thing.AE2Thing;
-import com.xyp.gtnotgood.common.compass.StructureSearch;
+import com.xyp.gtnotgood.common.blocks.mebridge.MEBridgeEventHandler;
+import com.xyp.gtnotgood.common.blocks.mebridge.MEWirelessLinkEventHandler;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.LargeVoidMinerConfigGuiFactory;
+import com.xyp.gtnotgood.common.items.compass.StructureSearch;
 import com.xyp.gtnotgood.common.items.toolbelt.common.BeltEvents;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.hatch.me.ChatComponentInterfaceNameSuffix;
 import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
 import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
-import com.xyp.gtnotgood.common.mebridge.MEBridgeEventHandler;
-import com.xyp.gtnotgood.common.mebridge.MEWirelessLinkEventHandler;
-import com.xyp.gtnotgood.common.mestock.StockRegistration;
-import com.xyp.gtnotgood.common.packet.NetWorkHandler;
-import com.xyp.gtnotgood.common.packet.WirelessMonitorSnapshot;
+import com.xyp.gtnotgood.common.network.NetworkHandler;
+import com.xyp.gtnotgood.common.network.WirelessMonitorSnapshot;
+import com.xyp.gtnotgood.common.parts.mestock.StockRegistration;
+import com.xyp.gtnotgood.common.parts.stockio.StockIOGuiFactory;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.config.Config;
@@ -49,7 +50,7 @@ public class CommonProxy {
         if (Config.enableRTSBuilding) com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.preInit(event);
 
         GTNotGood.channel = NetworkRegistry.INSTANCE.newSimpleChannel(GTNotGood.MODID);
-        NetWorkHandler.registerAllMessage();
+        NetworkHandler.registerAllMessage();
         FMLCommonHandler.instance()
             .bus()
             .register(new WirelessMonitorService());
@@ -89,7 +90,8 @@ public class CommonProxy {
     public void init(FMLInitializationEvent event) {
         if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
             com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.init(event);
-        GuiManager.registerFactory(com.xyp.gtnotgood.common.advancedio.AdvancedIOGuiFactory.INSTANCE);
+        GuiManager.registerFactory(com.xyp.gtnotgood.common.parts.advancedio.AdvancedIOGuiFactory.INSTANCE);
+        GuiManager.registerFactory(StockIOGuiFactory.INSTANCE);
         GuiManager.registerFactory(LargeVoidMinerConfigGuiFactory.INSTANCE);
         RecipeLoader.loadRecipes();
         StockRegistration.init();
@@ -128,7 +130,7 @@ public class CommonProxy {
     public void serverStarting(FMLServerStartingEvent event) {}
 
     /** Receives a server settings reply on the client proxy; dedicated servers have no settings screen. */
-    public void receiveServerConfig(com.xyp.gtnotgood.common.packet.ServerConfigMessage message) {}
+    public void receiveServerConfig(com.xyp.gtnotgood.common.network.ServerConfigMessage message) {}
 
     /** Forwards a balance snapshot only on the client; dedicated servers have no HUD renderer. */
     public void receiveWirelessMonitor(WirelessMonitorSnapshot message) {}

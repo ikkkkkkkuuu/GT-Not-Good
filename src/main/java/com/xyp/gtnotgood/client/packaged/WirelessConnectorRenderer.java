@@ -19,9 +19,9 @@ import net.minecraftforge.event.world.WorldEvent;
 
 import org.lwjgl.opengl.GL11;
 
-import com.xyp.gtnotgood.common.packaged.ItemWirelessConnector;
-import com.xyp.gtnotgood.common.packaged.PackagedTarget;
-import com.xyp.gtnotgood.common.packaged.TilePackagedProvider;
+import com.xyp.gtnotgood.common.blocks.packaged.PackagedTarget;
+import com.xyp.gtnotgood.common.blocks.packaged.TilePackagedProvider;
+import com.xyp.gtnotgood.common.items.packaged.ItemWirelessConnector;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;

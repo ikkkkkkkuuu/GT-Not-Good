@@ -19,8 +19,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.xyp.gtnotgood.common.flux.BlockFluxConnector;
-import com.xyp.gtnotgood.common.flux.TileFluxConnector;
+import com.xyp.gtnotgood.common.blocks.flux.BlockFluxConnector;
+import com.xyp.gtnotgood.common.blocks.flux.TileFluxConnector;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -70,7 +70,7 @@ public final class FluxConnectorRenderer implements ISimpleBlockRenderingHandler
     }
 
     private void render(BlockFluxConnector block, IBlockAccess world, int x, int y, int z) {
-        boolean active = world == null || block instanceof com.xyp.gtnotgood.common.flux.BlockFluxLogistics
+        boolean active = world == null || block instanceof com.xyp.gtnotgood.common.blocks.flux.BlockFluxLogistics
             || world.getTileEntity(x, y, z) instanceof TileFluxConnector tile && tile.enabled();
         drawModel(block, model(block.plug ? "fluxplug" : "fluxpoint"), active, -1, x, y, z, world == null);
         for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {

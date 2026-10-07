@@ -31,7 +31,7 @@ gradle.projectsEvaluated {
     }
     root.spotless {
         java {
-            target 'src/main/java/com/xyp/gtnotgood/common/compass/*.java',
+            target 'src/main/java/com/xyp/gtnotgood/common/items/compass/*.java',
                 'src/main/java/com/xyp/gtnotgood/client/StructureCompassRenderer.java',
                 'src/main/java/com/xyp/gtnotgood/mixins/late/compass/*.java'
         }

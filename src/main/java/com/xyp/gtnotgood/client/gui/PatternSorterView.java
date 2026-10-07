@@ -13,8 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
 import com.xyp.gtnotgood.common.compat.VirtualMachineMolds;
-import com.xyp.gtnotgood.common.patternsorter.PatternSorter;
-import com.xyp.gtnotgood.common.patternsorter.PatternSorterGui;
+import com.xyp.gtnotgood.common.items.patternsorter.PatternSorter;
+import com.xyp.gtnotgood.common.items.patternsorter.PatternSorterGui;
 import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.ldlib.gui.texture.ItemStackTexture;
 import com.xyp.ldlib.gui.ui.UIElement;

@@ -1,4 +1,4 @@
-package com.xyp.gtnotgood.common.compass;
+package com.xyp.gtnotgood.common.items.compass;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;

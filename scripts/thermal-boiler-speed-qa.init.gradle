@@ -6,7 +6,7 @@ gradle.projectsEvaluated {
     root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm-tree:9.8')
     root.spotless {
         java {
-            target 'src/main/java/com/xyp/gtnotgood/mixins/late/CutCorners/ThermalBoilerSpeedMixin.java',
+            target 'src/main/java/com/xyp/gtnotgood/mixins/late/cutcorners/ThermalBoilerSpeedMixin.java',
                 'scripts/qa/ThermalBoilerSpeedTest.java'
         }
     }

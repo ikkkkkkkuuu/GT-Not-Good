@@ -3,8 +3,6 @@ package com.xyp.gtnotgood.common.blocks.mebridge;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import com.xyp.gtnotgood.common.mebridge.TileMEBridgeReceiver;
-
 /** 跨维度 ME 网桥 - 接收端方块（选频道连入）。 */
 public class BlockMEBridgeReceiver extends BlockMEBridgeBase {
 

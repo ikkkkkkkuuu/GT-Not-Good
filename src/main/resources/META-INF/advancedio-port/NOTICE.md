@@ -17,8 +17,11 @@ Behavior references:
 - `src/main/java/net/pedroksl/advanced_ae/client/gui/AdvancedIOBusScreen.java`
 - `src/generated/resources/assets/advanced_ae/models/part/advanced_io_bus_part.json`
 
-Destinations: `com.xyp.gtnotgood.common.advancedio.PartAdvancedIOBus`, `AdvancedIOGui`, and
-`ItemAdvancedIOBus`. These are Minecraft 1.7.10 rewrites/adaptations, not unchanged modern classes.
+Current destinations (2026-10-07): `com.xyp.gtnotgood.common.parts.advancedio.PartAdvancedIOBus`,
+`com.xyp.gtnotgood.common.parts.advancedio.AdvancedIOGui`, and
+`com.xyp.gtnotgood.common.items.advancedio.ItemAdvancedIOBus`.
+The local recipe is `com.xyp.gtnotgood.common.recipe.gtnotgood.AdvancedIORecipes`.
+These are Minecraft 1.7.10 rewrites/adaptations, not unchanged modern classes.
 Retained behavior: exact item/fluid targets, optional excess regulation (default on), import of unlisted
 products, 18 base configuration slots plus 9 per capacity card (maximum 63), eight upgrade slots,
 and 8x acceleration bonuses. Remainders smaller than one fluid operation are transferred exactly.

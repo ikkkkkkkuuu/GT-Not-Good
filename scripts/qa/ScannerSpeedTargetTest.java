@@ -1,4 +1,4 @@
-package com.xyp.gtnotgood.mixins.late.CutCorners;
+package com.xyp.gtnotgood.mixins.late.cutcorners;
 
 import static org.junit.Assert.*;
 

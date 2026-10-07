@@ -36,12 +36,12 @@ gradle.projectsEvaluated {
                 'scripts/qa/ItemSortNameCacheClientChecks.java',
                 'scripts/qa/InterfaceViewportClientChecks.java',
                 'scripts/qa/InterfaceNameClientChecks.java',
-                'src/main/java/com/xyp/gtnotgood/mixins/late/AppliedEnergistics/InterfaceEntryViewportAccessor.java',
-                'src/main/java/com/xyp/gtnotgood/mixins/late/AppliedEnergistics/InterfaceTerminalViewportMixin.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/InterfaceEntryViewportAccessor.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/InterfaceTerminalViewportMixin.java',
                 'src/main/java/com/xyp/gtnotgood/ae2thing/quickterminal/client/ItemSortNameCache.java',
-                'src/main/java/com/xyp/gtnotgood/mixins/late/AppliedEnergistics/ItemRepoSortNameCacheMixin.java',
-                'src/main/java/com/xyp/gtnotgood/mixins/late/AppliedEnergistics/ItemSortersNameCacheMixin.java',
-                'src/main/java/com/xyp/gtnotgood/mixins/late/AppliedEnergistics/InvTweaksOrderCacheMixin.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/ItemRepoSortNameCacheMixin.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/ItemSortersNameCacheMixin.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/InvTweaksOrderCacheMixin.java',
                 'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java'
         }
     }

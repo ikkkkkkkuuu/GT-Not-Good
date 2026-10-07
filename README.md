@@ -43,17 +43,18 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.3.3          | [![1.3.3](https://img.shields.io/badge/release-1.3.3-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.3) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.3.4          | [![1.3.4](https://img.shields.io/badge/release-1.3.4-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.4) |         ✔️         |
 
-最新版本：[1.3.3 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.3)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.3/gtnotgood-1.3.3.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.3/gtnotgood-1.3.3-sources.jar)。
+最新版本：[1.3.4 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.4)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.4/gtnotgood-1.3.4.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.4/gtnotgood-1.3.4-sources.jar)。
 
 ### 大型矿石处理机
 
-保留原有粉末和宝石产量，按原生筛选配方补齐缺失产物，覆盖原矿、粗磨矿、洗净矿和下界/末地富矿。
+保留原有粉末和宝石产量，按原生筛选、粉碎、热离心和离心配方补齐缺失副产物，覆盖原矿、粗磨矿、洗净矿和下界/末地富矿。
 例如方钍石保留 8 个原粉，并追加独立的钍粉（6%、3%）和钍-232粉（1%）；富矿产量翻倍，概率不变。
 按实际材料匹配配方，避免石墨等矿石通过矿辞分组继承其他材料的产物。
-已核对当前开发环境的 67 种材料、580 条输入配方，详见 [矿石筛选产物与验证说明](docs/testing/ore-sifting.md)。
+按输入的加工阶段导入，保留原生数量、概率与独立槽位；不同可选路线不重复叠加，不追加化学处理或需要额外物品、流体的配方。
+已核对当前开发环境的 335 种材料、3722 条输入配方，原有 67 种材料、580 条筛选配方继续通过，详见 [矿石副产物与验证说明](docs/testing/ore-sifting.md)。
 
 ### 电路样板总成（ME）
 
@@ -146,6 +147,14 @@ NEI → GTNotGood 新增“优先使用本模组接口自动命名”，默认�
 
 完全抄袭Xnet
 
+
+### 🔌 库存 IO 接口 (ME)
+
+完整方块或线缆贴面紧贴 GT 单方块机器，配方直接使用 AE 网络里的物品与流体，开工时扣除实际消耗，不提前填入机器输入槽。
+物品、流体各 900 个标记，合并分页 GUI，支持网络保留量、固定可用量、自动标记和产物回收。
+回收遵守机器面与覆盖板权限，只取明确输出槽、输出罐；已标记产物也能回收，输入保持不动。
+使用 ME 接口模型与高级 IO 总线的紫色配色，ME 接口与高级 IO 总线无序合成，两种形态可无序互转并保留配置。
+当前支持使用 GT 原生通用配方流程的单方块机器；特殊独立配方逻辑和其他模组容器尚未接入。详见 [库存 IO 接口说明](docs/stock-io-interface.md)。
 
 ### 🔌 ME容器/ ME Container
 
