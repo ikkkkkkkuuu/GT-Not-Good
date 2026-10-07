@@ -9,6 +9,7 @@ $sourcePaths = @{}
 $javaCount = 0
 $importCount = 0
 $mixinCount = 0
+$reservedMixinTypeCount = 0
 $qaPathCount = 0
 
 function Test-ProjectType([string]$TypeName) {
@@ -61,11 +62,62 @@ foreach ($sourceRoot in @($mainRoot, $testRoot)) {
 }
 
 $resources = Join-Path $projectPath 'src/main/resources'
-foreach ($file in Get-ChildItem -LiteralPath $resources -File -Filter 'mixins.gtnotgood*.json') {
+$mixinPackages = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+$mixinPlugins = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+foreach ($file in Get-ChildItem -LiteralPath $resources -File -Filter 'mixins*.json') {
     $config = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($config.package) { [void]$mixinPackages.Add($config.package) }
+    if ($config.plugin) { [void]$mixinPlugins.Add($config.plugin) }
     foreach ($entry in @($config.mixins) + @($config.client) + @($config.server)) {
         $mixinCount++
         if (-not (Test-ProjectType "$($config.package).$entry")) { $issues.Add("Missing configured mixin: $entry") }
+    }
+}
+# Mixin excludes every class below its configured package from normal class loading, including unlisted helpers.
+foreach ($file in $mainFiles) {
+    $content = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8
+    $package = [regex]::Match($content, '(?m)^package ([\w.]+);').Groups[1].Value
+    $reserved = $false
+    foreach ($prefix in $mixinPackages) {
+        if ($package -ceq $prefix -or $package.StartsWith($prefix + '.', [System.StringComparison]::Ordinal)) {
+            $reserved = $true
+            break
+        }
+    }
+    if (-not $reserved) { continue }
+    $code = [regex]::Replace($content, '(?s)/\*.*?\*/|//[^\r\n]*|"(?:\\.|[^"\\])*"|''(?:\\.|[^''\\])*''', {
+        param($match)
+        $match.Value -replace '[^\r\n]', ' '
+    })
+    $depth = 0
+    $parentheses = 0
+    $isMixin = $false
+    $tokens = [regex]::Matches($code, '(?<mixin>@\s*(?:[\w$]+\s*\.\s*)*Mixin\b)|(?<kind>@interface|\b(?:class|interface|enum|record))\s+(?<name>[A-Za-z_$][\w$]*)|(?<delimiter>[{}();])')
+    foreach ($token in $tokens) {
+        if ($token.Groups['mixin'].Success) {
+            if ($depth -eq 0 -and $parentheses -eq 0) { $isMixin = $true }
+        } elseif ($token.Groups['name'].Success) {
+            if ($depth -ne 0 -or $parentheses -ne 0) { continue }
+            $reservedMixinTypeCount++
+            $type = $package + '.' + $token.Groups['name'].Value
+            if (-not $isMixin -and -not $mixinPlugins.Contains($type)) {
+                $issues.Add("Ordinary type in reserved mixin package: $type (move runtime helpers outside $package)")
+            }
+            $isMixin = $false
+        } else {
+            switch ($token.Value) {
+                '(' { $parentheses++ }
+                ')' { $parentheses-- }
+                '{' { if ($parentheses -eq 0) { $depth++ } }
+                '}' {
+                    if ($parentheses -eq 0) {
+                        $depth--
+                        if ($depth -eq 0) { $isMixin = $false }
+                    }
+                }
+                ';' { if ($depth -eq 0 -and $parentheses -eq 0) { $isMixin = $false } }
+            }
+        }
     }
 }
 $loader = Get-Content -LiteralPath (Join-Path $mainRoot 'com/xyp/gtnotgood/loader/LateMixinsLoader.java') -Raw -Encoding UTF8
@@ -88,4 +140,4 @@ foreach ($file in Get-ChildItem -LiteralPath (Join-Path $projectPath 'scripts') 
 }
 
 if ($issues.Count -gt 0) { throw ($issues -join [Environment]::NewLine) }
-Write-Output "PASS: $javaCount Java locations, $importCount project imports, $mixinCount mixins, $qaPathCount QA source paths."
+Write-Output "PASS: $javaCount Java locations, $importCount project imports, $mixinCount mixins, $reservedMixinTypeCount reserved mixin types, $qaPathCount QA source paths."

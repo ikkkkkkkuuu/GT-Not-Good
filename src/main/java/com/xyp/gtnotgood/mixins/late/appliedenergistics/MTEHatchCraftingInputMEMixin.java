@@ -23,8 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.xyp.gtnotgood.common.gui.slots.WildcardPatternSlotGT;
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternGenerator;
-import com.xyp.gtnotgood.mixins.helpers.WildcardPatternSlotGT;
 
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.networking.crafting.ICraftingProvider;

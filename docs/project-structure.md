@@ -40,7 +40,7 @@ com/xyp/gtnotgood/
 │  ├─ compat/              跨模组兼容逻辑
 │  └─ …                    其他已有通用职责
 ├─ loader/                 初始化和注册入口
-├─ mixins/                 early、late 与辅助类型
+├─ mixins/                 early、late Mixin 类型与配置插件
 ├─ config/                 配置和同步服务
 └─ utils/                  通用工具、枚举和机器工具
 ```
@@ -53,6 +53,7 @@ com/xyp/gtnotgood/
 - 网络消息放在 `common.network` 或其功能子包。`common.blocks.network` 专指可编程网络的方块系统。
 - 配方定义放在 `common.recipe`；通用注册入口放在 `loader`。
 - TileEntity 与 GUI、适配器存在紧密的包内访问关系时，保留同一功能子包；客户端专用渲染、HUD 等继续放在 `client`。
+- Mixin 配置 JSON 的 `package` 及其子包是保留命名空间，只放带 `@Mixin` 的顶层类型和 JSON 声明的配置插件。普通运行时辅助类按职责和功能放在保留前缀外的 `common.*` 等包中，例如槽位组件放在 `common.gui.slots`；即使没有列入 Mixin 配置，也不能放进保留包，否则正常类加载会被 Mixin 拒绝。
 - 测试文件在 `src/test/java` 镜像被测功能的包结构；`scripts/qa` 中独立测试夹具保持脚本入口位置。
 
 `ae2thing`、`commandtree`、`com.xyp.ldlib` 和 `src/vendor` 保留各自移植模块的结构。`reference` 中的上游检出仅用于参考，不参与编译或资源打包。
@@ -69,6 +70,6 @@ com/xyp/gtnotgood/
 
 ## 检查
 
-运行 `scripts/qa/CheckProjectStructure.ps1` 检查目录与包声明、项目内 import、物品与方块归属、Mixin 配置和 QA 源路径。结构调整后运行 Gradle 的格式化、编译和测试检查。
+运行 `scripts/qa/CheckProjectStructure.ps1` 检查目录与包声明、项目内 import、物品与方块归属、Mixin 配置、保留包中的顶层类型和 QA 源路径。结构调整后运行 Gradle 的格式化、编译和测试检查。
 
 2026-10-07 结构调整后，封包供应器的公开扩展接口位于 `com.xyp.gtnotgood.common.blocks.packaged.PackagedCoreRegistry.Adapter`，其参数类型 `TilePackagedProvider`、`PackagedTarget` 位于同一包。使用旧 Java 包名的外部附属模组需要更新引用并重新编译。

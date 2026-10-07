@@ -1,4 +1,4 @@
-package com.xyp.gtnotgood.mixins.helpers;
+package com.xyp.gtnotgood.common.gui.slots;
 
 import java.util.List;
 
