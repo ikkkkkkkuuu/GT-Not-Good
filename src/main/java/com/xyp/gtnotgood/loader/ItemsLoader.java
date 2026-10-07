@@ -13,6 +13,7 @@ import com.xyp.gtnotgood.common.items.GTNGItem;
 import com.xyp.gtnotgood.common.items.advancedio.ItemAdvancedIOBus;
 import com.xyp.gtnotgood.common.items.compass.StructureCompassItem;
 import com.xyp.gtnotgood.common.items.fuel.IronFuelRod;
+import com.xyp.gtnotgood.common.items.largeinterface.ItemLargeInterface;
 import com.xyp.gtnotgood.common.items.mebridge.ItemMEWirelessTransceiver;
 import com.xyp.gtnotgood.common.items.mechanicaluser.ItemUserSpeedUpgrade;
 import com.xyp.gtnotgood.common.items.packaged.ItemPackagedCore;
@@ -48,6 +49,7 @@ public final class ItemsLoader {
         registerPatternSorter();
         registerAdvancedIOBus();
         registerItem(new ItemStockIOInterface(), "stock_io_interface_part", GTNGItemList.StockIOInterfacePart);
+        registerItem(new ItemLargeInterface(), "large_interface_part", GTNGItemList.LargeInterfacePart);
         registerPackagedItems();
         registerMechanicalUserUpgrades();
         registerWirelessTransceiver();

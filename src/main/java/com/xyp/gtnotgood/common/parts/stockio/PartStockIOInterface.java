@@ -140,12 +140,7 @@ public final class PartStockIOInterface extends PartBasicState implements IGridT
         ItemStack stack = super.getItemStack(type);
         if (type != PartItemStack.Break && type != PartItemStack.Wrench && type != PartItemStack.Pick) return stack;
         ItemStack portable = stack.copy();
-        NBTTagCompound tag = portable.hasTagCompound() ? portable.getTagCompound() : new NBTTagCompound();
-        if (type == PartItemStack.Pick) {
-            logic.writeSettings(tag);
-            tag.removeTag("stockIOEscrow");
-        } else logic.writeContents(tag);
-        portable.setTagCompound(tag);
+        portable.setTagCompound(type == PartItemStack.Pick ? null : logic.getRemovalContents());
         return portable;
     }
 

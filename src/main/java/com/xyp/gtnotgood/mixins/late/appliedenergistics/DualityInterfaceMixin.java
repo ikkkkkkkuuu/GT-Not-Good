@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceHost;
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternCache;
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternGenerator;
 
@@ -59,7 +60,8 @@ public abstract class DualityInterfaceMixin {
             this.craftingList = new LinkedList<>();
         }
 
-        int priority = slot - 36 * this.getPriority();
+        int priority = slot
+            - (this.iHost instanceof LargeInterfaceHost ? LargeInterfaceHost.PATTERN_COUNT : 36) * this.getPriority();
         for (ICraftingPatternDetails details : detailsList) {
             details.setPriority(priority);
             this.craftingList.add(details);

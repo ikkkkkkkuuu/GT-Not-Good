@@ -14,6 +14,8 @@ import com.xyp.gtnotgood.common.blocks.flux.ItemBlockFluxConnector;
 import com.xyp.gtnotgood.common.blocks.flux.TileFluxLogistics;
 import com.xyp.gtnotgood.common.blocks.flux.TileFluxPlug;
 import com.xyp.gtnotgood.common.blocks.flux.TileFluxPoint;
+import com.xyp.gtnotgood.common.blocks.largeinterface.BlockLargeInterface;
+import com.xyp.gtnotgood.common.blocks.largeinterface.TileLargeInterface;
 import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeReceiver;
 import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeSender;
 import com.xyp.gtnotgood.common.blocks.mebridge.ItemBlockMEBridge;
@@ -78,6 +80,7 @@ public final class BlockLoader {
     public static final BlockMEBridgeSender blockMEBridgeSender = new BlockMEBridgeSender();
     public static final BlockMEContainer meContainer = new BlockMEContainer();
     public static final BlockStockIOInterface stockIOInterface = new BlockStockIOInterface();
+    public static final BlockLargeInterface largeInterface = new BlockLargeInterface();
     public static final BlockMEBridgeReceiver blockMEBridgeReceiver = new BlockMEBridgeReceiver();
 
     private BlockLoader() {}
@@ -94,6 +97,12 @@ public final class BlockLoader {
         registerFluxBlocks();
         registerMEContainer();
         registerStockIOInterface();
+        largeInterface.register();
+        GTNGItemList.LargeInterface.set(new ItemStack(largeInterface));
+        AEApi.instance()
+            .registries()
+            .interfaceTerminal()
+            .register(TileLargeInterface.class);
         registerNetworkBlocks();
         registerMEBridgeBlocks();
     }

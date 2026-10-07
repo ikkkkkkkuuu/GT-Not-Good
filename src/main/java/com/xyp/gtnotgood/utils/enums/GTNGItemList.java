@@ -219,6 +219,8 @@ public enum GTNGItemList implements IItemContainer {
     MEContainer,
     StockIOInterface,
     StockIOInterfacePart,
+    LargeInterface,
+    LargeInterfacePart,
     AdvancedIOBus,
     ThresholdExportBus,
     ThresholdLevelEmitter,

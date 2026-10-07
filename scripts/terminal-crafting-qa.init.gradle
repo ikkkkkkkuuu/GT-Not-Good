@@ -1,0 +1,78 @@
+// Opt-in native AE2/GT crafting checks; QA classes never enter an ordinary release jar.
+// Client: gradlew -I scripts/terminal-crafting-qa.init.gradle runClient --no-configuration-cache
+// Dedicated: gradlew -I scripts/terminal-crafting-qa.init.gradle runServer --no-configuration-cache
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def qaClasses = root.layout.buildDirectory.dir('terminal-crafting-qa/test-classes')
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(qaClasses)
+        setSource(root.files('scripts/qa/TerminalCraftingChecks.java', 'scripts/qa/TerminalCraftingClientChecks.java'))
+    }
+    root.extensions.findByName('spotless')?.java {
+        target 'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/SlotCraftingTermBatchMixin.java',
+            'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
+            'scripts/qa/TerminalCraftingChecks.java', 'scripts/qa/TerminalCraftingClientChecks.java'
+    }
+    root.tasks.register('jarTerminalCraftingQA', Jar) {
+        dependsOn root.tasks.named('testClasses')
+        from qaClasses
+        archiveFileName = 'terminal-crafting-qa.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('terminal-crafting-qa')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn root.tasks.named('testClasses')
+        classpath += root.files(qaClasses)
+        maxHeapSize = '3G'
+        workingDir root.file('run/terminal-crafting-check')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.terminalCrafting.qa', 'true'
+        systemProperty 'gtng.terminalCrafting.report', root.file('build/terminal-crafting-qa/report.txt').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in native terminal crafting checks')
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/terminal-crafting-qa').mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/terminal-crafting-qa/result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(root.file('build/terminal-crafting-qa/window-helper.log'))
+                    .start()
+            }
+        }
+        doLast {
+            def result = root.file('build/terminal-crafting-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Terminal crafting QA failed; inspect report.txt and TERMINAL_CRAFTING_QA.')
+        }
+    }
+    root.tasks.named('runServer').configure {
+        dependsOn root.tasks.named('testClasses')
+        classpath += root.files(qaClasses)
+        maxHeapSize = '3G'
+        workingDir root.file('run/terminal-crafting-server-check')
+        systemProperty 'gtng.terminalCrafting.qa', 'true'
+        systemProperty 'gtng.terminalCrafting.report', root.file('build/terminal-crafting-qa/server-report.txt').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('Opt-in native terminal crafting server checks')
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/terminal-crafting-qa').mkdirs()
+            new File(workingDir, 'eula.txt').setText('eula=true\n', 'UTF-8')
+            new File(workingDir, 'server.properties').setText(
+                'server-ip=127.0.0.1\nserver-port=25575\nlevel-name=terminal-crafting-qa\nlevel-type=FLAT\n' +
+                'generator-settings=\nonline-mode=false\nallow-flight=true\nmax-tick-time=-1\nenable-query=false\n' +
+                'enable-rcon=false\nspawn-protection=0\nview-distance=3\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/terminal-crafting-qa/result.txt').toPath())
+        }
+        doLast {
+            def result = root.file('build/terminal-crafting-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Terminal crafting server QA failed; inspect server-report.txt and TERMINAL_CRAFTING_QA.')
+        }
+    }
+}

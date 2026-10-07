@@ -3,6 +3,8 @@ package com.xyp.gtnotgood.common.machines.basic;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -21,6 +23,7 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 
 import com.cleanroommc.modularui.screen.GuiContainerWrapper;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -33,6 +36,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import gregtech.api.GregTechAPI;
+import gregtech.api.enums.ItemList;
+import gregtech.api.enums.Mods;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
 
 /** Disposable integrated-world checks of real drains, throughput, persistence, protection and the native pump GUI. */
@@ -100,31 +105,13 @@ public final class UniversalPumpClientChecks {
             if (!checked && ticks > 60) {
                 checked = true;
                 verifyCursor();
+                verifySearch();
                 BaseMetaTileEntity tile = place(player.worldObj, player);
-                UniversalFluidPump pump = (UniversalFluidPump) tile.getMetaTileEntity();
                 World world = player.worldObj;
-                for (int x = 0; x <= 65; x++) world.setBlock(x, 99, 0, Blocks.lava, 0, 2);
-                prepare(pump, tile);
-                long initialEnergy = tile.getStoredEU();
-                pump.onPostTick(tile, 1);
-                require(pump.getDrainableStack().amount == 64000, "64 source blocks drained per tick without pipes");
-                require(tile.getStoredEU() == initialEnergy - 512, "8 EU per block");
-                require(
-                    world.getBlock(63, 99, 0) == Blocks.air && world.getBlock(64, 99, 0) == Blocks.lava,
-                    "batch limit retains next source");
-                NBTTagCompound saved = new NBTTagCompound();
-                tile.writeToNBT(saved);
-                world.removeTileEntity(0, 100, 0);
-                tile = new BaseMetaTileEntity();
-                tile.setWorldObj(world);
-                tile.readFromNBT(saved);
-                world.setTileEntity(0, 100, 0, tile);
-                pump = (UniversalFluidPump) tile.getMetaTileEntity();
-                pump.onPostTick(tile, 2);
-                require(pump.getDrainableStack().amount == 65000, "tank and cursor survive native NBT reload");
-                require(
-                    world.getBlock(64, 99, 0) == Blocks.air && world.getBlock(65, 99, 0) == Blocks.lava,
-                    "radius includes 64 but excludes 65");
+                tile = verifyBatchAndReload(tile);
+                tile = verifyOilSearchAndStalls(tile);
+                UniversalFluidPump pump = (UniversalFluidPump) tile.getMetaTileEntity();
+                verifyRadius(pump, tile);
                 world.setBlock(0, 99, 0, Blocks.water, 0, 2);
                 prepare(pump, tile);
                 tile.setStoredEU(0);
@@ -178,11 +165,14 @@ public final class UniversalPumpClientChecks {
                     "actual Nether dimension lava");
                 netherTile.disableWorking();
                 tile.disableWorking();
+                pump.mFluidTransfer = false;
+                // NBT restores a fresh base tile; finish its native first-tick setup before checking output.
+                for (int warmup = 0; warmup < 10; warmup++) tile.updateEntity();
                 world.setBlock(0, 100, -1, GregTechAPI.sBlockMachines, 0, 3);
                 BaseMetaTileEntity sink = (BaseMetaTileEntity) world.getTileEntity(0, 100, -1);
                 sink.setInitialValuesAsNBT(
                     null,
-                    (short) gregtech.api.enums.ItemList.Hatch_Input_HV.get(1)
+                    (short) ItemList.Hatch_Input_UV.get(1)
                         .getItemDamage());
                 // Native GT fluid handlers reject transfers during the first five tile ticks.
                 for (int warmup = 0; warmup < 10; warmup++) sink.updateEntity();
@@ -190,9 +180,38 @@ public final class UniversalPumpClientChecks {
                 pump.mMainFacing = ForgeDirection.SOUTH;
                 tile.setFrontFacing(ForgeDirection.NORTH);
                 pump.mFluidTransfer = true;
-                pump.setDrainableStack(new FluidStack(FluidRegistry.LAVA, 65000));
+                pump.setDrainableStack(new FluidStack(FluidRegistry.LAVA, 513000));
+                System.out.println(
+                    "UNIVERSAL_PUMP_QA: output before front=" + tile.getFrontFacing()
+                        + ", main="
+                        + pump.mMainFacing
+                        + ", target="
+                        + (tile.getITankContainerAtSide(tile.getFrontFacing()) == sink)
+                        + ", sourceAge="
+                        + tile.getTimer()
+                        + ", sinkAge="
+                        + sink.getTimer()
+                        + ", sinkCapacity="
+                        + sink.getTankInfo(ForgeDirection.SOUTH)[0].capacity
+                        + ", sinkAmount="
+                        + sink.getMetaTileEntity()
+                            .getFluidAmount()
+                        + ", sinkAccepts="
+                        + sink.fill(ForgeDirection.SOUTH, new FluidStack(FluidRegistry.LAVA, 512000), false)
+                        + ", pumpAmount="
+                        + pump.getDrainableStack().amount);
                 pump.onPostTick(tile, 20);
-                require(pump.getDrainableStack().amount == 1000, "auto-output transfers 64 buckets in one tick");
+                int pumpRemaining = pump.getDrainableStack() == null ? 0 : pump.getDrainableStack().amount;
+                int sinkAmount = sink.getMetaTileEntity()
+                    .getFluidAmount();
+                System.out.println(
+                    "UNIVERSAL_PUMP_QA: output after pumpAmount=" + pumpRemaining + ", sinkAmount=" + sinkAmount);
+                require(
+                    sinkAmount == 512000 && pumpRemaining == 1000,
+                    "auto-output transfers exactly 512 buckets in one tick (pump=" + pumpRemaining
+                        + ", sink="
+                        + sinkAmount
+                        + ")");
                 player.playerNetServerHandler.setPlayerLocation(2, 100, -3, 0, 15);
                 player.capabilities.isFlying = true;
                 player.sendPlayerAbilities();
@@ -216,10 +235,139 @@ public final class UniversalPumpClientChecks {
         }
     }
 
+    private static BaseMetaTileEntity verifyBatchAndReload(BaseMetaTileEntity tile) {
+        World world = tile.getWorld();
+        UniversalFluidPump pump = (UniversalFluidPump) tile.getMetaTileEntity();
+        for (int i = 0; i < 513; i++) world.setBlock(i % 64, 99, i / 64, Blocks.lava, 0, 2);
+        prepare(pump, tile);
+        long initialEnergy = tile.getStoredEU();
+        long startedAt = System.nanoTime();
+        pump.onPostTick(tile, 1);
+        System.out
+            .println("UNIVERSAL_PUMP_QA: 512-source tick took " + (System.nanoTime() - startedAt) / 1000000.0 + " ms");
+        require(pump.getDrainableStack().amount == 512000, "512 sources across multiple rows drained in one tick");
+        require(tile.getStoredEU() == initialEnergy - 4096, "full batch consumes exactly 8 EU per block");
+        int remaining = 0;
+        for (int i = 0; i < 513; i++) {
+            if (world.getBlock(i % 64, 99, i / 64) == Blocks.lava) remaining++;
+        }
+        require(remaining == 1, "world mutations stop at the 512-block batch limit");
+        tile = reload(tile);
+        pump = (UniversalFluidPump) tile.getMetaTileEntity();
+        pump.onPostTick(tile, 2);
+        require(pump.getDrainableStack().amount == 513000, "tank and pending search survive native NBT reload");
+        boolean allDrained = true;
+        for (int i = 0; i < 513; i++) allDrained &= world.getBlock(i % 64, 99, i / 64) == Blocks.air;
+        require(allDrained, "batch reload consumes the remaining source without skipping any rows");
+        require(
+            pump.maxAmperesIn() == 128 && pump.maxEUStore() == 32768,
+            "LV input supports full speed with original buffer");
+        return tile;
+    }
+
+    private static BaseMetaTileEntity verifyOilSearchAndStalls(BaseMetaTileEntity tile) {
+        World world = tile.getWorld();
+        Block oilBlock = GameRegistry.findBlock(Mods.BuildCraftEnergy.ID, "blockOil");
+        require(oilBlock instanceof IFluidBlock, "actual BuildCraft oil block available");
+        IFluidBlock oilHandler = (IFluidBlock) oilBlock;
+        Fluid oil = oilHandler.getFluid();
+        UniversalFluidPump pump = (UniversalFluidPump) tile.getMetaTileEntity();
+        for (int y = 60; y <= 99; y++) world.setBlock(0, y, 0, oilBlock, 0, 2);
+        for (int y = 20; y <= 60; y++) world.setBlock(2, y, 0, oilBlock, 0, 2);
+        world.setBlock(1, 60, 0, oilBlock, 1, 2);
+        world.setBlock(20, 99, 20, oilBlock, 0, 2);
+        require(!oilHandler.canDrain(world, 1, 60, 0), "flowing oil connector is not a source");
+        prepare(pump, tile);
+        long initialEnergy = tile.getStoredEU();
+        long startedAt = System.nanoTime();
+        pump.onPostTick(tile, 1);
+        System.out
+            .println("UNIVERSAL_PUMP_QA: oil-column tick took " + (System.nanoTime() - startedAt) / 1000000.0 + " ms");
+        require(
+            pump.getDrainableStack()
+                .getFluid() == oil && pump.getDrainableStack().amount == 82000,
+            "narrow oil columns and disconnected pool drained in one tick");
+        boolean columnsDrained = true;
+        for (int y = 60; y <= 99; y++) columnsDrained &= world.getBlock(0, y, 0) == Blocks.air;
+        for (int y = 20; y <= 60; y++) columnsDrained &= world.getBlock(2, y, 0) == Blocks.air;
+        require(columnsDrained, "connected oil search crosses many Y levels instead of waiting for layer scans");
+        require(world.getBlock(20, 99, 20) == Blocks.air, "fallback scan finds a disconnected oil pool");
+        require(
+            world.getBlock(1, 60, 0) == oilBlock && tile.getStoredEU() == initialEnergy - 82 * 8,
+            "non-drainable oil connector guides search without fluid duplication or energy charge");
+        world.setBlock(1, 60, 0, Blocks.air, 0, 2);
+
+        world.setBlock(0, 99, 0, oilBlock, 0, 2);
+        world.setBlock(1, 99, 0, oilBlock, 1, 2);
+        for (int y = 80; y <= 99; y++) world.setBlock(2, y, 0, oilBlock, 0, 2);
+        prepare(pump, tile);
+        tile.setStoredEU(24);
+        pump.onPostTick(tile, 2);
+        require(
+            pump.getDrainableStack().amount == 3000 && tile.getStoredEU() == 0 && world.getBlock(2, 97, 0) == oilBlock,
+            "partial energy batch stalls at the next connected oil source");
+        tile = reload(tile);
+        pump = (UniversalFluidPump) tile.getMetaTileEntity();
+        tile.setStoredEU(tile.getEUCapacity());
+        pump.onPostTick(tile, 3);
+        require(pump.getDrainableStack().amount == 21000, "power-stalled frontier resumes after native NBT reload");
+        columnsDrained = true;
+        for (int y = 80; y <= 99; y++) columnsDrained &= world.getBlock(2, y, 0) == Blocks.air;
+        require(columnsDrained, "resumed connected search removes all remaining oil sources");
+        world.setBlock(1, 99, 0, Blocks.air, 0, 2);
+
+        for (int y = 97; y <= 99; y++) world.setBlock(0, y, 0, oilBlock, 0, 2);
+        prepare(pump, tile);
+        pump.setDrainableStack(new FluidStack(oil, pump.getCapacity() - 1000));
+        pump.onPostTick(tile, 4);
+        require(
+            pump.getDrainableStack().amount == pump.getCapacity() && world.getBlock(0, 99, 0) == Blocks.air
+                && world.getBlock(0, 98, 0) == oilBlock,
+            "full tank retains the next connected oil source");
+        tile = reload(tile);
+        pump = (UniversalFluidPump) tile.getMetaTileEntity();
+        pump.setDrainableStack(new FluidStack(oil, pump.getCapacity() - 2000));
+        pump.onPostTick(tile, 5);
+        require(
+            world.getBlock(0, 98, 0) == Blocks.air && world.getBlock(0, 97, 0) == Blocks.air
+                && pump.getDrainableStack().amount == pump.getCapacity(),
+            "tank-stalled frontier resumes after NBT reload and output space returns");
+        return tile;
+    }
+
+    private static void verifyRadius(UniversalFluidPump pump, BaseMetaTileEntity tile) {
+        World world = tile.getWorld();
+        world.setBlock(64, 99, 0, Blocks.lava, 0, 2);
+        world.setBlock(65, 99, 0, Blocks.lava, 0, 2);
+        prepare(pump, tile);
+        pump.onPostTick(tile, 1);
+        require(
+            world.getBlock(64, 99, 0) == Blocks.air && world.getBlock(65, 99, 0) == Blocks.lava
+                && pump.getDrainableStack().amount == 1000,
+            "search and fallback include radius 64 but exclude radius 65");
+    }
+
+    private static BaseMetaTileEntity reload(BaseMetaTileEntity tile) {
+        NBTTagCompound saved = new NBTTagCompound();
+        tile.writeToNBT(saved);
+        World world = tile.getWorld();
+        int x = tile.xCoord;
+        int y = tile.yCoord;
+        int z = tile.zCoord;
+        world.removeTileEntity(x, y, z);
+        BaseMetaTileEntity restored = new BaseMetaTileEntity();
+        restored.setWorldObj(world);
+        restored.readFromNBT(saved);
+        world.setTileEntity(x, y, z, restored);
+        return restored;
+    }
+
     private static void prepare(UniversalFluidPump pump, BaseMetaTileEntity tile) {
         NBTTagCompound data = new NBTTagCompound();
         pump.saveNBTData(data);
         data.setInteger("pumpScanOffset", CENTER);
+        data.setIntArray("pumpFluidSearch", new int[0]);
+        data.setBoolean("pumpSearchStarted", false);
         pump.loadNBTData(data);
         pump.setDrainableStack(null);
         pump.mFluidTransfer = false;
@@ -243,7 +391,7 @@ public final class UniversalPumpClientChecks {
 
     private static void verifyCursor() {
         PumpScanCursor cursor = new PumpScanCursor(1);
-        java.util.Set<String> positions = new java.util.HashSet<>();
+        Set<String> positions = new HashSet<>();
         for (int i = 0; i < 27; i++) {
             require(
                 positions.add(cursor.xOffset() + ":" + cursor.y(2) + ":" + cursor.zOffset()),
@@ -253,6 +401,30 @@ public final class UniversalPumpClientChecks {
         require(cursor.offset() == 0, "cursor wraps for unloaded-chunk retry");
         cursor.restore(Integer.MAX_VALUE, 2);
         require(cursor.offset() == 0, "invalid persisted offset safely resets");
+    }
+
+    private static void verifySearch() {
+        PumpFluidSearch search = new PumpFluidSearch(1, 32);
+        search.start(2);
+        require(search.xOffset() == 0 && search.zOffset() == 0 && search.y() == 2, "central column is checked first");
+        search.restore(new int[0], true, 2);
+        search.follow(0, 1, 0, 2);
+        require(search.y() == 0, "connected search prioritizes the below neighbor");
+        search.restore(new int[] { -1, 13, 13, Integer.MAX_VALUE, 26 }, true, 2);
+        require(search.positions().length == 2, "restored frontier rejects invalid and duplicate coordinates");
+        search.restore(new int[0], true, 2);
+        search.follow(1, 0, 1, 2);
+        boolean bounded = true;
+        while (search.hasPending()) {
+            bounded &= Math.abs(search.xOffset()) <= 1 && Math.abs(search.zOffset()) <= 1
+                && search.y() >= 0
+                && search.y() <= 2;
+            search.removeFirst();
+        }
+        require(bounded, "connected search cannot escape horizontal or vertical bounds");
+        PumpFluidSearch limited = new PumpFluidSearch(1, 2);
+        limited.start(20);
+        require(limited.positions().length == 2, "pending search stays within its memory limit");
     }
 
     @SubscribeEvent

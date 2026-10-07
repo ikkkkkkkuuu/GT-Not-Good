@@ -1,17 +1,19 @@
 // Opt-in disposable world: never packaged in release artifacts.
 gradle.projectsEvaluated {
     def root = gradle.rootProject
+    root.dependencies.add('runtimeOnlyNonPublishable', root.extensions.getByName('elytraModpackVersion').gtnhdev('BuildCraft') as String)
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (efr.exists()) root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def qaClasses = root.layout.buildDirectory.dir('universal-pump-qa-runtime/test-classes')
     root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(qaClasses)
         setSource(root.fileTree('scripts/qa') { include 'UniversalPumpClientChecks.java' })
     }
     root.spotless.java {
         target root.file('src/main/java/com/xyp/gtnotgood/common/machines/basic/UniversalFluidPump.java'),
             root.file('src/main/java/com/xyp/gtnotgood/common/machines/basic/PumpScanCursor.java'),
-            root.file('scripts/qa/UniversalPumpClientChecks.java'),
-            root.file('src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java'),
-            root.file('src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java'),
-            root.file('src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java'),
-            root.file('src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java')
+            root.file('src/main/java/com/xyp/gtnotgood/common/machines/basic/PumpFluidSearch.java'),
+            root.file('scripts/qa/UniversalPumpClientChecks.java')
     }
     def mainJar = root.tasks.register('jarUniversalPumpQA', Jar) {
         dependsOn root.tasks.named('classes')
@@ -21,7 +23,7 @@ gradle.projectsEvaluated {
     }
     def snapshot = root.tasks.register('snapshotUniversalPumpQA', Sync) {
         dependsOn root.tasks.named('testClasses')
-        from root.sourceSets.test.output
+        from qaClasses
         include '**/UniversalPumpClientChecks*.class'
         into root.layout.buildDirectory.dir('universal-pump-qa-runtime/test')
     }
@@ -30,12 +32,26 @@ gradle.projectsEvaluated {
         classpath -= root.sourceSets.main.output
         classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
         classpath += root.files(mainJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('universal-pump-qa-runtime/test'))
+        workingDir root.file('run/universal-pump-qa')
+        systemProperty 'gtng.factory.qa', 'true'
         systemProperty 'gtng.pump.qa', 'true'
         args '--width', '1100', '--height', '800'
         notCompatibleWithConfigurationCache('Opt-in integrated-server checks')
-        doFirst { java.nio.file.Files.deleteIfExists(root.file('run/client/universal-pump-qa-result.txt').toPath()) }
+        doFirst {
+            workingDir.mkdirs()
+            java.nio.file.Files.deleteIfExists(new File(workingDir, 'universal-pump-qa-result.txt').toPath())
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(root.file('build/universal-pump-qa-runtime/window-helper.log'))
+                    .start()
+            }
+        }
         doLast {
-            def result = root.file('run/client/universal-pump-qa-result.txt')
+            def result = new File(workingDir, 'universal-pump-qa-result.txt')
             if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Universal pump QA failed; inspect UNIVERSAL_PUMP_QA in client log.')
         }
     }

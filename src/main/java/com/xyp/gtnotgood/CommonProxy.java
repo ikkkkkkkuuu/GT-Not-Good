@@ -5,6 +5,7 @@ import net.minecraftforge.common.MinecraftForge;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.gtnewhorizon.gtnhlib.chat.ChatComponentCustomRegistry;
 import com.xyp.gtnotgood.ae2thing.AE2Thing;
+import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceGuiFactory;
 import com.xyp.gtnotgood.common.blocks.mebridge.MEBridgeEventHandler;
 import com.xyp.gtnotgood.common.blocks.mebridge.MEWirelessLinkEventHandler;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.LargeVoidMinerConfigGuiFactory;
@@ -16,9 +17,11 @@ import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
 import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
 import com.xyp.gtnotgood.common.network.NetworkHandler;
 import com.xyp.gtnotgood.common.network.WirelessMonitorSnapshot;
+import com.xyp.gtnotgood.common.parts.largeinterface.PartLargeInterface;
 import com.xyp.gtnotgood.common.parts.mestock.StockRegistration;
 import com.xyp.gtnotgood.common.parts.stockio.StockIOGuiFactory;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.config.MainConfig;
@@ -92,6 +95,7 @@ public class CommonProxy {
             com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.init(event);
         GuiManager.registerFactory(com.xyp.gtnotgood.common.parts.advancedio.AdvancedIOGuiFactory.INSTANCE);
         GuiManager.registerFactory(StockIOGuiFactory.INSTANCE);
+        GuiManager.registerFactory(LargeInterfaceGuiFactory.INSTANCE);
         GuiManager.registerFactory(LargeVoidMinerConfigGuiFactory.INSTANCE);
         RecipeLoader.loadRecipes();
         StockRegistration.init();
@@ -101,6 +105,10 @@ public class CommonProxy {
 
     // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
     public void postInit(FMLPostInitializationEvent event) {
+        AEApi.instance()
+            .registries()
+            .interfaceTerminal()
+            .register(PartLargeInterface.class);
         RecipeLoader.loadPostInitRecipes();
         com.xyp.gtnotgood.loader.WirelessLaserLoader.bindNativeHatches();
         com.xyp.gtnotgood.common.recipe.machine.EasyWirelessRecipes.loadRecipes();
@@ -120,6 +128,7 @@ public class CommonProxy {
     }
 
     public void complete(FMLLoadCompleteEvent event) {
+        LargeInterfaceRecipes.registerUpgrades();
         AE2Thing.onLoadComplete(event);
         OreProcessingRecipes.loadExternalOreRecipes();
         com.xyp.gtnotgood.common.recipe.gtnotgood.CombProcessingRecipes.loadRecipes();

@@ -128,6 +128,17 @@ public class LateMixinsLoader implements ILateMixinLoader {
         }
 
         if (loadedMods.contains(ModList.AE2.getID())) {
+            if (loadedMods.contains(ModList.AE2FluidCraft.getID())) {
+                addAll(
+                    list,
+                    "appliedenergistics.LargeInterfaceDualityMixin",
+                    "appliedenergistics.LargeInterfaceTerminalRowsMixin",
+                    "ae2fluidcraft.LargeInterfaceFluidDualityMixin");
+                if (FMLLaunchHandler.side()
+                    .isClient()) {
+                    addAll(list, "appliedenergistics.LargeInterfaceTerminalEntryMixin");
+                }
+            }
             if (FMLLaunchHandler.side()
                 .isClient()) {
                 addAll(
@@ -147,6 +158,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "appliedenergistics.MTEHatchCraftingInputMEMultiBlockNameMixin",
                 "appliedenergistics.PatternMultiplierHelperMixin",
                 "appliedenergistics.MatrixWildcardPatternOptimizationMixin",
+                "appliedenergistics.SlotCraftingTermBatchMixin",
                 "appliedenergistics.SuperMTEHatchCraftingInputMEMixin");
         }
 

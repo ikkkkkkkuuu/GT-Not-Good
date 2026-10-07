@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
@@ -19,6 +20,8 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
@@ -44,6 +47,8 @@ import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.networking.security.MachineSource;
 import appeng.api.parts.IPartHost;
+import appeng.api.parts.PartItemStack;
+import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.util.AEColor;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.tile.storage.TileDrive;
@@ -120,6 +125,7 @@ public final class StockIOClientChecks {
                 setup(player);
                 conversionTag = conversionData(partFixture);
                 verifyConversions(player.worldObj, conversionTag);
+                verifyRemoval(player, conversionTag);
             }
             if (ticks > 1600) throw new AssertionError("Stock IO QA timed out at stage " + stage);
             if (stage == 0 && ticks >= 100 && partFixture.proxy.isActive() && blockFixture.proxy.isActive()) {
@@ -243,6 +249,94 @@ public final class StockIOClientChecks {
         roundTrip.getTagCompound().getTagList("stockIOEscrow", 10).getCompoundTagAt(0).setBoolean("rollback", false);
         require(!tag.equals(roundTrip.getTagCompound()) && tag.equals(panel.getTagCompound())
             && tag.equals(original.getTagCompound()), "nested settings/refund edits cannot mutate either crafting ingredient");
+    }
+
+    private void verifyRemoval(EntityPlayerMP player, NBTTagCompound tag) {
+        NBTTagCompound partOriginal = contents(part.getLogic());
+        NBTTagCompound blockOriginal = contents(block.getLogic());
+        World world = player.worldObj;
+        Block blockType = world.getBlock(4, 10, 0);
+        try {
+            ItemStack legacyStack = GTNGItemList.StockIOInterfacePart.get(1);
+            legacyStack.setTagCompound((NBTTagCompound) tag.copy());
+            PartStockIOInterface legacyPart = new PartStockIOInterface(legacyStack);
+            legacyPart.getLogic().readContents(new NBTTagCompound());
+            require(legacyPart.getItemStack(PartItemStack.Break).getTagCompound() == null
+                && legacyPart.getItemStack(PartItemStack.Wrench).getTagCompound() == null,
+                "old backing item NBT cannot resurrect cleared settings or refunded resources");
+            for (boolean pending : new boolean[] {false, true}) {
+                NBTTagCompound configured = (NBTTagCompound) tag.copy();
+                if (!pending) configured.removeTag("stockIOEscrow");
+                part.getLogic().readContents(configured);
+                block.getLogic().readContents(configured);
+                NBTTagCompound partBefore = contents(part.getLogic());
+                NBTTagCompound blockBefore = contents(block.getLogic());
+                List<ItemStack> blockDrops = blockType.getDrops(world, 4, 10, 0, world.getBlockMetadata(4, 10, 0), 0);
+                require(blockDrops.size() == 1, "configured block produces exactly one interface drop");
+                ItemStack[] drops = {blockDrops.get(0), part.getItemStack(PartItemStack.Break),
+                    part.getItemStack(PartItemStack.Wrench), part.getItemStack(PartItemStack.Pick),
+                    blockType.getPickBlock(new MovingObjectPosition(4, 10, 0, ForgeDirection.NORTH.ordinal(),
+                        Vec3.createVectorHelper(4.5, 10.5, 0)), world, 4, 10, 0)};
+                NBTTagCompound refundsOnly = new NBTTagCompound();
+                refundsOnly.setTag("stockIOEscrow", configured.getTagList("stockIOEscrow", 10).copy());
+                for (int index = 0; index < drops.length; index++) {
+                    ItemStack drop = drops[index];
+                    ItemStack plain = (index == 0 || index == 4 ? GTNGItemList.StockIOInterface
+                        : GTNGItemList.StockIOInterfacePart).get(1);
+                    if (pending && index < 3) {
+                        require(sameType(drop, plain) && drop.stackSize == 1 && refundsOnly.equals(drop.getTagCompound()),
+                            "actual removal drop contains complete native refunds and no configuration");
+                        NBTTagList refunds = drop.getTagCompound().getTagList("stockIOEscrow", 10);
+                        var itemRefund = Platform.readStackNBT(refunds.getCompoundTagAt(0), false);
+                        var fluidRefund = Platform.readStackNBT(refunds.getCompoundTagAt(1), false);
+                        require(itemRefund != null && itemRefund.isItem() && itemRefund.getStackSize() == 6_000_000_000L
+                            && fluidRefund instanceof IAEFluidStack fluid && fluid.getFluid() == FluidRegistry.WATER
+                            && fluid.getStackSize() == 9_000_000_000L, "removal retains long item and native fluid quantities");
+                    } else {
+                        InventoryPlayer inventory = new InventoryPlayer(player);
+                        require(drop.getTagCompound() == null && sameType(drop, plain)
+                            && inventory.addItemStackToInventory(plain.copy()) && inventory.addItemStackToInventory(drop.copy())
+                            && inventory.getStackInSlot(0).stackSize == 2,
+                            "ordinary removal and creative picks carry no NBT and merge with default interfaces");
+                    }
+                }
+                require(partBefore.equals(contents(part.getLogic())) && blockBefore.equals(contents(block.getLogic())),
+                    "drop and pick previews leave live configuration and refunds intact");
+                if (pending) {
+                    world.setBlock(12, 10, 0, blockType, ForgeDirection.NORTH.ordinal(), 3);
+                    blockType.onBlockPlacedBy(world, 12, 10, 0, player, drops[0]);
+                    TileStockIOInterface restored = (TileStockIOInterface) world.getTileEntity(12, 10, 0);
+                    NBTTagCompound expected = contents(new TileStockIOInterface().getLogic());
+                    expected.setTag("stockIOEscrow", refundsOnly.getTag("stockIOEscrow").copy());
+                    require(expected.equals(contents(restored.getLogic()))
+                        && expected.equals(contents(new PartStockIOInterface(drops[1]).getLogic())),
+                        "replacing removal drops restores default settings and the entire refund queue");
+                    NBTTagCompound savedBlock = new NBTTagCompound();
+                    block.writeToNBT(savedBlock);
+                    TileStockIOInterface loadedBlock = new TileStockIOInterface();
+                    loadedBlock.readFromNBT(savedBlock);
+                    NBTTagCompound savedPart = new NBTTagCompound();
+                    part.writeToNBT(savedPart);
+                    PartStockIOInterface loadedPart = new PartStockIOInterface(GTNGItemList.StockIOInterfacePart.get(1));
+                    loadedPart.readFromNBT(savedPart);
+                    // A detached part takes its facing from a future host, rather than its old cable face.
+                    partBefore.setInteger("stockIOTargetSide", ForgeDirection.NORTH.ordinal());
+                    require(blockBefore.equals(contents(loadedBlock.getLogic()))
+                        && partBefore.equals(contents(loadedPart.getLogic())),
+                        "real block and part world-save round trips retain full configuration and refunds");
+                }
+            }
+        } finally {
+            world.setBlockToAir(12, 10, 0);
+            part.getLogic().readContents(partOriginal);
+            block.getLogic().readContents(blockOriginal);
+        }
+    }
+
+    private static NBTTagCompound contents(StockIOLogic logic) {
+        NBTTagCompound tag = new NBTTagCompound();
+        logic.writeContents(tag);
+        return tag;
     }
 
     private static void verifyConversion(World world, GTNGItemList input, GTNGItemList output) {

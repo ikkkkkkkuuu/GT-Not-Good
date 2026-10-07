@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -15,7 +14,7 @@ import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeBase;
 import com.xyp.gtnotgood.common.parts.stockio.StockIOGuiFactory;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
-/** Full-block ME interface shape with a selectable machine face and portable configuration/refunds. */
+/** Full-block ME interface shape with a selectable machine face and portable refunds. */
 public final class BlockStockIOInterface extends BlockMEBridgeBase {
 
     // #tr tile.stock_io_interface.name
@@ -73,10 +72,9 @@ public final class BlockStockIOInterface extends BlockMEBridgeBase {
         ArrayList<ItemStack> drops = new ArrayList<>();
         ItemStack portable = new ItemStack(this);
         if (world.getTileEntity(x, y, z) instanceof TileStockIOInterface tile) {
-            NBTTagCompound tag = new NBTTagCompound();
-            tile.getLogic()
-                .writeContents(tag);
-            portable.setTagCompound(tag);
+            portable.setTagCompound(
+                tile.getLogic()
+                    .getRemovalContents());
         }
         drops.add(portable);
         return drops;

@@ -804,14 +804,33 @@ public final class StockIOLogic {
 
     public void writeContents(NBTTagCompound tag) {
         writeSettings(tag);
+        tag.setTag("stockIOEscrow", writeEscrow());
+    }
+
+    /**
+     * Returns only owned resources for a real removal, leaving configuration behind. Drop previews never
+     * transfer ownership or clear the pending queue; ordinary interfaces return null so their items stack.
+     *
+     * @return an independent escrow-only tag, or null when no actual resource remains
+     */
+    public NBTTagCompound getRemovalContents() {
+        NBTTagList escrow = writeEscrow();
+        if (escrow.tagCount() == 0) return null;
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setTag("stockIOEscrow", escrow);
+        return tag;
+    }
+
+    private NBTTagList writeEscrow() {
         NBTTagList escrow = new NBTTagList();
         for (Pending transfer : pending) {
+            if (transfer.stack == null || transfer.stack.getStackSize() <= 0) continue;
             NBTTagCompound entry = new NBTTagCompound();
             Platform.writeStackNBT(transfer.stack, entry, true);
             entry.setBoolean("rollback", transfer.rollback);
-            escrow.appendTag(entry);
+            escrow.appendTag(entry.copy());
         }
-        tag.setTag("stockIOEscrow", escrow);
+        return escrow;
     }
 
     public void readContents(NBTTagCompound tag) {

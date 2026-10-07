@@ -29,27 +29,31 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.gui.modularui.singleblock.base.MTEBasicMachineBaseGui;
 
 /**
- * Pipe-free LV world-fluid pump. Scans loaded blocks below itself in bounded batches, consuming real fluid blocks.
- * The native GT output tank owns fluid persistence and sided extraction; this class persists only a scan offset.
+ * Pipe-free LV world-fluid pump. Follows connected fluid downward, then scans the remaining area in bounded batches.
+ * The native GT output tank owns fluid persistence and sided extraction; scan and search progress are saved here.
  * No dimension filter is applied, so Nether lava is handled exactly like Overworld lava.
  */
 public final class UniversalFluidPump extends MTEBasicMachine {
 
     public static final int RADIUS = 64;
-    public static final int BLOCKS_PER_TICK = 64;
-    public static final int SCANS_PER_TICK = 1024;
+    public static final int BLOCKS_PER_TICK = 512;
+    public static final int SCANS_PER_TICK = 8192;
     public static final int EU_PER_BLOCK = 8;
+    private static final int INPUT_AMPERAGE = BLOCKS_PER_TICK * EU_PER_BLOCK / 32;
     private final PumpScanCursor scan = new PumpScanCursor(RADIUS);
+    private final PumpFluidSearch search = new PumpFluidSearch(RADIUS, 32_768);
+    private int scanTop = -1;
     private int rescanDelay;
+    private boolean nativeTick;
     private FakePlayer fakePlayer;
 
     public UniversalFluidPump(int id, String name, String localizedName) {
-        super(id, name, localizedName, 1, 16, description(), 0, 0, overlays());
+        super(id, name, localizedName, 1, INPUT_AMPERAGE, description(), 0, 0, overlays());
         mFluidTransfer = true;
     }
 
     private UniversalFluidPump(String name, String[] description, ITexture[][][] textures) {
-        super(name, 1, 16, description, textures, 0, 0);
+        super(name, 1, INPUT_AMPERAGE, description, textures, 0, 0);
         mFluidTransfer = true;
     }
 
@@ -64,17 +68,21 @@ public final class UniversalFluidPump extends MTEBasicMachine {
             // # No mining pipes; scans 129 x 129 blocks below the pump
             // # zh_CN 无需采矿管；向下扫描 129×129 格范围
             StatCollector.translateToLocal("gtng.pump.area"),
+            // #tr gtng.pump.search
+            // # Checks below first, then follows connected fluid downward before scanning the remaining area
+            // # zh_CN 先检查正下方，优先沿连通流体向下抽取，再扫描其余区域
+            StatCollector.translateToLocal("gtng.pump.search"),
             // #tr gtng.pump.speed
-            // # Up to 64 blocks/tick, 8 EU/block (512 EU/t at full speed)
-            // # zh_CN 最多 64 方块/tick，每方块 8 EU（满速 512 EU/t）
+            // # Up to 512 blocks/tick, 8 EU/block (4096 EU/t at full speed)
+            // # zh_CN 最多 512 方块/tick，每方块 8 EU（满速 4096 EU/t）
             StatCollector.translateToLocal("gtng.pump.speed"),
             // #tr gtng.pump.fluids
             // # Drains water, lava (including Nether lava), and drainable Forge fluid blocks
             // # zh_CN 实际抽走水、岩浆（含下界）及可抽取的 Forge 流体方块
             StatCollector.translateToLocal("gtng.pump.fluids"),
             // #tr gtng.pump.output
-            // # Buffer: 16,000 buckets; auto-output: up to 64 buckets/tick
-            // # zh_CN 缓存 16000 桶；自动输出最高 64 桶/tick
+            // # Buffer: 16,000 buckets; auto-output: up to 512 buckets/tick
+            // # zh_CN 缓存 16000 桶；自动输出最高 512 桶/tick
             StatCollector.translateToLocal("gtng.pump.output"),
             // #tr gtng.pump.safety
             // # Loaded chunks only; pauses when full or when changing buffered fluid
@@ -101,10 +109,10 @@ public final class UniversalFluidPump extends MTEBasicMachine {
         return 16_000_000;
     }
 
-    /** Supplies the unchanged 512 EU/t pumping budget at LV voltage (32 EU per packet). */
+    /** Supplies the 4096 EU/t pumping budget at LV voltage (32 EU per packet). */
     @Override
     public long maxAmperesIn() {
-        return 16;
+        return INPUT_AMPERAGE;
     }
 
     /** Preserves the original energy buffer independently of the lowered voltage tier. */
@@ -121,6 +129,12 @@ public final class UniversalFluidPump extends MTEBasicMachine {
     @Override
     public int checkRecipe() {
         return DID_NOT_FIND_RECIPE;
+    }
+
+    /** Prevents native batch-output mixins from bypassing the pump's own per-tick transfer budget. */
+    @Override
+    public boolean doesAutoOutputFluids() {
+        return !nativeTick && super.doesAutoOutputFluids();
     }
 
     @Override
@@ -148,12 +162,19 @@ public final class UniversalFluidPump extends MTEBasicMachine {
     public void saveNBTData(NBTTagCompound nbt) {
         super.saveNBTData(nbt);
         nbt.setInteger("pumpScanOffset", scan.offset());
+        nbt.setIntArray("pumpFluidSearch", search.positions());
+        nbt.setBoolean("pumpSearchStarted", search.started());
     }
 
     @Override
     public void loadNBTData(NBTTagCompound nbt) {
         super.loadNBTData(nbt);
-        scan.restore(nbt.getInteger("pumpScanOffset"), getBaseMetaTileEntity().getYCoord() - 1);
+        IGregTechTileEntity tile = getBaseMetaTileEntity();
+        World world = tile.getWorld();
+        scanTop = (world == null ? tile.getYCoord() : Math.min(tile.getYCoord(), world.getActualHeight())) - 1;
+        scan.restore(nbt.getInteger("pumpScanOffset"), scanTop);
+        search.restore(nbt.getIntArray("pumpFluidSearch"), nbt.getBoolean("pumpSearchStarted"), scanTop);
+        rescanDelay = 0;
     }
 
     /**
@@ -165,14 +186,18 @@ public final class UniversalFluidPump extends MTEBasicMachine {
      */
     @Override
     public void onPostTick(IGregTechTileEntity tile, long tick) {
-        int beforeOutput = fluidOutputTank.getFluidAmount();
-        super.onPostTick(tile, tick);
+        nativeTick = true;
+        try {
+            super.onPostTick(tile, tick);
+        } finally {
+            nativeTick = false;
+        }
         if (!tile.isServerSide()) return;
-        int nativeOutput = Math.max(0, beforeOutput - fluidOutputTank.getFluidAmount());
-        outputFluid(tile, BLOCKS_PER_TICK * 1000 - nativeOutput);
+        outputFluid(tile, BLOCKS_PER_TICK * 1000);
         tile.setActive(false);
         if (!tile.isAllowedToWork() || !tile.isUniversalEnergyStored(EU_PER_BLOCK)) return;
-        if (rescanDelay > 0) {
+        if (rescanDelay > 0 && !search.hasPending()) {
+            search.reset();
             rescanDelay--;
             return;
         }
@@ -182,18 +207,30 @@ public final class UniversalFluidPump extends MTEBasicMachine {
                 .getActualHeight())
             - 1;
         if (top < 0) return;
+        if (top != scanTop) {
+            scan.restore(scan.offset(), top);
+            search.restore(search.positions(), search.started(), top);
+            scanTop = top;
+        }
+        search.start(top);
         int pumped = 0;
         for (int checked = 0; checked < SCANS_PER_TICK && pumped < BLOCKS_PER_TICK; checked++) {
-            int x = tile.getXCoord() + scan.xOffset();
-            int y = scan.y(top);
-            int z = tile.getZCoord() + scan.zOffset();
-            int result = pumpBlock(tile, x, y, z);
-            if (result < 0) break;
-            pumped += result;
-            if (scan.advance(top)) {
-                rescanDelay = 100;
+            boolean following = search.hasPending();
+            if (!following && rescanDelay > 0) {
+                search.reset();
                 break;
             }
+            int dx = following ? search.xOffset() : scan.xOffset();
+            int y = following ? search.y() : scan.y(top);
+            int dz = following ? search.zOffset() : scan.zOffset();
+            int x = tile.getXCoord() + dx;
+            int z = tile.getZCoord() + dz;
+            int result = pumpBlock(tile, x, y, z);
+            if (result < 0) break;
+            if (following) search.removeFirst();
+            if (result == 1) pumped++;
+            if (result > 0) search.follow(dx, y, dz, top);
+            if (!following && scan.advance(top)) rescanDelay = 100;
         }
         tile.setActive(pumped > 0);
         markDirty();
@@ -203,7 +240,8 @@ public final class UniversalFluidPump extends MTEBasicMachine {
      * Simulates mod-fluid drainage and tank acceptance before mutation. Flowing vanilla blocks yield no fluid.
      * Forge implementations are required to honor their drain simulation; their actual returned volume is stored.
      *
-     * @return -1 to retry after output/power becomes available, 0 to skip, or 1 for a consumed block
+     * @return -1 to retry after output/power becomes available, 0 to skip, 1 for a consumed block,
+     *         or 2 to follow a non-drainable Forge fluid without producing fluid or consuming energy
      */
     private int pumpBlock(IGregTechTileEntity tile, int x, int y, int z) {
         World world = tile.getWorld();
@@ -216,7 +254,9 @@ public final class UniversalFluidPump extends MTEBasicMachine {
             preview = world.getBlockMetadata(x, y, z) == 0
                 ? new FluidStack(water ? FluidRegistry.WATER : FluidRegistry.LAVA, 1000)
                 : null;
-        } else if (block instanceof IFluidBlock fluidBlock && fluidBlock.canDrain(world, x, y, z)) {
+        } else if (block instanceof IFluidBlock fluidBlock) {
+            if (fluidBlock.getFluid() == null) return 0;
+            if (!fluidBlock.canDrain(world, x, y, z)) return 2;
             preview = fluidBlock.drain(world, x, y, z, false);
             if (preview == null || preview.amount <= 0 || preview.getFluid() == null) return 0;
         } else {
@@ -240,7 +280,7 @@ public final class UniversalFluidPump extends MTEBasicMachine {
         return 1;
     }
 
-    /** Native auto-output is only one bucket per second; match output throughput to the pump's batch size. */
+    /** Transfers the pump's per-tick budget independently of native batch-output mixins. */
     private void outputFluid(IGregTechTileEntity tile, int limit) {
         if (limit <= 0) return;
         if (!doesAutoOutputFluids() || getDrainableStack() == null || tile.getFrontFacing() == mMainFacing) return;

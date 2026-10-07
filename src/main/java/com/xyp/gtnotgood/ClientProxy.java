@@ -110,7 +110,8 @@ public class ClientProxy extends CommonProxy {
 
     private void registerAEPartRenderer() {
         for (GTNGItemList part : new GTNGItemList[] { GTNGItemList.AdvancedIOBus, GTNGItemList.StockIOInterfacePart,
-            GTNGItemList.ThresholdExportBus, GTNGItemList.ThresholdLevelEmitter, GTNGItemList.MERequesterTerminal }) {
+            GTNGItemList.LargeInterfacePart, GTNGItemList.ThresholdExportBus, GTNGItemList.ThresholdLevelEmitter,
+            GTNGItemList.MERequesterTerminal }) {
             AEApi.instance()
                 .partHelper()
                 .setItemBusRenderer((IPartItem) part.getItem());

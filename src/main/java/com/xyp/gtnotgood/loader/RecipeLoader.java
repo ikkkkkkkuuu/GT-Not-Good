@@ -16,6 +16,7 @@ import com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeBeeBreederRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCropBreederRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeTransmutationMachineRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeVoidMinerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEBridgeRecipes;
@@ -81,6 +82,7 @@ public class RecipeLoader {
         LargeTransmutationMachineRecipes.loadRecipes();
         AdvancedIORecipes.register();
         StockIOInterfaceRecipes.register();
+        LargeInterfaceRecipes.register();
         PackagedRecipes.register();
         MechanicalUserRecipes.loadRecipes();
         FluxConnectorRecipes.loadRecipes();

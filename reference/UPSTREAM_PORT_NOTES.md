@@ -656,6 +656,30 @@ remains outside compilation/resource inputs. Validation details: docs/testing/ld
 - Additional hidden-client QA passed: edit key opens/closes, drag offset preserved, saved position
   reloads, out-of-screen dragging clamps, reset persists, Esc exits, and both mods continue to coexist.
 
+## Large ME dual interface — 2026-10-07
+
+- Native references: GTNH Applied Energistics 2 `rv3-beta-1073-GTNH`, commit
+  `151550f6d558a663eee792f0bfa22e12a53c0e54`, LGPL-3.0-or-later; AE2FluidCraft-Rework
+  `1.5.110-gtnh`, commit `6e8dd013bd4ec123cf74daaecf581534d87f2391`, LGPL-3.0.
+  Inspected packaged sources and AE2FluidCraft `LICENSE.txt` before using its interfaces.
+- Destinations: `common/blocks/largeinterface`, `common/parts/largeinterface`,
+  `common/items/largeinterface`, `client/largeinterface`, plus scoped late mixins.
+  Native `TileFluidInterface` / `PartFluidInterface` behavior is inherited; pattern
+  inventory grows to 900, native priority bands grow accordingly, and permanently
+  empty item/fluid configuration inventories forbid stock requests after NBT or
+  memory-card imports. Native item/fluid product return paths remain active.
+- GUI middle layout reuses this project's `SuperMTEHatchCraftingInputMEGui`:
+  9 columns, 4 visible rows, vertical scrolling. Native left-side settings,
+  priority and upgrade slots remain; hatch tools, manual slots and ghost mold
+  slots are omitted. The source layout and native setting-icon indices adapted
+  for `LargeInterfaceRenderer` and `LargeInterfaceGui` are LGPL-3.0-or-later.
+- Runtime assets: AE2FC `interface/fluid_interface_Orange` and its colored front,
+  alternate and arrow textures; AE2 `guis/states` setting icon atlas. No upstream
+  PNGs are copied or packaged. The installed dependencies supply those assets.
+- Packaged provenance: `META-INF/large-interface-port/NOTICE.md`; existing LGPL
+  and GPL license texts in `META-INF/ae2lt-port`. Reference extraction under
+  ignored `build/qa/interface-source` never enters compilation or resources.
+
 ## Current local package layout — 2026-10-07
 
 The structure refactor relocated host Java sources by responsibility. Earlier dated

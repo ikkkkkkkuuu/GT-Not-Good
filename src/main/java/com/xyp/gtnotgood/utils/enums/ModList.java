@@ -21,6 +21,7 @@ public enum ModList {
     Angelica(ModIds.ANGELICA, Names.ANGELICA),
     NotEnoughItems(ModIds.NOT_ENOUGH_ITEMS, Names.NOT_ENOUGH_ITEMS),
     AE2(ModIds.APPLIED_ENERGISTICS_2, Names.APPLIED_ENERGISTICS_2),
+    AE2FluidCraft(ModIds.AE2_FLUID_CRAFT, Names.AE2_FLUID_CRAFT),
     CropsNH(ModIds.CROPSNH, Names.CROPSNH),
     SpiceOfLife(ModIds.SPICE_OF_LIFE, Names.SPICE_OF_LIFE),
     Forestry(ModIds.FORESTRY, Names.FORESTRY),
@@ -49,6 +50,7 @@ public enum ModList {
         public static final String NOT_ENOUGH_ITEMS = "NotEnoughItems";
         public static final String BETTER_QUESTING_API = "bqapi";
         public static final String APPLIED_ENERGISTICS_2 = "appliedenergistics2";
+        public static final String AE2_FLUID_CRAFT = "ae2fc";
         public static final String CROPSNH = "cropsnh";
         public static final String SPICE_OF_LIFE = "SpiceOfLife";
         public static final String FORESTRY = "Forestry";
@@ -77,6 +79,7 @@ public enum ModList {
         public static final String NOT_ENOUGH_ITEMS = "Not Enough Items";
         public static final String BETTER_QUESTING_API = "Better Questing API";
         public static final String APPLIED_ENERGISTICS_2 = "Applied Energistics 2";
+        public static final String AE2_FLUID_CRAFT = "AE2 Fluid Crafting";
         public static final String CROPSNH = "CropsNH";
         public static final String SPICE_OF_LIFE = "Spice of Life";
         public static final String FORESTRY = "Forestry";
