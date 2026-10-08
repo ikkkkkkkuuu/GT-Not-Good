@@ -764,3 +764,49 @@ in `META-INF/ae2lt-port/CODE_PORT_NOTES.md` covers all relocated port sources.
   the existing AE2LT notices. This artwork is outside the project's general MIT grant.
 - Official reference downloads remain under ignored
   `build/reference/ae2-19.2.17-gui`, outside all source and resource sets.
+
+## Large ME dual interface dark default and pattern hints — 2026-10-08
+
+- Dark visual source: Ridanisaurus, **AE2 Dark Mode 1.0.6**, Minecraft 1.21,
+  published July 10, 2024. Author's release page:
+  https://www.curseforge.com/minecraft/texture-packs/ae2-dark-mode/files/5520011
+  Alternate author distribution:
+  https://modrinth.com/resourcepack/ae2-dark-mode/version/BXpYgw04
+- This resource pack publishes immutable release/file IDs rather than a source
+  commit: CurseForge project `1038055`, file `5520011`; Modrinth project
+  `UP2ZKKkg`, version `BXpYgw04`. Source archive `AE2DarkMode-V1.0.6.zip`:
+  SHA-256 `a5a721617a5043b53d7223b102626b878661f53931e638b23dcc7ffdb58c1249`;
+  the download also matches the publisher's SHA-512 from its version metadata.
+- License: **CC BY-NC-SA 4.0**, as declared on both author project pages;
+  this differs from the original AE2 default artwork's CC BY-NC-SA 3.0.
+  The dark artwork and composition adaptations retain the 4.0 terms and remain
+  outside the project's MIT grant. Full text is packaged under
+  `META-INF/large-interface-port/CC-BY-NC-SA-4.0.txt`.
+- Destination: `assets/gtnotgood/textures/gui/large_interface/`; only required
+  GUI PNGs are copied without pixel edits. The feature texture adapter preserves
+  AE2 crop geometry, nine-slice borders, upgrade-slot repainting and MUI2 state.
+  Main and priority text use the pack palette's `DEFAULT_TEXT_COLOR` /
+  `TEXTFIELD_TEXT` (`#f2f2f2`). Other features' shared light textures stay intact.
+- The pack has no `button_highlighted.png`. Numeric-button hover reuses its
+  authored `states` toolbar hover crop `(212, 128, 18, 20)` with three-pixel
+  nine-slice borders; hovered numeric text uses that atlas's dark outline color
+  `#0a090e`. The original GT empty-pattern hint receives an independent runtime
+  tint from `MUTED_TEXT_COLOR` (`#cbccd4`), restoring GL white after drawing it.
+- Pattern slots disable the underlying MUI2/GT theme background so it cannot
+  show light borders through the dark sprite's transparent perimeter. Empty
+  upgrade slots draw the dark `BACKGROUND_UPGRADE` chip crop `(240, 208, 16, 16)`
+  inset by one pixel, after the upgrade frame and before native hover shading;
+  occupied upgrade slots continue to display the actual card.
+- Empty upgrade tooltips adapt the installed native `GuiUpgradeable` card-cache
+  and supported-limit rules using `MaterialType`, `IUpgradeModule` and
+  `IUpgradeInventory.getMaxInstalled`. These small source adaptations remain
+  LGPL-3.0-or-later under the native AE2 source notice; displayed card limits
+  include cards already installed and do not change insertion behavior.
+- Pattern hint visibility follows installed native AE2 `AEBaseGui`: an occupied
+  interface slot keeps its plain slot background; only empty slots receive the
+  GregTech pattern hint. Installed GT `PatternSlot` continues to render the
+  native recipe output and count; Ultimate Encoded Patterns inherit the native
+  encoded-pattern API, so no alternative fluid format or special decoder is added.
+- Reference extraction, project metadata and version metadata stay under ignored
+  `build/reference/ae2-dark-mode-1.0.6`, outside compilation and packaged resources.
+  The current asset manifest records each copied file and its crop adaptations.

@@ -894,6 +894,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     @Override
     public void onChangeInventory(IInventory inv, int slot, InvOperation operation, ItemStack removedStack,
         ItemStack newStack) {
+        inventory.markDirty();
         if (patternState.onPatternInventoryChanged(this, removedStack, newStack)) {
             needsPatternSync = true;
         }
@@ -955,7 +956,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
 
     @Override
     public int rows() {
-        return mMaxSlots / 9;
+        return inventory.getTerminalRows();
     }
 
     @Override
@@ -1151,6 +1152,20 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     public class CombinationPatternsIInventory implements IInventory, Iterable<ItemStack> {
 
         private AppEngInternalInventory[] combinationInventory = new AppEngInternalInventory[0];
+        private int terminalRows = -1;
+
+        /** Matches the super pattern input assembly's empty and full-row expansion rules. */
+        private int getTerminalRows() {
+            if (terminalRows < 0) {
+                int columns = rowSize();
+                int lastNonNullIndex = getSizeInventory() - 1;
+                while (lastNonNullIndex >= 0 && getStackInSlot(lastNonNullIndex) == null) lastNonNullIndex--;
+                int calculatedRows = (lastNonNullIndex + columns) / columns + 1;
+                if ((lastNonNullIndex + 1) % columns == 0) calculatedRows++;
+                terminalRows = Math.min(calculatedRows, getSizeInventory() / columns);
+            }
+            return terminalRows;
+        }
 
         private AppEngInternalInventory getInventory(int ordinal) {
             if (ordinal < 0 || ordinal >= PATTERN_CAPACITY / eachPatternCasingCapacity) {
@@ -1223,7 +1238,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
 
         @Override
         public void markDirty() {
-
+            terminalRows = -1;
         }
 
         @Override
@@ -1266,6 +1281,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         public void loadNBTData(NBTTagCompound aNBT) {
             combinationInventory = new AppEngInternalInventory[0];
             size = -1;
+            markDirty();
             var n = aNBT.getCompoundTag("patterns");
             for (var o : n.func_150296_c()) {
                 getInventory(Integer.parseInt(o)).readFromNBT(n.getCompoundTag(o));

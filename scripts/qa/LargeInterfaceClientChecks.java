@@ -2,6 +2,7 @@ package com.xyp.gtnotgood.qa;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -48,6 +49,7 @@ import com.glodblock.github.loader.ItemAndBlockHolder;
 import com.glodblock.github.util.DualityFluidInterface;
 import com.xyp.gtnotgood.client.text.TextRenderState;
 import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceGuiFactory;
+import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceGuiTextures;
 import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceHost;
 import com.xyp.gtnotgood.common.blocks.largeinterface.TileLargeInterface;
 import com.xyp.gtnotgood.common.parts.largeinterface.PartLargeInterface;
@@ -76,6 +78,7 @@ import appeng.core.sync.network.NetworkHandler;
 import appeng.core.sync.packets.PacketInventoryAction;
 import appeng.helpers.DualityInterface;
 import appeng.helpers.InventoryAction;
+import appeng.items.misc.ItemEncodedPattern;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.parts.reporting.PartInterfaceTerminal;
 import appeng.tile.inventory.AppEngInternalInventory;
@@ -89,6 +92,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import gregtech.common.gui.modularui.util.PatternSlot;
 
 /** Disposable native grids and actual synchronized screens; this fixture never enters the release jar. */
 @Mod(
@@ -1009,6 +1013,7 @@ public final class LargeInterfaceClientChecks {
                             .getSlot()
                             .getStack() != null,
                     "both first and final native encoded patterns synchronize to the client");
+                verifyPatternPreview(slots.get(0), slots.get(1), new ItemStack(Items.iron_ingot, 2));
                 require(
                     collect(panel, PhantomItemSlot.class).isEmpty() && collect(panel, FluidSlot.class).isEmpty(),
                     "GUI contains no stocking marks, virtual item slots or virtual fluid slots");
@@ -1048,16 +1053,23 @@ public final class LargeInterfaceClientChecks {
                         "removed hatch controls do not create hidden popup handlers: " + name);
                 }
                 screenshot("large-interface-" + variant + "-first.png");
+                screenshotHovered(gui, slots.get(0), "large-interface-" + variant + "-pattern-output.png");
                 screenshotHovered(gui, named(panel, "block"), "large-interface-" + variant + "-block-hover.png");
                 screenshotHovered(gui, named(panel, "priority"), "large-interface-" + variant + "-priority-hover.png");
                 screenshotHovered(gui, upgrade, "large-interface-" + variant + "-upgrade-hover.png");
+                screenshotHovered(
+                    gui,
+                    named(panel, "upgrade_1"),
+                    "large-interface-" + variant + "-empty-upgrade-hover.png");
                 var scroll = patterns.getScrollArea();
                 scroll.getScrollY()
                     .scrollTo(scroll, Integer.MAX_VALUE);
             }
             if (frames == 60) {
                 Grid patterns = collect(panel, Grid.class).get(0);
-                ItemSlot last = collect(patterns, ItemSlot.class).get(899);
+                List<ItemSlot> slots = collect(patterns, ItemSlot.class);
+                ItemSlot last = slots.get(899);
+                verifyPatternPreview(last, slots.get(898), new ItemStack(Items.gold_ingot, 3));
                 int lastY = last.getArea()
                     .y() - patterns.getScrollY();
                 require(
@@ -1230,6 +1242,33 @@ public final class LargeInterfaceClientChecks {
         for (IWidget child : root.getChildren()) collect(child, type, matches);
     }
 
+    private static void verifyPatternPreview(ItemSlot occupied, ItemSlot empty, ItemStack expected) throws Exception {
+        ItemStack raw = occupied.getSlot()
+            .getStack();
+        require(
+            raw != null && raw.getItem() instanceof ItemEncodedPattern,
+            "the preview starts from a real native encoded pattern");
+        Method renderer = PatternSlot.class
+            .getDeclaredMethod("getItemStackForRendering", ItemStack.class, boolean.class);
+        renderer.setAccessible(true);
+        ItemStack display = (ItemStack) renderer.invoke(occupied, raw, false);
+        IAEStack<?> output = ((ItemEncodedPattern) raw.getItem()).getOutputAE(raw);
+        require(
+            display != null && display.getItem() == expected.getItem()
+                && display.getItemDamage() == expected.getItemDamage()
+                && output != null
+                && output.getStackSize() == expected.stackSize,
+            "the actual pattern renderer previews the recipe output and its native quantity: "
+                + expected.getDisplayName()
+                + " x"
+                + expected.stackSize);
+        require(
+            occupied.getCurrentBackground(null) == LargeInterfaceGuiTextures.SLOT && empty.getSlot()
+                .getStack() == null && empty.getCurrentBackground(null) == LargeInterfaceGuiTextures.PATTERN_SLOT,
+            "occupied output previews omit the blank pattern glyph while adjacent empty slots retain it");
+        require(raw.stackSize == 1, "output preview keeps the underlying physical pattern count unchanged");
+    }
+
     private static ItemStack pattern(int amount) {
         ItemStack pattern = AEApi.instance()
             .definitions()
@@ -1246,7 +1285,9 @@ public final class LargeInterfaceClientChecks {
             inputs.appendTag(entry);
         }
         NBTTagCompound output = new NBTTagCompound();
-        AEItemStack.create(new ItemStack(Items.apple))
+        ItemStack product = amount == 1 ? new ItemStack(Items.iron_ingot, 2)
+            : amount == 900 ? new ItemStack(Items.gold_ingot, 3) : new ItemStack(Items.apple);
+        AEItemStack.create(product)
             .writeToNBTGeneric(output);
         outputs.appendTag(output);
         NBTTagCompound tag = new NBTTagCompound();

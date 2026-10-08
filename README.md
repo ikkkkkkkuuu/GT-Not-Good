@@ -43,12 +43,12 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.3.7          | [![1.3.7](https://img.shields.io/badge/release-1.3.7-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.7) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.3.8          | [![1.3.8](https://img.shields.io/badge/release-1.3.8-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.8) |         ✔️         |
 
-最新版本：[1.3.7 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.7)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.7/gtnotgood-1.3.7.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.7/gtnotgood-1.3.7-sources.jar)。
+最新版本：[1.3.8 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.8)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.8/gtnotgood-1.3.8.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.8/gtnotgood-1.3.8-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.3.7。
+1.3.4 因启动错误已撤回，请更新到 1.3.8。
 
 ### 大型矿石处理机
 
@@ -152,7 +152,11 @@ NEI → GTNotGood 新增“优先使用本模组接口自动命名”，默认�
 
 ### 🔌 ME 大容量二合一接口
 
-金橙色外观，900 个样板槽，9 列滚动显示；MUI2 界面使用高版本 AE2 的面板、槽位、侧栏按钮与优先级窗口材质。接口终端从 2 行按样板动态展开，沿用超级样板输入总成的行数规则。保留原版二合一接口的左侧设置、优先级与升级槽；不提供库存标记拉取，仍接收物品和流体产物回 AE。合成使用原版二合一接口与超级样板输入总成，方块和线缆部件可互转。详见 [大容量二合一接口说明](docs/large-me-interface.md)。
+金橙色外观，900 个样板槽，9 列滚动显示；MUI2 界面默认使用高版本 AE2 Dark Mode 的深色面板、槽位、侧栏按钮与优先级窗口材质。空槽保留空白样板底图，已放样板显示产物与数量。接口终端从 2 行按样板动态展开，沿用超级样板输入总成的行数规则。保留原版二合一接口的左侧设置、优先级与升级槽；不提供库存标记拉取，仍接收物品和流体产物回 AE。合成使用原版二合一接口与超级样板输入总成，方块和线缆部件可互转。详见 [大容量二合一接口说明](docs/large-me-interface.md)。
+
+### 装配矩阵接口终端
+
+默认显示 2 行，按最后一个非空样板槽自动展开，取走末尾样板后自动收缩，无需重开终端。沿用超级样板输入总成的整行末格扩展规则，最多 16 行，保留全部 144 个真实样板槽。
 
 ### 🔌 库存 IO 接口 (ME)
 

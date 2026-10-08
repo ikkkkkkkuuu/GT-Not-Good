@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceHost;
+import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
 
 import appeng.api.util.IInterfaceViewable;
 import appeng.container.implementations.ContainerInterfaceTerminal;
@@ -39,10 +40,10 @@ public abstract class LargeInterfaceTerminalRowsMixin {
 
     /** updateList also runs inside the native constructor, before mixin field initializers would execute. */
     @Unique
-    private Map<LargeInterfaceHost, Integer> largeinterface$knownRows;
+    private Map<IInterfaceViewable, Integer> largeinterface$knownRows;
 
     @Unique
-    private Map<LargeInterfaceHost, Integer> largeinterface$rowSnapshots() {
+    private Map<IInterfaceViewable, Integer> largeinterface$rowSnapshots() {
         if (largeinterface$knownRows == null) largeinterface$knownRows = new HashMap<>();
         return largeinterface$knownRows;
     }
@@ -50,17 +51,19 @@ public abstract class LargeInterfaceTerminalRowsMixin {
     @Inject(method = "updateList", at = @At("RETURN"), remap = false)
     private void largeinterface$recordRows(CallbackInfoReturnable<PacketInterfaceTerminalUpdate> cir) {
         if (Platform.isClient()) return;
-        Map<LargeInterfaceHost, Integer> snapshots = largeinterface$rowSnapshots();
+        Map<IInterfaceViewable, Integer> snapshots = largeinterface$rowSnapshots();
         snapshots.clear();
         for (IInterfaceViewable machine : tracked.keySet()) {
-            if (machine instanceof LargeInterfaceHost host) snapshots.put(host, host.rows());
+            if (machine instanceof LargeInterfaceHost || machine instanceof AssemblerMatrix) {
+                snapshots.put(machine, machine.rows());
+            }
         }
     }
 
     @Inject(method = "detectAndSendChanges", at = @At("HEAD"), remap = false)
     private void largeinterface$refreshChangedRows(CallbackInfo ci) {
         if (Platform.isClient() || largeinterface$knownRows == null) return;
-        for (Map.Entry<LargeInterfaceHost, Integer> snapshot : largeinterface$knownRows.entrySet()) {
+        for (Map.Entry<IInterfaceViewable, Integer> snapshot : largeinterface$knownRows.entrySet()) {
             if (snapshot.getKey()
                 .rows() != snapshot.getValue()) {
                 scheduleUpdate();
@@ -75,8 +78,8 @@ public abstract class LargeInterfaceTerminalRowsMixin {
         if (Platform.isClient() || largeinterface$knownRows == null) return;
         Object tracker = trackedById.get(id);
         if (tracker == null) return;
-        for (Map.Entry<LargeInterfaceHost, Integer> snapshot : largeinterface$knownRows.entrySet()) {
-            LargeInterfaceHost host = snapshot.getKey();
+        for (Map.Entry<IInterfaceViewable, Integer> snapshot : largeinterface$knownRows.entrySet()) {
+            IInterfaceViewable host = snapshot.getKey();
             if (tracked.get(host) != tracker) continue;
             if (host.rows() != snapshot.getValue()) {
                 scheduleUpdate();

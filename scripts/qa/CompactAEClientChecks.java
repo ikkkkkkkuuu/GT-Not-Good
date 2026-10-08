@@ -111,8 +111,8 @@ public final class CompactAEClientChecks {
                     "computer forms from five casings");
                 require(
                     matrix.getPatterns()
-                        .getSizeInventory() == 144 && matrix.rows() == 16,
-                    "144 slots / 16 terminal rows");
+                        .getSizeInventory() == 144 && matrix.rows() == 2,
+                    "144 slots / 2 initial terminal rows");
                 require(
                     AEApi.instance()
                         .registries()

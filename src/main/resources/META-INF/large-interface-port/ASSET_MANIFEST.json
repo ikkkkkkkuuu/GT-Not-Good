@@ -1,15 +1,12 @@
 [
   {
-    "project": "Applied-Energistics-2",
-    "version": "19.2.17",
-    "tag": "neoforge/v19.2.17",
-    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
-    "license": "CC-BY-NC-SA-3.0",
+    "project": "AE2 Dark Mode",
+    "version": "1.0.6",
+    "license": "CC-BY-NC-SA-4.0",
     "modified": false,
-    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
-    "source": "src/main/resources/assets/ae2/textures/guis/priority.png",
-    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/priority.png",
-    "sha256": "48efb799c9cca90ad28b72866ea76f1b3db219b674dd6b8ecc79e4a97f6d926a",
+    "source": "assets/ae2/textures/guis/priority.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/large_interface/priority.png",
+    "sha256": "7f239a66c771d8b0525ff3803c9ebff8c7aa855255a3247b98514d85fc0986bc",
     "imageSize": [
       256,
       256
@@ -40,19 +37,20 @@
         ]
       }
     ],
-    "runtimeAdaptation": "The slot-free priority frame is resized with a two-pixel nine-slice for the main panel; the popup keeps its original 176x125 frame. PNG bytes and original pixel colors are unchanged."
+    "runtimeAdaptation": "Authored dark priority frame uses a two-pixel nine-slice for the main panel and its original 176x125 size for the popup. PNG bytes and pixel colors remain unchanged. Text follows the pack palette DEFAULT_TEXT_COLOR/TEXTFIELD_TEXT (#f2f2f2).",
+    "author": "Ridanisaurus",
+    "sourceRelease": "https://www.curseforge.com/minecraft/texture-packs/ae2-dark-mode/files/5520011",
+    "modrinthVersion": "BXpYgw04",
+    "sourceArchiveSha256": "a5a721617a5043b53d7223b102626b878661f53931e638b23dcc7ffdb58c1249"
   },
   {
-    "project": "Applied-Energistics-2",
-    "version": "19.2.17",
-    "tag": "neoforge/v19.2.17",
-    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
-    "license": "CC-BY-NC-SA-3.0",
+    "project": "AE2 Dark Mode",
+    "version": "1.0.6",
+    "license": "CC-BY-NC-SA-4.0",
     "modified": false,
-    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
-    "source": "src/main/resources/assets/ae2/textures/guis/states.png",
-    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/states.png",
-    "sha256": "0996b0084c7bf37f65a97a745982ab681ebd86f142fade526f14c823c4727e55",
+    "source": "assets/ae2/textures/guis/states.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/large_interface/states.png",
+    "sha256": "d3d395397e5a6b4478f7738deb54e4a2fb7b1201c404b99a82045ee3da612598",
     "imageSize": [
       256,
       256
@@ -102,9 +100,39 @@
           22,
           22
         ]
+      },
+      {
+        "name": "BUTTON_HOVER",
+        "xywh": [
+          212,
+          128,
+          18,
+          20
+        ],
+        "adaptable": [
+          3,
+          3,
+          3,
+          3
+        ]
+      },
+      {
+        "name": "UPGRADE_SLOT_HINT",
+        "xywh": [
+          240,
+          208,
+          16,
+          16
+        ],
+        "drawOffset": [
+          1,
+          1
+        ],
+        "renderWhen": "Only when the synchronized upgrade slot is empty",
+        "layer": "After the upgrade frame, before the native item-slot hover overlay"
       }
     ],
-    "runtimeAdaptation": "Modern slot, toolbar-button and tab frames are cropped for MUI2 controls. Central PATTERN_SLOT combines SLOT with the installed GregTech empty-pattern overlay. GTNH setting glyphs are still read from the installed native AE2 atlas; old glyph indices are not applied to this modern atlas.",
+    "runtimeAdaptation": "Authored dark slot, sidebar and tab crops retain their original geometry. Because this pack has no button_highlighted sprite, numeric-button hover reuses its toolbar hover crop (212,128,18,20) with a three-pixel nine-slice; hovered numeric text uses the atlas outline color #0a090e. Native GTNH setting glyphs continue to use the installed old AE2 atlas, avoiding modern magenta placeholders. Empty pattern slots alone combine SLOT with the installed GT hint; occupied slots use SLOT and native output/count rendering. Pattern slots disable the underlying MUI2/GT theme background, preventing light default borders from showing through the authored transparent perimeter. Empty upgrade slots draw the native dark BACKGROUND_UPGRADE chip crop after the frame and before hover; occupied slots retain actual card rendering.",
     "runtimeOverlay": {
       "project": "GTNewHorizons/GT5-Unofficial",
       "version": "5.09.54.183",
@@ -112,20 +140,21 @@
       "textureConstant": "gregtech.api.modularui2.GTGuiTextures.OVERLAY_SLOT_PATTERN_ME",
       "resource": "gregtech:textures/gui/overlay_slot/pattern_me.png",
       "packaged": false,
-      "modifications": "Runtime IDrawable composition over the modern AE2 SLOT surface; the overlay PNG is provided unchanged by the installed GregTech dependency."
-    }
+      "modifications": "Independent runtime hint tint from the dark pack MUTED_TEXT_COLOR (#cbccd4), drawn only for empty slots with GL white restored afterward. The installed GT hint PNG is not copied or modified."
+    },
+    "author": "Ridanisaurus",
+    "sourceRelease": "https://www.curseforge.com/minecraft/texture-packs/ae2-dark-mode/files/5520011",
+    "modrinthVersion": "BXpYgw04",
+    "sourceArchiveSha256": "a5a721617a5043b53d7223b102626b878661f53931e638b23dcc7ffdb58c1249"
   },
   {
-    "project": "Applied-Energistics-2",
-    "version": "19.2.17",
-    "tag": "neoforge/v19.2.17",
-    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
-    "license": "CC-BY-NC-SA-3.0",
+    "project": "AE2 Dark Mode",
+    "version": "1.0.6",
+    "license": "CC-BY-NC-SA-4.0",
     "modified": false,
-    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
-    "source": "src/main/resources/assets/ae2/textures/gui/sprites/button.png",
-    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/button.png",
-    "sha256": "5e815b235384d3ad4422e61e044804c097e486ffdb61fade6056965069c8f382",
+    "source": "assets/ae2/textures/gui/sprites/button.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/large_interface/button.png",
+    "sha256": "44af62b1612880d99863251a745be9ad5126fd1b226bd852b9e90345094aa2f2",
     "imageSize": [
       200,
       20
@@ -147,53 +176,20 @@
         ]
       }
     ],
-    "runtimeAdaptation": "Unmodified normal button sprite is resized using a three-pixel nine-slice."
+    "runtimeAdaptation": "Unmodified authored dark button sprite is resized using its original three-pixel nine-slice.",
+    "author": "Ridanisaurus",
+    "sourceRelease": "https://www.curseforge.com/minecraft/texture-packs/ae2-dark-mode/files/5520011",
+    "modrinthVersion": "BXpYgw04",
+    "sourceArchiveSha256": "a5a721617a5043b53d7223b102626b878661f53931e638b23dcc7ffdb58c1249"
   },
   {
-    "project": "Applied-Energistics-2",
-    "version": "19.2.17",
-    "tag": "neoforge/v19.2.17",
-    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
-    "license": "CC-BY-NC-SA-3.0",
+    "project": "AE2 Dark Mode",
+    "version": "1.0.6",
+    "license": "CC-BY-NC-SA-4.0",
     "modified": false,
-    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
-    "source": "src/main/resources/assets/ae2/textures/gui/sprites/button_highlighted.png",
-    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/button_highlighted.png",
-    "sha256": "5f2bda04a241ebfd4dac3799c42b413c2653f6607757c95e41d86eb73b3f7ca9",
-    "imageSize": [
-      200,
-      20
-    ],
-    "crops": [
-      {
-        "name": "BUTTON_HOVER",
-        "xywh": [
-          0,
-          0,
-          200,
-          20
-        ],
-        "adaptable": [
-          3,
-          3,
-          3,
-          3
-        ]
-      }
-    ],
-    "runtimeAdaptation": "Unmodified highlighted button sprite is resized using a three-pixel nine-slice."
-  },
-  {
-    "project": "Applied-Energistics-2",
-    "version": "19.2.17",
-    "tag": "neoforge/v19.2.17",
-    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
-    "license": "CC-BY-NC-SA-3.0",
-    "modified": false,
-    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
-    "source": "src/main/resources/assets/ae2/textures/gui/sprites/big_scroller.png",
-    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/big_scroller.png",
-    "sha256": "583732b6abe3ccea373213b1ecf62217b724d3b2acd71b07070ec7f2e7aa13d3",
+    "source": "assets/ae2/textures/gui/sprites/big_scroller.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/large_interface/big_scroller.png",
+    "sha256": "5ac58fb54c70b47d9d98442add653f16fc6bdf5c9ba8914674d4ac7d24d9c2ed",
     "imageSize": [
       12,
       15
@@ -215,19 +211,20 @@
         ]
       }
     ],
-    "runtimeAdaptation": "Unmodified scroll-handle sprite is used by the MUI2 vertical pattern scrollbar; borders follow the adapter's adaptable(1, 2, 1, 2) setting."
+    "runtimeAdaptation": "Unmodified authored dark scroll handle is used by the MUI2 vertical pattern scrollbar with adaptable(1,2,1,2) borders.",
+    "author": "Ridanisaurus",
+    "sourceRelease": "https://www.curseforge.com/minecraft/texture-packs/ae2-dark-mode/files/5520011",
+    "modrinthVersion": "BXpYgw04",
+    "sourceArchiveSha256": "a5a721617a5043b53d7223b102626b878661f53931e638b23dcc7ffdb58c1249"
   },
   {
-    "project": "Applied-Energistics-2",
-    "version": "19.2.17",
-    "tag": "neoforge/v19.2.17",
-    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
-    "license": "CC-BY-NC-SA-3.0",
+    "project": "AE2 Dark Mode",
+    "version": "1.0.6",
+    "license": "CC-BY-NC-SA-4.0",
     "modified": false,
-    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
-    "source": "src/main/resources/assets/ae2/textures/guis/extra_panels.png",
-    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/extra_panels.png",
-    "sha256": "c67fed0f98c9ca67a0602b5589a5191d59d5dd2bd3848c62de0e209e0e44b8b0",
+    "source": "assets/ae2/textures/guis/extra_panels.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/large_interface/extra_panels.png",
+    "sha256": "2c3317f3434c54fb67c2369b608a16e500dcbbb319949ecd2df544ec0c06018b",
     "imageSize": [
       128,
       128
@@ -270,7 +267,7 @@
         ]
       }
     ],
-    "runtimeAdaptation": "UPGRADES_FRAME composes these original one-pixel samples into an open-left thin frame at the requested size. The native embedded slot is omitted. After drawing its frame, the drawable repaints four modern SLOT backgrounds in the same widget layer so the frame does not cover MUI2's earlier slot-background pass; real upgrade widgets retain item rendering and hover states.",
+    "runtimeAdaptation": "Authored dark one-pixel samples compose the open-left upgrade frame. Four dark SLOT backgrounds are repainted after the frame in the same widget layer, before real item and hover drawing.",
     "slotRepaint": {
       "texture": "SLOT",
       "count": 4,
@@ -287,19 +284,20 @@
         18
       ],
       "order": "After the frame in the same drawable layer, before real slot items and hover."
-    }
+    },
+    "author": "Ridanisaurus",
+    "sourceRelease": "https://www.curseforge.com/minecraft/texture-packs/ae2-dark-mode/files/5520011",
+    "modrinthVersion": "BXpYgw04",
+    "sourceArchiveSha256": "a5a721617a5043b53d7223b102626b878661f53931e638b23dcc7ffdb58c1249"
   },
   {
-    "project": "Applied-Energistics-2",
-    "version": "26.1.12-beta",
-    "tag": "v26.1.12-beta",
-    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
-    "license": "CC-BY-NC-SA-3.0",
+    "project": "AE2 Dark Mode",
+    "version": "1.0.6",
+    "license": "CC-BY-NC-SA-4.0",
     "modified": false,
-    "sharedManifest": "META-INF/me-stock-port/ASSET_MANIFEST.json",
-    "source": "src/main/resources/assets/ae2/textures/guis/text_field.png",
-    "local": "src/main/resources/assets/gtnotgood/textures/gui/me_stock/text_field.png",
-    "sha256": "73bba41174d3ec15d83947e439915873611735fe436ad0cbc7653eca15e23ad1",
+    "source": "assets/ae2/textures/guis/text_field.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/large_interface/text_field.png",
+    "sha256": "8d7864aa4a0ef38d2aea5be1181894b64e529c563aaa4b3d388dff712f4e8aff",
     "imageSize": [
       128,
       128
@@ -336,6 +334,10 @@
         ]
       }
     ],
-    "runtimeAdaptation": "Priority input shares the existing ME-stock text-field atlas. Unfocused/focused rows keep their original pixels and are resized with a two-pixel nine-slice."
+    "runtimeAdaptation": "Authored dark text-field rows (0,0,128,12) and (0,24,128,12) use their original two-pixel nine-slice and palette text #f2f2f2. This pack supplies identical pixels for focused and unfocused rows.",
+    "author": "Ridanisaurus",
+    "sourceRelease": "https://www.curseforge.com/minecraft/texture-packs/ae2-dark-mode/files/5520011",
+    "modrinthVersion": "BXpYgw04",
+    "sourceArchiveSha256": "a5a721617a5043b53d7223b102626b878661f53931e638b23dcc7ffdb58c1249"
   }
 ]

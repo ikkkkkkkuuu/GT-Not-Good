@@ -2,7 +2,9 @@
 package com.xyp.gtnotgood.common.blocks.largeinterface;
 
 import java.io.IOException;
+import java.util.EnumMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 
 import javax.annotation.Nonnull;
@@ -47,6 +49,7 @@ import appeng.api.config.SidelessMode;
 import appeng.api.config.Upgrades;
 import appeng.api.config.YesNo;
 import appeng.api.implementations.ICraftingPatternItem;
+import appeng.api.implementations.items.IUpgradeModule;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.parts.IPart;
 import appeng.client.gui.AEBaseGui;
@@ -54,9 +57,11 @@ import appeng.core.AEConfig;
 import appeng.core.localization.ButtonToolTips;
 import appeng.core.localization.GuiText;
 import appeng.helpers.DualityInterface;
+import appeng.items.materials.MaterialType;
 import appeng.me.cache.CraftingGridCache;
 import appeng.util.PatternMultiplierHelper;
 import appeng.util.Platform;
+import appeng.util.inv.IUpgradeInventory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.common.gui.modularui.util.PatternSlot;
@@ -68,6 +73,7 @@ public final class LargeInterfaceGui {
     private static final int VISIBLE_ROWS = 4;
     private static final int SLOT_SIZE = 18;
     private static final UITexture[] ICONS = new UITexture[256];
+    private static final Map<Upgrades, ItemStack> UPGRADE_CARDS = upgradeCards();
     private final LargeInterfaceHost host;
     private final DualityInterface duality;
     private final PanelSyncManager sync;
@@ -93,7 +99,7 @@ public final class LargeInterfaceGui {
         // # zh_CN 大容量 ME 二合一接口
         panel.child(
             IKey.lang("gui.large_interface.title")
-                .color(0xff413f54)
+                .color(LargeInterfaceGuiTextures.TEXT_COLOR)
                 .asWidget()
                 .pos(8, 7));
         // #tr gui.large_interface.patterns
@@ -101,7 +107,7 @@ public final class LargeInterfaceGui {
         // # zh_CN 样板（900）
         panel.child(
             IKey.lang("gui.large_interface.patterns")
-                .color(0xff413f54)
+                .color(LargeInterfaceGuiTextures.TEXT_COLOR)
                 .asWidget()
                 .pos(8, 21));
         panel.child(patternGrid().pos(8, 32));
@@ -128,7 +134,7 @@ public final class LargeInterfaceGui {
                 }));
         panel.child(
             IKey.lang("container.inventory")
-                .color(0xff413f54)
+                .color(LargeInterfaceGuiTextures.TEXT_COLOR)
                 .asWidget()
                 .pos(8, 109));
         panel.child(
@@ -150,7 +156,8 @@ public final class LargeInterfaceGui {
 
                 @Override
                 public IDrawable getCurrentBackground(WidgetThemeEntry<?> widgetTheme) {
-                    return LargeInterfaceGuiTextures.PATTERN_SLOT;
+                    return isSynced() && getSlot().getStack() != null ? LargeInterfaceGuiTextures.SLOT
+                        : LargeInterfaceGuiTextures.PATTERN_SLOT;
                 }
 
                 @Override
@@ -160,9 +167,11 @@ public final class LargeInterfaceGui {
                     actions.change(index, direction.modifier > 0 ? 1 : -1);
                     return true;
                 }
-            }.slot(
-                new AuthorizedSlot(inventory, index, 1).slotGroup("patterns")
-                    .filter(stack -> stack.getItem() instanceof ICraftingPatternItem)))
+            }.disableThemeBackground(true)
+                .disableHoverThemeBackground(true)
+                .slot(
+                    new AuthorizedSlot(inventory, index, 1).slotGroup("patterns")
+                        .filter(stack -> stack.getItem() instanceof ICraftingPatternItem)))
             .size(COLUMNS * SLOT_SIZE + 12, VISIBLE_ROWS * SLOT_SIZE)
             .scrollable(new VerticalScrollData(false, 12).texture(LargeInterfaceGuiTextures.SCROLL_HANDLE))
             .showScrollShadows(false);
@@ -177,14 +186,59 @@ public final class LargeInterfaceGui {
                 .size(28, 82)
                 .excludeAreaInRecipeViewer());
         for (int i = 0; i < 4; i++) {
-            panel.child(
-                new ItemSlot().name("upgrade_" + i)
-                    .slot(
-                        new AuthorizedSlot(upgrades, i, 1).slotGroup("upgrades")
-                            .canDragInto(false))
-                    .background(LargeInterfaceGuiTextures.SLOT)
-                    .pos(190, 35 + i * SLOT_SIZE));
+            panel.child(new ItemSlot() {
+
+                @Override
+                protected void drawOverlay() {
+                    if (isSynced() && getSlot().getStack() == null) {
+                        LargeInterfaceGuiTextures.UPGRADE_SLOT_HINT.draw(
+                            getContext(),
+                            0,
+                            0,
+                            SLOT_SIZE,
+                            SLOT_SIZE,
+                            getWidgetThemeInternal(getPanel().getTheme()).getTheme());
+                    }
+                    super.drawOverlay();
+                }
+            }.name("upgrade_" + i)
+                .slot(
+                    new AuthorizedSlot(upgrades, i, 1).slotGroup("upgrades")
+                        .canDragInto(false))
+                .background(LargeInterfaceGuiTextures.SLOT)
+                .tooltip(t -> t.addLine(IKey.dynamic(this::upgradeTooltip)))
+                .pos(190, 35 + i * SLOT_SIZE));
         }
+    }
+
+    /** Native card lookup is cached once; displayed limits include cards already installed in the interface. */
+    private static Map<Upgrades, ItemStack> upgradeCards() {
+        Map<Upgrades, ItemStack> cards = new EnumMap<>(Upgrades.class);
+        for (MaterialType material : MaterialType.VALUES) {
+            if (!material.isRegistered() || material.getItemInstance() == null) continue;
+            ItemStack stack = material.stack(1);
+            if (stack.getItem() instanceof IUpgradeModule module) {
+                Upgrades upgrade = module.getType(stack);
+                if (upgrade != null) cards.putIfAbsent(upgrade, stack);
+            }
+        }
+        return cards;
+    }
+
+    private String upgradeTooltip() {
+        StringBuilder text = new StringBuilder(GuiText.Accepts.getLocal());
+        IUpgradeInventory upgrades = (IUpgradeInventory) duality.getUpgrades();
+        for (Upgrades upgrade : Upgrades.values()) {
+            int maximum = upgrades.getMaxInstalled(upgrade);
+            ItemStack card = UPGRADE_CARDS.get(upgrade);
+            if (maximum <= 0 || card == null) continue;
+            text.append("\n- ")
+                .append(card.getDisplayName());
+            if (maximum > 1) text.append(" (")
+                .append(maximum)
+                .append(')');
+        }
+        return text.toString();
     }
 
     private void addSettings(ModularPanel panel) {
@@ -275,7 +329,7 @@ public final class LargeInterfaceGui {
         manager.syncValue("priority", priority);
         panel.child(
             IKey.str(GuiText.Priority.getLocal())
-                .color(0xff413f54)
+                .color(LargeInterfaceGuiTextures.TEXT_COLOR)
                 .asWidget()
                 .pos(8, 6));
         panel.child(new TextFieldWidget() {
@@ -290,7 +344,7 @@ public final class LargeInterfaceGui {
             .size(61, 12)
             .background(LargeInterfaceGuiTextures.TEXT_FIELD)
             .disableHoverBackground()
-            .setTextColor(0xfff2f2f2)
+            .setTextColor(LargeInterfaceGuiTextures.TEXT_COLOR)
             .value(priority)
             .numbersInt(Integer.MIN_VALUE, Integer.MAX_VALUE));
         int[] steps = { 1, 10, 100, 1000 };
@@ -307,7 +361,12 @@ public final class LargeInterfaceGui {
                     .size(widths[col], 20)
                     .background(LargeInterfaceGuiTextures.BUTTON)
                     .hoverBackground(LargeInterfaceGuiTextures.BUTTON_HOVER)
-                    .overlay(IKey.str((amount > 0 ? "+" : "") + amount))
+                    .overlay(
+                        IKey.str((amount > 0 ? "+" : "") + amount)
+                            .color(LargeInterfaceGuiTextures.TEXT_COLOR))
+                    .hoverOverlay(
+                        IKey.str((amount > 0 ? "+" : "") + amount)
+                            .color(LargeInterfaceGuiTextures.HOVER_TEXT_COLOR))
                     .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
                         if (mouse.isClient() || !authorized.getAsBoolean() || mouse.mouseButton != 0) return;
                         long result = (long) duality.getPriority() + amount;

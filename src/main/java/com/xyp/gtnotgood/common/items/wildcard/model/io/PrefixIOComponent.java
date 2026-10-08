@@ -27,6 +27,8 @@ public final class PrefixIOComponent implements IWildcardIOComponent {
     private int amount;
     /** 用户正在输入的前缀名原始文本；解析成 OrePrefixes 后仍保留原文，避免输入过程被 getter 冲掉。 */
     private String rawText;
+    private OrePrefixes displayPrefix;
+    private ItemStack displayStack;
 
     public PrefixIOComponent(OrePrefixes prefix, int amount) {
         this.prefix = prefix;
@@ -76,8 +78,21 @@ public final class PrefixIOComponent implements IWildcardIOComponent {
 
     @Override
     public ItemStack getDisplayStack() {
-        // 用一个代表性材料（铁）展示前缀形态
-        ItemStack display = WildcardMaterials.makePrefixStack(prefix, Materials.Iron, Math.max(1, amount));
+        if (prefix == null) return null;
+        // 铁没有管道等形态；缓存实际注册的示例，避免 GUI 每帧扫描材料。
+        if (displayPrefix != prefix) {
+            displayStack = WildcardMaterials.makePrefixStack(prefix, Materials.Iron, 1);
+            if (displayStack == null) {
+                for (String materialName : WildcardMaterials.expandableMaterialNames()) {
+                    displayStack = WildcardMaterials.makePrefixStack(prefix, materialName, 1);
+                    if (displayStack != null) break;
+                }
+            }
+            displayPrefix = prefix;
+        }
+        if (displayStack == null) return null;
+        ItemStack display = displayStack.copy();
+        display.stackSize = amount;
         return display;
     }
 

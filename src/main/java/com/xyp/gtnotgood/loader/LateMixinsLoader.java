@@ -128,21 +128,18 @@ public class LateMixinsLoader implements ILateMixinLoader {
         }
 
         if (loadedMods.contains(ModList.AE2.getID())) {
+            addAll(list, "appliedenergistics.LargeInterfaceTerminalRowsMixin");
             if (loadedMods.contains(ModList.AE2FluidCraft.getID())) {
                 addAll(
                     list,
                     "appliedenergistics.LargeInterfaceDualityMixin",
-                    "appliedenergistics.LargeInterfaceTerminalRowsMixin",
                     "ae2fluidcraft.LargeInterfaceFluidDualityMixin");
-                if (FMLLaunchHandler.side()
-                    .isClient()) {
-                    addAll(list, "appliedenergistics.LargeInterfaceTerminalEntryMixin");
-                }
             }
             if (FMLLaunchHandler.side()
                 .isClient()) {
                 addAll(
                     list,
+                    "appliedenergistics.LargeInterfaceTerminalEntryMixin",
                     "appliedenergistics.InvTweaksOrderCacheMixin",
                     "appliedenergistics.ItemRepoSortNameCacheMixin",
                     "appliedenergistics.ItemSortersNameCacheMixin",

@@ -1,24 +1,41 @@
 package com.xyp.gtnotgood.common.blocks.largeinterface;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
-import com.cleanroommc.modularui.drawable.DrawableStack;
 import com.cleanroommc.modularui.drawable.UITexture;
+import com.cleanroommc.modularui.utils.GlStateManager;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import gregtech.api.modularui2.GTGuiTextures;
 
 /**
- * Official AE2 surfaces reused from the packaged-provider and ME-stock asset sets. Their sources and CC BY-NC-SA
- * 3.0 license are recorded in the corresponding packaged manifests; these drawables contain no GUI state.
+ * Ridanisaurus' AE2 Dark Mode 1.0.6 sprites with the original modern AE2 geometry. Sources and CC BY-NC-SA 4.0
+ * licensing are recorded in {@code META-INF/large-interface-port}; these drawables contain no GUI state.
  */
 public final class LargeInterfaceGuiTextures {
+
+    public static final int TEXT_COLOR = 0xfff2f2f2;
+    public static final int HOVER_TEXT_COLOR = 0xff0a090e;
+    private static final int mutedTextColor = 0xffcbccd4;
+    private static final UITexture patternHint = GTGuiTextures.OVERLAY_SLOT_PATTERN_ME
+        .withColorOverride(mutedTextColor);
 
     /** The priority page has no painted slots, so its two-pixel border can safely fit the main panel. */
     public static final UITexture BACKGROUND = texture("priority", 256, 256, 0, 0, 176, 125).adaptable(2)
         .build()
         .withColorOverride(0xffffffff);
     public static final UITexture SLOT = crop("states", 256, 256, 192, 192, 18, 18);
-    public static final IDrawable PATTERN_SLOT = new DrawableStack(SLOT, GTGuiTextures.OVERLAY_SLOT_PATTERN_ME);
+    private static final UITexture upgradeHint = crop("states", 256, 256, 240, 208, 16, 16);
+    /** Native empty-card artwork occupies the slot interior and leaves its one-pixel border intact. */
+    public static final IDrawable UPGRADE_SLOT_HINT = (context, x, y, width, height, theme) -> {
+        upgradeHint.draw(context, x + 1, y + 1, 16, 16, theme);
+        GlStateManager.color(1f, 1f, 1f, 1f);
+    };
+    /** A private glyph tint uses the pack's muted palette and restores white before real item rendering. */
+    public static final IDrawable PATTERN_SLOT = (context, x, y, width, height, theme) -> {
+        SLOT.draw(context, x, y, width, height, theme);
+        patternHint.draw(context, x, y, width, height, theme);
+        GlStateManager.color(1f, 1f, 1f, 1f);
+    };
     public static final UITexture PRIORITY_BACKGROUND = crop("priority", 256, 256, 0, 0, 176, 125);
     public static final UITexture SIDE_BUTTON = crop("states", 256, 256, 176, 128, 18, 20);
     public static final UITexture SIDE_BUTTON_HOVER = crop("states", 256, 256, 212, 128, 18, 20);
@@ -27,7 +44,8 @@ public final class LargeInterfaceGuiTextures {
     public static final UITexture BUTTON = texture("button", 200, 20, 0, 0, 200, 20).adaptable(3)
         .build()
         .withColorOverride(0xffffffff);
-    public static final UITexture BUTTON_HOVER = texture("button_highlighted", 200, 20, 0, 0, 200, 20).adaptable(3)
+    /** The pack omits a highlighted button sprite; its own toolbar highlight supplies the same blue focus color. */
+    public static final UITexture BUTTON_HOVER = texture("states", 256, 256, 212, 128, 18, 20).adaptable(3)
         .build()
         .withColorOverride(0xffffffff);
     public static final UITexture SCROLL_HANDLE = texture("big_scroller", 12, 15, 0, 0, 12, 15).adaptable(1, 2, 1, 2)
@@ -66,7 +84,7 @@ public final class LargeInterfaceGuiTextures {
 
     private static UITexture textField(int y) {
         return UITexture.builder()
-            .location(ModList.ModIds.GT_NOT_GOOD, "gui/me_stock/text_field")
+            .location(ModList.ModIds.GT_NOT_GOOD, "gui/large_interface/text_field")
             .imageSize(128, 128)
             .subAreaXYWH(0, y, 128, 12)
             .adaptable(2)
@@ -77,7 +95,7 @@ public final class LargeInterfaceGuiTextures {
     private static UITexture.Builder texture(String name, int imageWidth, int imageHeight, int x, int y, int width,
         int height) {
         return UITexture.builder()
-            .location(ModList.ModIds.GT_NOT_GOOD, "gui/packaged/" + name)
+            .location(ModList.ModIds.GT_NOT_GOOD, "gui/large_interface/" + name)
             .imageSize(imageWidth, imageHeight)
             .subAreaXYWH(x, y, width, height);
     }

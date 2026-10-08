@@ -36,8 +36,7 @@ public class GuiCraftAmount extends GuiAmount {
                 this.guiTop + 53,
                 Settings.CRAFTING_MODE,
                 CraftingMode.STANDARD));
-        this.amountBox.setText("1");
-        this.amountBox.setCursorPositionEnd();
+        this.setAmount(1);
     }
 
     @Override
@@ -114,5 +113,6 @@ public class GuiCraftAmount extends GuiAmount {
     public void setAmount(int amount) {
         this.amountBox.setText(String.valueOf(amount));
         this.amountBox.setCursorPositionEnd();
+        this.amountBox.setSelectionPos(0);
     }
 }

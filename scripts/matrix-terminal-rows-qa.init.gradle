@@ -1,0 +1,62 @@
+// Native matrix terminal boundaries and synchronization; disposable fixtures never enter release jars.
+// gradlew.bat -I scripts/matrix-terminal-rows-qa.init.gradle spotlessApply runClient --no-configuration-cache
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(project.file('.gradle/matrix-terminal-rows-qa-build'))
+}
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def output = root.file('build/matrix-terminal-rows-qa')
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Prepare the existing factory QA Et Futurum runtime first')
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def qaClasses = root.layout.buildDirectory.dir('matrix-terminal-rows-qa/test-classes')
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(qaClasses)
+        setSource(root.files('scripts/qa/MatrixTerminalRowsClientChecks.java'))
+    }
+    root.extensions.findByName('spotless')?.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/AssemblerMatrix.java',
+            'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/LargeInterfaceTerminalRowsMixin.java',
+            'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/LargeInterfaceTerminalEntryMixin.java',
+            'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
+            'scripts/qa/MatrixTerminalRowsClientChecks.java'
+    }
+    def runtimeJar = root.tasks.register('jarMatrixTerminalRowsQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'matrix-terminal-rows-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('matrix-terminal-rows-qa')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn runtimeJar, root.tasks.named('testClasses')
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(runtimeJar.flatMap { it.archiveFile }, qaClasses)
+        workingDir root.file('run/matrix-terminal-rows-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.matrixTerminalRows.qa', 'true'
+        systemProperty 'gtng.matrixTerminalRows.qa.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in native matrix terminal row client QA')
+        doFirst {
+            output.mkdirs()
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(new File(output, 'result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            def result = new File(output, 'result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('Matrix terminal rows QA failed; inspect MATRIX_TERMINAL_ROWS_QA in the client log')
+            }
+        }
+    }
+}
