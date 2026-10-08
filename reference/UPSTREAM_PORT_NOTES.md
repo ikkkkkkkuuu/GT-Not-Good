@@ -723,3 +723,44 @@ its `TilePackagedProvider` and `PackagedTarget` signature types share that packa
 External integrations using the former `com.xyp.gtnotgood.common.packaged` API
 must update their Java paths and rebuild. The corresponding source-license notice
 in `META-INF/ae2lt-port/CODE_PORT_NOTES.md` covers all relocated port sources.
+
+## Large ME dual interface appearance — 2026-10-08
+
+- Retains MUI2, the real 900-pattern inventory, 9-column/4-visible-row scrollable
+  grid, native settings, four upgrade slots and synchronized priority popup.
+  Replaces the GUI's GT default material with the existing modern AE2 resources;
+  the orange interface block render and GTNH setting semantics remain intact.
+- Official AE2 reference: version 19.2.17, tag `neoforge/v19.2.17`, commit
+  `79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a`, inspected `PatternProviderScreen`,
+  `AEBaseScreen`, `Icon`, `VerticalButtonBar`, `UpgradesPanel`, screen JSON layouts
+  and README license declarations. Official source:
+  https://github.com/AppliedEnergistics/Applied-Energistics-2/tree/79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a
+- Visual sources are the already packaged AE2 19.2.17 `priority`, `states`,
+  `extra_panels`, `button`, `button_highlighted` and `big_scroller` PNGs. The
+  slot-free priority background provides a two-pixel nine-slice main frame.
+  Existing source URLs, author credits and CC BY-NC-SA 3.0 declarations remain
+  in `META-INF/ae2lt-port`.
+- The priority text field shares the existing `textures/gui/me_stock/text_field`
+  atlas, pinned to official AE2 `v26.1.12-beta`, commit
+  `b7cf5822d9c128a61d9291cb2c1f92319253e4f0`; its original source and license are
+  recorded in `META-INF/me-stock-port`. Unfocused/focused crops are
+  `(0, 0, 128, 12)` and `(0, 24, 128, 12)` with two-pixel adaptable borders.
+- Destination: `common/blocks/largeinterface/LargeInterfaceGuiTextures.java` and
+  `LargeInterfaceGui.java`. The texture adapter composes cropped existing PNGs
+  for the frame, slots, settings sidebar, upgrade panel, buttons and scroll handle.
+  No PNG is changed or duplicated; shared file hashes match the packaged manifest.
+  Runtime crop/composition adaptations retain the artwork's CC BY-NC-SA 3.0 terms.
+- Central pattern slots combine the modern AE2 slot surface with the installed
+  GT5-Unofficial 5.09.54.183 MUI2 `PatternSlot` empty-pattern overlay,
+  `GTGuiTextures.OVERLAY_SLOT_PATTERN_ME` at
+  `gregtech:textures/gui/overlay_slot/pattern_me.png`. No GT PNG is copied; the
+  installed dependency remains its source and retains its upstream resource terms.
+- The upgrade-frame drawable repaints four modern `SLOT` backgrounds after the
+  frame at offsets `(4, 5 + slot * 18)`, each 18x18. These share the widget drawing
+  layer, preventing the frame from covering MUI2's prior slot-background pass;
+  the real upgrade widgets retain item rendering and hover behavior.
+- Exact shared-source paths, crop rectangles and SHA-256 hashes are recorded in
+  `META-INF/large-interface-port/ASSET_MANIFEST.json`; its `NOTICE.md` supplements
+  the existing AE2LT notices. This artwork is outside the project's general MIT grant.
+- Official reference downloads remain under ignored
+  `build/reference/ae2-19.2.17-gui`, outside all source and resource sets.

@@ -1,0 +1,341 @@
+[
+  {
+    "project": "Applied-Energistics-2",
+    "version": "19.2.17",
+    "tag": "neoforge/v19.2.17",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
+    "source": "src/main/resources/assets/ae2/textures/guis/priority.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/priority.png",
+    "sha256": "48efb799c9cca90ad28b72866ea76f1b3db219b674dd6b8ecc79e4a97f6d926a",
+    "imageSize": [
+      256,
+      256
+    ],
+    "crops": [
+      {
+        "name": "BACKGROUND",
+        "xywh": [
+          0,
+          0,
+          176,
+          125
+        ],
+        "adaptable": [
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "name": "PRIORITY_BACKGROUND",
+        "xywh": [
+          0,
+          0,
+          176,
+          125
+        ]
+      }
+    ],
+    "runtimeAdaptation": "The slot-free priority frame is resized with a two-pixel nine-slice for the main panel; the popup keeps its original 176x125 frame. PNG bytes and original pixel colors are unchanged."
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "version": "19.2.17",
+    "tag": "neoforge/v19.2.17",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
+    "source": "src/main/resources/assets/ae2/textures/guis/states.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/states.png",
+    "sha256": "0996b0084c7bf37f65a97a745982ab681ebd86f142fade526f14c823c4727e55",
+    "imageSize": [
+      256,
+      256
+    ],
+    "crops": [
+      {
+        "name": "SLOT",
+        "xywh": [
+          192,
+          192,
+          18,
+          18
+        ]
+      },
+      {
+        "name": "SIDE_BUTTON",
+        "xywh": [
+          176,
+          128,
+          18,
+          20
+        ]
+      },
+      {
+        "name": "SIDE_BUTTON_HOVER",
+        "xywh": [
+          212,
+          128,
+          18,
+          20
+        ]
+      },
+      {
+        "name": "TAB",
+        "xywh": [
+          160,
+          192,
+          20,
+          20
+        ]
+      },
+      {
+        "name": "TAB_HOVER",
+        "xywh": [
+          160,
+          224,
+          22,
+          22
+        ]
+      }
+    ],
+    "runtimeAdaptation": "Modern slot, toolbar-button and tab frames are cropped for MUI2 controls. Central PATTERN_SLOT combines SLOT with the installed GregTech empty-pattern overlay. GTNH setting glyphs are still read from the installed native AE2 atlas; old glyph indices are not applied to this modern atlas.",
+    "runtimeOverlay": {
+      "project": "GTNewHorizons/GT5-Unofficial",
+      "version": "5.09.54.183",
+      "widget": "gregtech.common.gui.modularui.util.PatternSlot",
+      "textureConstant": "gregtech.api.modularui2.GTGuiTextures.OVERLAY_SLOT_PATTERN_ME",
+      "resource": "gregtech:textures/gui/overlay_slot/pattern_me.png",
+      "packaged": false,
+      "modifications": "Runtime IDrawable composition over the modern AE2 SLOT surface; the overlay PNG is provided unchanged by the installed GregTech dependency."
+    }
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "version": "19.2.17",
+    "tag": "neoforge/v19.2.17",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/button.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/button.png",
+    "sha256": "5e815b235384d3ad4422e61e044804c097e486ffdb61fade6056965069c8f382",
+    "imageSize": [
+      200,
+      20
+    ],
+    "crops": [
+      {
+        "name": "BUTTON",
+        "xywh": [
+          0,
+          0,
+          200,
+          20
+        ],
+        "adaptable": [
+          3,
+          3,
+          3,
+          3
+        ]
+      }
+    ],
+    "runtimeAdaptation": "Unmodified normal button sprite is resized using a three-pixel nine-slice."
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "version": "19.2.17",
+    "tag": "neoforge/v19.2.17",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/button_highlighted.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/button_highlighted.png",
+    "sha256": "5f2bda04a241ebfd4dac3799c42b413c2653f6607757c95e41d86eb73b3f7ca9",
+    "imageSize": [
+      200,
+      20
+    ],
+    "crops": [
+      {
+        "name": "BUTTON_HOVER",
+        "xywh": [
+          0,
+          0,
+          200,
+          20
+        ],
+        "adaptable": [
+          3,
+          3,
+          3,
+          3
+        ]
+      }
+    ],
+    "runtimeAdaptation": "Unmodified highlighted button sprite is resized using a three-pixel nine-slice."
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "version": "19.2.17",
+    "tag": "neoforge/v19.2.17",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
+    "source": "src/main/resources/assets/ae2/textures/gui/sprites/big_scroller.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/big_scroller.png",
+    "sha256": "583732b6abe3ccea373213b1ecf62217b724d3b2acd71b07070ec7f2e7aa13d3",
+    "imageSize": [
+      12,
+      15
+    ],
+    "crops": [
+      {
+        "name": "SCROLL_HANDLE",
+        "xywh": [
+          0,
+          0,
+          12,
+          15
+        ],
+        "adaptable": [
+          1,
+          2,
+          1,
+          2
+        ]
+      }
+    ],
+    "runtimeAdaptation": "Unmodified scroll-handle sprite is used by the MUI2 vertical pattern scrollbar; borders follow the adapter's adaptable(1, 2, 1, 2) setting."
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "version": "19.2.17",
+    "tag": "neoforge/v19.2.17",
+    "commit": "79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sharedManifest": "META-INF/ae2lt-port/ASSET_MANIFEST.json",
+    "source": "src/main/resources/assets/ae2/textures/guis/extra_panels.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/packaged/extra_panels.png",
+    "sha256": "c67fed0f98c9ca67a0602b5589a5191d59d5dd2bd3848c62de0e209e0e44b8b0",
+    "imageSize": [
+      128,
+      128
+    ],
+    "crops": [
+      {
+        "name": "upgradeBody",
+        "xywh": [
+          18,
+          5,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "upgradeOutline",
+        "xywh": [
+          1,
+          0,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "upgradeHighlight",
+        "xywh": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "upgradeShadow",
+        "xywh": [
+          1,
+          28,
+          1,
+          1
+        ]
+      }
+    ],
+    "runtimeAdaptation": "UPGRADES_FRAME composes these original one-pixel samples into an open-left thin frame at the requested size. The native embedded slot is omitted. After drawing its frame, the drawable repaints four modern SLOT backgrounds in the same widget layer so the frame does not cover MUI2's earlier slot-background pass; real upgrade widgets retain item rendering and hover states.",
+    "slotRepaint": {
+      "texture": "SLOT",
+      "count": 4,
+      "offset": [
+        4,
+        5
+      ],
+      "step": [
+        0,
+        18
+      ],
+      "size": [
+        18,
+        18
+      ],
+      "order": "After the frame in the same drawable layer, before real slot items and hover."
+    }
+  },
+  {
+    "project": "Applied-Energistics-2",
+    "version": "26.1.12-beta",
+    "tag": "v26.1.12-beta",
+    "commit": "b7cf5822d9c128a61d9291cb2c1f92319253e4f0",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sharedManifest": "META-INF/me-stock-port/ASSET_MANIFEST.json",
+    "source": "src/main/resources/assets/ae2/textures/guis/text_field.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/me_stock/text_field.png",
+    "sha256": "73bba41174d3ec15d83947e439915873611735fe436ad0cbc7653eca15e23ad1",
+    "imageSize": [
+      128,
+      128
+    ],
+    "crops": [
+      {
+        "name": "TEXT_FIELD",
+        "xywh": [
+          0,
+          0,
+          128,
+          12
+        ],
+        "adaptable": [
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "name": "TEXT_FIELD_FOCUSED",
+        "xywh": [
+          0,
+          24,
+          128,
+          12
+        ],
+        "adaptable": [
+          2,
+          2,
+          2,
+          2
+        ]
+      }
+    ],
+    "runtimeAdaptation": "Priority input shares the existing ME-stock text-field atlas. Unfocused/focused rows keep their original pixels and are resized with a two-pixel nine-slice."
+  }
+]

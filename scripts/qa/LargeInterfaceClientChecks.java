@@ -34,6 +34,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.screen.ClientScreenHandler;
 import com.cleanroommc.modularui.screen.GuiContainerWrapper;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.widgets.layout.Grid;
@@ -45,6 +46,7 @@ import com.glodblock.github.common.parts.PartFluidInterface;
 import com.glodblock.github.common.tile.TileFluidInterface;
 import com.glodblock.github.loader.ItemAndBlockHolder;
 import com.glodblock.github.util.DualityFluidInterface;
+import com.xyp.gtnotgood.client.text.TextRenderState;
 import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceGuiFactory;
 import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceHost;
 import com.xyp.gtnotgood.common.blocks.largeinterface.TileLargeInterface;
@@ -185,6 +187,8 @@ public final class LargeInterfaceClientChecks {
             } else if (stage == 1 && ticks - seededAt >= 100 && clientPartReady && clientBlockReady) {
                 verifyReturns(partFixture);
                 verifyReturns(blockFixture);
+                installGuiUpgrade(part);
+                installGuiUpgrade(block);
                 require(
                     clientPartReady && clientBlockReady,
                     "the real client has loaded and resolved both the cable part and full block before opening their GUI");
@@ -684,6 +688,29 @@ public final class LargeInterfaceClientChecks {
         player.playerNetServerHandler.setPlayerLocation(1.5, 10, -2.5, 0, 15);
     }
 
+    private static ItemStack guiUpgradeCard() {
+        return AEApi.instance()
+            .definitions()
+            .materials()
+            .cardAdvancedBlocking()
+            .maybeStack(1)
+            .get();
+    }
+
+    private static void installGuiUpgrade(LargeInterfaceHost host) {
+        ItemStack card = guiUpgradeCard();
+        var duality = host.getInterfaceDuality();
+        var upgrades = duality.getUpgrades();
+        require(
+            upgradeMaximum(Upgrades.ADVANCED_BLOCKING, ModsItemlist.AE2FluidCraftBlockFluidInterface.get(1)) > 0
+                && upgrades.isItemValidForSlot(0, card),
+            "GUI fixture uses an actual upgrade card supported by the native dual interface");
+        upgrades.setInventorySlotContents(0, card);
+        require(
+            duality.getInstalledUpgrades(Upgrades.ADVANCED_BLOCKING) == 1,
+            "GUI fixture installs exactly one native advanced blocking card after the return-buffer checks");
+    }
+
     private static Fixture fixture(EntityPlayerMP player, int x, LargeInterfaceHost host,
         PartInterfaceTerminal terminal) {
         World world = player.worldObj;
@@ -988,6 +1015,19 @@ public final class LargeInterfaceClientChecks {
                 require(
                     collect(panel, ItemSlot.class).size() == 940,
                     "GUI contains exactly patterns, four upgrades and player inventory");
+                ItemSlot upgrade = (ItemSlot) named(panel, "upgrade_0");
+                require(
+                    upgrade.isEnabled() && ItemStack.areItemStacksEqual(
+                        upgrade.getSlot()
+                            .getStack(),
+                        guiUpgradeCard()),
+                    "the enabled client upgrade slot synchronizes the actual native advanced blocking card");
+                for (int i = 1; i < 4; i++) {
+                    requireSilent(
+                        ((ItemSlot) named(panel, "upgrade_" + i)).getSlot()
+                            .getStack() == null,
+                        "GUI fixture keeps the other three native upgrade slots empty");
+                }
                 for (String name : new String[] { "block", "interface_terminal", "insertion_mode",
                     "pattern_optimization" }) {
                     IWidget button = named(panel, name);
@@ -1008,6 +1048,9 @@ public final class LargeInterfaceClientChecks {
                         "removed hatch controls do not create hidden popup handlers: " + name);
                 }
                 screenshot("large-interface-" + variant + "-first.png");
+                screenshotHovered(gui, named(panel, "block"), "large-interface-" + variant + "-block-hover.png");
+                screenshotHovered(gui, named(panel, "priority"), "large-interface-" + variant + "-priority-hover.png");
+                screenshotHovered(gui, upgrade, "large-interface-" + variant + "-upgrade-hover.png");
                 var scroll = patterns.getScrollArea();
                 scroll.getScrollY()
                     .scrollTo(scroll, Integer.MAX_VALUE);
@@ -1223,6 +1266,34 @@ public final class LargeInterfaceClientChecks {
         Minecraft mc = Minecraft.getMinecraft();
         ScreenShotHelper
             .saveScreenshot(outputDirectory(), name, mc.displayWidth, mc.displayHeight, mc.getFramebuffer());
+    }
+
+    /** Captures native hover rendering without moving the system pointer or retaining temporary GL state. */
+    private static void screenshotHovered(GuiContainerWrapper gui, IWidget widget, String name) {
+        Minecraft mc = Minecraft.getMinecraft();
+        var screen = gui.getScreen();
+        var context = screen.getContext();
+        int previousX = context.getAbsMouseX();
+        int previousY = context.getAbsMouseY();
+        float partialTicks = context.getPartialTicks();
+        var area = widget.getArea();
+        int x = area.x() + area.w() / 2;
+        int y = area.y() + area.h() / 2;
+        try (TextRenderState ignored = new TextRenderState()) {
+            mc.getFramebuffer()
+                .bindFramebuffer(true);
+            mc.entityRenderer.setupOverlayRendering();
+            try {
+                context.updateState(x, y, partialTicks);
+                screen.onFrameUpdate();
+                requireSilent(widget.isHovering(), "native hover state did not reach " + widget.getName());
+                ClientScreenHandler.drawScreen(screen, gui, x, y, partialTicks);
+                screenshot(name);
+            } finally {
+                context.updateState(previousX, previousY, partialTicks);
+                screen.onFrameUpdate();
+            }
+        }
     }
 
     private static void require(boolean condition, String message) {

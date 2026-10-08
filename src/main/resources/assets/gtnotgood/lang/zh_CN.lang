@@ -174,6 +174,7 @@ tooltip.large_interface.patterns=900 个样板槽，9 列滚动显示
 tooltip.large_interface.return=物品与流体产物直接回 ME，不支持库存标记拉取
 gui.large_interface.title=大容量 ME 二合一接口
 gui.large_interface.patterns=样板（900）
+gui.large_interface.back=返回二合一接口
 tile.mebridge.receiver.name=ME 网桥 - 接收端
 tooltip.mebridge.receiver.0=§b连接到发起端广播的频道。
 tooltip.mebridge.receiver.1=§7跨维度并入发起端所在的 ME 网络。

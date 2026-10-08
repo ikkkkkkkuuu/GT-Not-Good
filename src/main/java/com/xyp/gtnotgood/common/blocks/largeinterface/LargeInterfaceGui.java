@@ -15,8 +15,10 @@ import net.minecraft.network.PacketBuffer;
 import com.cleanroommc.modularui.api.UpOrDown;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.utils.item.IItemHandler;
 import com.cleanroommc.modularui.utils.item.InvWrapper;
@@ -25,6 +27,7 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
+import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
@@ -32,6 +35,7 @@ import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.glodblock.github.inventory.IDualHost;
+import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import appeng.api.config.AdvancedBlockingMode;
@@ -55,7 +59,6 @@ import appeng.util.PatternMultiplierHelper;
 import appeng.util.Platform;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import gregtech.api.modularui2.GTGuiTextures;
 import gregtech.common.gui.modularui.util.PatternSlot;
 
 /** Real pattern slots share the native interface inventories and settings; only the central grid is enlarged. */
@@ -82,24 +85,25 @@ public final class LargeInterfaceGui {
     }
 
     private ModularPanel build() {
-        ModularPanel panel = ModularPanel.defaultPanel("large_interface", 212, 207)
-            .background(GTGuiTextures.BACKGROUND_STANDARD);
+        ModularPanel panel = ModularPanel.defaultPanel("large_interface", 190, 207)
+            .background(LargeInterfaceGuiTextures.BACKGROUND)
+            .disableHoverBackground();
         // #tr gui.large_interface.title
         // # Large ME Dual Interface
         // # zh_CN 大容量 ME 二合一接口
         panel.child(
             IKey.lang("gui.large_interface.title")
+                .color(0xff413f54)
                 .asWidget()
-                .pos(8, 7)
-                .size(172, 10));
+                .pos(8, 7));
         // #tr gui.large_interface.patterns
         // # Patterns (900)
         // # zh_CN 样板（900）
         panel.child(
             IKey.lang("gui.large_interface.patterns")
+                .color(0xff413f54)
                 .asWidget()
-                .pos(8, 21)
-                .size(166, 9));
+                .pos(8, 21));
         panel.child(patternGrid().pos(8, 32));
         addUpgrades(panel);
         addSettings(panel);
@@ -107,21 +111,28 @@ public final class LargeInterfaceGui {
             .syncedPanel("large_interface_priority", true, (manager, handler) -> priorityPanel(manager));
         panel.child(
             new ButtonWidget<>().name("priority")
-                .pos(184, 5)
-                .size(18)
-                .overlay(icon(66))
+                .pos(166, -5)
+                .size(22)
+                .background(LargeInterfaceGuiTextures.TAB)
+                .hoverBackground(LargeInterfaceGuiTextures.TAB_HOVER)
+                .overlay(
+                    icon(66).asIcon()
+                        .size(16))
+                .excludeAreaInRecipeViewer()
                 .addTooltipLine(GuiText.Priority.getLocal())
                 .onMousePressed(mouse -> {
                     if (mouse != 0 && mouse != 1) return false;
                     priorityPanel.openPanel();
+                    panel.setEnabled(false);
                     return true;
                 }));
         panel.child(
             IKey.lang("container.inventory")
+                .color(0xff413f54)
                 .asWidget()
                 .pos(8, 109));
         panel.child(
-            SlotGroupWidget.playerInventory((index, slot) -> slot.background(GTGuiTextures.SLOT_ITEM_STANDARD))
+            SlotGroupWidget.playerInventory((index, slot) -> slot.background(LargeInterfaceGuiTextures.SLOT))
                 .pos(8, 120));
         return panel;
     }
@@ -138,6 +149,11 @@ public final class LargeInterfaceGui {
             .gridOfWidthHeight(COLUMNS, rows, (x, y, index) -> new PatternSlot() {
 
                 @Override
+                public IDrawable getCurrentBackground(WidgetThemeEntry<?> widgetTheme) {
+                    return LargeInterfaceGuiTextures.PATTERN_SLOT;
+                }
+
+                @Override
                 @SideOnly(Side.CLIENT)
                 public boolean onMouseScroll(UpOrDown direction, int amount) {
                     if (!AEBaseGui.isCtrlKeyDown() || getSlot().getStack() == null) return false;
@@ -147,34 +163,43 @@ public final class LargeInterfaceGui {
             }.slot(
                 new AuthorizedSlot(inventory, index, 1).slotGroup("patterns")
                     .filter(stack -> stack.getItem() instanceof ICraftingPatternItem)))
-            .size(COLUMNS * SLOT_SIZE + 4, VISIBLE_ROWS * SLOT_SIZE)
-            .scrollable();
+            .size(COLUMNS * SLOT_SIZE + 12, VISIBLE_ROWS * SLOT_SIZE)
+            .scrollable(new VerticalScrollData(false, 12).texture(LargeInterfaceGuiTextures.SCROLL_HANDLE))
+            .showScrollShadows(false);
     }
 
     private void addUpgrades(ModularPanel panel) {
         InvWrapper upgrades = new InvWrapper(duality.getUpgrades());
         sync.registerSlotGroup("upgrades", 1);
+        panel.child(
+            LargeInterfaceGuiTextures.UPGRADES_FRAME.asWidget()
+                .pos(186, 30)
+                .size(28, 82)
+                .excludeAreaInRecipeViewer());
         for (int i = 0; i < 4; i++) {
             panel.child(
                 new ItemSlot().name("upgrade_" + i)
                     .slot(
                         new AuthorizedSlot(upgrades, i, 1).slotGroup("upgrades")
                             .canDragInto(false))
-                    .background(GTGuiTextures.SLOT_ITEM_STANDARD)
-                    .pos(184, 32 + i * SLOT_SIZE));
+                    .background(LargeInterfaceGuiTextures.SLOT)
+                    .pos(190, 35 + i * SLOT_SIZE));
         }
     }
 
     private void addSettings(ModularPanel panel) {
-        panel.child(setting(Settings.BLOCK, -20, 8, null));
-        panel.child(setting(Settings.SMART_BLOCK, -38, 8, null));
-        panel.child(setting(Settings.INTERFACE_TERMINAL, -20, 26, null));
-        panel.child(setting(Settings.INSERTION_MODE, -20, 44, null));
+        panel.child(setting(Settings.BLOCK, -18, 1, null));
+        panel.child(setting(Settings.SMART_BLOCK, -36, 1, null));
+        panel.child(setting(Settings.INTERFACE_TERMINAL, -18, 23, null));
+        panel.child(setting(Settings.INSERTION_MODE, -18, 45, null));
         panel.child(
             new ButtonWidget<>().name("double_patterns")
-                .pos(-20, 62)
-                .size(18)
-                .overlay(icon(71))
+                .pos(-18, 67)
+                .size(18, 20)
+                .background(LargeInterfaceGuiTextures.SIDE_BUTTON)
+                .hoverBackground(LargeInterfaceGuiTextures.SIDE_BUTTON_HOVER)
+                .overlay(sideIcon(icon(71)))
+                .excludeAreaInRecipeViewer()
                 .addTooltipLine(ButtonToolTips.DoublePatterns.getLocal())
                 .addTooltipLine(ButtonToolTips.DoublePatternsHint.getLocal())
                 .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
@@ -183,12 +208,12 @@ public final class LargeInterfaceGui {
                         multiplyPatterns(mouse);
                     }
                 })));
-        panel.child(setting(Settings.PATTERN_OPTIMIZATION, -20, 80, null));
-        panel.child(setting(Settings.ADVANCED_BLOCKING_MODE, -20, 98, Upgrades.ADVANCED_BLOCKING));
-        panel.child(setting(Settings.LOCK_CRAFTING_MODE, -20, 116, Upgrades.LOCK_CRAFTING));
-        panel.child(setting(Settings.FUZZY_MODE, -20, 134, Upgrades.FUZZY));
+        panel.child(setting(Settings.PATTERN_OPTIMIZATION, -18, 89, null));
+        panel.child(setting(Settings.ADVANCED_BLOCKING_MODE, -18, 111, Upgrades.ADVANCED_BLOCKING));
+        panel.child(setting(Settings.LOCK_CRAFTING_MODE, -18, 133, Upgrades.LOCK_CRAFTING));
+        panel.child(setting(Settings.FUZZY_MODE, -18, 155, Upgrades.FUZZY));
         if (host instanceof IDualHost && !(host instanceof IPart)) {
-            panel.child(setting(Settings.SIDELESS_MODE, -20, 152, null));
+            panel.child(setting(Settings.SIDELESS_MODE, -18, 177, null));
         }
     }
 
@@ -204,8 +229,11 @@ public final class LargeInterfaceGui {
             setting.name()
                 .toLowerCase(Locale.ROOT))
             .pos(x, y)
-            .size(18)
-            .overlay(drawable)
+            .size(18, 20)
+            .background(LargeInterfaceGuiTextures.SIDE_BUTTON)
+            .hoverBackground(LargeInterfaceGuiTextures.SIDE_BUTTON_HOVER)
+            .overlay(sideIcon(drawable))
+            .excludeAreaInRecipeViewer()
             .tooltip(t -> t.addLine(IKey.dynamic(() -> settingTooltip(setting, value.getIntValue()))))
             .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
                 if (mouse.isClient() || !authorized.getAsBoolean()
@@ -226,9 +254,18 @@ public final class LargeInterfaceGui {
         return button;
     }
 
+    private static IDrawable sideIcon(IDrawable icon) {
+        return (context, x, y, width, height, theme) -> icon.draw(context, x + 1, y + 1, 16, 16, theme);
+    }
+
     private ModularPanel priorityPanel(PanelSyncManager manager) {
         ModularPanel panel = ModularPanel.defaultPanel("large_interface_priority", 176, 125)
-            .background(GTGuiTextures.BACKGROUND_STANDARD);
+            .background(LargeInterfaceGuiTextures.PRIORITY_BACKGROUND)
+            .disableHoverBackground();
+        panel.onCloseAction(
+            () -> panel.getScreen()
+                .getMainPanel()
+                .setEnabled(true));
         IntSyncValue priority = new IntSyncValue(
             duality::getPriority,
             value -> {
@@ -238,24 +275,38 @@ public final class LargeInterfaceGui {
         manager.syncValue("priority", priority);
         panel.child(
             IKey.str(GuiText.Priority.getLocal())
+                .color(0xff413f54)
                 .asWidget()
-                .pos(8, 7));
-        panel.child(
-            new TextFieldWidget().name("priority_value")
-                .pos(40, 54)
-                .size(96, 18)
-                .value(priority)
-                .numbersInt(Integer.MIN_VALUE, Integer.MAX_VALUE));
+                .pos(8, 6));
+        panel.child(new TextFieldWidget() {
+
+            @Override
+            public IDrawable getCurrentBackground(WidgetThemeEntry<?> widgetTheme) {
+                return isFocused() ? LargeInterfaceGuiTextures.TEXT_FIELD_FOCUSED
+                    : LargeInterfaceGuiTextures.TEXT_FIELD;
+            }
+        }.name("priority_value")
+            .pos(60, 55)
+            .size(61, 12)
+            .background(LargeInterfaceGuiTextures.TEXT_FIELD)
+            .disableHoverBackground()
+            .setTextColor(0xfff2f2f2)
+            .value(priority)
+            .numbersInt(Integer.MIN_VALUE, Integer.MAX_VALUE));
         int[] steps = { 1, 10, 100, 1000 };
         if (AEConfig.instance != null) {
             for (int i = 0; i < steps.length; i++) steps[i] = AEConfig.instance.priorityByStacksAmounts(i);
         }
+        int[] positions = { 20, 48, 82, 120 };
+        int[] widths = { 22, 28, 32, 38 };
         for (int row = 0; row < 2; row++) for (int col = 0; col < steps.length; col++) {
             int amount = (row == 0 ? 1 : -1) * steps[col];
             panel.child(
                 new ButtonWidget<>().name("priority_" + row + "_" + col)
-                    .pos(8 + col * 40, row == 0 ? 29 : 80)
-                    .size(38, 20)
+                    .pos(positions[col], row == 0 ? 30 : 72)
+                    .size(widths[col], 20)
+                    .background(LargeInterfaceGuiTextures.BUTTON)
+                    .hoverBackground(LargeInterfaceGuiTextures.BUTTON_HOVER)
                     .overlay(IKey.str((amount > 0 ? "+" : "") + amount))
                     .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
                         if (mouse.isClient() || !authorized.getAsBoolean() || mouse.mouseButton != 0) return;
@@ -265,8 +316,20 @@ public final class LargeInterfaceGui {
         }
         panel.child(
             ButtonWidget.panelCloseButton()
-                .pos(154, 5)
-                .size(16));
+                .pos(152, -5)
+                .size(20)
+                .background(LargeInterfaceGuiTextures.TAB)
+                .hoverBackground(LargeInterfaceGuiTextures.TAB_HOVER)
+                .overlay(
+                    new ItemDrawable(
+                        (host instanceof IPart ? GTNGItemList.LargeInterfacePart : GTNGItemList.LargeInterface).get(1))
+                            .asIcon()
+                            .size(16))
+                // #tr gui.large_interface.back
+                // # Return to the interface
+                // # zh_CN 返回二合一接口
+                .tooltip(t -> t.addLine(IKey.lang("gui.large_interface.back")))
+                .excludeAreaInRecipeViewer());
         return panel;
     }
 
