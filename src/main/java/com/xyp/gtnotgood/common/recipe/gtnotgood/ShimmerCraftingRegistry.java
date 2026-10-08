@@ -25,8 +25,7 @@ public final class ShimmerCraftingRegistry {
         if (output == null || !(output.getItem() instanceof ItemMachines)) return;
         Object[] copy = Arrays.stream(inputs)
             .filter(value -> !(value instanceof String name && name.startsWith("craftingTool")))
-            .map(value -> value instanceof ItemStack stack ? stack.copy() : value)
-            .toArray();
+            .map(value -> value instanceof ItemStack stack ? stack.copy() : value).toArray();
         RECIPES.add(new Entry(output.copy(), copy, shaped));
     }
 
@@ -35,13 +34,13 @@ public final class ShimmerCraftingRegistry {
             try {
                 GTRecipe reversed = (entry.shaped ? GTUtility.reverseShapedRecipe(entry.output, entry.inputs)
                     : GTUtility.reverseShapelessRecipe(entry.output, entry.inputs)).orElse(null);
-                if (reversed == null || reversed.mInputs == null
-                    || !ShimmerRecoveryRules.shouldDisassemble(reversed.mInputs)
-                    || TransmutationRecipes.contains(reversed.mInputs[0])) continue;
-                TransmutationRecipes.register(
-                    reversed.mInputs[0],
-                    ShimmerRecoveryRules.handleRecipeTransformation(reversed.mOutputs, null),
-                    null);
+                if (
+                    reversed == null || reversed.mInputs == null
+                        || !ShimmerRecoveryRules.shouldDisassemble(reversed.mInputs)
+                        || TransmutationRecipes.contains(reversed.mInputs[0])
+                ) continue;
+                TransmutationRecipes.register(reversed.mInputs[0],
+                    ShimmerRecoveryRules.handleRecipeTransformation(reversed.mOutputs, null), null);
             } catch (IllegalStateException e) {
                 GTNotGood.LOG.warn("Skipping invalid reversed GT crafting recipe", e);
             }

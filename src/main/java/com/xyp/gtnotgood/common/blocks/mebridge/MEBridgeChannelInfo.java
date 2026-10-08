@@ -75,13 +75,8 @@ public class MEBridgeChannelInfo {
             } catch (RuntimeException ignored) {}
         }
         String name = tag.getString("name");
-        return new MEBridgeChannelInfo(
-            name,
-            tag.getInteger("x"),
-            tag.getInteger("y"),
-            tag.getInteger("z"),
+        return new MEBridgeChannelInfo(name, tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z"),
             tag.getInteger("dim"),
-            tag.hasKey("color") ? tag.getInteger("color") : MEBridgeChannelColor.defaultFor(name),
-            owner);
+            tag.hasKey("color") ? tag.getInteger("color") : MEBridgeChannelColor.defaultFor(name), owner);
     }
 }

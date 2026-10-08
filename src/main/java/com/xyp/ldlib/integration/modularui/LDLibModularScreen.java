@@ -114,12 +114,10 @@ public class LDLibModularScreen extends PixelFontModularScreen {
     @Override
     public boolean onKeyPressed(char character, int key) {
         try (PixelFontScope ignored = new PixelFontScope()) {
-            if (input.keyTyped(
-                character,
-                key,
-                GuiScreen.isShiftKeyDown(),
-                GuiScreen.isCtrlKeyDown(),
-                key == Keyboard.KEY_TAB)) return true;
+            if (
+                input.keyTyped(character, key, GuiScreen.isShiftKeyDown(), GuiScreen.isCtrlKeyDown(),
+                    key == Keyboard.KEY_TAB)
+            ) return true;
         }
         return super.onKeyPressed(character, key);
     }

@@ -25,11 +25,11 @@ public final class CraftingBatchPlannerImpl implements CraftingBatchPlanner {
 
     @Override
     public MediumStrategy resolveMediumStrategy(List<Boolean> compatibleMedia) {
-        if (compatibleMedia == null || compatibleMedia.isEmpty()) return MediumStrategy.NATIVE;
+        if (compatibleMedia == null || compatibleMedia.isEmpty()) return MediumStrategy.Native;
         for (Boolean compatible : compatibleMedia) {
-            if (!Boolean.TRUE.equals(compatible)) return MediumStrategy.NATIVE;
+            if (!Boolean.TRUE.equals(compatible)) return MediumStrategy.Native;
         }
-        return MediumStrategy.BATCH;
+        return MediumStrategy.Batch;
     }
 
     @Override
@@ -42,21 +42,16 @@ public final class CraftingBatchPlannerImpl implements CraftingBatchPlanner {
         Objects.requireNonNull(energySimulation, "energySimulation");
 
         if (!hasValidStacks(expandedInputs) || !hasValidStacks(condensedOutputs)) {
-            return new BatchPlan(1, LimitingFactor.STACK_CONTRACT);
+            return new BatchPlan(1, LimitingFactor.StackContract);
         }
 
         List<BatchRequirement> requirements = new ArrayList<>();
         for (IAEStack<?> input : expandedInputs) {
             if (input == null) continue;
-            IAEStack<?> key = input.copy()
-                .setStackSize(1);
+            IAEStack<?> key = input.copy().setStackSize(1);
             IAEStack<?> available = getAvailableItem(inventory, key);
-            requirements.add(
-                new BatchRequirement(
-                    key,
-                    input.getStackSize(),
-                    available == null ? 0 : Math.max(0, available.getStackSize()),
-                    input.getAmountPerUnit()));
+            requirements.add(new BatchRequirement(key, input.getStackSize(),
+                available == null ? 0 : Math.max(0, available.getStackSize()), input.getAmountPerUnit()));
         }
         long[] outputAmounts = new long[condensedOutputs.length];
         for (int i = 0; i < condensedOutputs.length; i++) {
@@ -73,43 +68,43 @@ public final class CraftingBatchPlannerImpl implements CraftingBatchPlanner {
         Objects.requireNonNull(outputAmounts, "outputAmounts");
         Objects.requireNonNull(energySimulation, "energySimulation");
 
-        if (mediumStrategy != MediumStrategy.BATCH) return new BatchPlan(1, LimitingFactor.MEDIUM);
-        if (requestedCrafts < 2) return new BatchPlan(1, LimitingFactor.TASK);
+        if (mediumStrategy != MediumStrategy.Batch) return new BatchPlan(1, LimitingFactor.Medium);
+        if (requestedCrafts < 2) return new BatchPlan(1, LimitingFactor.Task);
         if (requirements.isEmpty() || outputAmounts.length == 0) {
-            return new BatchPlan(1, LimitingFactor.STACK_CONTRACT);
+            return new BatchPlan(1, LimitingFactor.StackContract);
         }
 
         Map<Object, AggregatedDemand> aggregatedDemand;
         try {
             aggregatedDemand = aggregateRequirements(requirements);
         } catch (ArithmeticException exception) {
-            return new BatchPlan(1, LimitingFactor.LONG_ARITHMETIC);
+            return new BatchPlan(1, LimitingFactor.LongArithmetic);
         }
         for (long outputAmount : outputAmounts) {
-            if (outputAmount <= 0) return new BatchPlan(1, LimitingFactor.STACK_CONTRACT);
+            if (outputAmount <= 0) return new BatchPlan(1, LimitingFactor.StackContract);
         }
 
         long crafts = requestedCrafts;
-        LimitingFactor limitingFactor = LimitingFactor.REQUESTED;
+        LimitingFactor limitingFactor = LimitingFactor.Requested;
 
         long arithmeticLimit = arithmeticLimit(aggregatedDemand, outputAmounts);
         if (arithmeticLimit < crafts) {
             crafts = arithmeticLimit;
-            limitingFactor = LimitingFactor.LONG_ARITHMETIC;
+            limitingFactor = LimitingFactor.LongArithmetic;
         }
         if (crafts < 2) return new BatchPlan(1, limitingFactor);
 
         long materialLimit = materialLimit(aggregatedDemand);
         if (materialLimit < crafts) {
             crafts = materialLimit;
-            limitingFactor = LimitingFactor.MATERIAL;
+            limitingFactor = LimitingFactor.Material;
         }
         if (crafts < 2) return new BatchPlan(1, limitingFactor);
 
         long energyLimit = energyLimit(requirements, crafts, energySimulation);
         if (energyLimit < crafts) {
             crafts = energyLimit;
-            limitingFactor = LimitingFactor.ENERGY;
+            limitingFactor = LimitingFactor.Energy;
         }
         return new BatchPlan(Math.max(1, crafts), limitingFactor);
     }
@@ -295,8 +290,7 @@ public final class CraftingBatchPlannerImpl implements CraftingBatchPlanner {
         if (!allocations.isEmpty()) {
             SessionAllocation<S> last = allocations.get(allocations.size() - 1);
             if (Objects.equals(last.getSessionId(), sessionId)) {
-                allocations.set(
-                    allocations.size() - 1,
+                allocations.set(allocations.size() - 1,
                     new SessionAllocation<>(sessionId, Math.addExact(last.getCrafts(), crafts)));
                 return;
             }
@@ -309,8 +303,7 @@ public final class CraftingBatchPlannerImpl implements CraftingBatchPlanner {
         for (BatchRequirement requirement : requirements) {
             AggregatedDemand demand = aggregated.get(requirement.getMaterialKey());
             if (demand == null) {
-                aggregated.put(
-                    requirement.getMaterialKey(),
+                aggregated.put(requirement.getMaterialKey(),
                     new AggregatedDemand(requirement.getAmountPerCraft(), requirement.getAvailableAmount()));
             } else {
                 demand.amountPerCraft = Math.addExact(demand.amountPerCraft, requirement.getAmountPerCraft());

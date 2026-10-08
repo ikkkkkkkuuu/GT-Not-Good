@@ -86,9 +86,9 @@ public class StructureUtils {
      * blocks in the world, with the machine facing the XZ direction.
      *
      * @param aBaseMetaTileEntity the machine
-     * @param offSetX             HORIZONTAL_OFF_SET of the machine structure definition
-     * @param offSetY             VERTICAL_OFF_SET of the machine structure definition
-     * @param offSetZ             DEPTH_OFF_SET of the machine structure definition
+     * @param offSetX             HORIZONTAL_OFFSET of the machine structure definition
+     * @param offSetY             VERTICAL_OFFSET of the machine structure definition
+     * @param offSetZ             DEPTH_OFFSET of the machine structure definition
      * @param structureString     the machine structure definition string array
      * @param isStructureFlipped  if the machine is flipped, use getFlip().isHorizontallyFlipped() to get it
      * @param targetString        target character
@@ -145,14 +145,9 @@ public class StructureUtils {
                         }
                     }
 
-                    aBaseMetaTileEntity.getWorld()
-                        .setBlock(
-                            aBaseMetaTileEntity.getXCoord() + aX,
-                            aBaseMetaTileEntity.getYCoord() + aY,
-                            aBaseMetaTileEntity.getZCoord() + aZ,
-                            targetBlock,
-                            targetMeta,
-                            3);
+                    aBaseMetaTileEntity.getWorld().setBlock(aBaseMetaTileEntity.getXCoord() + aX,
+                        aBaseMetaTileEntity.getYCoord() + aY, aBaseMetaTileEntity.getZCoord() + aZ, targetBlock,
+                        targetMeta, 3);
                 }
             }
         }
@@ -160,16 +155,8 @@ public class StructureUtils {
 
     public static void setStringBlockXZ(IGregTechTileEntity aBaseMetaTileEntity, int offSetX, int offSetY, int offSetZ,
         String[][] structureString, boolean isStructureFlipped, String targetString, Block targetBlock) {
-        setStringBlockXZ(
-            aBaseMetaTileEntity,
-            offSetX,
-            offSetY,
-            offSetZ,
-            structureString,
-            isStructureFlipped,
-            targetString,
-            targetBlock,
-            0);
+        setStringBlockXZ(aBaseMetaTileEntity, offSetX, offSetY, offSetZ, structureString, isStructureFlipped,
+            targetString, targetBlock, 0);
     }
 
     public static String[][] replaceLetters(String[][] array, String replacement) {

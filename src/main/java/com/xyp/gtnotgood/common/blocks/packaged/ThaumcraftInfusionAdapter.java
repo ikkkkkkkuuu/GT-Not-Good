@@ -35,36 +35,39 @@ public final class ThaumcraftInfusionAdapter implements PackagedCoreRegistry.Ada
     @Override
     public ItemStack dispatch(TilePackagedProvider provider, PackagedTarget target, ICraftingPatternDetails pattern,
         InventoryCrafting ingredients) {
-        provider.altarStatus = AltarStatus.UNLOADED;
+        provider.altarStatus = AltarStatus.Unloaded;
         if (!(target.resolve(provider.getWorldObj()) instanceof TileInfusionMatrix matrix)) return null;
-        provider.altarStatus = matrix.crafting ? AltarStatus.RUNNING : AltarStatus.INACTIVE;
+        provider.altarStatus = matrix.crafting ? AltarStatus.Running : AltarStatus.Inactive;
         if (!matrix.active || matrix.crafting) return null;
         World world = matrix.getWorldObj();
         EntityPlayer owner = provider.getOwnerPlayer();
-        provider.altarStatus = AltarStatus.OWNER;
+        provider.altarStatus = AltarStatus.Owner;
         if (owner == null || owner.worldObj != world || !world.canMineBlock(owner, target.x, target.y, target.z))
             return null;
         // TC4 scans +/-12 during craftingStart. Require these chunks before invoking its world lookups.
-        provider.altarStatus = AltarStatus.UNLOADED;
+        provider.altarStatus = AltarStatus.Unloaded;
         for (int cx = (target.x - 12) >> 4; cx <= (target.x + 12) >> 4; cx++) {
             for (int cz = (target.z - 12) >> 4; cz <= (target.z + 12) >> 4; cz++) {
-                if (!world.getChunkProvider()
-                    .chunkExists(cx, cz)) return null;
+                if (!world.getChunkProvider().chunkExists(cx, cz)) return null;
             }
         }
-        provider.altarStatus = AltarStatus.OCCUPIED;
-        if (!matrix.validLocation()
-            || !(world.getTileEntity(target.x, target.y - 2, target.z) instanceof TilePedestal center)
-            || center.getStackInSlot(0) != null) return null;
+        provider.altarStatus = AltarStatus.Occupied;
+        if (
+            !matrix.validLocation()
+                || !(world.getTileEntity(target.x, target.y - 2, target.z) instanceof TilePedestal center)
+                || center.getStackInSlot(0) != null
+        ) return null;
         // Revalidate immediately before transfer: automation can add pedestals without a Forge placement event.
         // Reusing a stale topology here could let TC select a different recipe. Provider backoff bounds scans.
         List<TilePedestal> pedestals = findPedestals(world, target);
         for (TilePedestal pedestal : pedestals) {
-            if (pedestal.getStackInSlot(0) != null
-                || !world.canMineBlock(owner, pedestal.xCoord, pedestal.yCoord, pedestal.zCoord)) return null;
+            if (
+                pedestal.getStackInSlot(0) != null
+                    || !world.canMineBlock(owner, pedestal.xCoord, pedestal.yCoord, pedestal.zCoord)
+            ) return null;
         }
         if (!world.canMineBlock(owner, center.xCoord, center.yCoord, center.zCoord)) return null;
-        provider.altarStatus = AltarStatus.RECIPE;
+        provider.altarStatus = AltarStatus.Recipe;
         ArrayList<ItemStack> units = new ArrayList<>();
         for (int slot = 0; slot < ingredients.getSizeInventory(); slot++) {
             ItemStack stack = ingredients.getStackInSlot(slot);
@@ -86,20 +89,18 @@ public final class ThaumcraftInfusionAdapter implements PackagedCoreRegistry.Ada
             ArrayList<ItemStack> components = new ArrayList<>(units);
             components.remove(centerIndex);
             InfusionRecipe recipe = ThaumcraftCraftingManager.findMatchingInfusionRecipe(components, input, owner);
-            if (recipe == null || !(recipe.getRecipeOutput(input) instanceof ItemStack result)
-                || !TilePackagedProvider.sameItem(result, expected)
-                || result.stackSize != expected.stackSize) continue;
+            if (
+                recipe == null || !(recipe.getRecipeOutput(input) instanceof ItemStack result)
+                    || !TilePackagedProvider.sameItem(result, expected)
+                    || result.stackSize != expected.stackSize
+            ) continue;
             center.setInventorySlotContents(0, input.copy());
-            for (int i = 0; i < components.size(); i++) pedestals.get(i)
-                .setInventorySlotContents(
-                    0,
-                    components.get(i)
-                        .copy());
+            for (int i = 0; i < components.size(); i++)
+                pedestals.get(i).setInventorySlotContents(0, components.get(i).copy());
             matrix.craftingStart(owner);
             if (!matrix.crafting) {
                 center.setInventorySlotContents(0, null);
-                for (int i = 0; i < components.size(); i++) pedestals.get(i)
-                    .setInventorySlotContents(0, null);
+                for (int i = 0; i < components.size(); i++) pedestals.get(i).setInventorySlotContents(0, null);
                 return null;
             }
             DirectEssentiaSupply.attach(matrix, provider);
@@ -124,8 +125,10 @@ public final class ThaumcraftInfusionAdapter implements PackagedCoreRegistry.Ada
                 if (x == 0 && z == 0) continue;
                 for (int down = 1; down <= 10; down++) {
                     if (target.y - down < 0) break;
-                    if (world
-                        .getTileEntity(target.x + x, target.y - down, target.z + z) instanceof TilePedestal pedestal) {
+                    if (
+                        world.getTileEntity(target.x + x, target.y - down,
+                            target.z + z) instanceof TilePedestal pedestal
+                    ) {
                         result.add(pedestal);
                         break;
                     }
@@ -138,8 +141,7 @@ public final class ThaumcraftInfusionAdapter implements PackagedCoreRegistry.Ada
     @Override
     public IInventory output(TileEntity target) {
         if (!(target instanceof TileInfusionMatrix matrix) || matrix.crafting) return null;
-        TileEntity center = matrix.getWorldObj()
-            .getTileEntity(matrix.xCoord, matrix.yCoord - 2, matrix.zCoord);
+        TileEntity center = matrix.getWorldObj().getTileEntity(matrix.xCoord, matrix.yCoord - 2, matrix.zCoord);
         return center instanceof TilePedestal pedestal ? pedestal : null;
     }
 

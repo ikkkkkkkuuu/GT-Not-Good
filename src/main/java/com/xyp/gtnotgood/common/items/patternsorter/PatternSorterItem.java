@@ -14,8 +14,10 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.xyp.gtnotgood.client.gui.PatternSorterView;
 import com.xyp.gtnotgood.common.items.GTNGItem;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.ldlib.integration.modularui.LDLibModularScreen;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -46,10 +48,8 @@ public final class PatternSorterItem extends GTNGItem implements IGuiHolder<Play
     @Override
     @SideOnly(Side.CLIENT)
     public ModularScreen createScreen(PlayerInventoryGuiData data, ModularPanel panel) {
-        return new com.xyp.ldlib.integration.modularui.LDLibModularScreen(
-            ModList.GTNotGood.getID(),
-            panel,
-            new com.xyp.gtnotgood.client.gui.PatternSorterView(((PatternSorterGui.Panel) panel).model));
+        return new LDLibModularScreen(ModList.GTNotGood.getID(), panel,
+            new PatternSorterView(((PatternSorterGui.Panel) panel).model));
     }
 
     @Override

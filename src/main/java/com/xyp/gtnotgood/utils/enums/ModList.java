@@ -7,9 +7,6 @@ import net.minecraft.util.ResourceLocation;
 import cpw.mods.fml.common.Loader;
 import lombok.Getter;
 
-/**
- * Central enum for mod IDs, display names, resource domains, and loaded checks.
- */
 public enum ModList {
 
     Roguelike("Roguelike", "Roguelike Dungeons"),
@@ -124,13 +121,11 @@ public enum ModList {
     }
 
     public String getResourcePath(String path) {
-        return this.getResourceLocation(path)
-            .toString();
+        return this.getResourceLocation(path).toString();
     }
 
     public String getResourcePath(String... path) {
-        return this.getResourceLocation(path)
-            .toString();
+        return this.getResourceLocation(path).toString();
     }
 
     public ResourceLocation getResourceLocation(String path) {

@@ -24,8 +24,10 @@ public final class StructureMarkers {
             String id = tile.getString("id");
             int x = tile.getInteger("x"), y = tile.getInteger("y"), z = tile.getInteger("z");
             if (isGameMaster(id)) index.add(1, x, y, z);
-            if (isHouseChest(tile) && (level.hasKey("GTNGHasBricks") ? level.getBoolean("GTNGHasBricks")
-                : hasBricks(level.getTagList("Sections", 10), brickId))) index.add(0, x, y, z);
+            if (
+                isHouseChest(tile) && (level.hasKey("GTNGHasBricks") ? level.getBoolean("GTNGHasBricks")
+                    : hasBricks(level.getTagList("Sections", 10), brickId))
+            ) index.add(0, x, y, z);
         }
     }
 
@@ -39,8 +41,7 @@ public final class StructureMarkers {
         if (!"Chest".equals(chest.getString("id")) || chest.getInteger("y") < 60) return false;
         NBTTagList items = chest.getTagList("Items", 10);
         for (int i = 0; i < items.tagCount(); i++) {
-            NBTTagCompound tag = items.getCompoundTagAt(i)
-                .getCompoundTag("tag");
+            NBTTagCompound tag = items.getCompoundTagAt(i).getCompoundTag("tag");
             if ("Greymerk".equals(tag.getString("author")) && "Statistics".equals(tag.getString("title"))) return true;
         }
         return false;

@@ -35,9 +35,7 @@ public final class EdgeWindowIcon {
         if (event.phase != TickEvent.Phase.END || !Display.isCreated()) {
             return;
         }
-        FMLCommonHandler.instance()
-            .bus()
-            .unregister(this);
+        FMLCommonHandler.instance().bus().unregister(this);
         try {
             ByteBuffer[] icons = { readIcon(16), readIcon(32) };
             runOnWindowThread(() -> Display.setIcon(icons));
@@ -63,8 +61,7 @@ public final class EdgeWindowIcon {
             action.run();
             return;
         }
-        dispatcher.getMethod("runOnMainThread", Runnable.class)
-            .invoke(null, action);
+        dispatcher.getMethod("runOnMainThread", Runnable.class).invoke(null, action);
     }
 
     /**

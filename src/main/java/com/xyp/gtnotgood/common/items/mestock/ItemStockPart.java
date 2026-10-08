@@ -28,9 +28,8 @@ public final class ItemStockPart extends GTNGItem implements IPartItem {
     private final Kind kind;
 
     public ItemStockPart(Kind kind) {
-        super(
-            kind == Kind.ThresholdExportBus ? "threshold_export_bus"
-                : kind == Kind.ThresholdLevelEmitter ? "threshold_level_emitter" : "requester_terminal");
+        super(kind == Kind.ThresholdExportBus ? "threshold_export_bus"
+            : kind == Kind.ThresholdLevelEmitter ? "threshold_level_emitter" : "requester_terminal");
         this.kind = kind;
         if (kind == Kind.ThresholdExportBus) {
             // #tr item.threshold_export_bus.name
@@ -62,9 +61,7 @@ public final class ItemStockPart extends GTNGItem implements IPartItem {
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
         float hitX, float hitY, float hitZ) {
-        return AEApi.instance()
-            .partHelper()
-            .placeBus(stack, x, y, z, side, player, world);
+        return AEApi.instance().partHelper().placeBus(stack, x, y, z, side, player, world);
     }
 
     @Override

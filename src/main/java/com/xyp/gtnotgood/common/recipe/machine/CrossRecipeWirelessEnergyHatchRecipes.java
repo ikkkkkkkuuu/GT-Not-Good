@@ -19,17 +19,12 @@ public final class CrossRecipeWirelessEnergyHatchRecipes {
 
     public static void loadRecipes() {
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.HATCHES_ENERGY[VoltageIndex.UXV].get(1),
+            .itemInputs(ItemList.HATCHES_ENERGY[VoltageIndex.UXV].get(1),
                 ItemList.WIRELESS_ENERGY_COVERS[VoltageIndex.UXV - VoltageIndex.LV].get(4),
-                new Object[] { OrePrefixes.circuit.get(Materials.UXV), 4 },
-                ItemList.Emitter_UXV.get(2),
+                new Object[] { OrePrefixes.circuit.get(Materials.UXV), 4 }, ItemList.Emitter_UXV.get(2),
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Neutronium, 8))
-            .circuit(24)
-            .fluidInputs(Materials.SolderingAlloy.getMolten(2880))
-            .itemOutputs(GTNGItemList.CrossRecipeWirelessEnergyHatch.get(1))
-            .duration(100 * SECONDS)
-            .eut(RECIPE_UXV)
+            .circuit(24).fluidInputs(Materials.SolderingAlloy.getMolten(2880))
+            .itemOutputs(GTNGItemList.CrossRecipeWirelessEnergyHatch.get(1)).duration(100 * SECONDS).eut(RECIPE_UXV)
             .addTo(assemblerRecipes);
     }
 }

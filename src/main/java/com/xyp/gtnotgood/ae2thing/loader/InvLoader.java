@@ -9,7 +9,7 @@ public class InvLoader implements Runnable {
     @Override
     public void run() {
         InvUtil.INVENTORY.add(player -> player.inventory);
-        if (Mods.BAUBLES.isModLoaded()) {
+        if (Mods.Baubles.isModLoaded()) {
             InvUtil.INVENTORY.add(BaublesUtil::getBaublesInv);
         }
     }

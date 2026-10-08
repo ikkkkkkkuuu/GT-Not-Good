@@ -20,13 +20,8 @@ import tectech.thing.metaTileEntity.hatch.MTEHatchWirelessDynamoMulti;
 import tectech.thing.metaTileEntity.hatch.MTEHatchWirelessMulti;
 
 /**
- * Defines the creative tabs used by GT Not Good items, blocks, and machines.
- * <p>
- * The machine tab is populated from {@link GTNGItemList} registration rather than by setting a vanilla creative tab on
- * GregTech machine items. This matches the GT-Not-Cool pattern and keeps meta-tile machines grouped under the mod's own
- * machine tab.
- *
- * @see GTNGItemList
+ * The machine tab is populated during {@link GTNGItemList} registration; vanilla creative tabs do not group GT
+ * meta-tile machines.
  */
 public final class GTNGCreativeTabs {
 
@@ -82,8 +77,10 @@ public final class GTNGCreativeTabs {
             IMetaTileEntity machine = id >= 0 && id < GregTechAPI.METATILEENTITIES.length
                 ? GregTechAPI.METATILEENTITIES[id]
                 : null;
-            if (machine instanceof MTEHatchWirelessMulti || machine instanceof MTEHatchWirelessDynamoMulti
-                || machine instanceof MTEWirelessEnergy) {
+            if (
+                machine instanceof MTEHatchWirelessMulti || machine instanceof MTEHatchWirelessDynamoMulti
+                    || machine instanceof MTEWirelessEnergy
+            ) {
                 WIRELESS_HATCH_STACKS.add(stack);
             } else {
                 GTNGItemMachineStack.add(stack);

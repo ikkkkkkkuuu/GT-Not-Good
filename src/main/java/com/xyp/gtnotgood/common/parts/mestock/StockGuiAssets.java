@@ -32,13 +32,9 @@ final class StockGuiAssets {
 
     static UITexture texture(String name, int imageWidth, int imageHeight, int x, int y, int width, int height) {
         String key = name + ':' + x + ':' + y + ':' + width + ':' + height;
-        return atlasCrops.computeIfAbsent(
-            key,
-            ignored -> UITexture.builder()
-                .location(ModList.ModIds.GT_NOT_GOOD, "gui/me_stock/" + name)
-                .imageSize(imageWidth, imageHeight)
-                .subAreaXYWH(x, y, width, height)
-                .build());
+        return atlasCrops.computeIfAbsent(key,
+            ignored -> UITexture.builder().location(ModList.ModIds.GT_NOT_GOOD, "gui/me_stock/" + name)
+                .imageSize(imageWidth, imageHeight).subAreaXYWH(x, y, width, height).build());
     }
 
     static UITexture icon(int x, int y) {
@@ -62,11 +58,8 @@ final class StockGuiAssets {
     }
 
     private static UITexture buttonTexture(String name) {
-        return UITexture.builder()
-            .location(ModList.ModIds.GT_NOT_GOOD, "gui/me_stock/" + name)
-            .imageSize(200, 20)
-            .adaptable(3)
-            .build();
+        return UITexture.builder().location(ModList.ModIds.GT_NOT_GOOD, "gui/me_stock/" + name).imageSize(200, 20)
+            .adaptable(3).build();
     }
 
     static UITexture textField(boolean focused) {
@@ -74,12 +67,8 @@ final class StockGuiAssets {
     }
 
     private static UITexture fieldTexture(int y) {
-        return UITexture.builder()
-            .location(ModList.ModIds.GT_NOT_GOOD, "gui/me_stock/text_field")
-            .imageSize(128, 128)
-            .subAreaXYWH(0, y, 128, 12)
-            .adaptable(1, 0, 1, 0)
-            .build();
+        return UITexture.builder().location(ModList.ModIds.GT_NOT_GOOD, "gui/me_stock/text_field").imageSize(128, 128)
+            .subAreaXYWH(0, y, 128, 12).adaptable(1, 0, 1, 0).build();
     }
 
     static IDrawable requester(boolean terminal, IntSupplier rowCount, IntPredicate requestLine) {
@@ -89,8 +78,8 @@ final class StockGuiAssets {
             texture(name, 256, 256, 0, 0, 195, 20).draw(context, x, y, 195, 20, theme);
             for (int row = 0; row < rows; row++) texture(name, 256, 256, 0, requestLine.test(row) ? 38 : 60, 195, 19)
                 .draw(context, x, y + 20 + 19 * row, 195, 19, theme);
-            texture(name, 256, 256, 0, terminal ? 133 : 114, 195, 101)
-                .draw(context, x, y + 20 + 19 * rows, 195, 101, theme);
+            texture(name, 256, 256, 0, terminal ? 133 : 114, 195, 101).draw(context, x, y + 20 + 19 * rows, 195, 101,
+                theme);
         };
     }
 
@@ -98,8 +87,8 @@ final class StockGuiAssets {
         return (context, x, y, width, height, theme) -> {
             for (int i = 0; i < slots; i++) {
                 int top = i == 0 ? 5 : 0, bottom = i == slots - 1 ? 7 : 0;
-                texture("extra_panels", 128, 128, 0, i == 0 ? 0 : 5, 28, 18 + top + bottom)
-                    .draw(context, x, y + i * 18 + 5 - top, 28, 18 + top + bottom, theme);
+                texture("extra_panels", 128, 128, 0, i == 0 ? 0 : 5, 28, 18 + top + bottom).draw(context, x,
+                    y + i * 18 + 5 - top, 28, 18 + top + bottom, theme);
             }
             upgradeBorder.draw(context, x + 1, y + 5, 16, 1, theme);
             upgradeBorder.draw(context, x + 1, y + 5 + slots * 18 - 1, 16, 1, theme);

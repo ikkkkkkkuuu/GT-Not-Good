@@ -54,8 +54,7 @@ public class QuantumComputerGui extends GTNGModernMultiBlockBaseGui<QuantumCompu
     @Override
     public ModularPanel build(PosGuiData guiData, PanelSyncManager syncManager, UISettings uiSettings) {
         ModularPanel panel = super.build(guiData, syncManager, uiSettings);
-        panel.child(createCirculationLogo())
-            .child(createGtnlLogo());
+        panel.child(createCirculationLogo()).child(createGtnlLogo());
         return panel;
     }
 
@@ -63,41 +62,30 @@ public class QuantumComputerGui extends GTNGModernMultiBlockBaseGui<QuantumCompu
     protected void registerSyncValues(PanelSyncManager syncManager) {
         super.registerSyncValues(syncManager);
         syncManager.syncValue(AE_ACTIVE_SYNC_KEY, new BooleanSyncValue(multiblock::isActive));
-        syncManager
-            .syncValue(WIDTH_SYNC_KEY, new IntSyncValue(multiblock::getWidthForGui, multiblock::setWidthFromGui));
-        syncManager
-            .syncValue(HEIGHT_SYNC_KEY, new IntSyncValue(multiblock::getHeightForGui, multiblock::setHeightFromGui));
-        syncManager
-            .syncValue(DEPTH_SYNC_KEY, new IntSyncValue(multiblock::getDepthForGui, multiblock::setDepthFromGui));
-        syncManager.syncValue(
-            MAXIMUM_PARALLEL_SYNC_KEY,
+        syncManager.syncValue(WIDTH_SYNC_KEY,
+            new IntSyncValue(multiblock::getWidthForGui, multiblock::setWidthFromGui));
+        syncManager.syncValue(HEIGHT_SYNC_KEY,
+            new IntSyncValue(multiblock::getHeightForGui, multiblock::setHeightFromGui));
+        syncManager.syncValue(DEPTH_SYNC_KEY,
+            new IntSyncValue(multiblock::getDepthForGui, multiblock::setDepthFromGui));
+        syncManager.syncValue(MAXIMUM_PARALLEL_SYNC_KEY,
             new IntSyncValue(multiblock::getMaximumParallelForGui, multiblock::setMaximumParallelFromGui));
-        syncManager.syncValue(
-            USED_PARALLEL_SYNC_KEY,
+        syncManager.syncValue(USED_PARALLEL_SYNC_KEY,
             new IntSyncValue(multiblock::getUsedParallelForGui, multiblock::setUsedParallelFromGui));
-        syncManager.syncValue(
-            MAXIMUM_STORAGE_SYNC_KEY,
+        syncManager.syncValue(MAXIMUM_STORAGE_SYNC_KEY,
             new LongSyncValue(multiblock::getMaximumStorageForGui, multiblock::setMaximumStorageFromGui));
-        syncManager.syncValue(
-            USED_STORAGE_SYNC_KEY,
+        syncManager.syncValue(USED_STORAGE_SYNC_KEY,
             new LongSyncValue(multiblock::getUsedStorageForGui, multiblock::setUsedStorageFromGui));
-        syncManager.syncValue(
-            CUSTOM_NAME_SYNC_KEY,
+        syncManager.syncValue(CUSTOM_NAME_SYNC_KEY,
             new StringSyncValue(multiblock::getDisplayNameForGui, multiblock::setCustomName).allowC2S());
     }
 
     @Override
     protected ParentWidget<?> createTerminalParentWidget(ModularPanel panel, PanelSyncManager syncManager) {
-        return new ParentWidget<>().size(getTerminalWidgetWidth(), getTerminalWidgetHeight())
-            .paddingTop(3)
-            .paddingBottom(3)
-            .paddingLeft(6)
-            .paddingRight(0)
-            .background(GTGuiTextures.PICTURE_SCREEN_BLACK)
-            .child(
-                createTerminalTextWidget(syncManager, panel)
-                    .size(getTerminalWidgetWidth() - 8, getTerminalWidgetHeight() - 6)
-                    .collapseDisabledChild());
+        return new ParentWidget<>().size(getTerminalWidgetWidth(), getTerminalWidgetHeight()).paddingTop(3)
+            .paddingBottom(3).paddingLeft(6).paddingRight(0).background(GTGuiTextures.PICTURE_SCREEN_BLACK)
+            .child(createTerminalTextWidget(syncManager, panel)
+                .size(getTerminalWidgetWidth() - 8, getTerminalWidgetHeight() - 6).collapseDisabledChild());
     }
 
     @Override
@@ -116,55 +104,34 @@ public class QuantumComputerGui extends GTNGModernMultiBlockBaseGui<QuantumCompu
         LongSyncValue maximumStorageSyncer = syncManager.findSyncHandler(MAXIMUM_STORAGE_SYNC_KEY, LongSyncValue.class);
         LongSyncValue usedStorageSyncer = syncManager.findSyncHandler(USED_STORAGE_SYNC_KEY, LongSyncValue.class);
 
-        return new ListWidget<>().fullWidth()
-            .crossAxisAlignment(Alignment.CrossAxis.START)
-            .child(
-                IKey.dynamic(
-                    () -> StatCollector
-                        .translateToLocal(activeSyncer.getBoolValue() ? activeLabelKey() : inactiveLabelKey()))
-                    .asWidget()
-                    .color(Color.WHITE.main)
-                    .fullWidth())
-            .child(
-                IKey.dynamic(
-                    () -> StatCollector.translateToLocalFormatted(
-                        // #tr gtng.compact.machine.quantum_computer.info.0
-                        // # Multiblock size: %sx%sx%s
-                        // # zh_CN 结构大小：%sx%sx%s
-                        "gtng.compact.machine.quantum_computer.info.0",
-                        widthSyncer.getIntValue(),
-                        heightSyncer.getIntValue(),
-                        depthSyncer.getIntValue()))
-                    .asWidget()
-                    .textAlign(Alignment.CenterLeft)
-                    .color(Color.WHITE.main)
-                    .fullWidth())
-            .child(
-                IKey.dynamic(
-                    () -> StatCollector.translateToLocalFormatted(
-                        // #tr gtng.compact.machine.quantum_computer.info.1
-                        // # Co-processors: %s / %s used
-                        // # zh_CN 并行：%s / %s 已用
-                        "gtng.compact.machine.quantum_computer.info.1",
-                        GTUtility.formatShortenedLong(maximumParallelSyncer.getIntValue()),
-                        GTUtility.formatShortenedLong(usedParallelSyncer.getIntValue())))
-                    .asWidget()
-                    .textAlign(Alignment.CenterLeft)
-                    .color(Color.WHITE.main)
-                    .fullWidth())
-            .child(
-                IKey.dynamic(
-                    () -> StatCollector.translateToLocalFormatted(
-                        // #tr gtng.compact.machine.quantum_computer.info.2
-                        // # Storage: %s / %s used
-                        // # zh_CN 存储：%s / %s 已用
-                        "gtng.compact.machine.quantum_computer.info.2",
-                        GTUtility.formatShortenedLong(maximumStorageSyncer.getLongValue()),
-                        GTUtility.formatShortenedLong(usedStorageSyncer.getLongValue())))
-                    .asWidget()
-                    .textAlign(Alignment.CenterLeft)
-                    .color(Color.WHITE.main)
-                    .fullWidth());
+        return new ListWidget<>().fullWidth().crossAxisAlignment(Alignment.CrossAxis.START)
+            .child(IKey
+                .dynamic(() -> StatCollector
+                    .translateToLocal(activeSyncer.getBoolValue() ? activeLabelKey() : inactiveLabelKey()))
+                .asWidget().color(Color.WHITE.main).fullWidth())
+            .child(IKey.dynamic(() -> StatCollector.translateToLocalFormatted(
+                // #tr gtng.compact.machine.quantum_computer.info.0
+                // # Multiblock size: %sx%sx%s
+                // # zh_CN 结构大小：%sx%sx%s
+                "gtng.compact.machine.quantum_computer.info.0", widthSyncer.getIntValue(), heightSyncer.getIntValue(),
+                depthSyncer.getIntValue())).asWidget().textAlign(Alignment.CenterLeft).color(Color.WHITE.main)
+                .fullWidth())
+            .child(IKey.dynamic(() -> StatCollector.translateToLocalFormatted(
+                // #tr gtng.compact.machine.quantum_computer.info.1
+                // # Co-processors: %s / %s used
+                // # zh_CN 并行：%s / %s 已用
+                "gtng.compact.machine.quantum_computer.info.1",
+                GTUtility.formatShortenedLong(maximumParallelSyncer.getIntValue()),
+                GTUtility.formatShortenedLong(usedParallelSyncer.getIntValue()))).asWidget()
+                .textAlign(Alignment.CenterLeft).color(Color.WHITE.main).fullWidth())
+            .child(IKey.dynamic(() -> StatCollector.translateToLocalFormatted(
+                // #tr gtng.compact.machine.quantum_computer.info.2
+                // # Storage: %s / %s used
+                // # zh_CN 存储：%s / %s 已用
+                "gtng.compact.machine.quantum_computer.info.2",
+                GTUtility.formatShortenedLong(maximumStorageSyncer.getLongValue()),
+                GTUtility.formatShortenedLong(usedStorageSyncer.getLongValue()))).asWidget()
+                .textAlign(Alignment.CenterLeft).color(Color.WHITE.main).fullWidth());
     }
 
     /** Returns the label for a formed and connected AE CPU. */
@@ -185,45 +152,28 @@ public class QuantumComputerGui extends GTNGModernMultiBlockBaseGui<QuantumCompu
 
     @Override
     protected Flow createPanelGap(ModularPanel parent, PanelSyncManager syncManager) {
-        return Flow.row()
-            .fullWidth()
-            .height(getTextBoxToInventoryGap())
-            .paddingLeft(4)
-            .paddingRight(25)
+        return Flow.row().fullWidth().height(getTextBoxToInventoryGap()).paddingLeft(4).paddingRight(25)
             .child(createCustomNameField(syncManager));
     }
 
     @Override
     protected IWidget createInventoryRow(ModularPanel panel, PanelSyncManager syncManager) {
-        return Flow.row()
-            .fullWidth()
-            .height(76)
-            .childIf(
-                multiblock.doesBindPlayerInventory(),
-                () -> SlotGroupWidget.playerInventory(false)
-                    .marginLeft(4))
+        return Flow.row().fullWidth().height(76)
+            .childIf(multiblock.doesBindPlayerInventory(), () -> SlotGroupWidget.playerInventory(false).marginLeft(4))
             .child(createButtonColumn(panel, syncManager));
     }
 
     @Override
     protected Flow createButtonColumn(ModularPanel panel, PanelSyncManager syncManager) {
-        return Flow.column()
-            .width(18)
-            .leftRel(1, -2, 1)
-            .top(36)
-            .child(createStructureUpdateButton(syncManager))
-            .childIf(
-                multiblock.doesBindPlayerInventory(),
-                () -> new ItemSlot()
-                    .slot(new ModularSlot(multiblock.inventoryHandler, multiblock.getControllerSlotIndex()) {
+        return Flow.column().width(18).leftRel(1, -2, 1).top(36).child(createStructureUpdateButton(syncManager))
+            .childIf(multiblock.doesBindPlayerInventory(), () -> new ItemSlot()
+                .slot(new ModularSlot(multiblock.inventoryHandler, multiblock.getControllerSlotIndex()) {
 
-                        @Override
-                        public int getSlotStackLimit() {
-                            return multiblock.getInventoryStackLimit();
-                        }
-                    }.singletonSlotGroup())
-                    .backgroundOverlay(GTGuiTextures.SLOT_ITEM_DARK)
-                    .marginTop(4));
+                    @Override
+                    public int getSlotStackLimit() {
+                        return multiblock.getInventoryStackLimit();
+                    }
+                }.singletonSlotGroup()).backgroundOverlay(GTGuiTextures.SLOT_ITEM_DARK).marginTop(4));
     }
 
     @Override
@@ -233,11 +183,8 @@ public class QuantumComputerGui extends GTNGModernMultiBlockBaseGui<QuantumCompu
 
     private IWidget createCustomNameField(PanelSyncManager syncManager) {
         StringSyncValue customNameSyncer = syncManager.findSyncHandler(CUSTOM_NAME_SYNC_KEY, StringSyncValue.class);
-        return new TextFieldWidget().value(customNameSyncer)
-            .setTextAlignment(Alignment.Center)
-            .setTextColor(Color.WHITE.main)
-            .background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
-            .tooltipBuilder(
+        return new TextFieldWidget().value(customNameSyncer).setTextAlignment(Alignment.Center)
+            .setTextColor(Color.WHITE.main).background(GTGuiTextures.BACKGROUND_TEXT_FIELD).tooltipBuilder(
                 // #tr gtng.compact.machine.quantum_computer.info.3
                 // # Set Quantum Computer custom name
                 // # zh_CN 设置量子计算机自定义名称
@@ -248,13 +195,11 @@ public class QuantumComputerGui extends GTNGModernMultiBlockBaseGui<QuantumCompu
 
     private IWidget createCirculationLogo() {
         return new IDrawable.DrawableWidget(new DynamicDrawable(() -> GTNGGuiTextures.OVERLAY_BUTTON_BATCH_MODE))
-            .size(18, 18)
-            .pos(172, 49);
+            .size(18, 18).pos(172, 49);
     }
 
     private IWidget createGtnlLogo() {
-        return new IDrawable.DrawableWidget(GTNGGuiTextures.PICTURE_GODFORGE_LOGO).size(18, 18)
-            .pos(172, 67);
+        return new IDrawable.DrawableWidget(GTNGGuiTextures.PICTURE_GODFORGE_LOGO).size(18, 18).pos(172, 67);
     }
 
 }

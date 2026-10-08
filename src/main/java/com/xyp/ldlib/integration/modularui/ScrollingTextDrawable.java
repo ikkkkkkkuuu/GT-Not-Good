@@ -34,9 +34,7 @@ public final class ScrollingTextDrawable implements IDrawable {
     public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme theme) {
         if (width <= 4 || height <= 0) return;
         String supplied = text.get();
-        String value = supplied == null ? ""
-            : supplied.replace('\n', ' ')
-                .replace('\r', ' ');
+        String value = supplied == null ? "" : supplied.replace('\n', ' ').replace('\r', ' ');
         long now = Minecraft.getSystemTime();
         if (!value.equals(previous)) {
             previous = value;

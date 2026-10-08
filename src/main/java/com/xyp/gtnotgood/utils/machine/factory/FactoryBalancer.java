@@ -3,7 +3,10 @@ package com.xyp.gtnotgood.utils.machine.factory;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiPredicate;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -65,7 +68,7 @@ public final class FactoryBalancer {
                 outputs.add(port);
             }
         }
-        java.util.function.BiPredicate<Integer, Integer> links = (o, i) -> {
+        BiPredicate<Integer, Integer> links = (o, i) -> {
             Port out = outputs.get(o), in = inputs.get(i);
             if (!graph.nodes.get(in.node).sources.contains(graph.nodes.get(out.node).id)) return false;
             return out.item != null ? in.match != null && in.match.matchesType(out.item)
@@ -103,7 +106,7 @@ public final class FactoryBalancer {
 
     /** Sum each connected material pool once, including all producers and consumers and duplicate output slots. */
     static Fraction[][] materialEquations(int size, int outputCount, int[] owners, Fraction[] rates,
-        java.util.function.BiPredicate<Integer, Integer> links) {
+        BiPredicate<Integer, Integer> links) {
         int[] parent = new int[owners.length];
         boolean[] linked = new boolean[owners.length];
         for (int i = 0; i < parent.length; i++) parent[i] = i;
@@ -112,15 +115,14 @@ public final class FactoryBalancer {
             parent[root(parent, i)] = root(parent, o);
             linked[o] = linked[i] = true;
         }
-        java.util.Map<Integer, Fraction[]> rows = new java.util.LinkedHashMap<>();
+        Map<Integer, Fraction[]> rows = new LinkedHashMap<>();
         for (int i = 0; i < owners.length; i++) {
             if (!linked[i]) continue;
             Fraction[] row = rows.computeIfAbsent(root(parent, i), ignored -> zeros(size));
             Fraction signed = i < outputCount ? new Fraction(0, 1).subtract(rates[i]) : rates[i];
             row[owners[i]] = row[owners[i]].subtract(signed);
         }
-        return rows.values()
-            .toArray(new Fraction[0][]);
+        return rows.values().toArray(new Fraction[0][]);
     }
 
     private static int root(int[] parent, int i) {
@@ -183,8 +185,7 @@ public final class FactoryBalancer {
         BigInteger lcm = BigInteger.ONE;
         for (Fraction value : values) {
             if (value.n.signum() <= 0) return null;
-            lcm = lcm.divide(lcm.gcd(value.d))
-                .multiply(value.d);
+            lcm = lcm.divide(lcm.gcd(value.d)).multiply(value.d);
         }
         BigInteger[] scaled = new BigInteger[values.length];
         BigInteger gcd = BigInteger.ZERO;
@@ -219,8 +220,7 @@ public final class FactoryBalancer {
 
         Fraction(BigInteger n, BigInteger d) {
             if (d.signum() == 0) throw new ArithmeticException("Zero denominator");
-            BigInteger gcd = n.gcd(d)
-                .multiply(BigInteger.valueOf(d.signum()));
+            BigInteger gcd = n.gcd(d).multiply(BigInteger.valueOf(d.signum()));
             this.n = n.divide(gcd);
             this.d = d.divide(gcd);
         }
@@ -230,10 +230,7 @@ public final class FactoryBalancer {
         }
 
         Fraction subtract(Fraction b) {
-            return new Fraction(
-                n.multiply(b.d)
-                    .subtract(b.n.multiply(d)),
-                d.multiply(b.d));
+            return new Fraction(n.multiply(b.d).subtract(b.n.multiply(d)), d.multiply(b.d));
         }
 
         Fraction multiply(Fraction b) {

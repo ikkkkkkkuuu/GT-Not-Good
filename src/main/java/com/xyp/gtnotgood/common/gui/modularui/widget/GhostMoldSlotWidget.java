@@ -98,8 +98,7 @@ public class GhostMoldSlotWidget extends PhantomItemSlot {
         } else {
             moldName = current.getDisplayName();
         }
-        tooltip.clearText()
-            .addLine(moldName)
+        tooltip.clearText().addLine(moldName)
             // #tr GT5U.machines.select_mold.tooltip.1
             // # Shift+Click to select mold
             // # zh_CN Shift+点击以选择模具
@@ -111,8 +110,7 @@ public class GhostMoldSlotWidget extends PhantomItemSlot {
     }
 
     private boolean isSelectorPanelOpen() {
-        return getPanel().getScreen()
-            .isPanelOpen(GUI_ID);
+        return getPanel().getScreen().isPanelOpen(GUI_ID);
     }
 
     private void openSelectorPanel() {
@@ -138,66 +136,45 @@ public class GhostMoldSlotWidget extends PhantomItemSlot {
             panel.size(SELECTOR_GUI_WIDTH, SELECTOR_GUI_HEIGHT);
 
             // Header: item icon + title
-            panel.child(
-                Flow.row()
-                    .coverChildren()
-                    .childPadding(4)
-                    .pos(5, 5)
-                    .child(
-                        new ItemDrawable(hatch.getStackForm(1)).asWidget()
-                            .size(16))
-                    .child(
-                        IKey.lang("GT5U.machines.select_mold")
-                            .asWidget()));
+            panel.child(Flow.row().coverChildren().childPadding(4).pos(5, 5)
+                .child(new ItemDrawable(hatch.getStackForm(1)).asWidget().size(16))
+                .child(IKey.lang("GT5U.machines.select_mold").asWidget()));
 
             // "Current" label
-            panel.child(
-                IKey.lang("GT5U.gui.select.current")
-                    .asWidget()
-                    .leftRel(0.5f, -(SELECTOR_SLOT_SIZE / 2) - 3, 1)
-                    .height(SELECTOR_SLOT_SIZE)
-                    .top(22));
+            panel.child(IKey.lang("GT5U.gui.select.current").asWidget().leftRel(0.5f, -(SELECTOR_SLOT_SIZE / 2) - 3, 1)
+                .height(SELECTOR_SLOT_SIZE).top(22));
 
             // Current selection widget
             panel.child(new SlotLikeButtonWidget(() -> {
-                int idx = moldSyncHandler.getIndexSync()
-                    .getIntValue();
+                int idx = moldSyncHandler.getIndexSync().getIntValue();
                 return idx >= 0 && idx < molds.length ? molds[idx] : null;
             }).background(GTGuiTextures.SLOT_ITEM_DARK, new DynamicDrawable(() -> GTGuiTextures.OVERLAY_SLOT_MOLD))
-                .playClickSound(false)
-                .onMousePressed(mouseButton -> true)
-                .horizontalCenter()
-                .top(22));
+                .playClickSound(false).onMousePressed(mouseButton -> true).horizontalCenter().top(22));
 
             // Scrollable grid of all choices - shows 9 rows, scroll for the rest
             // Use minColWidth to keep columns properly sized
-            panel.child(
-                new Grid().minColWidth(SELECTOR_SLOT_SIZE)
-                    .gridOfWidthHeight(SELECTOR_COLS, totalRows, (x, y, index) -> {
-                        if (index >= molds.length) return null;
-                        SlotLikeButtonWidget widget = new SlotLikeButtonWidget(molds[index])
-                            .background(
-                                new DynamicDrawable(
-                                    () -> moldSyncHandler.getSelectedIndex() == index ? GTGuiTextures.SLOT_ITEM_DARK
-                                        : GTGuiTextures.SLOT_ITEM_STANDARD))
-                            .size(SELECTOR_SLOT_SIZE)
-                            .onMousePressed(mouseButton -> {
-                                if (mouseButton == 0) {
-                                    moldSyncHandler.setSelectedIndex(index);
-                                } else {
-                                    moldSyncHandler.setSelectedIndex(-1);
-                                }
-                                MouseData mouseData = MouseData.create(mouseButton);
-                                if (mouseData.shift) {
-                                    panel.closeIfOpen();
-                                }
-                                return true;
-                            });
-                        return widget;
-                    })
-                    .size(SELECTOR_COLS * SELECTOR_SLOT_SIZE + 4, SELECTOR_VISIBLE_ROWS * SELECTOR_SLOT_SIZE)
-                    .scrollable()
-                    .pos(7, SELECTOR_HEADER_HEIGHT));
+            panel.child(new Grid().minColWidth(SELECTOR_SLOT_SIZE)
+                .gridOfWidthHeight(SELECTOR_COLS, totalRows, (x, y, index) -> {
+                    if (index >= molds.length) return null;
+                    SlotLikeButtonWidget widget = new SlotLikeButtonWidget(molds[index])
+                        .background(new DynamicDrawable(
+                            () -> moldSyncHandler.getSelectedIndex() == index ? GTGuiTextures.SLOT_ITEM_DARK
+                                : GTGuiTextures.SLOT_ITEM_STANDARD))
+                        .size(SELECTOR_SLOT_SIZE).onMousePressed(mouseButton -> {
+                            if (mouseButton == 0) {
+                                moldSyncHandler.setSelectedIndex(index);
+                            } else {
+                                moldSyncHandler.setSelectedIndex(-1);
+                            }
+                            MouseData mouseData = MouseData.create(mouseButton);
+                            if (mouseData.shift) {
+                                panel.closeIfOpen();
+                            }
+                            return true;
+                        });
+                    return widget;
+                }).size(SELECTOR_COLS * SELECTOR_SLOT_SIZE + 4, SELECTOR_VISIBLE_ROWS * SELECTOR_SLOT_SIZE).scrollable()
+                .pos(7, SELECTOR_HEADER_HEIGHT));
 
             return panel;
         });

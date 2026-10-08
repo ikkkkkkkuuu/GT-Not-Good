@@ -21,7 +21,9 @@ public abstract class GtnlCrossRecipeControllerMixin {
         cancellable = true,
         require = 0)
     private void gtng$run(IGregTechTileEntity tile, long tick, CallbackInfo ci) {
-        if (((WirelessControllerAccess) this).gtng$getWirelessScheduler()
-            .tick((MTEMultiBlockBase) (Object) this, tile, tick)) ci.cancel();
+        if (
+            ((WirelessControllerAccess) this).gtng$getWirelessScheduler().tick((MTEMultiBlockBase) (Object) this, tile,
+                tick)
+        ) ci.cancel();
     }
 }

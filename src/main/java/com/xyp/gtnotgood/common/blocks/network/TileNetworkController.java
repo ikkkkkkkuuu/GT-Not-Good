@@ -1,5 +1,8 @@
 package com.xyp.gtnotgood.common.blocks.network;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -12,6 +15,8 @@ import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+
+import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 
 /**
  * Server-authoritative eight-channel scheduler. In-flight cargo is persisted and preserved in the dropped controller.
@@ -79,16 +84,15 @@ public class TileNetworkController extends TileNetworkNode {
         if (topology().status != 0) return;
         if (orderedChannels == null) {
             orderedChannels = channels.clone();
-            java.util.Arrays.sort(
-                orderedChannels,
-                java.util.Comparator.comparingInt((Channel c) -> c.priority)
-                    .reversed());
+            Arrays.sort(orderedChannels, Comparator.comparingInt((Channel c) -> c.priority).reversed());
         }
-        java.util.Map<gregtech.api.interfaces.tileentity.IGregTechTileEntity, Long> energyDraw = new java.util.IdentityHashMap<>();
+        Map<IGregTechTileEntity, Long> energyDraw = new IdentityHashMap<>();
         for (Channel channel : orderedChannels) {
             if (channel.enabled) {
-                if (channel.type == 2 ? NetworkEnergyTransfer.tick(this, channel, energyDraw)
-                    : NetworkTransfer.tick(this, channel)) markDirty();
+                if (
+                    channel.type == 2 ? NetworkEnergyTransfer.tick(this, channel, energyDraw)
+                        : NetworkTransfer.tick(this, channel)
+                ) markDirty();
             }
         }
     }
@@ -184,8 +188,7 @@ public class TileNetworkController extends TileNetworkNode {
             if (fluid != null) tag.setTag("fluid", fluid.writeToNBT(new NBTTagCompound()));
             NBTTagList entries = new NBTTagList();
             for (Map.Entry<String, NetworkRule> entry : rules.entrySet()) {
-                NBTTagCompound data = entry.getValue()
-                    .write();
+                NBTTagCompound data = entry.getValue().write();
                 data.setString("key", entry.getKey());
                 entries.appendTag(data);
             }

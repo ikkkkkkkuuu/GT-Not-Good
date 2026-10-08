@@ -1,5 +1,9 @@
 package com.xyp.gtnotgood.utils.machine.factory;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import gregtech.api.util.GTRecipe;
+import gregtech.api.util.GTUtility;
 
 /** Read-only material preview: rates for independent nodes, batch quantities for atomic pages. */
 public final class FactoryPreview {
@@ -44,12 +49,9 @@ public final class FactoryPreview {
 
         public String amount() {
             if (!Double.isFinite(rate)) return "?";
-            if (rate != 0 && Math.abs(rate) < 0.001) return java.math.BigDecimal.valueOf(rate)
-                .round(new java.math.MathContext(3))
-                .stripTrailingZeros()
-                .toPlainString();
-            return new java.text.DecimalFormat("#,##0.###", java.text.DecimalFormatSymbols.getInstance(Locale.ROOT))
-                .format(rate);
+            if (rate != 0 && Math.abs(rate) < 0.001)
+                return BigDecimal.valueOf(rate).round(new MathContext(3)).stripTrailingZeros().toPlainString();
+            return new DecimalFormat("#,##0.###", DecimalFormatSymbols.getInstance(Locale.ROOT)).format(rate);
         }
     }
 
@@ -64,9 +66,8 @@ public final class FactoryPreview {
 
         /** A pattern promises a complete executable period and only outputs that can actually leave the machine. */
         public FactoryText exportIssue() {
-            if (batchTicks <= 0) return FactoryText.LIMIT;
-            if (outputs.stream()
-                .anyMatch(entry -> entry.internal)) return FactoryText.PATTERN_INTERNAL;
+            if (batchTicks <= 0) return FactoryText.Limit;
+            if (outputs.stream().anyMatch(entry -> entry.internal)) return FactoryText.PatternInternal;
             return null;
         }
     }
@@ -75,8 +76,8 @@ public final class FactoryPreview {
      * Describes the configured node ratios only; runtime automatic batching never changes the preview or AE pattern.
      */
     public static Snapshot describe(FactoryGraph graph) {
-        if (!graph.nodes.isEmpty() && graph.nodes.stream()
-            .allMatch(node -> node.wholeLineBatch)) return describeWhole(graph);
+        if (!graph.nodes.isEmpty() && graph.nodes.stream().allMatch(node -> node.wholeLineBatch))
+            return describeWhole(graph);
         Snapshot result = new Snapshot();
         List<Port> inputs = new ArrayList<>(), outputs = new ArrayList<>();
         long totalPower = 0;
@@ -85,14 +86,11 @@ public final class FactoryPreview {
             for (FactoryGraph.Node node : graph.nodes) {
                 FactoryRecipeCatalog.Entry entry = FactoryRecipeCatalog.get(node.recipe);
                 if (entry == null) {
-                    result.info = FactoryText.PREVIEW_INVALID.text();
+                    result.info = FactoryText.PreviewInvalid.text();
                     return result;
                 }
-                long[] timing = FactoryGraph.timing(
-                    node.customEUt < 0 ? entry.recipe.mEUt : node.customEUt,
-                    entry.recipe.mDuration,
-                    Math.max(1, node.parallel),
-                    node.overclocks);
+                long[] timing = FactoryGraph.timing(node.customEUt < 0 ? entry.recipe.mEUt : node.customEUt,
+                    entry.recipe.mDuration, Math.max(1, node.parallel), node.overclocks);
                 totalPower = Math.addExact(totalPower, timing[0]);
                 double batches = (double) Math.max(1, node.parallel) * result.batchTicks / timing[1];
                 for (GTRecipe.RecipeItemInput input : entry.consumableRecipe.getCachedCombinedItemInputs()) {
@@ -116,17 +114,13 @@ public final class FactoryPreview {
             }
         } catch (ArithmeticException invalid) {
             result.batchTicks = 0;
-            result.info = FactoryText.LIMIT.text();
+            result.info = FactoryText.Limit.text();
             return result;
         }
         result.info = totalPower + " EU/t";
-        if (!graph.hasTargetsForAllComponents()) result.info += " | " + FactoryText.NO_TARGET.text();
-        double[] supply = outputs.stream()
-            .mapToDouble(p -> p.rate)
-            .toArray();
-        double[] demand = inputs.stream()
-            .mapToDouble(p -> p.rate)
-            .toArray();
+        if (!graph.hasTargetsForAllComponents()) result.info += " | " + FactoryText.NoTarget.text();
+        double[] supply = outputs.stream().mapToDouble(p -> p.rate).toArray();
+        double[] demand = inputs.stream().mapToDouble(p -> p.rate).toArray();
         BiPredicate<Integer, Integer> connects = (o, i) -> {
             Port out = outputs.get(o), in = inputs.get(i);
             if (!in.node.sources.contains(out.node.id)) return false;
@@ -157,9 +151,7 @@ public final class FactoryPreview {
         Snapshot result = new Snapshot();
         try {
             FactoryCycles.Plan plan = FactoryWholeBatch.prepare(graph.nodes);
-            result.batchTicks = plan.jobs.values()
-                .iterator()
-                .next().duration;
+            result.batchTicks = plan.jobs.values().iterator().next().duration;
             result.exactBatch = true;
             result.info = plan.eut + " EU/t | " + FactoryText.BatchDuration.text() + ": " + result.batchTicks + " t";
             for (ItemStack item : plan.inputs.mInputs)
@@ -179,7 +171,7 @@ public final class FactoryPreview {
             }
         } catch (ArithmeticException invalid) {
             result.batchTicks = 0;
-            result.info = FactoryText.LIMIT.text();
+            result.info = FactoryText.Limit.text();
         }
         return result;
     }
@@ -202,7 +194,7 @@ public final class FactoryPreview {
         entry.fluid = port.fluid == null ? null : port.fluid.copy();
         // Hide GT's original recipe quantity: the widget draws only the parallel-adjusted throughput.
         entry.display = entry.item != null ? entry.item.copy()
-            : gregtech.api.util.GTUtility.getFluidDisplayStack(entry.fluid, true, true);
+            : GTUtility.getFluidDisplayStack(entry.fluid, true, true);
         if (entry.item != null) entry.display.stackSize = 1;
         entries.add(entry);
     }
@@ -248,10 +240,8 @@ public final class FactoryPreview {
             int head = 0, tail = 1;
             while (head < tail && parent[sink] < 0) {
                 int from = queue[head++];
-                for (int e = 0; e < graph.get(from)
-                    .size(); e++) {
-                    Arc arc = graph.get(from)
-                        .get(e);
+                for (int e = 0; e < graph.get(from).size(); e++) {
+                    Arc arc = graph.get(from).get(e);
                     if (arc.remaining <= 1e-15 || parent[arc.to] >= 0) continue;
                     parent[arc.to] = from;
                     edge[arc.to] = e;
@@ -260,16 +250,12 @@ public final class FactoryPreview {
             }
             if (parent[sink] < 0) break;
             double amount = Double.POSITIVE_INFINITY;
-            for (int at = sink; at != 0; at = parent[at]) amount = Math.min(
-                amount,
-                graph.get(parent[at])
-                    .get(edge[at]).remaining);
+            for (int at = sink; at != 0; at = parent[at])
+                amount = Math.min(amount, graph.get(parent[at]).get(edge[at]).remaining);
             for (int at = sink; at != 0; at = parent[at]) {
-                Arc arc = graph.get(parent[at])
-                    .get(edge[at]);
+                Arc arc = graph.get(parent[at]).get(edge[at]);
                 arc.remaining -= amount;
-                graph.get(at)
-                    .get(arc.reverse).remaining += amount;
+                graph.get(at).get(arc.reverse).remaining += amount;
             }
         }
         for (int o = 0; o < supply.length; o++) supply[o] = sources[o].remaining;
@@ -277,20 +263,10 @@ public final class FactoryPreview {
     }
 
     private static Arc add(List<List<Arc>> graph, int from, int to, double amount) {
-        Arc forward = new Arc(
-            to,
-            graph.get(to)
-                .size(),
-            amount);
-        Arc reverse = new Arc(
-            from,
-            graph.get(from)
-                .size(),
-            0);
-        graph.get(from)
-            .add(forward);
-        graph.get(to)
-            .add(reverse);
+        Arc forward = new Arc(to, graph.get(to).size(), amount);
+        Arc reverse = new Arc(from, graph.get(from).size(), 0);
+        graph.get(from).add(forward);
+        graph.get(to).add(reverse);
         return forward;
     }
 }

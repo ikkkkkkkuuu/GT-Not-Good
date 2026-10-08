@@ -45,12 +45,7 @@ public class GuiSolvePreview extends GuiResearchBoardScreen {
     public void initGui() {
         int center = width / 2;
         buttonList.clear();
-        GuiButton execute = researchButton(
-            0,
-            center - 105,
-            height - 30,
-            100,
-            20,
+        GuiButton execute = researchButton(0, center - 105, height - 30, 100, 20,
             StatCollector.translateToLocal("tcautores.execute"));
         execute.enabled = allowExecute && result.success
             && result.missingPrimals.isEmpty()
@@ -114,22 +109,14 @@ public class GuiSolvePreview extends GuiResearchBoardScreen {
         lines.add(StatCollector.translateToLocal("tcautores.synthesis") + ": " + result.synthesisOperations);
         lines.add(String.format(StatCollector.translateToLocal("tcautores.solve_time"), result.solveTimeMs));
         lines.add(String.format(StatCollector.translateToLocal("tcautores.expanded_states"), result.expandedStates));
-        lines.add(
-            String.format(
-                StatCollector.translateToLocal("tcautores.peak_search"),
-                result.peakStates,
-                result.peakQueue,
-                result.peakPlans));
-        lines.add(
-            String.format(
-                StatCollector.translateToLocal("tcautores.cache_status"),
-                cacheText(result.resultCacheHit),
-                cacheText(result.graphCacheHit)));
+        lines.add(String.format(StatCollector.translateToLocal("tcautores.peak_search"), result.peakStates,
+            result.peakQueue, result.peakPlans));
+        lines.add(String.format(StatCollector.translateToLocal("tcautores.cache_status"),
+            cacheText(result.resultCacheHit), cacheText(result.graphCacheHit)));
         if (result.fallbackUsed) lines.add(StatCollector.translateToLocal("tcautores.fallback"));
         if (!result.success) {
-            lines.add(
-                StatCollector.translateToLocal("tcautores.solve_failed") + ": "
-                    + SolverLocalization.failure(result.failureReason));
+            lines.add(StatCollector.translateToLocal("tcautores.solve_failed") + ": "
+                + SolverLocalization.failure(result.failureReason));
         } else if (result.missingPrimals.isEmpty()) {
             lines.add(StatCollector.translateToLocal("tcautores.inventory_ready"));
         } else {

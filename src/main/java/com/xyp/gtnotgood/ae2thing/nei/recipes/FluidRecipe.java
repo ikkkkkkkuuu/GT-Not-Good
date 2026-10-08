@@ -62,10 +62,7 @@ public final class FluidRecipe {
         try {
             List<OrderStack<?>> tmp = new LinkedList<>();
             AtomicInteger i = new AtomicInteger(0);
-            tRecipe.getIngredientStacks(index)
-                .stream()
-                .filter(Objects::nonNull)
-                .filter(ps -> ps.item != null)
+            tRecipe.getIngredientStacks(index).stream().filter(Objects::nonNull).filter(ps -> ps.item != null)
                 .forEach(ps -> tmp.add(new OrderStack<>(ps.item, i.getAndIncrement(), ps.items)));
             return tmp;
         } catch (Exception e) {
@@ -80,10 +77,7 @@ public final class FluidRecipe {
             if (tRecipe.getResultStack(index) != null) {
                 tmp.add(new OrderStack<>(tRecipe.getResultStack(index).item, i.getAndIncrement()));
             }
-            tRecipe.getOtherStacks(index)
-                .stream()
-                .filter(Objects::nonNull)
-                .filter(ps -> ps.item != null)
+            tRecipe.getOtherStacks(index).stream().filter(Objects::nonNull).filter(ps -> ps.item != null)
                 .forEach(ps -> tmp.add(new OrderStack<>(ps.item, i.getAndIncrement())));
             return tmp;
         } catch (Exception e) {
@@ -108,26 +102,16 @@ public final class FluidRecipe {
     }
 
     public static List<OrderStack<?>> getPackageInputsLegacy(IRecipeHandler recipe, int index) {
-        if (recipe == null || !IdentifierMapLegacy.containsKey(
-            recipe.getClass()
-                .getName()))
-            return new ArrayList<>();
-        IRecipeExtractor extractor = IdentifierMapLegacy.get(
-            recipe.getClass()
-                .getName());
+        if (recipe == null || !IdentifierMapLegacy.containsKey(recipe.getClass().getName())) return new ArrayList<>();
+        IRecipeExtractor extractor = IdentifierMapLegacy.get(recipe.getClass().getName());
         if (extractor == null) return new ArrayList<>();
         List<PositionedStack> tmp = new ArrayList<>(recipe.getIngredientStacks(index));
         return extractor.getInputIngredients(tmp, recipe, index);
     }
 
     public static List<OrderStack<?>> getPackageOutputsLegacy(IRecipeHandler recipe, int index, boolean useOther) {
-        if (recipe == null || !IdentifierMapLegacy.containsKey(
-            recipe.getClass()
-                .getName()))
-            return new ArrayList<>();
-        IRecipeExtractor extractor = IdentifierMapLegacy.get(
-            recipe.getClass()
-                .getName());
+        if (recipe == null || !IdentifierMapLegacy.containsKey(recipe.getClass().getName())) return new ArrayList<>();
+        IRecipeExtractor extractor = IdentifierMapLegacy.get(recipe.getClass().getName());
         if (extractor == null) return new ArrayList<>();
         List<PositionedStack> tmp = new ArrayList<>(Collections.singleton(recipe.getResultStack(index)));
         if (useOther) tmp.addAll(recipe.getOtherStacks(index));

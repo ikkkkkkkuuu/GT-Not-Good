@@ -113,12 +113,8 @@ public class ToolBeltData implements IExtendedEntityProperties {
 
     public void syncToTracking() {
         if (!(owner instanceof EntityPlayerMP)) return;
-        NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(
-            owner.dimension,
-            owner.posX,
-            owner.posY,
-            owner.posZ,
-            64.0);
+        NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(owner.dimension, owner.posX, owner.posY,
+            owner.posZ, 64.0);
         GTNotGood.channel.sendToAllAround(new SyncToolBeltData(owner, this), point);
     }
 

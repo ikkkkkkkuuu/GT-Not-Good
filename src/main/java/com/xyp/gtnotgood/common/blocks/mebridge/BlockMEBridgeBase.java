@@ -3,10 +3,14 @@ package com.xyp.gtnotgood.common.blocks.mebridge;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.factory.TileEntityGuiFactory;
 import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.client.GTNGCreativeTabs;
 
@@ -40,21 +44,20 @@ public abstract class BlockMEBridgeBase extends Block {
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
         float hitY, float hitZ) {
         TileEntity te = world.getTileEntity(x, y, z);
-        if (!(te instanceof com.cleanroommc.modularui.api.IGuiHolder)) return false;
+        if (!(te instanceof IGuiHolder)) return false;
         // MUI2 opens server-side and pushes the panel packet to the client.
         if (!world.isRemote) {
-            com.cleanroommc.modularui.factory.TileEntityGuiFactory.INSTANCE.open(player, x, y, z);
+            TileEntityGuiFactory.INSTANCE.open(player, x, y, z);
         }
         return true;
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, net.minecraft.entity.EntityLivingBase placer,
-        net.minecraft.item.ItemStack stack) {
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, x, y, z, placer, stack);
         if (!world.isRemote && placer instanceof EntityPlayer player) {
             TileEntity te = world.getTileEntity(x, y, z);
-            if (te instanceof com.xyp.gtnotgood.common.blocks.mebridge.TileMEBridgeBase bridge) {
+            if (te instanceof TileMEBridgeBase bridge) {
                 bridge.setOwnerName(player.getCommandSenderName());
             }
         }

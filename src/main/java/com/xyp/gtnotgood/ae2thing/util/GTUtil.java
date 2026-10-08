@@ -21,8 +21,10 @@ public final class GTUtil {
 
     public static String getRecipeName(IRecipeHandler recipe, List<OrderStack<?>> inputs) {
         if (!(recipe instanceof GTNEIDefaultHandler)) return recipe.getRecipeName();
-        if (Mods.PROGRAMMABLE_HATCHES.isModLoaded()
-            && getConfigValue(ButtonConstants.DUAL_INTERFACE_TERMINAL_FILL_CIRCUIT)) {
+        if (
+            Mods.ProgrammableHatches.isModLoaded()
+                && getConfigValue(ButtonConstants.DUAL_INTERFACE_TERMINAL_FILL_CIRCUIT)
+        ) {
             return recipe.getRecipeName();
         }
         if (!getConfigValue(ButtonConstants.DUAL_INTERFACE_TERMINAL_APPEND_CIRCUIT_DAMAGE)) {
@@ -31,8 +33,7 @@ public final class GTUtil {
         StringBuilder name = new StringBuilder(recipe.getRecipeName());
         for (OrderStack<?> stack : inputs) {
             if (stack.getStack() instanceof ItemStack item && item.stackSize == 0) {
-                name.append(' ')
-                    .append(item.getItemDamage());
+                name.append(' ').append(item.getItemDamage());
             }
         }
         return name.toString();

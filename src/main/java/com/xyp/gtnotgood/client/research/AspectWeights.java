@@ -152,8 +152,6 @@ public final class AspectWeights {
     }
 
     public static String normalize(String tag) {
-        return tag == null ? ""
-            : tag.trim()
-                .toLowerCase(Locale.ROOT);
+        return tag == null ? "" : tag.trim().toLowerCase(Locale.ROOT);
     }
 }

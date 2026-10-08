@@ -50,8 +50,7 @@ public abstract class MixinMTEBrickedBlastFurnace {
     private void gtng$allowOutput(IGregTechTileEntity tile, int index, ForgeDirection side, ItemStack stack,
         CallbackInfoReturnable<Boolean> cir) {
         if (!Config.enableBrickedBlastFurnaceAutomation) return;
-        cir.setReturnValue(
-            index >= MTEBrickedBlastFurnace.INPUT_SLOTS
-                && index < MTEBrickedBlastFurnace.INPUT_SLOTS + MTEBrickedBlastFurnace.OUTPUT_SLOTS);
+        cir.setReturnValue(index >= MTEBrickedBlastFurnace.INPUT_SLOTS
+            && index < MTEBrickedBlastFurnace.INPUT_SLOTS + MTEBrickedBlastFurnace.OUTPUT_SLOTS);
     }
 }

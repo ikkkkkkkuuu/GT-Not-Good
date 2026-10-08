@@ -36,13 +36,8 @@ public class RenderHelper {
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glTranslatef(0f, 0f, z);
-        itemRender.renderItemAndEffectIntoGUI(
-            Minecraft.getMinecraft().fontRenderer,
-            Minecraft.getMinecraft()
-                .getTextureManager(),
-            stack,
-            x,
-            y);
+        itemRender.renderItemAndEffectIntoGUI(Minecraft.getMinecraft().fontRenderer,
+            Minecraft.getMinecraft().getTextureManager(), stack, x, y);
         GL11.glPopMatrix();
         GL11.glPopAttrib();
     }

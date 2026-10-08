@@ -20,8 +20,7 @@ public class ChannelLoader implements Runnable {
     public static final ChannelLoader INSTANCE = new ChannelLoader();
 
     public static Set<Class<?>> getClasses(String packageName) throws IOException {
-        ClassLoader classLoader = Thread.currentThread()
-            .getContextClassLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
         String path = packageName.replace('.', '/');
         Enumeration<URL> resources = classLoader.getResources(path);
@@ -46,10 +45,12 @@ public class ChannelLoader implements Runnable {
                     while (jarEntries.hasMoreElements()) {
                         JarEntry jarEntry = jarEntries.nextElement();
                         String jarEntryName = jarEntry.getName();
-                        if (jarEntryName.startsWith(packageName.replace('.', '/') + '/')
-                            && jarEntryName.endsWith(".class")) {
-                            String className = jarEntryName.substring(0, jarEntryName.lastIndexOf("."))
-                                .replaceAll("/", ".");
+                        if (
+                            jarEntryName.startsWith(packageName.replace('.', '/') + '/')
+                                && jarEntryName.endsWith(".class")
+                        ) {
+                            String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/",
+                                ".");
                             try {
                                 classes.add(Class.forName(className));
                             } catch (ClassNotFoundException ignored) {
@@ -76,19 +77,11 @@ public class ChannelLoader implements Runnable {
         try {
             Set<Class<?>> result = getClasses("com.xyp.gtnotgood.ae2thing.network");
             for (Class<?> aClass : result) {
-                if (aClass.getName()
-                    .endsWith("Handler")) {
-                    Class c = Class.forName(
-                        aClass.getName()
-                            .replace("$Handler", ""));
-                    IMessageHandler cls = (IMessageHandler) aClass.getConstructor()
-                        .newInstance();
-                    netHandler.registerMessage(
-                        cls,
-                        c,
-                        id++,
-                        c.getSimpleName()
-                            .startsWith("C") ? Side.SERVER : Side.CLIENT);
+                if (aClass.getName().endsWith("Handler")) {
+                    Class c = Class.forName(aClass.getName().replace("$Handler", ""));
+                    IMessageHandler cls = (IMessageHandler) aClass.getConstructor().newInstance();
+                    netHandler.registerMessage(cls, c, id++,
+                        c.getSimpleName().startsWith("C") ? Side.SERVER : Side.CLIENT);
                 }
             }
         } catch (Exception ignored) {}

@@ -45,18 +45,8 @@ public final class StockGuiFactory extends AbstractUIFactory<StockGuiFactory.Dat
     }
 
     public void open(EntityPlayer player, AEBasePart part) {
-        TileEntity tile = part.getHost()
-            .getTile();
-        open(
-            player,
-            new Data(
-                player,
-                tile.xCoord,
-                tile.yCoord,
-                tile.zCoord,
-                part.getSide()
-                    .ordinal(),
-                null));
+        TileEntity tile = part.getHost().getTile();
+        open(player, new Data(player, tile.xCoord, tile.yCoord, tile.zCoord, part.getSide().ordinal(), null));
     }
 
     public void open(EntityPlayer player, TileMERequester tile) {
@@ -64,40 +54,21 @@ public final class StockGuiFactory extends AbstractUIFactory<StockGuiFactory.Dat
     }
 
     void openRemote(EntityPlayer player, Data terminal, TileMERequester tile) {
-        open(
-            player,
-            new Data(
-                player,
-                terminal.getX(),
-                terminal.getY(),
-                terminal.getZ(),
-                terminal.side,
-                new int[] { tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord }));
+        open(player, new Data(player, terminal.getX(), terminal.getY(), terminal.getZ(), terminal.side,
+            new int[] { tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord }));
     }
 
     void openAmount(EntityPlayer player, PartThresholdExportBus bus, int row) {
-        if (row < 0 || row >= bus.stockSlots()
-            || bus.stockConfig()
-                .key(row) == null)
-            return;
-        TileEntity tile = bus.getHost()
-            .getTile();
-        open(
-            player,
-            new Data(
-                player,
-                tile.xCoord,
-                tile.yCoord,
-                tile.zCoord,
-                bus.getSide()
-                    .ordinal(),
-                null,
-                row));
+        if (row < 0 || row >= bus.stockSlots() || bus.stockConfig().key(row) == null) return;
+        TileEntity tile = bus.getHost().getTile();
+        open(player, new Data(player, tile.xCoord, tile.yCoord, tile.zCoord, bus.getSide().ordinal(), null, row));
     }
 
     private void open(EntityPlayer player, Data data) {
-        if (player instanceof EntityPlayerMP serverPlayer && !(player instanceof FakePlayer)
-            && canInteractWith(player, data)) GuiManager.open(this, data, serverPlayer);
+        if (
+            player instanceof EntityPlayerMP serverPlayer && !(player instanceof FakePlayer)
+                && canInteractWith(player, data)
+        ) GuiManager.open(this, data, serverPlayer);
     }
 
     @Override
@@ -122,30 +93,28 @@ public final class StockGuiFactory extends AbstractUIFactory<StockGuiFactory.Dat
 
     @Override
     public boolean canInteractWith(EntityPlayer player, Data data) {
-        if (!super.canInteractWith(player, data) || data.getSquaredDistance(player) > 64
-            || data.source == null
-            || data.source != data.resolveSource()) return false;
+        if (
+            !super.canInteractWith(player, data) || data.getSquaredDistance(player) > 64
+                || data.source == null
+                || data.source != data.resolveSource()
+        ) return false;
         if (player.worldObj.isRemote) return true;
-        if (data.amountSlot >= 0
-            && (!(data.source instanceof PartThresholdExportBus bus) || data.amountSlot >= bus.stockSlots()
-                || data.amountKey == null
-                || data.amountKey != bus.stockConfig()
-                    .key(data.amountSlot)))
-            return false;
+        if (
+            data.amountSlot >= 0
+                && (!(data.source instanceof PartThresholdExportBus bus) || data.amountSlot >= bus.stockSlots()
+                    || data.amountKey == null
+                    || data.amountKey != bus.stockConfig().key(data.amountSlot))
+        ) return false;
         if (!(data.source instanceof IActionHost action) || !permitted(player, action)) return false;
         if (data.remote == null) return data.target == data.source;
-        if (!(data.source instanceof PartRequesterTerminal terminal)
-            || !(data.target instanceof TileMERequester requester)
-            || data.target != data.resolveRemote()) return false;
+        if (
+            !(data.source instanceof PartRequesterTerminal terminal)
+                || !(data.target instanceof TileMERequester requester)
+                || data.target != data.resolveRemote()
+        ) return false;
         try {
-            return terminal.getProxy()
-                .isActive()
-                && requester.getProxy()
-                    .isActive()
-                && terminal.getProxy()
-                    .getGrid()
-                    == requester.getProxy()
-                        .getGrid()
+            return terminal.getProxy().isActive() && requester.getProxy().isActive()
+                && terminal.getProxy().getGrid() == requester.getProxy().getGrid()
                 && permitted(player, requester);
         } catch (GridAccessException ignored) {
             return false;
@@ -155,8 +124,7 @@ public final class StockGuiFactory extends AbstractUIFactory<StockGuiFactory.Dat
     private static boolean permitted(EntityPlayer player, IActionHost host) {
         var node = host.getActionableNode();
         if (node == null) return true; // Allow local setup before a cable/node is ready.
-        ISecurityGrid security = node.getGrid()
-            .getCache(ISecurityGrid.class);
+        ISecurityGrid security = node.getGrid().getCache(ISecurityGrid.class);
         return security.hasPermission(player, SecurityPermissions.BUILD);
     }
 
@@ -201,8 +169,7 @@ public final class StockGuiFactory extends AbstractUIFactory<StockGuiFactory.Dat
             this.remote = remote;
             source = resolveSource();
             amountKey = amountSlot >= 0 && source instanceof PartThresholdExportBus bus && amountSlot < bus.stockSlots()
-                ? bus.stockConfig()
-                    .key(amountSlot)
+                ? bus.stockConfig().key(amountSlot)
                 : null;
             if (remote != null && player.worldObj.isRemote) {
                 TileMERequester proxy = new TileMERequester();
@@ -231,9 +198,7 @@ public final class StockGuiFactory extends AbstractUIFactory<StockGuiFactory.Dat
         StockGridCache cache() {
             if (!(source instanceof PartRequesterTerminal terminal) || getWorld().isRemote) return null;
             try {
-                return terminal.getProxy()
-                    .getGrid()
-                    .getCache(StockGridCache.class);
+                return terminal.getProxy().getGrid().getCache(StockGridCache.class);
             } catch (GridAccessException ignored) {
                 return null;
             }
@@ -243,12 +208,7 @@ public final class StockGuiFactory extends AbstractUIFactory<StockGuiFactory.Dat
     boolean canEdit(EntityPlayer player, Data data, TileMERequester tile) {
         if (!canInteractWith(player, data) || tile == null || tile.isInvalid()) return false;
         if (data.source == tile) return true;
-        Data remote = new Data(
-            player,
-            data.getX(),
-            data.getY(),
-            data.getZ(),
-            data.side,
+        Data remote = new Data(player, data.getX(), data.getY(), data.getZ(), data.side,
             new int[] { tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord });
         return remote.target == tile && canInteractWith(player, remote);
     }

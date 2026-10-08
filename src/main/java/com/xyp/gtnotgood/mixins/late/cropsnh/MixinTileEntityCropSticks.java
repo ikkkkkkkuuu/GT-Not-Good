@@ -52,8 +52,7 @@ public abstract class MixinTileEntityCropSticks {
         Config.ensureLoaded();
         if (!Config.enableCropInstantGrowth) return;
         if (!this.hasCrop()) return;
-        int duration = this.seed.getCrop()
-            .getGrowthDuration();
+        int duration = this.seed.getCrop().getGrowthDuration();
         if (this.growthProgress < duration) {
             this.growthProgress = duration;
             this.isDirty = true;
@@ -87,8 +86,7 @@ public abstract class MixinTileEntityCropSticks {
             ItemStack drop = this.getSeedStack();
             if (drop != null) {
                 if (!(drop.getItem() instanceof ItemGenericSeed)) {
-                    drop = this.seed.getCrop()
-                        .getSeedItem(this.seed.getStats());
+                    drop = this.seed.getCrop().getSeedItem(this.seed.getStats());
                 }
                 if (drop == null) return;
                 drop.stackSize = 1;

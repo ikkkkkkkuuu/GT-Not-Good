@@ -11,16 +11,19 @@ def replaceColors = { String text ->
     text.replaceAll(/\{\\\\([A-Z_]+)\}/) { match, code -> colorCodes[code] ?: match }
 }
 
-def isValidFormat = { String str ->
-    try {
-        String.format(str, (Object[]) [])
-        true
-    } catch (Exception ignored) {
-        false
-    }
-}
+apply from: 'scripts/translation-format.gradle'
+def translationFormats = project.ext.translationFormatValidator
 
 afterEvaluate {
+    spotless {
+        java {
+            clearSteps()
+            importOrderFile(file('gtnhShared/spotless.importorder'))
+            removeUnusedImports()
+            eclipse('4.19').configFile(file('gtnhShared/spotless.eclipseformat.xml'))
+        }
+    }
+
     tasks.register('preprocessLangInJavaFiles') {
         group = 'language'
         description = 'Extract translation strings from Java comments and generate lang files'
@@ -29,6 +32,7 @@ afterEvaluate {
         def langDir = file("src/main/resources/assets/${project.findProperty('modId')}/lang")
 
         inputs.files(javaSource)
+        inputs.file('scripts/translation-format.gradle')
         outputs.dir(langDir)
 
         doLast {
@@ -50,10 +54,6 @@ afterEvaluate {
                             if (langs[lang].containsKey(pendingKey) && langs[lang][pendingKey] != value) {
                                 logger.lifecycle("[lang override] '${pendingKey}' in ${file.name}: ${langs[lang][pendingKey]} -> ${value}")
                             }
-                            if (!isValidFormat(value)) {
-                                logger.warn("[lang format error] '${pendingKey}' in ${file.name}: ${value}")
-                            }
-
                             langs[lang][pendingKey] = value
                             keyOrder.add(pendingKey)
                         } else {
@@ -86,6 +86,11 @@ afterEvaluate {
                         }
                     }
                 }
+            }
+
+            def formatErrors = translationFormats.validate(langs)
+            if (!formatErrors.empty) {
+                throw new GradleException('Invalid translation formats:\n' + formatErrors.join('\n'))
             }
 
             langDir.mkdirs()
@@ -126,12 +131,13 @@ tasks.register('uninstallPreCommitHook', Delete) {
     delete '.git/hooks/pre-commit'
 }
 
-tasks.register('networkRegression', JavaExec) {
+tasks.register('networkRegression', Test) {
     group = 'verification'
-    description = 'Checks programmable network transfer bounds and persistence without launching a client.'
+    description = 'Checks programmable network allocation and transfer bounds without launching a client.'
     dependsOn tasks.named('testClasses')
+    testClassesDirs = sourceSets.test.output.classesDirs
     classpath = sourceSets.test.runtimeClasspath
-    mainClass = 'com.xyp.gtnotgood.common.blocks.network.NetworkRegressionChecks'
+    filter { includeTestsMatching 'com.xyp.gtnotgood.common.blocks.network.*Test' }
 }
 
 // Windows JDK 25 selectors can fail to connect through the default user temp path.

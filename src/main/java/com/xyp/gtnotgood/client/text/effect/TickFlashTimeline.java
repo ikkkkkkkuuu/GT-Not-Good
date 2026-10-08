@@ -33,9 +33,7 @@ public class TickFlashTimeline {
             events.add((int) tick);
             tick += durationTicks;
         }
-        starts = events.stream()
-            .mapToInt(Integer::intValue)
-            .toArray();
+        starts = events.stream().mapToInt(Integer::intValue).toArray();
     }
 
     public boolean active(int tick) {

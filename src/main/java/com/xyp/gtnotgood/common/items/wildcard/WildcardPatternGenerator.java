@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,6 +18,7 @@ import com.xyp.gtnotgood.common.items.wildcard.model.IWildcardIOComponent;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardExpansion;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMigration;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardModelState;
+import com.xyp.gtnotgood.loader.ItemsLoader;
 
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.storage.data.IAEItemStack;
@@ -41,9 +43,8 @@ public final class WildcardPatternGenerator {
     // ============================================================
 
     public static boolean isWildcardPattern(ItemStack stack) {
-        return stack != null && (stack.getItem() == com.xyp.gtnotgood.loader.ItemsLoader.wildcardPattern
-            || stack.hasTagCompound() && stack.getTagCompound()
-                .getBoolean(KEY_WILDCARD));
+        return stack != null && (stack.getItem() == ItemsLoader.wildcardPattern
+            || stack.hasTagCompound() && stack.getTagCompound().getBoolean(KEY_WILDCARD));
     }
 
     /** 标记为通配样板并确保新模型 NBT 已初始化（含旧存档迁移）。 */
@@ -111,13 +112,8 @@ public final class WildcardPatternGenerator {
             cache = new WildcardPatternCache<>();
             COUNT_CACHE.put(stack, cache);
         }
-        return cache.get(
-            stack,
-            null,
-            () -> WildcardExpansion.countExpanded(
-                WildcardModelState.getInputs(stack),
-                WildcardModelState.getOutputs(stack),
-                WildcardModelState.getFilters(stack)));
+        return cache.get(stack, null, () -> WildcardExpansion.countExpanded(WildcardModelState.getInputs(stack),
+            WildcardModelState.getOutputs(stack), WildcardModelState.getFilters(stack)));
     }
 
     // ============================================================
@@ -199,8 +195,8 @@ public final class WildcardPatternGenerator {
         if ((inputs == null || inputs.isEmpty()) && (outputs == null || outputs.isEmpty())) {
             return null;
         }
-        inputs = inputs == null ? java.util.Collections.emptyList() : inputs;
-        outputs = outputs == null ? java.util.Collections.emptyList() : outputs;
+        inputs = inputs == null ? Collections.emptyList() : inputs;
+        outputs = outputs == null ? Collections.emptyList() : outputs;
 
         NBTTagList inputList = buildPatternList(inputs);
         NBTTagList outputList = buildPatternList(outputs);
@@ -242,22 +238,17 @@ public final class WildcardPatternGenerator {
         List<ItemStack> outputs) {
         StringBuilder builder = new StringBuilder(sanitizeIdentityPart(materialName)).append('|');
         for (ItemStack stack : inputs) {
-            builder.append(getStackFingerprint(stack))
-                .append('+');
+            builder.append(getStackFingerprint(stack)).append('+');
         }
         builder.append("->");
         for (ItemStack stack : outputs) {
-            builder.append(getStackFingerprint(stack))
-                .append('+');
+            builder.append(getStackFingerprint(stack)).append('+');
         }
         return builder.toString();
     }
 
     private static String sanitizeIdentityPart(String value) {
-        return value == null ? ""
-            : value.replace("\\", "\\\\")
-                .replace("|", "\\|")
-                .replace("->", "-\\>");
+        return value == null ? "" : value.replace("\\", "\\\\").replace("|", "\\|").replace("->", "-\\>");
     }
 
     // ============================================================
@@ -285,12 +276,9 @@ public final class WildcardPatternGenerator {
         if (stack == null) {
             return "empty";
         }
-        String itemName = String.valueOf(net.minecraft.item.Item.itemRegistry.getNameForObject(stack.getItem()));
+        String itemName = String.valueOf(Item.itemRegistry.getNameForObject(stack.getItem()));
         if (itemName == null || itemName.isEmpty() || "null".equals(itemName)) {
-            itemName = stack.getItem() == null ? "null"
-                : stack.getItem()
-                    .getClass()
-                    .getName();
+            itemName = stack.getItem() == null ? "null" : stack.getItem().getClass().getName();
         }
         NBTTagCompound tag = stack.getTagCompound();
         return itemName + "@"

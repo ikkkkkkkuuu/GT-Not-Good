@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import com.xyp.gtnotgood.commandtree.commodore.file.CommodoreFileReader;
 import org.jetbrains.annotations.NotNull;
+import cpw.mods.fml.common.Loader;
 
 /** Loads bundled syntax definitions for commands supplied by installed mods. */
 public class CompatRegistry {
@@ -39,7 +40,7 @@ public class CompatRegistry {
    }
 
    private static void register(@NotNull String modId, @NotNull Supplier<CompatMod> lazyMod) {
-      if (modId.equals("minecraft") || cpw.mods.fml.common.Loader.isModLoaded(modId)) {
+      if (modId.equals("minecraft") || Loader.isModLoaded(modId)) {
          GTNotGood.LOG.info("Loading compatibility for mod: {}", modId);
          CompatMod mod = lazyMod.get();
          mod.commands().forEach(clazz -> {

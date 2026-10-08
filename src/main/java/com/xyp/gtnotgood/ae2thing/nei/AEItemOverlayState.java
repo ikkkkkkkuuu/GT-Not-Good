@@ -19,11 +19,7 @@ public class AEItemOverlayState extends GuiOverlayButton.ItemOverlayState {
         this.isCraftable = isCraftable;
     }
 
-    private static final ItemStack PATTERN = AEApi.instance()
-        .definitions()
-        .items()
-        .encodedPattern()
-        .maybeStack(1)
+    private static final ItemStack PATTERN = AEApi.instance().definitions().items().encodedPattern().maybeStack(1)
         .orNull();
 
     @Override

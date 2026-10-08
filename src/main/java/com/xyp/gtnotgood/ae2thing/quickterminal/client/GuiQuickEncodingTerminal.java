@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -95,6 +97,7 @@ import appeng.core.sync.packets.PacketInterfaceTerminalUpdate.PacketAdd;
 import appeng.core.sync.packets.PacketInterfaceTerminalUpdate.PacketEntry;
 import appeng.core.sync.packets.PacketInterfaceTerminalUpdate.PacketRename;
 import appeng.core.sync.packets.PacketMonitorableAction;
+import appeng.core.sync.packets.PacketSwitchGuis;
 import appeng.helpers.MonitorableAction;
 import appeng.util.Platform;
 import gregtech.common.items.ItemFluidDisplay;
@@ -139,17 +142,13 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     private static final int DEFAULT_STORAGE_BUTTONS_PER_COLUMN = 4;
     private static final int GL_CLIENT_ALL_ATTRIB_BITS = 0xFFFFFFFF;
 
-    private static final ResourceLocation ITEM_PANEL = new ResourceLocation(
-        GTNotGood.MODID,
+    private static final ResourceLocation ITEM_PANEL = new ResourceLocation(GTNotGood.MODID,
         "textures/gui/quick_terminal/items.png");
-    private static final ResourceLocation VIEW_CELL_PANEL = new ResourceLocation(
-        GTNotGood.MODID,
+    private static final ResourceLocation VIEW_CELL_PANEL = new ResourceLocation(GTNotGood.MODID,
         "textures/gui/quick_terminal/view_cells.png");
-    private static final ResourceLocation PATTERN_PANEL = new ResourceLocation(
-        GTNotGood.MODID,
+    private static final ResourceLocation PATTERN_PANEL = new ResourceLocation(GTNotGood.MODID,
         "textures/gui/quick_terminal/encoding.png");
-    private static final ResourceLocation PATTERN_PANEL_4X4 = new ResourceLocation(
-        GTNotGood.MODID,
+    private static final ResourceLocation PATTERN_PANEL_4X4 = new ResourceLocation(GTNotGood.MODID,
         "textures/gui/quick_terminal/encoding4.png");
 
     private static final Field ITEM_REPO = findField(GuiMEMonitorable.class, "repo");
@@ -259,10 +258,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         // #tr gtnotgood.tooltip.switch_to_crafting_terminal
         // # Switch to Wireless Crafting Terminal
         // # zh_CN 切换到无线合成终端
-        switchToCraftingButton = new CompactItemTabButton(
-            new ItemStack(Blocks.crafting_table),
-            StatCollector.translateToLocal("gtnotgood.tooltip.switch_to_crafting_terminal"),
-            itemRender);
+        switchToCraftingButton = new CompactItemTabButton(new ItemStack(Blocks.crafting_table),
+            StatCollector.translateToLocal("gtnotgood.tooltip.switch_to_crafting_terminal"), itemRender);
         buttonList.add(switchToCraftingButton);
 
         craftingStatusButton = new GuiTabButton(0, 0, 2 + 11 * 16, GuiText.CraftingStatus.getLocal(), itemRender);
@@ -342,12 +339,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             }
             if (type.getButtonTexture() == null || type.getButtonIcon() == null) continue;
 
-            TypeToggleButton button = new TypeToggleButton(
-                oldLeft - 36,
-                oldTop + 8 + typeIndex * 20,
-                type.getButtonTexture(),
-                type.getButtonIcon(),
-                type.getDisplayName());
+            TypeToggleButton button = new TypeToggleButton(oldLeft - 36, oldTop + 8 + typeIndex * 20,
+                type.getButtonTexture(), type.getButtonIcon(), type.getDisplayName());
             button.setEnabled(typeFilters.isEnabled(type));
             toggleButtons.put(button, type);
             buttons.add(button);
@@ -376,7 +369,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         storageButtons.addAll(0, ordered);
     }
 
-    private ModeButton createModeButton(net.minecraft.block.Block icon, String translationKey) {
+    private ModeButton createModeButton(Block icon, String translationKey) {
         return new ModeButton(new ItemStack(icon), StatCollector.translateToLocal(translationKey), itemRender);
     }
 
@@ -430,11 +423,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         int oldLength = monitorableSlots.length;
         monitorableSlots = Arrays.copyOf(monitorableSlots, requiredSlots);
         for (int i = oldLength; i < requiredSlots; i++) {
-            VirtualMEMonitorableSlot slot = new VirtualMEMonitorableSlot(
-                0,
-                0,
-                itemRepo,
-                i,
+            VirtualMEMonitorableSlot slot = new VirtualMEMonitorableSlot(0, 0, itemRepo, i,
                 type -> typeFilters == null || typeFilters.isEnabled(type));
             monitorableSlots[i] = slot;
             registerVirtualSlots(slot);
@@ -507,12 +496,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         getScrollBar().setLeft(ITEM_PANEL_X + ITEM_PANEL_WIDTH - 20)
             // Pin slots stay fixed, but the scrollbar track covers the full
             // storage grid so scroll zero remains the top of the grid.
-            .setTop(itemPanelY + 18)
-            .setHeight(itemRows * 18)
-            .setRange(
-                0,
-                Math.max(0, (size - visibleItemSlots + ITEM_COLUMNS - 1) / ITEM_COLUMNS),
-                Math.max(1, itemRows / 6));
+            .setTop(itemPanelY + 18).setHeight(itemRows * 18).setRange(0,
+                Math.max(0, (size - visibleItemSlots + ITEM_COLUMNS - 1) / ITEM_COLUMNS), Math.max(1, itemRows / 6));
         // GuiMEMonitorable still recalculates this shared scrollbar with its native nine-column geometry whenever
         // the repository view changes. That can clamp the compact panel's valid six-column position before this
         // method restores the correct range. Keep the compact position separately so it does not jump or lose rows.
@@ -609,10 +594,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             keepNonConsumablesButton.yPosition = processingControlY;
         }
         layoutFluidCraftingButtonPair(combineEnabledButton, combineDisabledButton, right + 59, processingControlY);
-        layoutFluidCraftingButtonPair(
-            prioritizeEnabledButton,
-            prioritizeDisabledButton,
-            right + 69,
+        layoutFluidCraftingButtonPair(prioritizeEnabledButton, prioritizeDisabledButton, right + 69,
             processingControlY);
     }
 
@@ -677,10 +659,11 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             if (value == ItemSubstitution.DISABLED) button.visible = !patternContainer.substituteSync.get();
             if (value == PatternBeSubstitution.ENABLED) button.visible = patternContainer.beSubstituteSync.get();
             if (value == PatternBeSubstitution.DISABLED) button.visible = !patternContainer.beSubstituteSync.get();
-            if (patternContainer.arcaneModeSync.get()
-                && (value instanceof ItemSubstitution || value instanceof PatternBeSubstitution
-                    || value == ActionItems.DOUBLE))
-                button.visible = false;
+            if (
+                patternContainer.arcaneModeSync.get()
+                    && (value instanceof ItemSubstitution || value instanceof PatternBeSubstitution
+                        || value == ActionItems.DOUBLE)
+            ) button.visible = false;
         }
         if (combineEnabledButton != null)
             combineEnabledButton.visible = !crafting && patternContainer.isCombineEnabled();
@@ -756,8 +739,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     /** Starts a native fluid craft from an NEI synthetic fluid display item. */
     public boolean requestFluidCraft(ItemStack stack) {
-        if (stack == null || !(stack.getItem() instanceof ItemFluidDisplay || stack.getItem() instanceof ItemFluidDrop
-            || stack.getItem() instanceof ItemFluidPacket)) {
+        if (
+            stack == null || !(stack.getItem() instanceof ItemFluidDisplay || stack.getItem() instanceof ItemFluidDrop
+                || stack.getItem() instanceof ItemFluidPacket)
+        ) {
             return false;
         }
         IAEStack<?> fluid = Util.getAEFluidFromItem(stack);
@@ -797,22 +782,28 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                 // pattern container so the click boxes stay on the texture.
                 slot.xDisplayPosition = 14 + slot.getX();
                 slot.yDisplayPosition = ySize + slot.getY() - 82;
-            } else if (value instanceof SlotRestrictedInput slot
-                && slot.getItemType() == SlotRestrictedInput.PlacableItemType.BLANK_PATTERN) {
-                    slot.xDisplayPosition = PATTERN_PANEL_X + PATTERN_BLANK_SLOT_X;
-                    slot.yDisplayPosition = panelY + patternRowY();
-                } else if (value instanceof SlotRestrictedInput slot
-                    && slot.getItemType() == SlotRestrictedInput.PlacableItemType.ENCODED_PATTERN) {
-                        slot.xDisplayPosition = PATTERN_PANEL_X + PATTERN_ENCODED_SLOT_X;
-                        slot.yDisplayPosition = panelY + patternRowY();
-                    } else if (value instanceof SlotRestrictedInput slot
-                        && slot.getItemType() == SlotRestrictedInput.PlacableItemType.VIEW_CELL) {
-                            slot.xDisplayPosition = PATTERN_PANEL_X + VIEW_CELL_SLOT_X + slot.getSlotIndex() * 18;
-                            slot.yDisplayPosition = viewCellPanelY() + VIEW_CELL_SLOT_Y;
-                        } else if (value instanceof SlotPatternTerm slot) {
-                            slot.xDisplayPosition = patternContainer.isCraftingMode() ? PATTERN_PANEL_X + 42 : -9000;
-                            slot.yDisplayPosition = panelY + PATTERN_CRAFTING_OUTPUT_Y;
-                        }
+            } else if (
+                value instanceof SlotRestrictedInput slot
+                    && slot.getItemType() == SlotRestrictedInput.PlacableItemType.BLANK_PATTERN
+            ) {
+                slot.xDisplayPosition = PATTERN_PANEL_X + PATTERN_BLANK_SLOT_X;
+                slot.yDisplayPosition = panelY + patternRowY();
+            } else if (
+                value instanceof SlotRestrictedInput slot
+                    && slot.getItemType() == SlotRestrictedInput.PlacableItemType.ENCODED_PATTERN
+            ) {
+                slot.xDisplayPosition = PATTERN_PANEL_X + PATTERN_ENCODED_SLOT_X;
+                slot.yDisplayPosition = panelY + patternRowY();
+            } else if (
+                value instanceof SlotRestrictedInput slot
+                    && slot.getItemType() == SlotRestrictedInput.PlacableItemType.VIEW_CELL
+            ) {
+                slot.xDisplayPosition = PATTERN_PANEL_X + VIEW_CELL_SLOT_X + slot.getSlotIndex() * 18;
+                slot.yDisplayPosition = viewCellPanelY() + VIEW_CELL_SLOT_Y;
+            } else if (value instanceof SlotPatternTerm slot) {
+                slot.xDisplayPosition = patternContainer.isCraftingMode() ? PATTERN_PANEL_X + 42 : -9000;
+                slot.yDisplayPosition = panelY + PATTERN_CRAFTING_OUTPUT_Y;
+            }
         }
     }
 
@@ -886,8 +877,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         interfaceTerminal.drawHighlightedPatternSlot(offsetX, offsetY);
 
         GL11.glColor4f(1, 1, 1, 1);
-        mc.getTextureManager()
-            .bindTexture(ITEM_PANEL);
+        mc.getTextureManager().bindTexture(ITEM_PANEL);
         int left = offsetX + ITEM_PANEL_X;
         int top = offsetY + itemPanelY;
         drawItemPanelStrip(left, top, 0, 18);
@@ -902,8 +892,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         GL11.glColor4f(1, 1, 1, 1);
         boolean crafting = isWorkbenchView();
         ResourceLocation texture = crafting ? PATTERN_PANEL : PATTERN_PANEL_4X4;
-        mc.getTextureManager()
-            .bindTexture(texture);
+        mc.getTextureManager().bindTexture(texture);
         int right = offsetX + PATTERN_PANEL_X;
         int patternTop = offsetY + patternPanelY();
         drawTexturedModalRect(right, patternTop, 0, 0, PATTERN_PANEL_WIDTH, patternPanelTextureHeight());
@@ -929,18 +918,14 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             // #tr gtnotgood.terminal.quick.storage
             // # ME Storage
             // # zh_CN ME 库存
-            StatCollector.translateToLocal("gtnotgood.terminal.quick.storage"),
-            ITEM_PANEL_X + 5,
-            itemPanelY - 10,
+            StatCollector.translateToLocal("gtnotgood.terminal.quick.storage"), ITEM_PANEL_X + 5, itemPanelY - 10,
             0x404040);
         fontRendererObj.drawString(
             // #tr gtnotgood.terminal.quick.encoding
             // # Encoding
             // # zh_CN 编码
-            StatCollector.translateToLocal("gtnotgood.terminal.quick.encoding"),
-            PATTERN_PANEL_X + 8,
-            patternPanelY() - 10,
-            0x404040);
+            StatCollector.translateToLocal("gtnotgood.terminal.quick.encoding"), PATTERN_PANEL_X + 8,
+            patternPanelY() - 10, 0x404040);
     }
 
     @Override
@@ -978,14 +963,13 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             return;
         }
         if (button == switchToCraftingButton) {
-            AE2Thing.proxy.netHandler.sendToServer(new CPacketSwitchGuis(GuiType.WIRELESS_CRAFTING_TERMINAL));
+            AE2Thing.proxy.netHandler.sendToServer(new CPacketSwitchGuis(GuiType.WirelessCraftingTerminal));
             return;
         }
         if (button == craftingStatusButton) {
             // Use AE2's native sub-GUI path so ContainerQuickEncodingTerminal#createPrimaryGui is attached to the
             // crafting-status container. The legacy custom packet cannot establish this native parent/return link.
-            NetworkHandler.instance
-                .sendToServer(new appeng.core.sync.packets.PacketSwitchGuis(GuiBridge.GUI_CRAFTING_STATUS));
+            NetworkHandler.instance.sendToServer(new PacketSwitchGuis(GuiBridge.GUI_CRAFTING_STATUS));
             return;
         }
         if (button == encodeButton) {
@@ -1071,8 +1055,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         if (button == 0 || button == 1) {
             for (Object value : inventorySlots.inventorySlots) {
                 if (!(value instanceof SlotRestrictedInput slot)) continue;
-                if (slot.getItemType() != SlotRestrictedInput.PlacableItemType.BLANK_PATTERN
-                    && slot.getItemType() != SlotRestrictedInput.PlacableItemType.ENCODED_PATTERN) continue;
+                if (
+                    slot.getItemType() != SlotRestrictedInput.PlacableItemType.BLANK_PATTERN
+                        && slot.getItemType() != SlotRestrictedInput.PlacableItemType.ENCODED_PATTERN
+                ) continue;
                 int x = guiLeft + slot.xDisplayPosition;
                 int y = guiTop + slot.yDisplayPosition;
                 if (mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY < y + 16) {
@@ -1134,18 +1120,22 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     protected boolean handleVirtualSlotClick(VirtualMESlot slot, int mouseButton) {
         IAEStack<?> monitorTarget = slot instanceof VirtualMEMonitorableSlot ? slot.getAEStack() : null;
         if (monitorTarget instanceof IAEItemStack item) monitorTarget = Platform.convertStack(item);
-        if (mouseButton == 0 && !isShiftKeyDown()
-            && monitorTarget != null
-            && monitorTarget.isFluid()
-            && mc.thePlayer.inventory.getItemStack() == null) {
+        if (
+            mouseButton == 0 && !isShiftKeyDown()
+                && monitorTarget != null
+                && monitorTarget.isFluid()
+                && mc.thePlayer.inventory.getItemStack() == null
+        ) {
             patternContainer.requestFillOneFluidUnit(new StorageFluidRequest(monitorTarget, isCtrlKeyDown()));
             suppressExtensionVanillaClick(mouseButton);
             return true;
         }
-        if (mouseButton == 1 && !isShiftKeyDown()
-            && monitorTarget != null
-            && monitorTarget.isFluid()
-            && mc.thePlayer.inventory.getItemStack() == null) {
+        if (
+            mouseButton == 1 && !isShiftKeyDown()
+                && monitorTarget != null
+                && monitorTarget.isFluid()
+                && mc.thePlayer.inventory.getItemStack() == null
+        ) {
             patternContainer.requestStoreOneFluidUnit(new StorageFluidRequest(monitorTarget, isCtrlKeyDown()));
             suppressExtensionVanillaClick(mouseButton);
             return true;
@@ -1156,11 +1146,13 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             return true;
         }
         boolean handled = super.handleVirtualSlotClick(slot, mouseButton);
-        if (handled && mouseButton == 0
-            && isShiftKeyDown()
-            && slot instanceof VirtualMEMonitorableSlot monitorable
-            && !(slot instanceof VirtualMEPinSlot)
-            && monitorable.getAEStack() instanceof IAEItemStack) {
+        if (
+            handled && mouseButton == 0
+                && isShiftKeyDown()
+                && slot instanceof VirtualMEMonitorableSlot monitorable
+                && !(slot instanceof VirtualMEPinSlot)
+                && monitorable.getAEStack() instanceof IAEItemStack
+        ) {
             storageShiftDrag = true;
             draggedStorageSlots.add(monitorable);
         }
@@ -1450,27 +1442,14 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     @Override
     public boolean hideItemPanelSlot(int x, int y, int width, int height) {
-        if (intersects(x, y, width, height, guiLeft, guiTop, xSize, ySize)
-            || intersects(x, y, width, height, guiLeft + BUTTON_COLUMN_X, guiTop, BUTTON_COLUMN_WIDTH, ySize)
-            || intersects(
-                x,
-                y,
-                width,
-                height,
-                guiLeft + ITEM_PANEL_X,
-                guiTop + itemPanelY,
-                ITEM_PANEL_WIDTH,
-                itemPanelHeight)
-            || intersects(
-                x,
-                y,
-                width,
-                height,
-                guiLeft + PATTERN_PANEL_X,
-                guiTop + patternPanelY() + PATTERN_PANEL_TOP,
-                PATTERN_PANEL_WIDTH,
-                patternPanelTotalHeight()))
-            return true;
+        if (
+            intersects(x, y, width, height, guiLeft, guiTop, xSize, ySize)
+                || intersects(x, y, width, height, guiLeft + BUTTON_COLUMN_X, guiTop, BUTTON_COLUMN_WIDTH, ySize)
+                || intersects(x, y, width, height, guiLeft + ITEM_PANEL_X, guiTop + itemPanelY, ITEM_PANEL_WIDTH,
+                    itemPanelHeight)
+                || intersects(x, y, width, height, guiLeft + PATTERN_PANEL_X,
+                    guiTop + patternPanelY() + PATTERN_PANEL_TOP, PATTERN_PANEL_WIDTH, patternPanelTotalHeight())
+        ) return true;
 
         for (GuiButton button : storageButtons) {
             if (intersects(x, y, width, height, button.xPosition, button.yPosition, button.width, button.height))
@@ -1531,8 +1510,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         int left = offsetX + PATTERN_PANEL_X;
         int top = offsetY + viewCellPanelY();
         GL11.glColor4f(1, 1, 1, 1);
-        mc.getTextureManager()
-            .bindTexture(VIEW_CELL_PANEL);
+        mc.getTextureManager().bindTexture(VIEW_CELL_PANEL);
         drawTexturedModalRect(left, top, 0, 0, PATTERN_PANEL_WIDTH, VIEW_CELL_PANEL_HEIGHT);
     }
 
@@ -1778,12 +1756,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                 GL11.glTranslatef(centerX, centerY, 0.0F);
                 GL11.glScalef(ICON_SCALE, ICON_SCALE, 1.0F);
                 GL11.glTranslatef(-centerX, -centerY, 0.0F);
-                itemRenderer.renderItemAndEffectIntoGUI(
-                    minecraft.fontRenderer,
-                    minecraft.renderEngine,
-                    icon,
-                    xPosition + 3,
-                    yPosition + 3);
+                itemRenderer.renderItemAndEffectIntoGUI(minecraft.fontRenderer, minecraft.renderEngine, icon,
+                    xPosition + 3, yPosition + 3);
             } finally {
                 GL11.glPopMatrix();
                 minecraft.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
@@ -1804,12 +1778,11 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         private static final Field NAME_SEARCH = findField(GuiInterfaceTerminal.class, "searchFieldNames");
         private static final Field MASTER_LIST = findField(GuiInterfaceTerminal.class, "masterList");
         private static final Field ENTRIES_BY_ID = findField(
-            MASTER_LIST == null ? GuiInterfaceTerminal.class : MASTER_LIST.getType(),
-            "list");
+            MASTER_LIST == null ? GuiInterfaceTerminal.class : MASTER_LIST.getType(), "list");
         private static final Field VIEW_HEIGHT = findField(GuiInterfaceTerminal.class, "viewHeight");
         private static final Field EXTRA_OPTIONS_TEXT = findField(GuiInterfaceTerminal.class, "extraOptionsText");
         /** Fixed native controls used by the per-frame button refresh. Missing fields remain cached as null. */
-        private static final Map<String, Field> CONTROL_FIELDS = new java.util.HashMap<>();
+        private static final Map<String, Field> CONTROL_FIELDS = new HashMap<>();
         static {
             for (String name : new String[] { "guiButtonAssemblersOnly", "guiButtonHideFull", "guiButtonBrokenRecipes",
                 "guiButtonUseSubstitute", "guiButtonShowHidden", "guiButtonSectionOrder", "terminalStyleBox",
@@ -1874,8 +1847,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             Object masterList = objectField(this, MASTER_LIST);
             if (masterList == null) return;
             try {
-                Method changeComparator = masterList.getClass()
-                    .getDeclaredMethod("changeSectionComparator", java.util.Comparator.class);
+                Method changeComparator = masterList.getClass().getDeclaredMethod("changeSectionComparator",
+                    Comparator.class);
                 changeComparator.setAccessible(true);
                 changeComparator.invoke(masterList, comparator);
                 markInterfaceListDirty(masterList);
@@ -1883,18 +1856,14 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         }
 
         private void markInterfaceListDirty(Object masterList) throws ReflectiveOperationException {
-            Method markDirty = masterList.getClass()
-                .getDeclaredMethod("markDirty");
+            Method markDirty = masterList.getClass().getDeclaredMethod("markDirty");
             markDirty.setAccessible(true);
             markDirty.invoke(masterList);
         }
 
         private void updateSearchSectionOrder() {
             MEGuiTextField field = textField(NAME_SEARCH);
-            String query = field == null ? ""
-                : field.getText()
-                    .trim()
-                    .toLowerCase(Locale.ROOT);
+            String query = field == null ? "" : field.getText().trim().toLowerCase(Locale.ROOT);
             if (query.length() >= 2 && query.startsWith("\"") && query.endsWith("\"")) {
                 query = query.substring(1, query.length() - 1);
             }
@@ -1970,9 +1939,11 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             int scroll = getScrollBar().getCurrentScroll();
             int viewHeight = VIEW_HEIGHT == null ? 0 : intField(this, VIEW_HEIGHT, 0);
             String[] searchTexts = searchTexts();
-            if (entryHitBoxesDirty || scroll != lastEntryScroll
-                || viewHeight != lastEntryViewHeight
-                || !Arrays.equals(searchTexts, lastEntrySearchTexts)) {
+            if (
+                entryHitBoxesDirty || scroll != lastEntryScroll
+                    || viewHeight != lastEntryViewHeight
+                    || !Arrays.equals(searchTexts, lastEntrySearchTexts)
+            ) {
                 clearStaleEntryHitBoxes();
                 entryHitBoxesDirty = false;
                 lastEntryScroll = scroll;
@@ -2068,8 +2039,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             if (MASTER_LIST == null) return false;
             try {
                 Object masterList = MASTER_LIST.get(this);
-                Method click = masterList.getClass()
-                    .getMethod("mouseClicked", int.class, int.class, int.class);
+                Method click = masterList.getClass().getMethod("mouseClicked", int.class, int.class, int.class);
                 click.setAccessible(true);
                 boolean handled = Boolean.TRUE
                     .equals(click.invoke(masterList, mouseX - guiLeft - 10, mouseY - guiTop - 52, button));
@@ -2094,9 +2064,11 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                 if (section == null || !readBooleanField(section, sectionVisible, false)) continue;
                 Object optionValue = objectField(entry, entryOptionsButton);
                 if (!(optionValue instanceof GuiButton option) || option.yPosition < 0) continue;
-                if (relativeX < option.xPosition || relativeX >= option.xPosition + option.width
-                    || relativeY <= option.yPosition
-                    || relativeY > option.yPosition + option.height) continue;
+                if (
+                    relativeX < option.xPosition || relativeX >= option.xPosition + option.width
+                        || relativeY <= option.yPosition
+                        || relativeY > option.yPosition + option.height
+                ) continue;
 
                 long entryId = longField(entry, "id", -1);
                 boolean ctrlDown = isCtrlKeyDown() || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)
@@ -2114,8 +2086,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                 }
 
                 try {
-                    Method click = entry.getClass()
-                        .getDeclaredMethod("mouseClicked", int.class, int.class, int.class);
+                    Method click = entry.getClass().getDeclaredMethod("mouseClicked", int.class, int.class, int.class);
                     click.setAccessible(true);
                     boolean handled = Boolean.TRUE.equals(click.invoke(entry, relativeX, relativeY, button));
                     if (handled) entryHitBoxesDirty = true;
@@ -2205,9 +2176,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             MEGuiTextField names = textField(NAME_SEARCH);
             boolean itemSearch = input != null && input.isMouseIn(mouseX, mouseY)
                 || output != null && output.isMouseIn(mouseX, mouseY);
-            if (itemSearch && names != null
-                && !names.getText()
-                    .isEmpty()) {
+            if (itemSearch && names != null && !names.getText().isEmpty()) {
                 names.setText("");
             }
             super.setTextFieldValue(displayName, mouseX, mouseY, stack);
@@ -2242,16 +2211,14 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             clearFrozenSearchResults();
             for (Field search : new Field[] { INPUT_SEARCH, OUTPUT_SEARCH }) {
                 MEGuiTextField filter = textField(search);
-                if (filter != null && !filter.getText()
-                    .isEmpty()) {
+                if (filter != null && !filter.getText().isEmpty()) {
                     filter.setText("");
                 }
             }
             MEGuiTextField field = textField(NAME_SEARCH);
             String newText = text == null ? "" : text;
             if (field != null) {
-                if (!field.getText()
-                    .equals(newText)) clearHighlight();
+                if (!field.getText().equals(newText)) clearHighlight();
                 field.setText(newText);
             }
             // Programmatic NEI searches run before drawBG. Apply the relevance comparator and rebuild the visible
@@ -2301,18 +2268,19 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         }
 
         private static boolean containsStructuralUpdate(List<PacketEntry> updates, int statusFlags) {
-            if ((statusFlags
-                & (PacketInterfaceTerminalUpdate.CLEAR_ALL_BIT | PacketInterfaceTerminalUpdate.DISCONNECT_BIT)) != 0)
-                return true;
+            if (
+                (statusFlags
+                    & (PacketInterfaceTerminalUpdate.CLEAR_ALL_BIT | PacketInterfaceTerminalUpdate.DISCONNECT_BIT)) != 0
+            ) return true;
             for (PacketEntry update : updates) {
-                String type = update.getClass()
-                    .getSimpleName();
+                String type = update.getClass().getSimpleName();
                 if ("PacketRemove".equals(type) || "PacketRename".equals(type)) return true;
-                if ("PacketOverwrite".equals(type)
-                    && (booleanField(update, "onlineValid") || booleanField(update, "sizeValid")
-                        || booleanField(update, "priorityValid")
-                        || booleanField(update, "terminalVisibleValid")))
-                    return true;
+                if (
+                    "PacketOverwrite".equals(type)
+                        && (booleanField(update, "onlineValid") || booleanField(update, "sizeValid")
+                            || booleanField(update, "priorityValid")
+                            || booleanField(update, "terminalVisibleValid"))
+                ) return true;
             }
             return false;
         }
@@ -2354,8 +2322,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                 Object masterList = objectField(terminal, MASTER_LIST);
                 if (masterList == null) return null;
                 try {
-                    Method getVisibleSections = masterList.getClass()
-                        .getDeclaredMethod("getVisibleSections");
+                    Method getVisibleSections = masterList.getClass().getDeclaredMethod("getVisibleSections");
                     getVisibleSections.setAccessible(true);
                     List<Object> sections = new ArrayList<>((List<?>) getVisibleSections.invoke(masterList));
                     Map<Object, List<Object>> entries = new IdentityHashMap<>();
@@ -2413,20 +2380,16 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             Object masterList = objectField(this, MASTER_LIST);
             if (masterList == null) return null;
             try {
-                Method visibleSections = masterList.getClass()
-                    .getDeclaredMethod("getVisibleSections");
+                Method visibleSections = masterList.getClass().getDeclaredMethod("getVisibleSections");
                 visibleSections.setAccessible(true);
                 for (Object section : (List<?>) visibleSections.invoke(masterList)) {
-                    Method visibleEntries = section.getClass()
-                        .getDeclaredMethod("getVisible");
+                    Method visibleEntries = section.getClass().getDeclaredMethod("getVisible");
                     visibleEntries.setAccessible(true);
                     Iterator<?> entries = (Iterator<?>) visibleEntries.invoke(section);
                     while (entries.hasNext()) {
                         Object entry = entries.next();
                         IInventory inventory = entryInventory(entry);
-                        int numSlots = intField(
-                            entry,
-                            "numSlots",
+                        int numSlots = intField(entry, "numSlots",
                             inventory == null ? 0 : inventory.getSizeInventory());
                         if (inventory == null) continue;
                         for (int slot = 0; slot < Math.min(numSlots, inventory.getSizeInventory()); slot++) {
@@ -2455,12 +2418,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             int relativeY = mouseY - guiTop - 52;
 
             try {
-                Method visibleSections = masterList.getClass()
-                    .getDeclaredMethod("getVisibleSections");
+                Method visibleSections = masterList.getClass().getDeclaredMethod("getVisibleSections");
                 visibleSections.setAccessible(true);
                 for (Object section : (List<?>) visibleSections.invoke(masterList)) {
-                    Method visibleEntries = section.getClass()
-                        .getDeclaredMethod("getVisible");
+                    Method visibleEntries = section.getClass().getDeclaredMethod("getVisible");
                     visibleEntries.setAccessible(true);
                     Iterator<?> entries = (Iterator<?>) visibleEntries.invoke(section);
                     while (entries.hasNext()) {
@@ -2537,8 +2498,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         }
 
         private static void cacheEntrySlotArrayFields(Object entry) {
-            if (entry == null
-                || entryBrokenRecipes != null && entryFilteredRecipes != null && entryUseSubstitute != null) return;
+            if (
+                entry == null
+                    || entryBrokenRecipes != null && entryFilteredRecipes != null && entryUseSubstitute != null
+            ) return;
             Class<?> entryClass = entry.getClass();
             entryBrokenRecipes = findField(entryClass, "brokenRecipes");
             entryFilteredRecipes = findField(entryClass, "filteredRecipes");
@@ -2608,32 +2571,24 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         }
 
         private void refreshButtons() {
-            setActionButton(
-                "guiButtonAssemblersOnly",
+            setActionButton("guiButtonAssemblersOnly",
                 bool("onlyMolecularAssemblers") ? ActionItems.MOLECULAR_ASSEMBLEERS_ON
                     : ActionItems.MOLECULAR_ASSEMBLEERS_OFF);
-            setActionButton(
-                "guiButtonHideFull",
+            setActionButton("guiButtonHideFull",
                 AEConfig.instance.showOnlyInterfacesWithFreeSlotsInInterfaceTerminal
                     ? ActionItems.TOGGLE_SHOW_FULL_INTERFACES_OFF
                     : ActionItems.TOGGLE_SHOW_FULL_INTERFACES_ON);
-            setActionButton(
-                "guiButtonBrokenRecipes",
+            setActionButton("guiButtonBrokenRecipes",
                 bool("onlyBrokenRecipes") ? ActionItems.TOGGLE_SHOW_ONLY_INVALID_PATTERN_OFF
                     : ActionItems.TOGGLE_SHOW_ONLY_INVALID_PATTERN_ON);
-            setActionButton(
-                "guiButtonUseSubstitute",
+            setActionButton("guiButtonUseSubstitute",
                 bool("onlySubstitute") ? ActionItems.TOGGLE_SHOW_ONLY_SUBSTITUTE_OFF
                     : ActionItems.TOGGLE_SHOW_ONLY_SUBSTITUTE_ON);
-            setActionButton(
-                "guiButtonShowHidden",
-                bool("showHidden") ? ActionItems.TOGGLE_SHOW_HIDDEN_INTERFACES_ON
-                    : ActionItems.TOGGLE_SHOW_HIDDEN_INTERFACES_OFF);
-            setActionButton(
-                "guiButtonSectionOrder",
+            setActionButton("guiButtonShowHidden", bool("showHidden") ? ActionItems.TOGGLE_SHOW_HIDDEN_INTERFACES_ON
+                : ActionItems.TOGGLE_SHOW_HIDDEN_INTERFACES_OFF);
+            setActionButton("guiButtonSectionOrder",
                 (StringOrder) AEConfig.instance.settings.getSetting(Settings.INTERFACE_TERMINAL_SECTION_ORDER));
-            setActionButton(
-                "terminalStyleBox",
+            setActionButton("terminalStyleBox",
                 (TerminalStyle) AEConfig.instance.settings.getSetting(Settings.TERMINAL_STYLE));
         }
 

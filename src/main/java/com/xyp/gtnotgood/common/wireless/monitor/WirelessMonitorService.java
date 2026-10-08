@@ -42,8 +42,7 @@ public final class WirelessMonitorService {
         if (event.phase != TickEvent.Phase.END || PENDING.isEmpty()) return;
         MinecraftServer server = MinecraftServer.getServer();
         if (server == null || server.worldServerForDimension(0) == null) return;
-        long tick = server.worldServerForDimension(0)
-            .getTotalWorldTime();
+        long tick = server.worldServerForDimension(0).getTotalWorldTime();
         PENDING.forEach((player, requestId) -> {
             if (!PENDING.remove(player, requestId)) return;
             if (!server.getConfigurationManager().playerEntityList.contains(player)) return;
@@ -52,10 +51,7 @@ public final class WirelessMonitorService {
             if (previous != null && tick >= previous && tick - previous < 20) return;
             LAST_REQUEST.put(player, tick);
             GTNotGood.channel.sendTo(
-                new WirelessMonitorSnapshot(
-                    requestId,
-                    tick,
-                    SpaceProjectManager.getLeader(player.getUniqueID()),
+                new WirelessMonitorSnapshot(requestId, tick, SpaceProjectManager.getLeader(player.getUniqueID()),
                     WirelessNetworkManager.getUserEU(player.getUniqueID())),
                 player);
         });

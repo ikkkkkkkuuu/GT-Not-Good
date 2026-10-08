@@ -52,8 +52,7 @@ public class ShaderTextEffect implements TextEffect {
     public void render(TextRenderContext context) {
         shader.use();
         Mask mask = context.mask();
-        List<Integer> overrides = context.style()
-            .colors();
+        List<Integer> overrides = context.style().colors();
         int count = overrides.isEmpty() ? colors.length : overrides.size();
         GL20.glUniform1i(shader.uniform("textMask"), 0);
         GL20.glUniform1i(shader.uniform("paletteCount"), count);
@@ -62,20 +61,14 @@ public class ShaderTextEffect implements TextEffect {
         for (int i = 0; i < 8; i++) {
             int color = overrides.isEmpty() ? colors[Math.min(i, colors.length - 1)]
                 : overrides.get(Math.min(i, overrides.size() - 1));
-            GL20.glUniform3f(
-                shader.uniform(PALETTE_UNIFORMS[i]),
-                (color >> 16 & 255) / 255f,
-                (color >> 8 & 255) / 255f,
+            GL20.glUniform3f(shader.uniform(PALETTE_UNIFORMS[i]), (color >> 16 & 255) / 255f, (color >> 8 & 255) / 255f,
                 (color & 255) / 255f);
         }
         GL20.glUniform2f(shader.uniform("maskSize"), mask.textureWidth(), mask.textureHeight());
         GL20.glUniform1f(shader.uniform("maskResolution"), mask.resolution());
         GL20.glUniform2f(shader.uniform("textSize"), Math.max(1, mask.width()), Math.max(1, mask.height()));
         GL20.glUniform1f(shader.uniform("padding"), mask.padding());
-        GL20.glUniform1f(
-            shader.uniform("time"),
-            (float) (context.seconds() * context.style()
-                .speed() % 3600));
+        GL20.glUniform1f(shader.uniform("time"), (float) (context.seconds() * context.style().speed() % 3600));
         GL20.glUniform1f(shader.uniform("opacity"), (context.color() >>> 24) / 255f);
         GL20.glUniform1i(shader.uniform("shadowPass"), context.shadow() ? 1 : 0);
         configureUniforms(shader, context);
@@ -86,11 +79,8 @@ public class ShaderTextEffect implements TextEffect {
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_CULL_FACE);
-        OpenGlHelper.glBlendFunc(
-            premultipliedAlpha ? GL11.GL_ONE : GL11.GL_SRC_ALPHA,
-            GL11.GL_ONE_MINUS_SRC_ALPHA,
-            GL11.GL_ONE,
-            GL11.GL_ONE_MINUS_SRC_ALPHA);
+        OpenGlHelper.glBlendFunc(premultipliedAlpha ? GL11.GL_ONE : GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA,
+            GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         float left = context.x() - mask.padding();
         float top = context.y() - mask.padding();
         float right = left + mask.textureWidth();

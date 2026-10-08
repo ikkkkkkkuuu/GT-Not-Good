@@ -114,10 +114,7 @@ public final class WildcardModelState {
 
     private static void copyList(NBTTagCompound source, NBTTagCompound target, String key) {
         if (source.hasKey(key, Constants.NBT.TAG_LIST)) {
-            target.setTag(
-                key,
-                source.getTagList(key, Constants.NBT.TAG_COMPOUND)
-                    .copy());
+            target.setTag(key, source.getTagList(key, Constants.NBT.TAG_COMPOUND).copy());
         } else {
             target.setTag(key, new NBTTagList());
         }

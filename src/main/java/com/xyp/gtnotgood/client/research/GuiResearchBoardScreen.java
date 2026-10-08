@@ -2,6 +2,7 @@ package com.xyp.gtnotgood.client.research;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,24 +42,16 @@ public abstract class GuiResearchBoardScreen extends GuiScreen {
 
     protected final void drawResearchBoard(ResearchNoteData note, Map<String, Aspect> planned, int centerX, int centerY,
         int availableWidth, int availableHeight, int titleY) {
-        drawCenteredString(
-            fontRendererObj,
-            StatCollector.translateToLocal("tcautores.preview_board"),
-            centerX,
-            titleY,
+        drawCenteredString(fontRendererObj, StatCollector.translateToLocal("tcautores.preview_board"), centerX, titleY,
             0xD7E7DF);
         if (note == null) {
             boardView = null;
-            drawCenteredString(
-                fontRendererObj,
-                StatCollector.translateToLocal("tcautores.preview_no_board"),
-                centerX,
-                centerY,
-                0xAAAAAA);
+            drawCenteredString(fontRendererObj, StatCollector.translateToLocal("tcautores.preview_no_board"), centerX,
+                centerY, 0xAAAAAA);
             return;
         }
 
-        Map<String, Aspect> placements = planned == null ? java.util.Collections.emptyMap() : planned;
+        Map<String, Aspect> placements = planned == null ? Collections.emptyMap() : planned;
         Bounds bounds = bounds(note);
         int scale = boardScale(bounds, availableWidth, availableHeight);
         int originX = centerX - (int) Math.round((bounds.minX + bounds.maxX) * scale / 2.0D);
@@ -68,8 +61,7 @@ public abstract class GuiResearchBoardScreen extends GuiScreen {
 
         for (Map.Entry<String, HexUtils.Hex> entry : note.hexes.entrySet()) {
             String key = entry.getKey();
-            HexUtils.Pixel pixel = entry.getValue()
-                .toPixel(scale);
+            HexUtils.Pixel pixel = entry.getValue().toPixel(scale);
             int x = originX + (int) Math.round(pixel.x);
             int y = originY + (int) Math.round(pixel.y);
             ResearchManager.HexEntry current = note.hexEntries.get(key);
@@ -93,8 +85,7 @@ public abstract class GuiResearchBoardScreen extends GuiScreen {
             Aspect plannedAspect = placements.get(key);
             Aspect aspect = plannedAspect != null ? plannedAspect : current == null ? null : current.aspect;
             if (aspect == null) continue;
-            HexUtils.Pixel pixel = entry.getValue()
-                .toPixel(scale);
+            HexUtils.Pixel pixel = entry.getValue().toPixel(scale);
             int x = originX + (int) Math.round(pixel.x);
             int y = originY + (int) Math.round(pixel.y);
             UtilsFX.drawTag(x - 8, y - 8, aspect, 0.0F, 0, zLevel, 771, conflicts.contains(key) ? 0.55F : 0.9F);
@@ -158,8 +149,7 @@ public abstract class GuiResearchBoardScreen extends GuiScreen {
         for (String key : new ArrayList<>(board.keySet())) {
             HexUtils.Hex cell = parse(key);
             for (int direction = 0; direction < 6; direction++) {
-                String neighbor = cell.getNeighbour(direction)
-                    .toString();
+                String neighbor = cell.getNeighbour(direction).toString();
                 if (board.containsKey(neighbor) && !compatible(board.get(key), board.get(neighbor))) {
                     conflicts.add(key);
                     conflicts.add(neighbor);
@@ -170,19 +160,18 @@ public abstract class GuiResearchBoardScreen extends GuiScreen {
 
         Set<String> visited = new HashSet<>();
         ArrayDeque<String> queue = new ArrayDeque<>();
-        String start = board.keySet()
-            .iterator()
-            .next();
+        String start = board.keySet().iterator().next();
         visited.add(start);
         queue.add(start);
         while (!queue.isEmpty()) {
             String key = queue.removeFirst();
             HexUtils.Hex cell = parse(key);
             for (int direction = 0; direction < 6; direction++) {
-                String neighbor = cell.getNeighbour(direction)
-                    .toString();
-                if (board.containsKey(neighbor) && !visited.contains(neighbor)
-                    && compatible(board.get(key), board.get(neighbor))) {
+                String neighbor = cell.getNeighbour(direction).toString();
+                if (
+                    board.containsKey(neighbor) && !visited.contains(neighbor)
+                        && compatible(board.get(key), board.get(neighbor))
+                ) {
                     visited.add(neighbor);
                     queue.addLast(neighbor);
                 }

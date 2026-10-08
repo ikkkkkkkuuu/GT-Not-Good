@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import com.xyp.gtnotgood.ae2thing.api.Constants;
+import com.xyp.gtnotgood.ae2thing.util.Util;
 
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.IAEAppEngInventory;
@@ -29,7 +30,7 @@ public class ItemPatternsInventory extends AppEngInternalInventory {
     @Override
     public void markDirty() {
         this.writeToNBT(Platform.openNbtData(is), Constants.PATTERN);
-        if (Platform.isServer()) com.xyp.gtnotgood.ae2thing.util.Util.writeBackTerminal(this.player, slot, this.is);
+        if (Platform.isServer()) Util.writeBackTerminal(this.player, slot, this.is);
     }
 
     @Override

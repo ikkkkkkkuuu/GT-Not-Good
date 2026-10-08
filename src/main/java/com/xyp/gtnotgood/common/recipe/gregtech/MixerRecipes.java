@@ -17,62 +17,29 @@ public final class MixerRecipes {
     public static void loadRecipes() {
         if (!Mods.NEIOrePlugin.isModLoaded()) return;
         if (Mods.GalacticraftCore.isModLoaded()) {
-            addDimensionRecipes(
-                ModsItemlist.GalacticraftCoreItemSpaceship,
-                ModsItemlist.DimensionOverworld,
-                ModsItemlist.DimensionNether,
-                ModsItemlist.DimensionTwilight,
-                ModsItemlist.DimensionEnd,
-                ModsItemlist.DimensionEndAsteroids,
-                ModsItemlist.DimensionEverglades,
-                ModsItemlist.DimensionMoon);
+            addDimensionRecipes(ModsItemlist.Tier1Rocket, ModsItemlist.DimensionOverworld, ModsItemlist.DimensionNether,
+                ModsItemlist.DimensionTwilight, ModsItemlist.DimensionEnd, ModsItemlist.DimensionEndAsteroids,
+                ModsItemlist.DimensionEverglades, ModsItemlist.DimensionMoon);
         }
         if (Mods.GalacticraftMars.isModLoaded()) {
-            addDimensionRecipes(
-                ModsItemlist.GalacticraftMarsItemSpaceshipTier2,
-                ModsItemlist.DimensionDeimos,
-                ModsItemlist.DimensionMars,
+            addDimensionRecipes(ModsItemlist.Tier2Rocket, ModsItemlist.DimensionDeimos, ModsItemlist.DimensionMars,
                 ModsItemlist.DimensionPhobos);
-            addDimensionRecipes(
-                ModsItemlist.GalacticraftMarsItemItemTier3Rocket,
-                ModsItemlist.DimensionAsteroids,
-                ModsItemlist.DimensionCallisto,
-                ModsItemlist.DimensionCeres,
-                ModsItemlist.DimensionEuropa,
-                ModsItemlist.DimensionGanymede,
-                ModsItemlist.DimensionRoss128b);
+            addDimensionRecipes(ModsItemlist.Tier3Rocket, ModsItemlist.DimensionAsteroids,
+                ModsItemlist.DimensionCallisto, ModsItemlist.DimensionCeres, ModsItemlist.DimensionEuropa,
+                ModsItemlist.DimensionGanymede, ModsItemlist.DimensionRoss128b);
         }
         if (Mods.GalaxySpace.isModLoaded()) {
-            addDimensionRecipes(
-                ModsItemlist.GalaxySpaceItemTier4Rocket,
-                ModsItemlist.DimensionIo,
-                ModsItemlist.DimensionMercury,
+            addDimensionRecipes(ModsItemlist.Tier4Rocket, ModsItemlist.DimensionIo, ModsItemlist.DimensionMercury,
                 ModsItemlist.DimensionVenus);
-            addDimensionRecipes(
-                ModsItemlist.GalaxySpaceItemTier5Rocket,
-                ModsItemlist.DimensionEnceladus,
-                ModsItemlist.DimensionMiranda,
-                ModsItemlist.DimensionOberon,
-                ModsItemlist.DimensionTitan,
+            addDimensionRecipes(ModsItemlist.Tier5Rocket, ModsItemlist.DimensionEnceladus,
+                ModsItemlist.DimensionMiranda, ModsItemlist.DimensionOberon, ModsItemlist.DimensionTitan,
                 ModsItemlist.DimensionRoss128ba);
-            addDimensionRecipes(
-                ModsItemlist.GalaxySpaceItemTier6Rocket,
-                ModsItemlist.DimensionProteus,
-                ModsItemlist.DimensionTriton);
-            addDimensionRecipes(
-                ModsItemlist.GalaxySpaceItemTier7Rocket,
-                ModsItemlist.DimensionHaumea,
-                ModsItemlist.DimensionKuiperBelt,
-                ModsItemlist.DimensionMakeMake,
-                ModsItemlist.DimensionPluto);
-            addDimensionRecipes(
-                ModsItemlist.GalaxySpaceItemTier8Rocket,
-                ModsItemlist.DimensionBarnardC,
-                ModsItemlist.DimensionBarnardE,
-                ModsItemlist.DimensionBarnardF,
-                ModsItemlist.DimensionCentauriBb,
-                ModsItemlist.DimensionTauCetiE,
-                ModsItemlist.DimensionVegaB);
+            addDimensionRecipes(ModsItemlist.Tier6Rocket, ModsItemlist.DimensionProteus, ModsItemlist.DimensionTriton);
+            addDimensionRecipes(ModsItemlist.Tier7Rocket, ModsItemlist.DimensionHaumea,
+                ModsItemlist.DimensionKuiperBelt, ModsItemlist.DimensionMakeMake, ModsItemlist.DimensionPluto);
+            addDimensionRecipes(ModsItemlist.Tier8Rocket, ModsItemlist.DimensionBarnardC,
+                ModsItemlist.DimensionBarnardE, ModsItemlist.DimensionBarnardF, ModsItemlist.DimensionCentauriBb,
+                ModsItemlist.DimensionTauCetiE, ModsItemlist.DimensionVegaB);
         }
     }
 
@@ -86,12 +53,8 @@ public final class MixerRecipes {
         for (int index = 0; index < dimensions.length; index++) {
             ItemStack output = dimensions[index].get(1);
             if (output == null) continue;
-            GTRecipeBuilder.builder()
-                .itemInputs(rocketStack.copy(), new ItemStack(Blocks.cobblestone))
-                .circuit(index + 1)
-                .itemOutputs(output)
-                .duration(5 * GTRecipeBuilder.SECONDS)
-                .eut(TierEU.RECIPE_LV)
+            GTRecipeBuilder.builder().itemInputs(rocketStack.copy(), new ItemStack(Blocks.cobblestone))
+                .circuit(index + 1).itemOutputs(output).duration(5 * GTRecipeBuilder.SECONDS).eut(TierEU.RECIPE_LV)
                 .addTo(RecipeMaps.mixerNonCellRecipes);
         }
     }

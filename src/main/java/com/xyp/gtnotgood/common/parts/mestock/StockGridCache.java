@@ -71,19 +71,15 @@ public final class StockGridCache implements IGridCache {
             ready.add(tile);
         } else {
             scheduled.put(tile, due);
-            delayed.computeIfAbsent(due, ignored -> new LinkedHashSet<>())
-                .add(tile);
+            delayed.computeIfAbsent(due, ignored -> new LinkedHashSet<>()).add(tile);
         }
     }
 
     public List<TileMERequester> listing() {
         if (listingDirty) {
             ArrayList<TileMERequester> next = new ArrayList<>(machines);
-            next.sort(
-                Comparator.comparingInt((TileMERequester t) -> t.getWorldObj().provider.dimensionId)
-                    .thenComparingInt(t -> t.xCoord)
-                    .thenComparingInt(t -> t.yCoord)
-                    .thenComparingInt(t -> t.zCoord));
+            next.sort(Comparator.comparingInt((TileMERequester t) -> t.getWorldObj().provider.dimensionId)
+                .thenComparingInt(t -> t.xCoord).thenComparingInt(t -> t.yCoord).thenComparingInt(t -> t.zCoord));
             listing = Collections.unmodifiableList(next);
             listingDirty = false;
         }
@@ -117,8 +113,7 @@ public final class StockGridCache implements IGridCache {
     }
 
     private void addPending(IAEStack<?> key, long amount) {
-        IAEStack<?> identity = key.copy()
-            .setStackSize(1);
+        IAEStack<?> identity = key.copy().setStackSize(1);
         inFlight.put(identity, StockResources.add(inFlight.getOrDefault(identity, 0L), Math.max(0, amount)));
     }
 
@@ -129,22 +124,11 @@ public final class StockGridCache implements IGridCache {
 
     public boolean start(TileMERequester tile, int row, long amount) throws GridAccessException {
         if (plans.size() >= maxPlanning || tick < nextPlanTick) return false;
-        IAEStack<?> output = tile.stockConfig()
-            .key(row)
-            .copy()
-            .setStackSize(amount);
+        IAEStack<?> output = tile.stockConfig().key(row).copy().setStackSize(amount);
         ICraftingGrid crafting = grid.getCache(ICraftingGrid.class);
-        Future<ICraftingJob> future = crafting
-            .beginCraftingJob(tile.getWorldObj(), grid, new MachineSource(tile), output, null);
-        plans.add(
-            new Plan(
-                tile,
-                row,
-                output,
-                tile.stockConfig()
-                    .revision(),
-                future,
-                tick));
+        Future<ICraftingJob> future = crafting.beginCraftingJob(tile.getWorldObj(), grid, new MachineSource(tile),
+            output, null);
+        plans.add(new Plan(tile, row, output, tile.stockConfig().revision(), future, tick));
         nextPlanTick = tick + 10;
         plansStarted++;
         return true;
@@ -156,8 +140,7 @@ public final class StockGridCache implements IGridCache {
         finishPlans();
         int woke = 0;
         while (!delayed.isEmpty() && delayed.firstKey() <= tick && woke < devicesPerTick) {
-            var group = delayed.firstEntry()
-                .getValue();
+            var group = delayed.firstEntry().getValue();
             var iterator = group.iterator();
             TileMERequester tile = iterator.next();
             iterator.remove();
@@ -179,8 +162,7 @@ public final class StockGridCache implements IGridCache {
         for (int i = plans.size() - 1; i >= 0; i--) {
             Plan plan = plans.get(i);
             boolean stale = !machines.contains(plan.tile) || plan.tile.isInvalid()
-                || plan.tile.stockConfig()
-                    .revision() != plan.revision
+                || plan.tile.stockConfig().revision() != plan.revision
                 || !plan.tile.canRequest()
                 || tick - plan.started > 1200;
             if (!stale && !plan.future.isDone()) continue;
@@ -193,14 +175,8 @@ public final class StockGridCache implements IGridCache {
             int delay = 20;
             try {
                 ICraftingJob job = plan.future.get(); // isDone checked above; never waits on the server tick.
-                long stored = StockResources.count(
-                    plan.tile.getProxy()
-                        .getStorage(),
-                    plan.key);
-                long missing = StockResources.missing(
-                    plan.tile.stockConfig()
-                        .amount(plan.row),
-                    stored,
+                long stored = StockResources.count(plan.tile.getProxy().getStorage(), plan.key);
+                long missing = StockResources.missing(plan.tile.stockConfig().amount(plan.row), stored,
                     pending(plan.key));
                 if (missing == 0) {
                     plan.tile.setStatus(plan.row, TileMERequester.ready);
@@ -217,16 +193,12 @@ public final class StockGridCache implements IGridCache {
                         plan.tile.setStatus(plan.row, TileMERequester.waitingCPU);
                         delay = 100;
                     } else {
-                        addPending(
-                            plan.key,
-                            job.getOutput()
-                                .getStackSize());
+                        addPending(plan.key, job.getOutput().getStackSize());
                         plan.tile.setStatus(plan.row, TileMERequester.crafting);
                     }
                 }
             } catch (InterruptedException error) {
-                Thread.currentThread()
-                    .interrupt();
+                Thread.currentThread().interrupt();
                 plan.tile.setStatus(plan.row, TileMERequester.failed);
                 delay = 200;
             } catch (ExecutionException | GridAccessException | RuntimeException error) {

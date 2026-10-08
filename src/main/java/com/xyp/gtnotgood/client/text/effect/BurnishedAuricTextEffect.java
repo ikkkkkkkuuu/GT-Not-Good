@@ -18,8 +18,7 @@ public class BurnishedAuricTextEffect extends ShaderTextEffect {
 
     @Override
     protected void configureUniforms(TextShader shader, TextRenderContext context) {
-        double seconds = context.seconds() * context.style()
-            .speed() % 3600;
+        double seconds = context.seconds() * context.style().speed() % 3600;
         GL20.glUniform1i(shader.uniform("flashActive"), flashes.active((int) (seconds * 60)) ? 1 : 0);
     }
 }

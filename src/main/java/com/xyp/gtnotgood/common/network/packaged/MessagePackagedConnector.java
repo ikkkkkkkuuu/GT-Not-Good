@@ -58,28 +58,23 @@ public final class MessagePackagedConnector implements IMessage {
             PackagedServerActions.enqueue(() -> {
                 ItemStack held = player.getHeldItem();
                 var world = player.getServerForPlayer();
-                if (world != requestWorld || player.isDead
-                    || held == null
-                    || !(held.getItem() instanceof ItemWirelessConnector)
-                    || message.face > 5
-                    || message.y < 0
-                    || message.y >= world.getHeight()
-                    || !world.getChunkProvider()
-                        .chunkExists(message.x >> 4, message.z >> 4))
-                    return;
+                if (
+                    world != requestWorld || player.isDead
+                        || held == null
+                        || !(held.getItem() instanceof ItemWirelessConnector)
+                        || message.face > 5
+                        || message.y < 0
+                        || message.y >= world.getHeight()
+                        || !world.getChunkProvider().chunkExists(message.x >> 4, message.z >> 4)
+                ) return;
                 double reach = player.theItemInWorldManager.getBlockReachDistance() + 1;
-                if (player.getDistanceSq(message.x + .5, message.y + .5, message.z + .5) > reach * reach
-                    || MinecraftServer.getServer()
-                        .isBlockProtected(world, message.x, message.y, message.z, player)
-                    || !player.canPlayerEdit(message.x, message.y, message.z, message.face, held)) return;
-                PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(
-                    player,
-                    PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK,
-                    message.x,
-                    message.y,
-                    message.z,
-                    message.face,
-                    world);
+                if (
+                    player.getDistanceSq(message.x + .5, message.y + .5, message.z + .5) > reach * reach
+                        || MinecraftServer.getServer().isBlockProtected(world, message.x, message.y, message.z, player)
+                        || !player.canPlayerEdit(message.x, message.y, message.z, message.face, held)
+                ) return;
+                PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(player,
+                    PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, message.x, message.y, message.z, message.face, world);
                 if (!event.isCanceled() && event.useItem != Event.Result.DENY) {
                     ItemWirelessConnector.use(player, message.x, message.y, message.z, message.face);
                     player.inventory.markDirty();

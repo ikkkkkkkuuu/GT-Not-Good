@@ -16,9 +16,7 @@ final class MEBridgeReceiverTopologyCodec {
         StringBuilder encoded = new StringBuilder();
         for (Map.Entry<Integer, Integer> entry : counts.entrySet()) {
             if (encoded.length() > 0) encoded.append(RECORD_SEPARATOR);
-            encoded.append(entry.getKey())
-                .append(FIELD_SEPARATOR)
-                .append(entry.getValue());
+            encoded.append(entry.getKey()).append(FIELD_SEPARATOR).append(entry.getValue());
         }
         return encoded.toString();
     }

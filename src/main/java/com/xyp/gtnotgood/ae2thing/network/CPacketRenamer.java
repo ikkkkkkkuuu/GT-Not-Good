@@ -34,15 +34,15 @@ public class CPacketRenamer implements IMessage {
     private String text;
 
     public enum Action {
-        OPEN,
-        GET_TEXT,
-        SET_TEXT,
+        Open,
+        GetText,
+        SetText,
     }
 
     public CPacketRenamer() {}
 
     public CPacketRenamer(String text) {
-        this.action = Action.SET_TEXT;
+        this.action = Action.SetText;
         this.text = text;
     }
 
@@ -51,7 +51,7 @@ public class CPacketRenamer implements IMessage {
     }
 
     public CPacketRenamer(int x, int y, int z, int dim, ForgeDirection side) {
-        this.action = Action.OPEN;
+        this.action = Action.Open;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -62,13 +62,13 @@ public class CPacketRenamer implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         this.action = Action.values()[buf.readInt()];
-        if (this.action == Action.OPEN) {
+        if (this.action == Action.Open) {
             this.x = buf.readInt();
             this.y = buf.readInt();
             this.z = buf.readInt();
             this.dim = buf.readInt();
             this.side = ForgeDirection.getOrientation(buf.readInt());
-        } else if (this.action == Action.SET_TEXT) {
+        } else if (this.action == Action.SetText) {
             int leName = buf.readInt();
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < leName; i++) {
@@ -82,13 +82,13 @@ public class CPacketRenamer implements IMessage {
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(this.action.ordinal());
-        if (this.action == Action.OPEN) {
+        if (this.action == Action.Open) {
             buf.writeInt(this.x);
             buf.writeInt(this.y);
             buf.writeInt(this.z);
             buf.writeInt(this.dim);
             buf.writeInt(side.ordinal());
-        } else if (this.action == Action.SET_TEXT) {
+        } else if (this.action == Action.SetText) {
             buf.writeInt(this.text.length());
             for (int i = 0; i < this.text.length(); i++) {
                 buf.writeChar(this.text.charAt(i));
@@ -131,48 +131,38 @@ public class CPacketRenamer implements IMessage {
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             AEBaseContainer con = (AEBaseContainer) player.openContainer;
             switch (message.action) {
-                case OPEN -> {
+                case Open -> {
                     if (con.getTarget() instanceof IClickableInTerminal clickableInterface) {
-                        TileEntity tile = DimensionManager.getWorld(message.dim)
-                            .getTileEntity(message.x, message.y, message.z);
+                        TileEntity tile = DimensionManager.getWorld(message.dim).getTileEntity(message.x, message.y,
+                            message.z);
                         if (!(tile instanceof ICustomNameObject)) {
                             break;
                         }
 
                         String name = getName(tile, message.side);
-                        clickableInterface.setClickedInterface(
-                            new Util.DimensionalCoordSide(
-                                message.x,
-                                message.y,
-                                message.z,
-                                message.dim,
-                                message.side,
-                                name));
+                        clickableInterface.setClickedInterface(new Util.DimensionalCoordSide(message.x, message.y,
+                            message.z, message.dim, message.side, name));
 
                         if (con.getTarget() instanceof WirelessTerminal terminal) {
-                            InventoryHandler.openGui(
-                                player,
-                                player.worldObj,
-                                new BlockPos(terminal.getInventorySlot(), 0, 0),
-                                message.side,
-                                GuiType.RENAMER);
+                            InventoryHandler.openGui(player, player.worldObj,
+                                new BlockPos(terminal.getInventorySlot(), 0, 0), message.side, GuiType.Renamer);
                         }
                     }
                 }
-                case GET_TEXT -> {
+                case GetText -> {
                     if (con.getTarget() instanceof IClickableInTerminal clickableInterface) {
                         Util.DimensionalCoordSide intMsg = clickableInterface.getClickedInterface();
-                        TileEntity tile = DimensionManager.getWorld(intMsg.getDimension())
-                            .getTileEntity(intMsg.x, intMsg.y, intMsg.z);
-                        AE2Thing.proxy.netHandler
-                            .sendTo(new SPacketStringUpdate(this.getName(tile, intMsg.getSide())), player);
+                        TileEntity tile = DimensionManager.getWorld(intMsg.getDimension()).getTileEntity(intMsg.x,
+                            intMsg.y, intMsg.z);
+                        AE2Thing.proxy.netHandler.sendTo(new SPacketStringUpdate(this.getName(tile, intMsg.getSide())),
+                            player);
                     }
                 }
-                case SET_TEXT -> {
+                case SetText -> {
                     if (con.getTarget() instanceof IClickableInTerminal clickableInterface) {
                         Util.DimensionalCoordSide intMsg = clickableInterface.getClickedInterface();
-                        TileEntity tile = DimensionManager.getWorld(intMsg.getDimension())
-                            .getTileEntity(intMsg.x, intMsg.y, intMsg.z);
+                        TileEntity tile = DimensionManager.getWorld(intMsg.getDimension()).getTileEntity(intMsg.x,
+                            intMsg.y, intMsg.z);
                         this.setName(tile, intMsg.getSide(), message.text);
                         AE2Thing.proxy.netHandler.sendTo(new SPacketSwitchBack(), player);
                     }

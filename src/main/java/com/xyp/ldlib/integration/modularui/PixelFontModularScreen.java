@@ -1,5 +1,6 @@
 package com.xyp.ldlib.integration.modularui;
 
+import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.UpOrDown;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
@@ -100,7 +101,7 @@ public class PixelFontModularScreen extends ModularScreen {
     }
 
     @Override
-    @Optional.Method(modid = com.cleanroommc.modularui.ModularUI.ModIds.LWJGL3IFY)
+    @Optional.Method(modid = ModularUI.ModIds.LWJGL3IFY)
     public void onKeyEvent(InputEvents.KeyEvent event) {
         try (PixelFontScope ignored = new PixelFontScope()) {
             super.onKeyEvent(event);
@@ -108,7 +109,7 @@ public class PixelFontModularScreen extends ModularScreen {
     }
 
     @Override
-    @Optional.Method(modid = com.cleanroommc.modularui.ModularUI.ModIds.LWJGL3IFY)
+    @Optional.Method(modid = ModularUI.ModIds.LWJGL3IFY)
     public void onTextEvent(InputEvents.TextEvent event) {
         try (PixelFontScope ignored = new PixelFontScope()) {
             super.onTextEvent(event);

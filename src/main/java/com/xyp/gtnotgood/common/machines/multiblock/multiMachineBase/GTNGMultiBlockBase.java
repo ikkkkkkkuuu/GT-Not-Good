@@ -56,8 +56,7 @@ public abstract class GTNGMultiBlockBase<T extends GTNGMultiBlockBase<T>> extend
      */
     @Override
     protected ProcessingLogic createProcessingLogic() {
-        return new ProcessingLogic() {}.enablePerfectOverclock()
-            .setMaxParallelSupplier(this::getTrueParallel);
+        return new ProcessingLogic() {}.enablePerfectOverclock().setMaxParallelSupplier(this::getTrueParallel);
     }
 
     /**

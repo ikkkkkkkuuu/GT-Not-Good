@@ -6,6 +6,7 @@ import java.util.Set;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 /** Exact item identity, stock targets and sided insertion shared by logistics export and regression tests. */
 public final class LogisticsStock {
@@ -13,7 +14,7 @@ public final class LogisticsStock {
     private LogisticsStock() {}
 
     /** Restores the int cargo count after vanilla has decoded its byte-sized Count field. */
-    static ItemStack restoreCargoCount(ItemStack cargo, net.minecraft.nbt.NBTTagCompound tag) {
+    static ItemStack restoreCargoCount(ItemStack cargo, NBTTagCompound tag) {
         if (cargo != null && tag.hasKey("pendingItemCount")) {
             cargo.stackSize = Math.max(0, tag.getInteger("pendingItemCount"));
             if (cargo.stackSize == 0) return null;

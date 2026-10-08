@@ -31,13 +31,8 @@ public class WildcardExpansionTest {
         IWildcardIOComponent empty = new TestComponent(true, true);
         List<IWildcardFilterComponent> ironOnly = Collections
             .singletonList(new SimpleFilterComponent(Materials.Iron, true));
-        assertTrue(
-            WildcardExpansion.countExpanded(
-                Collections.singletonList(valid),
-                Collections.singletonList(valid),
-                ironOnly,
-                MATERIAL_NAMES,
-                false) > 0);
+        assertTrue(WildcardExpansion.countExpanded(Collections.singletonList(valid), Collections.singletonList(valid),
+            ironOnly, MATERIAL_NAMES, false) > 0);
         assertCount(Collections.singletonList(valid), Collections.singletonList(valid), ironOnly, 1);
         assertCount(Arrays.asList(null, empty, valid), Collections.singletonList(valid), ironOnly, 1);
         assertCount(Collections.singletonList(unavailable), Collections.singletonList(valid), ironOnly, 0);
@@ -45,13 +40,8 @@ public class WildcardExpansionTest {
         assertCount(Collections.singletonList(empty), Collections.emptyList(), ironOnly, 0);
         assertCount(Collections.emptyList(), Collections.singletonList(valid), ironOnly, 1);
         assertCount(Collections.singletonList(valid), Collections.emptyList(), ironOnly, 1);
-        assertCount(
-            Collections.singletonList(valid),
-            Collections.singletonList(valid),
-            Arrays.asList(
-                new SimpleFilterComponent(Materials.Iron, true),
-                new SimpleFilterComponent(Materials.Iron, false)),
-            0);
+        assertCount(Collections.singletonList(valid), Collections.singletonList(valid), Arrays.asList(
+            new SimpleFilterComponent(Materials.Iron, true), new SimpleFilterComponent(Materials.Iron, false)), 0);
         assertCount(null, Collections.singletonList(valid), ironOnly, 0);
     }
 
@@ -68,15 +58,9 @@ public class WildcardExpansionTest {
         WildcardExpansion.Expanded expanded = WildcardExpansion.expand(inputs, outputs, filters, MATERIAL_NAMES, true)
             .get(0);
         assertEquals(ADDON_NAME, expanded.materialName);
-        assertEquals(
-            ingot,
-            expanded.inputs.get(0)
-                .getItem());
+        assertEquals(ingot, expanded.inputs.get(0).getItem());
         assertEquals(2, expanded.inputs.get(0).stackSize);
-        assertEquals(
-            dust,
-            expanded.outputs.get(0)
-                .getItem());
+        assertEquals(dust, expanded.outputs.get(0).getItem());
     }
 
     private static void assertCount(List<IWildcardIOComponent> inputs, List<IWildcardIOComponent> outputs,
@@ -86,10 +70,7 @@ public class WildcardExpansionTest {
 
     private static void assertCount(List<IWildcardIOComponent> inputs, List<IWildcardIOComponent> outputs,
         List<IWildcardFilterComponent> filters, boolean addonForms, int expected) {
-        assertEquals(
-            expected,
-            WildcardExpansion.expand(inputs, outputs, filters, MATERIAL_NAMES, addonForms)
-                .size());
+        assertEquals(expected, WildcardExpansion.expand(inputs, outputs, filters, MATERIAL_NAMES, addonForms).size());
         assertEquals(expected, WildcardExpansion.countExpanded(inputs, outputs, filters, MATERIAL_NAMES, addonForms));
     }
 

@@ -10,6 +10,7 @@ import com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType;
 import com.xyp.gtnotgood.ae2thing.inventory.item.WirelessDualInterfaceTerminalInventory;
 import com.xyp.gtnotgood.ae2thing.loader.ItemAndBlockHolder;
 import com.xyp.gtnotgood.ae2thing.network.CPacketCraftRequest;
+import com.xyp.gtnotgood.ae2thing.network.CPacketSwitchGuis;
 
 import appeng.api.config.CraftingMode;
 import appeng.api.config.Settings;
@@ -30,12 +31,8 @@ public class GuiCraftAmount extends GuiAmount {
     @Override
     public void initGui() {
         super.initGui();
-        this.buttonList.add(
-            this.craftingMode = new GuiImgButton(
-                this.guiLeft + 10,
-                this.guiTop + 53,
-                Settings.CRAFTING_MODE,
-                CraftingMode.STANDARD));
+        this.buttonList.add(this.craftingMode = new GuiImgButton(this.guiLeft + 10, this.guiTop + 53,
+            Settings.CRAFTING_MODE, CraftingMode.STANDARD));
         this.setAmount(1);
     }
 
@@ -65,20 +62,13 @@ public class GuiCraftAmount extends GuiAmount {
 
                 final Enum cv = iBtn.getCurrentValue();
                 final boolean backwards = Mouse.isButtonDown(1);
-                final Enum next = Platform.rotateEnum(
-                    cv,
-                    backwards,
-                    iBtn.getSetting()
-                        .getPossibleValues());
+                final Enum next = Platform.rotateEnum(cv, backwards, iBtn.getSetting().getPossibleValues());
 
                 iBtn.set(next);
             }
             if (btn == this.submit && this.submit.enabled) {
-                AE2Thing.proxy.netHandler.sendToServer(
-                    new CPacketCraftRequest(
-                        getAmount(),
-                        isShiftKeyDown(),
-                        (CraftingMode) this.craftingMode.getCurrentValue()));
+                AE2Thing.proxy.netHandler.sendToServer(new CPacketCraftRequest(getAmount(), isShiftKeyDown(),
+                    (CraftingMode) this.craftingMode.getCurrentValue()));
             }
         } catch (final NumberFormatException e) {
             this.amountBox.setText("1");
@@ -88,20 +78,20 @@ public class GuiCraftAmount extends GuiAmount {
     @Override
     protected void setOriginGUI(Object target) {
         if (target instanceof WirelessDualInterfaceTerminalInventory) {
-            this.myIcon = ItemAndBlockHolder.ITEM_WIRELESS_DUAL_INTERFACE_TERMINAL.stack();
-            this.originalGui = GuiType.WIRELESS_DUAL_INTERFACE_TERMINAL;
+            this.myIcon = ItemAndBlockHolder.wirelessDualInterfaceTerminal.stack();
+            this.originalGui = GuiType.WirelessDualInterfaceTerminal;
         }
     }
 
     /**
      * The craft-amount screen for our terminal is always item-hosted; the view it was launched from (dual interface vs
      * AE2 wireless crafting terminal) is persisted on the terminal NBT. Route the back navigation through the server's
-     * "restore last" path rather than the hard-coded {@link GuiType#WIRELESS_DUAL_INTERFACE_TERMINAL}, so it returns to
+     * "restore last" path rather than the hard-coded {@link GuiType#WirelessDualInterfaceTerminal}, so it returns to
      * the correct view — and works for a baubles-slot terminal whose NBT the client can't read reliably.
      */
     @Override
     protected void switchToOriginalGui() {
-        AE2Thing.proxy.netHandler.sendToServer(com.xyp.gtnotgood.ae2thing.network.CPacketSwitchGuis.restoreLast());
+        AE2Thing.proxy.netHandler.sendToServer(CPacketSwitchGuis.restoreLast());
     }
 
     @Override

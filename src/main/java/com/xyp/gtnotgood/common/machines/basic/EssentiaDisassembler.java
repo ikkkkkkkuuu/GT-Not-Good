@@ -119,8 +119,7 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
     public void onFirstTick(IGregTechTileEntity tile) {
         super.onFirstTick(tile);
         if (tile.isServerSide()) {
-            var owner = tile.getWorld()
-                .getPlayerEntityByName(tile.getOwnerName());
+            var owner = tile.getWorld().getPlayerEntityByName(tile.getOwnerName());
             if (owner != null) getProxy().setOwner(owner);
             getProxy().onReady();
         }
@@ -156,8 +155,8 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
             var inventory = monitor();
             var source = new MachineSource((IActionHost) getBaseMetaTileEntity());
             for (Aspect aspect : output.getAspects()) {
-                var rest = inventory
-                    .injectItems(new AEEssentiaStack(aspect, output.getAmount(aspect)), Actionable.SIMULATE, source);
+                var rest = inventory.injectItems(new AEEssentiaStack(aspect, output.getAmount(aspect)),
+                    Actionable.SIMULATE, source);
                 if (rest != null && rest.getStackSize() > 0) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS;
             }
             batch = output;

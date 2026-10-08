@@ -79,8 +79,7 @@ public class MEDataAccessHatch extends MTEHatchDataAccess
             proxy.setValidSides(EnumSet.of(getBaseMetaTileEntity().getFrontFacing()));
             if (getBaseMetaTileEntity().getWorld() != null) {
                 proxy.setOwner(
-                    getBaseMetaTileEntity().getWorld()
-                        .getPlayerEntityByName(getBaseMetaTileEntity().getOwnerName()));
+                    getBaseMetaTileEntity().getWorld().getPlayerEntityByName(getBaseMetaTileEntity().getOwnerName()));
             }
         }
         return proxy;
@@ -134,15 +133,13 @@ public class MEDataAccessHatch extends MTEHatchDataAccess
                 if (snapshot.clear()) super.onContentsChanged(-1);
                 return;
             }
-            setMonitor(
-                getProxy().getStorage()
-                    .getItemInventory());
+            setMonitor(getProxy().getStorage().getItemInventory());
             if (!refreshPending) return;
             refreshPending = false;
             ItemStack dataStick = ItemList.Tool_DataStick.get(1);
             List<ItemStack> contents = new ArrayList<>();
-            for (IAEItemStack stack : monitor.getStorageList()
-                .findFuzzy(AEItemStack.create(dataStick), FuzzyMode.IGNORE_ALL)) {
+            for (IAEItemStack stack : monitor.getStorageList().findFuzzy(AEItemStack.create(dataStick),
+                FuzzyMode.IGNORE_ALL)) {
                 // Craftable-only entries and zero-sized cached entries must not authorize research.
                 if (stack.getStackSize() <= 0) continue;
                 ItemStack copy = stack.getItemStack();

@@ -68,8 +68,8 @@ public final class FactoryCycles {
 
     /** Builds a whole number of each node's batches over the least common period, with exact overflow checks. */
     public static Plan prepare(List<FactoryGraph.Node> group, int multiplier, Random random) {
-        if (!group.isEmpty() && group.stream()
-            .allMatch(node -> node.wholeLineBatch)) return scale(FactoryWholeBatch.prepare(group), multiplier);
+        if (!group.isEmpty() && group.stream().allMatch(node -> node.wholeLineBatch))
+            return scale(FactoryWholeBatch.prepare(group), multiplier);
         Plan plan = new Plan();
         int[] durations = new int[group.size()];
         for (int i = 0; i < group.size(); i++) {
@@ -122,32 +122,22 @@ public final class FactoryCycles {
                 outputs.add(port);
             }
         }
-        double[] supply = outputs.stream()
-            .mapToDouble(Port::amount)
-            .toArray();
-        double[] demand = inputs.stream()
-            .mapToDouble(Port::amount)
-            .toArray();
+        double[] supply = outputs.stream().mapToDouble(Port::amount).toArray();
+        double[] demand = inputs.stream().mapToDouble(Port::amount).toArray();
         FactoryPreview.allocate(supply, demand, (o, i) -> {
             Port out = outputs.get(o), in = inputs.get(i);
             if (!in.node.sources.contains(out.node.id)) return false;
             return out.item != null ? in.match != null && in.match.matchesType(out.item)
                 : in.fluid != null && in.fluid.isFluidEqual(out.fluid);
         });
-        for (int i = 0; i < inputs.size(); i++) inputs.get(i)
-            .amount((int) demand[i]);
-        for (int o = 0; o < outputs.size(); o++) outputs.get(o)
-            .amount((int) supply[o]);
+        for (int i = 0; i < inputs.size(); i++) inputs.get(i).amount((int) demand[i]);
+        for (int o = 0; o < outputs.size(); o++) outputs.get(o).amount((int) supply[o]);
         // Use strict NBT matching when any member needs it; never weaken another node's external-input check.
         plan.inputs.isNBTSensitive = group.stream()
             .anyMatch(node -> FactoryRecipeCatalog.get(node.recipe).recipe.isNBTSensitive);
-        plan.inputs.mInputs = inputs.stream()
-            .filter(p -> p.item != null && p.item.stackSize > 0)
-            .map(p -> p.item)
+        plan.inputs.mInputs = inputs.stream().filter(p -> p.item != null && p.item.stackSize > 0).map(p -> p.item)
             .toArray(ItemStack[]::new);
-        plan.inputs.mFluidInputs = inputs.stream()
-            .filter(p -> p.fluid != null && p.fluid.amount > 0)
-            .map(p -> p.fluid)
+        plan.inputs.mFluidInputs = inputs.stream().filter(p -> p.fluid != null && p.fluid.amount > 0).map(p -> p.fluid)
             .toArray(FluidStack[]::new);
         for (FactoryRuntime.State job : plan.jobs.values()) {
             job.pendingItems.removeIf(item -> item.stackSize <= 0);
@@ -167,10 +157,8 @@ public final class FactoryCycles {
         for (Map.Entry<Integer, FactoryRuntime.State> entry : base.jobs.entrySet()) {
             FactoryRuntime.State original = entry.getValue(), job = new FactoryRuntime.State();
             job.duration = job.remaining = original.duration;
-            BigInteger energy = BigInteger.valueOf(original.eut)
-                .multiply(BigInteger.valueOf(original.duration))
-                .add(BigInteger.valueOf(original.extraEnergyTicks))
-                .multiply(BigInteger.valueOf(multiplier));
+            BigInteger energy = BigInteger.valueOf(original.eut).multiply(BigInteger.valueOf(original.duration))
+                .add(BigInteger.valueOf(original.extraEnergyTicks)).multiply(BigInteger.valueOf(multiplier));
             BigInteger[] parts = energy.divideAndRemainder(BigInteger.valueOf(job.duration));
             job.eut = parts[0].longValueExact();
             job.extraEnergyTicks = parts[1].intValueExact();

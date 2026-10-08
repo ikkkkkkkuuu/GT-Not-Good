@@ -15,19 +15,9 @@ public final class ServerConfigOptions {
 
     public static Map<String, Option> options() {
         Map<String, Option> options = new LinkedHashMap<>();
-        add(
-            options,
-            false,
-            "Wireless_Multiblock",
-            "crossRecipeDurationTicks",
-            "wirelessCrossRecipeDurationTicks",
+        add(options, false, "Wireless_Multiblock", "crossRecipeDurationTicks", "wirelessCrossRecipeDurationTicks",
             true);
-        add(
-            options,
-            false,
-            "Wireless_Multiblock",
-            "crossRecipeParallelLimit",
-            "wirelessCrossRecipeParallelLimit",
+        add(options, false, "Wireless_Multiblock", "crossRecipeParallelLimit", "wirelessCrossRecipeParallelLimit",
             true);
         add(options, false, "CutCorners", "mode", "recipeSpeedMode", false);
         add(options, false, "CutCorners", "fixedDuration", "recipeSpeedFixedDuration", false);
@@ -35,12 +25,7 @@ public final class ServerConfigOptions {
         add(options, false, "CutCorners", "fullFluidOutput", "recipeSpeedFullFluidOutput", true);
         add(options, false, "Railcraft", "boilerInstantHeat", "railcraftBoilerInstantHeat", true);
         add(options, false, "Railcraft", "boilerSteamMultiplier", "railcraftBoilerSteamMultiplier", true);
-        add(
-            options,
-            false,
-            "GregTech",
-            "enableBrickedBlastFurnaceAutomation",
-            "enableBrickedBlastFurnaceAutomation",
+        add(options, false, "GregTech", "enableBrickedBlastFurnaceAutomation", "enableBrickedBlastFurnaceAutomation",
             false);
         add(options, false, "CropsNH", "enableInstantGrowth", "enableCropInstantGrowth", true);
         add(options, false, "CropsNH", "enableMaxStats", "enableCropMaxStats", true);
@@ -107,8 +92,7 @@ public final class ServerConfigOptions {
         }
 
         public Property property() {
-            return configuration().getCategory(category.toLowerCase(Locale.ENGLISH))
-                .get(key);
+            return configuration().getCategory(category.toLowerCase(Locale.ENGLISH)).get(key);
         }
 
         /**
@@ -158,7 +142,9 @@ public final class ServerConfigOptions {
         } else {
             throw new IllegalArgumentException();
         }
-        if (!Double.isFinite(number) || number < Double.parseDouble(property.getMinValue())
-            || number > Double.parseDouble(property.getMaxValue())) throw new IllegalArgumentException();
+        if (
+            !Double.isFinite(number) || number < Double.parseDouble(property.getMinValue())
+                || number > Double.parseDouble(property.getMaxValue())
+        ) throw new IllegalArgumentException();
     }
 }

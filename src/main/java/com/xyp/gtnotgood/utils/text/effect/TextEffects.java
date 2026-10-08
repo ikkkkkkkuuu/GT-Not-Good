@@ -45,24 +45,16 @@ public class TextEffects {
         String namespace = ModList.GTNotGood.getID() + ":";
         if (id.startsWith(namespace)) id = id.substring(namespace.length());
         StringBuilder result = new StringBuilder(TextEffectFormat.INLINE_OPEN).append(id);
-        if (!style.colors()
-            .isEmpty()) {
+        if (!style.colors().isEmpty()) {
             result.append(";colors=");
-            for (int i = 0; i < style.colors()
-                .size(); i++) {
+            for (int i = 0; i < style.colors().size(); i++) {
                 if (i > 0) result.append(',');
-                String hex = Integer.toHexString(
-                    style.colors()
-                        .get(i));
-                result.append('#')
-                    .append("000000", 0, 6 - hex.length())
-                    .append(hex);
+                String hex = Integer.toHexString(style.colors().get(i));
+                result.append('#').append("000000", 0, 6 - hex.length()).append(hex);
             }
         }
-        if (style.speed() != 1) result.append(";speed=")
-            .append(style.speed());
-        return result.append('}')
-            .toString();
+        if (style.speed() != 1) result.append(";speed=").append(style.speed());
+        return result.append('}').toString();
     }
 
     /**
@@ -79,29 +71,20 @@ public class TextEffects {
     }
 
     public static String opening(TextEffectStyle style) {
-        StringBuilder result = new StringBuilder(EffectTextParser.OPEN).append(style.rendererId())
-            .append(';')
-            .append(style.speed())
-            .append(';');
-        for (int i = 0; i < style.colors()
-            .size(); i++) {
+        StringBuilder result = new StringBuilder(EffectTextParser.OPEN).append(style.rendererId()).append(';')
+            .append(style.speed()).append(';');
+        for (int i = 0; i < style.colors().size(); i++) {
             if (i > 0) result.append(',');
-            result.append(
-                Integer.toHexString(
-                    style.colors()
-                        .get(i)));
+            result.append(Integer.toHexString(style.colors().get(i)));
         }
-        return result.append(EffectTextParser.END)
-            .toString();
+        return result.append(EffectTextParser.END).toString();
     }
 
     public static String escapeLiteral(String text) {
-        return Objects.requireNonNull(text, "text")
-            .replace("\u2063", "\u2063\u2063");
+        return Objects.requireNonNull(text, "text").replace("\u2063", "\u2063\u2063");
     }
 
     public static String plainText(String text) {
-        return EffectTextParser.parse(text)
-            .plainText();
+        return EffectTextParser.parse(text).plainText();
     }
 }

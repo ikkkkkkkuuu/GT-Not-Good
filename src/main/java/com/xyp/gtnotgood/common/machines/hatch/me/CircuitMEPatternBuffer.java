@@ -54,13 +54,8 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
         World world = getBaseMetaTileEntity().getWorld();
         ICraftingPatternDetails original = CircuitPatternCodec.decode(pattern, world);
         ItemStack[] molds = CircuitPatternCodec.molds(original);
-        return new CircuitSlot(
-            pattern,
-            saved,
-            this,
-            CircuitPatternCodec.runtime(pattern, world, original, molds),
-            CircuitPatternCodec.circuit(original),
-            molds);
+        return new CircuitSlot(pattern, saved, this, CircuitPatternCodec.runtime(pattern, world, original, molds),
+            CircuitPatternCodec.circuit(original), molds);
     }
 
     /** Each pattern supplies its own circuit and molds; only physical manual slots are shared. */
@@ -183,8 +178,7 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
         // #tr tooltip.gtng.circuit_buffer.refunds
         // # Pending input refunds: %s buffers; reconnect ME to return them.
         // # zh_CN 待退料缓冲：%s份；接回ME网络后自动退回。
-        return ArrayUtils.add(
-            lines,
+        return ArrayUtils.add(lines,
             StatCollector.translateToLocalFormatted("tooltip.gtng.circuit_buffer.refunds", pendingRefunds.size()));
     }
 

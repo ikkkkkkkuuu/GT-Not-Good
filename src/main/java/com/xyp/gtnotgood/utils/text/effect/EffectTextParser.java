@@ -31,8 +31,10 @@ public class EffectTextParser {
         if (text instanceof String value && start == 0 && end == value.length()) return containsMarkers(value);
         for (int i = start; i < end; i++) {
             char character = text.charAt(i);
-            if (character == '\u2063'
-                || (character == '\u00a7' || character == '&') && i + 1 < end && text.charAt(i + 1) == '{') return true;
+            if (
+                character == '\u2063'
+                    || (character == '\u00a7' || character == '&') && i + 1 < end && text.charAt(i + 1) == '{'
+            ) return true;
         }
         return false;
     }
@@ -105,8 +107,7 @@ public class EffectTextParser {
                     return new Token("\u2063", style, formatting, start, position, false);
                 }
                 if (source.startsWith(CLOSE, start)) {
-                    if (!scopes.isEmpty()) style = scopes.pop()
-                        .saved();
+                    if (!scopes.isEmpty()) style = scopes.pop().saved();
                     position += CLOSE.length();
                     continue;
                 }
@@ -165,8 +166,7 @@ public class EffectTextParser {
                 Scope next = iterator.hasNext() ? iterator.next() : null;
                 TextEffectStyle active = next == null ? style : next.saved();
                 result.append(TextEffects.opening(active == null ? scope.opened() : active));
-                if (active == null) result.append("\u00a7r")
-                    .append(formatting);
+                if (active == null) result.append("\u00a7r").append(formatting);
                 scope = next;
             }
             return result.toString();

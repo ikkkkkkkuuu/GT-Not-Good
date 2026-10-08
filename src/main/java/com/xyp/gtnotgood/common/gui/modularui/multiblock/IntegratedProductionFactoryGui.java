@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -13,8 +14,13 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.Rectangle;
+import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.ObjectValue;
+import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.value.sync.GenericListSyncHandler;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -22,13 +28,16 @@ import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.ScrollWidget;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemDisplayWidget;
 import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.xyp.gtnotgood.common.gui.modularui.GTNGGuiTextures;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.base.GTNGModernMultiBlockBaseGui;
+import com.xyp.gtnotgood.common.gui.modularui.widget.FactoryIngredientWidget;
 import com.xyp.gtnotgood.common.gui.modularui.widget.FactoryListScroll;
 import com.xyp.gtnotgood.common.machines.multiblock.IntegratedProductionFactory;
 import com.xyp.gtnotgood.utils.machine.factory.FactoryControllers;
@@ -42,7 +51,9 @@ import com.xyp.gtnotgood.utils.machine.factory.FactoryText;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import gregtech.api.modularui2.GTGuiTextures;
+import gregtech.api.modularui2.GTGuis;
 import gregtech.api.util.GTUtility;
+import gregtech.common.items.ItemIntegratedCircuit;
 
 /**
  * Modern machine panel with a BOX-style route list and server-authoritative recipe imports.
@@ -62,10 +73,8 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
     private int recipePage = 1;
     private int recipePageCount = 1;
     private String drainDetails = "";
-    private final com.cleanroommc.modularui.value.StringValue routingCode = new com.cleanroommc.modularui.value.StringValue(
-        "");
-    private final com.cleanroommc.modularui.value.StringValue routeParallel = new com.cleanroommc.modularui.value.StringValue(
-        "1");
+    private final StringValue routingCode = new StringValue("");
+    private final StringValue routeParallel = new StringValue("1");
     private IPanelHandler preview;
     private FactoryPreview.Snapshot previewSnapshot = new FactoryPreview.Snapshot();
     private final int[] previewPages = new int[2];
@@ -74,8 +83,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
     private List<NBTTagCompound> requirements = new ArrayList<>();
     private int requirementPage;
     private int selected = -1;
-    private final com.cleanroommc.modularui.value.StringValue nodeEUtText = new com.cleanroommc.modularui.value.StringValue(
-        "");
+    private final StringValue nodeEUtText = new StringValue("");
     private FactoryActions actions;
 
     public IntegratedProductionFactoryGui(IntegratedProductionFactory factory) {
@@ -86,66 +94,37 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
     protected void registerSyncValues(PanelSyncManager manager) {
         super.registerSyncValues(manager);
         actions = new FactoryActions(multiblock, this);
-        manager.syncValue(
-            "factoryRequirements",
-            new GenericListSyncHandler<>(
-                multiblock::getRequirementTags,
-                values -> requirements = values,
-                ByteBufUtils::readTag,
-                ByteBufUtils::writeTag,
-                NBTTagCompound::equals,
+        manager.syncValue("factoryRequirements",
+            new GenericListSyncHandler<>(multiblock::getRequirementTags, values -> requirements = values,
+                ByteBufUtils::readTag, ByteBufUtils::writeTag, NBTTagCompound::equals,
                 value -> (NBTTagCompound) value.copy()));
         manager.syncValue("factoryActions", actions);
-        manager
-            .syncValue("factoryRecipePage", new IntSyncValue(multiblock::getRecipePage, value -> recipePage = value));
-        manager.syncValue(
-            "factoryRecipePageCount",
+        manager.syncValue("factoryRecipePage",
+            new IntSyncValue(multiblock::getRecipePage, value -> recipePage = value));
+        manager.syncValue("factoryRecipePageCount",
             new IntSyncValue(multiblock::getRecipePageCount, value -> recipePageCount = value));
-        manager.syncValue(
-            "factoryDraining",
-            new StringSyncValue(
-                () -> Boolean.toString(multiblock.isDraining()),
-                value -> draining = Boolean.parseBoolean(value)));
-        manager.syncValue(
-            "factoryDrainDetails",
+        manager.syncValue("factoryDraining", new StringSyncValue(() -> Boolean.toString(multiblock.isDraining()),
+            value -> draining = Boolean.parseBoolean(value)));
+        manager.syncValue("factoryDrainDetails",
             new StringSyncValue(multiblock::getDrainDetails, value -> drainDetails = value));
-        manager.syncValue(
-            "factoryLocked",
-            new StringSyncValue(
-                () -> Boolean.toString(multiblock.isRoutingLocked()),
-                value -> locked = Boolean.parseBoolean(value)));
+        manager.syncValue("factoryLocked", new StringSyncValue(() -> Boolean.toString(multiblock.isRoutingLocked()),
+            value -> locked = Boolean.parseBoolean(value)));
         manager.syncValue("factoryEditorStatus", new StringSyncValue(multiblock::getEditorStatus, value -> {}));
-        manager.syncValue(
-            "factoryReservations",
-            new GenericListSyncHandler<>(
-                () -> Collections.singletonList(multiblock.getReservationsTag()),
-                values -> { if (!values.isEmpty()) visibleReservations.read(values.get(0)); },
-                ByteBufUtils::readTag,
-                ByteBufUtils::writeTag,
-                NBTTagCompound::equals,
-                value -> (NBTTagCompound) value.copy()));
+        manager.syncValue("factoryReservations",
+            new GenericListSyncHandler<>(() -> Collections.singletonList(multiblock.getReservationsTag()),
+                values -> { if (!values.isEmpty()) visibleReservations.read(values.get(0)); }, ByteBufUtils::readTag,
+                ByteBufUtils::writeTag, NBTTagCompound::equals, value -> (NBTTagCompound) value.copy()));
         manager.syncValue("factoryStatus", new StringSyncValue(multiblock::getFactoryStatus, value -> {}));
-        manager.syncValue(
-            "factoryGraph",
-            new GenericListSyncHandler<>(
-                () -> Collections.singletonList(
-                    multiblock.getDraft()
-                        .write()),
-                values -> { if (!values.isEmpty()) visibleGraph.read(values.get(0)); },
-                ByteBufUtils::readTag,
-                ByteBufUtils::writeTag,
-                NBTTagCompound::equals,
-                value -> (NBTTagCompound) value.copy()));
+        manager.syncValue("factoryGraph",
+            new GenericListSyncHandler<>(() -> Collections.singletonList(multiblock.getDraft().write()),
+                values -> { if (!values.isEmpty()) visibleGraph.read(values.get(0)); }, ByteBufUtils::readTag,
+                ByteBufUtils::writeTag, NBTTagCompound::equals, value -> (NBTTagCompound) value.copy()));
         manager.syncValue("factoryNodeStatus", new GenericListSyncHandler<>(() -> {
             List<String> lines = new ArrayList<>();
             for (FactoryGraph.Node node : multiblock.getDraft().nodes)
                 lines.add(node.id + ":" + multiblock.getNodeStatus(node.id));
             return lines;
-        },
-            values -> nodeLines = values,
-            ByteBufUtils::readUTF8String,
-            ByteBufUtils::writeUTF8String,
-            String::equals,
+        }, values -> nodeLines = values, ByteBufUtils::readUTF8String, ByteBufUtils::writeUTF8String, String::equals,
             value -> value));
     }
 
@@ -157,62 +136,35 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
 
     /** Keeps the existing controls at their normal width and adds a persistent requirement column. */
     @Override
-    public ModularPanel build(com.cleanroommc.modularui.factory.PosGuiData data, PanelSyncManager manager,
-        com.cleanroommc.modularui.screen.UISettings settings) {
+    public ModularPanel build(PosGuiData data, PanelSyncManager manager, UISettings settings) {
         ModularPanel panel = super.build(data, manager, settings).size(480, 260);
-        panel.child(
-            new ParentWidget<>().pos(200, 4)
-                .size(276, 222)
-                .background(new com.cleanroommc.modularui.drawable.Rectangle().color(0xff192331)));
+        panel.child(new ParentWidget<>().pos(200, 4).size(276, 222).background(new Rectangle().color(0xff192331)));
         card(panel, 200, 4, 276, 20, 0xff304762);
-        panel.child(
-            new TextWidget<>(
-                IKey.dynamic(() -> draining ? FactoryText.REFUND_LIST.text() : FactoryText.REQUIREMENTS.text()))
-                    .pos(204, 8)
-                    .size(264, 14)
-                    .color(0xffedf3fa)
-                    .textAlign(com.cleanroommc.modularui.utils.Alignment.CenterLeft));
-        panel.child(
-            new TextWidget<>(IKey.dynamic(() -> draining ? drainDetails : FactoryText.REQUIREMENT_HELP.text()))
-                .pos(204, 26)
-                .size(264, 26)
-                .color(0xffc8d2df)
-                .textAlign(com.cleanroommc.modularui.utils.Alignment.CenterLeft));
+        panel.child(new TextWidget<>(
+            IKey.dynamic(() -> draining ? FactoryText.RefundList.text() : FactoryText.Requirements.text())).pos(204, 8)
+                .size(264, 14).color(0xffedf3fa).textAlign(Alignment.CenterLeft));
+        panel.child(new TextWidget<>(IKey.dynamic(() -> draining ? drainDetails : FactoryText.RequirementHelp.text()))
+            .pos(204, 26).size(264, 26).color(0xffc8d2df).textAlign(Alignment.CenterLeft));
         for (int i = 0; i < 5; i++) {
             final int row = i;
-            panel.child(
-                new TextWidget<>(IKey.dynamic(() -> requirementLine(row))).pos(204, 57 + i * 28)
-                    .size(264, 26)
-                    .color(0xffc8d2df)
-                    .textAlign(com.cleanroommc.modularui.utils.Alignment.CenterLeft)
-                    .tooltipBuilder(t -> {
-                        t.setAutoUpdate(true);
-                        String line = requirementLine(row);
-                        if (!line.isEmpty()) t.addLine(line);
-                        NBTTagCompound requirement = requirement(row);
-                        if (requirement != null && requirement.getCompoundTag("key")
-                            .hasKey("map")) {
-                            t.addLine(FactoryText.HOST_HELP.text());
-                        }
-                    }));
+            panel.child(new TextWidget<>(IKey.dynamic(() -> requirementLine(row))).pos(204, 57 + i * 28).size(264, 26)
+                .color(0xffc8d2df).textAlign(Alignment.CenterLeft).tooltipBuilder(t -> {
+                    t.setAutoUpdate(true);
+                    String line = requirementLine(row);
+                    if (!line.isEmpty()) t.addLine(line);
+                    NBTTagCompound requirement = requirement(row);
+                    if (requirement != null && requirement.getCompoundTag("key").hasKey("map")) {
+                        t.addLine(FactoryText.HostHelp.text());
+                    }
+                }));
         }
         panel.child(button(() -> "<", 204, 204, 32, () -> requirementPage = Math.max(0, currentRequirementPage() - 1)));
+        panel.child(new TextWidget<>(IKey.dynamic(() -> (currentRequirementPage() + 1) + "/" + requirementPages()))
+            .pos(242, 207).size(185, 14).color(0xffedf3fa));
+        panel.child(button(() -> ">", 436, 204, 32,
+            () -> requirementPage = Math.min(requirementPages() - 1, currentRequirementPage() + 1)));
         panel.child(
-            new TextWidget<>(IKey.dynamic(() -> (currentRequirementPage() + 1) + "/" + requirementPages()))
-                .pos(242, 207)
-                .size(185, 14)
-                .color(0xffedf3fa));
-        panel.child(
-            button(
-                () -> ">",
-                436,
-                204,
-                32,
-                () -> requirementPage = Math.min(requirementPages() - 1, currentRequirementPage() + 1)));
-        panel.child(
-            new TextWidget<>(IKey.dynamic(FactoryText.AUTO_PARALLEL::text)).pos(8, 233)
-                .size(464, 18)
-                .color(0xff304762));
+            new TextWidget<>(IKey.dynamic(FactoryText.AutoParallel::text)).pos(8, 233).size(464, 18).color(0xff304762));
         return panel;
     }
 
@@ -231,9 +183,9 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
 
     /** Includes the programmed circuit configuration, which GT stores in damage rather than its display name. */
     private static String itemName(ItemStack item) {
-        if (item == null) return FactoryText.INVALID.text();
+        if (item == null) return FactoryText.Invalid.text();
         String name = item.getDisplayName();
-        if (item.getItem() instanceof gregtech.common.items.ItemIntegratedCircuit) {
+        if (item.getItem() instanceof ItemIntegratedCircuit) {
             int metadata = item.getItemDamage();
             String mode = switch ((byte) (metadata >>> 8)) {
                 case 0 -> "#";
@@ -251,13 +203,15 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
     /** Names are translated on the viewing client; the server supplies only identities and counts. */
     private String requirementLine(int row) {
         NBTTagCompound data = requirement(row);
-        if (data == null) return row == 0 && requirements.isEmpty()
-            ? (draining ? FactoryText.REFUND_EMPTY.text() : FactoryText.NO_REQUIREMENTS.text())
+        if (
+            data == null
+        ) return row == 0 && requirements.isEmpty()
+            ? (draining ? FactoryText.RefundEmpty.text() : FactoryText.NoRequirements.text())
             : "";
         NBTTagCompound key = data.getCompoundTag("key");
         String name;
         if (key.hasKey("map")) {
-            name = FactoryText.CONTROLLER.text() + ": " + FactoryControllers.displayName(key.getString("map"));
+            name = FactoryText.Controller.text() + ": " + FactoryControllers.displayName(key.getString("map"));
         } else {
             ItemStack item = ItemStack.loadItemStackFromNBT(key.getCompoundTag("item"));
             name = itemName(item);
@@ -269,20 +223,16 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
             + received
             + "/"
             + required
-            + (received < required ? "  " + FactoryText.MISSING.text() + " " + (required - received) : " ✓");
+            + (received < required ? "  " + FactoryText.Missing.text() + " " + (required - received) : " ✓");
     }
 
     @Override
     public Flow createMainColumn(ModularPanel panel, PanelSyncManager manager) {
         StringSyncValue status = manager.findSyncHandler("factoryStatus", StringSyncValue.class);
         // Relative anchors in the inherited terminal/inventory rows must resolve inside the left column.
-        return super.createMainColumn(panel, manager).pos(0, 0)
-            .size(198, 230)
-            .crossAxisAlignment(com.cleanroommc.modularui.utils.Alignment.CrossAxis.START)
-            .child(
-                new TextWidget<>(IKey.dynamic(status::getStringValue)).width(186)
-                    .textAlign(com.cleanroommc.modularui.utils.Alignment.CenterLeft)
-                    .height(24));
+        return super.createMainColumn(panel, manager).pos(0, 0).size(198, 230)
+            .crossAxisAlignment(Alignment.CrossAxis.START).child(new TextWidget<>(IKey.dynamic(status::getStringValue))
+                .width(186).textAlign(Alignment.CenterLeft).height(24));
     }
 
     @Override
@@ -294,13 +244,10 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         clear = manager.syncedPanel("factoryClear", true, (sm, sh) -> createClear());
         deletePage = manager.syncedPanel("factoryDeletePage", true, (sm, sh) -> createDeletePage());
         editor = manager.syncedPanel("factoryEditor", true, (sm, sh) -> createEditor(manager));
-        return super.createButtonColumn(panel, manager).child(
-            new ButtonWidget<>().size(18)
-                .background(GTNGGuiTextures.MODERN_BUTTON)
-                .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
-                .overlay(GTGuiTextures.OVERLAY_BUTTON_WHITELIST)
-                .tooltipBuilder(t -> t.addLine(FactoryText.EDIT.text()))
-                .onMousePressed(button -> {
+        return super.createButtonColumn(panel, manager)
+            .child(new ButtonWidget<>().size(18).background(GTNGGuiTextures.MODERN_BUTTON)
+                .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER).overlay(GTGuiTextures.OVERLAY_BUTTON_WHITELIST)
+                .tooltipBuilder(t -> t.addLine(FactoryText.Edit.text())).onMousePressed(button -> {
                     editor.openPanel();
                     return true;
                 }));
@@ -308,167 +255,102 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
 
     /** Compact BOX-style routing page; NEI appends routes and the existing preview confirms installation. */
     private ModularPanel createEditor(PanelSyncManager manager) {
-        ModularPanel panel = gregtech.api.modularui2.GTGuis.createPopUpPanel("factoryEditor")
-            .size(260, 215);
+        ModularPanel panel = GTGuis.createPopUpPanel("factoryEditor").size(260, 215);
         panel.child(ButtonWidget.panelCloseButton());
+        panel.child(new TextWidget<>(IKey
+            .dynamic(() -> FactoryText.Edit.text() + ": " + visibleGraph.nodes.size() + "/" + FactoryGraph.MAX_NODES))
+                .pos(25, 8).size(125, 12));
+        panel.child(GTGuiTextures.OVERLAY_BUTTON_ALLOW_INPUT.asWidget().pos(5, 5).size(16, 16));
         panel.child(
-            new TextWidget<>(
-                IKey.dynamic(
-                    () -> FactoryText.EDIT.text() + ": " + visibleGraph.nodes.size() + "/" + FactoryGraph.MAX_NODES))
-                        .pos(25, 8)
-                        .size(125, 12));
-        panel.child(
-            GTGuiTextures.OVERLAY_BUTTON_ALLOW_INPUT.asWidget()
-                .pos(5, 5)
-                .size(16, 16));
-        panel.child(
-            new TextWidget<>(IKey.dynamic(() -> locked ? FactoryText.LOCKED.text() : FactoryText.IMPORT_HELP.text()))
-                .pos(139, 96)
-                .size(110, 39));
-        com.cleanroommc.modularui.widget.ScrollWidget<?> list = new com.cleanroommc.modularui.widget.ScrollWidget<>(
-            new com.cleanroommc.modularui.widget.scroll.VerticalScrollData()).pos(21, 20)
-                .size(110, 180);
+            new TextWidget<>(IKey.dynamic(() -> locked ? FactoryText.Locked.text() : FactoryText.ImportHelp.text()))
+                .pos(139, 96).size(110, 39));
+        ScrollWidget<?> list = new ScrollWidget<>(new VerticalScrollData()).pos(21, 20).size(110, 180);
         for (int i = 0; i < FactoryGraph.MAX_NODES; i++) {
             final int index = i;
-            ParentWidget<?> row = new ParentWidget<>().pos(0, i * 20)
-                .size(110, 20)
+            ParentWidget<?> row = new ParentWidget<>().pos(0, i * 20).size(110, 20)
                 .setEnabledIf(w -> index < visibleGraph.nodes.size());
             row.child(new ItemDisplayWidget().item(new ObjectValue.Dynamic<>(ItemStack.class, () -> {
                 FactoryGraph.Node node = route(index);
                 FactoryRecipeCatalog.Entry entry = node == null ? null : FactoryRecipeCatalog.get(node.recipe);
                 return entry == null ? null : controllerIcon(entry);
-            }, value -> {}))
-                .pos(0, 0)
-                .size(16, 16));
+            }, value -> {})).pos(0, 0).size(16, 16));
             row.child(new TextWidget<>(IKey.dynamic(() -> {
                 FactoryGraph.Node node = route(index);
                 return node == null ? "" : "#" + (index + 1);
-            })).pos(20, 4)
-                .size(43, 12));
-            row.child(
-                new ButtonWidget<>().pos(70, 0)
-                    .size(16, 16)
-                    .background(GTNGGuiTextures.MODERN_BUTTON)
-                    .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
-                    .overlay(GTGuiTextures.OVERLAY_BUTTON_ALLOW_INPUT)
-                    .tooltipBuilder(t -> t.addLine(FactoryText.ROUTE_DETAILS.text()))
-                    .onMousePressed(mouse -> {
-                        FactoryGraph.Node node = route(index);
-                        if (node == null) return true;
-                        selected = node.id;
-                        routeParallel.setStringValue(Integer.toString(node.parallel));
-                        nodeEUtText.setStringValue("");
-                        details.openPanel();
-                        return true;
-                    }));
-            row.child(
-                new ButtonWidget<>().pos(92, 0)
-                    .size(16, 16)
-                    .background(GTNGGuiTextures.MODERN_BUTTON)
-                    .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
-                    .overlay(GTGuiTextures.OVERLAY_BUTTON_BLOCK_INPUT)
-                    .tooltipBuilder(t -> t.addLine(FactoryText.SHIFT_DELETE.text()))
-                    .onMousePressed(mouse -> {
-                        FactoryGraph.Node node = route(index);
-                        if (node != null && shiftDown()) actions.send(1, node.id, 0, 0, "");
-                        return true;
-                    })
-                    .setEnabledIf(w -> !locked));
+            })).pos(20, 4).size(43, 12));
+            row.child(new ButtonWidget<>().pos(70, 0).size(16, 16).background(GTNGGuiTextures.MODERN_BUTTON)
+                .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER).overlay(GTGuiTextures.OVERLAY_BUTTON_ALLOW_INPUT)
+                .tooltipBuilder(t -> t.addLine(FactoryText.RouteDetails.text())).onMousePressed(mouse -> {
+                    FactoryGraph.Node node = route(index);
+                    if (node == null) return true;
+                    selected = node.id;
+                    routeParallel.setStringValue(Integer.toString(node.parallel));
+                    nodeEUtText.setStringValue("");
+                    details.openPanel();
+                    return true;
+                }));
+            row.child(new ButtonWidget<>().pos(92, 0).size(16, 16).background(GTNGGuiTextures.MODERN_BUTTON)
+                .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER).overlay(GTGuiTextures.OVERLAY_BUTTON_BLOCK_INPUT)
+                .tooltipBuilder(t -> t.addLine(FactoryText.ShiftDelete.text())).onMousePressed(mouse -> {
+                    FactoryGraph.Node node = route(index);
+                    if (node != null && shiftDown()) actions.send(1, node.id, 0, 0, "");
+                    return true;
+                }).setEnabledIf(w -> !locked));
             list.child(row);
         }
         FactoryListScroll routingScroll = new FactoryListScroll();
         list.onUpdateListener(
             w -> routingScroll.update(w.getScrollArea(), visibleGraph.nodes.size(), recipePage, true));
         panel.child(list);
+        panel.child(button(() -> "<", 5, 193, 20, () -> actions.send(19, 0, recipePage - 1, 0, ""))
+            .setEnabledIf(w -> recipePage > 1).tooltipBuilder(t -> t.addLine(FactoryText.PagePrevious.text())));
+        panel.child(new TextWidget<>(
+            IKey.dynamic(() -> recipePage + " / " + recipePageCount + " (" + multiblock.getMaxRecipePages() + ")"))
+                .pos(76, 198).size(100, 12).textAlign(Alignment.Center));
+        panel.child(button(() -> "-", 211, 193, 20, () -> deletePage.openPanel()).setEnabledIf(w -> recipePageCount > 1)
+            .tooltipBuilder(t -> t.addLine(FactoryText.PageDelete.text())));
+        panel.child(button(() -> "+", 235, 193, 20, () -> actions.send(19, 0, recipePage + 1, 0, ""))
+            .setEnabledIf(w -> recipePage < multiblock.getMaxRecipePages())
+            .tooltipBuilder(t -> t.addLine(FactoryText.PageNext.text())));
+        panel.child(new ButtonWidget<>().pos(140, 26).size(32, 32).background(GTNGGuiTextures.MODERN_BUTTON)
+            .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER).overlay(GTGuiTextures.OVERLAY_BUTTON_POWER_SWITCH_ON)
+            .tooltipBuilder(t -> t.addLine(FactoryText.Preview.text())).onMousePressed(mouse -> {
+                openPreview();
+                return true;
+            }));
+        panel.child(new ButtonWidget<>().pos(175, 26).size(14, 14).overlay(GTNGGuiTextures.BOX_DOUBLE)
+            .tooltipBuilder(t -> t.addLine("×2")).onMousePressed(mouse -> {
+                actions.send(14, 0, 0, 0, "");
+                return true;
+            }).setEnabledIf(w -> !locked && !visibleGraph.nodes.isEmpty()));
+        panel.child(new ButtonWidget<>().pos(175, 44).size(14, 14).overlay(GTNGGuiTextures.BOX_HALVE)
+            .tooltipBuilder(t -> t.addLine("÷2")).onMousePressed(mouse -> {
+                actions.send(15, 0, 0, 0, "");
+                return true;
+            }).setEnabledIf(w -> !locked && !visibleGraph.nodes.isEmpty()));
+        panel.child(button(FactoryText.Balance::text, 140, 71, 108, () -> actions.send(9, 0, 0, 0, ""))
+            .setEnabledIf(w -> !locked && !visibleGraph.nodes.isEmpty()));
         panel.child(
-            button(() -> "<", 5, 193, 20, () -> actions.send(19, 0, recipePage - 1, 0, ""))
-                .setEnabledIf(w -> recipePage > 1)
-                .tooltipBuilder(t -> t.addLine(FactoryText.PAGE_PREVIOUS.text())));
+            new ButtonWidget<>().pos(175, 26).size(14, 14).overlay(GTNGGuiTextures.BOX_AE).onMousePressed(mouse -> {
+                actions.send(18, 0, 0, 0, "");
+                return true;
+            }).setEnabledIf(w -> locked).tooltipBuilder(t -> t.addLine(FactoryText.PatternHelp.text())));
         panel.child(
-            new TextWidget<>(
-                IKey.dynamic(() -> recipePage + " / " + recipePageCount + " (" + multiblock.getMaxRecipePages() + ")"))
-                    .pos(76, 198)
-                    .size(100, 12)
-                    .textAlign(com.cleanroommc.modularui.utils.Alignment.Center));
-        panel.child(
-            button(() -> "-", 211, 193, 20, () -> deletePage.openPanel()).setEnabledIf(w -> recipePageCount > 1)
-                .tooltipBuilder(t -> t.addLine(FactoryText.PAGE_DELETE.text())));
-        panel.child(
-            button(() -> "+", 235, 193, 20, () -> actions.send(19, 0, recipePage + 1, 0, ""))
-                .setEnabledIf(w -> recipePage < multiblock.getMaxRecipePages())
-                .tooltipBuilder(t -> t.addLine(FactoryText.PAGE_NEXT.text())));
-        panel.child(
-            new ButtonWidget<>().pos(140, 26)
-                .size(32, 32)
-                .background(GTNGGuiTextures.MODERN_BUTTON)
-                .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
-                .overlay(GTGuiTextures.OVERLAY_BUTTON_POWER_SWITCH_ON)
-                .tooltipBuilder(t -> t.addLine(FactoryText.PREVIEW.text()))
-                .onMousePressed(mouse -> {
-                    openPreview();
-                    return true;
-                }));
-        panel.child(
-            new ButtonWidget<>().pos(175, 26)
-                .size(14, 14)
-                .overlay(GTNGGuiTextures.BOX_DOUBLE)
-                .tooltipBuilder(t -> t.addLine("×2"))
-                .onMousePressed(mouse -> {
-                    actions.send(14, 0, 0, 0, "");
-                    return true;
-                })
-                .setEnabledIf(w -> !locked && !visibleGraph.nodes.isEmpty()));
-        panel.child(
-            new ButtonWidget<>().pos(175, 44)
-                .size(14, 14)
-                .overlay(GTNGGuiTextures.BOX_HALVE)
-                .tooltipBuilder(t -> t.addLine("÷2"))
-                .onMousePressed(mouse -> {
-                    actions.send(15, 0, 0, 0, "");
-                    return true;
-                })
-                .setEnabledIf(w -> !locked && !visibleGraph.nodes.isEmpty()));
-        panel.child(
-            button(FactoryText.BALANCE::text, 140, 71, 108, () -> actions.send(9, 0, 0, 0, ""))
-                .setEnabledIf(w -> !locked && !visibleGraph.nodes.isEmpty()));
-        panel.child(
-            new ButtonWidget<>().pos(175, 26)
-                .size(14, 14)
-                .overlay(GTNGGuiTextures.BOX_AE)
-                .onMousePressed(mouse -> {
-                    actions.send(18, 0, 0, 0, "");
-                    return true;
-                })
-                .setEnabledIf(w -> locked)
-                .tooltipBuilder(t -> t.addLine(FactoryText.PATTERN_HELP.text())));
-        panel.child(
-            new ButtonWidget<>().pos(175, 44)
-                .size(14, 14)
-                .overlay(GTNGGuiTextures.BOX_CLEAR)
-                .onMousePressed(mouse -> {
-                    clear.openPanel();
-                    return true;
-                })
-                .setEnabledIf(w -> locked)
-                .tooltipBuilder(t -> t.addLine(FactoryText.CLEAR.text())));
-        panel.child(
-            new ButtonWidget<>().pos(200, 25)
-                .size(18, 18)
-                .overlay(GTGuiTextures.OVERLAY_BUTTON_AUTOOUTPUT_ITEM)
-                .tooltipBuilder(t -> t.addLine(FactoryText.ROUTE_CODE.text()))
-                .onMousePressed(mouse -> {
-                    routingCode.setStringValue(visibleGraph.nodes.isEmpty() ? "" : FactoryRouting.encode(visibleGraph));
-                    transfer.openPanel();
-                    return true;
-                }));
-        panel.child(
-            button(FactoryText.Presets::text, 200, 49, 48, () -> presets.openPanel())
-                .setEnabledIf(w -> !locked && visibleGraph.nodes.isEmpty()));
-        panel.child(button(FactoryText.CLEAR::text, 140, 164, 108, () -> clear.openPanel()));
+            new ButtonWidget<>().pos(175, 44).size(14, 14).overlay(GTNGGuiTextures.BOX_CLEAR).onMousePressed(mouse -> {
+                clear.openPanel();
+                return true;
+            }).setEnabledIf(w -> locked).tooltipBuilder(t -> t.addLine(FactoryText.Clear.text())));
+        panel.child(new ButtonWidget<>().pos(200, 25).size(18, 18).overlay(GTGuiTextures.OVERLAY_BUTTON_AUTOOUTPUT_ITEM)
+            .tooltipBuilder(t -> t.addLine(FactoryText.RouteCode.text())).onMousePressed(mouse -> {
+                routingCode.setStringValue(visibleGraph.nodes.isEmpty() ? "" : FactoryRouting.encode(visibleGraph));
+                transfer.openPanel();
+                return true;
+            }));
+        panel.child(button(FactoryText.Presets::text, 200, 49, 48, () -> presets.openPanel())
+            .setEnabledIf(w -> !locked && visibleGraph.nodes.isEmpty()));
+        panel.child(button(FactoryText.Clear::text, 140, 164, 108, () -> clear.openPanel()));
         StringSyncValue status = manager.findSyncHandler("factoryEditorStatus", StringSyncValue.class);
-        panel.child(
-            new TextWidget<>(IKey.dynamic(status::getStringValue)).pos(140, 139)
-                .size(108, 22));
+        panel.child(new TextWidget<>(IKey.dynamic(status::getStringValue)).pos(140, 139).size(108, 22));
         return panel;
     }
 
@@ -476,20 +358,13 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         ModularPanel panel = ModularPanel.defaultPanel("factoryPresets", 350, 268)
             .background(GTNGGuiTextures.MODERN_BACKGROUND);
         panel.child(ButtonWidget.panelCloseButton());
-        panel.child(
-            new TextWidget<>(IKey.dynamic(FactoryText.Presets::text)).pos(10, 8)
-                .size(315, 14));
-        panel.child(
-            new TextWidget<>(IKey.dynamic(FactoryText.PresetHelp::text)).pos(10, 26)
-                .size(330, 30));
-        ScrollWidget<?> list = new ScrollWidget<>(new VerticalScrollData()).pos(10, 60)
-            .size(330, 168);
+        panel.child(new TextWidget<>(IKey.dynamic(FactoryText.Presets::text)).pos(10, 8).size(315, 14));
+        panel.child(new TextWidget<>(IKey.dynamic(FactoryText.PresetHelp::text)).pos(10, 26).size(330, 30));
+        ScrollWidget<?> list = new ScrollWidget<>(new VerticalScrollData()).pos(10, 60).size(330, 168);
         list.onUpdateListener(w -> {
             var area = w.getScrollArea();
-            area.getScrollY()
-                .setScrollSize(FactoryPresets.Preset.values().length * 24);
-            area.getScrollY()
-                .clamp(area);
+            area.getScrollY().setScrollSize(FactoryPresets.Preset.values().length * 24);
+            area.getScrollY().clamp(area);
         });
         panel.child(list);
         int row = 0;
@@ -498,16 +373,13 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
             list.child(button(() -> preset.title.text() + " (" + result.size() + ")", 0, row++ * 24, 320, () -> {
                 actions.send(21, 0, 0, 0, preset.name());
                 presets.closePanel();
-            }).setEnabledIf(w -> result.available() && !locked && visibleGraph.nodes.isEmpty())
-                .tooltipBuilder(t -> {
-                    t.addLine(preset.help.text());
-                    t.addLine(FactoryText.PresetChance.text());
-                    if (!result.available()) t.addLine(FactoryText.PresetUnavailable.text() + ": " + result.problem);
-                }));
+            }).setEnabledIf(w -> result.available() && !locked && visibleGraph.nodes.isEmpty()).tooltipBuilder(t -> {
+                t.addLine(preset.help.text());
+                t.addLine(FactoryText.PresetChance.text());
+                if (!result.available()) t.addLine(FactoryText.PresetUnavailable.text() + ": " + result.problem);
+            }));
         }
-        panel.child(
-            new TextWidget<>(IKey.dynamic(FactoryText.PresetChance::text)).pos(10, 234)
-                .size(330, 28));
+        panel.child(new TextWidget<>(IKey.dynamic(FactoryText.PresetChance::text)).pos(10, 234).size(330, 28));
         return panel;
     }
 
@@ -516,7 +388,7 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
     }
 
     private static boolean shiftDown() {
-        return net.minecraft.client.gui.GuiScreen.isShiftKeyDown();
+        return GuiScreen.isShiftKeyDown();
     }
 
     private void openPreview() {
@@ -533,28 +405,18 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         ModularPanel panel = ModularPanel.defaultPanel("factoryTransfer", 360, 112)
             .background(GTNGGuiTextures.MODERN_BACKGROUND);
         panel.child(ButtonWidget.panelCloseButton());
-        panel.child(
-            new TextWidget<>(IKey.dynamic(FactoryText.ROUTE_CODE_HELP::text)).pos(10, 10)
-                .size(320, 34));
-        panel.child(
-            new com.cleanroommc.modularui.widgets.textfield.TextFieldWidget().value(routingCode)
-                .setMaxLength(FactoryRouting.MAX_CODE_LENGTH)
-                .pos(10, 48)
-                .size(340, 18));
-        panel.child(
-            button(
-                FactoryText.IMPORT_CODE::text,
-                10,
-                80,
-                160,
-                () -> actions.send(17, 0, 0, 0, routingCode.getStringValue()))
-                    .setEnabledIf(w -> !locked && visibleGraph.nodes.isEmpty()));
-        panel.child(button(FactoryText.COPY_CODE::text, 190, 80, 160, this::copyCode));
+        panel.child(new TextWidget<>(IKey.dynamic(FactoryText.RouteCodeHelp::text)).pos(10, 10).size(320, 34));
+        panel.child(new TextFieldWidget().value(routingCode).setMaxLength(FactoryRouting.MAX_CODE_LENGTH).pos(10, 48)
+            .size(340, 18));
+        panel.child(button(FactoryText.ImportCode::text, 10, 80, 160,
+            () -> actions.send(17, 0, 0, 0, routingCode.getStringValue()))
+                .setEnabledIf(w -> !locked && visibleGraph.nodes.isEmpty()));
+        panel.child(button(FactoryText.CopyCode::text, 190, 80, 160, this::copyCode));
         return panel;
     }
 
     private void copyCode() {
-        net.minecraft.client.gui.GuiScreen.setClipboardString(routingCode.getStringValue());
+        GuiScreen.setClipboardString(routingCode.getStringValue());
     }
 
     /** Explicit clear confirmation preserves the machine's draining and deposit-refund semantics. */
@@ -562,10 +424,8 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         ModularPanel panel = ModularPanel.defaultPanel("factoryClear", 280, 100)
             .background(GTNGGuiTextures.MODERN_BACKGROUND);
         panel.child(ButtonWidget.panelCloseButton());
-        panel.child(
-            new TextWidget<>(IKey.dynamic(FactoryText.CLEAR_HELP::text)).pos(10, 10)
-                .size(252, 42));
-        panel.child(button(FactoryText.CLEAR::text, 10, 67, 120, () -> {
+        panel.child(new TextWidget<>(IKey.dynamic(FactoryText.ClearHelp::text)).pos(10, 10).size(252, 42));
+        panel.child(button(FactoryText.Clear::text, 10, 67, 120, () -> {
             actions.send(16, 0, 0, 0, "");
             clear.closePanel();
         }));
@@ -578,10 +438,9 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         ModularPanel panel = ModularPanel.defaultPanel("factoryDeletePage", 280, 100)
             .background(GTNGGuiTextures.MODERN_BACKGROUND);
         panel.child(ButtonWidget.panelCloseButton());
-        panel.child(
-            new TextWidget<>(IKey.dynamic(() -> FactoryText.PAGE_DELETE_HELP.text() + " #" + recipePage)).pos(10, 10)
-                .size(252, 42));
-        panel.child(button(FactoryText.PAGE_DELETE::text, 10, 67, 120, () -> {
+        panel.child(new TextWidget<>(IKey.dynamic(() -> FactoryText.PageDeleteHelp.text() + " #" + recipePage))
+            .pos(10, 10).size(252, 42));
+        panel.child(button(FactoryText.PageDelete::text, 10, 67, 120, () -> {
             actions.send(20, recipePage, 0, 0, "");
             deletePage.closePanel();
         }));
@@ -601,62 +460,38 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         card(panel, 6, 76, 240, 3, 0xff69bbef);
         card(panel, 264, 76, 240, 3, 0xff73d4ad);
         panel.child(ButtonWidget.panelCloseButton());
-        panel.child(
-            new TextWidget<>(IKey.dynamic(FactoryText.PREVIEW::text)).pos(10, 8)
-                .size(460, 14));
-        panel.child(
-            new TextWidget<>(IKey.dynamic(() -> previewSnapshot.info)).pos(10, 29)
-                .size(490, 18));
-        panel.child(
-            new TextWidget<>(
-                IKey.dynamic(
-                    () -> previewSnapshot.exportIssue() == null
-                        ? (previewSnapshot.exactBatch ? FactoryText.AtomicNote : FactoryText.PREVIEW_NOTE).text()
-                        : "§e" + previewSnapshot.exportIssue()
-                            .text())).pos(10, 50)
-                                .size(490, 26)
-                                .color(0xffdae3ee)
-                                .textAlign(com.cleanroommc.modularui.utils.Alignment.CenterLeft));
+        panel.child(new TextWidget<>(IKey.dynamic(FactoryText.Preview::text)).pos(10, 8).size(460, 14));
+        panel.child(new TextWidget<>(IKey.dynamic(() -> previewSnapshot.info)).pos(10, 29).size(490, 18));
+        panel.child(new TextWidget<>(IKey.dynamic(() -> previewSnapshot.exportIssue() == null
+            ? (previewSnapshot.exactBatch ? FactoryText.AtomicNote : FactoryText.PreviewNote).text()
+            : "§e" + previewSnapshot.exportIssue().text())).pos(10, 50).size(490, 26).color(0xffdae3ee)
+                .textAlign(Alignment.CenterLeft));
         for (int side = 0; side < 2; side++) {
             final int column = side;
             int x = side == 0 ? 10 : 268;
-            panel.child(
-                new TextWidget<>(
-                    IKey.dynamic(
-                        () -> (column == 0 ? FactoryText.EXTERNAL_INPUT.text() : FactoryText.OUTPUTS.text()) + " ("
-                            + (previewSnapshot.exactBatch ? FactoryText.PerBatch : FactoryText.PER_TICK).text()
-                            + ")")).pos(x + 4, 82)
-                                .size(224, 14)
-                                .color(column == 0 ? 0xff92d3ff : 0xff9be9c7)
-                                .textAlign(com.cleanroommc.modularui.utils.Alignment.CenterLeft));
+            panel.child(new TextWidget<>(
+                IKey.dynamic(() -> (column == 0 ? FactoryText.ExternalInput.text() : FactoryText.Outputs.text()) + " ("
+                    + (previewSnapshot.exactBatch ? FactoryText.PerBatch : FactoryText.PerTick).text()
+                    + ")")).pos(x + 4, 82).size(224, 14).color(column == 0 ? 0xff92d3ff : 0xff9be9c7)
+                        .textAlign(Alignment.CenterLeft));
             for (int slot = 0; slot < 24; slot++) {
                 final int index = slot;
-                panel.child(
-                    new com.xyp.gtnotgood.common.gui.modularui.widget.FactoryIngredientWidget(
-                        () -> previewIngredient(column, index)).pos(x + (slot % 6) * 39, 99 + (slot / 6) * 40)
-                            .size(35)
-                            .setEnabledIf(w -> previewIngredient(column, index) != null));
+                panel.child(new FactoryIngredientWidget(() -> previewIngredient(column, index))
+                    .pos(x + (slot % 6) * 39, 99 + (slot / 6) * 40).size(35)
+                    .setEnabledIf(w -> previewIngredient(column, index) != null));
             }
             panel.child(
                 button(() -> "<", x, 270, 32, () -> previewPages[column] = Math.max(0, previewPages[column] - 1)));
-            panel.child(
-                new TextWidget<>(IKey.dynamic(() -> (previewPages[column] + 1) + "/" + previewPageCount(column)))
-                    .pos(x + 36, 273)
-                    .size(160, 14)
-                    .color(0xffe1e8f1));
-            panel.child(
-                button(
-                    () -> ">",
-                    x + 200,
-                    270,
-                    32,
-                    () -> previewPages[column] = Math.min(previewPageCount(column) - 1, previewPages[column] + 1)));
+            panel
+                .child(new TextWidget<>(IKey.dynamic(() -> (previewPages[column] + 1) + "/" + previewPageCount(column)))
+                    .pos(x + 36, 273).size(160, 14).color(0xffe1e8f1));
+            panel.child(button(() -> ">", x + 200, 270, 32,
+                () -> previewPages[column] = Math.min(previewPageCount(column) - 1, previewPages[column] + 1)));
         }
-        panel.child(button(FactoryText.CONFIRM_LOCK::text, 176, 303, 158, () -> {
+        panel.child(button(FactoryText.ConfirmLock::text, 176, 303, 158, () -> {
             actions.send(5, recipePage, 0, 0, previewCode);
             preview.closePanel();
-        }).background(new com.cleanroommc.modularui.drawable.Rectangle().color(0xff9dd5bc))
-            .hoverBackground(new com.cleanroommc.modularui.drawable.Rectangle().color(0xffb7ebd4))
+        }).background(new Rectangle().color(0xff9dd5bc)).hoverBackground(new Rectangle().color(0xffb7ebd4))
             .setEnabledIf(w -> !locked && !visibleGraph.nodes.isEmpty()));
         return panel;
     }
@@ -673,12 +508,8 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
 
     private void tune(int parallel, int oc) {
         FactoryGraph.Node node = visibleGraph.find(selected);
-        if (node != null) actions.send(
-            4,
-            selected,
-            (int) Math.max(1, Math.min(Integer.MAX_VALUE, (long) node.parallel + parallel)),
-            node.overclocks + oc,
-            "");
+        if (node != null) actions.send(4, selected,
+            (int) Math.max(1, Math.min(Integer.MAX_VALUE, (long) node.parallel + parallel)), node.overclocks + oc, "");
     }
 
     private String nodeLine(int id) {
@@ -696,35 +527,23 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         card(panel, 6, 181, 348, 35, 0xffb5c5d4);
         card(panel, 6, 218, 348, 56, 0xffc2cad5);
         panel.child(ButtonWidget.panelCloseButton());
-        panel.child(
-            new TextWidget<>(
-                IKey.dynamic(
-                    () -> FactoryText.NODE_DETAILS.text() + " #"
-                        + (visibleGraph.nodes.indexOf(visibleGraph.find(selected)) + 1))).pos(10, 8)
-                            .size(320, 14));
-        com.cleanroommc.modularui.widget.ScrollWidget<?> list = new com.cleanroommc.modularui.widget.ScrollWidget<>(
-            new com.cleanroommc.modularui.widget.scroll.VerticalScrollData()).pos(10, 29)
-                .size(340, 148);
+        panel.child(new TextWidget<>(IKey.dynamic(() -> FactoryText.NodeDetails.text() + " #"
+            + (visibleGraph.nodes.indexOf(visibleGraph.find(selected)) + 1))).pos(10, 8).size(320, 14));
+        ScrollWidget<?> list = new ScrollWidget<>(new VerticalScrollData()).pos(10, 29).size(340, 148);
         for (int i = 0; i < 96; i++) {
             final int index = i;
-            ParentWidget<?> row = new ParentWidget<>().pos(0, i * 20)
-                .size(330, 20)
-                .background(
-                    new com.cleanroommc.modularui.drawable.Rectangle().color(i % 2 == 0 ? 0xffdce1e7 : 0xffcbd2dd))
+            ParentWidget<?> row = new ParentWidget<>().pos(0, i * 20).size(330, 20)
+                .background(new Rectangle().color(i % 2 == 0 ? 0xffdce1e7 : 0xffcbd2dd))
                 .setEnabledIf(w -> index < detailIngredients().size());
-            row.child(
-                new ItemDisplayWidget()
-                    .item(new ObjectValue.Dynamic<>(ItemStack.class, () -> detailItem(index), value -> {}))
-                    .displayAmount(true)
-                    .pos(0, 1));
+            row.child(new ItemDisplayWidget()
+                .item(new ObjectValue.Dynamic<>(ItemStack.class, () -> detailItem(index), value -> {}))
+                .displayAmount(true).pos(0, 1));
             row.child(new TextWidget<>(IKey.dynamic(() -> {
                 List<DetailIngredient> entries = detailIngredients();
                 if (index >= entries.size()) return "";
                 DetailIngredient entry = entries.get(index);
                 return entry.label.text() + ": " + itemName(entry.item);
-            })).pos(22, 3)
-                .size(304, 16)
-                .textAlign(com.cleanroommc.modularui.utils.Alignment.CenterLeft));
+            })).pos(22, 3).size(304, 16).textAlign(Alignment.CenterLeft));
             list.child(row);
         }
         FactoryListScroll detailScroll = new FactoryListScroll();
@@ -733,13 +552,10 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         panel.child(new TextWidget<>(IKey.dynamic(() -> {
             FactoryRecipeCatalog.Entry entry = selectedRecipe();
             FactoryGraph.Node node = visibleGraph.find(selected);
-            if (entry == null || node == null) return FactoryText.EMPTY.text();
+            if (entry == null || node == null) return FactoryText.Empty.text();
             try {
-                long[] timing = FactoryGraph.timing(
-                    node.customEUt < 0 ? entry.recipe.mEUt : node.customEUt,
-                    entry.recipe.mDuration,
-                    node.wholeLineBatch ? 1 : node.parallel,
-                    node.overclocks);
+                long[] timing = FactoryGraph.timing(node.customEUt < 0 ? entry.recipe.mEUt : node.customEUt,
+                    entry.recipe.mDuration, node.wholeLineBatch ? 1 : node.parallel, node.overclocks);
                 return FactoryControllers.displayName(entry.map.unlocalizedName) + "\n"
                     + timing[0]
                     + " EU/t | "
@@ -747,33 +563,22 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
                     + " t | OC "
                     + node.overclocks;
             } catch (ArithmeticException invalid) {
-                return FactoryText.LIMIT.text();
+                return FactoryText.Limit.text();
             }
-        })).pos(10, 184)
-            .size(340, 30));
-        ParentWidget<?> parallelControls = new ParentWidget<>().pos(0, 0)
-            .size(180, 244)
-            .setEnabledIf(w -> {
-                FactoryGraph.Node node = visibleGraph.find(selected);
-                return !locked && node != null && !node.wholeLineBatch;
-            });
+        })).pos(10, 184).size(340, 30));
+        ParentWidget<?> parallelControls = new ParentWidget<>().pos(0, 0).size(180, 244).setEnabledIf(w -> {
+            FactoryGraph.Node node = visibleGraph.find(selected);
+            return !locked && node != null && !node.wholeLineBatch;
+        });
         panel.child(parallelControls);
-        parallelControls.child(
-            new TextWidget<>(IKey.dynamic(FactoryText.PARALLEL::text)).pos(10, 224)
-                .size(50, 15));
+        parallelControls.child(new TextWidget<>(IKey.dynamic(FactoryText.Parallel::text)).pos(10, 224).size(50, 15));
         // MUI2's dragged-root background pass ignores disabled direct children. A backgroundless
         // disabled parent stops traversal before its editing fields/buttons can paint their backgrounds.
-        ParentWidget<?> editing = new ParentWidget<>().pos(0, 0)
-            .size(360, 304)
-            .setEnabledIf(w -> !locked);
+        ParentWidget<?> editing = new ParentWidget<>().pos(0, 0).size(360, 304).setEnabledIf(w -> !locked);
         panel.child(editing);
-        parallelControls.child(
-            new com.cleanroommc.modularui.widgets.textfield.TextFieldWidget().value(routeParallel)
-                .setMaxLength(10)
-                .pos(64, 222)
-                .size(52, 18)
-                .setEnabledIf(w -> !locked));
-        parallelControls.child(button(FactoryText.SET::text, 122, 222, 52, () -> {
+        parallelControls.child(new TextFieldWidget().value(routeParallel).setMaxLength(10).pos(64, 222).size(52, 18)
+            .setEnabledIf(w -> !locked));
+        parallelControls.child(button(FactoryText.Set::text, 122, 222, 52, () -> {
             FactoryGraph.Node node = visibleGraph.find(selected);
             if (node == null) return;
             try {
@@ -782,28 +587,16 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         }).setEnabledIf(w -> !locked));
         editing.child(button(() -> "OC−", 184, 222, 76, () -> tune(0, -1)).setEnabledIf(w -> !locked));
         editing.child(button(() -> "OC+", 270, 222, 76, () -> tune(0, 1)).setEnabledIf(w -> !locked));
-        panel.child(
-            new TextWidget<>(IKey.dynamic(FactoryText.NODE_EUT::text)).pos(10, 253)
-                .size(95, 20));
-        editing.child(
-            new com.cleanroommc.modularui.widgets.textfield.TextFieldWidget().value(nodeEUtText)
-                .setMaxLength(19)
-                .pos(110, 251)
-                .size(115, 18)
+        panel.child(new TextWidget<>(IKey.dynamic(FactoryText.NodeEut::text)).pos(10, 253).size(95, 20));
+        editing.child(new TextFieldWidget().value(nodeEUtText).setMaxLength(19).pos(110, 251).size(115, 18)
+            .setEnabledIf(w -> !locked));
+        editing.child(button(FactoryText.Set::text, 231, 251, 52,
+            () -> actions.send(10, selected, 0, 0, nodeEUtText.getStringValue())).setEnabledIf(w -> !locked));
+        editing
+            .child(button(FactoryText.RecipeDefault::text, 289, 251, 57, () -> actions.send(10, selected, 0, 0, "-1"))
                 .setEnabledIf(w -> !locked));
-        editing.child(
-            button(
-                FactoryText.SET::text,
-                231,
-                251,
-                52,
-                () -> actions.send(10, selected, 0, 0, nodeEUtText.getStringValue())).setEnabledIf(w -> !locked));
-        editing.child(
-            button(FactoryText.RECIPE_DEFAULT::text, 289, 251, 57, () -> actions.send(10, selected, 0, 0, "-1"))
-                .setEnabledIf(w -> !locked));
-        panel.child(
-            new TextWidget<>(IKey.dynamic(() -> locked ? FactoryText.LOCKED.text() : nodeLine(selected))).pos(10, 280)
-                .size(340, 16));
+        panel.child(new TextWidget<>(IKey.dynamic(() -> locked ? FactoryText.Locked.text() : nodeLine(selected)))
+            .pos(10, 280).size(340, 16));
         return panel;
     }
 
@@ -830,8 +623,8 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         detailRecipeId = id;
         detailCache.clear();
         for (int group = 0; group < 3; group++) {
-            FactoryText label = group == 0 ? FactoryText.INPUTS
-                : group == 1 ? FactoryText.OUTPUTS : FactoryText.CATALYSTS;
+            FactoryText label = group == 0 ? FactoryText.Inputs
+                : group == 1 ? FactoryText.Outputs : FactoryText.Catalysts;
             for (int i = 0; i < 32; i++) {
                 ItemStack item = ingredient(group, i);
                 if (item == null) break;
@@ -875,20 +668,12 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
 
     /** Background grouping keeps the inherited MUI layout and hit targets unchanged. */
     private void card(ModularPanel panel, int x, int y, int width, int height, int color) {
-        panel.child(
-            new com.cleanroommc.modularui.widget.Widget<>()
-                .background(new com.cleanroommc.modularui.drawable.Rectangle().color(color))
-                .pos(x, y)
-                .size(width, height));
+        panel.child(new Widget<>().background(new Rectangle().color(color)).pos(x, y).size(width, height));
     }
 
     private ButtonWidget<?> button(Supplier<String> text, int x, int y, int width, Runnable action) {
-        return new ButtonWidget<>().pos(x, y)
-            .size(width, 20)
-            .background(GTNGGuiTextures.MODERN_BUTTON)
-            .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
-            .overlay(IKey.dynamic(text))
-            .onMousePressed(mouse -> {
+        return new ButtonWidget<>().pos(x, y).size(width, 20).background(GTNGGuiTextures.MODERN_BUTTON)
+            .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER).overlay(IKey.dynamic(text)).onMousePressed(mouse -> {
                 if (mouse != 0) return false;
                 action.run();
                 return true;
@@ -910,11 +695,13 @@ public class IntegratedProductionFactoryGui extends GTNGModernMultiBlockBaseGui<
         /** Returns -2 for an editable route list and -1 otherwise; never targets a previously closed machine. */
         public int importTarget() {
             if (!isValid() || gui.locked) return -1;
-            if ((gui.details != null && gui.details.isPanelOpen()) || (gui.preview != null && gui.preview.isPanelOpen())
-                || (gui.presets != null && gui.presets.isPanelOpen())
-                || (gui.transfer != null && gui.transfer.isPanelOpen())
-                || (gui.clear != null && gui.clear.isPanelOpen())
-                || (gui.deletePage != null && gui.deletePage.isPanelOpen())) return -1;
+            if (
+                (gui.details != null && gui.details.isPanelOpen()) || (gui.preview != null && gui.preview.isPanelOpen())
+                    || (gui.presets != null && gui.presets.isPanelOpen())
+                    || (gui.transfer != null && gui.transfer.isPanelOpen())
+                    || (gui.clear != null && gui.clear.isPanelOpen())
+                    || (gui.deletePage != null && gui.deletePage.isPanelOpen())
+            ) return -1;
             return gui.editor != null && gui.editor.isPanelOpen()
                 && gui.visibleGraph.nodes.size() < FactoryGraph.MAX_NODES ? -2 : -1;
         }

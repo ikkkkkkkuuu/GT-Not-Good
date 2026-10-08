@@ -23,8 +23,8 @@ final class RoguelikeCandidates extends WorldEditor {
 
     static boolean enabled(World world) {
         List<Integer> allowed = RogueConfig.getIntList(RogueConfig.DIMENSIONWL);
-        return RogueConfig.getBoolean(RogueConfig.DONATURALSPAWN) && !RogueConfig.getIntList(RogueConfig.DIMENSIONBL)
-            .contains(world.provider.dimensionId)
+        return RogueConfig.getBoolean(RogueConfig.DONATURALSPAWN)
+            && !RogueConfig.getIntList(RogueConfig.DIMENSIONBL).contains(world.provider.dimensionId)
             && (allowed.isEmpty() || allowed.contains(world.provider.dimensionId));
     }
 

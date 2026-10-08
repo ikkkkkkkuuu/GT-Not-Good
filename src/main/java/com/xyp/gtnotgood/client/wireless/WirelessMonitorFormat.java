@@ -18,18 +18,16 @@ public final class WirelessMonitorFormat {
 
     public static String number(BigDecimal value, boolean scientific, boolean fractional) {
         BigDecimal absolute = value.abs();
-        if ((scientific && absolute.compareTo(BigDecimal.valueOf(1000)) >= 0)
-            || absolute.precision() - absolute.scale() > 18) {
+        if (
+            (scientific && absolute.compareTo(BigDecimal.valueOf(1000)) >= 0)
+                || absolute.precision() - absolute.scale() > 18
+        ) {
             BigDecimal rounded = absolute.round(new MathContext(3, RoundingMode.HALF_UP));
             int exponent = rounded.precision() - rounded.scale() - 1;
-            return rounded.movePointLeft(exponent)
-                .stripTrailingZeros()
-                .toPlainString() + "×10^"
-                + exponent;
+            return rounded.movePointLeft(exponent).stripTrailingZeros().toPlainString() + "×10^" + exponent;
         }
         if (fractional && absolute.signum() > 0 && absolute.compareTo(new BigDecimal("0.01")) < 0) return "<0.01";
-        DecimalFormat format = new DecimalFormat(
-            fractional ? "#,##0.00" : "#,##0",
+        DecimalFormat format = new DecimalFormat(fractional ? "#,##0.00" : "#,##0",
             DecimalFormatSymbols.getInstance(Locale.US));
         format.setRoundingMode(RoundingMode.HALF_UP);
         return format.format(absolute);

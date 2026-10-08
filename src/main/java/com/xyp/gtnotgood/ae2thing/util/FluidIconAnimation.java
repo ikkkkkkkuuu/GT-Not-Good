@@ -25,7 +25,7 @@ public final class FluidIconAnimation {
     private FluidIconAnimation() {}
 
     public static void mark(IIcon icon) {
-        if (icon == null || !Mods.HODGEPODGE.isModLoaded()) return;
+        if (icon == null || !Mods.Hodgepodge.isModLoaded()) return;
         resolve();
         if (spriteClass == null || markMethod == null) return;
         if (!spriteClass.isInstance(icon)) return;

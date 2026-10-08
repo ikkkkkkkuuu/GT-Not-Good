@@ -24,6 +24,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
+import java.util.List;
 
 /** Sends each player the commands they are permitted to use. */
 public class PlayerJoinHandler {
@@ -74,7 +75,7 @@ public class PlayerJoinHandler {
       }
 
       dispatcher.getRoot().addChild(node);
-      java.util.List<?> aliases = command.getCommandAliases();
+      List<?> aliases = command.getCommandAliases();
       if (aliases != null) {
          for (Object aliasObj : aliases) {
             String alias = (String) aliasObj;

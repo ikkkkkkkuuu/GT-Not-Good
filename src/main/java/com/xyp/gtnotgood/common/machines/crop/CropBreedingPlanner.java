@@ -3,6 +3,7 @@ package com.xyp.gtnotgood.common.machines.crop;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -54,9 +55,8 @@ public final class CropBreedingPlanner {
         Candidate best = null;
         if (mutations != null) {
             List<ICropMutation> sorted = new ArrayList<>(mutations);
-            sorted.sort(
-                java.util.Comparator.comparingInt(ICropMutation::getParentCount)
-                    .thenComparing(CropBreedingPlanner::mutationSignature));
+            sorted.sort(Comparator.comparingInt(ICropMutation::getParentCount)
+                .thenComparing(CropBreedingPlanner::mutationSignature));
             for (ICropMutation mutation : sorted) {
                 Candidate candidate = resolveMutation(cropId, mutation, archived, visiting, memo);
                 if (candidate != null && (best == null || compare(candidate, best) < 0)) {
@@ -76,11 +76,9 @@ public final class CropBreedingPlanner {
         Set<String> visiting, Map<String, Candidate> memo) {
         Candidate combined = Candidate.empty();
         for (ICropCard parent : mutation.getParents()) {
-            if (parent == null || parent.getId() == null
-                || parent.getId()
-                    .isEmpty()
-                || parent.getId()
-                    .equals(resultId)) {
+            if (
+                parent == null || parent.getId() == null || parent.getId().isEmpty() || parent.getId().equals(resultId)
+            ) {
                 return null;
             }
             Candidate parentCandidate = resolve(parent.getId(), archived, visiting, memo);
@@ -100,18 +98,12 @@ public final class CropBreedingPlanner {
         int cost = Long.compare(left.recipeCost(), right.recipeCost());
         if (cost != 0) return cost;
 
-        return left.signature()
-            .compareTo(right.signature());
+        return left.signature().compareTo(right.signature());
     }
 
     private static String mutationSignature(ICropMutation mutation) {
-        return mutation.getParents()
-            .stream()
-            .map(parent -> parent == null ? "" : parent.getId())
-            .sorted()
-            .collect(Collectors.joining("+")) + ">"
-            + mutation.getOutput()
-                .getId();
+        return mutation.getParents().stream().map(parent -> parent == null ? "" : parent.getId()).sorted().collect(
+            Collectors.joining("+")) + ">" + mutation.getOutput().getId();
     }
 
     private static final class Candidate {
@@ -159,8 +151,7 @@ public final class CropBreedingPlanner {
         private String signature() {
             StringBuilder signature = new StringBuilder();
             for (Step step : stepsByResult.values()) {
-                signature.append(step.signature())
-                    .append(';');
+                signature.append(step.signature()).append(';');
             }
             return signature.toString();
         }
@@ -180,21 +171,14 @@ public final class CropBreedingPlanner {
 
         private Step(ICropMutation mutation) {
             this.mutation = mutation;
-            this.parents = mutation.getParents()
-                .stream()
-                .map(ICropCard::getId)
-                .collect(Collectors.toList());
-            this.result = mutation.getOutput()
-                .getId();
+            this.parents = mutation.getParents().stream().map(ICropCard::getId).collect(Collectors.toList());
+            this.result = mutation.getOutput().getId();
             this.duration = Math.max(1, mutation.getBreedingMachineRecipeDuration());
             this.eut = Math.max(1, mutation.getBreedingMachineRecipeEUt());
         }
 
         public String signature() {
-            return parents.stream()
-                .sorted()
-                .collect(Collectors.joining("+")) + ">"
-                + result;
+            return parents.stream().sorted().collect(Collectors.joining("+")) + ">" + result;
         }
     }
 
@@ -220,9 +204,7 @@ public final class CropBreedingPlanner {
         }
 
         public String getFirstMissingCrop() {
-            return missingCrops.isEmpty() ? ""
-                : missingCrops.iterator()
-                    .next();
+            return missingCrops.isEmpty() ? "" : missingCrops.iterator().next();
         }
 
         public List<Step> getReadySteps(Set<String> archivedCrops, int limit) {

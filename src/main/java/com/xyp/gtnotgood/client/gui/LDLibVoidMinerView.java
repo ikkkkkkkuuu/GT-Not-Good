@@ -69,25 +69,12 @@ public final class LDLibVoidMinerView extends UIElement {
         this.model = model;
         addChild(new Label(8, 5, 459, 16, tr("NameLargeVoidMiner")));
         addChild(coloredButton(12, 26, 112, 20, this::oreMode, model.actions::sendCycleOreMode));
-        fortune = coloredButton(
-            130,
-            26,
-            105,
-            20,
-            this::fortuneLabel,
-            model.actions::sendCycleFortune,
+        fortune = coloredButton(130, 26, 105, 20, this::fortuneLabel, model.actions::sendCycleFortune,
             () -> 0xFFFFFF33);
         addChild(fortune);
-        addChild(
-            coloredButton(
-                241,
-                26,
-                100,
-                20,
-                () -> tr(
-                    OVERCLOCK) + " " + model.overclock.getIntValue() + " (" + model.cycleTicks.getIntValue() + "t)",
-                model.actions::sendCycleOverclock,
-                () -> 0xFFFFAA44));
+        addChild(coloredButton(241, 26, 100, 20,
+            () -> tr(OVERCLOCK) + " " + model.overclock.getIntValue() + " (" + model.cycleTicks.getIntValue() + "t)",
+            model.actions::sendCycleOverclock, () -> 0xFFFFAA44));
         addChild(new Label(347, 24, 118, 12, () -> number(model.energy.getDoubleValue()) + " EU/t"));
         addChild(
             new Label(347, 36, 118, 12, () -> tr(ENERGY_COST) + " x" + decimal(model.energyMult.getDoubleValue())));
@@ -113,77 +100,37 @@ public final class LDLibVoidMinerView extends UIElement {
         // # zh_CN 过滤增幅
         addChild(new Label(106, 120, 62, 16, tr("gui.gtnotgood.ldminer.filtercost")));
         addChild(new Label(106, 138, 62, 16, () -> "+" + number(model.weightIncrease.getDoubleValue()) + "%"));
+        addChild(new Label(10, 164, 158, 16,
+            () -> tr("gui.gtnotgood.largeVoidMiner.dimension_line") + model.dimension.getValue()));
         addChild(
-            new Label(
-                10,
-                164,
-                158,
-                16,
-                () -> tr("gui.gtnotgood.largeVoidMiner.dimension_line") + model.dimension.getValue()));
-        addChild(
-            coloredButton(
-                12,
-                184,
-                94,
-                20,
-                () -> tr((model.directional.getValue() ? DIRECTIONAL_ON : DIRECTIONAL_OFF)),
-                model.actions::sendToggleDirectional,
-                () -> model.directional.getValue() ? 0xFF9933FF : 0xFF337777));
+            coloredButton(12, 184, 94, 20, () -> tr((model.directional.getValue() ? DIRECTIONAL_ON : DIRECTIONAL_OFF)),
+                model.actions::sendToggleDirectional, () -> model.directional.getValue() ? 0xFF9933FF : 0xFF337777));
         // #tr gui.gtnotgood.ldminer.power
         // # Power
         // # zh_CN 开关
-        addChild(
-            coloredButton(
-                111,
-                184,
-                55,
-                20,
-                () -> tr("gui.gtnotgood.ldminer.power") + ": "
-                    + tr(model.enabled.getValue() ? "options.on" : "options.off"),
-                () -> model.enabled.setValue(!model.enabled.getValue()),
-                () -> model.enabled.getValue() ? 0xFF337777 : 0xFF4852FF));
-        addChild(
-            new WrappedText(
-                12,
-                212,
-                154,
-                48,
-                () -> tr((model.directional.getValue() ? MODE_HINT_DIRECTIONAL : MODE_HINT_FILTERED))
-                    + (model.directional.getValue()
-                        ? "\n" + tr(UU_COST) + " " + decimal(model.uu.getDoubleValue()) + " L/s"
-                        : "")));
+        addChild(coloredButton(111, 184, 55, 20,
+            () -> tr("gui.gtnotgood.ldminer.power") + ": "
+                + tr(model.enabled.getValue() ? "options.on" : "options.off"),
+            () -> model.enabled.setValue(!model.enabled.getValue()),
+            () -> model.enabled.getValue() ? 0xFF337777 : 0xFF4852FF));
+        addChild(new WrappedText(12, 212, 154, 48,
+            () -> tr((model.directional.getValue() ? MODE_HINT_DIRECTIONAL : MODE_HINT_FILTERED))
+                + (model.directional.getValue() ? "\n" + tr(UU_COST) + " " + decimal(model.uu.getDoubleValue()) + " L/s"
+                    : "")));
     }
 
     private void buildBrowser() {
-        addChild(
-            new Label(
-                178,
-                51,
-                170,
-                17,
-                () -> tr(BROWSER_TITLE) + "  "
-                    + rows.getItems()
-                        .size()
-                    + "/"
-                    + snapshot.size()));
+        addChild(new Label(178, 51, 170, 17,
+            () -> tr(BROWSER_TITLE) + "  " + rows.getItems().size() + "/" + snapshot.size()));
         // #tr gui.gtnotgood.ldminer.clear
         // # Clear selection
         // # zh_CN 清空当前选择
-        addChild(
-            coloredButton(
-                367,
-                51,
-                97,
-                17,
-                () -> tr("gui.gtnotgood.ldminer.clear"),
-                this::confirmClear,
-                () -> 0xFFFF8800));
-        addChild(
-            theme.textField(178, 72, 169, 18)
-                .setOnChange(value -> {
-                    search = value.toLowerCase(Locale.ROOT);
-                    refreshRows();
-                }));
+        addChild(coloredButton(367, 51, 97, 17, () -> tr("gui.gtnotgood.ldminer.clear"), this::confirmClear,
+            () -> 0xFFFF8800));
+        addChild(theme.textField(178, 72, 169, 18).setOnChange(value -> {
+            search = value.toLowerCase(Locale.ROOT);
+            refreshRows();
+        }));
         addChild(coloredButton(352, 72, 112, 18, this::categoryLabel, () -> {
             category = (category + 1) % 5;
             refreshRows();
@@ -210,13 +157,7 @@ public final class LDLibVoidMinerView extends UIElement {
         // # No matching ores
         // # zh_CN 没有符合条件的矿石
         addChild(
-            new Label(
-                180,
-                162,
-                278,
-                20,
-                () -> rows.getItems()
-                    .isEmpty() ? tr("gui.gtnotgood.ldminer.empty") : ""));
+            new Label(180, 162, 278, 20, () -> rows.getItems().isEmpty() ? tr("gui.gtnotgood.ldminer.empty") : ""));
         addChild(rows);
     }
 
@@ -225,11 +166,13 @@ public final class LDLibVoidMinerView extends UIElement {
 
             @Override
             protected void drawForeground(int mx, int my, int px, int py) {
-                if (mx >= getScreenX() && mx < getScreenX() + getWidth()
-                    && my >= getScreenY()
-                    && my < getScreenY() + getHeight()
-                    && my >= rows.getScreenY()
-                    && my < rows.getScreenY() + rows.getHeight()) {
+                if (
+                    mx >= getScreenX() && mx < getScreenX() + getWidth()
+                        && my >= getScreenY()
+                        && my < getScreenY() + getHeight()
+                        && my >= rows.getScreenY()
+                        && my < rows.getScreenY() + rows.getHeight()
+                ) {
                     detail = info.ore.getDisplayName() + " | "
                         + tr("gui.gtnotgood.ldminer.weight")
                         + " "
@@ -246,14 +189,8 @@ public final class LDLibVoidMinerView extends UIElement {
         // #tr gui.gtnotgood.ldminer.local
         // # Local
         // # zh_CN 本地
-        row.addChild(
-            new Label(
-                182,
-                0,
-                45,
-                20,
-                String.join(",", info.dimAbbrs)
-                    .replace("None", tr("gui.gtnotgood.ldminer.local"))));
+        row.addChild(new Label(182, 0, 45, 20,
+            String.join(",", info.dimAbbrs).replace("None", tr("gui.gtnotgood.ldminer.local"))));
         Button action = coloredButton(229, 1, 48, 18, () -> actionLabel(info), () -> {
             if (model.directional.getValue()) model.actions.sendToggleDirectionalOre(info);
             else model.actions.sendToggleFilter(info);
@@ -275,8 +212,7 @@ public final class LDLibVoidMinerView extends UIElement {
         IntSupplier color) {
         return new Button(x, y, width, height, tinted(theme.button.copy(), text, color), action)
             .setHoverTexture(tinted(theme.accent.copy(), text, color))
-            .setDisabledTexture(theme.text(theme.disabled, text))
-            .setFocusTexture(theme.focus);
+            .setDisabledTexture(theme.text(theme.disabled, text)).setFocusTexture(theme.focus);
     }
 
     private IGuiTexture tinted(SpriteTexture texture, Supplier<String> text, IntSupplier color) {
@@ -284,8 +220,7 @@ public final class LDLibVoidMinerView extends UIElement {
         TextTexture dark = new TextTexture(text, 0xFF182433);
         return (mx, my, x, y, width, height) -> {
             int tint = color.getAsInt();
-            texture.setColor(tint)
-                .draw(mx, my, x, y, width, height);
+            texture.setColor(tint).draw(mx, my, x, y, width, height);
             int brightness = ((tint >> 16 & 255) * 299 + (tint >> 8 & 255) * 587 + (tint & 255) * 114) / 1000;
             (brightness > 200 ? dark : light).draw(mx, my, x, y, width, height);
         };
@@ -342,25 +277,19 @@ public final class LDLibVoidMinerView extends UIElement {
         // #tr gui.gtnotgood.ldminer.confirm
         // # Clear the current mode's ore selection?
         // # zh_CN 清空当前模式的矿石选择？
-        Dialog.confirm(
-            this,
-            theme,
-            tr("gui.gtnotgood.ldminer.confirm"),
-            tr("gui.yes"),
-            tr("gui.no"),
+        Dialog.confirm(this, theme, tr("gui.gtnotgood.ldminer.confirm"), tr("gui.yes"), tr("gui.no"),
             accepted -> { if (accepted) model.actions.sendClearConfig(); });
     }
 
     private void refreshRows() {
         List<OreEntryInfo> filtered = new ArrayList<>();
-        for (OreEntryInfo ore : snapshot) if (ore.ore != null && ore.ore.getDisplayName()
-            .toLowerCase(Locale.ROOT)
-            .contains(search) && (category != 1 || !selected(ore)) && (category != 2 || selected(ore)))
-            filtered.add(ore);
-        if (category >= 3) filtered.sort(
-            category == 3 ? Comparator.comparingDouble(ore -> ore.weight)
-                : Comparator.<OreEntryInfo>comparingDouble(ore -> ore.weight)
-                    .reversed());
+        for (OreEntryInfo ore : snapshot) if (
+            ore.ore != null && ore.ore.getDisplayName().toLowerCase(Locale.ROOT).contains(search)
+                && (category != 1 || !selected(ore))
+                && (category != 2 || selected(ore))
+        ) filtered.add(ore);
+        if (category >= 3) filtered.sort(category == 3 ? Comparator.comparingDouble(ore -> ore.weight)
+            : Comparator.<OreEntryInfo>comparingDouble(ore -> ore.weight).reversed());
         rows.setItems(filtered);
     }
 
@@ -417,13 +346,8 @@ public final class LDLibVoidMinerView extends UIElement {
 
         @Override
         protected void drawForeground(int mx, int my, int px, int py) {
-            Minecraft.getMinecraft().fontRenderer.drawSplitString(
-                text.get()
-                    .replace("\\n", "\n"),
-                px + x,
-                py + y,
-                width,
-                0xFF263544);
+            Minecraft.getMinecraft().fontRenderer.drawSplitString(text.get().replace("\\n", "\n"), px + x, py + y,
+                width, 0xFF263544);
         }
     }
 }

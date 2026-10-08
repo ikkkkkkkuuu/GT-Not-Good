@@ -27,10 +27,8 @@ public final class AspectSynthesisController {
         ResearchSolveController.cancel();
         AspectList inventory = helper.availableAspects();
         active = Task.synthesis(helper, player, target, inventory.getAmount(target) + amount);
-        PlayerNotifications.addNotification(
-            String.format(
-                StatCollector.translateToLocal("tcautores.synthesis_started"),
-                AspectLocalization.name(target)));
+        PlayerNotifications.addNotification(String.format(StatCollector.translateToLocal("tcautores.synthesis_started"),
+            AspectLocalization.name(target)));
     }
 
     public static void discoverAll(GuiResearchTableHelperInterface helper, EntityPlayer player, Runnable onComplete) {
@@ -159,8 +157,7 @@ public final class AspectSynthesisController {
         }
 
         private boolean discovered(Aspect aspect) {
-            return Thaumcraft.proxy.getPlayerKnowledge()
-                .hasDiscoveredAspect(player.getCommandSenderName(), aspect);
+            return Thaumcraft.proxy.getPlayerKnowledge().hasDiscoveredAspect(player.getCommandSenderName(), aspect);
         }
 
         private void succeed(String key, Aspect aspect) {

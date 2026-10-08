@@ -32,6 +32,7 @@ import appeng.me.GridAccessException;
 import appeng.parts.automation.PartExportBus;
 import appeng.tile.inventory.IAEStackInventory;
 import appeng.util.Platform;
+import appeng.util.SettingsFrom;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -86,8 +87,7 @@ public final class PartAdvancedIOBus extends PartExportBus {
     public void setFilter(int slot, IAEStack<?> stack) {
         if (slot < 0 || slot >= availableSlots()) return;
         if (stack != null) {
-            stack = stack.copy()
-                .setStackSize(Math.max(1, Math.min(Integer.MAX_VALUE - 1L, stack.getStackSize())));
+            stack = stack.copy().setStackSize(Math.max(1, Math.min(Integer.MAX_VALUE - 1L, stack.getStackSize())));
             for (int i = 0; i < CONFIG_SLOTS; i++) {
                 if (i != slot && filter(i) != null && filter(i).isSameType(stack))
                     stockConfig.putAEStackInSlot(i, null);
@@ -110,8 +110,7 @@ public final class PartAdvancedIOBus extends PartExportBus {
         if (getHost() == null) return;
         getHost().markForSave();
         try {
-            getProxy().getTick()
-                .alertDevice(getProxy().getNode());
+            getProxy().getTick().alertDevice(getProxy().getNode());
         } catch (GridAccessException ignored) {}
     }
 
@@ -133,18 +132,20 @@ public final class PartAdvancedIOBus extends PartExportBus {
 
     @Override
     protected TickRateModulation doBusWork() {
-        if (transferring || getTile() == null
-            || getTile().getWorldObj().isRemote
-            || !getProxy().isActive()
-            || !canDoBusWork()
-            || !redstoneAllows()) return TickRateModulation.IDLE;
+        if (
+            transferring || getTile() == null
+                || getTile().getWorldObj().isRemote
+                || !getProxy().isActive()
+                || !canDoBusWork()
+                || !redstoneAllows()
+        ) return TickRateModulation.IDLE;
         transferring = true;
         try {
             if (!flushPending()) return TickRateModulation.SLOWER;
             var self = getTile();
             var side = getSide();
-            var tile = self.getWorldObj()
-                .getTileEntity(self.xCoord + side.offsetX, self.yCoord + side.offsetY, self.zCoord + side.offsetZ);
+            var tile = self.getWorldObj().getTileEntity(self.xCoord + side.offsetX, self.yCoord + side.offsetY,
+                self.zCoord + side.offsetZ);
             if (tile == null || tile.isInvalid()) return TickRateModulation.SLOWER;
             var target = new BusTarget(tile, side.getOpposite());
             if (!target.available()) return TickRateModulation.SLOWER;
@@ -159,14 +160,11 @@ public final class PartAdvancedIOBus extends PartExportBus {
                 var filter = filter(slot);
                 if (filter == null) continue;
                 long unit = filter.isFluid() ? 1000 : 1;
-                long amount = StockPolicy
-                    .exportAmount(BusTarget.count(initialStock, filter), filter.getStackSize(), remaining * unit);
+                long amount = StockPolicy.exportAmount(BusTarget.count(initialStock, filter), filter.getStackSize(),
+                    remaining * unit);
                 long moved = export(target, filter, amount);
                 if (moved > 0) {
-                    BusTarget.add(
-                        initialStock,
-                        filter.copy()
-                            .setStackSize(moved));
+                    BusTarget.add(initialStock, filter.copy().setStackSize(moved));
                     remaining -= (int) ((moved + unit - 1) / unit);
                     worked = true;
                     cursor = (slot + 1) % availableSlots();
@@ -177,12 +175,8 @@ public final class PartAdvancedIOBus extends PartExportBus {
                 if (remaining <= 0 || pending != null) break;
                 var filter = matchingFilter(stack);
                 long unit = stack.isFluid() ? 1000 : 1;
-                long amount = StockPolicy.importAmount(
-                    stack.getStackSize(),
-                    filter == null ? 0 : filter.getStackSize(),
-                    filter != null,
-                    regulate,
-                    remaining * unit);
+                long amount = StockPolicy.importAmount(stack.getStackSize(), filter == null ? 0 : filter.getStackSize(),
+                    filter != null, regulate, remaining * unit);
                 long moved = importStack(target, stack, amount);
                 if (moved > 0) {
                     remaining -= (int) ((moved + unit - 1) / unit);
@@ -209,9 +203,7 @@ public final class PartAdvancedIOBus extends PartExportBus {
         for (int i = 0; i < CONFIG_SLOTS; i++) {
             var filter = filter(i);
             if (filter != null && filter.isSameType(key)) {
-                return i < availableSlots() ? filter
-                    : key.copy()
-                        .setStackSize(Long.MAX_VALUE);
+                return i < availableSlots() ? filter : key.copy().setStackSize(Long.MAX_VALUE);
             }
         }
         return null;
@@ -219,29 +211,24 @@ public final class PartAdvancedIOBus extends PartExportBus {
 
     @SuppressWarnings("rawtypes")
     private IMEInventory inventory(IAEStack<?> key) throws GridAccessException {
-        return key.isFluid() ? getProxy().getStorage()
-            .getFluidInventory()
-            : getProxy().getStorage()
-                .getItemInventory();
+        return key.isFluid() ? getProxy().getStorage().getFluidInventory() : getProxy().getStorage().getItemInventory();
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private long export(BusTarget target, IAEStack<?> key, long amount) throws GridAccessException {
         if (amount <= 0) return 0;
-        IAEStack request = key.copy()
-            .setStackSize(amount);
+        IAEStack request = key.copy().setStackSize(amount);
         long accepted = target.insert(request, true);
         if (accepted <= 0) return 0;
         IMEInventory network = inventory(key);
-        IAEStack extracted = Platform
-            .poweredExtraction(getProxy().getEnergy(), network, request.setStackSize(accepted), mySrc);
+        IAEStack extracted = Platform.poweredExtraction(getProxy().getEnergy(), network, request.setStackSize(accepted),
+            mySrc);
         if (extracted == null) return 0;
         pending = extracted;
         changed();
         long inserted = target.insert(extracted, false);
         pending = inserted >= extracted.getStackSize() ? null
-            : extracted.copy()
-                .setStackSize(extracted.getStackSize() - inserted);
+            : extracted.copy().setStackSize(extracted.getStackSize() - inserted);
         // Returning extracted stock is a rollback, not a second powered transfer.
         if (pending != null) pending = network.injectItems(pending, Actionable.MODULATE, mySrc);
         changed();
@@ -251,20 +238,14 @@ public final class PartAdvancedIOBus extends PartExportBus {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private long importStack(BusTarget target, IAEStack<?> key, long amount) throws GridAccessException {
         if (amount <= 0) return 0;
-        IAEStack simulated = target.extract(
-            key.copy()
-                .setStackSize(amount),
-            true);
+        IAEStack simulated = target.extract(key.copy().setStackSize(amount), true);
         if (simulated == null || simulated.getStackSize() <= 0) return 0;
         IMEInventory network = inventory(key);
-        IAEStack rest = Platform
-            .poweredInsert(getProxy().getEnergy(), network, simulated.copy(), mySrc, Actionable.SIMULATE);
+        IAEStack rest = Platform.poweredInsert(getProxy().getEnergy(), network, simulated.copy(), mySrc,
+            Actionable.SIMULATE);
         long accepted = simulated.getStackSize() - (rest == null ? 0 : rest.getStackSize());
         if (accepted <= 0) return 0;
-        IAEStack extracted = target.extract(
-            simulated.copy()
-                .setStackSize(accepted),
-            false);
+        IAEStack extracted = target.extract(simulated.copy().setStackSize(accepted), false);
         if (extracted == null) return 0;
         pending = extracted;
         changed();
@@ -296,14 +277,14 @@ public final class PartAdvancedIOBus extends PartExportBus {
     /** Memory-card settings copy only ghost targets/settings, never real escrow or installed upgrades. */
     @Override
     @Nonnull
-    public NBTTagCompound downloadSettings(@Nonnull appeng.util.SettingsFrom from) {
+    public NBTTagCompound downloadSettings(@Nonnull SettingsFrom from) {
         NBTTagCompound tag = super.downloadSettings(from);
         tag.setBoolean("regulateStock", regulate);
         return tag;
     }
 
     @Override
-    public void uploadSettings(@Nonnull appeng.util.SettingsFrom from, @Nonnull NBTTagCompound tag) {
+    public void uploadSettings(@Nonnull SettingsFrom from, @Nonnull NBTTagCompound tag) {
         for (int i = 0; i < CONFIG_SLOTS; i++) stockConfig.putAEStackInSlot(i, null);
         super.uploadSettings(from, tag);
         normalizeFilters();

@@ -54,11 +54,7 @@ public final class PartStockIOInterface extends PartBasicState implements IGridT
             ForgeDirection side = getSide();
             if (tile == null || tile.getWorldObj() == null || side == null) return null;
             int x = tile.xCoord + side.offsetX, y = tile.yCoord + side.offsetY, z = tile.zCoord + side.offsetZ;
-            return tile.getWorldObj()
-                .blockExists(x, y, z)
-                    ? tile.getWorldObj()
-                        .getTileEntity(x, y, z)
-                    : null;
+            return tile.getWorldObj().blockExists(x, y, z) ? tile.getWorldObj().getTileEntity(x, y, z) : null;
         }
 
         public ForgeDirection getTargetSide() {
@@ -75,15 +71,13 @@ public final class PartStockIOInterface extends PartBasicState implements IGridT
             if (getHost() == null) return;
             getHost().markForSave();
             try {
-                getProxy().getTick()
-                    .alertDevice(getProxy().getNode());
+                getProxy().getTick().alertDevice(getProxy().getNode());
             } catch (GridAccessException ignored) {}
         }
 
         public long getTimer() {
             return getTile() == null || getTile().getWorldObj() == null ? 0
-                : getTile().getWorldObj()
-                    .getTotalWorldTime();
+                : getTile().getWorldObj().getTotalWorldTime();
         }
     });
 
@@ -111,8 +105,7 @@ public final class PartStockIOInterface extends PartBasicState implements IGridT
     @Override
     public void onNeighborChanged() {
         try {
-            getProxy().getTick()
-                .alertDevice(getProxy().getNode());
+            getProxy().getTick().alertDevice(getProxy().getNode());
         } catch (GridAccessException ignored) {}
     }
 
@@ -149,11 +142,7 @@ public final class PartStockIOInterface extends PartBasicState implements IGridT
         if (getHost() == null || getItemStack().stackSize <= 0) return;
         ItemStack portable = getItemStack(PartItemStack.Break);
         getHost().removePart(getSide(), false);
-        Platform.spawnDrops(
-            getTile().getWorldObj(),
-            getTile().xCoord,
-            getTile().yCoord,
-            getTile().zCoord,
+        Platform.spawnDrops(getTile().getWorldObj(), getTile().xCoord, getTile().yCoord, getTile().zCoord,
             Collections.singletonList(portable));
         getItemStack().stackSize = 0;
     }

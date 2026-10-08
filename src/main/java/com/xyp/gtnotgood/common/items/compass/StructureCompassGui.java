@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.common.items.compass;
 
+import java.util.function.BooleanSupplier;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -7,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -27,9 +30,8 @@ public final class StructureCompassGui {
     public StructureCompassGui(PlayerInventoryGuiData data, PanelSyncManager sync) {
         this.data = data;
         mode = new IntSyncValue(() -> tag().getInteger("Mode") == 1 ? 1 : 0);
-        state = new IntSyncValue(
-            () -> StructureSearch.INSTANCE.isSearching(data.getPlayer()) ? 1
-                : tag().getBoolean("Found") ? tag().getBoolean("Confirmed") ? 3 : 2 : 0);
+        state = new IntSyncValue(() -> StructureSearch.INSTANCE.isSearching(data.getPlayer()) ? 1
+            : tag().getBoolean("Found") ? tag().getBoolean("Confirmed") ? 3 : 2 : 0);
         x = new IntSyncValue(() -> tag().getInteger("X"));
         y = new IntSyncValue(() -> tag().getInteger("Y"));
         z = new IntSyncValue(() -> tag().getInteger("Z"));
@@ -65,83 +67,37 @@ public final class StructureCompassGui {
     }
 
     public ModularPanel build() {
-        ModularPanel panel = new ModularPanel("structure_compass").size(340, 222)
-            .background(theme.panel);
-        panel.child(
-            IKey.lang("item.structure_compass.name")
-                .color(0xff503b0d)
-                .asWidget()
-                .pos(14, 12));
+        ModularPanel panel = new ModularPanel("structure_compass").size(340, 222).background(theme.panel);
+        panel.child(IKey.lang("item.structure_compass.name").color(0xff503b0d).asWidget().pos(14, 12));
         for (int target = 0; target < 2; target++) {
             final int selected = target;
-            panel.child(
-                button(
-                    "target_" + target,
-                    StructureCompassItem.modeKey(target),
-                    14 + target * 159,
-                    34,
-                    153,
-                    () -> StructureCompassItem.selectMode(data.getPlayer(), compass(), selected)).background(
-                        new com.cleanroommc.modularui.drawable.DynamicDrawable(
-                            () -> mode.getIntValue() == selected ? theme.hover : theme.button)));
+            panel.child(button("target_" + target, StructureCompassItem.modeKey(target), 14 + target * 159, 34, 153,
+                () -> StructureCompassItem.selectMode(data.getPlayer(), compass(), selected)).background(
+                    new DynamicDrawable(() -> mode.getIntValue() == selected ? theme.hover : theme.button)));
         }
-        panel.child(
-            IKey.dynamic(() -> status(state.getIntValue()))
-                .color(0xff655019)
-                .asWidget()
-                .pos(14, 68)
-                .width(312));
-        panel.child(
-            IKey.dynamic(this::position)
-                .color(0xff30384b)
-                .asWidget()
-                .pos(14, 88)
-                .width(312));
-        panel.child(
-            IKey.dynamic(
-                () -> state.getIntValue() < 2 ? ""
-                    : distance.getIntValue() < 0 ? StatCollector.translateToLocal("compass.dimension")
-                        : StatCollector.translateToLocalFormatted("compass.distance", distance.getIntValue()))
-                .color(0xff525b69)
-                .asWidget()
-                .pos(14, 106)
-                .width(312));
+        panel
+            .child(IKey.dynamic(() -> status(state.getIntValue())).color(0xff655019).asWidget().pos(14, 68).width(312));
+        panel.child(IKey.dynamic(this::position).color(0xff30384b).asWidget().pos(14, 88).width(312));
+        panel.child(IKey
+            .dynamic(() -> state.getIntValue() < 2 ? ""
+                : distance.getIntValue() < 0 ? StatCollector.translateToLocal("compass.dimension")
+                    : StatCollector.translateToLocalFormatted("compass.distance", distance.getIntValue()))
+            .color(0xff525b69).asWidget().pos(14, 106).width(312));
         // #tr gui.compass.search
         // # Search
         // # zh_CN 开始搜索
-        panel.child(
-            button(
-                "search",
-                "gui.compass.search",
-                14,
-                134,
-                100,
-                () -> StructureCompassItem.search(data.getPlayer(), compass()),
-                () -> state.getIntValue() != 1));
+        panel.child(button("search", "gui.compass.search", 14, 134, 100,
+            () -> StructureCompassItem.search(data.getPlayer(), compass()), () -> state.getIntValue() != 1));
         // #tr gui.compass.cancel
         // # Cancel search
         // # zh_CN 取消搜索
-        panel.child(
-            button(
-                "cancel",
-                "gui.compass.cancel",
-                120,
-                134,
-                100,
-                () -> StructureSearch.INSTANCE.cancel(data.getPlayer()),
-                () -> state.getIntValue() == 1));
+        panel.child(button("cancel", "gui.compass.cancel", 120, 134, 100,
+            () -> StructureSearch.INSTANCE.cancel(data.getPlayer()), () -> state.getIntValue() == 1));
         // #tr gui.compass.clear
         // # Clear target
         // # zh_CN 清除目标
-        panel.child(
-            button(
-                "clear",
-                "gui.compass.clear",
-                226,
-                134,
-                100,
-                () -> StructureCompassItem
-                    .selectMode(data.getPlayer(), compass(), StructureCompassItem.mode(compass()))));
+        panel.child(button("clear", "gui.compass.clear", 226, 134, 100,
+            () -> StructureCompassItem.selectMode(data.getPlayer(), compass(), StructureCompassItem.mode(compass()))));
         // #tr gui.compass.teleport
         // # Teleport to safe surface
         // # zh_CN 传送至目标附近安全地表
@@ -155,12 +111,7 @@ public final class StructureCompassGui {
         // #tr gui.compass.note
         // # Search predicts only. Teleport loads terrain. ESC closes.
         // # zh_CN 搜索仅预测；传送才加载地形。按 ESC 关闭。
-        panel.child(
-            IKey.lang("gui.compass.note")
-                .color(0xff525b69)
-                .asWidget()
-                .pos(14, 199)
-                .width(312));
+        panel.child(IKey.lang("gui.compass.note").color(0xff525b69).asWidget().pos(14, 199).width(312));
         return panel;
     }
 
@@ -171,20 +122,11 @@ public final class StructureCompassGui {
 
     /** Keeps unavailable actions visible with a disabled appearance while rejecting their server-side clicks. */
     private ButtonWidget<?> button(String name, String key, int x, int y, int width, Runnable action,
-        java.util.function.BooleanSupplier available) {
-        return theme.button()
-            .name(name)
-            .pos(x, y)
-            .size(width, 23)
-            .background(
-                new com.cleanroommc.modularui.drawable.DynamicDrawable(
-                    () -> available.getAsBoolean() ? theme.button : theme.disabled))
-            .hoverBackground(
-                new com.cleanroommc.modularui.drawable.DynamicDrawable(
-                    () -> available.getAsBoolean() ? theme.hover : theme.disabled))
-            .overlay(
-                IKey.lang(key)
-                    .color(0xff30384b))
+        BooleanSupplier available) {
+        return theme.button().name(name).pos(x, y).size(width, 23)
+            .background(new DynamicDrawable(() -> available.getAsBoolean() ? theme.button : theme.disabled))
+            .hoverBackground(new DynamicDrawable(() -> available.getAsBoolean() ? theme.hover : theme.disabled))
+            .overlay(IKey.lang(key).color(0xff30384b))
             .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
                 if (mouse.isClient() || !available.getAsBoolean()) return;
                 EntityPlayer player = data.getPlayer();

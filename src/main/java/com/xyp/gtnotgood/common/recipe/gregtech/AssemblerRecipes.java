@@ -14,23 +14,15 @@ public class AssemblerRecipes {
 
     public static void loadRecipes() {
         GTRecipeBuilder.builder()
-            .itemInputs(
-                GTOreDictUnificator.get(OrePrefixes.plate, Materials.Copper, 4),
+            .itemInputs(GTOreDictUnificator.get(OrePrefixes.plate, Materials.Copper, 4),
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 4),
-                new Object[] { OrePrefixes.circuit.get(Materials.LV), 4 },
-                GTUtility.getIntegratedCircuit(24))
-            .itemOutputs(GTNGItemList.LargeOreProcessor.get(1))
-            .duration(200)
-            .eut(32)
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 4 }, GTUtility.getIntegratedCircuit(24))
+            .itemOutputs(GTNGItemList.LargeOreProcessor.get(1)).duration(200).eut(32)
             .addTo(RecipeMaps.assemblerRecipes);
 
         // 生碳纤维
-        GTRecipeBuilder.builder()
-            .itemInputs(GTOreDictUnificator.get(OrePrefixes.dust, Materials.Carbon, 4))
-            .fluidInputs(Materials.Polyethylene.getMolten(36))
-            .itemOutputs(ModsItemlist.IC2ItemPartCarbonFibre.get(1))
-            .duration(1)
-            .eut(30)
-            .addTo(RecipeMaps.assemblerRecipes);
+        GTRecipeBuilder.builder().itemInputs(GTOreDictUnificator.get(OrePrefixes.dust, Materials.Carbon, 4))
+            .fluidInputs(Materials.Polyethylene.getMolten(36)).itemOutputs(ModsItemlist.RawCarbonFibre.get(1))
+            .duration(1).eut(30).addTo(RecipeMaps.assemblerRecipes);
     }
 }

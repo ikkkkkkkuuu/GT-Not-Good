@@ -70,8 +70,8 @@ public final class TreeList<T> extends UIElement {
                 (node == selected ? theme.accent : theme.button).draw(mx, my, left, top, w, h);
                 int indent = Math.min(Math.max(0, w - 20), depth(node) * 12);
                 String arrow = node.children.isEmpty() ? "  " : expanded.contains(node) ? "- " : "+ ";
-                new TextTexture(() -> arrow + names.apply(node.value), 0xFF202830)
-                    .draw(mx, my, left + indent, top, w - indent, h);
+                new TextTexture(() -> arrow + names.apply(node.value), 0xFF202830).draw(mx, my, left + indent, top,
+                    w - indent, h);
             });
             row.addEventListener(UIEvents.CLICK, e -> {
                 if (e.button != 0) return;
@@ -116,9 +116,7 @@ public final class TreeList<T> extends UIElement {
                 default:
                     return;
             }
-            rows.revealIndex(
-                rows.getItems()
-                    .indexOf(selected));
+            rows.revealIndex(rows.getItems().indexOf(selected));
             e.preventDefault();
             e.stopPropagation();
         });

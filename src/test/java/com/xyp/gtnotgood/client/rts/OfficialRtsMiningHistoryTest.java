@@ -39,8 +39,8 @@ public class OfficialRtsMiningHistoryTest {
     @BeforeClass
     public static void registerBlock() throws Exception {
         HeadlessBlockRegistry.bootstrap();
-        Method register = Block.blockRegistry.getClass()
-            .getDeclaredMethod("addObjectRaw", int.class, String.class, Object.class);
+        Method register = Block.blockRegistry.getClass().getDeclaredMethod("addObjectRaw", int.class, String.class,
+            Object.class);
         register.setAccessible(true);
         register.invoke(Block.blockRegistry, 31002, MIXED_CASE_ID, BLOCK);
     }
@@ -51,28 +51,15 @@ public class OfficialRtsMiningHistoryTest {
         tile.setInteger("machine", 42);
         HistoryBlockRecord original = new HistoryBlockRecord(POS, BlockState.of(BLOCK, 7), tile);
         NBTTagCompound encoded = MiningTaskCodec.encodeHistory(original);
-        assertEquals(
-            MIXED_CASE_ID,
-            encoded.getCompoundTag("state")
-                .getString("id"));
+        assertEquals(MIXED_CASE_ID, encoded.getCompoundTag("state").getString("id"));
         HistoryBlockRecord decoded = MiningTaskCodec.decodeHistory(encoded);
         assertNotNull(decoded);
-        assertSame(
-            BLOCK,
-            decoded.state()
-                .getBlock());
-        assertEquals(
-            7,
-            decoded.state()
-                .getMetadata());
+        assertSame(BLOCK, decoded.state().getBlock());
+        assertEquals(7, decoded.state().getMetadata());
         assertEquals(POS, decoded.pos());
         assertEquals(tile, decoded.blockEntityData());
-        encoded.getCompoundTag("block_entity")
-            .setInteger("machine", 0);
-        assertEquals(
-            42,
-            decoded.blockEntityData()
-                .getInteger("machine"));
+        encoded.getCompoundTag("block_entity").setInteger("machine", 0);
+        assertEquals(42, decoded.blockEntityData().getInteger("machine"));
     }
 
     @Test
@@ -86,19 +73,16 @@ public class OfficialRtsMiningHistoryTest {
         assertNull(MiningTaskCodec.decodeHistory(null));
         assertNull(MiningTaskCodec.decodeHistory(new NBTTagCompound()));
         NBTTagCompound missingStateId = history(MIXED_CASE_ID);
-        missingStateId.getCompoundTag("state")
-            .removeTag("id");
+        missingStateId.getCompoundTag("state").removeTag("id");
         assertNull(MiningTaskCodec.decodeHistory(missingStateId));
         NBTTagCompound wrongPositionType = history(MIXED_CASE_ID);
         wrongPositionType.setInteger("pos", 1);
         assertNull(MiningTaskCodec.decodeHistory(wrongPositionType));
         NBTTagCompound wrongMetadataType = history(MIXED_CASE_ID);
-        wrongMetadataType.getCompoundTag("state")
-            .setString("meta", "7");
+        wrongMetadataType.getCompoundTag("state").setString("meta", "7");
         assertNull(MiningTaskCodec.decodeHistory(wrongMetadataType));
         NBTTagCompound invalidMetadata = history(MIXED_CASE_ID);
-        invalidMetadata.getCompoundTag("state")
-            .setInteger("meta", 16);
+        invalidMetadata.getCompoundTag("state").setInteger("meta", 16);
         assertNull(MiningTaskCodec.decodeHistory(invalidMetadata));
     }
 
@@ -113,28 +97,16 @@ public class OfficialRtsMiningHistoryTest {
     @Test
     public void detachedFinalizationKeepsValidHistoryAroundInvalidEntries() throws Exception {
         NBTTagCompound valid = history(MIXED_CASE_ID);
-        List<NBTTagCompound> saved = Arrays.asList(
-            history("minecraft:air"),
-            valid,
-            history("missing_mining_test:removed_block"),
-            new NBTTagCompound(),
-            valid);
-        Method decode = RtsMiningStateMachine.class
-            .getDeclaredMethod("decodeDetachedHistory", EntityPlayerMP.class, List.class);
+        List<NBTTagCompound> saved = Arrays.asList(history("minecraft:air"), valid,
+            history("missing_mining_test:removed_block"), new NBTTagCompound(), valid);
+        Method decode = RtsMiningStateMachine.class.getDeclaredMethod("decodeDetachedHistory", EntityPlayerMP.class,
+            List.class);
         decode.setAccessible(true);
         @SuppressWarnings("unchecked")
         List<HistoryBlockRecord> decoded = (List<HistoryBlockRecord>) decode.invoke(null, null, saved);
         assertEquals(2, decoded.size());
-        assertSame(
-            BLOCK,
-            decoded.get(0)
-                .state()
-                .getBlock());
-        assertSame(
-            BLOCK,
-            decoded.get(1)
-                .state()
-                .getBlock());
+        assertSame(BLOCK, decoded.get(0).state().getBlock());
+        assertSame(BLOCK, decoded.get(1).state().getBlock());
     }
 
     @Test
@@ -146,19 +118,8 @@ public class OfficialRtsMiningHistoryTest {
         MiningTaskState state = RtsMiningStateMachine.snapshotDetachedActive(session);
         MiningTaskPayload restored = MiningTaskCodec
             .decode(MiningTaskCodec.encode(new MiningTaskPayload(UUID.randomUUID(), 0, -1, state)));
-        assertEquals(
-            1,
-            restored.state()
-                .historyRecords()
-                .size());
-        assertSame(
-            BLOCK,
-            MiningTaskCodec.decodeHistory(
-                restored.state()
-                    .historyRecords()
-                    .get(0))
-                .state()
-                .getBlock());
+        assertEquals(1, restored.state().historyRecords().size());
+        assertSame(BLOCK, MiningTaskCodec.decodeHistory(restored.state().historyRecords().get(0)).state().getBlock());
     }
 
     @Test
@@ -166,36 +127,19 @@ public class OfficialRtsMiningHistoryTest {
         RtsStorageSession session = new RtsStorageSession();
         session.mining.miningPos = POS;
         MiningTaskState state = RtsMiningStateMachine.snapshotDetachedActive(session);
-        state = state.next(
-            state.mode(),
-            state.remainingTargets(),
-            0,
-            0,
-            0,
-            0,
-            -1,
-            Arrays.asList(
-                history("minecraft:air"),
-                history(MIXED_CASE_ID),
-                history("missing_mining_test:removed_block"),
-                new NBTTagCompound()));
+        state = state.next(state.mode(), state.remainingTargets(), 0, 0, 0, 0, -1,
+            Arrays.asList(history("minecraft:air"), history(MIXED_CASE_ID),
+                history("missing_mining_test:removed_block"), new NBTTagCompound()));
         MiningTaskPayload restored = MiningTaskCodec
             .decode(MiningTaskCodec.encode(new MiningTaskPayload(UUID.randomUUID(), 0, -1, state)));
-        Method decode = RtsMiningStateMachine.class
-            .getDeclaredMethod("decodeDetachedHistory", EntityPlayerMP.class, List.class);
+        Method decode = RtsMiningStateMachine.class.getDeclaredMethod("decodeDetachedHistory", EntityPlayerMP.class,
+            List.class);
         decode.setAccessible(true);
         @SuppressWarnings("unchecked")
-        List<HistoryBlockRecord> decoded = (List<HistoryBlockRecord>) decode.invoke(
-            null,
-            null,
-            restored.state()
-                .historyRecords());
+        List<HistoryBlockRecord> decoded = (List<HistoryBlockRecord>) decode.invoke(null, null,
+            restored.state().historyRecords());
         assertEquals(1, decoded.size());
-        assertSame(
-            BLOCK,
-            decoded.get(0)
-                .state()
-                .getBlock());
+        assertSame(BLOCK, decoded.get(0).state().getBlock());
     }
 
     private static NBTTagCompound history(String id) {

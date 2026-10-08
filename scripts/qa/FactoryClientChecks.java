@@ -355,7 +355,7 @@ public final class FactoryClientChecks {
                 for (FactoryGraph.Node node : whole.nodes) node.wholeLineBatch = false;
                 require(
                     FactoryPreview.describe(whole)
-                        .exportIssue() == FactoryText.PATTERN_INTERNAL,
+                        .exportIssue() == FactoryText.PatternInternal,
                     "manual line retains existing surplus rule");
                 FactoryGraph otherPage = result.copy();
                 int offset = whole.nodes.size();
@@ -692,7 +692,7 @@ public final class FactoryClientChecks {
             "renumbered existing node needs no replacement machine");
         FactoryRecipeCatalog.Entry added = FactoryRecipeCatalog.get(expanded.nodes.get(2).recipe);
         require(
-            held.collect(2, added, new ArrayList<>(), stack -> false) == FactoryText.HOST,
+            held.collect(2, added, new ArrayList<>(), stack -> false) == FactoryText.Host,
             "new map still requires its own machine");
         FactoryReservations restored = new FactoryReservations();
         restored.read(held.write());
@@ -940,18 +940,18 @@ public final class FactoryClientChecks {
             FactoryRecipeCatalog.unsupportedReason(RecipeMaps.chemicalPlantRecipes, recipe) == null,
             "waive chemical tier");
         require(
-            FactoryRecipeCatalog.unsupportedReason(RecipeMaps.assemblerRecipes, recipe) == FactoryText.IMPORT_SPECIAL,
+            FactoryRecipeCatalog.unsupportedReason(RecipeMaps.assemblerRecipes, recipe) == FactoryText.ImportSpecial,
             "other maps protected");
         recipe.mSpecialValue = -200;
         require(
             FactoryRecipeCatalog.unsupportedReason(RecipeMaps.chemicalPlantRecipes, recipe)
-                == FactoryText.IMPORT_SPECIAL,
+                == FactoryText.ImportSpecial,
             "environment protected");
         recipe.mSpecialValue = 7;
         recipe.mSpecialItems = new Object();
         require(
             FactoryRecipeCatalog.unsupportedReason(RecipeMaps.chemicalPlantRecipes, recipe)
-                == FactoryText.IMPORT_SPECIAL,
+                == FactoryText.ImportSpecial,
             "special item protected");
         for (GTRecipe registered : RecipeMaps.chemicalPlantRecipes.getAllRecipes()) {
             if (registered.mSpecialValue <= 0

@@ -63,31 +63,13 @@ public class WirelessDualInterfaceTerminalInventory extends WirelessTerminal imp
     public WirelessDualInterfaceTerminalInventory(WirelessObject obj) {
         super(obj);
         pattern = new ItemPatternsInventory(obj.getItemStack(), this, obj.getPlayer(), obj.getSlot());
-        crafting = new ItemBiggerAppEngInventory(
-            obj.getItemStack(),
-            Constants.CRAFTING,
-            9,
-            obj.getPlayer(),
-            obj.getSlot(),
-            this);
-        craftingEx = new ItemBiggerAppEngInventory(
-            obj.getItemStack(),
-            Constants.CRAFTING_EX,
-            32,
-            obj.getPlayer(),
+        crafting = new ItemBiggerAppEngInventory(obj.getItemStack(), Constants.CRAFTING, 9, obj.getPlayer(),
+            obj.getSlot(), this);
+        craftingEx = new ItemBiggerAppEngInventory(obj.getItemStack(), Constants.CRAFTING_EX, 32, obj.getPlayer(),
             obj.getSlot());
-        outputEx = new ItemBiggerAppEngInventory(
-            obj.getItemStack(),
-            Constants.OUTPUT_EX,
-            32,
-            obj.getPlayer(),
+        outputEx = new ItemBiggerAppEngInventory(obj.getItemStack(), Constants.OUTPUT_EX, 32, obj.getPlayer(),
             obj.getSlot());
-        upgrades = new ItemPatternRefillInventory(
-            obj.getItemStack(),
-            Constants.UPGRADES,
-            1,
-            1,
-            obj.getPlayer(),
+        upgrades = new ItemPatternRefillInventory(obj.getItemStack(), Constants.UPGRADES, 1, 1, obj.getPlayer(),
             obj.getSlot());
         this.readFromNBT();
     }
@@ -118,9 +100,7 @@ public class WirelessDualInterfaceTerminalInventory extends WirelessTerminal imp
         out.registerSetting(Settings.SORT_BY, SortOrder.NAME);
         out.registerSetting(Settings.VIEW_MODE, ViewItems.ALL);
         out.registerSetting(Settings.SORT_DIRECTION, SortDir.ASCENDING);
-        out.readFromNBT(
-            (NBTTagCompound) Platform.openNbtData(this.getItemStack())
-                .copy());
+        out.readFromNBT((NBTTagCompound) Platform.openNbtData(this.getItemStack()).copy());
         return out;
     }
 

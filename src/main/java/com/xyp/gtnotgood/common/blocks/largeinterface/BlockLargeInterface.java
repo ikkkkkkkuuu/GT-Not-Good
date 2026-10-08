@@ -92,8 +92,7 @@ public final class BlockLargeInterface extends FCBaseBlock {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block neighbor) {
         TileLargeInterface tile = getTileEntity(world, x, y, z);
-        if (tile != null) tile.getInterfaceDuality()
-            .updateRedstoneState();
+        if (tile != null) tile.getInterfaceDuality().updateRedstoneState();
     }
 
     @Override

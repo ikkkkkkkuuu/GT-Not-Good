@@ -91,9 +91,7 @@ final class PumpFluidSearch {
     }
 
     int[] positions() {
-        return pending.stream()
-            .mapToInt(Integer::intValue)
-            .toArray();
+        return pending.stream().mapToInt(Integer::intValue).toArray();
     }
 
     /** Restores only valid queued positions; already drained blocks need no persisted visit history. */

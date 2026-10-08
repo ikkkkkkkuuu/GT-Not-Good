@@ -41,21 +41,19 @@ public final class FactoryReservations {
             if (taken != null) catalysts.put(key, taken);
             else missing = true;
         }
-        return !hasHost(map) ? FactoryText.HOST : missing ? FactoryText.CATALYST_MISSING : null;
+        return !hasHost(map) ? FactoryText.Host : missing ? FactoryText.CatalystMissing : null;
     }
 
     /** Stable identity for one non-consumable item template, regardless of its recipe stack size. */
     public static String catalystKey(ItemStack input) {
         ItemStack display = input.copy();
         display.stackSize = 1;
-        return display.writeToNBT(new NBTTagCompound())
-            .toString();
+        return display.writeToNBT(new NBTTagCompound()).toString();
     }
 
     public boolean hasHost(String map) {
-        return hosts.containsKey(FactoryRecipeCatalog.controllerKey(map)) || hosts.values()
-            .stream()
-            .anyMatch(stack -> FactoryControllers.supports(map, stack));
+        return hosts.containsKey(FactoryRecipeCatalog.controllerKey(map))
+            || hosts.values().stream().anyMatch(stack -> FactoryControllers.supports(map, stack));
     }
 
     public boolean hasCatalyst(ItemStack input) {
@@ -98,11 +96,7 @@ public final class FactoryReservations {
     }
 
     private static boolean refundMap(Map<String, ItemStack> held, Set<String> keep, Predicate<ItemStack> output) {
-        held.entrySet()
-            .removeIf(
-                entry -> !keep.contains(entry.getKey()) && output.test(
-                    entry.getValue()
-                        .copy()));
+        held.entrySet().removeIf(entry -> !keep.contains(entry.getKey()) && output.test(entry.getValue().copy()));
         return keep.containsAll(held.keySet());
     }
 
@@ -144,8 +138,8 @@ public final class FactoryReservations {
     }
 
     /** Copies only actual held deposits for drain progress; never returns original mutable inventory stacks. */
-    public java.util.List<ItemStack> remaining() {
-        java.util.List<ItemStack> result = new ArrayList<>();
+    public List<ItemStack> remaining() {
+        List<ItemStack> result = new ArrayList<>();
         for (ItemStack item : hosts.values()) result.add(item.copy());
         for (ItemStack item : catalysts.values()) result.add(item.copy());
         for (ItemStack[] slots : stored.values())
@@ -206,8 +200,7 @@ public final class FactoryReservations {
         for (int i = 0; i < Math.min(FactoryGraph.MAX_ACTIVE_NODES, list.tagCount()); i++) {
             NBTTagCompound row = list.getCompoundTagAt(i);
             ItemStack item = ItemStack.loadItemStackFromNBT(row.getCompoundTag("item"));
-            if (item != null && !row.getString("key")
-                .isEmpty()) target.put(row.getString("key"), item);
+            if (item != null && !row.getString("key").isEmpty()) target.put(row.getString("key"), item);
         }
     }
 }

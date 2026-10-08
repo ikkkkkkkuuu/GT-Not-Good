@@ -23,13 +23,20 @@ public final class ResearchNoteGenerationController {
     private static final int ACK_TIMEOUT_TICKS = 100;
 
     public enum EndReason {
-        COMPLETE,
-        INVENTORY_FULL,
-        WORKSPACE_REQUIRED,
-        NO_PAPER,
-        NO_INK,
-        TIMEOUT,
-        CANCELLED
+
+        Complete("tcautores.generate_reason.complete"),
+        InventoryFull("tcautores.generate_reason.inventory_full"),
+        WorkspaceRequired("tcautores.generate_reason.workspace_required"),
+        NoPaper("tcautores.generate_reason.no_paper"),
+        NoInk("tcautores.generate_reason.no_ink"),
+        Timeout("tcautores.generate_reason.timeout"),
+        Cancelled("tcautores.generate_reason.cancelled");
+
+        public final String translationKey;
+
+        EndReason(String translationKey) {
+            this.translationKey = translationKey;
+        }
     }
 
     public static final class Result {
@@ -75,7 +82,7 @@ public final class ResearchNoteGenerationController {
         }
         Listener completionListener = listener == null ? Listener.NONE : listener;
         if (keys.isEmpty()) {
-            finish(new Result(0, 0, EndReason.COMPLETE, ""), completionListener, notify, player);
+            finish(new Result(0, 0, EndReason.Complete, ""), completionListener, notify, player);
             return;
         }
         active = new Task(player, mc, keys, completionListener, notify, Math.max(0, reservedEmptySlots));
@@ -86,7 +93,7 @@ public final class ResearchNoteGenerationController {
         Task current = active;
         active = null;
         if (current != null) {
-            lastResult = new Result(current.generated, current.total, EndReason.CANCELLED, current.pendingKey);
+            lastResult = new Result(current.generated, current.total, EndReason.Cancelled, current.pendingKey);
             revision++;
         }
     }
@@ -106,8 +113,8 @@ public final class ResearchNoteGenerationController {
     public static String progressText() {
         Task current = active;
         if (current == null) return StatCollector.translateToLocal("tcautores.generate_visible");
-        return String
-            .format(StatCollector.translateToLocal("tcautores.generate_progress"), current.generated, current.total);
+        return String.format(StatCollector.translateToLocal("tcautores.generate_progress"), current.generated,
+            current.total);
     }
 
     public static void clientTick() {
@@ -120,11 +127,8 @@ public final class ResearchNoteGenerationController {
         lastResult = result;
         revision++;
         if (notify && player != null) {
-            String message = String.format(
-                StatCollector.translateToLocal("tcautores.generate_finished"),
-                result.generated,
-                result.total,
-                reasonText(result.reason));
+            String message = String.format(StatCollector.translateToLocal("tcautores.generate_finished"),
+                result.generated, result.total, reasonText(result.reason));
             PlayerNotifications.addNotification(message);
             player.addChatMessage(new ChatComponentText(message));
         }
@@ -132,9 +136,7 @@ public final class ResearchNoteGenerationController {
     }
 
     private static String reasonText(EndReason reason) {
-        return StatCollector.translateToLocal(
-            "tcautores.generate_reason." + reason.name()
-                .toLowerCase());
+        return StatCollector.translateToLocal(reason.translationKey);
     }
 
     static int generatedNoteCapacity(ItemStack[] inventory, int reservedEmptySlots) {
@@ -174,7 +176,7 @@ public final class ResearchNoteGenerationController {
 
         void tick() {
             if (active != this || mc.thePlayer != player) {
-                stop(EndReason.CANCELLED);
+                stop(EndReason.Cancelled);
                 return;
             }
             tick++;
@@ -185,42 +187,40 @@ public final class ResearchNoteGenerationController {
                     deadline = 0;
                     revision++;
                 } else if (tick >= deadline) {
-                    stop(EndReason.TIMEOUT);
+                    stop(EndReason.Timeout);
                 }
                 return;
             }
 
             while (!keys.isEmpty()) {
                 String key = keys.removeFirst();
-                if (ResearchManager.isResearchComplete(player.getCommandSenderName(), key)
-                    || ResearchManager.getResearchSlot(player, key) >= 0) continue;
+                if (
+                    ResearchManager.isResearchComplete(player.getCommandSenderName(), key)
+                        || ResearchManager.getResearchSlot(player, key) >= 0
+                ) continue;
                 if (generatedNoteCapacity(player.inventory.mainInventory, reservedEmptySlots) <= 0) {
-                    stop(reservedEmptySlots > 0 ? EndReason.WORKSPACE_REQUIRED : EndReason.INVENTORY_FULL);
+                    stop(reservedEmptySlots > 0 ? EndReason.WorkspaceRequired : EndReason.InventoryFull);
                     return;
                 }
                 if (!player.inventory.hasItem(Items.paper)) {
-                    stop(EndReason.NO_PAPER);
+                    stop(EndReason.NoPaper);
                     return;
                 }
                 if (!ResearchManager.consumeInkFromPlayer(player, false)) {
-                    stop(EndReason.NO_INK);
+                    stop(EndReason.NoInk);
                     return;
                 }
                 pendingKey = key;
                 deadline = tick + ACK_TIMEOUT_TICKS;
-                PacketHandler.INSTANCE.sendToServer(
-                    new PacketPlayerCompleteToServer(
-                        key,
-                        player.getCommandSenderName(),
-                        player.worldObj.provider.dimensionId,
-                        (byte) 1));
+                PacketHandler.INSTANCE.sendToServer(new PacketPlayerCompleteToServer(key, player.getCommandSenderName(),
+                    player.worldObj.provider.dimensionId, (byte) 1));
                 return;
             }
-            stop(EndReason.COMPLETE);
+            stop(EndReason.Complete);
         }
 
         private void stop(EndReason reason) {
-            if (active != this && reason != EndReason.CANCELLED) return;
+            if (active != this && reason != EndReason.Cancelled) return;
             finish(new Result(generated, total, reason, pendingKey), listener, notify, player);
         }
     }

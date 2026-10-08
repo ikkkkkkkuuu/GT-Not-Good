@@ -17,8 +17,8 @@ public abstract class NetHandlerPlayClientMixin {
 
     @Inject(method = "handleConfirmTransaction", at = @At("HEAD"))
     private void tcAutoResearch$confirmResearchNoteTransfer(S32PacketConfirmTransaction packet, CallbackInfo ci) {
-        ContainerTransferController
-            .onConfirmation(packet.func_148889_c(), packet.func_148890_d(), packet.func_148888_e());
+        ContainerTransferController.onConfirmation(packet.func_148889_c(), packet.func_148890_d(),
+            packet.func_148888_e());
     }
 
     @Inject(method = "handleWindowItems", at = @At("TAIL"))

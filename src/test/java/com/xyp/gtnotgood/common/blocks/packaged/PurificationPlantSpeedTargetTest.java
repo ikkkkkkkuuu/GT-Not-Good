@@ -19,14 +19,12 @@ public class PurificationPlantSpeedTargetTest {
     public void normalCycleIsAssignedBeforeLinkedUnitsStart() throws Exception {
         String plant = "gregtech/common/tileentities/machines/multi/purification/MTEPurificationPlant";
         ClassNode node = new ClassNode();
-        try (InputStream source = getClass().getClassLoader()
-            .getResourceAsStream(plant + ".class")) {
+        try (InputStream source = getClass().getClassLoader().getResourceAsStream(plant + ".class")) {
             assertNotNull(source);
             new ClassReader(source).accept(node, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
         }
         var cycle = node.methods.stream()
-            .filter(method -> method.name.equals("startCycle") && method.desc.equals("()V"))
-            .findFirst()
+            .filter(method -> method.name.equals("startCycle") && method.desc.equals("()V")).findFirst()
             .orElseThrow(() -> new AssertionError("Missing plant startCycle()"));
         int normalCycles = 0;
         int debugCycles = 0;
@@ -42,14 +40,15 @@ public class PurificationPlantSpeedTargetTest {
             if (instruction instanceof IntInsnNode constant && constant.operand == 600) {
                 debugCycles++;
             }
-            if (instruction instanceof MethodInsnNode call && call.name.equals("startCycle")
-                && call.owner
-                    .equals("gregtech/common/tileentities/machines/multi/purification/MTEPurificationUnitBase")) {
+            if (
+                instruction instanceof MethodInsnNode call && call.name.equals("startCycle")
+                    && call.owner
+                        .equals("gregtech/common/tileentities/machines/multi/purification/MTEPurificationUnitBase")
+            ) {
                 assertEquals("(II)V", call.desc);
                 assertEquals("The normal cycle must be set before starting units", 1, normalCycles);
                 FieldInsnNode progress = (FieldInsnNode) call.getPrevious();
-                FieldInsnNode duration = (FieldInsnNode) progress.getPrevious()
-                    .getPrevious();
+                FieldInsnNode duration = (FieldInsnNode) progress.getPrevious().getPrevious();
                 assertEquals(Opcodes.GETFIELD, duration.getOpcode());
                 assertEquals("mMaxProgresstime", duration.name);
                 assertEquals(Opcodes.GETFIELD, progress.getOpcode());

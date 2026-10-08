@@ -14,14 +14,9 @@ import gregtech.api.enums.OrePrefixes;
 import gregtech.api.util.GTOreDictUnificator;
 import gtPlusPlus.xmod.gregtech.api.enums.GregtechItemList;
 
-/**
- * 模具数据管理类
- * 统一管理所有可选择的模具列表（普通模具、一次性工具模具、挤出模头、透镜和纳米蜂群）
- * 将模具列表从SuperMTEHatchCraftingInputME中提取出来，便于维护和扩展
- */
 public class MoldDataManager {
 
-    // 所有可选择的模具列表（Shape_Mold_* 和 Shape_Extruder_* 系列物品）
+    // 普通模具、一次性模具、挤出模头、透镜和纳米蜂群。
     public static final ItemStack[] CRIB_MOLDS = buildMoldArray();
 
     private static ItemStack[] buildMoldArray() {
@@ -118,10 +113,10 @@ public class MoldDataManager {
         // GTNH (NewHorizonsCoreMod) 特殊透镜
         // 这些透镜用于高阶激光雕刻/纳米锻造等 GTNH 特有配方
         {
-            ItemStack reinforcedGlassLense = ModsItemlist.NHCoreModReinforcedGlassLens.get(1);
-            ItemStack mysteriousCrystalLens = ModsItemlist.NHCoreModMysteriousCrystalLens.get(1);
-            ItemStack radoxPolymerLens = ModsItemlist.NHCoreModRadoxPolymerLens.get(1);
-            ItemStack chromaticLens = ModsItemlist.NHCoreModChromaticLens.get(1);
+            ItemStack reinforcedGlassLense = ModsItemlist.ReinforcedGlassLens.get(1);
+            ItemStack mysteriousCrystalLens = ModsItemlist.MysteriousCrystalLens.get(1);
+            ItemStack radoxPolymerLens = ModsItemlist.RadoxPolymerLens.get(1);
+            ItemStack chromaticLens = ModsItemlist.ChromaticLens.get(1);
             if (reinforcedGlassLense != null) items.add(reinforcedGlassLense);
             if (mysteriousCrystalLens != null) items.add(mysteriousCrystalLens);
             if (radoxPolymerLens != null) items.add(radoxPolymerLens);
@@ -129,10 +124,10 @@ public class MoldDataManager {
         }
 
         // AE2 压印模板 (Inscriber Presses)
-        items.add(ModsItemlist.AE2CalculationPress.get(1));
-        items.add(ModsItemlist.AE2EngineeringPress.get(1));
-        items.add(ModsItemlist.AE2LogicPress.get(1));
-        items.add(ModsItemlist.AE2SiliconPress.get(1));
+        items.add(ModsItemlist.CalculationPress.get(1));
+        items.add(ModsItemlist.EngineeringPress.get(1));
+        items.add(ModsItemlist.LogicPress.get(1));
+        items.add(ModsItemlist.SiliconPress.get(1));
 
         // 所有纳米蜂群 (OrePrefixes.nanite) - GT 原生材料
         // 纳米蜂群由纳米锻造机 (Nano Forge) 生产，用于 PCB 工厂、光学电路线、星门等

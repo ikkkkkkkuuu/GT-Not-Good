@@ -138,8 +138,7 @@ public class BeeBreedingHelper {
         if (!isBee(stack)) return null;
         IBee bee = getBeeRoot().getMember(stack);
         if (bee == null || bee.getGenome() == null) return null;
-        IAlleleBeeSpecies species = bee.getGenome()
-            .getPrimary();
+        IAlleleBeeSpecies species = bee.getGenome().getPrimary();
         return species != null ? species.getUnlocalizedName() : null;
     }
 
@@ -150,8 +149,7 @@ public class BeeBreedingHelper {
         if (!isBee(stack)) return null;
         IBee bee = getBeeRoot().getMember(stack);
         if (bee == null || bee.getGenome() == null) return null;
-        IAlleleBeeSpecies species = bee.getGenome()
-            .getPrimary();
+        IAlleleBeeSpecies species = bee.getGenome().getPrimary();
         return species != null ? species.getUID() : null;
     }
 
@@ -405,14 +403,12 @@ public class BeeBreedingHelper {
     private static boolean matchSpeciesName(IAlleleBeeSpecies species, String speciesName) {
         if (species == null || speciesName == null) return false;
         // 匹配本地化名（用户手动输入的英文名）
-        if (species.getName() != null && species.getName()
-            .equalsIgnoreCase(speciesName)) {
+        if (species.getName() != null && species.getName().equalsIgnoreCase(speciesName)) {
             return true;
         }
         // 匹配未本地化的内部名（NEI拖放获取的标识名）
         if (species.getUnlocalizedName() != null) {
-            if (species.getUnlocalizedName()
-                .equalsIgnoreCase(speciesName)) {
+            if (species.getUnlocalizedName().equalsIgnoreCase(speciesName)) {
                 return true;
             }
             // 匹配点分隔后的可读名（如 "for.bees.species.Nickel" → "Nickel"）
@@ -482,10 +478,8 @@ public class BeeBreedingHelper {
             if (resultTemplate.length > 0 && resultTemplate[0] instanceof IAlleleBeeSpecies) {
                 IAlleleBeeSpecies resultSpecies = (IAlleleBeeSpecies) resultTemplate[0];
                 if (matchSpeciesName(resultSpecies, speciesName)) {
-                    String parent1 = mutation.getAllele0()
-                        .getUnlocalizedName();
-                    String parent2 = mutation.getAllele1()
-                        .getUnlocalizedName();
+                    String parent1 = mutation.getAllele0().getUnlocalizedName();
+                    String parent2 = mutation.getAllele1().getUnlocalizedName();
                     mutations.add(new MutationData(parent1, parent2, speciesName, mutation.getBaseChance()));
                 }
             }
@@ -661,8 +655,10 @@ public class BeeBreedingHelper {
         String[] preference = BREEDING_PREFERENCES_UID.get(uid);
         if (preference != null) {
             for (MutationData mutation : mutations) {
-                if ((mutation.parent1.equals(preference[0]) && mutation.parent2.equals(preference[1]))
-                    || (mutation.parent1.equals(preference[1]) && mutation.parent2.equals(preference[0]))) {
+                if (
+                    (mutation.parent1.equals(preference[0]) && mutation.parent2.equals(preference[1]))
+                        || (mutation.parent1.equals(preference[1]) && mutation.parent2.equals(preference[0]))
+                ) {
                     return mutation;
                 }
             }
@@ -691,8 +687,7 @@ public class BeeBreedingHelper {
             return new ArrayList<>();
         }
 
-        breedingChain.put(
-            targetUID,
+        breedingChain.put(targetUID,
             new BreedingStep(targetMutation.parent1, targetMutation.parent2, targetUID, targetMutation.chance));
         queue.add(targetUID);
 
@@ -709,13 +704,8 @@ public class BeeBreedingHelper {
                 parentMutations.removeIf(m -> m.parent1.equals(targetUID) || m.parent2.equals(targetUID));
                 MutationData parentMutation = selectBestMutationForUID(parent, parentMutations);
                 if (parentMutation != null) {
-                    breedingChain.put(
-                        parent,
-                        new BreedingStep(
-                            parentMutation.parent1,
-                            parentMutation.parent2,
-                            parent,
-                            parentMutation.chance));
+                    breedingChain.put(parent, new BreedingStep(parentMutation.parent1, parentMutation.parent2, parent,
+                        parentMutation.chance));
                     queue.add(parent);
                 }
             }
@@ -771,8 +761,7 @@ public class BeeBreedingHelper {
             return new ArrayList<>();
         }
 
-        breedingChain.put(
-            targetBee,
+        breedingChain.put(targetBee,
             new BreedingStep(targetMutation.parent1, targetMutation.parent2, targetBee, targetMutation.chance));
         queue.add(targetBee);
 
@@ -789,13 +778,8 @@ public class BeeBreedingHelper {
                 parentMutations.removeIf(m -> m.parent1.equals(targetBee) || m.parent2.equals(targetBee));
                 MutationData parentMutation = selectBestMutation(parent, parentMutations);
                 if (parentMutation != null) {
-                    breedingChain.put(
-                        parent,
-                        new BreedingStep(
-                            parentMutation.parent1,
-                            parentMutation.parent2,
-                            parent,
-                            parentMutation.chance));
+                    breedingChain.put(parent, new BreedingStep(parentMutation.parent1, parentMutation.parent2, parent,
+                        parentMutation.chance));
                     queue.add(parent);
                 }
             }

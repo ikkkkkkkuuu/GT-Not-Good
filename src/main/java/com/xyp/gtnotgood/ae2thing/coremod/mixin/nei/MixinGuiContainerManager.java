@@ -63,9 +63,7 @@ public abstract class MixinGuiContainerManager {
         boolean displayFluid = false;
         if (window instanceof GuiRecipe<?>gui) {
             IDisplayRepo repo = null;
-            if (AE2ThingAPI.instance()
-                .terminal()
-                .isTerminal(gui.getFirstScreenGeneral())) {
+            if (AE2ThingAPI.instance().terminal().isTerminal(gui.getFirstScreenGeneral())) {
                 repo = Util.getDisplayRepo((AEBaseGui) gui.getFirstScreenGeneral());
             }
             if (!(repo instanceof ItemRepo)) return;
@@ -75,8 +73,8 @@ public abstract class MixinGuiContainerManager {
                 // [液滴分类] 可迁原生：把 NEI 鼠标悬停的流体转成液滴仅为 list.findPrecise 查库存/画 tooltip,不下单合成
                 stack = displayFluid ? FluidDropCompat.newDisplayStack(fs) : FluidDropCompat.newStack(fs);
             }
-            IAEStack<?> found = list.findPrecise(
-                ae2Thing$lastStack != null && Platform.isSameItemPrecise(ae2Thing$lastStack, stack)
+            IAEStack<?> found = list
+                .findPrecise(ae2Thing$lastStack != null && Platform.isSameItemPrecise(ae2Thing$lastStack, stack)
                     && ae2thing$lastAEStack != null ? ae2thing$lastAEStack : AEItemStack.create(stack));
             if (found instanceof IAEItemStack item) {
                 ae2thing$render(item, mousex - 8, mousey - 40 < 0 ? mousey + 40 : mousey - 40);
@@ -92,22 +90,12 @@ public abstract class MixinGuiContainerManager {
         GL11.glPushMatrix();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glTranslatef(0.0f, 0.0f, 350);
-        ae2thing$r.renderItemAndEffectIntoGUI(
-            Minecraft.getMinecraft().fontRenderer,
-            Minecraft.getMinecraft()
-                .getTextureManager(),
-            stack,
-            x,
-            y);
+        ae2thing$r.renderItemAndEffectIntoGUI(Minecraft.getMinecraft().fontRenderer,
+            Minecraft.getMinecraft().getTextureManager(), stack, x, y);
         GL11.glTranslatef(0.0f, 0.0f, 200.0f);
         aeRenderItem.setAeStack(item);
-        aeRenderItem.renderItemOverlayIntoGUI(
-            Minecraft.getMinecraft().fontRenderer,
-            Minecraft.getMinecraft()
-                .getTextureManager(),
-            stack,
-            x,
-            y);
+        aeRenderItem.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer,
+            Minecraft.getMinecraft().getTextureManager(), stack, x, y);
         GL11.glTranslatef(0.0f, 0.0f, -350.0f);
         if (item.isCraftable() && canDrawPlus) {
             GL11.glTranslatef(0.0f, 0.0f, 450.0f);

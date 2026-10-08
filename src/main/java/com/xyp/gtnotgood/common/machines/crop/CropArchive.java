@@ -38,10 +38,7 @@ public class CropArchive {
     }
 
     public boolean unlockCrop(ICropCard crop, ISeedStats stats) {
-        if (crop == null || crop.getId() == null
-            || crop.getId()
-                .isEmpty()
-            || stats == null) {
+        if (crop == null || crop.getId() == null || crop.getId().isEmpty() || stats == null) {
             return false;
         }
         return unlockCrop(crop.getId(), stats);
@@ -112,8 +109,7 @@ public class CropArchive {
         for (Map.Entry<String, ArchivedSeed> entry : seeds.entrySet()) {
             NBTTagCompound cropTag = new NBTTagCompound();
             cropTag.setString("id", entry.getKey());
-            entry.getValue()
-                .writeToNBT(cropTag);
+            entry.getValue().writeToNBT(cropTag);
             cropList.appendTag(cropTag);
         }
         tag.setTag("crops", cropList);
@@ -149,10 +145,8 @@ public class CropArchive {
             if (previous == null) {
                 return new ArchivedSeed(stats.getGrowth(), stats.getGain(), stats.getResistance());
             }
-            return new ArchivedSeed(
-                Math.max(previous.growth, stats.getGrowth()),
-                Math.max(previous.gain, stats.getGain()),
-                Math.max(previous.resistance, stats.getResistance()));
+            return new ArchivedSeed(Math.max(previous.growth, stats.getGrowth()),
+                Math.max(previous.gain, stats.getGain()), Math.max(previous.resistance, stats.getResistance()));
         }
 
         private static ArchivedSeed fromNBT(NBTTagCompound tag) {

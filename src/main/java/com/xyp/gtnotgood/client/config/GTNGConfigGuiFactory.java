@@ -35,9 +35,7 @@ public class GTNGConfigGuiFactory implements IModGuiFactory {
 
     @Override
     public void initialize(Minecraft minecraftInstance) {
-        FMLCommonHandler.instance()
-            .bus()
-            .register(this);
+        FMLCommonHandler.instance().bus().register(this);
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ConfigTooltipHandler());
     }
@@ -56,8 +54,7 @@ public class GTNGConfigGuiFactory implements IModGuiFactory {
     public void onModOptionsClick(GuiScreenEvent.ActionPerformedEvent.Pre event) {
         if (event.gui instanceof GuiIngameModOptions && event.button instanceof SettingsButton) {
             event.setCanceled(true);
-            Minecraft.getMinecraft()
-                .displayGuiScreen(new SettingsScreen(event.gui));
+            Minecraft.getMinecraft().displayGuiScreen(new SettingsScreen(event.gui));
         }
     }
 
@@ -92,12 +89,9 @@ public class GTNGConfigGuiFactory implements IModGuiFactory {
      */
     @SubscribeEvent
     public void onConfigChanged(OnConfigChangedEvent event) {
-        if (ModList.GTNotGood.getID()
-            .equals(event.modID)) {
-            Config.getConfiguration()
-                .save();
-            MainConfig.getConfiguration()
-                .save();
+        if (ModList.GTNotGood.getID().equals(event.modID)) {
+            Config.getConfiguration().save();
+            MainConfig.getConfiguration().save();
             Config.refreshClientTaskbarButton();
         }
     }
@@ -106,12 +100,7 @@ public class GTNGConfigGuiFactory implements IModGuiFactory {
     public static class SettingsScreen extends GuiConfig {
 
         public SettingsScreen(GuiScreen parentScreen) {
-            super(
-                parentScreen,
-                createElements(),
-                ModList.GTNotGood.getID(),
-                false,
-                true,
+            super(parentScreen, createElements(), ModList.GTNotGood.getID(), false, true,
                 ModList.GTNotGood.getDisplayName());
         }
 
@@ -122,11 +111,8 @@ public class GTNGConfigGuiFactory implements IModGuiFactory {
                 // #tr gui.gtnotgood.server_settings
                 // # Server settings (administrator)
                 // # zh_CN 服务器设置（管理员）
-                elements.add(
-                    new DummyCategoryElement(
-                        "server",
-                        "gui.gtnotgood.server_settings",
-                        ServerSettingsScreen.ServerEntry.class));
+                elements.add(new DummyCategoryElement("server", "gui.gtnotgood.server_settings",
+                    ServerSettingsScreen.ServerEntry.class));
             }
             addCategories(elements, Config.getConfiguration());
             addCategories(elements, MainConfig.getConfiguration());

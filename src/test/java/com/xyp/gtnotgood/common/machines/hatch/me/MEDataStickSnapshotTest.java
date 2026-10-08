@@ -28,22 +28,10 @@ public class MEDataStickSnapshotTest {
 
     @Test
     public void filtersNonSticksAndEmptyEntries() {
-        assertTrue(
-            snapshot.replace(
-                Arrays.asList(
-                    research("A", 1),
-                    research("empty", 0),
-                    research("removed", -1),
-                    new ItemStack(item, 1, 8),
-                    new ItemStack(new Item(), 1, 7),
-                    null),
-                dataStick));
+        assertTrue(snapshot.replace(Arrays.asList(research("A", 1), research("empty", 0), research("removed", -1),
+            new ItemStack(item, 1, 8), new ItemStack(new Item(), 1, 7), null), dataStick));
         assertEquals(1, snapshot.size());
-        assertEquals(
-            "A",
-            snapshot.get(0)
-                .getTagCompound()
-                .getString("research"));
+        assertEquals("A", snapshot.get(0).getTagCompound().getString("research"));
     }
 
     @Test
@@ -59,11 +47,7 @@ public class MEDataStickSnapshotTest {
     public void sameSizedResearchSwapAndRemovalInvalidate() {
         assertTrue(snapshot.replace(Collections.singletonList(research("A", 1)), dataStick));
         assertTrue(snapshot.replace(Collections.singletonList(research("B", 1)), dataStick));
-        assertEquals(
-            "B",
-            snapshot.get(0)
-                .getTagCompound()
-                .getString("research"));
+        assertEquals("B", snapshot.get(0).getTagCompound().getString("research"));
         assertTrue(snapshot.replace(Collections.emptyList(), dataStick));
         assertEquals(0, snapshot.size());
         assertNull(snapshot.get(0));
@@ -74,17 +58,11 @@ public class MEDataStickSnapshotTest {
         ItemStack network = research("A", 9);
         snapshot.replace(Collections.singletonList(network), dataStick);
         assertEquals(9, network.stackSize);
-        network.getTagCompound()
-            .setString("research", "network changed");
+        network.getTagCompound().setString("research", "network changed");
         ItemStack returned = snapshot.get(0);
-        returned.getTagCompound()
-            .setString("research", "caller changed");
+        returned.getTagCompound().setString("research", "caller changed");
         returned.stackSize = 0;
-        assertEquals(
-            "A",
-            snapshot.get(0)
-                .getTagCompound()
-                .getString("research"));
+        assertEquals("A", snapshot.get(0).getTagCompound().getString("research"));
         assertEquals(1, snapshot.get(0).stackSize);
         assertNull(snapshot.get(-1));
         assertNull(snapshot.get(1));
@@ -106,10 +84,6 @@ public class MEDataStickSnapshotTest {
         for (int i = 0; i < 100; i++) research.add(research("recipe " + i, 1));
         assertTrue(snapshot.replace(research, dataStick));
         assertEquals(100, snapshot.size());
-        assertEquals(
-            "recipe 99",
-            snapshot.get(99)
-                .getTagCompound()
-                .getString("research"));
+        assertEquals("recipe 99", snapshot.get(99).getTagCompound().getString("research"));
     }
 }

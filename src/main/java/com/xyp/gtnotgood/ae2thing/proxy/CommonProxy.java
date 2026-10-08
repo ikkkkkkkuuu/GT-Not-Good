@@ -23,24 +23,19 @@ public class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(this);
+        FMLCommonHandler.instance().bus().register(this);
         ModAndClassUtil.init();
     }
 
     public void init(FMLInitializationEvent event) {
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerCraftingTerminal(new AECraftingTerminal());
+        AE2ThingAPI.instance().terminal().registerCraftingTerminal(new AECraftingTerminal());
         new PatternTerminalMouseWheelLoader().run();
         new InvLoader().run();
     }
 
     public void postInit(FMLPostInitializationEvent event) {
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerTerminalItem(ItemWirelessDualInterfaceTerminal.class, new DualInterfaceTerminalHandler());
+        AE2ThingAPI.instance().terminal().registerTerminalItem(ItemWirelessDualInterfaceTerminal.class,
+            new DualInterfaceTerminalHandler());
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {

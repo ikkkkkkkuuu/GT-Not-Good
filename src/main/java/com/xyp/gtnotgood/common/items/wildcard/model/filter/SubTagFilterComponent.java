@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.common.items.wildcard.model.filter;
 
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
@@ -48,7 +50,7 @@ public final class SubTagFilterComponent extends AbstractFilterComponent {
     public void setExample(Materials example) {
         this.example = WildcardMaterials.isRealMaterial(example) ? example : null;
         if (this.example != null) {
-            java.util.List<SubTag> avail = WildcardMaterials.subTagsOf(this.example);
+            List<SubTag> avail = WildcardMaterials.subTagsOf(this.example);
             if (!avail.isEmpty() && (subTag == null || !avail.contains(subTag))) {
                 subTag = avail.get(0);
             }

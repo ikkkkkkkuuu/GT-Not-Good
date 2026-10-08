@@ -61,15 +61,15 @@ public final class WirelessRecipeDisplay {
     public static String rate(NBTTagCompound row, boolean compact) {
         int ticks = row.getInteger("ticks");
         BigDecimal rate = ticks <= 0 ? BigDecimal.ZERO
-            : new BigDecimal(row.getString("amount")).multiply(BigDecimal.valueOf(20))
-                .divide(BigDecimal.valueOf(ticks), 2, RoundingMode.HALF_UP);
+            : new BigDecimal(row.getString("amount")).multiply(BigDecimal.valueOf(20)).divide(BigDecimal.valueOf(ticks),
+                2, RoundingMode.HALF_UP);
         return number(rate, compact) + (row.hasKey("fluid") ? " L/s" : "/s");
     }
 
     public static String number(Number number, boolean compact) {
         BigDecimal decimal = new BigDecimal(number.toString());
-        if (compact && decimal.precision() - decimal.scale() > 18) return decimal.round(new MathContext(4))
-            .toEngineeringString();
+        if (compact && decimal.precision() - decimal.scale() > 18)
+            return decimal.round(new MathContext(4)).toEngineeringString();
         return new DecimalFormat("#,##0.##").format(number);
     }
 }

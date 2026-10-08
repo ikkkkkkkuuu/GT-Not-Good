@@ -32,16 +32,13 @@ public final class ModernTheme {
         disabled = new SpriteTexture(resources.apply("modern/button_disabled.png"), 200, 20, 3);
         input = new SpriteTexture(resources.apply("modern/text_field.png"), 128, 128, 0).setSprite(0, 0, 128, 12)
             .setBorder(1, 1, 1, 1);
-        inputFocused = input.copy()
-            .setSprite(0, 24, 128, 12);
-        inputDisabled = input.copy()
-            .setSprite(0, 12, 128, 12);
+        inputFocused = input.copy().setSprite(0, 24, 128, 12);
+        inputDisabled = input.copy().setSprite(0, 12, 128, 12);
         scrollThumb = new SpriteTexture(resources.apply("modern/small_scroller.png"), 7, 15, 2);
         slot = new SpriteTexture(resources.apply("modern/slot.png"), 18, 18, 1);
         tab = new SpriteTexture(resources.apply("modern/tabs_left.png"), 64, 84, 0).setSprite(0, 28, 32, 28)
             .setBorder(3, 3, 3, 3);
-        selectedTab = tab.copy()
-            .setSprite(32, 28, 32, 28);
+        selectedTab = tab.copy().setSprite(32, 28, 32, 28);
         accent = new SpriteTexture(resources.apply("modern/button_highlighted.png"), 200, 20, 3);
         hover = accent;
         focus = new ColorBorderTexture(1, 0xFFA5D8FF);

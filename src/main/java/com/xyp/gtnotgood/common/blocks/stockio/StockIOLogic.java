@@ -102,8 +102,7 @@ public final class StockIOLogic {
     }
 
     public boolean isOnline() {
-        return isServerSide() && host.getProxy()
-            .isActive();
+        return isServerSide() && host.getProxy().isActive();
     }
 
     public boolean isTargetConnected() {
@@ -307,11 +306,11 @@ public final class StockIOLogic {
             TileEntity targetTile = host.getTarget();
             targetConnected = targetTile != null && !targetTile.isInvalid() && !sameGrid(targetTile);
             if (targetConnected && targetTile instanceof BaseMetaTileEntity base && base.getMetaTileEntity() != null) {
-                targetNameKey = base.getMetaTileEntity()
-                    .getLocalNameKey();
+                targetNameKey = base.getMetaTileEntity().getLocalNameKey();
             } else {
-                targetNameKey = targetConnected && targetTile.getBlockType() != null ? targetTile.getBlockType()
-                    .getUnlocalizedName() + ".name" : "";
+                targetNameKey = targetConnected && targetTile.getBlockType() != null
+                    ? targetTile.getBlockType().getUnlocalizedName() + ".name"
+                    : "";
             }
             if (!enabled || !recycle || !targetConnected || !pending.isEmpty()) return;
             BusTarget target = new BusTarget(targetTile, getTargetFace(), true);
@@ -355,10 +354,7 @@ public final class StockIOLogic {
     private void refreshAutomaticMarks() throws GridAccessException {
         if (autoPullItems) {
             int free = freeSlot(false);
-            for (IAEItemStack item : host.getProxy()
-                .getStorage()
-                .getItemInventory()
-                .getStorageList()) {
+            for (IAEItemStack item : host.getProxy().getStorage().getItemInventory().getStorageList()) {
                 if (free < 0) break;
                 if (item.getStackSize() < minItemAutoPull || matchingSlot(item, -1) >= 0) continue;
                 itemFilters[free] = item.getItemStack();
@@ -370,10 +366,7 @@ public final class StockIOLogic {
         }
         if (autoPullFluids) {
             int free = freeSlot(true);
-            for (IAEFluidStack fluid : host.getProxy()
-                .getStorage()
-                .getFluidInventory()
-                .getStorageList()) {
+            for (IAEFluidStack fluid : host.getProxy().getStorage().getFluidInventory().getStorageList()) {
                 if (free < 0) break;
                 if (fluid.getStackSize() < minFluidAutoPull || matchingSlot(fluid, -1) >= 0) continue;
                 fluidFilters[free] = fluid.getFluidStack();
@@ -410,8 +403,7 @@ public final class StockIOLogic {
 
     private boolean sameGrid(TileEntity target) {
         if (!(target instanceof IGridHost gridHost)) return false;
-        var node = host.getProxy()
-            .getNode();
+        var node = host.getProxy().getNode();
         if (node == null) return false;
         for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
             var targetNode = gridHost.getGridNode(side);
@@ -422,20 +414,13 @@ public final class StockIOLogic {
 
     @SuppressWarnings("rawtypes")
     private IMEInventory inventory(IAEStack<?> key) throws GridAccessException {
-        return key.isFluid() ? host.getProxy()
-            .getStorage()
-            .getFluidInventory()
-            : host.getProxy()
-                .getStorage()
-                .getItemInventory();
+        return key.isFluid() ? host.getProxy().getStorage().getFluidInventory()
+            : host.getProxy().getStorage().getItemInventory();
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private long available(IAEStack<?> key) throws GridAccessException {
-        IAEStack found = inventory(key).extractItems(
-            key.copy()
-                .setStackSize(Long.MAX_VALUE),
-            Actionable.SIMULATE,
+        IAEStack found = inventory(key).extractItems(key.copy().setStackSize(Long.MAX_VALUE), Actionable.SIMULATE,
             host.getActionSource());
         return found == null ? 0 : Math.max(0, found.getStackSize());
     }
@@ -460,8 +445,8 @@ public final class StockIOLogic {
             int endSlot = selectedSlot < 0 ? SLOT_COUNT : selectedSlot + 1;
             for (int slot = firstSlot; slot < endSlot; slot++) {
                 if ((selectedSlot < 0 || !fluidOnly) && itemFilters[slot] != null) {
-                    int offered = getPolicy(false, slot)
-                        .offered(available(AEItemStack.create(itemFilters[slot])), limitedMode, fixedMode);
+                    int offered = getPolicy(false, slot).offered(available(AEItemStack.create(itemFilters[slot])),
+                        limitedMode, fixedMode);
                     if (offered > 0) {
                         snapshot.items[slot] = itemFilters[slot].copy();
                         snapshot.items[slot].stackSize = offered;
@@ -469,8 +454,8 @@ public final class StockIOLogic {
                     }
                 }
                 if ((selectedSlot < 0 || fluidOnly) && fluidFilters[slot] != null) {
-                    int offered = getPolicy(true, slot)
-                        .offered(available(AEFluidStack.create(fluidFilters[slot])), limitedMode, fixedMode);
+                    int offered = getPolicy(true, slot).offered(available(AEFluidStack.create(fluidFilters[slot])),
+                        limitedMode, fixedMode);
                     if (offered > 0) {
                         snapshot.fluids[slot] = fluidFilters[slot].copy();
                         snapshot.fluids[slot].amount = offered;
@@ -518,26 +503,23 @@ public final class StockIOLogic {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public boolean endRecipe(StockIOSnapshot snapshot, BooleanSupplier commitEffect) {
         Objects.requireNonNull(commitEffect, "commitEffect");
-        if (!isServerSide() || snapshot == null
-            || snapshot.closed
-            || snapshot != activeRecipe
-            || snapshot.owner != this) return false;
+        if (
+            !isServerSide() || snapshot == null || snapshot.closed || snapshot != activeRecipe || snapshot.owner != this
+        ) return false;
         List<IAEStack<?>> requests = new ArrayList<>();
         List<IAEStack<?>> extracted = new ArrayList<>();
         transferring = true;
         try {
             if (!enabled || !isOnline() || !pending.isEmpty()) return false;
             for (int slot = 0; slot < SLOT_COUNT; slot++) {
-                if (!consumption(requests, snapshot.originalItems[slot], snapshot.items[slot], slot)
-                    || !consumption(requests, snapshot.originalFluids[slot], snapshot.fluids[slot], slot)) return false;
+                if (
+                    !consumption(requests, snapshot.originalItems[slot], snapshot.items[slot], slot)
+                        || !consumption(requests, snapshot.originalFluids[slot], snapshot.fluids[slot], slot)
+                ) return false;
             }
             for (IAEStack<?> request : requests) {
-                IAEStack actual = Platform.poweredExtraction(
-                    host.getProxy()
-                        .getEnergy(),
-                    inventory(request),
-                    (IAEStack) request.copy(),
-                    host.getActionSource());
+                IAEStack actual = Platform.poweredExtraction(host.getProxy().getEnergy(), inventory(request),
+                    (IAEStack) request.copy(), host.getActionSource());
                 if (actual != null && actual.getStackSize() > 0) extracted.add(actual);
                 if (actual == null || actual.getStackSize() != request.getStackSize()) {
                     rollback(extracted);
@@ -563,9 +545,10 @@ public final class StockIOLogic {
     private boolean consumption(List<IAEStack<?>> requests, ItemStack original, ItemStack remaining, int slot)
         throws GridAccessException {
         if (original == null) return remaining == null;
-        if (remaining != null
-            && (!sameItem(original, remaining) || remaining.stackSize < 0 || remaining.stackSize > original.stackSize))
-            return false;
+        if (
+            remaining != null && (!sameItem(original, remaining) || remaining.stackSize < 0
+                || remaining.stackSize > original.stackSize)
+        ) return false;
         int used = original.stackSize - (remaining == null ? 0 : remaining.stackSize);
         if (used <= 0) return true;
         IAEItemStack request = AEItemStack.create(original);
@@ -577,9 +560,10 @@ public final class StockIOLogic {
     private boolean consumption(List<IAEStack<?>> requests, FluidStack original, FluidStack remaining, int slot)
         throws GridAccessException {
         if (original == null) return remaining == null;
-        if (remaining != null
-            && (!sameFluid(original, remaining) || remaining.amount < 0 || remaining.amount > original.amount))
-            return false;
+        if (
+            remaining != null
+                && (!sameFluid(original, remaining) || remaining.amount < 0 || remaining.amount > original.amount)
+        ) return false;
         int used = original.amount - (remaining == null ? 0 : remaining.amount);
         if (used <= 0) return true;
         IAEFluidStack request = AEFluidStack.create(original);
@@ -612,24 +596,21 @@ public final class StockIOLogic {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private IAEStack<?> extract(IAEStack<?> key, int slot, int amount, boolean simulate) {
-        if (key == null || amount <= 0
-            || !enabled
-            || !isOnline()
-            || activeRecipe != null
-            || transferring
-            || !pending.isEmpty()) return null;
+        if (
+            key == null || amount <= 0
+                || !enabled
+                || !isOnline()
+                || activeRecipe != null
+                || transferring
+                || !pending.isEmpty()
+        ) return null;
         try {
             int offered = getPolicy(key.isFluid(), slot).offered(available(key), limitedMode, fixedMode);
             if (offered <= 0) return null;
-            IAEStack request = key.copy()
-                .setStackSize(Math.min(amount, offered));
+            IAEStack request = key.copy().setStackSize(Math.min(amount, offered));
             if (simulate) return inventory(key).extractItems(request, Actionable.SIMULATE, host.getActionSource());
             transferring = true;
-            IAEStack actual = Platform.poweredExtraction(
-                host.getProxy()
-                    .getEnergy(),
-                inventory(key),
-                request,
+            IAEStack actual = Platform.poweredExtraction(host.getProxy().getEnergy(), inventory(key), request,
                 host.getActionSource());
             refreshRequested = true;
             return actual;
@@ -648,28 +629,17 @@ public final class StockIOLogic {
             if (!pending.isEmpty()) break;
             long budget = stack.isFluid() ? fluidBudget : itemBudget;
             if (budget <= 0) continue;
-            long quantity = Math
-                .min(budget, target.hasNativeOutputs() ? stack.getStackSize() : recyclableAmount(stack));
+            long quantity = Math.min(budget,
+                target.hasNativeOutputs() ? stack.getStackSize() : recyclableAmount(stack));
             if (quantity <= 0) continue;
-            IAEStack simulated = target.extract(
-                stack.copy()
-                    .setStackSize(quantity),
-                true);
+            IAEStack simulated = target.extract(stack.copy().setStackSize(quantity), true);
             if (simulated == null || simulated.getStackSize() <= 0) continue;
             IMEInventory network = inventory(stack);
-            IAEStack remainder = Platform.poweredInsert(
-                host.getProxy()
-                    .getEnergy(),
-                network,
-                simulated.copy(),
-                host.getActionSource(),
-                Actionable.SIMULATE);
+            IAEStack remainder = Platform.poweredInsert(host.getProxy().getEnergy(), network, simulated.copy(),
+                host.getActionSource(), Actionable.SIMULATE);
             long accepted = simulated.getStackSize() - (remainder == null ? 0 : remainder.getStackSize());
             if (accepted <= 0) continue;
-            IAEStack taken = target.extract(
-                simulated.copy()
-                    .setStackSize(accepted),
-                false);
+            IAEStack taken = target.extract(simulated.copy().setStackSize(accepted), false);
             if (taken == null || taken.getStackSize() <= 0) continue;
             pending.add(new Pending(taken, false));
             host.markDirty();
@@ -697,11 +667,7 @@ public final class StockIOLogic {
             IMEInventory network = inventory(transfer.stack);
             IAEStack remainder = transfer.rollback
                 ? network.injectItems((IAEStack) transfer.stack.copy(), Actionable.MODULATE, host.getActionSource())
-                : Platform.poweredInsert(
-                    host.getProxy()
-                        .getEnergy(),
-                    network,
-                    (IAEStack) transfer.stack.copy(),
+                : Platform.poweredInsert(host.getProxy().getEnergy(), network, (IAEStack) transfer.stack.copy(),
                     host.getActionSource());
             if (remainder == null || remainder.getStackSize() <= 0) pending.remove(index);
             else {

@@ -66,19 +66,12 @@ public final class PatternMEOutput {
             }
 
             public IMEInventory<IAEItemStack> getNetworkInvtory() throws GridAccessException {
-                return owner.getProxy()
-                    .getStorage()
-                    .getItemInventory();
+                return owner.getProxy().getStorage().getItemInventory();
             }
 
             public NBTTagCompound saveStackToNBT(IAEItemStack stack) {
                 NBTTagCompound tag = new NBTTagCompound();
-                tag.setTag(
-                    "stack",
-                    GTUtility.saveItem(
-                        stack.copy()
-                            .setStackSize(1)
-                            .getItemStack()));
+                tag.setTag("stack", GTUtility.saveItem(stack.copy().setStackSize(1).getItemStack()));
                 tag.setLong("amount", stack.getStackSize());
                 return tag;
             }
@@ -99,19 +92,12 @@ public final class PatternMEOutput {
             }
 
             public IMEInventory<IAEFluidStack> getNetworkInvtory() throws GridAccessException {
-                return owner.getProxy()
-                    .getStorage()
-                    .getFluidInventory();
+                return owner.getProxy().getStorage().getFluidInventory();
             }
 
             public NBTTagCompound saveStackToNBT(IAEFluidStack stack) {
                 NBTTagCompound tag = new NBTTagCompound();
-                tag.setTag(
-                    "stack",
-                    stack.copy()
-                        .setStackSize(1)
-                        .getFluidStack()
-                        .writeToNBT(new NBTTagCompound()));
+                tag.setTag("stack", stack.copy().setStackSize(1).getFluidStack().writeToNBT(new NBTTagCompound()));
                 tag.setLong("amount", stack.getStackSize());
                 return tag;
             }
@@ -244,10 +230,7 @@ public final class PatternMEOutput {
         void saveCache(NBTTagCompound tag, String key) {
             NBTTagList list = new NBTTagList();
             cache.iterateAll(
-                (stack, amount) -> list.appendTag(
-                    environment.saveStackToNBT(
-                        stack.copy()
-                            .setStackSize(amount))));
+                (stack, amount) -> list.appendTag(environment.saveStackToNBT(stack.copy().setStackSize(amount))));
             if (list.tagCount() == 0) tag.removeTag(key);
             else tag.setTag(key, list);
         }

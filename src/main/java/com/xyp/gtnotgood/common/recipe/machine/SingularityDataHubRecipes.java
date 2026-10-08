@@ -17,26 +17,16 @@ public class SingularityDataHubRecipes {
         RecipeMap<?> As = RecipeMaps.assemblerRecipes;
         // 保险库
         GTRecipeBuilder.builder()
-            .itemInputs(
-                GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 4),
+            .itemInputs(GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 4),
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 4),
                 new Object[] { OrePrefixes.circuit.get(Materials.LV), 4 })
-            .circuit(24)
-            .itemOutputs(GTNGItemList.SingularityDataHub.get(1))
-            .duration(5 * SECONDS)
-            .eut(32)
-            .addTo(As);
+            .circuit(24).itemOutputs(GTNGItemList.SingularityDataHub.get(1)).duration(5 * SECONDS).eut(32).addTo(As);
         // 保险库数据中心
         GTRecipeBuilder.builder()
-            .itemInputs(
-                GTOreDictUnificator.get(OrePrefixes.plate, Materials.Iron, 4),
+            .itemInputs(GTOreDictUnificator.get(OrePrefixes.plate, Materials.Iron, 4),
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 4),
                 new Object[] { OrePrefixes.circuit.get(Materials.LV), 4 })
-            .circuit(24)
-            .itemOutputs(GTNGItemList.VaultPortHatch.get(1))
-            .duration(5 * SECONDS)
-            .eut(32)
-            .addTo(As);
+            .circuit(24).itemOutputs(GTNGItemList.VaultPortHatch.get(1)).duration(5 * SECONDS).eut(32).addTo(As);
 
     }
 

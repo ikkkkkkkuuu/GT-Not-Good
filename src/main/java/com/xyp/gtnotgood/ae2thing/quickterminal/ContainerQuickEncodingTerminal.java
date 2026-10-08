@@ -3,6 +3,7 @@ package com.xyp.gtnotgood.ae2thing.quickterminal;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -34,6 +37,7 @@ import appeng.api.parts.IInterfaceTerminal;
 import appeng.api.parts.IPatternTerminalEx;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.ITerminalHost;
+import appeng.api.storage.StorageName;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
@@ -45,6 +49,7 @@ import appeng.container.implementations.ContainerCraftAmount;
 import appeng.container.implementations.ContainerInterfaceTerminal;
 import appeng.container.implementations.ContainerPatternTerm;
 import appeng.container.slot.AppEngSlot;
+import appeng.container.slot.SlotPatternTerm;
 import appeng.container.slot.SlotRestrictedInput;
 import appeng.container.sync.ActionHandler;
 import appeng.container.sync.StreamCodecs;
@@ -166,18 +171,15 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         playerPinRowsSync = sync.intSync("playerPinRows");
         setInvertedAction = sync.actionC2S("setInverted", StreamCodecs.booleanValue())
             .onServerAction(this::applyInverted);
-        setCombineAction = sync.actionC2S("setCombine", StreamCodecs.booleanValue())
-            .onServerAction(this::applyCombine);
+        setCombineAction = sync.actionC2S("setCombine", StreamCodecs.booleanValue()).onServerAction(this::applyCombine);
         setPrioritizeFluidsAction = sync.actionC2S("setPrioritizeFluids", StreamCodecs.intValue())
             .onServerAction(this::applyPrioritizeFluids);
         setKeepNonConsumablesAction = sync.actionC2S("setKeepNonConsumables", StreamCodecs.booleanValue())
             .onServerAction(this::applyKeepNonConsumables);
         setProcessingGridSizeAction = sync.actionC2S("setProcessingGridSize", StreamCodecs.intValue())
             .onServerAction(this::applyProcessingGridSize);
-        setPinRowsAction = sync.actionC2S("setPinRows", StreamCodecs.intValue())
-            .onServerAction(this::applyPinRows);
-        refreshPinsAction = sync.actionC2S("refreshPins")
-            .onServerAction(() -> updatePins(true));
+        setPinRowsAction = sync.actionC2S("setPinRows", StreamCodecs.intValue()).onServerAction(this::applyPinRows);
+        refreshPinsAction = sync.actionC2S("refreshPins").onServerAction(() -> updatePins(true));
         transferRecipeAction = sync.actionC2S("transferRecipe", RecipeTransferPayload.CODEC)
             .onServerAction(this::applyRecipeTransfer);
         replaceRecipeIngredientAction = sync.actionC2S("replaceRecipeIngredient", RecipeIngredientReplacement.CODEC)
@@ -200,8 +202,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             .onServerAction(this::storeOneFluidUnit);
         craftFluidAction = sync.actionC2S("craftFluid", StorageFluidRequest.CODEC)
             .onServerAction(this::openFluidCraftAmount);
-        quickEncodeAction = sync.actionC2S("quickEncode")
-            .onServerAction(this::quickEncode);
+        quickEncodeAction = sync.actionC2S("quickEncode").onServerAction(this::quickEncode);
         quickEncodeAndMoveToInventoryAction = sync.actionC2S("quickEncodeAndMove", StreamCodecs.booleanValue())
             .onServerAction(this::quickEncodeAndMoveToInventory);
         if (Platform.isServer()) {
@@ -233,9 +234,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         if (encodingWithLogicalInventorySize) return;
         if (Platform.isServer()) {
             IPatternTerminalEx terminal = getExtendedPatternTerminal();
-            arcaneModeSync.set(
-                !isCraftingMode() && getDualTerminal().getArcaneLayout()
-                    .tagCount() == 9);
+            arcaneModeSync.set(!isCraftingMode() && getDualTerminal().getArcaneLayout().tagCount() == 9);
             arcaneWorkbenchViewSync.set(getDualTerminal().isArcaneWorkbenchView());
             invertedSync.set(terminal.isInverted());
             combineSync.set(getDualTerminal().shouldCombine());
@@ -360,8 +359,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
 
     /** Updates the visible tab immediately; authoritative slot contents arrive from the server action. */
     public void requestRecipeTransfer(RecipeTransferPayload payload) {
-        boolean arcane = payload.getArcaneLayout()
-            .tagCount() == 9;
+        boolean arcane = payload.getArcaneLayout().tagCount() == 9;
         arcaneModeSync.setLocalValue(arcane);
         arcaneWorkbenchViewSync.setLocalValue(true);
         craftingModeSync.setLocalValue(payload.isCrafting());
@@ -371,8 +369,8 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         }
         activePageSync.setLocalValue(0);
         for (int slot = 0; slot < RecipeTransferPayload.SLOT_COUNT; slot++) {
-            updateVirtualSlot(appeng.api.storage.StorageName.CRAFTING_INPUT, slot, payload.getInput(slot));
-            updateVirtualSlot(appeng.api.storage.StorageName.CRAFTING_OUTPUT, slot, payload.getOutput(slot));
+            updateVirtualSlot(StorageName.CRAFTING_INPUT, slot, payload.getInput(slot));
+            updateVirtualSlot(StorageName.CRAFTING_OUTPUT, slot, payload.getOutput(slot));
         }
         transferRecipeAction.send(payload);
     }
@@ -444,15 +442,10 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
 
         IAEFluidStack full = fluid.copy();
         full.setStackSize(empty.capacity);
-        ObjectLongPair<ItemStack> preview = fluid.getStackType()
-            .fillContainer(empty.item.copy(), full);
+        ObjectLongPair<ItemStack> preview = fluid.getStackType().fillContainer(empty.item.copy(), full);
         if (!isCompletelyFilled(preview, empty.capacity)) return;
-        int count = request.isFullStack() ? Math.min(
-            64,
-            Math.min(
-                empty.item.getMaxStackSize(),
-                preview.left()
-                    .getMaxStackSize()))
+        int count = request.isFullStack()
+            ? Math.min(64, Math.min(empty.item.getMaxStackSize(), preview.left().getMaxStackSize()))
             : 1;
         for (int index = 0; index < count; index++) {
             if (!fillFluidContainer(itemMonitor, fluidMonitor, fluid, empty)) break;
@@ -482,16 +475,15 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         IAEItemStack availableEmpty = itemMonitor.extractItems(emptyRequest, Actionable.SIMULATE, getActionSource());
         if (availableEmpty == null || availableEmpty.getStackSize() < 1) return false;
 
-        ObjectLongPair<ItemStack> preview = fluid.getStackType()
-            .fillContainer(empty.item.copy(), fluidRequest);
+        ObjectLongPair<ItemStack> preview = fluid.getStackType().fillContainer(empty.item.copy(), fluidRequest);
         if (!isCompletelyFilled(preview, empty.capacity) || !canAcceptFilledContainer(preview.left())) return false;
 
-        IAEItemStack extractedEmpty = Platform
-            .poweredExtraction(getPowerSource(), itemMonitor, emptyRequest, getActionSource());
+        IAEItemStack extractedEmpty = Platform.poweredExtraction(getPowerSource(), itemMonitor, emptyRequest,
+            getActionSource());
         if (extractedEmpty == null || extractedEmpty.getStackSize() < 1) return false;
 
-        IAEFluidStack extractedFluid = Platform
-            .poweredExtraction(getPowerSource(), fluidMonitor, fluidRequest, getActionSource());
+        IAEFluidStack extractedFluid = Platform.poweredExtraction(getPowerSource(), fluidMonitor, fluidRequest,
+            getActionSource());
         if (extractedFluid == null || extractedFluid.getStackSize() < empty.capacity) {
             restoreItem(itemMonitor, extractedEmpty);
             restoreFluid(fluidMonitor, extractedFluid);
@@ -500,8 +492,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
 
         ItemStack extractedItem = extractedEmpty.getItemStack();
         extractedItem.stackSize = 1;
-        ObjectLongPair<ItemStack> filled = fluid.getStackType()
-            .fillContainer(extractedItem, extractedFluid);
+        ObjectLongPair<ItemStack> filled = fluid.getStackType().fillContainer(extractedItem, extractedFluid);
         if (!isCompletelyFilled(filled, empty.capacity)) {
             restoreItem(itemMonitor, extractedEmpty);
             restoreFluid(fluidMonitor, extractedFluid);
@@ -546,27 +537,24 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             return false;
         IAEItemStack emptyRequest = AEItemStack.create(filled.empty.copy());
         IAEFluidStack fluidRequest = filled.fluid.copy();
-        if (emptyRequest == null
-            || !canInsertAll(itemMonitor.injectItems(emptyRequest.copy(), Actionable.SIMULATE, getActionSource()))
-            || !canInsertAll(
-                Platform.poweredInsert(
-                    getPowerSource(),
-                    fluidMonitor,
-                    fluidRequest.copy(),
-                    getActionSource(),
-                    Actionable.SIMULATE))) {
+        if (
+            emptyRequest == null
+                || !canInsertAll(itemMonitor.injectItems(emptyRequest.copy(), Actionable.SIMULATE, getActionSource()))
+                || !canInsertAll(Platform.poweredInsert(getPowerSource(), fluidMonitor, fluidRequest.copy(),
+                    getActionSource(), Actionable.SIMULATE))
+        ) {
             return false;
         }
 
-        IAEItemStack emptyLeftover = itemMonitor
-            .injectItems(emptyRequest.copy(), Actionable.MODULATE, getActionSource());
+        IAEItemStack emptyLeftover = itemMonitor.injectItems(emptyRequest.copy(), Actionable.MODULATE,
+            getActionSource());
         if (!canInsertAll(emptyLeftover)) {
             rollbackInserted(itemMonitor, emptyRequest, emptyLeftover);
             return false;
         }
 
-        IAEFluidStack fluidLeftover = Platform
-            .poweredInsert(getPowerSource(), fluidMonitor, fluidRequest.copy(), getActionSource(), Actionable.MODULATE);
+        IAEFluidStack fluidLeftover = Platform.poweredInsert(getPowerSource(), fluidMonitor, fluidRequest.copy(),
+            getActionSource(), Actionable.MODULATE);
         if (!canInsertAll(fluidLeftover)) {
             rollbackInserted(itemMonitor, emptyRequest, null);
             rollbackInserted(fluidMonitor, fluidRequest, fluidLeftover);
@@ -588,20 +576,18 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         IAEStack<?> requested = request == null ? null : request.getFluid();
         if (!(requested instanceof IAEFluidStack fluid)) return;
         IGridNode node = getDualTerminal().getActionableNode();
-        if (node == null || node.getGrid() == null
-            || !isCraftableFluid(
-                node.getGrid()
-                    .getCache(ICraftingGrid.class),
-                fluid))
-            return;
+        if (
+            node == null || node.getGrid() == null
+                || !isCraftableFluid(node.getGrid().getCache(ICraftingGrid.class), fluid)
+        ) return;
 
         setTargetStack(fluid);
         PrimaryGui primaryGui = createPrimaryGui();
         ContainerOpenContext context = getOpenContext();
         if (context == null || !(getPlayerInv().player instanceof EntityPlayerMP player)) return;
 
-        Platform
-            .openGUI(player, context.getTile(), context.getSide(), GuiBridge.GUI_CRAFTING_AMOUNT, getTargetSlotIndex());
+        Platform.openGUI(player, context.getTile(), context.getSide(), GuiBridge.GUI_CRAFTING_AMOUNT,
+            getTargetSlotIndex());
         if (player.openContainer instanceof ContainerCraftAmount amount) {
             amount.setPrimaryGui(primaryGui);
             amount.setItemToCraft(fluid);
@@ -613,19 +599,15 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     private boolean isCraftableFluid(ICraftingGrid crafting, IAEFluidStack target) {
         if (crafting == null) return false;
         try {
-            if (!crafting.getCraftingFor(target, null, 0, getPlayerInv().player.worldObj)
-                .isEmpty()) {
+            if (!crafting.getCraftingFor(target, null, 0, getPlayerInv().player.worldObj).isEmpty()) {
                 return true;
             }
             // AE2's direct query is item-biased on this baseline. Fluid outputs
             // remain authoritative in the generic multi-pattern output map.
             for (Map.Entry<IAEStack<?>, ? extends List<ICraftingPatternDetails>> entry : crafting
-                .getCraftingMultiPatterns()
-                .entrySet()) {
+                .getCraftingMultiPatterns().entrySet()) {
                 IAEStack<?> output = entry.getKey();
-                if (output != null && output.isSameType(target)
-                    && !entry.getValue()
-                        .isEmpty()) {
+                if (output != null && output.isSameType(target) && !entry.getValue().isEmpty()) {
                     return true;
                 }
             }
@@ -698,8 +680,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     }
 
     private void giveFilledContainer(ItemStack filled) {
-        InventoryAdaptor.getAdaptor(getPlayerInv().player, ForgeDirection.UNKNOWN)
-            .addItems(filled);
+        InventoryAdaptor.getAdaptor(getPlayerInv().player, ForgeDirection.UNKNOWN).addItems(filled);
     }
 
     private void restoreItem(IMEMonitor<IAEItemStack> monitor, IAEItemStack stack) {
@@ -765,8 +746,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             return;
         }
 
-        if (getDualTerminal().getArcaneLayout()
-            .tagCount() == 9) return;
+        if (getDualTerminal().getArcaneLayout().tagCount() == 9) return;
         IAEStackInventory inputInventory = inputsSync.get();
         List<IAEStack<?>> fluids = new ArrayList<>();
         List<IAEStack<?>> items = new ArrayList<>();
@@ -959,7 +939,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
 
     private IAEStack<?> getCraftingResult() {
         for (Object value : inventorySlots) {
-            if (!(value instanceof appeng.container.slot.SlotPatternTerm slot)) continue;
+            if (!(value instanceof SlotPatternTerm slot)) continue;
             ItemStack result = slot.getStack();
             return result == null ? null : AEItemStack.create(result.copy());
         }
@@ -974,9 +954,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     }
 
     private void persistPatternSnapshot(boolean crafting) {
-        getDualTerminal().setPatternSnapshot(
-            crafting,
-            crafting ? craftingInputSnapshot : processingInputSnapshot,
+        getDualTerminal().setPatternSnapshot(crafting, crafting ? craftingInputSnapshot : processingInputSnapshot,
             crafting ? craftingOutputSnapshot : processingOutputSnapshot);
     }
 
@@ -1001,10 +979,12 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             IAEStack<?> saved = slot < snapshot.length ? snapshot[slot] : null;
             if (active == null || saved == null) {
                 if (active != saved) return false;
-            } else if (!(active instanceof IAEItemStack activeItem) || !(saved instanceof IAEItemStack savedItem)
-                || !activeItem.isSameType(savedItem)) {
-                    return false;
-                }
+            } else if (
+                !(active instanceof IAEItemStack activeItem) || !(saved instanceof IAEItemStack savedItem)
+                    || !activeItem.isSameType(savedItem)
+            ) {
+                return false;
+            }
         }
         return true;
     }
@@ -1016,10 +996,9 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             IAEStack<?> saved = slot < snapshot.length ? snapshot[slot] : null;
             if (active == null || saved == null) {
                 if (active != saved) return false;
-            } else if (!active.toNBTGeneric()
-                .equals(saved.toNBTGeneric())) {
-                    return false;
-                }
+            } else if (!active.toNBTGeneric().equals(saved.toNBTGeneric())) {
+                return false;
+            }
         }
         return true;
     }
@@ -1060,7 +1039,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     }
 
     private static void clearArray(IAEStack<?>[] stacks) {
-        java.util.Arrays.fill(stacks, null);
+        Arrays.fill(stacks, null);
     }
 
     private static boolean containsStack(IAEStack<?>[] stacks) {
@@ -1080,8 +1059,8 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         activePageSync.set(0);
 
         for (int slot = 0; slot < RecipeTransferPayload.SLOT_COUNT; slot++) {
-            updateVirtualSlot(appeng.api.storage.StorageName.CRAFTING_INPUT, slot, payload.getInput(slot));
-            updateVirtualSlot(appeng.api.storage.StorageName.CRAFTING_OUTPUT, slot, payload.getOutput(slot));
+            updateVirtualSlot(StorageName.CRAFTING_INPUT, slot, payload.getInput(slot));
+            updateVirtualSlot(StorageName.CRAFTING_OUTPUT, slot, payload.getOutput(slot));
         }
         getDualTerminal().setArcaneLayout(payload.getArcaneLayout());
         getDualTerminal().setArcaneWorkbenchView(true);
@@ -1119,11 +1098,10 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             IAEStack<?> replacementStack = to.copy();
             // Keep the selected NEI alternative's quantity in both local prediction and server application.
             if (crafting) replacementStack.setStackSize(1);
-            else if (getDualTerminal().getArcaneLayout()
-                .tagCount() == 9) {
-                    replacementStack.setStackSize(current.getStackSize());
-                }
-            updateVirtualSlot(appeng.api.storage.StorageName.CRAFTING_INPUT, slot, replacementStack);
+            else if (getDualTerminal().getArcaneLayout().tagCount() == 9) {
+                replacementStack.setStackSize(current.getStackSize());
+            }
+            updateVirtualSlot(StorageName.CRAFTING_INPUT, slot, replacementStack);
             changed = true;
         }
         return changed;
@@ -1260,9 +1238,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         if (details == null) return;
         List<IAEStack<?>> changed = new ArrayList<>();
         for (IAEStack<?> output : details.getAEOutputs()) {
-            if (output != null) changed.add(
-                output.copy()
-                    .reset());
+            if (output != null) changed.add(output.copy().reset());
         }
         if (!changed.isEmpty()) postChange(null, changed, getActionSource());
     }
@@ -1275,14 +1251,13 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             for (Map.Entry<?, ?> entry : ((Map<?, ?>) TRACKED.get(interfaceDelegate)).entrySet()) {
                 if (entry.getValue() != tracker || !(entry.getKey() instanceof IInterfaceViewable viewable)) continue;
                 if (viewable instanceof IInterfaceHost interfaceHost) {
-                    interfaceHost.getInterfaceDuality()
-                        .updateCraftingList();
+                    interfaceHost.getInterfaceDuality().updateCraftingList();
                 }
                 IGridNode node = interfaceNode(viewable);
                 ICraftingProvider provider = viewable instanceof ICraftingProvider craftingProvider ? craftingProvider
                     : null;
-                (node == null ? getDualTerminal().getActionableNode()
-                    .getGrid() : node.getGrid()).postEvent(new MENetworkCraftingPatternChange(provider, node));
+                (node == null ? getDualTerminal().getActionableNode().getGrid() : node.getGrid())
+                    .postEvent(new MENetworkCraftingPatternChange(provider, node));
                 return;
             }
         } catch (IllegalAccessException ignored) {}
@@ -1314,18 +1289,14 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
 
     /** Saves edits to the nine workbench cells before encoding or closing, without accepting hidden extra inputs. */
     private boolean rememberArcaneLayout() {
-        if (!isCraftingMode() && getDualTerminal().getArcaneLayout()
-            .tagCount() == 9) {
-            net.minecraft.nbt.NBTTagList layout = new net.minecraft.nbt.NBTTagList();
+        if (!isCraftingMode() && getDualTerminal().getArcaneLayout().tagCount() == 9) {
+            NBTTagList layout = new NBTTagList();
             for (int i = 0; i < RecipeTransferPayload.SLOT_COUNT; i++) {
-                IAEStack<?> stack = inputsSync.get()
-                    .getAEStackInSlot(i);
+                IAEStack<?> stack = inputsSync.get().getAEStackInSlot(i);
                 if (stack != null && (i >= 9 || !(stack instanceof IAEItemStack) || stack.getStackSize() != 1))
                     return false;
-                if (i < 9) layout.appendTag(
-                    stack == null ? new net.minecraft.nbt.NBTTagCompound()
-                        : ((IAEItemStack) stack).getItemStack()
-                            .writeToNBT(new net.minecraft.nbt.NBTTagCompound()));
+                if (i < 9) layout.appendTag(stack == null ? new NBTTagCompound()
+                    : ((IAEItemStack) stack).getItemStack().writeToNBT(new NBTTagCompound()));
             }
             getDualTerminal().setArcaneLayout(layout);
         }
@@ -1478,9 +1449,11 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
     private static boolean canFullyStore(InventoryPlayer inventory, ItemStack incoming) {
         int remaining = incoming.stackSize;
         for (ItemStack existing : inventory.mainInventory) {
-            if (existing == null || existing.getItem() != incoming.getItem()
-                || existing.getItemDamage() != incoming.getItemDamage()
-                || !ItemStack.areItemStackTagsEqual(existing, incoming)) continue;
+            if (
+                existing == null || existing.getItem() != incoming.getItem()
+                    || existing.getItemDamage() != incoming.getItemDamage()
+                    || !ItemStack.areItemStackTagsEqual(existing, incoming)
+            ) continue;
             int limit = Math.min(existing.getMaxStackSize(), inventory.getInventoryStackLimit());
             remaining -= Math.max(0, limit - existing.stackSize);
             if (remaining <= 0) return true;
@@ -1507,20 +1480,17 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
         if (TRACKED_BY_ID == null || getDualTerminal().getActionableNode() == null) return null;
         try {
             Object tracker = ((Map<?, ?>) TRACKED_BY_ID.get(interfaceDelegate)).get(id);
-            if (tracker == null || !readBooleanField(tracker, "online", false)
-                || !readBooleanField(tracker, "shouldDisplay", false)) return null;
+            if (
+                tracker == null || !readBooleanField(tracker, "online", false)
+                    || !readBooleanField(tracker, "shouldDisplay", false)
+            ) return null;
             ForgeDirection side = readField(tracker, "side") instanceof ForgeDirection direction ? direction
                 : ForgeDirection.UNKNOWN;
             int y = readIntField(tracker, "y", -1);
             int dimension = readIntField(tracker, "dim", Integer.MIN_VALUE);
             if (y < 0 || dimension == Integer.MIN_VALUE) return null;
-            return new Util.DimensionalCoordSide(
-                readIntField(tracker, "x", 0),
-                y,
-                readIntField(tracker, "z", 0),
-                dimension,
-                side,
-                "");
+            return new Util.DimensionalCoordSide(readIntField(tracker, "x", 0), y, readIntField(tracker, "z", 0),
+                dimension, side, "");
         } catch (IllegalAccessException ignored) {
             return null;
         }
@@ -1535,8 +1505,7 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             for (Map.Entry<?, ?> entry : ((Map<?, ?>) TRACKED.get(interfaceDelegate)).entrySet()) {
                 if (entry.getValue() != tracker) continue;
                 if (entry.getKey() instanceof IInterfaceHost host) {
-                    var config = host.getInterfaceDuality()
-                        .getConfigManager();
+                    var config = host.getInterfaceDuality().getConfigManager();
                     YesNo current = (YesNo) config.getSetting(Settings.INTERFACE_TERMINAL);
                     config.putSetting(Settings.INTERFACE_TERMINAL, current == YesNo.YES ? YesNo.NO : YesNo.YES);
                     host.saveChanges();
@@ -1628,12 +1597,8 @@ public final class ContainerQuickEncodingTerminal extends ContainerPatternTerm {
             if (slotIndex >= Platform.baublesSlotsOffset) {
                 terminalSlot = Constants.BAUBLE_SLOT_OFFSET + (slotIndex - Platform.baublesSlotsOffset);
             }
-            InventoryHandler.openGui(
-                player,
-                player.worldObj,
-                new BlockPos(terminalSlot, 0, 0),
-                ForgeDirection.UNKNOWN,
-                GuiType.WIRELESS_DUAL_INTERFACE_TERMINAL);
+            InventoryHandler.openGui(player, player.worldObj, new BlockPos(terminalSlot, 0, 0), ForgeDirection.UNKNOWN,
+                GuiType.WirelessDualInterfaceTerminal);
         }
     }
 }

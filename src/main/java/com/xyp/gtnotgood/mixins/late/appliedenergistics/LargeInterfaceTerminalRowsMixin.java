@@ -64,8 +64,7 @@ public abstract class LargeInterfaceTerminalRowsMixin {
     private void largeinterface$refreshChangedRows(CallbackInfo ci) {
         if (Platform.isClient() || largeinterface$knownRows == null) return;
         for (Map.Entry<IInterfaceViewable, Integer> snapshot : largeinterface$knownRows.entrySet()) {
-            if (snapshot.getKey()
-                .rows() != snapshot.getValue()) {
+            if (snapshot.getKey().rows() != snapshot.getValue()) {
                 scheduleUpdate();
                 return;
             }

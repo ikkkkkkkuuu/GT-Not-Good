@@ -12,6 +12,8 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.xyp.gtnotgood.GTNotGood;
+
 public class GuiWeightProfiles extends GuiWeightScreen {
 
     private static final int LIST_WIDTH = 200;
@@ -59,8 +61,7 @@ public class GuiWeightProfiles extends GuiWeightScreen {
             mc.displayGuiScreen(parent);
             return;
         }
-        String name = nameField.getText()
-            .trim();
+        String name = nameField.getText().trim();
         try {
             if (button.id == 1) {
                 selected = WeightProfileStore.saveCurrent(name);
@@ -96,7 +97,7 @@ public class GuiWeightProfiles extends GuiWeightScreen {
                 reloadProfiles();
             }
         } catch (IOException | RuntimeException exception) {
-            com.xyp.gtnotgood.GTNotGood.LOG.warn("Weight profile operation failed", exception);
+            GTNotGood.LOG.warn("Weight profile operation failed", exception);
             setStatus("tcautores.profile_error", false);
         }
     }
@@ -118,10 +119,12 @@ public class GuiWeightProfiles extends GuiWeightScreen {
         nameField.mouseClicked(mouseX, mouseY, mouseButton);
         int listX = listX();
         int index = scroll + (mouseY - LIST_Y) / ROW_HEIGHT;
-        if (mouseX >= listX && mouseX < listX + LIST_WIDTH
-            && mouseY >= LIST_Y
-            && index >= scroll
-            && index < Math.min(profiles.size(), scroll + visibleRows())) {
+        if (
+            mouseX >= listX && mouseX < listX + LIST_WIDTH
+                && mouseY >= LIST_Y
+                && index >= scroll
+                && index < Math.min(profiles.size(), scroll + visibleRows())
+        ) {
             selected = profiles.get(index);
             nameField.setText(selected);
         }
@@ -144,31 +147,23 @@ public class GuiWeightProfiles extends GuiWeightScreen {
         int rows = visibleRows();
         drawWeightPanel(listX - 4, LIST_Y - 4, listX + LIST_WIDTH + 4, LIST_Y + rows * ROW_HEIGHT + 3);
         drawWeightPanel(width / 2 + 50, 32, width / 2 + 160, height - 26);
-        drawCenteredString(
-            fontRendererObj,
-            StatCollector.translateToLocal("tcautores.profile_title"),
-            width / 2,
-            12,
+        drawCenteredString(fontRendererObj, StatCollector.translateToLocal("tcautores.profile_title"), width / 2, 12,
             0xFFFFFF);
         nameField.drawTextBox();
         for (int row = 0; row < rows && scroll + row < profiles.size(); row++) {
             String profile = profiles.get(scroll + row);
             int rowY = LIST_Y + row * ROW_HEIGHT;
             boolean active = profile.equals(selected);
-            GuiThemeRenderer
-                .rect(listX, rowY, listX + LIST_WIDTH, rowY + ROW_HEIGHT - 1, active ? 0xCC52606A : 0xAA242424);
-            GuiThemeRenderer
-                .rect(listX, rowY, listX + (active ? 3 : 2), rowY + ROW_HEIGHT - 1, active ? 0xFF7B8790 : 0xFF3A3A3A);
-            fontRendererObj
-                .drawString(fontRendererObj.trimStringToWidth(profile, LIST_WIDTH - 14), listX + 7, rowY + 6, 0xF0F4F2);
+            GuiThemeRenderer.rect(listX, rowY, listX + LIST_WIDTH, rowY + ROW_HEIGHT - 1,
+                active ? 0xCC52606A : 0xAA242424);
+            GuiThemeRenderer.rect(listX, rowY, listX + (active ? 3 : 2), rowY + ROW_HEIGHT - 1,
+                active ? 0xFF7B8790 : 0xFF3A3A3A);
+            fontRendererObj.drawString(fontRendererObj.trimStringToWidth(profile, LIST_WIDTH - 14), listX + 7, rowY + 6,
+                0xF0F4F2);
         }
         if (profiles.isEmpty()) {
-            drawCenteredString(
-                fontRendererObj,
-                StatCollector.translateToLocal("tcautores.profile_empty"),
-                listX + LIST_WIDTH / 2,
-                LIST_Y + 8,
-                0xAAAAAA);
+            drawCenteredString(fontRendererObj, StatCollector.translateToLocal("tcautores.profile_empty"),
+                listX + LIST_WIDTH / 2, LIST_Y + 8, 0xAAAAAA);
         }
         if (!status.isEmpty()) {
             drawCenteredString(fontRendererObj, status, width / 2 + 105, 172, statusColor);

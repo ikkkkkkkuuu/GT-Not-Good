@@ -12,9 +12,7 @@ import appeng.core.localization.PlayerMessages;
 public interface ITerminalHandler {
 
     default boolean canConnect(ItemStack item, ITerminalHandler terminal, TerminalItems items, EntityPlayerMP player) {
-        IWirelessTermRegistry term = AEApi.instance()
-            .registries()
-            .wireless();
+        IWirelessTermRegistry term = AEApi.instance().registries().wireless();
         if (!term.isWirelessTerminal(item)) {
             player.addChatMessage(PlayerMessages.DeviceNotWirelessTerminal.toChat());
             return false;
@@ -26,10 +24,7 @@ public interface ITerminalHandler {
             return false;
         }
         final long parsedKey = Long.parseLong(unparsedKey);
-        final ILocatable securityStation = AEApi.instance()
-            .registries()
-            .locatable()
-            .getLocatableBy(parsedKey);
+        final ILocatable securityStation = AEApi.instance().registries().locatable().getLocatableBy(parsedKey);
         if (securityStation == null) {
             player.addChatMessage(PlayerMessages.StationCanNotBeLocated.toChat());
             return false;

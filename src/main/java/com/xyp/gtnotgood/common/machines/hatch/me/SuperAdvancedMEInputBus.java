@@ -138,9 +138,7 @@ public class SuperAdvancedMEInputBus extends MTEHatchInputBusME {
         if (free == SLOT_COUNT) return;
         try {
             boolean changed = false;
-            for (IAEItemStack stack : getProxy().getStorage()
-                .getItemInventory()
-                .getStorageList()) {
+            for (IAEItemStack stack : getProxy().getStorage().getItemInventory().getStorageList()) {
                 if (stack.getStackSize() < minAutoPullStackSize || getMatchingSlot(stack.getItemStack(), false) != null)
                     continue;
                 slots[free] = new Slot(GTUtility.copyAmount(1, stack.getItemStack()));
@@ -231,12 +229,7 @@ public class SuperAdvancedMEInputBus extends MTEHatchInputBusME {
             slot.resetExtracted();
             return;
         }
-        int amount = availableAmount(
-            index,
-            available(
-                getProxy().getStorage()
-                    .getItemInventory(),
-                slot.config));
+        int amount = availableAmount(index, available(getProxy().getStorage().getItemInventory(), slot.config));
         slot.extracted = amount == 0 ? null : GTUtility.copyAmountUnsafe(amount, slot.config);
         slot.extractedAmount = amount;
     }
@@ -289,8 +282,7 @@ public class SuperAdvancedMEInputBus extends MTEHatchInputBusME {
         if (!processingRecipe) return CheckRecipeResultRegistry.SUCCESSFUL;
         CheckRecipeResult result = CheckRecipeResultRegistry.SUCCESSFUL;
         try {
-            IMEMonitor<IAEItemStack> inventory = getProxy().getStorage()
-                .getItemInventory();
+            IMEMonitor<IAEItemStack> inventory = getProxy().getStorage().getItemInventory();
             IEnergyGrid energy = getProxy().getEnergy();
             for (int i = 0; i < SLOT_COUNT; i++) {
                 Slot slot = slots[i];
@@ -415,9 +407,8 @@ public class SuperAdvancedMEInputBus extends MTEHatchInputBusME {
     public void onScrewdriverRightClick(ForgeDirection side, EntityPlayer player, float x, float y, float z,
         ItemStack tool) {
         setAutoPullItemList(!autoPull);
-        player.addChatMessage(
-            new ChatComponentTranslation(
-                "GT5U.machines.stocking_bus.auto_pull_toggle." + (autoPull ? "enabled" : "disabled")));
+        player.addChatMessage(new ChatComponentTranslation(
+            "GT5U.machines.stocking_bus.auto_pull_toggle." + (autoPull ? "enabled" : "disabled")));
     }
 
     @Override

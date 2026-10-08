@@ -22,8 +22,8 @@ public abstract class LootGamesStructureMixin {
     @Inject(method = "generatePuzzleMicroDungeon", at = @At("RETURN"), remap = false)
     private void gtng$recordGame(World world, int x, int z, CallbackInfoReturnable<Boolean> cir) {
         if (!world.isRemote && cir.getReturnValue()) {
-            StructureLocations.get(world)
-                .add(1, x, _mDungeonBottom + StructureGenerator.PUZZLEROOM_MASTER_TE_OFFSET, z);
+            StructureLocations.get(world).add(1, x, _mDungeonBottom + StructureGenerator.PUZZLEROOM_MASTER_TE_OFFSET,
+                z);
         }
     }
 }

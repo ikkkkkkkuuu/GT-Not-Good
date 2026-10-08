@@ -22,15 +22,8 @@ public class BuiltinTextEffects {
         register(TextEffects.EXOTIC_RAINBOW, 0xFF6B6B, 0x7DC4E1, 0xD3EB6C);
         registerRarity(TextEffects.SUPERBOSS_RARITY, 1.5f, 0x5F6F96, 0x00213C);
         registerRarity(TextEffects.INFERNUM_SPARK_RARITY, 1, 0x00FFFF, 0x87CEEB, 0x00FFFF, 0xFFFF00);
-        TextEffectRegistry.register(
-            TextEffects.BURNISHED_AURIC.rendererId(),
-            new BurnishedAuricTextEffect(
-                fragment(TextEffects.BURNISHED_AURIC),
-                0x9D6E0B,
-                0x4D0021,
-                0xFEE775,
-                0x00B7F1,
-                0x5ACFFF));
+        TextEffectRegistry.register(TextEffects.BURNISHED_AURIC.rendererId(), new BurnishedAuricTextEffect(
+            fragment(TextEffects.BURNISHED_AURIC), 0x9D6E0B, 0x4D0021, 0xFEE775, 0x00B7F1, 0x5ACFFF));
         registerRarity(TextEffects.EVERCOLD_CYAN, 1.5f, 0x44678B, 0x26435F);
         registerRarity(TextEffects.STARSILVER_RARITY, 1, 0xDEE6F4, 0x282C5A, 0xFFFFFF);
     }
@@ -44,8 +37,7 @@ public class BuiltinTextEffects {
     }
 
     private static void register(TextEffectStyle style, float paddingScale, boolean premultipliedAlpha, int... colors) {
-        TextEffectRegistry.register(
-            style.rendererId(),
+        TextEffectRegistry.register(style.rendererId(),
             new ShaderTextEffect(fragment(style), paddingScale, premultipliedAlpha, colors));
     }
 

@@ -1,0 +1,167 @@
+import java.util.regex.Pattern
+
+/** Validates the Formatter syntax remaining after Minecraft 1.7.10 loads a language entry. */
+class TranslationFormatValidator {
+    private static final Pattern NUMERIC = Pattern.compile('%(\\d+\\$)?[\\d\\.]*[df]')
+    private static final Pattern SPECIFIER = Pattern.compile('%(?:(\\d+)\\$)?([-#+ 0,(<]*)(\\d+)?(?:\\.(\\d+))?([tT])?([a-zA-Z%])')
+
+    static Map<Integer, Set<String>> signature(String value) {
+        // Locale and StringTranslate both turn these numeric conversions into string conversions.
+        String format = NUMERIC.matcher(value).replaceAll('%$1s')
+        boolean formatted = false
+        def candidates = SPECIFIER.matcher(format)
+        while (candidates.find()) {
+            if (!literalPercentage(format, candidates.start())) formatted = true
+        }
+
+        Map<Integer, Set<String>> arguments = new TreeMap<>()
+        int ordinaryIndex = 0
+        Integer previousIndex = null
+        int offset = 0
+        while ((offset = format.indexOf('%', offset)) >= 0) {
+            if (!formatted && literalPercentage(format, offset)) {
+                offset++
+                continue
+            }
+            def token = SPECIFIER.matcher(format).region(offset, format.length())
+            if (!token.lookingAt()) throw new IllegalArgumentException("Incomplete format at character ${offset + 1}")
+            String flags = token.group(2)
+            String conversion = token.group(6)
+            String date = token.group(5) ?: ''
+            boolean consumesArgument = !date.empty || !(conversion in ['%', 'n'])
+            Integer explicitIndex = token.group(1) == null ? null : positiveNumber(token.group(1), 'argument index')
+            if (token.group(3) != null) positiveNumber(token.group(3), 'width')
+            if (token.group(4) != null) nonnegativeNumber(token.group(4), 'precision')
+
+            // Validate flags/conversions with Formatter, without allocating enormous padding or argument arrays.
+            String probeFlags = consumesArgument ? flags.replace('<', '') : flags
+            String probe = '%' + probeFlags + (token.group(3) == null ? '' : '1') +
+                (token.group(4) == null ? '' : '.1') + date + conversion
+            Object sample = date.empty && conversion.toLowerCase(Locale.ROOT) == 's' && flags.contains('#')
+                ? new FormattableProbe() : null
+            String.format(Locale.ROOT, probe, (Object[]) [sample])
+            if (consumesArgument) {
+                Integer index
+                if (flags.contains('<')) {
+                    if (flags.count('<') > 1) throw new IllegalArgumentException('Duplicate relative argument flag')
+                    if (previousIndex == null) throw new IllegalArgumentException('Relative argument has no previous argument')
+                    index = previousIndex
+                } else {
+                    index = explicitIndex ?: ++ordinaryIndex
+                }
+                previousIndex = index
+                String kind = argumentKind(date, conversion, flags)
+                if (!arguments.containsKey(index)) arguments[index] = new TreeSet<String>()
+                if (kind != 'any') arguments[index].add(kind)
+            }
+            offset = token.end()
+        }
+        return arguments
+    }
+
+    private static boolean literalPercentage(String text, int offset) {
+        if (offset == 0 || !Character.isDigit(text.charAt(offset - 1))) return false
+        if (offset + 1 == text.length()) return true
+        char next = text.charAt(offset + 1)
+        return Character.isWhitespace(next) || next > 127 || '.,;:!?)]}'.indexOf((int) next) >= 0
+    }
+
+    private static int nonnegativeNumber(String text, String label) {
+        try {
+            return Integer.parseInt(text)
+        } catch (NumberFormatException ignored) {
+            throw new IllegalArgumentException("Invalid ${label}: ${text}")
+        }
+    }
+
+    private static int positiveNumber(String text, String label) {
+        int value = nonnegativeNumber(text, label)
+        if (value == 0) throw new IllegalArgumentException("Invalid ${label}: ${text}")
+        return value
+    }
+
+    private static String argumentKind(String date, String conversion, String flags) {
+        if (!date.empty) return 'date'
+        switch (conversion.toLowerCase(Locale.ROOT)) {
+            case 'c': return 'character'
+            case 'd': case 'o': case 'x': return 'integer'
+            case 'e': case 'f': case 'g': return 'decimal'
+            case 'a': return 'binary decimal'
+            case 's': return flags.contains('#') ? 'formattable' : 'any'
+            default: return 'any'
+        }
+    }
+
+    private static class FormattableProbe implements Formattable {
+        void formatTo(Formatter formatter, int flags, int width, int precision) {}
+    }
+
+    static List<String> validate(Map<String, Map<String, String>> languages) {
+        List<String> errors = []
+        Map<String, Map<Integer, Set<String>>> english = [:]
+        languages.get('en_US', [:]).each { key, value ->
+            try {
+                english[key] = signature(value)
+            } catch (IllegalArgumentException error) {
+                errors.add("${key} [en_US]: ${error.message}")
+            }
+        }
+        languages.each { language, translations ->
+            if (language == 'en_US') return
+            translations.each { key, value ->
+                try {
+                    def translated = signature(value)
+                    if (english.containsKey(key) && translated != english[key]) {
+                        errors.add("${key} [${language}]: arguments ${translated} differ from en_US ${english[key]}")
+                    }
+                } catch (IllegalArgumentException error) {
+                    errors.add("${key} [${language}]: ${error.message}")
+                }
+            }
+        }
+        return errors
+    }
+}
+
+ext.translationFormatValidator = TranslationFormatValidator
+
+tasks.register('checkTranslationFormatValidator') {
+    group = 'verification'
+    description = 'Checks language placeholder validation against Minecraft numeric conversions and literal percentages.'
+    doLast {
+        def compatible = [
+            ['Circuit %s / %s', '电路 %s／%s'],
+            ['%1$s %2$sA', '%2$s安%1$s'],
+            ['Cost %d; %.2f', '成本 %s；%s'],
+            ['%1$s %<s', '%1$s'],
+            ['Fuel %s%%', '燃料 %s%%'],
+            ['Perfect overclocking; 10% recipe duration', '完美超频；耗时为10%'],
+            ['100% complete', '完成度100%'],
+            ['Plain text', '普通文字'],
+            ['%1$08x %2$tY', '%2$tY %1$x'],
+            ['%#s', '%1$#s']
+        ]
+        compatible.each { pair ->
+            assert TranslationFormatValidator.validate([en_US: [sample: pair[0]], zh_CN: [sample: pair[1]]]).empty : pair
+        }
+        def incompatible = [
+            ['%s %s', '%s'],
+            ['%1$s', '%2$s'],
+            ['%s', '%x'],
+            ['Value %q', '数值 %q'],
+            ['Value %', '数值 %'],
+            ['%<s', '%s'],
+            ['%0$s', '%s'],
+            ['%--5s', '%s'],
+            ['%2$s %<<s', '%s'],
+            ['%s at 10%', '%s：10%'],
+            ['%999999999999$s', '%s']
+        ]
+        incompatible.each { pair ->
+            assert !TranslationFormatValidator.validate([en_US: [sample: pair[0]], zh_CN: [sample: pair[1]]]).empty : pair
+        }
+        logger.lifecycle("Translation format validator passed ${compatible.size() + incompatible.size()} cases")
+    }
+}
+
+tasks.named('check') { dependsOn 'checkTranslationFormatValidator' }

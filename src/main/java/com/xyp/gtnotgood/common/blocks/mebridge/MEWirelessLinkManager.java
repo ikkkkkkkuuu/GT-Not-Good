@@ -80,48 +80,38 @@ public final class MEWirelessLinkManager extends WorldSavedData {
 
     public static BindResult toggle(EntityPlayerMP player, World world, int x, int y, int z, int side,
         String channelName) {
-        if (player == null || world == null || world.isRemote) return BindResult.INVALID_TARGET;
+        if (player == null || world == null || world.isRemote) return BindResult.InvalidTarget;
         String channel = MEBridgeChannelName.normalize(channelName);
-        if (channel.isEmpty() || !MEBridgeChannelName.isValid(channel)) return BindResult.NO_CHANNEL;
+        if (channel.isEmpty() || !MEBridgeChannelName.isValid(channel)) return BindResult.NoChannel;
         if (instance == null) loadInstance(world);
-        if (instance == null) return BindResult.FAILED;
+        if (instance == null) return BindResult.Failed;
 
         ForgeDirection direction = ForgeDirection.getOrientation(side);
         ResolvedTarget target = resolveTarget(world, x, y, z, direction);
-        if (target == null || target.node == null) return BindResult.INVALID_TARGET;
+        if (target == null || target.node == null) return BindResult.InvalidTarget;
 
         TargetKey key = new TargetKey(world.provider.dimensionId, x, y, z);
         Link existing = instance.links.get(key);
         if (existing != null && existing.channel.equals(channel)) {
             instance.remove(key);
-            return BindResult.DISCONNECTED;
+            return BindResult.Disconnected;
         }
 
-        int authorizerPlayerId = AEApi.instance()
-            .registries()
-            .players()
-            .getID(player);
-        if (authorizerPlayerId < 0) return BindResult.FAILED;
+        int authorizerPlayerId = AEApi.instance().registries().players().getID(player);
+        if (authorizerPlayerId < 0) return BindResult.Failed;
 
         instance.destroyRuntimeConnection(key);
-        Link link = new Link(
-            key,
-            direction.ordinal(),
-            channel,
-            target.signature,
-            target.node.getPlayerID(),
-            authorizerPlayerId,
-            player.getUniqueID()
-                .toString());
+        Link link = new Link(key, direction.ordinal(), channel, target.signature, target.node.getPlayerID(),
+            authorizerPlayerId, player.getUniqueID().toString());
         instance.putLink(link);
         instance.markDirty();
 
         ConnectResult result = instance.tryConnect(link, target);
-        if (result == ConnectResult.FAILED) {
+        if (result == ConnectResult.Failed) {
             instance.remove(key);
-            return BindResult.FAILED;
+            return BindResult.Failed;
         }
-        return result == ConnectResult.CONNECTED ? BindResult.CONNECTED : BindResult.WAITING;
+        return result == ConnectResult.Connected ? BindResult.Connected : BindResult.Waiting;
     }
 
     public static void onServerTick() {
@@ -194,8 +184,7 @@ public final class MEWirelessLinkManager extends WorldSavedData {
                     if (Math.max(Math.abs(offsetX), Math.abs(offsetZ)) != ring) continue;
                     int chunkX = centerChunkX + offsetX;
                     int chunkZ = centerChunkZ + offsetZ;
-                    if (!player.worldObj.getChunkProvider()
-                        .chunkExists(chunkX, chunkZ)) {
+                    if (!player.worldObj.getChunkProvider().chunkExists(chunkX, chunkZ)) {
                         continue;
                     }
 
@@ -250,8 +239,7 @@ public final class MEWirelessLinkManager extends WorldSavedData {
     /** @return true when this check attempted an AE2 topology-changing reconnect. */
     private boolean refreshConnection(TargetKey key, Link link) {
         WorldServer world = DimensionManager.getWorld(key.dimension);
-        if (world == null || !world.getChunkProvider()
-            .chunkExists(key.x >> 4, key.z >> 4)) {
+        if (world == null || !world.getChunkProvider().chunkExists(key.x >> 4, key.z >> 4)) {
             destroyRuntimeConnection(key);
             return false;
         }
@@ -267,8 +255,10 @@ public final class MEWirelessLinkManager extends WorldSavedData {
             destroyRuntimeConnection(key);
             return false;
         }
-        if (!link.targetSignature.equals(target.signature)
-            || link.targetPlayerId >= 0 && target.node.getPlayerID() != link.targetPlayerId) {
+        if (
+            !link.targetSignature.equals(target.signature)
+                || link.targetPlayerId >= 0 && target.node.getPlayerID() != link.targetPlayerId
+        ) {
             remove(key);
             return false;
         }
@@ -290,7 +280,7 @@ public final class MEWirelessLinkManager extends WorldSavedData {
 
     private ConnectResult tryConnect(Link link, ResolvedTarget target, IGridNode senderNode) {
         if (senderNode == null || target == null || target.node == null || senderNode == target.node) {
-            return ConnectResult.WAITING;
+            return ConnectResult.Waiting;
         }
 
         int originalPlayerId = target.node.getPlayerID();
@@ -298,21 +288,14 @@ public final class MEWirelessLinkManager extends WorldSavedData {
             && originalPlayerId != link.authorizerPlayerId;
         try {
             if (temporaryIdentity) target.node.setPlayerID(link.authorizerPlayerId);
-            IGridConnection connection = AEApi.instance()
-                .createGridConnection(target.node, senderNode);
+            IGridConnection connection = AEApi.instance().createGridConnection(target.node, senderNode);
             ACTIVE_CONNECTIONS.put(link.key, connection);
-            return ConnectResult.CONNECTED;
+            return ConnectResult.Connected;
         } catch (FailedConnection exception) {
-            GTNotGood.LOG.debug(
-                "[MEWirelessLink] failed to connect ({},{},{},{}) to channel '{}': {}",
-                link.key.dimension,
-                link.key.x,
-                link.key.y,
-                link.key.z,
-                link.channel,
-                exception.getClass()
-                    .getSimpleName());
-            return ConnectResult.FAILED;
+            GTNotGood.LOG.debug("[MEWirelessLink] failed to connect ({},{},{},{}) to channel '{}': {}",
+                link.key.dimension, link.key.x, link.key.y, link.key.z, link.channel,
+                exception.getClass().getSimpleName());
+            return ConnectResult.Failed;
         } finally {
             if (temporaryIdentity) target.node.setPlayerID(originalPlayerId);
         }
@@ -335,15 +318,12 @@ public final class MEWirelessLinkManager extends WorldSavedData {
         if (connection == null || targetNode == null || senderNode == null) return false;
         boolean hasTargetEndpoint = connection.a() == targetNode || connection.b() == targetNode;
         boolean hasSenderEndpoint = connection.a() == senderNode || connection.b() == senderNode;
-        return hasTargetEndpoint && hasSenderEndpoint
-            && targetNode.getConnections()
-                .contains(connection);
+        return hasTargetEndpoint && hasSenderEndpoint && targetNode.getConnections().contains(connection);
     }
 
     private void putLink(Link link) {
         links.put(link.key, link);
-        linksByChunk.computeIfAbsent(ChunkKey.from(link.key), ignored -> new HashSet<>())
-            .add(link.key);
+        linksByChunk.computeIfAbsent(ChunkKey.from(link.key), ignored -> new HashSet<>()).add(link.key);
         linkRevision++;
     }
 
@@ -384,13 +364,11 @@ public final class MEWirelessLinkManager extends WorldSavedData {
         if (tile == null) return null;
 
         IGridHost host = tile instanceof IGridHost ? (IGridHost) tile : null;
-        String signature = tile.getClass()
-            .getName();
+        String signature = tile.getClass().getName();
         if (tile instanceof IGregTechTileEntity) {
             IMetaTileEntity metaTile = ((IGregTechTileEntity) tile).getMetaTileEntity();
             if (metaTile != null) {
-                signature += "|" + metaTile.getClass()
-                    .getName();
+                signature += "|" + metaTile.getClass().getName();
                 if (metaTile instanceof IGridHost) host = (IGridHost) metaTile;
             }
         }
@@ -413,29 +391,21 @@ public final class MEWirelessLinkManager extends WorldSavedData {
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tag = list.getCompoundTagAt(i);
             try {
-                TargetKey key = new TargetKey(
-                    tag.getInteger("dim"),
-                    tag.getInteger("x"),
-                    tag.getInteger("y"),
+                TargetKey key = new TargetKey(tag.getInteger("dim"), tag.getInteger("x"), tag.getInteger("y"),
                     tag.getInteger("z"));
                 String channel = MEBridgeChannelName.normalize(tag.getString("channel"));
                 String signature = tag.getString("target_signature");
                 int side = tag.getInteger("side");
-                if (channel.isEmpty() || !MEBridgeChannelName.isValid(channel)
-                    || signature.isEmpty()
-                    || side < 0
-                    || side >= ForgeDirection.values().length) {
+                if (
+                    channel.isEmpty() || !MEBridgeChannelName.isValid(channel)
+                        || signature.isEmpty()
+                        || side < 0
+                        || side >= ForgeDirection.values().length
+                ) {
                     continue;
                 }
-                putLink(
-                    new Link(
-                        key,
-                        side,
-                        channel,
-                        signature,
-                        tag.getInteger("target_player_id"),
-                        tag.getInteger("authorizer_player_id"),
-                        tag.getString("authorizer_uuid")));
+                putLink(new Link(key, side, channel, signature, tag.getInteger("target_player_id"),
+                    tag.getInteger("authorizer_player_id"), tag.getString("authorizer_uuid")));
             } catch (RuntimeException exception) {
                 GTNotGood.LOG.warn("[MEWirelessLink] skipping invalid saved link {}", i);
             }
@@ -463,12 +433,12 @@ public final class MEWirelessLinkManager extends WorldSavedData {
     }
 
     public enum BindResult {
-        CONNECTED,
-        WAITING,
-        DISCONNECTED,
-        NO_CHANNEL,
-        INVALID_TARGET,
-        FAILED
+        Connected,
+        Waiting,
+        Disconnected,
+        NoChannel,
+        InvalidTarget,
+        Failed
     }
 
     public static final class Inspection {
@@ -485,9 +455,9 @@ public final class MEWirelessLinkManager extends WorldSavedData {
     }
 
     private enum ConnectResult {
-        CONNECTED,
-        WAITING,
-        FAILED
+        Connected,
+        Waiting,
+        Failed
     }
 
     private static final class ResolvedTarget {

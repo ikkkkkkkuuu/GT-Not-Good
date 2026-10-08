@@ -4,7 +4,9 @@ import net.minecraftforge.common.MinecraftForge;
 
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.gtnewhorizon.gtnhlib.chat.ChatComponentCustomRegistry;
+import com.rtsbuilding.rtsbuilding.RtsbuildingMod;
 import com.xyp.gtnotgood.ae2thing.AE2Thing;
+import com.xyp.gtnotgood.commandtree.CommandTreeBootstrap;
 import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceGuiFactory;
 import com.xyp.gtnotgood.common.blocks.mebridge.MEBridgeEventHandler;
 import com.xyp.gtnotgood.common.blocks.mebridge.MEWirelessLinkEventHandler;
@@ -16,19 +18,26 @@ import com.xyp.gtnotgood.common.machines.hatch.me.ChatComponentInterfaceNameSuff
 import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
 import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
 import com.xyp.gtnotgood.common.network.NetworkHandler;
+import com.xyp.gtnotgood.common.network.ServerConfigMessage;
 import com.xyp.gtnotgood.common.network.WirelessMonitorSnapshot;
+import com.xyp.gtnotgood.common.parts.advancedio.AdvancedIOGuiFactory;
 import com.xyp.gtnotgood.common.parts.largeinterface.PartLargeInterface;
 import com.xyp.gtnotgood.common.parts.mestock.StockRegistration;
 import com.xyp.gtnotgood.common.parts.stockio.StockIOGuiFactory;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.CombProcessingRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.TransmutationRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.EasyWirelessRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.config.MainConfig;
+import com.xyp.gtnotgood.config.ServerConfigService;
 import com.xyp.gtnotgood.loader.BlockLoader;
 import com.xyp.gtnotgood.loader.ItemsLoader;
 import com.xyp.gtnotgood.loader.MachineLoader;
 import com.xyp.gtnotgood.loader.RecipeLoader;
+import com.xyp.gtnotgood.loader.WirelessLaserLoader;
 
 import appeng.api.AEApi;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -44,29 +53,21 @@ import cpw.mods.fml.common.network.NetworkRegistry;
  */
 public class CommonProxy {
 
-    // preInit "Run before anything else. Read your config, create blocks, items, etc., and register them with the
-    // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         ChatComponentCustomRegistry.register(ChatComponentInterfaceNameSuffix::new);
         Config.synchronizeConfiguration(event.getSuggestedConfigurationFile());
         MainConfig.ensureLoaded();
-        if (Config.enableRTSBuilding) com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.preInit(event);
+        if (Config.enableRTSBuilding) RtsbuildingMod.INSTANCE.preInit(event);
 
         GTNotGood.channel = NetworkRegistry.INSTANCE.newSimpleChannel(GTNotGood.MODID);
         NetworkHandler.registerAllMessage();
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new WirelessMonitorService());
-        com.xyp.gtnotgood.commandtree.CommandTreeBootstrap.preInit();
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new com.xyp.gtnotgood.config.ServerConfigService());
+        FMLCommonHandler.instance().bus().register(new WirelessMonitorService());
+        CommandTreeBootstrap.preInit();
+        FMLCommonHandler.instance().bus().register(new ServerConfigService());
 
         ItemsLoader.registry();
         MinecraftForge.EVENT_BUS.register(StructureSearch.INSTANCE);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(StructureSearch.INSTANCE);
+        FMLCommonHandler.instance().bus().register(StructureSearch.INSTANCE);
         BlockLoader.registry();
         StockRegistration.preInit();
         MachineLoader.registry();
@@ -74,56 +75,37 @@ public class CommonProxy {
 
         BeltEvents beltEvents = new BeltEvents();
         MinecraftForge.EVENT_BUS.register(beltEvents);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(beltEvents);
+        FMLCommonHandler.instance().bus().register(beltEvents);
 
         MinecraftForge.EVENT_BUS.register(new MEBridgeEventHandler());
         MEWirelessLinkEventHandler wirelessLinkHandler = new MEWirelessLinkEventHandler();
         MinecraftForge.EVENT_BUS.register(wirelessLinkHandler);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(wirelessLinkHandler);
+        FMLCommonHandler.instance().bus().register(wirelessLinkHandler);
 
         GTNotGood.LOG.info(Config.greeting);
         GTNotGood.LOG.info("Loaded " + GTNotGood.NAME + " at version " + Tags.VERSION);
     }
 
-    // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
-        if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
-            com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.init(event);
-        GuiManager.registerFactory(com.xyp.gtnotgood.common.parts.advancedio.AdvancedIOGuiFactory.INSTANCE);
+        if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.init(event);
+        GuiManager.registerFactory(AdvancedIOGuiFactory.INSTANCE);
         GuiManager.registerFactory(StockIOGuiFactory.INSTANCE);
         GuiManager.registerFactory(LargeInterfaceGuiFactory.INSTANCE);
         GuiManager.registerFactory(LargeVoidMinerConfigGuiFactory.INSTANCE);
         RecipeLoader.loadRecipes();
         StockRegistration.init();
         AE2Thing.init(event);
-        com.xyp.gtnotgood.commandtree.CommandTreeBootstrap.init();
+        CommandTreeBootstrap.init();
     }
 
-    // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
     public void postInit(FMLPostInitializationEvent event) {
-        AEApi.instance()
-            .registries()
-            .interfaceTerminal()
-            .register(PartLargeInterface.class);
+        AEApi.instance().registries().interfaceTerminal().register(PartLargeInterface.class);
         RecipeLoader.loadPostInitRecipes();
-        com.xyp.gtnotgood.loader.WirelessLaserLoader.bindNativeHatches();
-        com.xyp.gtnotgood.common.recipe.machine.EasyWirelessRecipes.loadRecipes();
-        AEApi.instance()
-            .registries()
-            .interfaceTerminal()
-            .register(SuperMTEHatchCraftingInputME.class);
-        AEApi.instance()
-            .registries()
-            .interfaceTerminal()
-            .register(CircuitMEPatternBuffer.class);
-        AEApi.instance()
-            .registries()
-            .interfaceTerminal()
-            .register(AssemblerMatrix.class);
+        WirelessLaserLoader.bindNativeHatches();
+        EasyWirelessRecipes.loadRecipes();
+        AEApi.instance().registries().interfaceTerminal().register(SuperMTEHatchCraftingInputME.class);
+        AEApi.instance().registries().interfaceTerminal().register(CircuitMEPatternBuffer.class);
+        AEApi.instance().registries().interfaceTerminal().register(AssemblerMatrix.class);
         AE2Thing.postInit(event);
     }
 
@@ -131,15 +113,14 @@ public class CommonProxy {
         LargeInterfaceRecipes.registerUpgrades();
         AE2Thing.onLoadComplete(event);
         OreProcessingRecipes.loadExternalOreRecipes();
-        com.xyp.gtnotgood.common.recipe.gtnotgood.CombProcessingRecipes.loadRecipes();
-        com.xyp.gtnotgood.common.recipe.gtnotgood.TransmutationRecipes.load();
+        CombProcessingRecipes.loadRecipes();
+        TransmutationRecipes.load();
     }
 
-    // register server commands in this event handler (Remove if not needed)
     public void serverStarting(FMLServerStartingEvent event) {}
 
     /** Receives a server settings reply on the client proxy; dedicated servers have no settings screen. */
-    public void receiveServerConfig(com.xyp.gtnotgood.common.network.ServerConfigMessage message) {}
+    public void receiveServerConfig(ServerConfigMessage message) {}
 
     /** Forwards a balance snapshot only on the client; dedicated servers have no HUD renderer. */
     public void receiveWirelessMonitor(WirelessMonitorSnapshot message) {}

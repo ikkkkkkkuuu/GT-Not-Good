@@ -9,7 +9,7 @@ public final class SolverLocalization {
     public static String mode(Config.SolveMode mode) {
         if (mode == null) return StatCollector.translateToLocal("tcautores.mode_unavailable");
         return StatCollector.translateToLocal(
-            mode == Config.SolveMode.WEIGHTED ? "tcautores.mode_weighted_value" : "tcautores.mode_normal_value");
+            mode == Config.SolveMode.Weighted ? "tcautores.mode_weighted_value" : "tcautores.mode_normal_value");
     }
 
     public static String failure(String reason) {

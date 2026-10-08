@@ -20,8 +20,7 @@ public final class LargeInterfaceGuiTextures {
         .withColorOverride(mutedTextColor);
 
     /** The priority page has no painted slots, so its two-pixel border can safely fit the main panel. */
-    public static final UITexture BACKGROUND = texture("priority", 256, 256, 0, 0, 176, 125).adaptable(2)
-        .build()
+    public static final UITexture BACKGROUND = texture("priority", 256, 256, 0, 0, 176, 125).adaptable(2).build()
         .withColorOverride(0xffffffff);
     public static final UITexture SLOT = crop("states", 256, 256, 192, 192, 18, 18);
     private static final UITexture upgradeHint = crop("states", 256, 256, 240, 208, 16, 16);
@@ -41,16 +40,13 @@ public final class LargeInterfaceGuiTextures {
     public static final UITexture SIDE_BUTTON_HOVER = crop("states", 256, 256, 212, 128, 18, 20);
     public static final UITexture TAB = crop("states", 256, 256, 160, 192, 20, 20);
     public static final UITexture TAB_HOVER = crop("states", 256, 256, 160, 224, 22, 22);
-    public static final UITexture BUTTON = texture("button", 200, 20, 0, 0, 200, 20).adaptable(3)
-        .build()
+    public static final UITexture BUTTON = texture("button", 200, 20, 0, 0, 200, 20).adaptable(3).build()
         .withColorOverride(0xffffffff);
     /** The pack omits a highlighted button sprite; its own toolbar highlight supplies the same blue focus color. */
-    public static final UITexture BUTTON_HOVER = texture("states", 256, 256, 212, 128, 18, 20).adaptable(3)
-        .build()
+    public static final UITexture BUTTON_HOVER = texture("states", 256, 256, 212, 128, 18, 20).adaptable(3).build()
         .withColorOverride(0xffffffff);
     public static final UITexture SCROLL_HANDLE = texture("big_scroller", 12, 15, 0, 0, 12, 15).adaptable(1, 2, 1, 2)
-        .build()
-        .withColorOverride(0xffffffff);
+        .build().withColorOverride(0xffffffff);
     public static final UITexture TEXT_FIELD = textField(0);
     public static final UITexture TEXT_FIELD_FOCUSED = textField(24);
 
@@ -78,25 +74,17 @@ public final class LargeInterfaceGuiTextures {
     private LargeInterfaceGuiTextures() {}
 
     private static UITexture crop(String name, int imageWidth, int imageHeight, int x, int y, int width, int height) {
-        return texture(name, imageWidth, imageHeight, x, y, width, height).build()
-            .withColorOverride(0xffffffff);
+        return texture(name, imageWidth, imageHeight, x, y, width, height).build().withColorOverride(0xffffffff);
     }
 
     private static UITexture textField(int y) {
-        return UITexture.builder()
-            .location(ModList.ModIds.GT_NOT_GOOD, "gui/large_interface/text_field")
-            .imageSize(128, 128)
-            .subAreaXYWH(0, y, 128, 12)
-            .adaptable(2)
-            .build()
-            .withColorOverride(0xffffffff);
+        return UITexture.builder().location(ModList.ModIds.GT_NOT_GOOD, "gui/large_interface/text_field")
+            .imageSize(128, 128).subAreaXYWH(0, y, 128, 12).adaptable(2).build().withColorOverride(0xffffffff);
     }
 
     private static UITexture.Builder texture(String name, int imageWidth, int imageHeight, int x, int y, int width,
         int height) {
-        return UITexture.builder()
-            .location(ModList.ModIds.GT_NOT_GOOD, "gui/large_interface/" + name)
-            .imageSize(imageWidth, imageHeight)
-            .subAreaXYWH(x, y, width, height);
+        return UITexture.builder().location(ModList.ModIds.GT_NOT_GOOD, "gui/large_interface/" + name)
+            .imageSize(imageWidth, imageHeight).subAreaXYWH(x, y, width, height);
     }
 }

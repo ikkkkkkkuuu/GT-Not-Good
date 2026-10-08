@@ -27,8 +27,7 @@ public final class CompassTravel {
         WorldServer world = (WorldServer) player.worldObj;
         long now = world.getTotalWorldTime();
         // Player-owned cooldown prevents switching stacks from bypassing the limit.
-        long last = player.getEntityData()
-            .getLong("GTNGCompassTravel");
+        long last = player.getEntityData().getLong("GTNGCompassTravel");
         if (last > 0 && now >= last && now - last < 100) {
             // #tr compass.cooldown
             // # Wait five seconds between compass teleports.
@@ -38,8 +37,7 @@ public final class CompassTravel {
         }
         int tx = tag.getInteger("X"), tz = tag.getInteger("Z");
         if (Math.abs((long) tx) > 29_999_900 || Math.abs((long) tz) > 29_999_900) return;
-        player.getEntityData()
-            .setLong("GTNGCompassTravel", Math.max(1, now));
+        player.getEntityData().setLong("GTNGCompassTravel", Math.max(1, now));
         StructureSearch.Spiral spiral = new StructureSearch.Spiral();
         for (int i = 0; i < 17 * 17; i++) {
             int x = tx + spiral.x, z = tz + spiral.z;
@@ -49,8 +47,8 @@ public final class CompassTravel {
             if (player.ridingEntity != null) player.mountEntity(null);
             player.motionX = player.motionY = player.motionZ = 0;
             player.fallDistance = 0;
-            player.playerNetServerHandler
-                .setPlayerLocation(x + .5, y, z + .5, player.rotationYaw, player.rotationPitch);
+            player.playerNetServerHandler.setPlayerLocation(x + .5, y, z + .5, player.rotationYaw,
+                player.rotationPitch);
             // #tr compass.arrived
             // # Teleported to the target area's surface. Candidate structures still need confirmation.
             // # zh_CN 已传送至目标区域地表；候选遗迹仍需实际确认。
@@ -67,8 +65,11 @@ public final class CompassTravel {
     static boolean safe(WorldServer world, int x, int y, int z) {
         if (y < 1 || y > 253) return false;
         Block floor = world.getBlock(x, y - 1, z);
-        if (!floor.isSideSolid(world, x, y - 1, z, ForgeDirection.UP) || floor.getMaterial()
-            .isLiquid() || floor == Blocks.cactus || floor == Blocks.fire) return false;
+        if (
+            !floor.isSideSolid(world, x, y - 1, z, ForgeDirection.UP) || floor.getMaterial().isLiquid()
+                || floor == Blocks.cactus
+                || floor == Blocks.fire
+        ) return false;
         return world.isAirBlock(x, y, z) && world.isAirBlock(x, y + 1, z);
     }
 }

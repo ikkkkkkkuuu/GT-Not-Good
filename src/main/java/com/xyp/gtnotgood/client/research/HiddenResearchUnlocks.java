@@ -47,11 +47,8 @@ public final class HiddenResearchUnlocks {
         if (triggers == null) return;
         for (Aspect aspect : triggers) {
             if (aspect == null) continue;
-            methods.add(
-                String.format(
-                    StatCollector.translateToLocal("tcautores.hidden_unlock.aspect"),
-                    AspectLocalization.name(aspect),
-                    aspect.getTag()));
+            methods.add(String.format(StatCollector.translateToLocal("tcautores.hidden_unlock.aspect"),
+                AspectLocalization.name(aspect), aspect.getTag()));
         }
     }
 

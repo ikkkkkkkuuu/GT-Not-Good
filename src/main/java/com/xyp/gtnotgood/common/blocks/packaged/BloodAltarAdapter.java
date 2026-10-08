@@ -25,27 +25,31 @@ public final class BloodAltarAdapter implements PackagedCoreRegistry.Adapter {
     @Override
     public ItemStack dispatch(TilePackagedProvider provider, PackagedTarget target, ICraftingPatternDetails pattern,
         InventoryCrafting ingredients) {
-        provider.altarStatus = AltarStatus.UNLOADED;
-        if (!(target.resolve(provider.getWorldObj()) instanceof TEAltar altar)
-            || !(altar instanceof BloodAltarAccess access)) return null;
-        provider.altarStatus = AltarStatus.OWNER;
+        provider.altarStatus = AltarStatus.Unloaded;
+        if (
+            !(target.resolve(provider.getWorldObj()) instanceof TEAltar altar)
+                || !(altar instanceof BloodAltarAccess access)
+        ) return null;
+        provider.altarStatus = AltarStatus.Owner;
         var owner = provider.getOwnerPlayer();
         var world = altar.getWorldObj();
         if (owner == null || owner.worldObj != world || !world.canMineBlock(owner, target.x, target.y, target.z))
             return null;
-        provider.altarStatus = AltarStatus.OCCUPIED;
+        provider.altarStatus = AltarStatus.Occupied;
         if (altar.getStackInSlot(0) != null || altar.isActive()) return null;
-        provider.altarStatus = AltarStatus.UNLOADED;
+        provider.altarStatus = AltarStatus.Unloaded;
         // Check the actual registered structure coordinates before Blood Magic examines world blocks.
         for (int tier = 2; tier <= UpgradedAltars.highestAltar; tier++) {
             var components = UpgradedAltars.getAltarUpgradeListForTier(tier);
             if (components == null) continue;
             for (var component : components) {
-                if (!world.getChunkProvider()
-                    .chunkExists((target.x + component.x()) >> 4, (target.z + component.z()) >> 4)) return null;
+                if (
+                    !world.getChunkProvider().chunkExists((target.x + component.x()) >> 4,
+                        (target.z + component.z()) >> 4)
+                ) return null;
             }
         }
-        provider.altarStatus = AltarStatus.BLOOD_RECIPE;
+        provider.altarStatus = AltarStatus.BloodRecipe;
         ItemStack input = planInput(ingredients);
         if (input == null || pattern.isCraftable()) return null;
         altar.checkAndSetAltar();
@@ -72,8 +76,10 @@ public final class BloodAltarAdapter implements PackagedCoreRegistry.Adapter {
             if (stack.stackSize <= 0 || stack.stackSize > Math.min(64, stack.getMaxStackSize())) return null;
             if (input == null) input = stack.copy();
             else {
-                if (!TilePackagedProvider.sameItem(input, stack)
-                    || input.stackSize > Math.min(64, input.getMaxStackSize()) - stack.stackSize) return null;
+                if (
+                    !TilePackagedProvider.sameItem(input, stack)
+                        || input.stackSize > Math.min(64, input.getMaxStackSize()) - stack.stackSize
+                ) return null;
                 input.stackSize += stack.stackSize;
             }
         }
@@ -86,15 +92,19 @@ public final class BloodAltarAdapter implements PackagedCoreRegistry.Adapter {
         if (recipe == null || recipe.getCanBeFilled()) return null;
         ItemStack result = ItemStack.copyItemStack(recipe.getResult());
         var outputs = pattern.getCondensedOutputs();
-        if (result == null || result.stackSize <= 0
-            || outputs == null
-            || outputs.length != 1
-            || outputs[0] == null
-            || !outputs[0].isItem()) return null;
+        if (
+            result == null || result.stackSize <= 0
+                || outputs == null
+                || outputs.length != 1
+                || outputs[0] == null
+                || !outputs[0].isItem()
+        ) return null;
         long count = (long) result.stackSize * input.stackSize;
-        if (count > Math.min(64, result.getMaxStackSize()) || count != outputs[0].getStackSize()
-            || !TilePackagedProvider.sameItem(result, outputs[0].getItemStack())
-            || TilePackagedProvider.sameItem(input, result)) return null;
+        if (
+            count > Math.min(64, result.getMaxStackSize()) || count != outputs[0].getStackSize()
+                || !TilePackagedProvider.sameItem(result, outputs[0].getItemStack())
+                || TilePackagedProvider.sameItem(input, result)
+        ) return null;
         result.stackSize = (int) count;
         return result;
     }

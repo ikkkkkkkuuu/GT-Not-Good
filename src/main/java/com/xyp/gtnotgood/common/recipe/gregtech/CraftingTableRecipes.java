@@ -20,8 +20,7 @@ public class CraftingTableRecipes {
 
     public static void loadRecipes() {
         if (!ModList.GTNotLeisure.isModLoaded()) {
-            GTModHandler.addCraftingRecipe(
-                CustomItemList.hatch_CreativeMaintenance.get(1),
+            GTModHandler.addCraftingRecipe(CustomItemList.hatch_CreativeMaintenance.get(1),
                 GTModHandler.RecipeBits.MIRRORED | GTModHandler.RecipeBits.KEEPNBT
                     | GTModHandler.RecipeBits.BUFFERED
                     | GTModHandler.RecipeBits.DISMANTLEABLE,

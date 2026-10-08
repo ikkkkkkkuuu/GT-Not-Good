@@ -1,6 +1,8 @@
 package com.xyp.gtnotgood.ae2thing.common.item;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
 
+import com.xyp.gtnotgood.ae2thing.api.WirelessObject;
 import com.xyp.gtnotgood.ae2thing.inventory.InventoryHandler;
 import com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType;
 import com.xyp.gtnotgood.ae2thing.inventory.item.IItemInventory;
@@ -56,10 +59,12 @@ public abstract class ItemBaseWirelessTerminal extends ToolWirelessTerminal
      */
     @Override
     public String[] getBaubleTypes(ItemStack itemstack) {
-        java.util.List<String> types = new java.util.ArrayList<>();
+        List<String> types = new ArrayList<>();
         for (String type : BaubleExpandedSlots.getCurrentlyRegisteredTypes()) {
-            if (type == null || type.equals(BaubleExpandedSlots.unknownType)
-                || type.equals(BaubleExpandedSlots.invalidType)) {
+            if (
+                type == null || type.equals(BaubleExpandedSlots.unknownType)
+                    || type.equals(BaubleExpandedSlots.invalidType)
+            ) {
                 continue;
             }
             types.add(type);
@@ -71,9 +76,7 @@ public abstract class ItemBaseWirelessTerminal extends ToolWirelessTerminal
     public ItemStack onItemRightClick(final ItemStack item, final World w, final EntityPlayer player) {
         if (ForgeEventFactory.onItemUseStart(player, item, 1) > 0) {
             if (Platform.isClient()) return item;
-            IWirelessTermRegistry term = AEApi.instance()
-                .registries()
-                .wireless();
+            IWirelessTermRegistry term = AEApi.instance().registries().wireless();
             if (!term.isWirelessTerminal(item)) {
                 player.addChatMessage(PlayerMessages.DeviceNotWirelessTerminal.get());
                 return item;
@@ -85,21 +88,14 @@ public abstract class ItemBaseWirelessTerminal extends ToolWirelessTerminal
                 return item;
             }
             final long parsedKey = Long.parseLong(unparsedKey);
-            final ILocatable securityStation = AEApi.instance()
-                .registries()
-                .locatable()
-                .getLocatableBy(parsedKey);
+            final ILocatable securityStation = AEApi.instance().registries().locatable().getLocatableBy(parsedKey);
             if (securityStation == null) {
                 player.addChatMessage(PlayerMessages.StationCanNotBeLocated.get());
                 return item;
             }
             if (handler.hasPower(player, 0.5, item)) {
-                InventoryHandler.openGui(
-                    player,
-                    w,
-                    new BlockPos(player.inventory.currentItem, 0, 0),
-                    ForgeDirection.UNKNOWN,
-                    this.guiGuiType(item));
+                InventoryHandler.openGui(player, w, new BlockPos(player.inventory.currentItem, 0, 0),
+                    ForgeDirection.UNKNOWN, this.guiGuiType(item));
             } else {
                 player.addChatMessage(PlayerMessages.DeviceNotPowered.get());
             }
@@ -122,12 +118,12 @@ public abstract class ItemBaseWirelessTerminal extends ToolWirelessTerminal
      */
     @Override
     public boolean hasInfinityPower(ItemStack is) {
-        return com.xyp.gtnotgood.ae2thing.api.WirelessObject.hasEnergyCard(is);
+        return WirelessObject.hasEnergyCard(is);
     }
 
     @Override
     public boolean hasInfinityRange(ItemStack is) {
-        return com.xyp.gtnotgood.ae2thing.api.WirelessObject.hasInfinityBoosterCard(is);
+        return WirelessObject.hasInfinityBoosterCard(is);
     }
 
     /**
@@ -145,10 +141,7 @@ public abstract class ItemBaseWirelessTerminal extends ToolWirelessTerminal
      */
     @Override
     public IGuiItemObject getGuiObject(ItemStack is, World world, EntityPlayer player, int x, int y, int z) {
-        IWirelessTermHandler handler = AEApi.instance()
-            .registries()
-            .wireless()
-            .getWirelessTerminalHandler(is);
+        IWirelessTermHandler handler = AEApi.instance().registries().wireless().getWirelessTerminalHandler(is);
         if (handler == null) {
             return null;
         }

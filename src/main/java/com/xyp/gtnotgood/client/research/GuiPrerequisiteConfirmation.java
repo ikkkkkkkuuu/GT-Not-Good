@@ -42,12 +42,7 @@ public final class GuiPrerequisiteConfirmation extends GuiScreen {
         int center = width / 2;
         buttonList
             .add(new GuiButtonExt(0, center - 105, height - 24, 100, 20, StatCollector.translateToLocal("gui.back")));
-        GuiButton executeButton = new GuiButtonExt(
-            1,
-            center + 5,
-            height - 24,
-            100,
-            20,
+        GuiButton executeButton = new GuiButtonExt(1, center + 5, height - 24, 100, 20,
             StatCollector.translateToLocal("tcautores.plan_execute"));
         executeButton.enabled = plan.canExecute();
         buttonList.add(executeButton);
@@ -94,88 +89,52 @@ public final class GuiPrerequisiteConfirmation extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
-        drawCenteredString(
-            fontRendererObj,
-            StatCollector.translateToLocal("tcautores.plan_title"),
-            width / 2,
-            8,
+        drawCenteredString(fontRendererObj, StatCollector.translateToLocal("tcautores.plan_title"), width / 2, 8,
             0xFFFFFF);
         String targetText = StatCollector.translateToLocal(
             "tcautores.plan_target") + ": " + target.getName() + " [" + target.key + "]";
-        drawCenteredString(
-            fontRendererObj,
-            fontRendererObj.trimStringToWidth(targetText, listWidth()),
-            width / 2,
-            23,
+        drawCenteredString(fontRendererObj, fontRendererObj.trimStringToWidth(targetText, listWidth()), width / 2, 23,
             0xD7E7DF);
         drawCenteredString(fontRendererObj, summaryText(), width / 2, 35, plan.canExecute() ? 0xA8E0B2 : 0xEF8585);
 
         int x = listX();
         int rows = visibleRows();
-        drawGradientRect(
-            x - 2,
-            LIST_Y - 2,
-            x + listWidth() + 2,
-            LIST_Y + rows * ROW_HEIGHT + 2,
-            0xE0222222,
+        drawGradientRect(x - 2, LIST_Y - 2, x + listWidth() + 2, LIST_Y + rows * ROW_HEIGHT + 2, 0xE0222222,
             0xE0101010);
         RenderItem renderer = new RenderItem();
         for (int row = 0; row < rows && scroll + row < plan.entries.size(); row++) {
             ResearchPlan.Entry entry = plan.entries.get(scroll + row);
             int y = LIST_Y + row * ROW_HEIGHT;
             boolean hovered = mouseX >= x && mouseX < x + listWidth() && mouseY >= y && mouseY < y + ROW_HEIGHT - 1;
-            drawRect(
-                x,
-                y,
-                x + listWidth(),
-                y + ROW_HEIGHT - 1,
+            drawRect(x, y, x + listWidth(), y + ROW_HEIGHT - 1,
                 entry.target ? 0xCC52606A : hovered ? 0xAA383838 : 0xAA242424);
             renderIcon(renderer, entry.research, x + 3, y + 3);
             String name = (entry.target ? StatCollector.translateToLocal("tcautores.plan_target_short") + " " : "")
                 + entry.research.getName();
-            if (entry.action == ResearchPlan.Action.HIDDEN) {
+            if (entry.action == ResearchPlan.Action.Hidden) {
                 String identified = name + " [" + entry.research.key + "]";
-                fontRendererObj.drawString(
-                    fontRendererObj.trimStringToWidth(identified, listWidth() - 32),
-                    x + 24,
-                    y + 3,
-                    actionColor(entry.action));
+                fontRendererObj.drawString(fontRendererObj.trimStringToWidth(identified, listWidth() - 32), x + 24,
+                    y + 3, actionColor(entry.action));
                 fontRendererObj.drawString(
                     fontRendererObj.trimStringToWidth(HiddenResearchUnlocks.describe(entry.research), listWidth() - 32),
-                    x + 24,
-                    y + 12,
-                    0xE0C178);
+                    x + 24, y + 12, 0xE0C178);
                 continue;
             }
             int statusWidth = fontRendererObj.getStringWidth(actionText(entry.action)) + 10;
-            fontRendererObj.drawString(
-                fontRendererObj.trimStringToWidth(name, listWidth() - statusWidth - 30),
-                x + 24,
-                y + 3,
-                actionColor(entry.action));
+            fontRendererObj.drawString(fontRendererObj.trimStringToWidth(name, listWidth() - statusWidth - 30), x + 24,
+                y + 3, actionColor(entry.action));
             fontRendererObj.drawString(entry.research.key, x + 24, y + 12, 0x888888);
             String status = actionText(entry.action);
-            fontRendererObj.drawString(
-                status,
-                x + listWidth() - fontRendererObj.getStringWidth(status) - 5,
-                y + 7,
+            fontRendererObj.drawString(status, x + listWidth() - fontRendererObj.getStringWidth(status) - 5, y + 7,
                 actionColor(entry.action));
         }
         if (plan.entries.isEmpty()) {
-            drawCenteredString(
-                fontRendererObj,
-                StatCollector.translateToLocal("tcautores.plan_empty"),
-                width / 2,
-                LIST_Y + 8,
-                0xAAAAAA);
+            drawCenteredString(fontRendererObj, StatCollector.translateToLocal("tcautores.plan_empty"), width / 2,
+                LIST_Y + 8, 0xAAAAAA);
         } else {
             int last = Math.min(plan.entries.size(), scroll + rows);
             String page = (scroll + 1) + "-" + last + "/" + plan.entries.size();
-            drawString(
-                fontRendererObj,
-                page,
-                x + listWidth() - fontRendererObj.getStringWidth(page),
-                height - 37,
+            drawString(fontRendererObj, page, x + listWidth() - fontRendererObj.getStringWidth(page), height - 37,
                 0xAAAAAA);
             drawScrollBar(x + listWidth() - 3, rows);
         }
@@ -188,34 +147,25 @@ public final class GuiPrerequisiteConfirmation extends GuiScreen {
     }
 
     private String summaryText() {
-        int completed = plan.count(ResearchPlan.Action.COMPLETED);
-        int pending = plan.count(ResearchPlan.Action.LEARN_DISCOVERY) + plan.count(ResearchPlan.Action.SOLVE_EXISTING)
-            + plan.count(ResearchPlan.Action.GENERATE_AND_SOLVE)
-            + plan.count(ResearchPlan.Action.DIRECT);
-        int wait = plan.count(ResearchPlan.Action.WAIT_FOR_PREREQUISITES);
-        int hidden = plan.count(ResearchPlan.Action.HIDDEN);
-        int unavailable = plan.count(ResearchPlan.Action.UNSUPPORTED);
-        return fontRendererObj.trimStringToWidth(
-            String.format(
-                StatCollector.translateToLocal("tcautores.plan_summary"),
-                completed,
-                pending,
-                wait,
-                hidden,
-                unavailable),
-            listWidth());
+        int completed = plan.count(ResearchPlan.Action.Completed);
+        int pending = plan.count(ResearchPlan.Action.LearnDiscovery) + plan.count(ResearchPlan.Action.SolveExisting)
+            + plan.count(ResearchPlan.Action.GenerateAndSolve)
+            + plan.count(ResearchPlan.Action.Direct);
+        int wait = plan.count(ResearchPlan.Action.WaitForPrerequisites);
+        int hidden = plan.count(ResearchPlan.Action.Hidden);
+        int unavailable = plan.count(ResearchPlan.Action.Unsupported);
+        return fontRendererObj.trimStringToWidth(String.format(StatCollector.translateToLocal("tcautores.plan_summary"),
+            completed, pending, wait, hidden, unavailable), listWidth());
     }
 
     private static String actionText(ResearchPlan.Action action) {
-        return StatCollector.translateToLocal(
-            "tcautores.plan_action." + action.name()
-                .toLowerCase());
+        return StatCollector.translateToLocal(action.translationKey);
     }
 
     private static int actionColor(ResearchPlan.Action action) {
-        if (action == ResearchPlan.Action.HIDDEN || action == ResearchPlan.Action.UNSUPPORTED) return 0xEF8585;
-        if (action == ResearchPlan.Action.COMPLETED) return 0xAAAAAA;
-        if (action == ResearchPlan.Action.WAIT_FOR_PREREQUISITES) return 0xE0C178;
+        if (action == ResearchPlan.Action.Hidden || action == ResearchPlan.Action.Unsupported) return 0xEF8585;
+        if (action == ResearchPlan.Action.Completed) return 0xAAAAAA;
+        if (action == ResearchPlan.Action.WaitForPrerequisites) return 0xE0C178;
         return 0xA8E0B2;
     }
 
@@ -250,18 +200,13 @@ public final class GuiPrerequisiteConfirmation extends GuiScreen {
     private void renderIcon(RenderItem renderer, ResearchItem research, int x, int y) {
         if (research.icon_item != null) {
             RenderHelper.enableGUIStandardItemLighting();
-            renderer.renderItemAndEffectIntoGUI(
-                fontRendererObj,
-                mc.getTextureManager(),
-                InventoryUtils.cycleItemStack(research.icon_item),
-                x,
-                y);
+            renderer.renderItemAndEffectIntoGUI(fontRendererObj, mc.getTextureManager(),
+                InventoryUtils.cycleItemStack(research.icon_item), x, y);
             RenderHelper.disableStandardItemLighting();
         } else if (research.icon_resource != null) {
             GL11.glPushMatrix();
             GL11.glColor4f(1, 1, 1, 1);
-            mc.getTextureManager()
-                .bindTexture(research.icon_resource);
+            mc.getTextureManager().bindTexture(research.icon_resource);
             UtilsFX.drawTexturedQuadFull(x, y, zLevel);
             GL11.glPopMatrix();
         }

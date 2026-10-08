@@ -19,26 +19,15 @@ public final class MechanicalUserRecipes {
 
     public static void loadRecipes() {
         GTValues.RA.stdBuilder()
-            .itemInputs(
-                ItemList.Hull_LV.get(1),
-                ItemList.Robot_Arm_LV.get(1),
-                ItemList.Conveyor_Module_LV.get(1),
+            .itemInputs(ItemList.Hull_LV.get(1), ItemList.Robot_Arm_LV.get(1), ItemList.Conveyor_Module_LV.get(1),
                 new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 2))
-            .circuit(1)
-            .itemOutputs(GTNGItemList.MechanicalUser.get(1))
-            .duration(10 * SECONDS)
-            .eut(RECIPE_LV)
+            .circuit(1).itemOutputs(GTNGItemList.MechanicalUser.get(1)).duration(10 * SECONDS).eut(RECIPE_LV)
             .addTo(assemblerRecipes);
         GTValues.RA.stdBuilder()
-            .itemInputs(
-                ItemList.Electric_Motor_LV.get(1),
-                new Object[] { OrePrefixes.circuit.get(Materials.LV), 1 },
+            .itemInputs(ItemList.Electric_Motor_LV.get(1), new Object[] { OrePrefixes.circuit.get(Materials.LV), 1 },
                 GTOreDictUnificator.get(OrePrefixes.wireGt01, Materials.Copper, 2))
-            .circuit(2)
-            .itemOutputs(GTNGItemList.MechanicalUserSpeedUpgrade.get(1))
-            .duration(5 * SECONDS)
-            .eut(RECIPE_LV)
+            .circuit(2).itemOutputs(GTNGItemList.MechanicalUserSpeedUpgrade.get(1)).duration(5 * SECONDS).eut(RECIPE_LV)
             .addTo(assemblerRecipes);
     }
 }

@@ -39,9 +39,8 @@ public final class VerticalTabsWidget extends TabsWidget {
                 theme.selectedTab.draw(mx, my, x, y, w, h);
                 label.draw(mx, my, x + 4, y + 4, w - 8, h - 8);
             };
-            rows.addChild(
-                new Button(0, 0, width, 28, normal, () -> select(page)).setHoverTexture(hover)
-                    .setFocusTexture(theme.focus));
+            rows.addChild(new Button(0, 0, width, 28, normal, () -> select(page)).setHoverTexture(hover)
+                .setFocusTexture(theme.focus));
         }
         viewport.addChild(rows);
         addChild(viewport);

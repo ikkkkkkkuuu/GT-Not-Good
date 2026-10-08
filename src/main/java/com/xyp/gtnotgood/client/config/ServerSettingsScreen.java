@@ -48,11 +48,9 @@ public final class ServerSettingsScreen extends GuiConfig {
         }
         entryList.saveConfigElements();
         Map<String, String> changes = new LinkedHashMap<>();
-        edits.forEach(
-            (id, property) -> {
-                if (!property.getString()
-                    .equals(baseline.get(id))) changes.put(id, property.getString());
-            });
+        edits.forEach((id, property) -> {
+            if (!property.getString().equals(baseline.get(id))) changes.put(id, property.getString());
+        });
         if (changes.isEmpty()) {
             mc.displayGuiScreen(parentScreen);
         } else {
@@ -70,17 +68,12 @@ public final class ServerSettingsScreen extends GuiConfig {
             Option option = options.get(id);
             categories.computeIfAbsent(option.category, name -> {
                 ConfigCategory category = new ConfigCategory(name);
-                category.setComment(
-                    option.configuration()
-                        .getCategory(name.toLowerCase(Locale.ENGLISH))
-                        .getComment());
+                category.setComment(option.configuration().getCategory(name.toLowerCase(Locale.ENGLISH)).getComment());
                 return category;
-            })
-                .put(option.key, property);
+            }).put(option.key, property);
         });
         List<IConfigElement> elements = new ArrayList<>();
-        categories.values()
-            .forEach(category -> elements.add(new ConfigElement(category)));
+        categories.values().forEach(category -> elements.add(new ConfigElement(category)));
         return elements;
     }
 
@@ -101,8 +94,7 @@ public final class ServerSettingsScreen extends GuiConfig {
         }
         Map<String, Property> edits = new LinkedHashMap<>();
         Map<String, Option> options = ServerConfigOptions.options();
-        if (!options.keySet()
-            .equals(reply.values.keySet())) {
+        if (!options.keySet().equals(reply.values.keySet())) {
             waiting.message = statusText(ServerConfigService.INVALID);
             return;
         }
@@ -195,8 +187,7 @@ public final class ServerSettingsScreen extends GuiConfig {
 
         @Override
         protected GuiScreen buildChildScreen() {
-            return new WaitingScreen(
-                owningScreen,
+            return new WaitingScreen(owningScreen,
                 new ServerConfigMessage(0, ServerConfigService.READ, Collections.emptyMap()));
         }
     }
@@ -227,8 +218,7 @@ public final class ServerSettingsScreen extends GuiConfig {
             buttonList.add(new GuiButton(0, width / 2 - 100, height - 35, I18n.format("gui.back")));
             if (started != 0) return;
             connection = mc.getNetHandler();
-            request.requestId = ThreadLocalRandom.current()
-                .nextLong();
+            request.requestId = ThreadLocalRandom.current().nextLong();
             started = System.currentTimeMillis();
             // #tr gui.gtnotgood.server_waiting
             // # Waiting for the server...

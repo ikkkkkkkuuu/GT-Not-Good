@@ -6,6 +6,7 @@ import net.minecraft.util.ResourceLocation;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.xyp.ldlib.gui.texture.IGuiTexture;
@@ -46,9 +47,7 @@ public final class ModernThemeAdapter {
 
     public TextFieldWidget textField() {
         TextFieldWidget field = new TextFieldWidget();
-        return field.background(new DynamicDrawable(() -> field.isFocused() ? inputFocused : input))
-            .padding(3, 0)
-            .setTextAlignment(com.cleanroommc.modularui.utils.Alignment.CenterLeft)
-            .setTextColor(0xFFFFFFFF);
+        return field.background(new DynamicDrawable(() -> field.isFocused() ? inputFocused : input)).padding(3, 0)
+            .setTextAlignment(Alignment.CenterLeft).setTextColor(0xFFFFFFFF);
     }
 }

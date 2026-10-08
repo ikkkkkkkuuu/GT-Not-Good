@@ -72,8 +72,8 @@ public final class PartThresholdExportBus extends PartExportBus implements Stock
     @SideOnly(Side.CLIENT)
     public void renderStatic(int x, int y, int z, IPartRenderHelper helper, RenderBlocks renderer) {
         StockModelRenderer.part("extendedae:part/threshold_export_bus_base", x, y, z, helper, renderer, getColor());
-        StockModelRenderer
-            .part(StockModelRenderer.indicator("export_bus", getClientFlags()), x, y, z, helper, renderer, getColor());
+        StockModelRenderer.part(StockModelRenderer.indicator("export_bus", getClientFlags()), x, y, z, helper, renderer,
+            getColor());
     }
 
     @Override
@@ -125,8 +125,7 @@ public final class PartThresholdExportBus extends PartExportBus implements Stock
     private void wake() {
         if (getHost() == null || wakeQueued) return;
         try {
-            wakeQueued = getProxy().getTick()
-                .alertDevice(getProxy().getNode());
+            wakeQueued = getProxy().getTick().alertDevice(getProxy().getNode());
         } catch (GridAccessException ignored) {
             wakeQueued = false;
         }
@@ -186,10 +185,8 @@ public final class PartThresholdExportBus extends PartExportBus implements Stock
         }
         try {
             if (escrow != null) {
-                IMEInventory network = escrow.isFluid() ? getProxy().getStorage()
-                    .getFluidInventory()
-                    : getProxy().getStorage()
-                        .getItemInventory();
+                IMEInventory network = escrow.isFluid() ? getProxy().getStorage().getFluidInventory()
+                    : getProxy().getStorage().getItemInventory();
                 escrow = network.injectItems(escrow, Actionable.MODULATE, mySrc);
                 getHost().markForSave();
                 if (escrow != null) return TickRateModulation.SLOWER;
@@ -198,10 +195,8 @@ public final class PartThresholdExportBus extends PartExportBus implements Stock
             TileEntity self = getTile();
             int x = self.xCoord + getSide().offsetX, y = self.yCoord + getSide().offsetY,
                 z = self.zCoord + getSide().offsetZ;
-            if (!self.getWorldObj()
-                .blockExists(x, y, z)) return TickRateModulation.IDLE;
-            TileEntity tile = self.getWorldObj()
-                .getTileEntity(x, y, z);
+            if (!self.getWorldObj().blockExists(x, y, z)) return TickRateModulation.IDLE;
+            TileEntity tile = self.getWorldObj().getTileEntity(x, y, z);
             if (tile != cachedTile || cachedTarget == null) {
                 cachedTile = tile;
                 cachedTarget = tile == null ? null : new BusTarget(tile, getSide().getOpposite());
@@ -213,8 +208,8 @@ public final class PartThresholdExportBus extends PartExportBus implements Stock
             boolean eligible = false, moved = false;
             SchedulingMode mode = (SchedulingMode) getConfigManager().getSetting(Settings.SCHEDULING_MODE);
             for (int n = 0; n < rows.length && budget > 0; n++) {
-                int offset = mode == SchedulingMode.RANDOM ? Platform.getRandom()
-                    .nextInt(rows.length) : mode == SchedulingMode.ROUNDROBIN ? (cursor + n) % rows.length : n;
+                int offset = mode == SchedulingMode.RANDOM ? Platform.getRandom().nextInt(rows.length)
+                    : mode == SchedulingMode.ROUNDROBIN ? (cursor + n) % rows.length : n;
                 int slot = rows[offset];
                 IAEStack<?> key = config.key(slot);
                 stockLookups++;
@@ -223,23 +218,19 @@ public final class PartThresholdExportBus extends PartExportBus implements Stock
                 if (limit <= 0) continue;
                 eligible = true;
                 long transfer = Math.min(Integer.MAX_VALUE, Math.min(limit, budget * (key.isFluid() ? 1000L : 1L)));
-                IAEStack offer = key.copy()
-                    .setStackSize(transfer);
+                IAEStack offer = key.copy().setStackSize(transfer);
                 long accepted = target.insert(offer, true);
                 if (accepted <= 0) continue;
-                IMEInventory network = key.isFluid() ? getProxy().getStorage()
-                    .getFluidInventory()
-                    : getProxy().getStorage()
-                        .getItemInventory();
-                IAEStack extracted = Platform
-                    .poweredExtraction(getProxy().getEnergy(), network, offer.setStackSize(accepted), mySrc);
+                IMEInventory network = key.isFluid() ? getProxy().getStorage().getFluidInventory()
+                    : getProxy().getStorage().getItemInventory();
+                IAEStack extracted = Platform.poweredExtraction(getProxy().getEnergy(), network,
+                    offer.setStackSize(accepted), mySrc);
                 if (extracted == null) continue;
                 escrow = extracted;
                 getHost().markForSave();
                 long inserted = target.insert(extracted, false);
                 escrow = inserted >= extracted.getStackSize() ? null
-                    : extracted.copy()
-                        .setStackSize(extracted.getStackSize() - inserted);
+                    : extracted.copy().setStackSize(extracted.getStackSize() - inserted);
                 if (escrow != null) escrow = network.injectItems(escrow, Actionable.MODULATE, mySrc);
                 getHost().markForSave();
                 budget -= Math.max(1, (inserted + (key.isFluid() ? 999 : 0)) / (key.isFluid() ? 1000 : 1));

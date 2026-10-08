@@ -29,9 +29,7 @@ public class Terminal {
     private static final HashSet<Class<? extends AEBaseGui>> terminal = new HashSet<>();
     private static final HashSet<Class<? extends AEBaseGui>> terminalBlackList = new HashSet<>();
     private static final HashMap<Class<? extends Container>, ICraftingTerminalAdapter> craftingTerminal = new HashMap<>();
-    private static final IItemList<IAEItemStack> tracking = AEApi.instance()
-        .storage()
-        .createPrimitiveItemList();
+    private static final IItemList<IAEItemStack> tracking = AEApi.instance().storage().createPrimitiveItemList();
     private static final HashMap<Class<? extends Container>, IPatternTerminalAdapter> patternTerminal = new HashMap<>();
     private static final HashMap<Class<? extends Item>, ITerminalHandler> terminalItem = new HashMap<>();
     private static final HashSet<ITerminal> terminalSet = new HashSet<>();

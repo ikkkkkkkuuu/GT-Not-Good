@@ -13,6 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.xyp.gtnotgood.common.blocks.packaged.DirectEssentiaSupply;
 import com.xyp.gtnotgood.common.blocks.packaged.InfusionSourceAccess;
 
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
 import thaumcraft.common.tiles.TileInfusionMatrix;
 
 /** A new manual craft must not inherit a completed Provider job's persistent source marker. */
@@ -28,8 +30,7 @@ public abstract class MixinPackagedInfusionSource implements InfusionSourceAcces
             value = "INVOKE",
             target = "Lthaumcraft/api/aspects/AspectList;reduce(Lthaumcraft/api/aspects/Aspect;I)Z"),
         require = 1)
-    private boolean gtnotgood$batchSource(thaumcraft.api.aspects.AspectList remaining,
-        thaumcraft.api.aspects.Aspect aspect, int amount) {
+    private boolean gtnotgood$batchSource(AspectList remaining, Aspect aspect, int amount) {
         return DirectEssentiaSupply.reduceBatch((TileInfusionMatrix) (Object) this, remaining, aspect, amount);
     }
 

@@ -21,6 +21,7 @@ import static gregtech.api.util.GTStructureUtility.chainAllGlasses;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -43,6 +44,7 @@ import com.xyp.gtnotgood.common.machines.bee.DronePool;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiBlockBase;
 
 import forestry.api.apiculture.IAlleleBeeSpecies;
+import gregtech.api.GregTechAPI;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
 import gregtech.api.enums.Textures;
@@ -98,9 +100,9 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
     // ==================== 结构定义 ====================
 
     private static final String STRUCTURE_PIECE_MAIN = "main";
-    private static final int HORIZONTAL_OFF_SET = 7;
-    private static final int VERTICAL_OFF_SET = 8;
-    private static final int DEPTH_OFF_SET = 0;
+    private static final int HORIZONTAL_OFFSET = 7;
+    private static final int VERTICAL_OFFSET = 8;
+    private static final int DEPTH_OFFSET = 0;
 
     private int mCountCasing = 0;
 
@@ -115,59 +117,58 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
     // 15 wide (x), 17 tall (y), 15 deep (z)
     // A=glass, B=dirt/grass, G=casing+hatches, H=wood planks, I=wood slabs, J/K/L/N/O/P=bronze frame
     // W(water) and F(flowers) replaced with spaces (air)
-    private static final String[][] shape = transpose(
-        new String[][] {
-            { "               ", "               ", "               ", "      HHH      ", "    HHAAAHH    ",
-                "    HAPLPAH    ", "   HAPAAAPAH   ", "   HALAAALAH   ", "   HAPAAAPAH   ", "    HAPLPAH    ",
-                "    HHAAAHH    ", "      HHH      ", "               ", "               ", "               " },
-            { "               ", "               ", "      GGG      ", "    GG   GG    ", "   G       G   ",
-                "   G       G   ", "  G         G  ", "  G         G  ", "  G         G  ", "   G       G   ",
-                "   G       G   ", "    GG   GG    ", "      GGG      ", "               ", "               " },
-            { "               ", "      HHH      ", "   HHH   HHH   ", "  HG       GH  ", "  H         H  ",
-                "  H         H  ", " H           H ", " H           H ", " H           H ", "  H         H  ",
-                "  H         H  ", "  HG       GH  ", "   HHH   HHH   ", "      HHH      ", "               " },
-            { "      GGG      ", "   GGG   GGG   ", "  G         G  ", " G           G ", " G           G ",
-                " G           G ", "G             G", "G             G", "G             G", " G           G ",
-                " G           G ", " G           G ", "  G         G  ", "   GGG   GGG   ", "      GGG      " },
-            { "      AAA      ", "   OLA   ALO   ", "  P         P  ", " O           O ", " L           L ",
-                " A           A ", "A             A", "A             A", "A             A", " A           A ",
-                " L           L ", " O           O ", "  P         P  ", "   OLA   ALO   ", "      AAA      " },
-            { "     AAAAA     ", "   NA     AO   ", "  P         P  ", " N           O ", " A           A ",
-                "A             A", "A     III     A", "A     III     A", "A     III     A", "A             A",
-                " A           A ", " N           N ", "  P         P  ", "   NA     AN   ", "     AAAAA     " },
-            { "     AAAAA     ", "   NA     AO   ", "  P         P  ", " N           O ", " A           A ",
-                "A             A", "A     JJJ     A", "A     JKJ     A", "A     JJJ     A", "A             A",
-                " A           A ", " N           N ", "  P         P  ", "   NA     AN   ", "     AAAAA     " },
-            { "      AAA      ", "   OLA   ALO   ", "  P         P  ", " O           O ", " L           L ",
-                " A           A ", "A             A", "A             A", "A             A", " A           A ",
-                " L           L ", " O           O ", "  P         P  ", "   OLA   ALO   ", "      AAA      " },
-            { "      G~G      ", "   GGGBBBGGG   ", "  GBB     BBG  ", " GBB       BBG ", " GB         BG ",
-                " G           G ", "GB           BG", "GB           BG", "GB           BG", " G           G ",
-                " GB         BG ", " GBB       BBG ", "  GBB     BBG  ", "   GGGBBBGGG   ", "      GGG      " },
-            { "      HHH      ", "    HHBBBHH    ", "  HHBBBBBBBHH  ", "  HBBB   BBBH  ", " HBB       BBH ",
-                " HBB BBBBB BBH ", "HBB  BBBBBB BBH", "HBB BBBBBBB BBH", "HBB BBBBBB  BBH", " HB  BBBBB BBH ",
-                " HBB   BB BBH ", "  HBBB    BBH  ", "  HHBBBBBBBHH  ", "    HHBBBHH    ", "      HHH      " },
-            { "               ", "     GGGGG     ", "   GGBBBBBGG   ", "  GBBBBBBBBBG  ", "  GBBBBBBBBBG  ",
-                " GBBBBBBBBBBBG ", " GBBBBBBBBBBBG ", " GBBBBBBBBBBBG ", " GBBBBBBBBBBBG ", " GBBBBBBBBBBBG ",
-                "  GBBBBBBBBBG  ", "  GBBBBBBBBBG  ", "   GGBBBBBGG   ", "     GGGGG     ", "               " },
-            { "               ", "      HHH      ", "    HHBBBHH    ", "   HBBBBBBBH   ", "  HBBBBBBBBBH  ",
-                "  HBBBBBBBBBH  ", " HBBBBBBBBBBBH ", " HBBBBBBBBBBBH ", " HBBBBBBBBBBBH ", "  HBBBBBBBBBH  ",
-                "  HBBBBBBBBBH  ", "   HBBBBBBBH   ", "    HHBBBHH    ", "      HHH      ", "               " },
-            { "               ", "               ", "      GGG      ", "    GGBBBGG    ", "   GBBBBBBBG   ",
-                "   GBBBBBBBG   ", "  GBBBBBBBBBG  ", "  GBBBBBBBBBG  ", "  GBBBBBBBBBG  ", "   GBBBBBBBG   ",
-                "   GBBBBBBBG   ", "    GGBBBGG    ", "      GGG      ", "               ", "               " },
-            { "               ", "               ", "       H       ", "     HHBHH     ", "    HBBBBBH    ",
-                "   HBBBBBBBH   ", "   HBBBBBBBH   ", "  HBBBBBBBBBH  ", "   HBBBBBBBH   ", "   HBBBBBBBH   ",
-                "    HBBBBBH    ", "     HHBHH     ", "       H       ", "               ", "               " },
-            { "               ", "               ", "               ", "       G       ", "     GGBGG     ",
-                "    GBBBBBG    ", "    GBBBBBG    ", "   GBBBBBBBG   ", "    GBBBBBG    ", "    GBBBBBG    ",
-                "     GGBGG     ", "       G       ", "               ", "               ", "               " },
-            { "               ", "               ", "               ", "               ", "      HHH      ",
-                "     HHHHH     ", "    HHBBBHH    ", "    HHBBBHH    ", "    HHBBBHH    ", "     HHHHH     ",
-                "      HHH      ", "               ", "               ", "               ", "               " },
-            { "               ", "               ", "               ", "               ", "               ",
-                "               ", "      GGG      ", "      GHG      ", "      GGG      ", "               ",
-                "               ", "               ", "               ", "               ", "               " } });
+    private static final String[][] shape = transpose(new String[][] {
+        { "               ", "               ", "               ", "      HHH      ", "    HHAAAHH    ",
+            "    HAPLPAH    ", "   HAPAAAPAH   ", "   HALAAALAH   ", "   HAPAAAPAH   ", "    HAPLPAH    ",
+            "    HHAAAHH    ", "      HHH      ", "               ", "               ", "               " },
+        { "               ", "               ", "      GGG      ", "    GG   GG    ", "   G       G   ",
+            "   G       G   ", "  G         G  ", "  G         G  ", "  G         G  ", "   G       G   ",
+            "   G       G   ", "    GG   GG    ", "      GGG      ", "               ", "               " },
+        { "               ", "      HHH      ", "   HHH   HHH   ", "  HG       GH  ", "  H         H  ",
+            "  H         H  ", " H           H ", " H           H ", " H           H ", "  H         H  ",
+            "  H         H  ", "  HG       GH  ", "   HHH   HHH   ", "      HHH      ", "               " },
+        { "      GGG      ", "   GGG   GGG   ", "  G         G  ", " G           G ", " G           G ",
+            " G           G ", "G             G", "G             G", "G             G", " G           G ",
+            " G           G ", " G           G ", "  G         G  ", "   GGG   GGG   ", "      GGG      " },
+        { "      AAA      ", "   OLA   ALO   ", "  P         P  ", " O           O ", " L           L ",
+            " A           A ", "A             A", "A             A", "A             A", " A           A ",
+            " L           L ", " O           O ", "  P         P  ", "   OLA   ALO   ", "      AAA      " },
+        { "     AAAAA     ", "   NA     AO   ", "  P         P  ", " N           O ", " A           A ",
+            "A             A", "A     III     A", "A     III     A", "A     III     A", "A             A",
+            " A           A ", " N           N ", "  P         P  ", "   NA     AN   ", "     AAAAA     " },
+        { "     AAAAA     ", "   NA     AO   ", "  P         P  ", " N           O ", " A           A ",
+            "A             A", "A     JJJ     A", "A     JKJ     A", "A     JJJ     A", "A             A",
+            " A           A ", " N           N ", "  P         P  ", "   NA     AN   ", "     AAAAA     " },
+        { "      AAA      ", "   OLA   ALO   ", "  P         P  ", " O           O ", " L           L ",
+            " A           A ", "A             A", "A             A", "A             A", " A           A ",
+            " L           L ", " O           O ", "  P         P  ", "   OLA   ALO   ", "      AAA      " },
+        { "      G~G      ", "   GGGBBBGGG   ", "  GBB     BBG  ", " GBB       BBG ", " GB         BG ",
+            " G           G ", "GB           BG", "GB           BG", "GB           BG", " G           G ",
+            " GB         BG ", " GBB       BBG ", "  GBB     BBG  ", "   GGGBBBGGG   ", "      GGG      " },
+        { "      HHH      ", "    HHBBBHH    ", "  HHBBBBBBBHH  ", "  HBBB   BBBH  ", " HBB       BBH ",
+            " HBB BBBBB BBH ", "HBB  BBBBBB BBH", "HBB BBBBBBB BBH", "HBB BBBBBB  BBH", " HB  BBBBB BBH ",
+            " HBB   BB BBH ", "  HBBB    BBH  ", "  HHBBBBBBBHH  ", "    HHBBBHH    ", "      HHH      " },
+        { "               ", "     GGGGG     ", "   GGBBBBBGG   ", "  GBBBBBBBBBG  ", "  GBBBBBBBBBG  ",
+            " GBBBBBBBBBBBG ", " GBBBBBBBBBBBG ", " GBBBBBBBBBBBG ", " GBBBBBBBBBBBG ", " GBBBBBBBBBBBG ",
+            "  GBBBBBBBBBG  ", "  GBBBBBBBBBG  ", "   GGBBBBBGG   ", "     GGGGG     ", "               " },
+        { "               ", "      HHH      ", "    HHBBBHH    ", "   HBBBBBBBH   ", "  HBBBBBBBBBH  ",
+            "  HBBBBBBBBBH  ", " HBBBBBBBBBBBH ", " HBBBBBBBBBBBH ", " HBBBBBBBBBBBH ", "  HBBBBBBBBBH  ",
+            "  HBBBBBBBBBH  ", "   HBBBBBBBH   ", "    HHBBBHH    ", "      HHH      ", "               " },
+        { "               ", "               ", "      GGG      ", "    GGBBBGG    ", "   GBBBBBBBG   ",
+            "   GBBBBBBBG   ", "  GBBBBBBBBBG  ", "  GBBBBBBBBBG  ", "  GBBBBBBBBBG  ", "   GBBBBBBBG   ",
+            "   GBBBBBBBG   ", "    GGBBBGG    ", "      GGG      ", "               ", "               " },
+        { "               ", "               ", "       H       ", "     HHBHH     ", "    HBBBBBH    ",
+            "   HBBBBBBBH   ", "   HBBBBBBBH   ", "  HBBBBBBBBBH  ", "   HBBBBBBBH   ", "   HBBBBBBBH   ",
+            "    HBBBBBH    ", "     HHBHH     ", "       H       ", "               ", "               " },
+        { "               ", "               ", "               ", "       G       ", "     GGBGG     ",
+            "    GBBBBBG    ", "    GBBBBBG    ", "   GBBBBBBBG   ", "    GBBBBBG    ", "    GBBBBBG    ",
+            "     GGBGG     ", "       G       ", "               ", "               ", "               " },
+        { "               ", "               ", "               ", "               ", "      HHH      ",
+            "     HHHHH     ", "    HHBBBHH    ", "    HHBBBHH    ", "    HHBBBHH    ", "     HHHHH     ",
+            "      HHH      ", "               ", "               ", "               ", "               " },
+        { "               ", "               ", "               ", "               ", "               ",
+            "               ", "      GGG      ", "      GHG      ", "      GGG      ", "               ",
+            "               ", "               ", "               ", "               ", "               " } });
 
     // ==================== 机器状态 ====================
 
@@ -268,10 +269,7 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
             String parent2 = tag.getString("parent2");
             String result = tag.getString("result");
             if (parent1.isEmpty() || parent2.isEmpty() || result.isEmpty()) return null;
-            BeeBreedingHelper.BreedingStep step = new BeeBreedingHelper.BreedingStep(
-                parent1,
-                parent2,
-                result,
+            BeeBreedingHelper.BreedingStep step = new BeeBreedingHelper.BreedingStep(parent1, parent2, result,
                 tag.getDouble("baseChance"));
             return new BreedingAttempt(step, tag.getDouble("effectiveChance"));
         }
@@ -314,63 +312,41 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
     @Override
     public IStructureDefinition<LargeBeeBreeder> getStructureDefinition() {
         if (structureDefinition == null) {
-            structureDefinition = StructureDefinition.<LargeBeeBreeder>builder()
-                .addShape(STRUCTURE_PIECE_MAIN, shape)
+            structureDefinition = StructureDefinition.<LargeBeeBreeder>builder().addShape(STRUCTURE_PIECE_MAIN, shape)
                 .addElement('A', chainAllGlasses(-1, (te, t) -> te.glassTier = t, te -> te.glassTier))
                 .addElement('B', ofChain(ofBlockAnyMeta(Blocks.dirt, 0), ofBlock(Blocks.grass, 0)))
-                .addElement(
-                    'G',
-                    ofChain(
-                        buildHatchAdder(LargeBeeBreeder.class)
-                            .atLeast(InputBus, OutputBus, Energy.or(ExoticEnergy), Maintenance)
-                            .casingIndex(10)
-                            .hint(1)
-                            .buildAndChain(),
-                        onElementPass(x -> ++x.mCountCasing, ofBlock(sBlockCasings1, 10))))
-                .addElement('H', ofBlock(Blocks.planks, 0))
-                .addElement('I', ofBlock(Blocks.wooden_slab, 0))
-                .addElement('J', ofBlock(gregtech.api.GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
-                .addElement('K', ofBlock(gregtech.api.GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
-                .addElement('L', ofBlock(gregtech.api.GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
-                .addElement('N', ofBlock(gregtech.api.GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
-                .addElement('O', ofBlock(gregtech.api.GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
-                .addElement('P', ofBlock(gregtech.api.GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
-                .build();
+                .addElement('G',
+                    ofChain(buildHatchAdder(LargeBeeBreeder.class)
+                        .atLeast(InputBus, OutputBus, Energy.or(ExoticEnergy), Maintenance).casingIndex(10).hint(1)
+                        .buildAndChain(), onElementPass(x -> ++x.mCountCasing, ofBlock(sBlockCasings1, 10))))
+                .addElement('H', ofBlock(Blocks.planks, 0)).addElement('I', ofBlock(Blocks.wooden_slab, 0))
+                .addElement('J', ofBlock(GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
+                .addElement('K', ofBlock(GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
+                .addElement('L', ofBlock(GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
+                .addElement('N', ofBlock(GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
+                .addElement('O', ofBlock(GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID))
+                .addElement('P', ofBlock(GregTechAPI.sBlockFrames, (int) Materials.Bronze.mMetaItemSubID)).build();
         }
         return structureDefinition;
     }
 
     @Override
     public void construct(ItemStack stackSize, boolean hintsOnly) {
-        this.buildPiece(
-            STRUCTURE_PIECE_MAIN,
-            stackSize,
-            hintsOnly,
-            HORIZONTAL_OFF_SET,
-            VERTICAL_OFF_SET,
-            DEPTH_OFF_SET);
+        this.buildPiece(STRUCTURE_PIECE_MAIN, stackSize, hintsOnly, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET);
     }
 
     @Override
     public int survivalConstruct(ItemStack stackSize, int elementBudget, ISurvivalBuildEnvironment env) {
         if (this.mMachine) return -1;
-        return this.survivalBuildPiece(
-            STRUCTURE_PIECE_MAIN,
-            stackSize,
-            HORIZONTAL_OFF_SET,
-            VERTICAL_OFF_SET,
-            DEPTH_OFF_SET,
-            elementBudget,
-            env,
-            false,
-            true);
+        return this.survivalBuildPiece(STRUCTURE_PIECE_MAIN, stackSize, HORIZONTAL_OFFSET, VERTICAL_OFFSET,
+            DEPTH_OFFSET, elementBudget, env, false, true);
     }
 
     @Override
     public void checkMachine(IGregTechTileEntity aBaseMetaTileEntity, ItemStack aStack, List<StructureError> errors) {
         mCountCasing = 0;
         glassTier = -1;
-        if (!checkPiece(STRUCTURE_PIECE_MAIN, HORIZONTAL_OFF_SET, VERTICAL_OFF_SET, DEPTH_OFF_SET, errors)) return;
+        if (!checkPiece(STRUCTURE_PIECE_MAIN, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET, errors)) return;
         checkCasingMin(errors, mCountCasing, 10);
         if (mInputBusses.isEmpty()) errors.add(StructureErrors.hatchCount(ErrorType.TOO_FEW, InputBus, 0, 1));
         if (mOutputBusses.isEmpty()) errors.add(StructureErrors.hatchCount(ErrorType.TOO_FEW, OutputBus, 0, 1));
@@ -432,8 +408,7 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
 
             // 摘要字符串只在池/链/加成变化时重建，避免每秒无谓的字符串拼接
             if (displayDirty) {
-                syncedPoolSize = dronePool.getAvailableSpecies()
-                    .size();
+                syncedPoolSize = dronePool.getAvailableSpecies().size();
                 syncedPoolSpecies = new ArrayList<>(dronePool.getAvailableSpecies());
                 Collections.sort(syncedPoolSpecies);
                 syncedChainSteps = buildStructuredChainSteps();
@@ -454,24 +429,15 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
     public ITexture[] getTexture(IGregTechTileEntity aBaseMetaTileEntity, ForgeDirection side, ForgeDirection aFacing,
         int colorIndex, boolean aActive, boolean redstoneLevel) {
         if (side == aFacing) {
-            if (aActive) return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(10), TextureFactory.builder()
-                .addIcon(OVERLAY_FRONT_DISTILLATION_TOWER_ACTIVE)
-                .extFacing()
-                .build(),
-                TextureFactory.builder()
-                    .addIcon(OVERLAY_FRONT_DISTILLATION_TOWER_ACTIVE_GLOW)
-                    .extFacing()
-                    .glow()
+            if (
+                aActive
+            ) return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(10),
+                TextureFactory.builder().addIcon(OVERLAY_FRONT_DISTILLATION_TOWER_ACTIVE).extFacing().build(),
+                TextureFactory.builder().addIcon(OVERLAY_FRONT_DISTILLATION_TOWER_ACTIVE_GLOW).extFacing().glow()
                     .build() };
-            return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(10), TextureFactory.builder()
-                .addIcon(OVERLAY_FRONT_DISTILLATION_TOWER)
-                .extFacing()
-                .build(),
-                TextureFactory.builder()
-                    .addIcon(OVERLAY_FRONT_DISTILLATION_TOWER_GLOW)
-                    .extFacing()
-                    .glow()
-                    .build() };
+            return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(10),
+                TextureFactory.builder().addIcon(OVERLAY_FRONT_DISTILLATION_TOWER).extFacing().build(),
+                TextureFactory.builder().addIcon(OVERLAY_FRONT_DISTILLATION_TOWER_GLOW).extFacing().glow().build() };
         }
         return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(10) };
     }
@@ -513,8 +479,8 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
             return CheckRecipeResultRegistry.SUCCESSFUL;
         }
 
-        List<BeeBreedingHelper.BreedingStep> readySteps = breedingPlan
-            .getReadySteps(dronePool.getAvailableSpecies(), MAX_PARALLEL_STEPS);
+        List<BeeBreedingHelper.BreedingStep> readySteps = breedingPlan.getReadySteps(dronePool.getAvailableSpecies(),
+            MAX_PARALLEL_STEPS);
         if (readySteps.isEmpty()) {
             allTasksBlocked = true;
             missingDroneSpecies = breedingPlan.getFirstMissingSpecies();
@@ -649,8 +615,7 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
             }
 
             boolean targetUnlocked = dronePool.hasDrone(targetBeeSpecies);
-            boolean hasReadyStep = !breedingPlan.getReadySteps(dronePool.getAvailableSpecies(), 1)
-                .isEmpty();
+            boolean hasReadyStep = !breedingPlan.getReadySteps(dronePool.getAvailableSpecies(), 1).isEmpty();
             allTasksBlocked = pendingPrincessOutputs > 0 && !targetUnlocked && !hasReadyStep;
             missingDroneSpecies = allTasksBlocked ? breedingPlan.getFirstMissingSpecies() : "";
             if (allTasksBlocked && missingDroneSpecies.isEmpty()) {
@@ -659,8 +624,10 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
         }
 
         updateChainDisplayInfo();
-        if (previousBlocked != allTasksBlocked || !java.util.Objects.equals(previousMissing, missingDroneSpecies)
-            || previousCompleted != chainCompletedSteps) {
+        if (
+            previousBlocked != allTasksBlocked || !Objects.equals(previousMissing, missingDroneSpecies)
+                || previousCompleted != chainCompletedSteps
+        ) {
             markDisplayDirty();
         }
     }
@@ -864,11 +831,8 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
         // # Machine casing
         // # zh_CN 机器外壳
         String casing = StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_Casing");
-        tt.beginStructureBlock(15, 17, 15, false)
-            .addInputBus("1+", casing, 1)
-            .addOutputBus("1+", casing, 1)
-            .addEnergyHatch("1+", casing, 1)
-            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1)
+        tt.beginStructureBlock(15, 17, 15, false).addInputBus("1+", casing, 1).addOutputBus("1+", casing, 1)
+            .addEnergyHatch("1+", casing, 1).addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1)
             .toolTipFinisher();
         return tt;
     }
@@ -882,8 +846,7 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
         System.arraycopy(superInfo, 0, info, 0, superInfo.length);
 
         info[superInfo.length] = "Target: " + (targetBeeSpecies.isEmpty() ? "Not Set" : targetBeeSpecies);
-        info[superInfo.length + 1] = "Pool Species: " + dronePool.getAvailableSpecies()
-            .size();
+        info[superInfo.length + 1] = "Pool Species: " + dronePool.getAvailableSpecies().size();
         info[superInfo.length + 2] = "Chain Progress: " + countCompletedSteps() + "/" + breedingChain.size();
         info[superInfo.length + 3] = "Pending Output: " + pendingPrincessOutputs;
         info[superInfo.length + 4] = "EU/t per Attempt: " + NumberFormatUtil.formatNumber(getEnergyCostPerTick(1));

@@ -65,8 +65,7 @@ public abstract class MTEHatchCraftingInputMEMixin {
             return;
         }
 
-        this.patternDetailsPatternSlotMap.values()
-            .removeIf(s -> s instanceof WildcardPatternSlotGT);
+        this.patternDetailsPatternSlotMap.values().removeIf(s -> s instanceof WildcardPatternSlotGT);
 
         IInventory patterns = getPatterns();
         World world = getWorld();
@@ -107,8 +106,7 @@ public abstract class MTEHatchCraftingInputMEMixin {
             .get(patternDetails);
         if (slot != null && !isCurrentInternalSlot(slot)) {
             MTEHatchCraftingInputME.PatternSlot<MTEHatchCraftingInputME> detachedSlot = slot;
-            this.patternDetailsPatternSlotMap.values()
-                .removeIf(s -> s == detachedSlot);
+            this.patternDetailsPatternSlotMap.values().removeIf(s -> s == detachedSlot);
             slot = null;
         }
 
@@ -138,8 +136,7 @@ public abstract class MTEHatchCraftingInputMEMixin {
         }
 
         MTEHatchCraftingInputME hatch = (MTEHatchCraftingInputME) (Object) this;
-        if (!hatch.isActive() || !hatch.getBaseMetaTileEntity()
-            .isAllowedToWork()) {
+        if (!hatch.isActive() || !hatch.getBaseMetaTileEntity().isAllowedToWork()) {
             cir.setReturnValue(false);
             return;
         }
@@ -173,9 +170,7 @@ public abstract class MTEHatchCraftingInputMEMixin {
         Map<Integer, NBTTagCompound> activePatternTags = readSavedActivePatternTags(tag);
         boolean hasItems = false;
         for (int index = 0; index < this.internalInventory.length && index < patterns.getSizeInventory(); index++) {
-            registerExpandedPatterns(
-                index,
-                patterns.getStackInSlot(index),
+            registerExpandedPatterns(index, patterns.getStackInSlot(index),
                 activePatternTags.get(Integer.valueOf(index)));
             MTEHatchCraftingInputME.PatternSlot<MTEHatchCraftingInputME> slot = this.internalInventory[index];
             if (slot != null && (slot.getItemInputs().length > 0 || slot.getFluidInputs().length > 0)) {
@@ -233,8 +228,7 @@ public abstract class MTEHatchCraftingInputMEMixin {
 
         MTEHatchCraftingInputME.PatternSlot<MTEHatchCraftingInputME> targetSlot = this.internalInventory[index];
         if (targetSlot != null) {
-            this.patternDetailsPatternSlotMap.values()
-                .removeIf(s -> s == targetSlot);
+            this.patternDetailsPatternSlotMap.values().removeIf(s -> s == targetSlot);
         }
 
         MTEHatchCraftingInputME.PatternSlot<MTEHatchCraftingInputME> slot = getOrCreateWildcardSlot(index);
@@ -243,8 +237,7 @@ public abstract class MTEHatchCraftingInputMEMixin {
         }
 
         if (slot != targetSlot) {
-            this.patternDetailsPatternSlotMap.values()
-                .removeIf(s -> s == slot);
+            this.patternDetailsPatternSlotMap.values().removeIf(s -> s == slot);
         }
 
         List<ICraftingPatternDetails> detailsList = getExpandedDetails(slot, stack, getWorld());
@@ -280,8 +273,10 @@ public abstract class MTEHatchCraftingInputMEMixin {
             NBTTagCompound slotWrapper = inventory.getCompoundTagAt(index);
             int patternSlot = slotWrapper.getInteger("patternSlot");
             NBTTagCompound slotTag = slotWrapper.getCompoundTag("patternSlotNBT");
-            if (slotTag.hasKey(WildcardPatternSlotGT.KEY_ACTIVE_PATTERN, NBT.TAG_COMPOUND)
-                || slotTag.hasKey(WildcardPatternSlotGT.KEY_ACTIVE_PATTERN_ID)) {
+            if (
+                slotTag.hasKey(WildcardPatternSlotGT.KEY_ACTIVE_PATTERN, NBT.TAG_COMPOUND)
+                    || slotTag.hasKey(WildcardPatternSlotGT.KEY_ACTIVE_PATTERN_ID)
+            ) {
                 result.put(Integer.valueOf(patternSlot), slotTag);
             }
         }
@@ -332,8 +327,7 @@ public abstract class MTEHatchCraftingInputMEMixin {
         if (processingLogic == null) {
             return;
         }
-        for (Method method : processingLogic.getClass()
-            .getMethods()) {
+        for (Method method : processingLogic.getClass().getMethods()) {
             if (!"removeInventoryRecipeCache".equals(method.getName()) || method.getParameterTypes().length != 1) {
                 continue;
             }
@@ -418,8 +412,10 @@ public abstract class MTEHatchCraftingInputMEMixin {
         if (leftPattern == null || rightPattern == null) {
             return false;
         }
-        if (leftPattern.getItem() != rightPattern.getItem()
-            || leftPattern.getItemDamage() != rightPattern.getItemDamage()) {
+        if (
+            leftPattern.getItem() != rightPattern.getItem()
+                || leftPattern.getItemDamage() != rightPattern.getItemDamage()
+        ) {
             return false;
         }
         String leftId = WildcardPatternGenerator.getGeneratedPatternId(leftPattern);
@@ -439,7 +435,6 @@ public abstract class MTEHatchCraftingInputMEMixin {
     }
 
     private World getWorld() {
-        return ((MTEHatchCraftingInputME) (Object) this).getBaseMetaTileEntity()
-            .getWorld();
+        return ((MTEHatchCraftingInputME) (Object) this).getBaseMetaTileEntity().getWorld();
     }
 }

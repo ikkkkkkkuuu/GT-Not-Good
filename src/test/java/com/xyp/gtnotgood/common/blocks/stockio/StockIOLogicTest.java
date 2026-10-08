@@ -42,11 +42,10 @@ public class StockIOLogicTest {
 
     @BeforeClass
     public static void registerSamples() throws Exception {
-        assumeTrue(
-            "Run with scripts/stockio-qa.init.gradle in the initialized native client",
+        assumeTrue("Run with scripts/stockio-qa.init.gradle in the initialized native client",
             Boolean.getBoolean("gtng.stockio.qa"));
-        Method register = Item.itemRegistry.getClass()
-            .getDeclaredMethod("addObjectRaw", int.class, String.class, Object.class);
+        Method register = Item.itemRegistry.getClass().getDeclaredMethod("addObjectRaw", int.class, String.class,
+            Object.class);
         register.setAccessible(true);
         int inputId = 32000;
         while (Item.itemRegistry.getObjectById(inputId) != null) inputId++;
@@ -295,11 +294,9 @@ public class StockIOLogicTest {
         private final Store items = new Store(false);
         private final Store fluids = new Store(true);
         private final BaseActionSource source = new BaseActionSource();
-        private final IEnergyGrid energy = proxy(
-            IEnergyGrid.class,
+        private final IEnergyGrid energy = proxy(IEnergyGrid.class,
             (method, args) -> method.equals("extractAEPower") ? args[0] : null);
-        private final IStorageGrid storage = proxy(
-            IStorageGrid.class,
+        private final IStorageGrid storage = proxy(IStorageGrid.class,
             (method, args) -> method.equals("getItemInventory") ? items.monitor
                 : method.equals("getFluidInventory") ? fluids.monitor : null);
         private final AENetworkProxy network = new AENetworkProxy(null, "test", null, false) {
@@ -387,9 +384,7 @@ public class StockIOLogicTest {
                     return;
                 }
             }
-            stacks.add(
-                key.copy()
-                    .setStackSize(quantity));
+            stacks.add(key.copy().setStackSize(quantity));
         }
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -406,8 +401,7 @@ public class StockIOLogicTest {
                 if (modulate) quantity = Math.min(quantity, extractionLimit);
                 if (quantity <= 0) return null;
                 if (modulate) set(key, amount(key) - quantity);
-                return key.copy()
-                    .setStackSize(quantity);
+                return key.copy().setStackSize(quantity);
             }
             if (method.equals("injectItems")) {
                 IAEStack<?> stack = (IAEStack<?>) args[0];
@@ -426,10 +420,7 @@ public class StockIOLogicTest {
     }
 
     private static <T> T proxy(Class<T> type, Invocation invocation) {
-        return type.cast(
-            Proxy.newProxyInstance(
-                type.getClassLoader(),
-                new Class<?>[] { type },
-                (proxy, method, args) -> invocation.invoke(method.getName(), args)));
+        return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] { type },
+            (proxy, method, args) -> invocation.invoke(method.getName(), args)));
     }
 }

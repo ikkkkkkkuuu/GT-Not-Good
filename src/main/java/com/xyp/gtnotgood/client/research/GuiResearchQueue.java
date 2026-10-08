@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.client.research;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,7 +37,7 @@ public final class GuiResearchQueue extends GuiScreen {
     private final List<String> categories = new ArrayList<>();
     private final List<ResearchCatalog.Entry> entries = new ArrayList<>();
     private final List<ResearchCatalog.Entry> filtered = new ArrayList<>();
-    private ResearchCatalog.Scope scope = ResearchCatalog.Scope.CURRENT_CATEGORY;
+    private ResearchCatalog.Scope scope = ResearchCatalog.Scope.CurrentCategory;
     private GuiTextField searchField;
     private GuiButton scopeButton;
     private GuiButton locateButton;
@@ -62,50 +63,24 @@ public final class GuiResearchQueue extends GuiScreen {
         buttonList.clear();
         refreshCategories();
         int center = width / 2;
-        searchField = new GuiTextField(
-            fontRendererObj,
-            center - Math.min(150, width / 2 - 10),
-            27,
-            Math.min(300, width - 20),
-            18);
+        searchField = new GuiTextField(fontRendererObj, center - Math.min(150, width / 2 - 10), 27,
+            Math.min(300, width - 20), 18);
         searchField.setMaxStringLength(64);
         searchField.setFocused(true);
         int bottom = height - 22;
         buttonList.add(new GuiButtonExt(0, center - 125, bottom, 70, 20, StatCollector.translateToLocal("gui.done")));
         scopeButton = new GuiButtonExt(1, center - 50, bottom, 100, 20, scopeText());
-        locateButton = new GuiButtonExt(
-            2,
-            center + 55,
-            bottom,
-            70,
-            20,
+        locateButton = new GuiButtonExt(2, center + 55, bottom, 70, 20,
             StatCollector.translateToLocal("tcautores.locate"));
-        generateButton = new GuiButtonExt(
-            3,
-            center - 130,
-            height - 44,
-            125,
-            20,
-            StatCollector
-                .translateToLocal(researchTableMode ? "tcautores.target_selected" : "tcautores.generate_selected"));
-        generateVisibleButton = new GuiButtonExt(
-            4,
-            center + 5,
-            height - 44,
-            125,
-            20,
-            StatCollector.translateToLocal(
-                researchTableMode ? "tcautores.target_with_prerequisites" : "tcautores.generate_visible"));
+        generateButton = new GuiButtonExt(3, center - 130, height - 44, 125, 20, StatCollector
+            .translateToLocal(researchTableMode ? "tcautores.target_selected" : "tcautores.generate_selected"));
+        generateVisibleButton = new GuiButtonExt(4, center + 5, height - 44, 125, 20, StatCollector.translateToLocal(
+            researchTableMode ? "tcautores.target_with_prerequisites" : "tcautores.generate_visible"));
         buttonList.add(scopeButton);
         buttonList.add(locateButton);
         buttonList.add(generateButton);
         buttonList.add(generateVisibleButton);
-        unlockResearchableButton = new GuiButtonExt(
-            5,
-            center - 130,
-            height - 66,
-            260,
-            20,
+        unlockResearchableButton = new GuiButtonExt(5, center - 130, height - 66, 260, 20,
             StatCollector.translateToLocal("tcautores.unlock_researchable"));
         unlockResearchableButton.visible = researchTableMode;
         buttonList.add(unlockResearchableButton);
@@ -131,8 +106,8 @@ public final class GuiResearchQueue extends GuiScreen {
         if (button.id == 0) {
             mc.displayGuiScreen(parent);
         } else if (button.id == 1) {
-            scope = scope == ResearchCatalog.Scope.CURRENT_CATEGORY ? ResearchCatalog.Scope.ALL_CATEGORIES
-                : ResearchCatalog.Scope.CURRENT_CATEGORY;
+            scope = scope == ResearchCatalog.Scope.CurrentCategory ? ResearchCatalog.Scope.AllCategories
+                : ResearchCatalog.Scope.CurrentCategory;
             scopeButton.displayString = scopeText();
             refresh();
         } else if (button.id == 2) {
@@ -144,34 +119,30 @@ public final class GuiResearchQueue extends GuiScreen {
         } else if (button.id == 3) {
             ResearchCatalog.Entry selected = selected();
             if (researchTableMode && selected != null) {
-                TargetResearchController
-                    .start((GuiResearchTableHelperInterface) parent, mc.thePlayer, mc, selected.research, false);
+                TargetResearchController.start((GuiResearchTableHelperInterface) parent, mc.thePlayer, mc,
+                    selected.research, false);
                 mc.displayGuiScreen(parent);
-            } else if (selected != null && selected.status == ResearchCatalog.Status.READY) {
-                ResearchNoteGenerationController
-                    .start(mc.thePlayer, mc, java.util.Collections.singletonList(selected.research), null, true);
+            } else if (selected != null && selected.status == ResearchCatalog.Status.Ready) {
+                ResearchNoteGenerationController.start(mc.thePlayer, mc, Collections.singletonList(selected.research),
+                    null, true);
             }
         } else if (button.id == 4) {
             ResearchCatalog.Entry selected = selected();
             if (researchTableMode && selected != null) {
-                mc.displayGuiScreen(
-                    new GuiPrerequisiteConfirmation(
-                        this,
-                        parent,
-                        (GuiResearchTableHelperInterface) parent,
-                        selected.research));
+                mc.displayGuiScreen(new GuiPrerequisiteConfirmation(this, parent,
+                    (GuiResearchTableHelperInterface) parent, selected.research));
             } else if (ResearchNoteGenerationController.isRunning()) {
                 ResearchNoteGenerationController.cancel();
             } else {
                 List<ResearchItem> visible = new ArrayList<>();
                 for (ResearchCatalog.Entry entry : filtered) {
-                    if (entry.status == ResearchCatalog.Status.READY) visible.add(entry.research);
+                    if (entry.status == ResearchCatalog.Status.Ready) visible.add(entry.research);
                 }
                 ResearchNoteGenerationController.start(mc.thePlayer, mc, visible, null, true);
             }
         } else if (button.id == 5 && researchTableMode) {
-            TargetResearchController
-                .startAllResearchable((GuiResearchTableHelperInterface) parent, mc.thePlayer, mc, scope, category);
+            TargetResearchController.startAllResearchable((GuiResearchTableHelperInterface) parent, mc.thePlayer, mc,
+                scope, category);
             mc.displayGuiScreen(parent);
         } else if (button.id == 6) {
             categoryScroll = Math.max(0, categoryScroll - visibleCategoryCount());
@@ -203,7 +174,7 @@ public final class GuiResearchQueue extends GuiScreen {
         if (clickedCategory != null) {
             category = clickedCategory;
             ResearchCatalog.setCurrentCategory(category);
-            scope = ResearchCatalog.Scope.CURRENT_CATEGORY;
+            scope = ResearchCatalog.Scope.CurrentCategory;
             scopeButton.displayString = scopeText();
             refresh();
             return;
@@ -244,11 +215,7 @@ public final class GuiResearchQueue extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
-        drawCenteredString(
-            fontRendererObj,
-            StatCollector.translateToLocal("tcautores.queue_title"),
-            width / 2,
-            9,
+        drawCenteredString(fontRendererObj, StatCollector.translateToLocal("tcautores.queue_title"), width / 2, 9,
             0xFFFFFF);
         searchField.drawTextBox();
         drawCategories(mouseX, mouseY);
@@ -264,40 +231,24 @@ public final class GuiResearchQueue extends GuiScreen {
             boolean hovered = mouseX >= listX && mouseX < listX + listWidth()
                 && mouseY >= y
                 && mouseY < y + ROW_HEIGHT - 1;
-            drawRect(
-                listX,
-                y,
-                listX + listWidth(),
-                y + ROW_HEIGHT - 1,
+            drawRect(listX, y, listX + listWidth(), y + ROW_HEIGHT - 1,
                 selected ? 0xCC52606A : hovered ? 0xAA383838 : 0xAA242424);
             renderIcon(renderer, entry.research, listX + 3, y + 3);
             int textX = listX + 24;
             String name = entry.research.getName();
-            fontRendererObj.drawString(
-                fontRendererObj.trimStringToWidth(name, listWidth() - 135),
-                textX,
-                y + 4,
-                entry.status == ResearchCatalog.Status.READY ? 0xFFFFFF : 0xBBBBBB);
+            fontRendererObj.drawString(fontRendererObj.trimStringToWidth(name, listWidth() - 135), textX, y + 4,
+                entry.status == ResearchCatalog.Status.Ready ? 0xFFFFFF : 0xBBBBBB);
             String categoryName = ResearchCategories.getCategoryName(entry.research.category);
             fontRendererObj.drawString(
-                fontRendererObj.trimStringToWidth(categoryName + " / " + entry.research.key, listWidth() - 135),
-                textX,
-                y + 14,
-                0x888888);
+                fontRendererObj.trimStringToWidth(categoryName + " / " + entry.research.key, listWidth() - 135), textX,
+                y + 14, 0x888888);
             String status = statusText(entry.status);
-            fontRendererObj.drawString(
-                status,
-                listX + listWidth() - fontRendererObj.getStringWidth(status) - 5,
-                y + 8,
-                entry.status == ResearchCatalog.Status.READY ? 0x80D890 : 0xAAAAAA);
+            fontRendererObj.drawString(status, listX + listWidth() - fontRendererObj.getStringWidth(status) - 5, y + 8,
+                entry.status == ResearchCatalog.Status.Ready ? 0x80D890 : 0xAAAAAA);
         }
         if (filtered.isEmpty()) {
-            drawCenteredString(
-                fontRendererObj,
-                StatCollector.translateToLocal("tcautores.queue_empty"),
-                width / 2,
-                listY + 12,
-                0xAAAAAA);
+            drawCenteredString(fontRendererObj, StatCollector.translateToLocal("tcautores.queue_empty"), width / 2,
+                listY + 12, 0xAAAAAA);
         }
         generateVisibleButton.displayString = researchTableMode
             ? StatCollector.translateToLocal("tcautores.target_with_prerequisites")
@@ -305,11 +256,9 @@ public final class GuiResearchQueue extends GuiScreen {
         updateButtons();
         super.drawScreen(mouseX, mouseY, partialTicks);
         String hoveredCategory = categoryAt(mouseX, mouseY);
-        if (hoveredCategory != null) drawHoveringText(
-            java.util.Collections.singletonList(ResearchCategories.getCategoryName(hoveredCategory)),
-            mouseX,
-            mouseY,
-            fontRendererObj);
+        if (hoveredCategory != null)
+            drawHoveringText(Collections.singletonList(ResearchCategories.getCategoryName(hoveredCategory)), mouseX,
+                mouseY, fontRendererObj);
     }
 
     @Override
@@ -342,10 +291,7 @@ public final class GuiResearchQueue extends GuiScreen {
 
     private void applyFilter() {
         filtered.clear();
-        String query = searchField == null ? ""
-            : searchField.getText()
-                .trim()
-                .toLowerCase(Locale.ROOT);
+        String query = searchField == null ? "" : searchField.getText().trim().toLowerCase(Locale.ROOT);
         for (ResearchCatalog.Entry entry : entries) {
             String haystack = (entry.research.getName() + " "
                 + entry.research.key
@@ -367,23 +313,24 @@ public final class GuiResearchQueue extends GuiScreen {
         scopeButton.enabled = !running;
         locateButton.enabled = !researchTableMode && !running && selected != null;
         generateButton.enabled = !running && selected != null
-            && (researchTableMode || selected.status == ResearchCatalog.Status.READY);
+            && (researchTableMode || selected.status == ResearchCatalog.Status.Ready);
         generateVisibleButton.enabled = researchTableMode ? !running && selected != null : running || hasVisibleReady();
         unlockResearchableButton.enabled = researchTableMode && !running && hasResearchableWork();
     }
 
     private boolean hasResearchableWork() {
         for (ResearchCatalog.Entry entry : entries) {
-            if (entry.status == ResearchCatalog.Status.READY || entry.status == ResearchCatalog.Status.HAS_NOTE
-                || entry.status == ResearchCatalog.Status.DIRECT
-                    && ResearchCatalog.isDirectResearchAffordable(mc.thePlayer, entry.research))
-                return true;
+            if (
+                entry.status == ResearchCatalog.Status.Ready || entry.status == ResearchCatalog.Status.HasNote
+                    || entry.status == ResearchCatalog.Status.Direct
+                        && ResearchCatalog.isDirectResearchAffordable(mc.thePlayer, entry.research)
+            ) return true;
         }
         return false;
     }
 
     private boolean hasVisibleReady() {
-        for (ResearchCatalog.Entry entry : filtered) if (entry.status == ResearchCatalog.Status.READY) return true;
+        for (ResearchCatalog.Entry entry : filtered) if (entry.status == ResearchCatalog.Status.Ready) return true;
         return false;
     }
 
@@ -395,13 +342,11 @@ public final class GuiResearchQueue extends GuiScreen {
 
     private String scopeText() {
         return StatCollector.translateToLocal(
-            scope == ResearchCatalog.Scope.CURRENT_CATEGORY ? "tcautores.scope_current" : "tcautores.scope_all");
+            scope == ResearchCatalog.Scope.CurrentCategory ? "tcautores.scope_current" : "tcautores.scope_all");
     }
 
     private static String statusText(ResearchCatalog.Status status) {
-        return StatCollector.translateToLocal(
-            "tcautores.queue_status." + status.name()
-                .toLowerCase());
+        return StatCollector.translateToLocal(status.translationKey);
     }
 
     private int listWidth() {
@@ -445,9 +390,11 @@ public final class GuiResearchQueue extends GuiScreen {
     private String categoryAt(int mouseX, int mouseY) {
         if (mouseY < CATEGORY_Y || mouseY >= CATEGORY_Y + 20) return null;
         int index = categoryScroll + (mouseX - categoryStartX()) / CATEGORY_SIZE;
-        if (mouseX < categoryStartX() || index < categoryScroll
-            || index >= categories.size()
-            || index >= categoryScroll + visibleCategoryCount()) return null;
+        if (
+            mouseX < categoryStartX() || index < categoryScroll
+                || index >= categories.size()
+                || index >= categoryScroll + visibleCategoryCount()
+        ) return null;
         return categories.get(index);
     }
 
@@ -457,20 +404,15 @@ public final class GuiResearchQueue extends GuiScreen {
         for (int visible = 0; visible < count && categoryScroll + visible < categories.size(); visible++) {
             String key = categories.get(categoryScroll + visible);
             int x = startX + visible * CATEGORY_SIZE;
-            boolean selectedCategory = key.equals(category) && scope == ResearchCatalog.Scope.CURRENT_CATEGORY;
+            boolean selectedCategory = key.equals(category) && scope == ResearchCatalog.Scope.CurrentCategory;
             boolean hovered = key.equals(categoryAt(mouseX, mouseY));
-            drawRect(
-                x,
-                CATEGORY_Y,
-                x + 20,
-                CATEGORY_Y + 20,
+            drawRect(x, CATEGORY_Y, x + 20, CATEGORY_Y + 20,
                 selectedCategory ? 0xCC426B82 : hovered ? 0xAA3C4650 : 0xAA242424);
             ResearchCategoryList categoryList = ResearchCategories.getResearchList(key);
             if (categoryList == null || categoryList.icon == null) continue;
             GL11.glPushMatrix();
             GL11.glColor4f(1, 1, 1, 1);
-            mc.getTextureManager()
-                .bindTexture(categoryList.icon);
+            mc.getTextureManager().bindTexture(categoryList.icon);
             UtilsFX.drawTexturedQuadFull(x + 2, CATEGORY_Y + 2, zLevel);
             GL11.glPopMatrix();
         }
@@ -483,18 +425,13 @@ public final class GuiResearchQueue extends GuiScreen {
     private void renderIcon(RenderItem renderer, ResearchItem research, int x, int y) {
         if (research.icon_item != null) {
             RenderHelper.enableGUIStandardItemLighting();
-            renderer.renderItemAndEffectIntoGUI(
-                fontRendererObj,
-                mc.getTextureManager(),
-                InventoryUtils.cycleItemStack(research.icon_item),
-                x,
-                y);
+            renderer.renderItemAndEffectIntoGUI(fontRendererObj, mc.getTextureManager(),
+                InventoryUtils.cycleItemStack(research.icon_item), x, y);
             RenderHelper.disableStandardItemLighting();
         } else if (research.icon_resource != null) {
             GL11.glPushMatrix();
             GL11.glColor4f(1, 1, 1, 1);
-            mc.getTextureManager()
-                .bindTexture(research.icon_resource);
+            mc.getTextureManager().bindTexture(research.icon_resource);
             UtilsFX.drawTexturedQuadFull(x, y, zLevel);
             GL11.glPopMatrix();
         }

@@ -73,8 +73,7 @@ public final class StringFilterComponent extends AbstractFilterComponent {
             return normName.equalsIgnoreCase(normPattern);
         }
         Pattern p = compile(normPattern);
-        return p != null && p.matcher(normName)
-            .find();
+        return p != null && p.matcher(normName).find();
     }
 
     private Pattern compile(String value) {
@@ -116,8 +115,7 @@ public final class StringFilterComponent extends AbstractFilterComponent {
             else if (c == '?') builder.append('.');
             else builder.append(Pattern.quote(String.valueOf(c)));
         }
-        return builder.append('$')
-            .toString();
+        return builder.append('$').toString();
     }
 
     @Override

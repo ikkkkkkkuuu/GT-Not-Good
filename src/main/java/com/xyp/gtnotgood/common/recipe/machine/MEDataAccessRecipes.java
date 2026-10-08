@@ -18,17 +18,10 @@ public final class MEDataAccessRecipes {
 
     public static void loadRecipes() {
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Hatch_DataAccess_EV.get(1),
-                ModsItemlist.AE2MEInterface.get(1),
-                ItemList.Hull_IV.get(1),
-                new Object[] { OrePrefixes.circuit.get(Materials.IV), 2 },
-                ItemList.Sensor_IV.get(1),
+            .itemInputs(ItemList.Hatch_DataAccess_EV.get(1), ModsItemlist.MEInterface.get(1), ItemList.Hull_IV.get(1),
+                new Object[] { OrePrefixes.circuit.get(Materials.IV), 2 }, ItemList.Sensor_IV.get(1),
                 ItemList.Emitter_IV.get(1))
-            .fluidInputs(Materials.SolderingAlloy.getMolten(576))
-            .itemOutputs(GTNGItemList.MEDataAccessHatch.get(1))
-            .duration(20 * SECONDS)
-            .eut(RECIPE_IV)
-            .addTo(assemblerRecipes);
+            .fluidInputs(Materials.SolderingAlloy.getMolten(576)).itemOutputs(GTNGItemList.MEDataAccessHatch.get(1))
+            .duration(20 * SECONDS).eut(RECIPE_IV).addTo(assemblerRecipes);
     }
 }

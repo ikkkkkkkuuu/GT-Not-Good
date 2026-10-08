@@ -21,8 +21,9 @@ public abstract class MixinFontRendererTextEffects {
     // Font replacements may handle these overloads without calling the vanilla implementation below them.
     @Inject(method = "drawString(Ljava/lang/String;III)I", at = @At("HEAD"), cancellable = true, order = 900)
     private void gtng$drawEffectText(String text, int x, int y, int color, CallbackInfoReturnable<Integer> cir) {
-        if (EffectTextRenderer.handles(text)) cir
-            .setReturnValue(EffectTextRenderer.INSTANCE.draw((FontRenderer) (Object) this, text, x, y, color, false));
+        if (
+            EffectTextRenderer.handles(text)
+        ) cir.setReturnValue(EffectTextRenderer.INSTANCE.draw((FontRenderer) (Object) this, text, x, y, color, false));
     }
 
     @Inject(method = "drawStringWithShadow", at = @At("HEAD"), cancellable = true, order = 900)
@@ -54,9 +55,7 @@ public abstract class MixinFontRendererTextEffects {
     private void gtng$measureEffectText(String text, CallbackInfoReturnable<Integer> cir) {
         if (EffectTextRenderer.handles(text)) {
             cir.setReturnValue(
-                (int) Math.ceil(
-                    EffectTextRenderer.INSTANCE.layout((FontRenderer) (Object) this, text)
-                        .width()));
+                (int) Math.ceil(EffectTextRenderer.INSTANCE.layout((FontRenderer) (Object) this, text).width()));
         }
     }
 
@@ -120,8 +119,6 @@ public abstract class MixinFontRendererTextEffects {
         if (!EffectTextRenderer.handles(text)) return;
         FontRenderer font = (FontRenderer) (Object) this;
         cir.setReturnValue(
-            (int) Math.ceil(
-                EffectTextLayout.wrap(font, text, width)
-                    .size() * EffectTextLayout.fontHeight(font)));
+            (int) Math.ceil(EffectTextLayout.wrap(font, text, width).size() * EffectTextLayout.fontHeight(font)));
     }
 }

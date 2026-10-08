@@ -144,21 +144,14 @@ public final class WirelessLaserLoader {
         for (int tier = VoltageIndex.LV; tier <= VoltageIndex.MAX; tier++) {
             for (int variant = 0; variant < INPUT_VARIANTS; variant++) {
                 if (tier == VoltageIndex.UXV) continue;
-                energy(tier, variant).set(
-                    new WirelessLaserEnergyHatch(
-                        machineId(tier, variant),
-                        ModList.GTNotGood.getID() + ".wireless.laser.input." + tier + "." + amperes(variant),
-                        tier,
-                        amperes(variant)));
+                energy(tier, variant).set(new WirelessLaserEnergyHatch(machineId(tier, variant),
+                    ModList.GTNotGood.getID() + ".wireless.laser.input." + tier + "." + amperes(variant), tier,
+                    amperes(variant)));
                 addItemTooltip(energy(tier, variant).get(1), AnimatedText.GT_NOT_GOOD);
             }
             if (tier != VoltageIndex.UMV) {
-                dynamo(tier).set(
-                    new WirelessLaserDynamoHatch(
-                        machineId(tier, INPUT_VARIANTS),
-                        ModList.GTNotGood.getID() + ".wireless.laser.output." + tier,
-                        tier,
-                        DYNAMO_AMPERES));
+                dynamo(tier).set(new WirelessLaserDynamoHatch(machineId(tier, INPUT_VARIANTS),
+                    ModList.GTNotGood.getID() + ".wireless.laser.output." + tier, tier, DYNAMO_AMPERES));
                 addItemTooltip(dynamo(tier).get(1), AnimatedText.GT_NOT_GOOD);
             }
         }

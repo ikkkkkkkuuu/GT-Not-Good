@@ -25,10 +25,10 @@ public interface CraftingBatchPlanner {
     enum MediumStrategy {
 
         /** All registered media are compatible with exact long-sized batching. */
-        BATCH,
+        Batch,
 
         /** At least one registered medium is absent or incompatible, so AE must use its native single-craft path. */
-        NATIVE
+        Native
     }
 
     /**
@@ -37,25 +37,25 @@ public interface CraftingBatchPlanner {
     enum LimitingFactor {
 
         /** The complete medium set does not support batching. */
-        MEDIUM,
+        Medium,
 
         /** The task itself has only one craft left. */
-        TASK,
+        Task,
 
         /** An input or output does not satisfy the item-stack batching contract. */
-        STACK_CONTRACT,
+        StackContract,
 
         /** A checked long multiplication limits the batch. */
-        LONG_ARITHMETIC,
+        LongArithmetic,
 
         /** The precise, aggregated material inventory limits the batch. */
-        MATERIAL,
+        Material,
 
         /** Available AE energy limits the batch. */
-        ENERGY,
+        Energy,
 
         /** No constraint below the requested task count was encountered. */
-        REQUESTED
+        Requested
     }
 
     /**
@@ -310,9 +310,7 @@ public interface CraftingBatchPlanner {
          * @return first session or {@code null} when no session segment exists
          */
         public S getFirstSessionId() {
-            return allocations.isEmpty() ? null
-                : allocations.get(0)
-                    .getSessionId();
+            return allocations.isEmpty() ? null : allocations.get(0).getSessionId();
         }
     }
 

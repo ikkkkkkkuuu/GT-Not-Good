@@ -12,11 +12,14 @@ import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiFactory;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.client.GTNGCreativeTabs;
 import com.xyp.gtnotgood.common.gui.modularui.wildcard.WildcardPatternGui;
+import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.ldlib.integration.modularui.PixelFontModularScreen;
 
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.items.misc.ItemEncodedPattern;
@@ -76,11 +79,8 @@ public class WildcardPatternItem extends ItemEncodedPattern implements IGuiHolde
 
     @Override
     @SideOnly(Side.CLIENT)
-    public com.cleanroommc.modularui.screen.ModularScreen createScreen(PlayerInventoryGuiData data,
-        ModularPanel mainPanel) {
-        return new com.xyp.ldlib.integration.modularui.PixelFontModularScreen(
-            com.xyp.gtnotgood.utils.enums.ModList.ModIds.GT_NOT_GOOD,
-            mainPanel);
+    public ModularScreen createScreen(PlayerInventoryGuiData data, ModularPanel mainPanel) {
+        return new PixelFontModularScreen(ModList.ModIds.GT_NOT_GOOD, mainPanel);
     }
 
     @Override

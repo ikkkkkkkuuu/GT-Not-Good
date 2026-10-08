@@ -79,8 +79,8 @@ public class CPacketSwitchGuis implements IMessage {
             if (message.restoreSaved) {
                 int s = Util.findDualInterfaceTerminal(player);
                 if (s != -1) {
-                    GuiType mode = Util
-                        .getLastGuiMode(Util.getTerminalInSlot(player, s), GuiType.WIRELESS_DUAL_INTERFACE_TERMINAL);
+                    GuiType mode = Util.getLastGuiMode(Util.getTerminalInSlot(player, s),
+                        GuiType.WirelessDualInterfaceTerminal);
                     InventoryHandler.openGui(player, w, new BlockPos(s, 0, 0), ForgeDirection.UNKNOWN, mode);
                 }
                 return null;
@@ -95,8 +95,10 @@ public class CPacketSwitchGuis implements IMessage {
                 // onContainerClosed alone can run too late in the GUI-switch sequence.
                 quickTerminal.restoreNativePinRows();
             }
-            if (message.guiType == GuiType.WIRELESS_DUAL_INTERFACE_TERMINAL
-                || message.guiType == GuiType.WIRELESS_CRAFTING_TERMINAL) {
+            if (
+                message.guiType == GuiType.WirelessDualInterfaceTerminal
+                    || message.guiType == GuiType.WirelessCraftingTerminal
+            ) {
                 int s = Util.findDualInterfaceTerminal(player);
                 if (s != -1) {
                     // Remember which of the two views the player switched to so reopening the terminal restores it.
@@ -114,19 +116,12 @@ public class CPacketSwitchGuis implements IMessage {
                 PrimaryGui pGui = c.getPrimaryGui();
                 TileEntity te = context.getTile();
                 if (te != null) {
-                    InventoryHandler.openGui(
-                        player,
-                        player.worldObj,
-                        new BlockPos(te),
-                        Objects.requireNonNull(context.getSide()),
-                        message.guiType);
+                    InventoryHandler.openGui(player, player.worldObj, new BlockPos(te),
+                        Objects.requireNonNull(context.getSide()), message.guiType);
                 } else {
-                    InventoryHandler.openGui(
-                        player,
-                        player.getEntityWorld(),
+                    InventoryHandler.openGui(player, player.getEntityWorld(),
                         new BlockPos(((IInventorySlotAware) (c.getTarget())).getInventorySlot(), 0, 0),
-                        Objects.requireNonNull(context.getSide()),
-                        message.guiType);
+                        Objects.requireNonNull(context.getSide()), message.guiType);
                 }
                 // Set PrimaryGui on the new container for AE2's new GUI system
                 if (pGui != null && player.openContainer instanceof AEBaseContainer nc) {

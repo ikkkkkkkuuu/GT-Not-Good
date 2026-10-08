@@ -53,8 +53,8 @@ public final class ServerConfigService {
             if (!PENDING.remove(player, message)) return;
             if (server == null || !server.getConfigurationManager().playerEntityList.contains(player)) return;
             if (!allowed(player)) {
-                GTNotGood.channel
-                    .sendTo(new ServerConfigMessage(message.requestId, DENIED, Collections.emptyMap()), player);
+                GTNotGood.channel.sendTo(new ServerConfigMessage(message.requestId, DENIED, Collections.emptyMap()),
+                    player);
                 return;
             }
             Map<String, Option> options = ServerConfigOptions.options();
@@ -65,11 +65,7 @@ public final class ServerConfigService {
 
     private static Map<String, String> snapshot(Map<String, Option> options) {
         Map<String, String> values = new LinkedHashMap<>();
-        options.forEach(
-            (id, option) -> values.put(
-                id,
-                option.property()
-                    .getString()));
+        options.forEach((id, option) -> values.put(id, option.property().getString()));
         return values;
     }
 
@@ -90,30 +86,17 @@ public final class ServerConfigService {
         Map<Configuration, byte[]> backups = new LinkedHashMap<>();
         try {
             for (String id : parsed.keySet()) {
-                Configuration config = options.get(id)
-                    .configuration();
-                if (!backups.containsKey(config)) backups.put(
-                    config,
-                    Files.readAllBytes(
-                        config.getConfigFile()
-                            .toPath()));
+                Configuration config = options.get(id).configuration();
+                if (!backups.containsKey(config))
+                    backups.put(config, Files.readAllBytes(config.getConfigFile().toPath()));
             }
-            message.values.forEach(
-                (id, value) -> options.get(id)
-                    .property()
-                    .set(value));
+            message.values.forEach((id, value) -> options.get(id).property().set(value));
             for (Configuration config : backups.keySet()) save(config);
         } catch (IOException | RuntimeException e) {
-            before.forEach(
-                (id, value) -> options.get(id)
-                    .property()
-                    .set(value));
+            before.forEach((id, value) -> options.get(id).property().set(value));
             backups.forEach((config, bytes) -> {
                 try {
-                    Files.write(
-                        config.getConfigFile()
-                            .toPath(),
-                        bytes);
+                    Files.write(config.getConfigFile().toPath(), bytes);
                 } catch (IOException rollbackFailure) {
                     GTNotGood.LOG.error("Could not restore configuration file", rollbackFailure);
                 }
@@ -125,8 +108,7 @@ public final class ServerConfigService {
         for (Map.Entry<String, Object> entry : parsed.entrySet()) {
             Option option = options.get(entry.getKey());
             option.applyRuntime(entry.getValue());
-            restart |= !option.live && !before.get(option.id)
-                .equals(message.values.get(option.id));
+            restart |= !option.live && !before.get(option.id).equals(message.values.get(option.id));
         }
         return restart ? RESTART : SAVED;
     }
@@ -139,8 +121,7 @@ public final class ServerConfigService {
      * @throws IOException if serialization or file replacement fails
      */
     private static void save(Configuration config) throws IOException {
-        Path destination = config.getConfigFile()
-            .toPath();
+        Path destination = config.getConfigFile().toPath();
         Path temporary = Files.createTempFile(destination.getParent(), "server-config-", ".tmp");
         try {
             try (BufferedWriter writer = Files.newBufferedWriter(temporary, StandardCharsets.UTF_8)) {

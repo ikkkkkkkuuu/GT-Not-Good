@@ -2,6 +2,7 @@ package com.xyp.gtnotgood.common.blocks.network;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -35,9 +36,8 @@ public final class NetworkRule {
     }
 
     /** Resolves the configured device access face; -1 follows the connector's physical contact face. */
-    public net.minecraftforge.common.util.ForgeDirection face(NetworkTopology.Endpoint endpoint) {
-        return facing >= 0 && facing < 6 ? net.minecraftforge.common.util.ForgeDirection.getOrientation(facing)
-            : endpoint.direction.getOpposite();
+    public ForgeDirection face(NetworkTopology.Endpoint endpoint) {
+        return facing >= 0 && facing < 6 ? ForgeDirection.getOrientation(facing) : endpoint.direction.getOpposite();
     }
 
     /** Each endpoint schedules independently, including when the opposite end uses a different interval. */
@@ -57,8 +57,10 @@ public final class NetworkRule {
                     for (int right : OreDictionary.getOreIDs(stack)) if (left == right) itemMatches = true;
                 }
             }
-            if (itemMatches && (!matchMeta || sample.getItemDamage() == stack.getItemDamage())
-                && (!matchNbt || ItemStack.areItemStackTagsEqual(sample, stack))) return !blacklist;
+            if (
+                itemMatches && (!matchMeta || sample.getItemDamage() == stack.getItemDamage())
+                    && (!matchNbt || ItemStack.areItemStackTagsEqual(sample, stack))
+            ) return !blacklist;
         }
         return !any || blacklist;
     }

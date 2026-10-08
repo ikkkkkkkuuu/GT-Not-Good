@@ -69,11 +69,8 @@ public class CPacketOpenTerminal implements IMessage {
             final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             ItemStack item = message.terminalItems.getRawItem();
             if (item == null || item.getItem() == null) return null;
-            ITerminalHandler terminal = AE2ThingAPI.instance()
-                .terminal()
-                .getOpenTerminalHandler(
-                    item.getItem()
-                        .getClass());
+            ITerminalHandler terminal = AE2ThingAPI.instance().terminal()
+                .getOpenTerminalHandler(item.getItem().getClass());
             if (terminal == null) return null;
             if (terminal.canConnect(message.terminalItems.getRawItem(), terminal, message.terminalItems, player)) {
                 terminal.openGui(message.terminalItems.getRawItem(), terminal, message.terminalItems, player);

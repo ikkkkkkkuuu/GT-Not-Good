@@ -36,20 +36,15 @@ public class TextEffectPreviewCommand extends CommandBase {
         if (pending) return;
         wirelessMonitor = args.length > 0 && args[0].equalsIgnoreCase("wireless");
         pending = true;
-        FMLCommonHandler.instance()
-            .bus()
-            .register(this);
+        FMLCommonHandler.instance().bus().register(this);
     }
 
     @SubscribeEvent
     public void onClientTick(ClientTickEvent event) {
         if (event.phase != Phase.END || !pending) return;
         pending = false;
-        FMLCommonHandler.instance()
-            .bus()
-            .unregister(this);
+        FMLCommonHandler.instance().bus().unregister(this);
         // GuiChat closes its screen after dispatching a command, so open after input processing.
-        Minecraft.getMinecraft()
-            .displayGuiScreen(new TextEffectPreview(wirelessMonitor));
+        Minecraft.getMinecraft().displayGuiScreen(new TextEffectPreview(wirelessMonitor));
     }
 }

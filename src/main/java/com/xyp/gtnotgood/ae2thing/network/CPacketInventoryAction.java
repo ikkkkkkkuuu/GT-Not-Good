@@ -16,6 +16,7 @@ import com.xyp.gtnotgood.ae2thing.inventory.InventoryHandler;
 import com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType;
 import com.xyp.gtnotgood.ae2thing.inventory.item.WirelessTerminal;
 import com.xyp.gtnotgood.ae2thing.util.BlockPos;
+import com.xyp.gtnotgood.ae2thing.util.Util;
 import com.xyp.gtnotgood.common.compat.FluidDropCompat;
 
 import appeng.api.storage.data.IAEItemStack;
@@ -107,7 +108,7 @@ public class CPacketInventoryAction implements IMessage {
                         if (target instanceof WirelessTerminal wt) {
                             itemSlot = wt.getInventorySlot();
                         } else if (te == null) {
-                            itemSlot = com.xyp.gtnotgood.ae2thing.util.Util.findDualInterfaceTerminal(sender);
+                            itemSlot = Util.findDualInterfaceTerminal(sender);
                         }
                         if (te != null || itemSlot != -2) {
                             if (message.stack == null){
@@ -135,14 +136,14 @@ public class CPacketInventoryAction implements IMessage {
                                     te.getWorldObj(),
                                     new BlockPos(te),
                                     Objects.requireNonNull(baseContainer.getOpenContext().getSide()),
-                                    GuiType.CRAFTING_AMOUNT);
+                                    GuiType.CraftingAmount);
                             }else{
                                 InventoryHandler.openGui(
                                     sender,
                                     sender.getEntityWorld(),
                                     new BlockPos(itemSlot,0,0),
                                     Objects.requireNonNull(baseContainer.getOpenContext().getSide()),
-                                    GuiType.CRAFTING_AMOUNT_ITEM);
+                                    GuiType.CraftingAmountItem);
                             }
                         }
                         if (sender.openContainer instanceof final ContainerCraftAmount cca) {

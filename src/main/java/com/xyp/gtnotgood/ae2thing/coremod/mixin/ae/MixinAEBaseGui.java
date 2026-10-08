@@ -32,15 +32,15 @@ public abstract class MixinAEBaseGui extends GuiContainer {
 
     @Inject(method = "handleMouseClick", at = @At(value = "HEAD"), cancellable = true)
     protected void handleMouseClick(Slot slot, int slotIdx, int ctrlDown, int mouseButton, CallbackInfo ci) {
-        if (ctrlDown == 1 && mouseButton == 0
-            && (slot instanceof SlotPlayerInv || slot instanceof SlotPlayerHotBar)
-            && slot.getHasStack()) {
+        if (
+            ctrlDown == 1 && mouseButton == 0
+                && (slot instanceof SlotPlayerInv || slot instanceof SlotPlayerHotBar)
+                && slot.getHasStack()
+        ) {
             ItemStack item = slot.getStack();
             TerminalMenu menu = new TerminalMenu();
-            for (int i = 0; i < menu.getItems()
-                .size(); i++) {
-                ItemStack term = menu.getItems()
-                    .get(i);
+            for (int i = 0; i < menu.getItems().size(); i++) {
+                ItemStack term = menu.getItems().get(i);
                 if (StackInfo.equalItemAndNBT(term, item, true)) {
                     menu.openTerminal(i);
                     ci.cancel();

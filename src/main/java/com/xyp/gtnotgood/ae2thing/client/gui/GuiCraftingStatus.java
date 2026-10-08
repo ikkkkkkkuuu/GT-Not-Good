@@ -33,13 +33,9 @@ public class GuiCraftingStatus extends appeng.client.gui.implementations.GuiCraf
         // PrimaryGui, so the parent never creates it. Add our own return button (icon = the dual interface terminal),
         // mirroring MixinGuiCraftingTerm's client-side button; actionPerformed below already handles the switch-back.
         if (originalGuiBtn == null && host instanceof WirelessDualInterfaceTerminalInventory) {
-            ItemStack icon = ItemAndBlockHolder.ITEM_WIRELESS_DUAL_INTERFACE_TERMINAL.stack();
-            this.originalGuiBtn = new GuiTabButton(
-                this.guiLeft + this.xSize - 25,
-                this.guiTop - 4,
-                icon,
-                icon.getDisplayName(),
-                this.itemRender);
+            ItemStack icon = ItemAndBlockHolder.wirelessDualInterfaceTerminal.stack();
+            this.originalGuiBtn = new GuiTabButton(this.guiLeft + this.xSize - 25, this.guiTop - 4, icon,
+                icon.getDisplayName(), this.itemRender);
             this.originalGuiBtn.setHideEdge(13);
             this.buttonList.add(this.originalGuiBtn);
         }
@@ -49,7 +45,7 @@ public class GuiCraftingStatus extends appeng.client.gui.implementations.GuiCraf
     protected void actionPerformed(final GuiButton btn) {
         if (btn == originalGuiBtn) {
             if (host instanceof WirelessDualInterfaceTerminalInventory) {
-                InventoryHandler.switchGui(GuiType.WIRELESS_DUAL_INTERFACE_TERMINAL);
+                InventoryHandler.switchGui(GuiType.WirelessDualInterfaceTerminal);
             }
         } else {
             super.actionPerformed(btn);

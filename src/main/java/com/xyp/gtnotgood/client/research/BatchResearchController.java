@@ -66,13 +66,7 @@ public final class BatchResearchController {
             (listener == null ? Listener.NONE : listener).onSuccess(0);
             return;
         }
-        active = new BatchState(
-            helper,
-            player,
-            mc,
-            total,
-            researchKey,
-            listener == null ? Listener.NONE : listener,
+        active = new BatchState(helper, player, mc, total, researchKey, listener == null ? Listener.NONE : listener,
             notifySummary);
         if (notifySummary) PlayerNotifications
             .addNotification(String.format(StatCollector.translateToLocal("tcautores.batch_started"), total));
@@ -92,8 +86,8 @@ public final class BatchResearchController {
     public static String buttonText() {
         BatchState current = active;
         if (current == null) return StatCollector.translateToLocal("tcautores.batch_unlock");
-        return String
-            .format(StatCollector.translateToLocal("tcautores.batch_stop_progress"), current.completed, current.total);
+        return String.format(StatCollector.translateToLocal("tcautores.batch_stop_progress"), current.completed,
+            current.total);
     }
 
     public static void clientTick() {
@@ -112,12 +106,12 @@ public final class BatchResearchController {
     }
 
     private enum Phase {
-        WAIT_GUI,
-        ADVANCE,
-        WAIT_TABLE_EMPTY,
-        WAIT_NOTE_LOADED,
-        SOLVING,
-        RESTART_WAIT
+        WaitGui,
+        Advance,
+        WaitTableEmpty,
+        WaitNoteLoaded,
+        Solving,
+        RestartWait
     }
 
     private static final class BatchState implements ResearchSolveController.SolveListener {
@@ -130,7 +124,7 @@ public final class BatchResearchController {
         final String researchKey;
         final Listener listener;
         final boolean notifySummary;
-        Phase phase = Phase.ADVANCE;
+        Phase phase = Phase.Advance;
         int completed;
         int tick;
         int deadline;
@@ -154,7 +148,7 @@ public final class BatchResearchController {
             helper = newHelper;
             gui = (GuiResearchTable) newHelper;
             mc = newMinecraft;
-            if (phase == Phase.WAIT_GUI) phase = Phase.ADVANCE;
+            if (phase == Phase.WaitGui) phase = Phase.Advance;
         }
 
         void detach() {
@@ -162,16 +156,16 @@ public final class BatchResearchController {
             ResearchSolveController.cancel();
             helper = null;
             gui = null;
-            phase = Phase.WAIT_GUI;
+            phase = Phase.WaitGui;
         }
 
         void tick() {
             if (active != this) return;
             tick++;
-            if (phase == Phase.WAIT_GUI || helper == null || gui == null) return;
-            if (phase == Phase.RESTART_WAIT) {
+            if (phase == Phase.WaitGui || helper == null || gui == null) return;
+            if (phase == Phase.RestartWait) {
                 if (mc.currentScreen != gui || tick < deadline) return;
-                phase = Phase.ADVANCE;
+                phase = Phase.Advance;
                 deadline = 0;
                 return;
             }
@@ -179,19 +173,19 @@ public final class BatchResearchController {
                 detach();
                 return;
             }
-            if (phase == Phase.ADVANCE) advance();
-            else if (phase == Phase.WAIT_TABLE_EMPTY) waitForEmptyTable();
-            else if (phase == Phase.WAIT_NOTE_LOADED) waitForLoadedNote();
+            if (phase == Phase.Advance) advance();
+            else if (phase == Phase.WaitTableEmpty) waitForEmptyTable();
+            else if (phase == Phase.WaitNoteLoaded) waitForLoadedNote();
         }
 
         private void advance() {
             ItemStack tableStack = helper.researchNoteStack();
             if (ResearchNoteItems.isIncomplete(tableStack)) {
                 if (researchKey != null && !ResearchNoteItems.hasKey(tableStack, researchKey)) {
-                    transfer(1, Phase.WAIT_TABLE_EMPTY);
+                    transfer(1, Phase.WaitTableEmpty);
                     return;
                 }
-                phase = Phase.WAIT_NOTE_LOADED;
+                phase = Phase.WaitNoteLoaded;
                 deadline = tick + TRANSFER_TIMEOUT_TICKS;
                 transferPending = false;
                 expectedNoteState = noteState(tableStack);
@@ -199,7 +193,7 @@ public final class BatchResearchController {
                 return;
             }
             if (tableStack != null) {
-                transfer(1, Phase.WAIT_TABLE_EMPTY);
+                transfer(1, Phase.WaitTableEmpty);
                 return;
             }
             int nextSlot = researchKey == null ? helper.findIncompleteResearchNoteSlot()
@@ -208,7 +202,7 @@ public final class BatchResearchController {
                 finish();
                 return;
             }
-            transfer(nextSlot, Phase.WAIT_NOTE_LOADED);
+            transfer(nextSlot, Phase.WaitNoteLoaded);
         }
 
         private void transfer(int slot, Phase waitingPhase) {
@@ -228,7 +222,7 @@ public final class BatchResearchController {
             if (!transferConfirmed()) return;
             if (ContainerTransferController.observePostState(helper.researchNoteStack() == null)) {
                 clearTransfer();
-                phase = Phase.ADVANCE;
+                phase = Phase.Advance;
                 return;
             }
             if (tick >= deadline) fail("tcautores.batch_transfer_state_timeout");
@@ -248,8 +242,7 @@ public final class BatchResearchController {
                 && stack.getItemDamage() < 64
                 && guiData != null
                 && !guiData.complete
-                && ResearchNoteFingerprint.state(stackData)
-                    .equals(ResearchNoteFingerprint.state(guiData));
+                && ResearchNoteFingerprint.state(stackData).equals(ResearchNoteFingerprint.state(guiData));
             if (ContainerTransferController.observePostState(synchronizedNote)) {
                 clearTransfer();
                 startSolve();
@@ -265,11 +258,11 @@ public final class BatchResearchController {
                 return false;
             }
             ContainerTransferController.Status status = ContainerTransferController.status();
-            if (status == ContainerTransferController.Status.REJECTED) {
+            if (status == ContainerTransferController.Status.Rejected) {
                 if (tick >= deadline) restartAfterTransferFailure();
                 return false;
             }
-            if (status == ContainerTransferController.Status.RESYNCHRONIZED) {
+            if (status == ContainerTransferController.Status.Resynchronized) {
                 if (!ContainerTransferController.retryReady(tick)) return false;
                 if (!ContainerTransferController.canRetry() || !ContainerTransferController.retry(mc, player)) {
                     restartAfterTransferFailure();
@@ -279,7 +272,7 @@ public final class BatchResearchController {
                 deadline = tick + TRANSFER_TIMEOUT_TICKS;
                 return false;
             }
-            if (status == ContainerTransferController.Status.ACCEPTED) {
+            if (status == ContainerTransferController.Status.Accepted) {
                 if (!ContainerTransferController.hasServerStateUpdate()) {
                     if (tick >= deadline) fail("tcautores.batch_transfer_state_timeout");
                     return false;
@@ -296,10 +289,10 @@ public final class BatchResearchController {
         }
 
         private void restartAfterTransferFailure() {
-            if (phase == Phase.RESTART_WAIT) return;
+            if (phase == Phase.RestartWait) return;
             clearTransfer();
             ResearchSolveController.cancel();
-            phase = Phase.RESTART_WAIT;
+            phase = Phase.RestartWait;
             deadline = tick + TRANSFER_RESTART_DELAY_TICKS;
         }
 
@@ -316,7 +309,7 @@ public final class BatchResearchController {
         }
 
         private void startSolve() {
-            phase = Phase.SOLVING;
+            phase = Phase.Solving;
             ResearchSolveController.request(helper, player, mc, true, this);
         }
 
@@ -324,7 +317,7 @@ public final class BatchResearchController {
         public void onSuccess() {
             if (active != this) return;
             completed++;
-            phase = Phase.ADVANCE;
+            phase = Phase.Advance;
             deadline = 0;
             acceptedTick = -1;
             transferPending = false;
@@ -339,8 +332,8 @@ public final class BatchResearchController {
         private void finish() {
             active = null;
             ContainerTransferController.clear();
-            String message = String
-                .format(StatCollector.translateToLocal("tcautores.batch_complete"), completed, total);
+            String message = String.format(StatCollector.translateToLocal("tcautores.batch_complete"), completed,
+                total);
             if (notifySummary) {
                 PlayerNotifications.addNotification(message);
                 player.addChatMessage(new ChatComponentText(message));
@@ -358,8 +351,8 @@ public final class BatchResearchController {
             ContainerTransferController.clear();
             ResearchSolveController.cancel();
             String reason = StatCollector.translateToLocal(key);
-            String message = String
-                .format(StatCollector.translateToLocal("tcautores.batch_stopped"), completed, total, reason);
+            String message = String.format(StatCollector.translateToLocal("tcautores.batch_stopped"), completed, total,
+                reason);
             if (notifySummary) {
                 PlayerNotifications.addNotification(message);
                 player.addChatMessage(new ChatComponentText(message));

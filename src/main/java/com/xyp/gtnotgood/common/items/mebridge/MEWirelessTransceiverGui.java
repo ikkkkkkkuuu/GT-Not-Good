@@ -10,6 +10,7 @@ import net.minecraft.util.StatCollector;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -66,102 +67,52 @@ final class MEWirelessTransceiverGui {
         // #tr gui.me_wireless_transceiver.title
         // # ME Wireless Transceiver
         // # zh_CN ME 无线收发器
-        content.child(
-            MEBridgeGuiTheme.text(
-                IKey.lang("gui.me_wireless_transceiver.title"),
-                8,
-                6,
-                396,
-                MEBridgeGuiTheme.TEXT,
-                Alignment.CenterLeft));
+        content.child(MEBridgeGuiTheme.text(IKey.lang("gui.me_wireless_transceiver.title"), 8, 6, 396,
+            MEBridgeGuiTheme.TEXT, Alignment.CenterLeft));
 
         ParentWidget<?> directory = MEBridgeGuiTheme.section(0, 24, 264, 180);
         // #tr gui.me_wireless_transceiver.directory
         // # Sender Channel Directory
         // # zh_CN 发起端频道目录
-        directory.child(
-            MEBridgeGuiTheme.text(
-                IKey.lang("gui.me_wireless_transceiver.directory"),
-                8,
-                7,
-                248,
-                MEBridgeGuiTheme.ACCENT,
-                Alignment.CenterLeft));
+        directory.child(MEBridgeGuiTheme.text(IKey.lang("gui.me_wireless_transceiver.directory"), 8, 7, 248,
+            MEBridgeGuiTheme.ACCENT, Alignment.CenterLeft));
         // #tr gui.me_wireless_transceiver.search
         // # Search channels
         // # zh_CN 搜索频道
-        directory.child(
-            new TextFieldWidget().value(filterSync)
-                .hintText(StatCollector.translateToLocal("gui.me_wireless_transceiver.search"))
-                .autoUpdateOnChange(true)
-                .pos(8, 22)
-                .size(248, 14));
-        directory.child(
-            new DynamicSyncedWidget<>().syncHandler(directoryWidgetSync)
-                .initialChild(createDirectory(syncManager, data, DIRECTORY_SEPARATOR))
-                .pos(4, 42)
-                .size(256, 132));
+        directory.child(new TextFieldWidget().value(filterSync)
+            .hintText(StatCollector.translateToLocal("gui.me_wireless_transceiver.search")).autoUpdateOnChange(true)
+            .pos(8, 22).size(248, 14));
+        directory.child(new DynamicSyncedWidget<>().syncHandler(directoryWidgetSync)
+            .initialChild(createDirectory(syncManager, data, DIRECTORY_SEPARATOR)).pos(4, 42).size(256, 132));
         content.child(directory);
 
         ParentWidget<?> details = MEBridgeGuiTheme.section(270, 24, 142, 180);
         // #tr gui.me_wireless_transceiver.selected
         // # Selected Channel
         // # zh_CN 已选择频道
-        details.child(
-            MEBridgeGuiTheme.text(
-                IKey.lang("gui.me_wireless_transceiver.selected"),
-                8,
-                8,
-                126,
-                MEBridgeGuiTheme.ACCENT,
-                Alignment.CenterLeft));
-        details.child(
-            MEBridgeGuiTheme.dynamic(
-                () -> selectedSync.getValue()
-                    .isEmpty() ? "-" : selectedSync.getValue(),
-                8,
-                28,
-                126,
-                MEBridgeGuiTheme.SUCCESS,
-                Alignment.CenterLeft));
+        details.child(MEBridgeGuiTheme.text(IKey.lang("gui.me_wireless_transceiver.selected"), 8, 8, 126,
+            MEBridgeGuiTheme.ACCENT, Alignment.CenterLeft));
+        details.child(MEBridgeGuiTheme.dynamic(() -> selectedSync.getValue().isEmpty() ? "-" : selectedSync.getValue(),
+            8, 28, 126, MEBridgeGuiTheme.SUCCESS, Alignment.CenterLeft));
         // #tr gui.me_wireless_transceiver.instructions.0
         // # Close this screen, then
         // # zh_CN 关闭界面，然后
-        details.child(
-            MEBridgeGuiTheme.text(
-                IKey.lang("gui.me_wireless_transceiver.instructions.0"),
-                8,
-                58,
-                126,
-                MEBridgeGuiTheme.MUTED,
-                Alignment.CenterLeft));
+        details.child(MEBridgeGuiTheme.text(IKey.lang("gui.me_wireless_transceiver.instructions.0"), 8, 58, 126,
+            MEBridgeGuiTheme.MUTED, Alignment.CenterLeft));
         // #tr gui.me_wireless_transceiver.instructions.1
         // # Shift + right-click an ME node.
         // # zh_CN Shift + 右键 ME 节点。
-        details.child(
-            MEBridgeGuiTheme.text(
-                IKey.lang("gui.me_wireless_transceiver.instructions.1"),
-                8,
-                72,
-                126,
-                MEBridgeGuiTheme.MUTED,
-                Alignment.CenterLeft));
+        details.child(MEBridgeGuiTheme.text(IKey.lang("gui.me_wireless_transceiver.instructions.1"), 8, 72, 126,
+            MEBridgeGuiTheme.MUTED, Alignment.CenterLeft));
         // #tr gui.me_wireless_transceiver.instructions.2
         // # Repeat to disconnect.
         // # zh_CN 再次操作即可断开。
-        details.child(
-            MEBridgeGuiTheme.text(
-                IKey.lang("gui.me_wireless_transceiver.instructions.2"),
-                8,
-                86,
-                126,
-                MEBridgeGuiTheme.MUTED,
-                Alignment.CenterLeft));
+        details.child(MEBridgeGuiTheme.text(IKey.lang("gui.me_wireless_transceiver.instructions.2"), 8, 86, 126,
+            MEBridgeGuiTheme.MUTED, Alignment.CenterLeft));
         content.child(details);
 
         return ModularPanel.defaultPanel("me_wireless_transceiver", 420, 220)
-            .background(GTNGGuiTextures.MODERN_BACKGROUND)
-            .child(content.pos(4, 4));
+            .background(GTNGGuiTextures.MODERN_BACKGROUND).child(content.pos(4, 4));
     }
 
     private static void setSelectedChannel(PlayerInventoryGuiData data, String value) {
@@ -175,28 +126,21 @@ final class MEWirelessTransceiverGui {
         String encodedDirectoryData) {
         String[] directoryData = encodedDirectoryData.split(DIRECTORY_SEPARATOR, 2);
         String encodedEntries = directoryData.length > 0 ? directoryData[0] : "";
-        String filter = directoryData.length > 1 ? directoryData[1].trim()
-            .toLowerCase(Locale.ROOT) : "";
+        String filter = directoryData.length > 1 ? directoryData[1].trim().toLowerCase(Locale.ROOT) : "";
         List<MEBridgeChannelListCodec.Entry> entries = MEBridgeChannelListCodec.decode(encodedEntries);
-        if (!filter.isEmpty()) entries.removeIf(
-            entry -> !entry.name.toLowerCase(Locale.ROOT)
-                .contains(filter));
+        if (!filter.isEmpty()) entries.removeIf(entry -> !entry.name.toLowerCase(Locale.ROOT).contains(filter));
         if (entries.isEmpty()) return emptyDirectory(!filter.isEmpty());
 
-        Flow column = Flow.column()
-            .coverChildrenHeight()
-            .width(248);
+        Flow column = Flow.column().coverChildrenHeight().width(248);
         Integer currentDimension = null;
         for (MEBridgeChannelListCodec.Entry entry : entries) {
-            if (!Integer.valueOf(entry.dimension)
-                .equals(currentDimension)) {
+            if (!Integer.valueOf(entry.dimension).equals(currentDimension)) {
                 currentDimension = entry.dimension;
                 column.child(dimensionHeader(currentDimension));
             }
             column.child(channelRow(syncManager, data, entry));
         }
-        return new ListWidget<>().size(256, 132)
-            .child(column);
+        return new ListWidget<>().size(256, 132).child(column);
     }
 
     private static IWidget emptyDirectory(boolean filtered) {
@@ -207,29 +151,17 @@ final class MEWirelessTransceiverGui {
         // #tr gui.me_wireless_transceiver.no_results
         // # No channels match this search.
         // # zh_CN 没有匹配的频道。
-        empty.child(
-            MEBridgeGuiTheme.text(
-                IKey.lang(filtered ? "gui.me_wireless_transceiver.no_results" : "gui.me_wireless_transceiver.empty"),
-                4,
-                58,
-                248,
-                MEBridgeGuiTheme.MUTED,
-                Alignment.Center));
+        empty.child(MEBridgeGuiTheme.text(
+            IKey.lang(filtered ? "gui.me_wireless_transceiver.no_results" : "gui.me_wireless_transceiver.empty"), 4, 58,
+            248, MEBridgeGuiTheme.MUTED, Alignment.Center));
         return empty;
     }
 
     private static ParentWidget<?> dimensionHeader(int dimension) {
-        ParentWidget<?> header = new ParentWidget<>().width(248)
-            .height(16)
-            .background(new com.cleanroommc.modularui.drawable.Rectangle().color(MEBridgeGuiTheme.PANEL_ROW));
-        header.child(
-            MEBridgeGuiTheme.text(
-                IKey.str(MEBridgeGuiTheme.dimensionLabel(dimension)),
-                6,
-                2,
-                236,
-                MEBridgeGuiTheme.ACCENT,
-                Alignment.CenterLeft));
+        ParentWidget<?> header = new ParentWidget<>().width(248).height(16)
+            .background(new Rectangle().color(MEBridgeGuiTheme.PANEL_ROW));
+        header.child(MEBridgeGuiTheme.text(IKey.str(MEBridgeGuiTheme.dimensionLabel(dimension)), 6, 2, 236,
+            MEBridgeGuiTheme.ACCENT, Alignment.CenterLeft));
         return header;
     }
 
@@ -238,24 +170,15 @@ final class MEWirelessTransceiverGui {
         String label = (entry.online ? "\u00A7a\u25CF " : "\u00A77\u25CB ") + entry.name
             + "\u00A7r  "
             + entry.receiverCount;
-        ParentWidget<?> row = new ParentWidget<>().width(248)
-            .height(18)
-            .marginBottom(1);
-        row.child(
-            new ButtonWidget<>().pos(0, 0)
-                .size(248, 18)
-                .background(GTNGGuiTextures.MODERN_BUTTON_COMPACT)
-                .overlay(IKey.str(label))
-                .syncHandler(selectAction(syncManager, data, entry))
-                .tooltip(
-                    tooltip -> tooltip.addLine(
-                        IKey.str(
-                            entry.x + ", "
-                                + entry.y
-                                + ", "
-                                + entry.z
-                                + "  |  "
-                                + MEBridgeGuiTheme.dimensionLabel(entry.dimension)))));
+        ParentWidget<?> row = new ParentWidget<>().width(248).height(18).marginBottom(1);
+        row.child(new ButtonWidget<>().pos(0, 0).size(248, 18).background(GTNGGuiTextures.MODERN_BUTTON_COMPACT)
+            .overlay(IKey.str(label)).syncHandler(selectAction(syncManager, data, entry))
+            .tooltip(tooltip -> tooltip.addLine(IKey.str(entry.x + ", "
+                + entry.y
+                + ", "
+                + entry.z
+                + "  |  "
+                + MEBridgeGuiTheme.dimensionLabel(entry.dimension)))));
         return row;
     }
 
@@ -269,13 +192,8 @@ final class MEWirelessTransceiverGui {
             + "."
             + entry.z
             + "."
-            + Base64.getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(entry.name.getBytes(StandardCharsets.UTF_8));
-        return syncManager.getOrCreateSyncHandler(
-            key,
-            InteractionSyncHandler.class,
-            () -> new InteractionSyncHandler()
-                .setOnMousePressed(mouseData -> { if (!mouseData.isClient()) setSelectedChannel(data, entry.name); }));
+            + Base64.getUrlEncoder().withoutPadding().encodeToString(entry.name.getBytes(StandardCharsets.UTF_8));
+        return syncManager.getOrCreateSyncHandler(key, InteractionSyncHandler.class, () -> new InteractionSyncHandler()
+            .setOnMousePressed(mouseData -> { if (!mouseData.isClient()) setSelectedChannel(data, entry.name); }));
     }
 }

@@ -43,10 +43,12 @@ public final class MEWirelessNodeRenderer {
     @SubscribeEvent
     public void onRenderWorldLast(RenderWorldLastEvent event) {
         Minecraft minecraft = Minecraft.getMinecraft();
-        if (minecraft.theWorld == null || minecraft.thePlayer == null
-            || positions.length == 0
-            || dimension != minecraft.theWorld.provider.dimensionId
-            || System.currentTimeMillis() > expiresAt) {
+        if (
+            minecraft.theWorld == null || minecraft.thePlayer == null
+                || positions.length == 0
+                || dimension != minecraft.theWorld.provider.dimensionId
+                || System.currentTimeMillis() > expiresAt
+        ) {
             return;
         }
 
@@ -92,14 +94,8 @@ public final class MEWirelessNodeRenderer {
             double centerX = positions[index] + 0.5D;
             double centerY = positions[index + 1] + 0.5D;
             double centerZ = positions[index + 2] + 0.5D;
-            addCube(
-                tessellator,
-                centerX - NODE_HALF_SIZE,
-                centerY - NODE_HALF_SIZE,
-                centerZ - NODE_HALF_SIZE,
-                centerX + NODE_HALF_SIZE,
-                centerY + NODE_HALF_SIZE,
-                centerZ + NODE_HALF_SIZE);
+            addCube(tessellator, centerX - NODE_HALF_SIZE, centerY - NODE_HALF_SIZE, centerZ - NODE_HALF_SIZE,
+                centerX + NODE_HALF_SIZE, centerY + NODE_HALF_SIZE, centerZ + NODE_HALF_SIZE);
         }
         tessellator.draw();
     }
@@ -112,21 +108,15 @@ public final class MEWirelessNodeRenderer {
             double x0 = positions[index] + BLOCK_INSET;
             double y0 = positions[index + 1] + BLOCK_INSET;
             double z0 = positions[index + 2] + BLOCK_INSET;
-            addOutline(
-                tessellator,
-                x0,
-                y0,
-                z0,
-                x0 + 1.0D - BLOCK_INSET * 2.0D,
-                y0 + 1.0D - BLOCK_INSET * 2.0D,
+            addOutline(tessellator, x0, y0, z0, x0 + 1.0D - BLOCK_INSET * 2.0D, y0 + 1.0D - BLOCK_INSET * 2.0D,
                 z0 + 1.0D - BLOCK_INSET * 2.0D);
         }
         tessellator.draw();
     }
 
     private static void setColor(Tessellator tessellator, int rgb, float alpha) {
-        tessellator
-            .setColorRGBA_F(((rgb >> 16) & 0xFF) / 255.0F, ((rgb >> 8) & 0xFF) / 255.0F, (rgb & 0xFF) / 255.0F, alpha);
+        tessellator.setColorRGBA_F(((rgb >> 16) & 0xFF) / 255.0F, ((rgb >> 8) & 0xFF) / 255.0F, (rgb & 0xFF) / 255.0F,
+            alpha);
     }
 
     private static void addCube(Tessellator tessellator, double x0, double y0, double z0, double x1, double y1,

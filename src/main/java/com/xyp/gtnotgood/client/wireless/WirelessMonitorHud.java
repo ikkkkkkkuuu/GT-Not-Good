@@ -91,12 +91,14 @@ public final class WirelessMonitorHud extends Gui {
     @SubscribeEvent
     public void onRenderOverlay(RenderGameOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (event.type != RenderGameOverlayEvent.ElementType.ALL || !WirelessMonitorPreferences.enabled
-            || mc.thePlayer == null
-            || mc.theWorld == null
-            || mc.gameSettings.hideGUI
-            || mc.gameSettings.showDebugInfo
-            || mc.currentScreen instanceof WirelessMonitorPositionScreen) return;
+        if (
+            event.type != RenderGameOverlayEvent.ElementType.ALL || !WirelessMonitorPreferences.enabled
+                || mc.thePlayer == null
+                || mc.theWorld == null
+                || mc.gameSettings.hideGUI
+                || mc.gameSettings.showDebugInfo
+                || mc.currentScreen instanceof WirelessMonitorPositionScreen
+        ) return;
         ScaledResolution resolution = event.resolution;
         draw(layout(resolution.getScaledWidth(), resolution.getScaledHeight()));
     }
@@ -109,10 +111,9 @@ public final class WirelessMonitorHud extends Gui {
         for (String line : lines) width = Math.max(width, mc.fontRenderer.getStringWidth(line));
         float scale = Math.min(WirelessMonitorPreferences.scale, (screenWidth - 8F) / (width + 4F));
         scale = Math.min(scale, (screenHeight - 8F) / 36F);
-        int x = Math
-            .max(4, Math.min(4 + WirelessMonitorPreferences.xOffset, screenWidth - (int) ((width + 4) * scale) - 4));
-        int y = Math.max(
-            4,
+        int x = Math.max(4,
+            Math.min(4 + WirelessMonitorPreferences.xOffset, screenWidth - (int) ((width + 4) * scale) - 4));
+        int y = Math.max(4,
             Math.min(screenHeight - 78 - WirelessMonitorPreferences.yOffset, screenHeight - (int) (36 * scale) - 4));
         return new Layout(lines, x, y, width, scale);
     }

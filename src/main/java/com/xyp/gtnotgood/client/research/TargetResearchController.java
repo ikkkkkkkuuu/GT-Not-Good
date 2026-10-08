@@ -1,8 +1,10 @@
 package com.xyp.gtnotgood.client.research;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,6 +20,8 @@ import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
 import thaumcraft.client.gui.GuiResearchTable;
 import thaumcraft.client.lib.PlayerNotifications;
+import thaumcraft.common.Thaumcraft;
+import thaumcraft.common.config.Config;
 import thaumcraft.common.lib.network.PacketHandler;
 import thaumcraft.common.lib.network.playerdata.PacketPlayerCompleteToServer;
 import thaumcraft.common.lib.research.ResearchManager;
@@ -47,18 +51,12 @@ public final class TargetResearchController {
 
     public static void startAllResearchable(GuiResearchTableHelperInterface helper, EntityPlayer player, Minecraft mc,
         ResearchCatalog.Scope scope, String category) {
-        startPlan(
-            helper,
-            player,
-            mc,
-            ResearchCatalog.actionable(player, scope, category),
-            scope == ResearchCatalog.Scope.CURRENT_CATEGORY ? category : "ALL",
-            scope,
-            category);
+        startPlan(helper, player, mc, ResearchCatalog.actionable(player, scope, category),
+            scope == ResearchCatalog.Scope.CurrentCategory ? category : "ALL", scope, category);
     }
 
     public static void startExistingNotes(GuiResearchTableHelperInterface helper, EntityPlayer player, Minecraft mc) {
-        List<ResearchItem> research = new java.util.ArrayList<>();
+        List<ResearchItem> research = new ArrayList<>();
         int discoveries = 0;
         int incomplete = 0;
         for (String key : helper.researchNoteKeys()) {
@@ -73,12 +71,8 @@ public final class TargetResearchController {
             PlayerNotifications.addNotification(StatCollector.translateToLocal("tcautores.batch_none"));
             return;
         }
-        PlayerNotifications.addNotification(
-            String.format(
-                StatCollector.translateToLocal("tcautores.batch_plan"),
-                discoveries,
-                incomplete,
-                research.size()));
+        PlayerNotifications.addNotification(String.format(StatCollector.translateToLocal("tcautores.batch_plan"),
+            discoveries, incomplete, research.size()));
         startPlan(helper, player, mc, research, "NOTES");
     }
 
@@ -92,7 +86,7 @@ public final class TargetResearchController {
         if (research != null) {
             for (ResearchItem item : research) if (item != null) unique.put(item.key, item);
         }
-        List<ResearchItem> plan = new java.util.ArrayList<>(unique.values());
+        List<ResearchItem> plan = new ArrayList<>(unique.values());
         if (plan.isEmpty()) {
             notifyFailure(player, "tcautores.target_invalid");
             return;
@@ -126,8 +120,8 @@ public final class TargetResearchController {
     public static String buttonText() {
         Task current = active;
         if (current == null) return StatCollector.translateToLocal("tcautores.target_search");
-        return String
-            .format(StatCollector.translateToLocal("tcautores.target_stop_progress"), current.completed, current.total);
+        return String.format(StatCollector.translateToLocal("tcautores.target_stop_progress"), current.completed,
+            current.total);
     }
 
     public static void clientTick() {
@@ -143,18 +137,18 @@ public final class TargetResearchController {
     }
 
     private enum Phase {
-        WAIT_GUI,
-        ADVANCE,
-        MOVE_PEN_OUT,
-        GENERATING,
-        MOVE_PEN_BACK,
-        SOLVING,
-        MOVE_DISCOVERY_OUT,
-        SWAP_DISCOVERY_IN,
-        WAIT_USE,
-        SWAP_HELD_BACK,
-        DIRECT_RESEARCH,
-        RESTART_WAIT
+        WaitGui,
+        Advance,
+        MovePenOut,
+        Generating,
+        MovePenBack,
+        Solving,
+        MoveDiscoveryOut,
+        SwapDiscoveryIn,
+        WaitUse,
+        SwapHeldBack,
+        DirectResearch,
+        RestartWait
     }
 
     private static final class Task {
@@ -169,14 +163,14 @@ public final class TargetResearchController {
         GuiResearchTableHelperInterface helper;
         GuiResearchTable gui;
         ResearchItem current;
-        Phase phase = Phase.WAIT_GUI;
+        Phase phase = Phase.WaitGui;
         int completed;
         int total;
         int tick;
         int deadline;
         int acceptedTick = -1;
-        Phase recoveryPhase = Phase.ADVANCE;
-        Phase pausedPhase = Phase.ADVANCE;
+        Phase recoveryPhase = Phase.Advance;
+        Phase pausedPhase = Phase.Advance;
         boolean penMoved;
         int discoverySlot = -1;
         int discoveryHotbarIndex = -1;
@@ -201,43 +195,43 @@ public final class TargetResearchController {
             helper = newHelper;
             gui = (GuiResearchTable) newHelper;
             mc = newMinecraft;
-            if (phase == Phase.WAIT_GUI) {
+            if (phase == Phase.WaitGui) {
                 Phase resumePhase = pausedPhase;
-                pausedPhase = Phase.ADVANCE;
-                if (resumePhase == Phase.WAIT_USE) {
-                    phase = Phase.WAIT_USE;
+                pausedPhase = Phase.Advance;
+                if (resumePhase == Phase.WaitUse) {
+                    phase = Phase.WaitUse;
                     nextUseRetryTick = tick + USE_RETRY_INTERVAL_TICKS;
                     deadline = tick + USE_TIMEOUT_TICKS;
-                } else if (resumePhase == Phase.RESTART_WAIT) {
-                    phase = Phase.RESTART_WAIT;
+                } else if (resumePhase == Phase.RestartWait) {
+                    phase = Phase.RestartWait;
                     deadline = tick;
                 } else if (isTransferPhase(resumePhase)) {
                     recoveryPhase = resumePhase;
-                    phase = Phase.RESTART_WAIT;
+                    phase = Phase.RestartWait;
                     deadline = tick;
                 } else {
-                    phase = Phase.ADVANCE;
+                    phase = Phase.Advance;
                 }
             }
         }
 
         void detach() {
-            if (phase != Phase.WAIT_GUI) pausedPhase = phase;
+            if (phase != Phase.WaitGui) pausedPhase = phase;
             if (helper != null) BatchResearchController.onResearchTableClosed(helper);
             ResearchNoteGenerationController.cancel();
             ResearchSolveController.cancel();
             ContainerTransferController.clear();
             helper = null;
             gui = null;
-            phase = Phase.WAIT_GUI;
+            phase = Phase.WaitGui;
         }
 
         private static boolean isTransferPhase(Phase candidate) {
-            return candidate == Phase.MOVE_PEN_OUT || candidate == Phase.MOVE_PEN_BACK
-                || candidate == Phase.MOVE_DISCOVERY_OUT
-                || candidate == Phase.SWAP_DISCOVERY_IN
-                || candidate == Phase.SWAP_HELD_BACK
-                || candidate == Phase.RESTART_WAIT;
+            return candidate == Phase.MovePenOut || candidate == Phase.MovePenBack
+                || candidate == Phase.MoveDiscoveryOut
+                || candidate == Phase.SwapDiscoveryIn
+                || candidate == Phase.SwapHeldBack
+                || candidate == Phase.RestartWait;
         }
 
         void tick() {
@@ -248,38 +242,40 @@ public final class TargetResearchController {
             }
             tick++;
 
-            if (phase == Phase.WAIT_GUI || helper == null || gui == null) return;
-            if (phase == Phase.RESTART_WAIT) {
+            if (phase == Phase.WaitGui || helper == null || gui == null) return;
+            if (phase == Phase.RestartWait) {
                 if (mc.currentScreen != gui || tick < deadline) return;
                 resumeAfterTransferFailure();
                 return;
             }
 
-            if (phase == Phase.WAIT_USE) {
+            if (phase == Phase.WaitUse) {
                 tickWaitUse();
                 return;
             }
-            if (phase == Phase.DIRECT_RESEARCH) {
+            if (phase == Phase.DirectResearch) {
                 tickDirectResearch();
                 return;
             }
-            if (current != null && phase != Phase.SWAP_DISCOVERY_IN
-                && phase != Phase.SWAP_HELD_BACK
-                && ResearchManager.isResearchComplete(player.getCommandSenderName(), current.key)) {
+            if (
+                current != null && phase != Phase.SwapDiscoveryIn
+                    && phase != Phase.SwapHeldBack
+                    && ResearchManager.isResearchComplete(player.getCommandSenderName(), current.key)
+            ) {
                 completeCurrent();
             }
 
-            if (phase == Phase.WAIT_GUI || phase == Phase.GENERATING || phase == Phase.SOLVING) return;
+            if (phase == Phase.WaitGui || phase == Phase.Generating || phase == Phase.Solving) return;
             if (mc.currentScreen != gui) {
                 detach();
                 return;
             }
-            if (phase == Phase.ADVANCE) advance();
-            else if (phase == Phase.MOVE_PEN_OUT) tickPenOut();
-            else if (phase == Phase.MOVE_PEN_BACK) tickPenBack();
-            else if (phase == Phase.MOVE_DISCOVERY_OUT) tickDiscoveryOut();
-            else if (phase == Phase.SWAP_DISCOVERY_IN) tickSwapIn();
-            else if (phase == Phase.SWAP_HELD_BACK) tickSwapBack();
+            if (phase == Phase.Advance) advance();
+            else if (phase == Phase.MovePenOut) tickPenOut();
+            else if (phase == Phase.MovePenBack) tickPenBack();
+            else if (phase == Phase.MoveDiscoveryOut) tickDiscoveryOut();
+            else if (phase == Phase.SwapDiscoveryIn) tickSwapIn();
+            else if (phase == Phase.SwapHeldBack) tickSwapBack();
         }
 
         private void advance() {
@@ -297,12 +293,8 @@ public final class TargetResearchController {
                 return;
             }
             if (!isRevealed(current)) {
-                failReason(
-                    String.format(
-                        StatCollector.translateToLocal("tcautores.target_hidden_detail"),
-                        current.getName(),
-                        current.key,
-                        HiddenResearchUnlocks.describe(current)));
+                failReason(String.format(StatCollector.translateToLocal("tcautores.target_hidden_detail"),
+                    current.getName(), current.key, HiddenResearchUnlocks.describe(current)));
                 return;
             }
             if (current.isVirtual() || current.isStub() || current.isAutoUnlock()) {
@@ -348,8 +340,8 @@ public final class TargetResearchController {
                 fail("tcautores.target_prerequisites");
                 return;
             }
-            List<String> descriptions = new java.util.ArrayList<>();
-            List<String> hiddenParents = current.parentsHidden == null ? java.util.Collections.emptyList()
+            List<String> descriptions = new ArrayList<>();
+            List<String> hiddenParents = current.parentsHidden == null ? Collections.emptyList()
                 : Arrays.asList(current.parentsHidden);
             for (String key : missing) {
                 ResearchItem prerequisite = ResearchCategories.getResearch(key);
@@ -358,11 +350,8 @@ public final class TargetResearchController {
                     name = StatCollector.translateToLocal("tcautores.target_hidden_parent") + " " + name;
                 descriptions.add(name);
             }
-            failReason(
-                String.format(
-                    StatCollector.translateToLocal("tcautores.target_missing_prerequisites"),
-                    current.getName(),
-                    String.join(", ", descriptions)));
+            failReason(String.format(StatCollector.translateToLocal("tcautores.target_missing_prerequisites"),
+                current.getName(), String.join(", ", descriptions)));
         }
 
         private boolean isRevealed(ResearchItem research) {
@@ -371,7 +360,7 @@ public final class TargetResearchController {
         }
 
         private static boolean isDirect(ResearchItem research) {
-            return ResearchCatalog.completesDirectly(research, thaumcraft.common.config.Config.researchDifficulty);
+            return ResearchCatalog.completesDirectly(research, Config.researchDifficulty);
         }
 
         private void startDirectResearch() {
@@ -379,14 +368,10 @@ public final class TargetResearchController {
                 fail("tcautores.insufficient");
                 return;
             }
-            phase = Phase.DIRECT_RESEARCH;
+            phase = Phase.DirectResearch;
             deadline = tick + USE_TIMEOUT_TICKS;
-            PacketHandler.INSTANCE.sendToServer(
-                new PacketPlayerCompleteToServer(
-                    current.key,
-                    player.getCommandSenderName(),
-                    player.worldObj.provider.dimensionId,
-                    (byte) 0));
+            PacketHandler.INSTANCE.sendToServer(new PacketPlayerCompleteToServer(current.key,
+                player.getCommandSenderName(), player.worldObj.provider.dimensionId, (byte) 0));
         }
 
         private void tickDirectResearch() {
@@ -418,7 +403,7 @@ public final class TargetResearchController {
                 return;
             }
             penMoved = true;
-            if (!beginTransfer(0, Phase.MOVE_PEN_OUT)) fail("tcautores.batch_transfer_failed");
+            if (!beginTransfer(0, Phase.MovePenOut)) fail("tcautores.batch_transfer_failed");
         }
 
         private void tickPenOut() {
@@ -433,15 +418,10 @@ public final class TargetResearchController {
         }
 
         private void beginGeneration() {
-            phase = Phase.GENERATING;
+            phase = Phase.Generating;
             int reservedSlots = helper.researchNoteStack() == null ? 0 : 1;
-            ResearchNoteGenerationController.start(
-                player,
-                mc,
-                java.util.Collections.singletonList(current),
-                this::generationFinished,
-                false,
-                reservedSlots);
+            ResearchNoteGenerationController.start(player, mc, Collections.singletonList(current),
+                this::generationFinished, false, reservedSlots);
         }
 
         private void generationFinished(ResearchNoteGenerationController.Result result) {
@@ -453,7 +433,7 @@ public final class TargetResearchController {
                     fail("tcautores.generate_reason.no_ink");
                     return;
                 }
-                if (!beginTransfer(penSlot, Phase.MOVE_PEN_BACK)) fail("tcautores.batch_transfer_failed");
+                if (!beginTransfer(penSlot, Phase.MovePenBack)) fail("tcautores.batch_transfer_failed");
                 return;
             }
             afterGeneration(result);
@@ -475,11 +455,11 @@ public final class TargetResearchController {
         }
 
         private void afterGeneration(ResearchNoteGenerationController.Result result) {
-            if (result == null || result.reason != ResearchNoteGenerationController.EndReason.COMPLETE
-                || helper.countIncompleteResearchNotes(current.key) <= 0) {
-                String reasonKey = result == null ? "tcautores.generate_reason.timeout"
-                    : "tcautores.generate_reason." + result.reason.name()
-                        .toLowerCase();
+            if (
+                result == null || result.reason != ResearchNoteGenerationController.EndReason.Complete
+                    || helper.countIncompleteResearchNotes(current.key) <= 0
+            ) {
+                String reasonKey = result == null ? "tcautores.generate_reason.timeout" : result.reason.translationKey;
                 fail(reasonKey);
                 return;
             }
@@ -487,9 +467,9 @@ public final class TargetResearchController {
         }
 
         private void startSolve() {
-            phase = Phase.SOLVING;
-            BatchResearchController
-                .startForKey(helper, player, mc, current.key, new BatchResearchController.Listener() {
+            phase = Phase.Solving;
+            BatchResearchController.startForKey(helper, player, mc, current.key,
+                new BatchResearchController.Listener() {
 
                     @Override
                     public void onSuccess(int solved) {
@@ -511,7 +491,7 @@ public final class TargetResearchController {
         private void startAutomaticLearning() {
             int slot = helper.findCompletedResearchNoteSlot(current.key);
             if (slot == 1) {
-                if (!beginTransfer(1, Phase.MOVE_DISCOVERY_OUT)) fail("tcautores.batch_transfer_failed");
+                if (!beginTransfer(1, Phase.MoveDiscoveryOut)) fail("tcautores.batch_transfer_failed");
             } else if (slot >= 2) {
                 startSwapIn(slot);
             } else {
@@ -541,11 +521,9 @@ public final class TargetResearchController {
                 useHeldDiscovery();
                 return;
             }
-            originalHeld = player.getHeldItem() == null ? null
-                : player.getHeldItem()
-                    .copy();
+            originalHeld = player.getHeldItem() == null ? null : player.getHeldItem().copy();
             discoverySlot = slot;
-            if (!beginSwapTransfer(slot, Phase.SWAP_DISCOVERY_IN)) {
+            if (!beginSwapTransfer(slot, Phase.SwapDiscoveryIn)) {
                 fail("tcautores.target_use_failed");
                 return;
             }
@@ -573,7 +551,7 @@ public final class TargetResearchController {
             discoveryHotbarIndex = player.inventory.currentItem;
             useAttempts = 1;
             nextUseRetryTick = tick + USE_RETRY_INTERVAL_TICKS;
-            phase = Phase.WAIT_USE;
+            phase = Phase.WaitUse;
             deadline = tick + USE_TIMEOUT_TICKS;
         }
 
@@ -597,8 +575,7 @@ public final class TargetResearchController {
                 // comes from the server's authoritative inventory update and proves that learning succeeded even
                 // when PacketResearchComplete reaches the client late or is suppressed by another coremod.
                 if (!researchLearned) {
-                    thaumcraft.common.Thaumcraft.proxy.getResearchManager()
-                        .completeResearch(player, current.key);
+                    Thaumcraft.proxy.getResearchManager().completeResearch(player, current.key);
                 }
                 finishAutomaticLearning();
                 return;
@@ -618,14 +595,13 @@ public final class TargetResearchController {
                 completeCurrent();
                 return;
             }
-            ItemStack displaced = player.openContainer.getSlot(discoverySlot)
-                .getStack();
+            ItemStack displaced = player.openContainer.getSlot(discoverySlot).getStack();
             if (!ItemStack.areItemStacksEqual(originalHeld, displaced)) {
                 fail("tcautores.target_held_changed");
                 return;
             }
             ContainerTransferController.clear();
-            if (!beginSwapTransfer(discoverySlot, Phase.SWAP_HELD_BACK)) {
+            if (!beginSwapTransfer(discoverySlot, Phase.SwapHeldBack)) {
                 fail("tcautores.target_use_failed");
                 return;
             }
@@ -633,8 +609,10 @@ public final class TargetResearchController {
 
         private void tickSwapBack() {
             if (!transferAccepted()) return;
-            if (!ContainerTransferController
-                .observePostState(ItemStack.areItemStacksEqual(originalHeld, player.getHeldItem()))) {
+            if (
+                !ContainerTransferController
+                    .observePostState(ItemStack.areItemStacksEqual(originalHeld, player.getHeldItem()))
+            ) {
                 if (tick >= deadline) fail("tcautores.batch_transfer_state_timeout");
                 return;
             }
@@ -650,7 +628,7 @@ public final class TargetResearchController {
             discoveryHotbarIndex = -1;
             useAttempts = 0;
             nextUseRetryTick = 0;
-            phase = gui == null ? Phase.WAIT_GUI : Phase.ADVANCE;
+            phase = gui == null ? Phase.WaitGui : Phase.Advance;
         }
 
         private boolean beginTransfer(int slot, Phase nextPhase) {
@@ -677,11 +655,11 @@ public final class TargetResearchController {
                 return false;
             }
             ContainerTransferController.Status status = ContainerTransferController.status();
-            if (status == ContainerTransferController.Status.REJECTED) {
+            if (status == ContainerTransferController.Status.Rejected) {
                 if (tick >= deadline) scheduleTransferRecovery();
                 return false;
             }
-            if (status == ContainerTransferController.Status.RESYNCHRONIZED) {
+            if (status == ContainerTransferController.Status.Resynchronized) {
                 if (!ContainerTransferController.retryReady(tick)) return false;
                 if (!ContainerTransferController.canRetry() || !ContainerTransferController.retry(mc, player)) {
                     scheduleTransferRecovery();
@@ -691,7 +669,7 @@ public final class TargetResearchController {
                 deadline = tick + TRANSFER_TIMEOUT_TICKS;
                 return false;
             }
-            if (status == ContainerTransferController.Status.ACCEPTED) {
+            if (status == ContainerTransferController.Status.Accepted) {
                 if (!ContainerTransferController.hasServerStateUpdate()) {
                     if (tick >= deadline) fail("tcautores.batch_transfer_state_timeout");
                     return false;
@@ -708,29 +686,29 @@ public final class TargetResearchController {
         }
 
         private void scheduleTransferRecovery() {
-            if (phase == Phase.RESTART_WAIT) return;
+            if (phase == Phase.RestartWait) return;
             recoveryPhase = phase;
             ContainerTransferController.clear();
             ResearchNoteGenerationController.cancel();
             BatchResearchController.cancel();
             ResearchSolveController.cancel();
             acceptedTick = -1;
-            phase = Phase.RESTART_WAIT;
+            phase = Phase.RestartWait;
             deadline = tick + TRANSFER_RESTART_DELAY_TICKS;
         }
 
         private void resumeAfterTransferFailure() {
             Phase failedPhase = recoveryPhase;
-            recoveryPhase = Phase.ADVANCE;
+            recoveryPhase = Phase.Advance;
             switch (failedPhase) {
-                case MOVE_PEN_OUT:
+                case MovePenOut:
                     if (helper.scribingToolsStack() == null && ResearchManager.consumeInkFromPlayer(player, false)) {
                         beginGeneration();
-                    } else if (!beginTransfer(0, Phase.MOVE_PEN_OUT)) {
-                        phase = Phase.ADVANCE;
+                    } else if (!beginTransfer(0, Phase.MovePenOut)) {
+                        phase = Phase.Advance;
                     }
                     return;
-                case MOVE_PEN_BACK:
+                case MovePenBack:
                     if (helper.hasInk()) {
                         penMoved = false;
                         ResearchNoteGenerationController.Result result = pendingGenerationResult;
@@ -738,38 +716,40 @@ public final class TargetResearchController {
                         afterGeneration(result);
                     } else {
                         int penSlot = helper.findUsableScribingToolsSlot();
-                        if (penSlot < 0 || !beginTransfer(penSlot, Phase.MOVE_PEN_BACK)) phase = Phase.ADVANCE;
+                        if (penSlot < 0 || !beginTransfer(penSlot, Phase.MovePenBack)) phase = Phase.Advance;
                     }
                     return;
-                case MOVE_DISCOVERY_OUT:
+                case MoveDiscoveryOut:
                     if (helper.researchNoteStack() == null) {
                         int slot = helper.findCompletedResearchNoteSlot(current.key);
                         if (slot < 2) {
-                            phase = Phase.ADVANCE;
+                            phase = Phase.Advance;
                         } else {
                             startSwapIn(slot);
                         }
-                    } else if (!beginTransfer(1, Phase.MOVE_DISCOVERY_OUT)) {
-                        phase = Phase.ADVANCE;
+                    } else if (!beginTransfer(1, Phase.MoveDiscoveryOut)) {
+                        phase = Phase.Advance;
                     }
                     return;
-                case SWAP_DISCOVERY_IN:
-                    if (ResearchNoteItems.isComplete(player.getHeldItem())
-                        && ResearchNoteItems.hasKey(player.getHeldItem(), current.key)) {
+                case SwapDiscoveryIn:
+                    if (
+                        ResearchNoteItems.isComplete(player.getHeldItem())
+                            && ResearchNoteItems.hasKey(player.getHeldItem(), current.key)
+                    ) {
                         useHeldDiscovery();
-                    } else if (discoverySlot < 0 || !beginSwapTransfer(discoverySlot, Phase.SWAP_DISCOVERY_IN)) {
-                        phase = Phase.ADVANCE;
+                    } else if (discoverySlot < 0 || !beginSwapTransfer(discoverySlot, Phase.SwapDiscoveryIn)) {
+                        phase = Phase.Advance;
                     }
                     return;
-                case SWAP_HELD_BACK:
+                case SwapHeldBack:
                     if (ItemStack.areItemStacksEqual(originalHeld, player.getHeldItem())) {
                         completeCurrent();
-                    } else if (discoverySlot < 0 || !beginSwapTransfer(discoverySlot, Phase.SWAP_HELD_BACK)) {
-                        phase = Phase.ADVANCE;
+                    } else if (discoverySlot < 0 || !beginSwapTransfer(discoverySlot, Phase.SwapHeldBack)) {
+                        phase = Phase.Advance;
                     }
                     return;
                 default:
-                    phase = Phase.ADVANCE;
+                    phase = Phase.Advance;
                     return;
             }
         }
@@ -784,8 +764,8 @@ public final class TargetResearchController {
             if (active != this) return;
             active = null;
             ContainerTransferController.clear();
-            String message = String
-                .format(StatCollector.translateToLocal("tcautores.target_complete"), completed, total, targetKey);
+            String message = String.format(StatCollector.translateToLocal("tcautores.target_complete"), completed,
+                total, targetKey);
             PlayerNotifications.addNotification(message);
             player.addChatMessage(new ChatComponentText(message));
         }

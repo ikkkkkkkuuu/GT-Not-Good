@@ -17,8 +17,8 @@ public record TextEffectStyle(String rendererId, List<Integer> colors, float spe
 
     public TextEffectStyle {
         Objects.requireNonNull(rendererId, "rendererId");
-        if (rendererId.length() > 128 || !IDENTIFIER.matcher(rendererId)
-            .matches()) throw new IllegalArgumentException("Invalid effect identifier");
+        if (rendererId.length() > 128 || !IDENTIFIER.matcher(rendererId).matches())
+            throw new IllegalArgumentException("Invalid effect identifier");
         colors = ImmutableList.copyOf(colors);
         if (colors.size() > 8) throw new IllegalArgumentException("At most eight palette colors are supported");
         for (int color : colors) {

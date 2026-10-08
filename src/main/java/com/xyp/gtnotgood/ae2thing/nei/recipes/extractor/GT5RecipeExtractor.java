@@ -59,8 +59,7 @@ public class GT5RecipeExtractor implements IRecipeExtractor {
             if (item.getItem() instanceof ItemFluidDisplay) {
                 if (item.getTagCompound() != null) {
                     Fluid fluid = FluidRegistry.getFluid(item.getItemDamage());
-                    int amt = (int) item.getTagCompound()
-                        .getLong("mFluidDisplayAmount");
+                    int amt = (int) item.getTagCompound().getLong("mFluidDisplayAmount");
                     return amt > 0 && fluid != null ? new FluidStack(fluid, amt) : null;
                 }
             } else {
@@ -75,8 +74,10 @@ public class GT5RecipeExtractor implements IRecipeExtractor {
             PositionedStack positionedStack = list.get(i);
             if (positionedStack != null && positionedStack.items.length > 0) {
                 ItemStack item = positionedStack.items[0];
-                if (ItemList.Tool_DataStick.isStackEqual(item, false, true)
-                    || ItemList.Tool_DataOrb.isStackEqual(item, false, true)) {
+                if (
+                    ItemList.Tool_DataStick.isStackEqual(item, false, true)
+                        || ItemList.Tool_DataOrb.isStackEqual(item, false, true)
+                ) {
                     list.remove(i);
                     break;
                 }

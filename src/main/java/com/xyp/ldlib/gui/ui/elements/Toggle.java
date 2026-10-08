@@ -1,5 +1,6 @@
 package com.xyp.ldlib.gui.ui.elements;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.lwjgl.input.Keyboard;
@@ -51,7 +52,7 @@ public final class Toggle extends UIElement {
     }
 
     public Toggle setOnChange(Consumer<Boolean> callback) {
-        onChange = java.util.Objects.requireNonNull(callback);
+        onChange = Objects.requireNonNull(callback);
         return this;
     }
 

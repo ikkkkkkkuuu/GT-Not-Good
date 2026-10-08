@@ -1,5 +1,7 @@
 package com.xyp.ldlib.gui.texture;
 
+import java.awt.Color;
+
 import net.minecraft.client.gui.Gui;
 
 /** Solid-color texture adapted from LDLib2, using vanilla 1.7.10 drawing. */
@@ -11,7 +13,7 @@ public final class ColorRectTexture implements IGuiTexture {
         this.color = color;
     }
 
-    public ColorRectTexture(java.awt.Color color) {
+    public ColorRectTexture(Color color) {
         this(color.getRGB());
     }
 

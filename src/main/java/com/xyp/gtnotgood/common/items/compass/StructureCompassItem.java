@@ -2,12 +2,14 @@ package com.xyp.gtnotgood.common.items.compass;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
@@ -15,6 +17,7 @@ import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiFactory;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.xyp.gtnotgood.common.items.GTNGItem;
@@ -41,8 +44,7 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
     }
 
     public static int mode(ItemStack stack) {
-        return stack.hasTagCompound() && stack.getTagCompound()
-            .getInteger("Mode") == 1 ? 1 : 0;
+        return stack.hasTagCompound() && stack.getTagCompound().getInteger("Mode") == 1 ? 1 : 0;
     }
 
     public static String modeKey(int mode) {
@@ -73,9 +75,8 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
 
     @Override
     @SideOnly(Side.CLIENT)
-    public com.cleanroommc.modularui.screen.ModularScreen createScreen(PlayerInventoryGuiData data,
-        ModularPanel panel) {
-        return new com.cleanroommc.modularui.screen.ModularScreen(ModList.GTNotGood.getID(), panel);
+    public ModularScreen createScreen(PlayerInventoryGuiData data, ModularPanel panel) {
+        return new ModularScreen(ModList.GTNotGood.getID(), panel);
     }
 
     /** Changes the server-owned target type and invalidates the previous search and destination. */
@@ -102,27 +103,29 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
     /** Resolves seed candidates after normal player exploration has generated a matching structure nearby. */
     @Override
     public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean held) {
-        if (world.isRemote || !held
-            || !(entity instanceof EntityPlayer)
-            || world.getTotalWorldTime() % 20 != 0
-            || !stack.hasTagCompound()) return;
+        if (
+            world.isRemote || !held
+                || !(entity instanceof EntityPlayer)
+                || world.getTotalWorldTime() % 20 != 0
+                || !stack.hasTagCompound()
+        ) return;
         NBTTagCompound tag = stack.getTagCompound();
         if (!tag.getBoolean("Found") || tag.getBoolean("Confirmed") || tag.getInteger("Dimension") != entity.dimension)
             return;
-        StructureLocations.Location found = StructureLocations.get(world)
-            .nearest(mode(stack), tag.getInteger("X"), tag.getInteger("Z"), mode(stack) == 0 ? 128 : 24);
+        StructureLocations.Location found = StructureLocations.get(world).nearest(mode(stack), tag.getInteger("X"),
+            tag.getInteger("Z"), mode(stack) == 0 ? 128 : 24);
         if (found != null) StructureSearch.setTarget((EntityPlayer) entity, stack, found, true);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(net.minecraft.client.renderer.texture.IIconRegister register) {
+    public void registerIcons(IIconRegister register) {
         itemIcon = register.registerIcon("compass");
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public net.minecraft.util.IIcon getIconFromDamage(int damage) {
+    public IIcon getIconFromDamage(int damage) {
         return Items.compass.getIconFromDamage(0);
     }
 
@@ -142,8 +145,7 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
         // # Recorded structures may already be looted or changed.
         // # zh_CN 记录的遗迹可能已被探索或改动。
         lines.add(StatCollector.translateToLocal("compass.historical"));
-        if (!stack.hasTagCompound() || !stack.getTagCompound()
-            .getBoolean("Found")) return;
+        if (!stack.hasTagCompound() || !stack.getTagCompound().getBoolean("Found")) return;
         NBTTagCompound tag = stack.getTagCompound();
         if (!tag.getBoolean("Confirmed")) {
             // #tr compass.unconfirmed
@@ -153,23 +155,14 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
             // #tr compass.candidate_position
             // # Candidate: X %s, Z %s (dimension %s).
             // # zh_CN 候选：X %s，Z %s（维度 %s）。
-            lines.add(
-                StatCollector.translateToLocalFormatted(
-                    "compass.candidate_position",
-                    tag.getInteger("X"),
-                    tag.getInteger("Z"),
-                    tag.getInteger("Dimension")));
+            lines.add(StatCollector.translateToLocalFormatted("compass.candidate_position", tag.getInteger("X"),
+                tag.getInteger("Z"), tag.getInteger("Dimension")));
         } else {
             // #tr compass.position
             // # Target: %s, %s, %s (dimension %s)
             // # zh_CN 目标：%s，%s，%s（维度 %s）
-            lines.add(
-                StatCollector.translateToLocalFormatted(
-                    "compass.position",
-                    tag.getInteger("X"),
-                    tag.getInteger("Y"),
-                    tag.getInteger("Z"),
-                    tag.getInteger("Dimension")));
+            lines.add(StatCollector.translateToLocalFormatted("compass.position", tag.getInteger("X"),
+                tag.getInteger("Y"), tag.getInteger("Z"), tag.getInteger("Dimension")));
         }
         if (player.dimension == tag.getInteger("Dimension")) {
             double dx = tag.getInteger("X") + .5 - player.posX, dz = tag.getInteger("Z") + .5 - player.posZ;

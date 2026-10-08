@@ -39,11 +39,9 @@ public final class FactoryIngredientWidget extends ItemDisplayWidget {
             if (entry == null) return;
             tooltip.addLine(entry.name());
             tooltip.addLine(
-                BigDecimal.valueOf(entry.rate)
-                    .stripTrailingZeros()
-                    .toPlainString() + (entry.fluid == null ? " " : " L")
-                    + (entry.batchAmount > 0 ? FactoryText.PerBatch : FactoryText.PER_TICK).text());
-            if (entry.internal) tooltip.addLine(FactoryText.INTERNAL_SURPLUS.text());
+                BigDecimal.valueOf(entry.rate).stripTrailingZeros().toPlainString() + (entry.fluid == null ? " " : " L")
+                    + (entry.batchAmount > 0 ? FactoryText.PerBatch : FactoryText.PerTick).text());
+            if (entry.internal) tooltip.addLine(FactoryText.InternalSurplus.text());
         });
     }
 
@@ -52,21 +50,9 @@ public final class FactoryIngredientWidget extends ItemDisplayWidget {
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
         super.draw(context, theme);
         FactoryPreview.Ingredient entry = ingredient.get();
-        if (entry != null && entry.internal) GuiDraw.drawScaledAlignedTextInBox(
-            "§e!",
-            1,
-            1,
-            getArea().width - 2,
-            getArea().height - 2,
-            Alignment.TopLeft,
-            0.8f);
-        if (entry != null) GuiDraw.drawScaledAlignedTextInBox(
-            entry.amount(),
-            1,
-            1,
-            getArea().width - 2,
-            getArea().height - 2,
-            Alignment.BottomRight,
-            0.8f);
+        if (entry != null && entry.internal) GuiDraw.drawScaledAlignedTextInBox("§e!", 1, 1, getArea().width - 2,
+            getArea().height - 2, Alignment.TopLeft, 0.8f);
+        if (entry != null) GuiDraw.drawScaledAlignedTextInBox(entry.amount(), 1, 1, getArea().width - 2,
+            getArea().height - 2, Alignment.BottomRight, 0.8f);
     }
 }

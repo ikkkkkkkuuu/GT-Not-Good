@@ -42,10 +42,7 @@ public class Ae2Reflect {
             fCraftingJobV2_callback = reflectField(CraftingJobV2.class, "callback");
             fGrid_myStorage = reflectField(Grid.class, "myStorage");
             fContainerInterfaceTerminal_tracked = reflectField(ContainerInterfaceTerminal.class, "tracked");
-            mSlotCraftingTerm_makeItem = reflectMethod(
-                SlotCraftingTerm.class,
-                "makeItem",
-                EntityPlayer.class,
+            mSlotCraftingTerm_makeItem = reflectMethod(SlotCraftingTerm.class, "makeItem", EntityPlayer.class,
                 ItemStack.class);
             fContainerCraftConfirm_result = reflectField(ContainerCraftConfirm.class, "result");
         } catch (Exception e) {

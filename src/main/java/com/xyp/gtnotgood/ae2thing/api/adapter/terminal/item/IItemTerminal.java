@@ -23,7 +23,7 @@ public interface IItemTerminal extends ITerminal {
 
     default List<TerminalItems> getTerminalItems() {
         List<TerminalItems> terminal = new ArrayList<>(this.getMainInvTerminals());
-        if (Mods.BAUBLES.isModLoaded() && this.supportBaubles()) {
+        if (Mods.Baubles.isModLoaded() && this.supportBaubles()) {
             terminal.addAll(getBaublesInvTerminals(BaublesUtil.getBaublesInv(this.player())));
         }
         return terminal;
@@ -32,12 +32,9 @@ public interface IItemTerminal extends ITerminal {
     default List<TerminalItems> getMainInvTerminals() {
         List<TerminalItems> arr = new ArrayList<>();
         for (int i = 0; i < this.getInventory().mainInventory.length; i++) {
-            ItemStack item = this.getInventory()
-                .getStackInSlot(i);
+            ItemStack item = this.getInventory().getStackInSlot(i);
             if (item == null || item.getItem() == null) continue;
-            if (getClasses().contains(
-                item.getItem()
-                    .getClass())) {
+            if (getClasses().contains(item.getItem().getClass())) {
                 arr.add(new TerminalItems(item, item));
             }
         }
@@ -50,9 +47,7 @@ public interface IItemTerminal extends ITerminal {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack item = inv.getStackInSlot(i);
             if (item == null || item.getItem() == null) continue;
-            if (getClasses().contains(
-                item.getItem()
-                    .getClass())) {
+            if (getClasses().contains(item.getItem().getClass())) {
                 NBTTagCompound data = this.newNBT();
                 data.setInteger(Constants.SLOT, i);
                 arr.add(new TerminalItems(item, item, data));

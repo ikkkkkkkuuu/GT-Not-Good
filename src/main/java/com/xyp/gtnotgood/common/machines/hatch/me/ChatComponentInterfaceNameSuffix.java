@@ -50,16 +50,14 @@ public final class ChatComponentInterfaceNameSuffix extends AbstractChatComponen
 
     @Override
     protected AbstractChatComponentCustom copySelf() {
-        return new ChatComponentInterfaceNameSuffix(
-            standard == null ? null : standard.createCopy(),
+        return new ChatComponentInterfaceNameSuffix(standard == null ? null : standard.createCopy(),
             preferred == null ? null : preferred.createCopy());
     }
 
     @Override
     public String getUnformattedTextForChat() {
-        boolean preferOwn = FMLCommonHandler.instance()
-            .getEffectiveSide()
-            .isClient() && GTNotGood.proxy.preferOwnInterfaceNames();
+        boolean preferOwn = FMLCommonHandler.instance().getEffectiveSide().isClient()
+            && GTNotGood.proxy.preferOwnInterfaceNames();
         return getText(preferOwn);
     }
 

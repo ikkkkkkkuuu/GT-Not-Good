@@ -85,8 +85,7 @@ public class BlockPos {
 
     public ItemStack getPickBlock(MovingObjectPosition target, World world, EntityPlayer player) {
         if (this.getBlock() != null) {
-            return this.getBlock()
-                .getPickBlock(target, world, this.x, this.y, this.z, player);
+            return this.getBlock().getPickBlock(target, world, this.x, this.y, this.z, player);
         }
         return null;
     }

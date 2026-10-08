@@ -42,9 +42,7 @@ public final class BusTarget {
      */
     public BusTarget(TileEntity tile, ForgeDirection face, boolean nativeOutputsOnly) {
         this.face = face;
-        items = InventoryAdaptor.getAdaptor(
-            tile,
-            face,
+        items = InventoryAdaptor.getAdaptor(tile, face,
             InventoryAdaptor.ALLOW_ITEMS | InventoryAdaptor.FOR_INSERTS | InventoryAdaptor.FOR_EXTRACTS);
         fluids = tile instanceof IFluidHandler handler ? handler : null;
         nativeTile = nativeOutputsOnly && tile instanceof BaseMetaTileEntity base
@@ -126,8 +124,8 @@ public final class BusTarget {
     public IAEStack<?> extract(IAEStack<?> stack, boolean simulate) {
         if (stack instanceof IAEItemStack item && nativeTile != null) return extractNativeOutput(item, simulate);
         if (stack instanceof IAEItemStack item && items != null) {
-            return AEItemStack.create(
-                simulate ? items.simulateRemove((int) stack.getStackSize(), item.getItemStack(), null)
+            return AEItemStack
+                .create(simulate ? items.simulateRemove((int) stack.getStackSize(), item.getItemStack(), null)
                     : items.removeItems((int) stack.getStackSize(), item.getItemStack(), null));
         }
         if (stack instanceof IAEFluidStack fluid && fluids != null) {
@@ -184,17 +182,13 @@ public final class BusTarget {
             taken += extracted;
             remaining -= extracted;
         }
-        return taken <= 0 ? null
-            : requested.copy()
-                .setStackSize(taken);
+        return taken <= 0 ? null : requested.copy().setStackSize(taken);
     }
 
     private boolean allowsUntypedDrain(FluidStack requested) {
         if (fluids instanceof BaseMetaTileEntity tile) {
-            return tile.getMetaTileEntity() != null && tile.getMetaTileEntity()
-                .isLiquidOutput(face)
-                && tile.getCoverAtSide(face)
-                    .letsFluidOut(requested.getFluid());
+            return tile.getMetaTileEntity() != null && tile.getMetaTileEntity().isLiquidOutput(face)
+                && tile.getCoverAtSide(face).letsFluidOut(requested.getFluid());
         }
         return fluids.canDrain(face, requested.getFluid());
     }

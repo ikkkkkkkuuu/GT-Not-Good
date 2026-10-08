@@ -48,8 +48,8 @@ public final class StockResources {
     public static long count(IStorageGrid storage, IAEStack<?> key) {
         if (key == null) return 0;
         IMEMonitor monitor = key.isFluid() ? storage.getFluidInventory() : storage.getItemInventory();
-        IAEStack stored = monitor instanceof NetworkMonitor network ? network.getHandler()
-            .getAvailableItem(key, IterationCounter.fetchNewId())
+        IAEStack stored = monitor instanceof NetworkMonitor network
+            ? network.getHandler().getAvailableItem(key, IterationCounter.fetchNewId())
             : monitor.getAvailableItem(key, IterationCounter.fetchNewId());
         return stored == null ? 0 : Math.max(0, stored.getStackSize());
     }

@@ -80,18 +80,15 @@ public final class WirelessConnectorRenderer {
                 int minZ = ((int) Math.floor(mc.thePlayer.posZ) - 64) >> 4;
                 int maxZ = ((int) Math.floor(mc.thePlayer.posZ) + 64) >> 4;
                 for (Object tile : world.loadedTileEntityList) {
-                    if (tile instanceof TilePackagedProvider provider && !provider.isInvalid()
-                        && (provider.xCoord >> 4) >= minX
-                        && (provider.xCoord >> 4) <= maxX
-                        && (provider.zCoord >> 4) >= minZ
-                        && (provider.zCoord >> 4) <= maxZ) {
-                        hosts.add(
-                            new PackagedTarget(
-                                world.provider.dimensionId,
-                                provider.xCoord,
-                                provider.yCoord,
-                                provider.zCoord,
-                                0));
+                    if (
+                        tile instanceof TilePackagedProvider provider && !provider.isInvalid()
+                            && (provider.xCoord >> 4) >= minX
+                            && (provider.xCoord >> 4) <= maxX
+                            && (provider.zCoord >> 4) >= minZ
+                            && (provider.zCoord >> 4) <= maxZ
+                    ) {
+                        hosts.add(new PackagedTarget(world.provider.dimensionId, provider.xCoord, provider.yCoord,
+                            provider.zCoord, 0));
                     }
                 }
             }
@@ -106,8 +103,7 @@ public final class WirelessConnectorRenderer {
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         GL11.glPushMatrix();
         try {
-            GL11.glTranslated(
-                -(camera.lastTickPosX + (camera.posX - camera.lastTickPosX) * event.partialTicks),
+            GL11.glTranslated(-(camera.lastTickPosX + (camera.posX - camera.lastTickPosX) * event.partialTicks),
                 -(camera.lastTickPosY + (camera.posY - camera.lastTickPosY) * event.partialTicks),
                 -(camera.lastTickPosZ + (camera.posZ - camera.lastTickPosZ) * event.partialTicks));
             OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
@@ -171,19 +167,17 @@ public final class WirelessConnectorRenderer {
     /** Matches direct binding: an already-bound block cannot acquire another lane through a different face. */
     private static PackagedTarget preview(Minecraft mc, TilePackagedProvider provider) {
         MovingObjectPosition hit = mc.objectMouseOver;
-        if (hit == null || hit.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK
-            || hit.sideHit < 0
-            || hit.sideHit > 5) return null;
-        PackagedTarget target = new PackagedTarget(
-            mc.theWorld.provider.dimensionId,
-            hit.blockX,
-            hit.blockY,
-            hit.blockZ,
+        if (
+            hit == null || hit.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK
+                || hit.sideHit < 0
+                || hit.sideHit > 5
+        ) return null;
+        PackagedTarget target = new PackagedTarget(mc.theWorld.provider.dimensionId, hit.blockX, hit.blockY, hit.blockZ,
             hit.sideHit);
-        if (target.resolve(mc.theWorld) == null || target.resolve(mc.theWorld) == provider
-            || provider.connections()
-                .size() >= TilePackagedProvider.MAX_TARGETS)
-            return null;
+        if (
+            target.resolve(mc.theWorld) == null || target.resolve(mc.theWorld) == provider
+                || provider.connections().size() >= TilePackagedProvider.MAX_TARGETS
+        ) return null;
         for (PackagedTarget bound : provider.connections()) if (bound.sameBlock(target)) return null;
         return target;
     }
@@ -195,9 +189,7 @@ public final class WirelessConnectorRenderer {
     private static void line(Tessellator t, TilePackagedProvider provider, PackagedTarget target) {
         ForgeDirection direction = ForgeDirection.getOrientation(target.face);
         t.addVertex(provider.xCoord + .5, provider.yCoord + .5, provider.zCoord + .5);
-        t.addVertex(
-            target.x + .5 + direction.offsetX * .501,
-            target.y + .5 + direction.offsetY * .501,
+        t.addVertex(target.x + .5 + direction.offsetX * .501, target.y + .5 + direction.offsetY * .501,
             target.z + .5 + direction.offsetZ * .501);
     }
 

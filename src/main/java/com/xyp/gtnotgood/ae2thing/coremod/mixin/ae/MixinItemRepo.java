@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -59,17 +60,13 @@ public abstract class MixinItemRepo implements IDisplayRepo, IDisplayRepoExtend 
     private boolean addView(ArrayList<Object> view, Object o) {
         GuiScreen gui = mc.currentScreen;
         if (gui == null) return view.add(o);
-        if (!AE2ThingAPI.instance()
-            .terminal()
-            .isPinTerminal(gui)) {
+        if (!AE2ThingAPI.instance().terminal().isPinTerminal(gui)) {
             return view.add(o);
-        } else if ((o instanceof IAEItemStack is && AE2ThingAPI.instance()
-            .getPinned()
-            .isPinnedItem(is))) {
-                return false;
-            } else {
-                return view.add(o);
-            }
+        } else if ((o instanceof IAEItemStack is && AE2ThingAPI.instance().getPinned().isPinnedItem(is))) {
+            return false;
+        } else {
+            return view.add(o);
+        }
     }
 
     @Redirect(
@@ -87,9 +84,7 @@ public abstract class MixinItemRepo implements IDisplayRepo, IDisplayRepoExtend 
     }
 
     private void viewFilter() {
-        List<IAEStack<?>> list = this.view.stream()
-            .filter(Objects::nonNull)
-            .collect(java.util.stream.Collectors.toList());
+        List<IAEStack<?>> list = this.view.stream().filter(Objects::nonNull).collect(Collectors.toList());
         this.view.clear();
         this.view.addAll(list);
     }
@@ -98,21 +93,15 @@ public abstract class MixinItemRepo implements IDisplayRepo, IDisplayRepoExtend 
     public void updateViewTail(CallbackInfo ci) {
         GuiScreen gui = mc.currentScreen;
         if (gui == null) return;
-        if (!AE2ThingAPI.instance()
-            .terminal()
-            .isPinTerminal(gui)) {
+        if (!AE2ThingAPI.instance().terminal().isPinTerminal(gui)) {
             return;
         }
-        final List<IAEItemStack> pinItems = AE2ThingAPI.instance()
-            .getPinned()
-            .getSortedPinnedItems();
+        final List<IAEItemStack> pinItems = AE2ThingAPI.instance().getPinned().getSortedPinnedItems();
         if (pinItems.isEmpty()) {
             return;
         }
 
-        for (int i = 0; i < AE2ThingAPI.instance()
-            .getPinned()
-            .getMaxPinSize(); i++) {
+        for (int i = 0; i < AE2ThingAPI.instance().getPinned().getMaxPinSize(); i++) {
             if (i >= pinItems.size()) {
                 this.setAsEmpty(i);
                 continue;

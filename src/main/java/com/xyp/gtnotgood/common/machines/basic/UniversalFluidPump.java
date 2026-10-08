@@ -139,18 +139,14 @@ public final class UniversalFluidPump extends MTEBasicMachine {
 
     @Override
     protected BasicUIProperties getUIProperties() {
-        return BasicUIProperties.builder()
-            .maxItemInputs(0)
-            .maxItemOutputs(0)
-            .maxFluidInputs(0)
-            .maxFluidOutputs(1)
+        return BasicUIProperties.builder().maxItemInputs(0).maxItemOutputs(0).maxFluidInputs(0).maxFluidOutputs(1)
             .build();
     }
 
     @Override
     public ModularPanel buildUI(PosGuiData data, PanelSyncManager syncManager, UISettings settings) {
-        return new MTEBasicMachineBaseGui<>(this, getUIProperties()).useGregTechLogo(true)
-            .build(data, syncManager, settings);
+        return new MTEBasicMachineBaseGui<>(this, getUIProperties()).useGregTechLogo(true).build(data, syncManager,
+            settings);
     }
 
     @Override
@@ -201,11 +197,7 @@ public final class UniversalFluidPump extends MTEBasicMachine {
             rescanDelay--;
             return;
         }
-        int top = Math.min(
-            tile.getYCoord(),
-            tile.getWorld()
-                .getActualHeight())
-            - 1;
+        int top = Math.min(tile.getYCoord(), tile.getWorld().getActualHeight()) - 1;
         if (top < 0) return;
         if (top != scanTop) {
             scan.restore(scan.offset(), top);

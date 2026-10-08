@@ -17,34 +17,34 @@ import cpw.mods.fml.common.Loader;
 public enum Mods implements IMod, ITargetMod {
 
     AE2("appliedenergistics2"),
-    AE2_FLUID_CRAFT("ae2fc"),
-    AE2_STUFF("ae2stuff"),
-    ANGELICA("angelica"),
-    ADVENTURE_BACKPACK("adventurebackpack"),
-    ASPECT_RECIPE_INDEX("aspectrecipeindex"),
-    BACKPACK("Backpack"),
-    BAUBLES("Baubles", () -> Loader.isModLoaded("Baubles") || Loader.isModLoaded("Baubles|Expanded"), null),
-    BETTER_P2P("betterp2p"),
-    BLOCK_RENDERER("blockrenderer6343"),
-    BOTANIA("Botania"),
-    CORE_MOD("dreamcraft"),
-    FIND_IT("findit"),
-    FORESTRY("Forestry"),
-    GREGTECH("gregtech"),
-    HBM_AE_ADDON("hbmaeaddon"),
-    HODGEPODGE("hodgepodge"),
+    AE2FluidCraft("ae2fc"),
+    AE2Stuff("ae2stuff"),
+    Angelica("angelica"),
+    AdventureBackpack("adventurebackpack"),
+    AspectRecipeIndex("aspectrecipeindex"),
+    Backpack("Backpack"),
+    Baubles("Baubles", () -> Loader.isModLoaded("Baubles") || Loader.isModLoaded("Baubles|Expanded"), null),
+    BetterP2P("betterp2p"),
+    BlockRenderer("blockrenderer6343"),
+    Botania("Botania"),
+    CoreMod("dreamcraft"),
+    FindIt("findit"),
+    Forestry("Forestry"),
+    GregTech("gregtech"),
+    HbmAeAddon("hbmaeaddon"),
+    Hodgepodge("hodgepodge"),
     IC2("IC2"),
-    NECHAR("nechar"),
-    NECH("nech"),
-    NOT_ENOUGH_ENERGISTICS("neenergistics"),
-    NOT_ENOUGH_ITEMS("NotEnoughItems"),
-    OK_BACKPACK("okbackpack"),
-    PROGRAMMABLE_HATCHES("programmablehatches"),
-    THAUMCRAFT("Thaumcraft"),
-    THAUMIC_ENERGISTICS("thaumicenergistics"),
-    TINKERS_CONSTRUCT("TConstruct"),
-    WAILA("Waila"),
-    WIRELESS_CRAFTING_TERMINAL("ae2wct");
+    Nechar("nechar"),
+    Nech("nech"),
+    NotEnoughEnergistics("neenergistics"),
+    NotEnoughItems("NotEnoughItems"),
+    OkBackpack("okbackpack"),
+    ProgrammableHatches("programmablehatches"),
+    Thaumcraft("Thaumcraft"),
+    ThaumicEnergistics("thaumicenergistics"),
+    TinkersConstruct("TConstruct"),
+    Waila("Waila"),
+    WirelessCraftingTerminal("ae2wct");
 
     private final String modid;
     private final String resourceDomain;
@@ -60,8 +60,7 @@ public enum Mods implements IMod, ITargetMod {
         this.modid = modid;
         this.resourceDomain = modid.toLowerCase(Locale.ENGLISH);
         this.supplier = supplier;
-        this.targetBuilder = new TargetModBuilder().setModId(modid)
-            .setCoreModClass(coreModClass);
+        this.targetBuilder = new TargetModBuilder().setModId(modid).setCoreModClass(coreModClass);
     }
 
     @NotNull
@@ -89,7 +88,7 @@ public enum Mods implements IMod, ITargetMod {
     }
 
     public static boolean isGt5Loaded() {
-        return GREGTECH.isModLoaded() && !Loader.isModLoaded("gregapi");
+        return GregTech.isModLoaded() && !Loader.isModLoaded("gregapi");
     }
 
     public static boolean isGt5UnofficialLoaded() {

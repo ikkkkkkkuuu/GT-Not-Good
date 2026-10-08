@@ -51,8 +51,7 @@ public abstract class DualityInterfaceMixin {
             return;
         }
 
-        World world = this.iHost.getTileEntity()
-            .getWorldObj();
+        World world = this.iHost.getTileEntity().getWorldObj();
         List<ICraftingPatternDetails> detailsList = this.wildcardpattern$caches
             .computeIfAbsent(slot, ignored -> new WildcardPatternCache<>())
             .get(stack, world, () -> WildcardPatternGenerator.generateAllDetails(stack, world));

@@ -31,29 +31,23 @@ public class AngelicaTextAdapter {
     @Optional.Method(modid = ModList.ModIds.ANGELICA)
     private static FontSettings angelicaFontSettings() {
         FontSettings state = currentSettings;
-        if (state == null || state.custom() != FontConfig.enableCustomFont
-            || !Objects.equals(state.primary(), FontConfig.customFontNamePrimary)
-            || !Objects.equals(state.fallback(), FontConfig.customFontNameFallback)
-            || state.quality() != FontConfig.customFontQuality
-            || state.scale() != FontConfig.customFontScale
-            || state.boldCopies() != FontConfig.boldCopies
-            || state.shadowCopies() != FontConfig.shadowCopies
-            || state.aaMode() != FontConfig.fontAAMode
-            || state.aaStrength() != FontConfig.fontAAStrength
-            || state.replacements() != FontConfig.enableGlyphReplacements
-            || state.unicodeShadowOffset() != FontConfig.fontShadowOffsetUC) {
-            currentSettings = new FontSettings(
-                FontConfig.enableCustomFont,
-                FontConfig.customFontNamePrimary,
-                FontConfig.customFontNameFallback,
-                FontConfig.customFontQuality,
-                FontConfig.customFontScale,
-                FontConfig.boldCopies,
-                FontConfig.shadowCopies,
-                FontConfig.fontAAMode,
-                FontConfig.fontAAStrength,
-                FontConfig.enableGlyphReplacements,
-                FontConfig.fontShadowOffsetUC);
+        if (
+            state == null || state.custom() != FontConfig.enableCustomFont
+                || !Objects.equals(state.primary(), FontConfig.customFontNamePrimary)
+                || !Objects.equals(state.fallback(), FontConfig.customFontNameFallback)
+                || state.quality() != FontConfig.customFontQuality
+                || state.scale() != FontConfig.customFontScale
+                || state.boldCopies() != FontConfig.boldCopies
+                || state.shadowCopies() != FontConfig.shadowCopies
+                || state.aaMode() != FontConfig.fontAAMode
+                || state.aaStrength() != FontConfig.fontAAStrength
+                || state.replacements() != FontConfig.enableGlyphReplacements
+                || state.unicodeShadowOffset() != FontConfig.fontShadowOffsetUC
+        ) {
+            currentSettings = new FontSettings(FontConfig.enableCustomFont, FontConfig.customFontNamePrimary,
+                FontConfig.customFontNameFallback, FontConfig.customFontQuality, FontConfig.customFontScale,
+                FontConfig.boldCopies, FontConfig.shadowCopies, FontConfig.fontAAMode, FontConfig.fontAAStrength,
+                FontConfig.enableGlyphReplacements, FontConfig.fontShadowOffsetUC);
         }
         return currentSettings;
     }
@@ -72,8 +66,7 @@ public class AngelicaTextAdapter {
     private static boolean angelicaUsesCustomFont(FontRenderer font) {
         return FontConfig.enableCustomFont && font instanceof FontRendererAccessor accessor
             && accessor.angelica$getBatcher() != null
-            && !accessor.angelica$getBatcher()
-                .forceDefaults();
+            && !accessor.angelica$getBatcher().forceDefaults();
     }
 
     public static boolean shouldDeferEffects() {
@@ -119,18 +112,17 @@ public class AngelicaTextAdapter {
     @Optional.Method(modid = ModList.ModIds.ANGELICA)
     private static GlyphTextureMetrics angelicaGlyphTextureMetrics(FontRenderer font, char character) {
         if (!(font instanceof FontRendererAccessor accessor) || accessor.angelica$getBatcher() == null) return null;
-        FontProvider provider = FontStrategist.getFontProvider(
-            accessor.angelica$getBatcher(),
-            character,
-            FontConfig.enableCustomFont,
-            font.getUnicodeFlag());
+        FontProvider provider = FontStrategist.getFontProvider(accessor.angelica$getBatcher(), character,
+            FontConfig.enableCustomFont, font.getUnicodeFlag());
         return new GlyphTextureMetrics(provider.getVStart(character), provider.getVSize(character));
     }
 
     @Optional.Method(modid = ModList.ModIds.ANGELICA)
     private static FontBatchBridge angelicaBridge(FontRenderer font) {
-        if (font instanceof FontRendererAccessor accessor
-            && accessor.angelica$getBatcher() instanceof FontBatchBridge bridge) return bridge;
+        if (
+            font instanceof FontRendererAccessor accessor
+                && accessor.angelica$getBatcher() instanceof FontBatchBridge bridge
+        ) return bridge;
         return null;
     }
 }

@@ -16,6 +16,7 @@ import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.ldlib.gui.texture.TextTexture;
 import com.xyp.ldlib.gui.ui.UIElement;
 import com.xyp.ldlib.gui.ui.elements.Button;
+import com.xyp.ldlib.gui.ui.style.ModernTheme;
 
 /**
  * Read-only integration probe for the reduced LDLib port and existing wildcard model.
@@ -27,7 +28,7 @@ public final class WildcardPreviewScreen extends GuiScreen {
     private static final int PANEL_WIDTH = 300;
     private static final int PANEL_HEIGHT = 220;
     private static final int ROWS = 7;
-    private static final com.xyp.ldlib.gui.ui.style.ModernTheme THEME = new com.xyp.ldlib.gui.ui.style.ModernTheme(
+    private static final ModernTheme THEME = new ModernTheme(
         path -> ModList.GTNotGood.getResourceLocation("textures/gui/ldlib/" + path));
 
     private final List<List<String>> rows = new ArrayList<>();
@@ -60,9 +61,7 @@ public final class WildcardPreviewScreen extends GuiScreen {
         StringBuilder result = new StringBuilder();
         for (ItemStack stack : stacks) {
             if (result.length() > 0) result.append(", ");
-            result.append(stack.stackSize)
-                .append("x ")
-                .append(stack.getDisplayName());
+            result.append(stack.stackSize).append("x ").append(stack.getDisplayName());
         }
         return result.toString();
     }
@@ -71,9 +70,8 @@ public final class WildcardPreviewScreen extends GuiScreen {
         List<String> result = new ArrayList<>();
         for (IWildcardIOComponent component : components) {
             ItemStack display = component.getDisplayStack();
-            result.add(
-                component.typeKey() + ": "
-                    + (display == null ? "-" : display.stackSize + "x " + display.getDisplayName()));
+            result.add(component.typeKey() + ": "
+                + (display == null ? "-" : display.stackSize + "x " + display.getDisplayName()));
         }
         return result;
     }
@@ -168,15 +166,14 @@ public final class WildcardPreviewScreen extends GuiScreen {
         List<String> current = rows.get(selectedTab);
         int row = (mouseY - top - 33) / 20;
         int index = page * ROWS + row;
-        if (mouseX >= left + 81 && mouseX < left + 288
-            && mouseY >= top + 33
-            && mouseY < top + 33 + ROWS * 20
-            && index < current.size()) {
-            drawHoveringText(
-                fontRendererObj.listFormattedStringToWidth(current.get(index), Math.min(260, width - 24)),
-                mouseX,
-                mouseY,
-                fontRendererObj);
+        if (
+            mouseX >= left + 81 && mouseX < left + 288
+                && mouseY >= top + 33
+                && mouseY < top + 33 + ROWS * 20
+                && index < current.size()
+        ) {
+            drawHoveringText(fontRendererObj.listFormattedStringToWidth(current.get(index), Math.min(260, width - 24)),
+                mouseX, mouseY, fontRendererObj);
         }
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

@@ -1,5 +1,8 @@
 package com.xyp.gtnotgood.loader;
 
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+
 import com.xyp.gtnotgood.common.blocks.beekeeping.WorkingApiaryRegistration;
 import com.xyp.gtnotgood.common.recipe.gregtech.AssemblerRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
@@ -15,6 +18,7 @@ import com.xyp.gtnotgood.common.recipe.machine.CrossRecipeWirelessEnergyHatchRec
 import com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeBeeBreederRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.LargeCombProcessorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCropBreederRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeTransmutationMachineRecipes;
@@ -32,15 +36,11 @@ import com.xyp.gtnotgood.common.recipe.machine.WildcardPatternRecipes;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
+import appeng.api.AEApi;
 import cpw.mods.fml.common.registry.GameRegistry;
 import gregtech.api.enums.ItemList;
+import thaumcraft.common.config.ConfigBlocks;
 
-/**
- * Dispatches recipe registration for this mod during Forge initialization.
- * <p>
- * Keep recipe family loaders behind this class so proxy lifecycle code only needs one recipe entry point, matching the
- * loader layout used by GT-Not-Cool.
- */
 public class RecipeLoader {
 
     /** Registers recipes whose dimension display blocks are created during another mod's initialization. */
@@ -48,36 +48,18 @@ public class RecipeLoader {
         MixerRecipes.loadRecipes();
     }
 
-    /**
-     * Registers all recipes owned by GT Not Good.
-     * <p>
-     * This currently delegates to the Large Ore Processor recipe generator. Future recipe families should be added here
-     * as additional one-line loader calls.
-     */
     public static void loadRecipes() {
-        GameRegistry.addShapelessRecipe(
-            GTNGItemList.UniversalFluidPump.get(1),
-            ItemList.Pump_LV.get(1),
+        GameRegistry.addShapelessRecipe(GTNGItemList.UniversalFluidPump.get(1), ItemList.Pump_LV.get(1),
             ItemList.Electric_Pump_LV.get(1));
         if (ModList.Forestry.isModLoaded()) {
             WorkingApiaryRegistration.registerRecipe();
         }
-        cpw.mods.fml.common.registry.GameRegistry.addShapelessRecipe(
-            GTNGItemList.StructureCompass.get(1),
-            net.minecraft.init.Items.compass,
-            net.minecraft.init.Items.map,
-            net.minecraft.init.Items.brick);
+        GameRegistry.addShapelessRecipe(GTNGItemList.StructureCompass.get(1), Items.compass, Items.map, Items.brick);
         if (ModList.ThaumicEnergistics.isModLoaded() && ModList.Thaumcraft.isModLoaded()) {
-            GameRegistry.addShapelessRecipe(
-                GTNGItemList.EssentiaDisassembler.get(1),
+            GameRegistry.addShapelessRecipe(GTNGItemList.EssentiaDisassembler.get(1),
                 ItemList.Machine_HV_Extractor.get(1),
-                appeng.api.AEApi.instance()
-                    .definitions()
-                    .blocks()
-                    .iface()
-                    .maybeStack(1)
-                    .get(),
-                new net.minecraft.item.ItemStack(thaumcraft.common.config.ConfigBlocks.blockStoneDevice, 1, 0));
+                AEApi.instance().definitions().blocks().iface().maybeStack(1).get(),
+                new ItemStack(ConfigBlocks.blockStoneDevice, 1, 0));
         }
         LargeTransmutationMachineRecipes.loadRecipes();
         AdvancedIORecipes.register();
@@ -104,7 +86,7 @@ public class RecipeLoader {
         SuperCraftingInputRecipes.loadRecipes();
         LargeVoidMinerRecipes.loadRecipes();
         LargeBeeBreederRecipes.loadRecipes();
-        com.xyp.gtnotgood.common.recipe.machine.LargeCombProcessorRecipes.loadRecipes();
+        LargeCombProcessorRecipes.loadRecipes();
         LargeCropBreederRecipes.loadRecipes();
         NetworkRecipes.loadRecipes();
     }

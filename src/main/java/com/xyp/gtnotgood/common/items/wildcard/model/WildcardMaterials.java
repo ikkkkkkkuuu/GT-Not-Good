@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.common.items.wildcard.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -22,10 +23,10 @@ import gregtech.api.enums.OrePrefixes;
 import gregtech.api.enums.SubTag;
 import gregtech.api.objects.ItemData;
 import gregtech.api.util.GTOreDictUnificator;
+import gregtech.api.util.GTUtility;
 
 /**
  * 材料轴模型的共享工具。封装 GT5U 材料的枚举、材料→前缀物品/流体的转换，以及结构化属性/标志查询。
- * 逻辑复用自旧的 {@link com.xyp.gtnotgood.common.items.wildcard.WildcardPatternEntry}，抽出来供新组件模型使用。
  */
 public final class WildcardMaterials {
 
@@ -116,14 +117,12 @@ public final class WildcardMaterials {
         for (String oreName : oreNames) {
             OrePrefixes prefix = prefixOfOreName(oreName);
             if (prefix == null) continue;
-            String materialName = oreName.substring(
-                prefix.name()
-                    .length());
+            String materialName = oreName.substring(prefix.name().length());
             if (materialName.isEmpty() || isRealMaterial(findByName(materialName))) continue;
             names.putIfAbsent(materialName.toLowerCase(Locale.ROOT), materialName);
         }
         cachedOreNameCount = oreNames.length;
-        cachedExpandableNames = java.util.Collections.unmodifiableList(new ArrayList<>(names.values()));
+        cachedExpandableNames = Collections.unmodifiableList(new ArrayList<>(names.values()));
         return cachedExpandableNames;
     }
 
@@ -132,11 +131,11 @@ public final class WildcardMaterials {
         OrePrefixes best = null;
         for (OrePrefixes prefix : OrePrefixes.VALUES) {
             String name = prefix.name();
-            if (!name.isEmpty() && oreName.startsWith(name)
-                && oreName.length() > name.length()
-                && (best == null || name.length() > best.name()
-                    .length()))
-                best = prefix;
+            if (
+                !name.isEmpty() && oreName.startsWith(name)
+                    && oreName.length() > name.length()
+                    && (best == null || name.length() > best.name().length())
+            ) best = prefix;
         }
         return best;
     }
@@ -187,7 +186,7 @@ public final class WildcardMaterials {
         // [液滴分类] 可迁原生：仅把流体转成 GT 显示物品用于 GUI 图标，不参与合成
         FluidStack fluid = FluidDropCompat.getFluidStack(stack);
         if (fluid != null && fluid.getFluid() != null) {
-            ItemStack display = gregtech.api.util.GTUtility.getFluidDisplayStack(fluid, true);
+            ItemStack display = GTUtility.getFluidDisplayStack(fluid, true);
             if (display != null) {
                 display.stackSize = 1;
                 return display;
@@ -233,58 +232,68 @@ public final class WildcardMaterials {
     /** 支持的材料属性（用于 property 过滤）。 */
     public enum Property {
 
-        DUST,
-        METAL,
-        GEM,
-        ORE,
-        CELL,
-        PLASMA,
-        TOOL_HEAD,
-        GEAR,
-        FLUID,
-        GAS,
-        POLYMER,
-        INGOT,
-        TOOL,
-        FLUID_PIPE;
+        Dust("DUST"),
+        Metal("METAL"),
+        Gem("GEM"),
+        Ore("ORE"),
+        Cell("CELL"),
+        Plasma("PLASMA"),
+        ToolHead("TOOL_HEAD"),
+        Gear("GEAR"),
+        Fluid("FLUID"),
+        Gas("GAS"),
+        Polymer("POLYMER"),
+        Ingot("INGOT"),
+        Tool("TOOL"),
+        FluidPipe("FLUID_PIPE");
 
-        /** Source-style display key; existing uppercase NBT enum names remain valid. */
+        public final String serializedName;
+
+        Property(String serializedName) {
+            this.serializedName = serializedName;
+        }
+
+        @Override
+        public String toString() {
+            return serializedName;
+        }
+
         public String displayName() {
-            if (this == METAL) return "ingot";
-            if (this == TOOL_HEAD) return "tool";
-            return name().toLowerCase(Locale.ROOT);
+            if (this == Metal) return "ingot";
+            if (this == ToolHead) return "tool";
+            return serializedName.toLowerCase(Locale.ROOT);
         }
 
         public boolean test(Materials material) {
             if (!isRealMaterial(material)) return false;
             switch (this) {
-                case DUST:
+                case Dust:
                     return material.hasDustItems() || hasWerkstoffForm(material, OrePrefixes.dust);
-                case METAL:
-                case INGOT:
+                case Metal:
+                case Ingot:
                     return material.hasMetalItems() || hasWerkstoffForm(material, OrePrefixes.ingot);
-                case GEM:
+                case Gem:
                     return material.hasGemItems() || hasWerkstoffForm(material, OrePrefixes.gem);
-                case ORE:
+                case Ore:
                     return material.hasOresItems() || hasWerkstoffForm(material, OrePrefixes.ore);
-                case CELL:
+                case Cell:
                     return material.hasCell() || hasWerkstoffForm(material, OrePrefixes.cell);
-                case PLASMA:
+                case Plasma:
                     return material.hasPlasma();
-                case TOOL_HEAD:
-                case TOOL:
+                case ToolHead:
+                case Tool:
                     return material.hasToolHeadItems() || hasWerkstoffForm(material, OrePrefixes.toolHeadHammer)
                         || hasWerkstoffForm(material, OrePrefixes.toolHeadWrench)
                         || hasWerkstoffForm(material, OrePrefixes.toolHeadSaw);
-                case GEAR:
+                case Gear:
                     return material.hasGearItems() || hasWerkstoffForm(material, OrePrefixes.gearGt);
-                case FLUID:
+                case Fluid:
                     return material.mFluid != null || material.mStandardMoltenFluid != null;
-                case GAS:
+                case Gas:
                     return material.mGas != null;
-                case POLYMER:
+                case Polymer:
                     return isPolymer(material);
-                case FLUID_PIPE:
+                case FluidPipe:
                     return hasFluidPipe(material);
                 default:
                     return false;
@@ -350,29 +359,27 @@ public final class WildcardMaterials {
     /** 按名解析属性，找不到返回 null。 */
     public static Property findProperty(String name) {
         if (name == null || name.isEmpty()) return null;
-        try {
-            return Property.valueOf(
-                name.trim()
-                    .toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException ignored) {
-            return null;
+        String serializedName = name.trim().toUpperCase(Locale.ROOT);
+        for (Property property : Property.values()) {
+            if (property.serializedName.equals(serializedName)) return property;
         }
+        return null;
     }
 
     /** 列出某材料实际拥有的属性（对齐原版：拖入示例物品后只在它真有的属性里选）。 */
-    public static java.util.List<Property> propertiesOf(Materials material) {
-        java.util.List<Property> result = new java.util.ArrayList<>();
+    public static List<Property> propertiesOf(Materials material) {
+        List<Property> result = new ArrayList<>();
         if (material == null) return result;
         for (Property property : Property.values()) {
-            if (property == Property.METAL || property == Property.TOOL_HEAD) continue;
+            if (property == Property.Metal || property == Property.ToolHead) continue;
             if (property.test(material)) result.add(property);
         }
         return result;
     }
 
     /** 列出某材料实际拥有的 SubTag。 */
-    public static java.util.List<SubTag> subTagsOf(Materials material) {
-        java.util.List<SubTag> result = new java.util.ArrayList<>();
+    public static List<SubTag> subTagsOf(Materials material) {
+        List<SubTag> result = new ArrayList<>();
         if (material == null) return result;
         for (SubTag tag : SubTag.sSubTags.values()) {
             if (hasSubTag(material, tag)) result.add(tag);
@@ -403,8 +410,7 @@ public final class WildcardMaterials {
         OrePrefixes exact = OrePrefixes.getPrefix(name.trim());
         if (exact != null) return exact;
         for (OrePrefixes prefix : OrePrefixes.VALUES) {
-            if (prefix.name()
-                .equalsIgnoreCase(name.trim())) return prefix;
+            if (prefix.name().equalsIgnoreCase(name.trim())) return prefix;
         }
         return null;
     }
@@ -421,9 +427,7 @@ public final class WildcardMaterials {
             String oreName = OreDictionary.getOreName(oreId);
             OrePrefixes prefix = prefixOfOreName(oreName);
             if (prefix != null) {
-                String materialName = oreName.substring(
-                    prefix.name()
-                        .length());
+                String materialName = oreName.substring(prefix.name().length());
                 return new PrefixMaterial(prefix, findByName(materialName));
             }
         }
@@ -448,7 +452,7 @@ public final class WildcardMaterials {
     public static Map<String, Property> propertyChoices() {
         Map<String, Property> map = new LinkedHashMap<>();
         for (Property property : Property.values()) {
-            if (property == Property.METAL || property == Property.TOOL_HEAD) continue;
+            if (property == Property.Metal || property == Property.ToolHead) continue;
             map.put(property.displayName(), property);
         }
         return map;

@@ -63,13 +63,8 @@ public class PosMetaTileGuiFactory<M extends MetaTileEntity> extends AbstractUIF
         if (te instanceof IGregTechTileEntity gte && machineType.isInstance(gte.getMetaTileEntity())) {
             return guiCtor.apply(machineType.cast(gte.getMetaTileEntity()));
         }
-        throw new IllegalStateException(
-            String.format(
-                "TileEntity at (%s, %s, %s) is not a %s!",
-                data.getX(),
-                data.getY(),
-                data.getZ(),
-                machineDisplayName));
+        throw new IllegalStateException(String.format("TileEntity at (%s, %s, %s) is not a %s!", data.getX(),
+            data.getY(), data.getZ(), machineDisplayName));
     }
 
     @Override
@@ -88,10 +83,7 @@ public class PosMetaTileGuiFactory<M extends MetaTileEntity> extends AbstractUIF
 
     @Override
     public @Nonnull PosGuiData readGuiData(EntityPlayer player, PacketBuffer buffer) {
-        return new PosGuiData(
-            player,
-            buffer.readVarIntFromBuffer(),
-            buffer.readVarIntFromBuffer(),
+        return new PosGuiData(player, buffer.readVarIntFromBuffer(), buffer.readVarIntFromBuffer(),
             buffer.readVarIntFromBuffer());
     }
 }

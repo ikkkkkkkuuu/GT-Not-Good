@@ -43,13 +43,9 @@ public final class ItemWirelessConnector extends Item {
 
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-        if (!world.isRemote && stack.hasTagCompound()
-            && stack.getTagCompound()
-                .hasKey("SelectedProvider")) {
-            stack.getTagCompound()
-                .removeTag("SelectedProvider");
-            if (stack.getTagCompound()
-                .hasNoTags()) stack.setTagCompound(null);
+        if (!world.isRemote && stack.hasTagCompound() && stack.getTagCompound().hasKey("SelectedProvider")) {
+            stack.getTagCompound().removeTag("SelectedProvider");
+            if (stack.getTagCompound().hasNoTags()) stack.setTagCompound(null);
             // #tr chat.packaged.deselected
             // # Provider selection cleared.
             // # zh_CN 已取消选择供应器。
@@ -59,9 +55,8 @@ public final class ItemWirelessConnector extends Item {
     }
 
     public static PackagedTarget selection(ItemStack stack) {
-        return stack != null && stack.hasTagCompound() ? PackagedTarget.read(
-            stack.getTagCompound()
-                .getCompoundTag("SelectedProvider"))
+        return stack != null && stack.hasTagCompound()
+            ? PackagedTarget.read(stack.getTagCompound().getCompoundTag("SelectedProvider"))
             : null;
     }
 
@@ -74,8 +69,7 @@ public final class ItemWirelessConnector extends Item {
             if (!held.hasTagCompound()) held.setTagCompound(new NBTTagCompound());
             NBTTagCompound selected = new PackagedTarget(world.provider.dimensionId, x, y, z, face).write();
             selected.setString("HostType", "provider");
-            held.getTagCompound()
-                .setTag("SelectedProvider", selected);
+            held.getTagCompound().setTag("SelectedProvider", selected);
             // #tr chat.packaged.selected
             // # Selected provider at %s, %s, %s.
             // # zh_CN 已选择供应器：%s，%s，%s。
@@ -84,8 +78,10 @@ public final class ItemWirelessConnector extends Item {
         }
         if (!player.isSneaking()) return;
         PackagedTarget selected = selection(held);
-        if (selected == null || !(selected.resolve(world) instanceof TilePackagedProvider provider)
-            || !provider.canConfigure(player)) {
+        if (
+            selected == null || !(selected.resolve(world) instanceof TilePackagedProvider provider)
+                || !provider.canConfigure(player)
+        ) {
             // #tr chat.packaged.no_selection
             // # Select an available provider in this dimension first.
             // # zh_CN 请先选择本维度已加载的供应器。
@@ -120,13 +116,8 @@ public final class ItemWirelessConnector extends Item {
             // #tr tooltip.packaged.connector_selection
             // # Selected: dimension %s, %s / %s / %s
             // # zh_CN 已选择：维度 %s，%s / %s / %s
-            lines.add(
-                StatCollector.translateToLocalFormatted(
-                    "tooltip.packaged.connector_selection",
-                    selected.dimension,
-                    selected.x,
-                    selected.y,
-                    selected.z));
+            lines.add(StatCollector.translateToLocalFormatted("tooltip.packaged.connector_selection",
+                selected.dimension, selected.x, selected.y, selected.z));
         }
     }
 }

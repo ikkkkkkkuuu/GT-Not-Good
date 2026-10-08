@@ -46,10 +46,10 @@ public final class WirelessMonitorPreferences {
         customPalette = configuration.getBoolean("CustomPalette", CATEGORY, false, "使用自定义颜色列表替代特效默认配色。");
         bold = configuration.getBoolean("Bold", CATEGORY, false, "HUD 文字粗体。");
         italic = configuration.getBoolean("Italic", CATEGORY, false, "HUD 文字斜体。");
-        String renderer = configuration
-            .getString("Renderer", CATEGORY, TextEffects.EXOTIC_RAINBOW.rendererId(), "滚动特效，可在游戏内颜色预览页选择。");
-        String palette = configuration
-            .getString("Palette", CATEGORY, "#33CCFF,#FFAA33,#DD77FF", "自定义 RGB 颜色，逗号分隔，最多八种。");
+        String renderer = configuration.getString("Renderer", CATEGORY, TextEffects.EXOTIC_RAINBOW.rendererId(),
+            "滚动特效，可在游戏内颜色预览页选择。");
+        String palette = configuration.getString("Palette", CATEGORY, "#33CCFF,#FFAA33,#DD77FF",
+            "自定义 RGB 颜色，逗号分隔，最多八种。");
         float speed = configuration.getFloat("Speed", CATEGORY, 1F, 0F, 10F, "特效滚动速度，0 为静止。");
         TextEffectStyle selected = TextEffectFormat.readInline(renderer);
         effectStyle = selected == null || TextEffectRegistry.get(selected.rendererId()) == null
@@ -63,17 +63,14 @@ public final class WirelessMonitorPreferences {
 
     public static void setEnabled(boolean value) {
         enabled = value;
-        configuration.get(CATEGORY, "Enabled", false)
-            .set(value);
+        configuration.get(CATEGORY, "Enabled", false).set(value);
         configuration.save();
     }
 
     /** Persists the bottom-left-relative position once editing ends, rather than writing on every mouse movement. */
     public static void savePosition() {
-        configuration.get(CATEGORY, "XOffset", 0)
-            .set(xOffset);
-        configuration.get(CATEGORY, "YOffset", 0)
-            .set(yOffset);
+        configuration.get(CATEGORY, "XOffset", 0).set(xOffset);
+        configuration.get(CATEGORY, "YOffset", 0).set(yOffset);
         configuration.save();
     }
 
@@ -93,16 +90,11 @@ public final class WirelessMonitorPreferences {
         bold = useBold;
         italic = useItalic;
         animatedColors = true;
-        configuration.get(CATEGORY, "Renderer", rendererId)
-            .set(rendererId);
-        configuration.get(CATEGORY, "CustomPalette", palette)
-            .set(palette);
-        configuration.get(CATEGORY, "Bold", useBold)
-            .set(useBold);
-        configuration.get(CATEGORY, "Italic", useItalic)
-            .set(useItalic);
-        configuration.get(CATEGORY, "AnimatedColors", true)
-            .set(true);
+        configuration.get(CATEGORY, "Renderer", rendererId).set(rendererId);
+        configuration.get(CATEGORY, "CustomPalette", palette).set(palette);
+        configuration.get(CATEGORY, "Bold", useBold).set(useBold);
+        configuration.get(CATEGORY, "Italic", useItalic).set(useItalic);
+        configuration.get(CATEGORY, "AnimatedColors", true).set(true);
         configuration.save();
     }
 

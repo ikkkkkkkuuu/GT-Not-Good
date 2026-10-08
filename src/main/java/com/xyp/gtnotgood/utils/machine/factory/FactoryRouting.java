@@ -37,28 +37,21 @@ public final class FactoryRouting {
     /** BOX doubles or halves all route counts atomically; odd counts cannot be halved. */
     public static boolean scale(FactoryGraph graph, boolean doubleCounts) {
         if (graph.nodes.isEmpty()) return false;
-        for (FactoryGraph.Node node : graph.nodes) if (doubleCounts ? node.parallel > FactoryGraph.MAX_PARALLEL / 2
-            : node.parallel < 2 || node.parallel % 2 != 0) return false;
+        for (FactoryGraph.Node node : graph.nodes) if (
+            doubleCounts ? node.parallel > FactoryGraph.MAX_PARALLEL / 2 : node.parallel < 2 || node.parallel % 2 != 0
+        ) return false;
         for (FactoryGraph.Node node : graph.nodes) node.parallel = doubleCounts ? node.parallel * 2 : node.parallel / 2;
         return true;
     }
 
     /** Portable recipe identities only: importing never trusts client-supplied inputs, outputs or recipe costs. */
     public static String encode(FactoryGraph graph) {
-        boolean extended = graph.nodes.stream()
-            .anyMatch(node -> node.wholeLineBatch);
+        boolean extended = graph.nodes.stream().anyMatch(node -> node.wholeLineBatch);
         StringBuilder text = new StringBuilder(extended ? "GTNG2" : "GTNG1");
         for (FactoryGraph.Node node : graph.nodes) {
-            text.append(';')
-                .append(node.recipe)
-                .append(',')
-                .append(node.parallel)
-                .append(',')
-                .append(node.overclocks)
-                .append(',')
-                .append(node.customEUt);
-            if (extended) text.append(',')
-                .append(node.wholeLineBatch ? 1 : 0);
+            text.append(';').append(node.recipe).append(',').append(node.parallel).append(',').append(node.overclocks)
+                .append(',').append(node.customEUt);
+            if (extended) text.append(',').append(node.wholeLineBatch ? 1 : 0);
         }
         return text.toString();
     }
@@ -66,8 +59,7 @@ public final class FactoryRouting {
     /** Fully validates a bounded route code before the caller replaces its draft. */
     public static FactoryGraph decode(String text) {
         if (text.length() > MAX_CODE_LENGTH) throw new IllegalArgumentException();
-        String[] rows = text.trim()
-            .split(";", -1);
+        String[] rows = text.trim().split(";", -1);
         boolean extended = rows[0].equals("GTNG2");
         if ((!extended && !rows[0].equals("GTNG1")) || rows.length < 2 || rows.length > FactoryGraph.MAX_NODES + 1)
             throw new IllegalArgumentException();

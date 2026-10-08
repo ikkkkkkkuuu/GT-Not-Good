@@ -97,68 +97,28 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
     @Override
     public void initGui() {
         super.initGui();
-        tcAutoResearch$unlockAllButton = new GuiButtonExt(
-            101,
-            super.guiLeft - 80,
-            super.guiTop + 255 / 2 - 50,
-            80,
-            25,
+        tcAutoResearch$unlockAllButton = new GuiButtonExt(101, super.guiLeft - 80, super.guiTop + 255 / 2 - 50, 80, 25,
             StatCollector.translateToLocal("tcautores.unlock_all"));
         tcAutoResearch$unlockAllButton.visible = true;
         tcAutoResearch$unlockAllButton.enabled = tcAutoResearch$hasMissingAspects();
         this.buttonList.add(tcAutoResearch$unlockAllButton);
 
-        tcAutoResearch$autoButton = new GuiButtonExt(
-            102,
-            super.guiLeft - 80,
-            super.guiTop + 255 / 2 - 25,
-            80,
-            25,
+        tcAutoResearch$autoButton = new GuiButtonExt(102, super.guiLeft - 80, super.guiTop + 255 / 2 - 25, 80, 25,
             tcAutoResearch$autoButtonText());
-        tcAutoResearch$solveButton = new GuiButtonExt(
-            104,
-            super.guiLeft - 80,
-            super.guiTop + 255 / 2,
-            80,
-            25,
+        tcAutoResearch$solveButton = new GuiButtonExt(104, super.guiLeft - 80, super.guiTop + 255 / 2, 80, 25,
             StatCollector.translateToLocal("tcautores.solve_current"));
         tcAutoResearch$solveButton.visible = !Config.autoResearch();
-        tcAutoResearch$retryButton = new GuiButtonExt(
-            105,
-            super.guiLeft - 80,
-            super.guiTop + 255 / 2 + 25,
-            80,
-            25,
+        tcAutoResearch$retryButton = new GuiButtonExt(105, super.guiLeft - 80, super.guiTop + 255 / 2 + 25, 80, 25,
             StatCollector.translateToLocal("tcautores.retry_last"));
         tcAutoResearch$retryButton.visible = !Config.autoResearch();
-        tcAutoResearch$weightsButton = new GuiButtonExt(
-            106,
-            super.guiLeft - 80,
-            super.guiTop + 255 / 2 + 50,
-            80,
-            25,
+        tcAutoResearch$weightsButton = new GuiButtonExt(106, super.guiLeft - 80, super.guiTop + 255 / 2 + 50, 80, 25,
             StatCollector.translateToLocal("tcautores.weights"));
-        tcAutoResearch$reportButton = new GuiButtonExt(
-            107,
-            Math.min(width - 82, super.guiLeft + super.xSize),
-            super.guiTop + 255 / 2 + 50,
-            80,
-            25,
-            StatCollector.translateToLocal("tcautores.report_button"));
-        tcAutoResearch$batchButton = new GuiButtonExt(
-            108,
-            Math.min(width - 82, super.guiLeft + super.xSize),
-            super.guiTop + 255 / 2 + 25,
-            80,
-            25,
-            BatchResearchController.buttonText());
-        tcAutoResearch$targetButton = new GuiButtonExt(
-            111,
-            Math.min(width - 82, super.guiLeft + super.xSize),
-            super.guiTop + 255 / 2,
-            80,
-            25,
-            TargetResearchController.buttonText());
+        tcAutoResearch$reportButton = new GuiButtonExt(107, Math.min(width - 82, super.guiLeft + super.xSize),
+            super.guiTop + 255 / 2 + 50, 80, 25, StatCollector.translateToLocal("tcautores.report_button"));
+        tcAutoResearch$batchButton = new GuiButtonExt(108, Math.min(width - 82, super.guiLeft + super.xSize),
+            super.guiTop + 255 / 2 + 25, 80, 25, BatchResearchController.buttonText());
+        tcAutoResearch$targetButton = new GuiButtonExt(111, Math.min(width - 82, super.guiLeft + super.xSize),
+            super.guiTop + 255 / 2, 80, 25, TargetResearchController.buttonText());
 
         this.buttonList.add(tcAutoResearch$autoButton);
         this.buttonList.add(tcAutoResearch$solveButton);
@@ -172,12 +132,7 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
         this.tcAutoResearch$amountField.setMaxStringLength(10);
         this.tcAutoResearch$amountField.setFocused(true);
         this.tcAutoResearch$amountField.setVisible(false);
-        this.tcAutoResearch$confirmButton = new GuiButtonExt(
-            103,
-            0,
-            0,
-            25,
-            13,
+        this.tcAutoResearch$confirmButton = new GuiButtonExt(103, 0, 0, 25, 13,
             StatCollector.translateToLocal("gui.done"));
         this.tcAutoResearch$confirmButton.visible = false;
         this.buttonList.add(this.tcAutoResearch$confirmButton);
@@ -281,9 +236,7 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
                     this.tcAutoResearch$amountField.setText("1");
                 }
                 this.tcAutoResearch$amountField.setCursorPosition(0);
-                this.tcAutoResearch$amountField.setSelectionPos(
-                    this.tcAutoResearch$amountField.getText()
-                        .length());
+                this.tcAutoResearch$amountField.setSelectionPos(this.tcAutoResearch$amountField.getText().length());
                 this.tcAutoResearch$confirmButton.xPosition = this.tcAutoResearch$amountField.xPosition + 27;
                 this.tcAutoResearch$confirmButton.yPosition = this.tcAutoResearch$amountField.yPosition - 2;
                 this.tcAutoResearch$confirmButton.visible = true;
@@ -319,15 +272,8 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
 
     @Override
     public void place(HexUtils.Hex hex, Aspect aspect) {
-        PacketHandler.INSTANCE.sendToServer(
-            new PacketAspectPlaceToServer(
-                this.player,
-                (byte) hex.q,
-                (byte) hex.r,
-                this.tileEntity.xCoord,
-                this.tileEntity.yCoord,
-                this.tileEntity.zCoord,
-                aspect));
+        PacketHandler.INSTANCE.sendToServer(new PacketAspectPlaceToServer(this.player, (byte) hex.q, (byte) hex.r,
+            this.tileEntity.xCoord, this.tileEntity.yCoord, this.tileEntity.zCoord, aspect));
     }
 
     @Override
@@ -341,8 +287,8 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
         String username = player.getCommandSenderName();
         for (Object value : Aspect.aspects.values()) {
             Aspect aspect = (Aspect) value;
-            int amount = Thaumcraft.proxy.getPlayerKnowledge()
-                .getAspectPoolFor(username, aspect) + tileEntity.bonusAspects.getAmount(aspect);
+            int amount = Thaumcraft.proxy.getPlayerKnowledge().getAspectPoolFor(username, aspect)
+                + tileEntity.bonusAspects.getAmount(aspect);
             if (amount > 0) available.add(aspect, amount);
         }
         return available;
@@ -350,14 +296,12 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
 
     @Override
     public ItemStack researchNoteStack() {
-        return this.inventorySlots.getSlot(1)
-            .getStack();
+        return this.inventorySlots.getSlot(1).getStack();
     }
 
     @Override
     public ItemStack scribingToolsStack() {
-        return this.inventorySlots.getSlot(0)
-            .getStack();
+        return this.inventorySlots.getSlot(0).getStack();
     }
 
     @Override
@@ -369,8 +313,7 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
     public int findIncompleteResearchNoteSlot(String key) {
         int end = Math.min(38, this.inventorySlots.inventorySlots.size());
         for (int slot = 2; slot < end; slot++) {
-            ItemStack stack = this.inventorySlots.getSlot(slot)
-                .getStack();
+            ItemStack stack = this.inventorySlots.getSlot(slot).getStack();
             if (ResearchNoteItems.isIncomplete(stack) && (key == null || ResearchNoteItems.hasKey(stack, key)))
                 return slot;
         }
@@ -389,8 +332,7 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
             && (key == null || ResearchNoteItems.hasKey(tableStack, key)) ? 1 : 0;
         int end = Math.min(38, this.inventorySlots.inventorySlots.size());
         for (int slot = 2; slot < end; slot++) {
-            ItemStack stack = this.inventorySlots.getSlot(slot)
-                .getStack();
+            ItemStack stack = this.inventorySlots.getSlot(slot).getStack();
             if (ResearchNoteItems.isIncomplete(stack) && (key == null || ResearchNoteItems.hasKey(stack, key))) count++;
         }
         return count;
@@ -400,8 +342,7 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
     public int findCompletedResearchNoteSlot(String key) {
         int end = Math.min(38, this.inventorySlots.inventorySlots.size());
         for (int slot = 1; slot < end; slot++) {
-            ItemStack stack = this.inventorySlots.getSlot(slot)
-                .getStack();
+            ItemStack stack = this.inventorySlots.getSlot(slot).getStack();
             if (ResearchNoteItems.isComplete(stack) && ResearchNoteItems.hasKey(stack, key)) return slot;
         }
         return -1;
@@ -413,8 +354,7 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
         List<String> incompleteKeys = new ArrayList<>();
         int end = Math.min(38, this.inventorySlots.inventorySlots.size());
         for (int slot = 1; slot < end; slot++) {
-            ItemStack stack = this.inventorySlots.getSlot(slot)
-                .getStack();
+            ItemStack stack = this.inventorySlots.getSlot(slot).getStack();
             ResearchNoteData data = ResearchNoteItems.data(stack);
             if (data == null || completedKeys.contains(data.key) || incompleteKeys.contains(data.key)) continue;
             (ResearchNoteItems.isComplete(stack) ? completedKeys : incompleteKeys).add(data.key);
@@ -429,10 +369,7 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
     public int findUsableScribingToolsSlot() {
         int end = Math.min(38, this.inventorySlots.inventorySlots.size());
         for (int slot = 2; slot < end; slot++) {
-            if (ResearchManager.consumeInkFromTable(
-                this.inventorySlots.getSlot(slot)
-                    .getStack(),
-                false)) return slot;
+            if (ResearchManager.consumeInkFromTable(this.inventorySlots.getSlot(slot).getStack(), false)) return slot;
         }
         return -1;
     }
@@ -440,16 +377,9 @@ public abstract class GuiResearchTableMixin extends GuiContainer implements GuiR
     @Override
     public void combine(Aspect aspect1, Aspect aspect2) {
         PacketHandler.INSTANCE.sendToServer(
-            new PacketAspectCombinationToServer(
-                this.player,
-                this.tileEntity.xCoord,
-                this.tileEntity.yCoord,
-                this.tileEntity.zCoord,
-                aspect1,
-                aspect2,
-                this.tileEntity.bonusAspects.getAmount(aspect1) > 0,
-                this.tileEntity.bonusAspects.getAmount(aspect2) > 0,
-                true));
+            new PacketAspectCombinationToServer(this.player, this.tileEntity.xCoord, this.tileEntity.yCoord,
+                this.tileEntity.zCoord, aspect1, aspect2, this.tileEntity.bonusAspects.getAmount(aspect1) > 0,
+                this.tileEntity.bonusAspects.getAmount(aspect2) > 0, true));
     }
 
     @Unique

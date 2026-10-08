@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Locale;
 import java.util.function.DoubleSupplier;
 import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 import net.minecraft.util.StatCollector;
 
@@ -12,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.Rectangle;
+import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
@@ -77,8 +79,7 @@ public class SingularityDataHubGui extends GTNGModernMultiBlockBaseGui<Singulari
     }
 
     @Override
-    protected ModularPanel getBasePanel(com.cleanroommc.modularui.factory.PosGuiData guiData,
-        PanelSyncManager syncManager, UISettings uiSettings) {
+    protected ModularPanel getBasePanel(PosGuiData guiData, PanelSyncManager syncManager, UISettings uiSettings) {
         return super.getBasePanel(guiData, syncManager, uiSettings).background(GTNGGuiTextures.MODERN_VAULT_BACKGROUND);
     }
 
@@ -122,15 +123,10 @@ public class SingularityDataHubGui extends GTNGModernMultiBlockBaseGui<Singulari
         // #tr Gui_SingularityDataHub_NeedVaultPortHatch
         // # Vault Port Hatch is required
         // # zh_CN 需要仓库端口仓
-        content.child(
-            dynamic(
-                () -> portHatch.getBoolValue() ? ""
-                    : StatCollector.translateToLocal("Gui_SingularityDataHub_NeedVaultPortHatch"),
-                38,
-                43,
-                126,
-                0xFFFF5555,
-                Alignment.CenterLeft));
+        content.child(dynamic(
+            () -> portHatch.getBoolValue() ? ""
+                : StatCollector.translateToLocal("Gui_SingularityDataHub_NeedVaultPortHatch"),
+            38, 43, 126, 0xFFFF5555, Alignment.CenterLeft));
         content.child(section(182, 4, 154, 214));
         // #tr Gui_SingularityDataHub_SystemLoad
         // # System Load
@@ -138,9 +134,7 @@ public class SingularityDataHubGui extends GTNGModernMultiBlockBaseGui<Singulari
         content.child(text(IKey.lang("Gui_SingularityDataHub_SystemLoad"), 190, 12, 138, TEXT, Alignment.Center));
         content.child(darkInset(190, 28, 138, 172));
         DoubleSupplier load = () -> storageLoad(storageBytes.getLongValue());
-        content.child(
-            new StorageLoadWidget(load).pos(198, 40)
-                .size(32, 126));
+        content.child(new StorageLoadWidget(load).pos(198, 40).size(32, 126));
         content.child(dynamic(() -> formatPercent(load.getAsDouble()), 198, 168, 32, GOOD, Alignment.Center));
         // #tr Gui_SingularityDataHub_CurrentLoad
         // # Current Load
@@ -155,13 +149,8 @@ public class SingularityDataHubGui extends GTNGModernMultiBlockBaseGui<Singulari
         // #tr Gui_SingularityDataHub_FluidTypes
         // # Fluid Types
         // # zh_CN 流体种类
-        content.child(
-            metric(
-                "Gui_SingularityDataHub_FluidTypes",
-                () -> compactAmount(fluidTypes.getLongValue()),
-                238,
-                78,
-                FLUID));
+        content.child(metric("Gui_SingularityDataHub_FluidTypes", () -> compactAmount(fluidTypes.getLongValue()), 238,
+            78, FLUID));
         content.child(
             // #tr Gui_SingularityDataHub_Mode
             // # Mode
@@ -172,13 +161,10 @@ public class SingularityDataHubGui extends GTNGModernMultiBlockBaseGui<Singulari
             // #tr Gui_SingularityDataHub_Wired
             // # Wired
             // # zh_CN 有线
-            metric(
-                "Gui_SingularityDataHub_Mode",
+            metric("Gui_SingularityDataHub_Mode",
                 () -> StatCollector.translateToLocal(
                     wirelessMode.getBoolValue() ? "Gui_SingularityDataHub_Wireless" : "Gui_SingularityDataHub_Wired"),
-                238,
-                96,
-                wirelessMode.getBoolValue() ? VALUE : TEXT));
+                238, 96, wirelessMode.getBoolValue() ? VALUE : TEXT));
         content.child(
             // #tr Gui_SingularityDataHub_AutoVoid
             // # Auto-voiding
@@ -189,95 +175,60 @@ public class SingularityDataHubGui extends GTNGModernMultiBlockBaseGui<Singulari
             // #tr Gui_SingularityDataHub_Disabled
             // # Disabled
             // # zh_CN 已禁用
-            metric(
-                "Gui_SingularityDataHub_AutoVoid",
+            metric("Gui_SingularityDataHub_AutoVoid",
                 () -> StatCollector.translateToLocal(
                     autoVoid.getBoolValue() ? "Gui_SingularityDataHub_Enabled" : "Gui_SingularityDataHub_Disabled"),
-                238,
-                114,
-                autoVoid.getBoolValue() ? GOOD : MUTED));
+                238, 114, autoVoid.getBoolValue() ? GOOD : MUTED));
         // #tr Gui_SingularityDataHub_RunningCost
         // # Running Cost
         // # zh_CN 运行成本
         content.child(metric("Gui_SingularityDataHub_RunningCost", () -> "0 EU/t", 238, 132, TEXT));
-        content.child(
-            SlotGroupWidget.playerInventory((index, slot) -> slot.background(GTNGGuiTextures.MODERN_VAULT_ITEM_SLOT))
-                .pos(8, 123));
+        content.child(SlotGroupWidget
+            .playerInventory((index, slot) -> slot.background(GTNGGuiTextures.MODERN_VAULT_ITEM_SLOT)).pos(8, 123));
         content.child(createFixedButtonColumn(syncManager).pos(309, 160));
-        return Flow.column()
-            .padding(4)
-            .child(content);
+        return Flow.column().padding(4).child(content);
     }
 
     private IWidget section(int x, int y, int width, int height) {
-        return new ParentWidget<>().pos(x, y)
-            .size(width, height)
-            .background(GTNGGuiTextures.MODERN_VAULT_PANEL_BORDER);
+        return new ParentWidget<>().pos(x, y).size(width, height).background(GTNGGuiTextures.MODERN_VAULT_PANEL_BORDER);
     }
 
     private IWidget darkInset(int x, int y, int width, int height) {
-        ParentWidget<?> inset = new ParentWidget<>().pos(x, y)
-            .size(width, height)
+        ParentWidget<?> inset = new ParentWidget<>().pos(x, y).size(width, height)
             .background(new Rectangle().color(0xFFC9C3D6));
         inset.child(
-            new ParentWidget<>().pos(1, 1)
-                .size(width - 2, height - 2)
-                .background(new Rectangle().color(0xFF17141E)));
+            new ParentWidget<>().pos(1, 1).size(width - 2, height - 2).background(new Rectangle().color(0xFF17141E)));
         inset.child(
-            new ParentWidget<>().pos(2, 2)
-                .size(width - 4, height - 4)
-                .background(new Rectangle().color(0xFF201E27)));
+            new ParentWidget<>().pos(2, 2).size(width - 4, height - 4).background(new Rectangle().color(0xFF201E27)));
         return inset;
     }
 
     private Flow createFixedButtonColumn(PanelSyncManager syncManager) {
-        return Flow.column()
-            .size(18, 40)
-            .reverseLayout(true)
-            .child(createPowerSwitchButton())
+        return Flow.column().size(18, 40).reverseLayout(true).child(createPowerSwitchButton())
             .child(createStructureUpdateButton(syncManager));
     }
 
     private IWidget bytesRow(LongSupplier usedBytes, int y) {
-        ParentWidget<?> row = new ParentWidget<>().pos(8, y)
-            .size(160, 12);
+        ParentWidget<?> row = new ParentWidget<>().pos(8, y).size(160, 12);
         row.child(text(IKey.lang("Gui_SingularityDataHub_Bytes"), 0, 0, 28, MUTED, Alignment.CenterLeft));
-        row.child(
-            new HostProgressWidget(() -> storageLoad(usedBytes.getAsLong()), FLUID).pos(30, 1)
-                .size(36, 9));
+        row.child(new HostProgressWidget(() -> storageLoad(usedBytes.getAsLong()), FLUID).pos(30, 1).size(36, 9));
         row.child(dynamic(() -> compactAmount(usedBytes.getAsLong()), 72, 0, 24, GOOD, Alignment.CenterRight));
         row.child(dynamic(() -> "/", 98, 0, 6, MUTED, Alignment.Center));
-        row.child(
-            dynamic(
-                () -> compactAmount(SingularityDataHub.MAX_STORAGE_BYTES),
-                106,
-                0,
-                52,
-                FLUID,
-                Alignment.CenterLeft));
+        row.child(dynamic(() -> compactAmount(SingularityDataHub.MAX_STORAGE_BYTES), 106, 0, 52, FLUID,
+            Alignment.CenterLeft));
         return row;
     }
 
-    private IWidget metric(String key, java.util.function.Supplier<String> value, int x, int y, int color) {
-        return dynamic(
-            () -> StatCollector.translateToLocal(key) + ": " + value.get(),
-            x,
-            y,
-            96,
-            color,
+    private IWidget metric(String key, Supplier<String> value, int x, int y, int color) {
+        return dynamic(() -> StatCollector.translateToLocal(key) + ": " + value.get(), x, y, 96, color,
             Alignment.CenterLeft);
     }
 
     private IWidget text(IKey key, int x, int y, int width, int color, Alignment alignment) {
-        return key.asWidget()
-            .pos(x, y)
-            .size(width, 12)
-            .color(color)
-            .textAlign(alignment);
+        return key.asWidget().pos(x, y).size(width, 12).color(color).textAlign(alignment);
     }
 
-    private IWidget dynamic(java.util.function.Supplier<String> value, int x, int y, int width, int color,
-        Alignment alignment) {
+    private IWidget dynamic(Supplier<String> value, int x, int y, int width, int color, Alignment alignment) {
         return text(IKey.dynamic(value), x, y, width, color, alignment);
     }
 
@@ -332,18 +283,13 @@ public class SingularityDataHubGui extends GTNGModernMultiBlockBaseGui<Singulari
             WidgetTheme theme = getActiveWidgetTheme(entry, isHovering());
             int width = getArea().width;
             int height = getArea().height;
-            new Rectangle().color(GAUGE_SHADOW)
-                .draw(context, 0, 0, width, height, theme);
-            new Rectangle().color(GAUGE_FRAME)
-                .draw(context, 1, 1, width - 2, height - 2, theme);
-            new Rectangle().color(GAUGE_INSET)
-                .draw(context, 3, 3, width - 6, height - 6, theme);
-            int filled = Math
-                .max(2, (int) Math.round((height - 8) * Math.max(0D, Math.min(1D, progress.getAsDouble()))));
-            new Rectangle().color(GAUGE_FILL)
-                .draw(context, 4, height - filled - 4, width - 8, filled, theme);
-            new Rectangle().color(GAUGE_FILL_HIGHLIGHT)
-                .draw(context, 4, height - filled - 4, width - 8, 1, theme);
+            new Rectangle().color(GAUGE_SHADOW).draw(context, 0, 0, width, height, theme);
+            new Rectangle().color(GAUGE_FRAME).draw(context, 1, 1, width - 2, height - 2, theme);
+            new Rectangle().color(GAUGE_INSET).draw(context, 3, 3, width - 6, height - 6, theme);
+            int filled = Math.max(2,
+                (int) Math.round((height - 8) * Math.max(0D, Math.min(1D, progress.getAsDouble()))));
+            new Rectangle().color(GAUGE_FILL).draw(context, 4, height - filled - 4, width - 8, filled, theme);
+            new Rectangle().color(GAUGE_FILL_HIGHLIGHT).draw(context, 4, height - filled - 4, width - 8, 1, theme);
             GL11.glColor4f(1F, 1F, 1F, 1F);
         }
     }
@@ -364,11 +310,9 @@ public class SingularityDataHubGui extends GTNGModernMultiBlockBaseGui<Singulari
             int width = getArea().width;
             int height = getArea().height;
             GTNGGuiTextures.MODERN_VAULT_PANEL_BORDER.draw(context, 0, 0, width, height, theme);
-            new Rectangle().color(PANEL_ALT)
-                .draw(context, 2, 2, width - 4, height - 4, theme);
+            new Rectangle().color(PANEL_ALT).draw(context, 2, 2, width - 4, height - 4, theme);
             int filled = (int) Math.round(Math.max(0D, Math.min(1D, progress.getAsDouble())) * (width - 6));
-            if (filled > 0) new Rectangle().color(color)
-                .draw(context, 3, 3, filled, height - 6, theme);
+            if (filled > 0) new Rectangle().color(color).draw(context, 3, 3, filled, height - 6, theme);
         }
     }
 }

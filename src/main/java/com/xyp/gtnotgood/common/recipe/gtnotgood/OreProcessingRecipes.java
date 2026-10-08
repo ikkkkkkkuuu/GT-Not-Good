@@ -35,12 +35,6 @@ import gregtech.api.util.GTUtility;
  */
 public class OreProcessingRecipes {
 
-    /**
-     * Alias to the actual GregTech recipe map used by this loader.
-     * <p>
-     * The field name intentionally mirrors the class name from GT-Not-Cool's style, so migrated recipe code can call
-     * {@code OreProcessingRecipes.addTo(...)} style helpers without searching for a different registry location.
-     */
     public static final RecipeMap<?> OreProcessingRecipes = GTNGRecipeMaps.OreProcessingRecipes;
 
     private static final int EUT = 0;
@@ -52,21 +46,12 @@ public class OreProcessingRecipes {
         OrePrefixes.oreNetherrack, OrePrefixes.oreEndstone, OrePrefixes.oreBasalt, OrePrefixes.oreBlackgranite,
         OrePrefixes.oreRedgranite, OrePrefixes.oreMarble, OrePrefixes.ore };
 
-    public static final Set<OrePrefixes> BASIC_STONE_TYPES = Sets.newHashSet(
-        OrePrefixes.ore,
-        OrePrefixes.oreBasalt,
-        OrePrefixes.oreBlackgranite,
-        OrePrefixes.oreRedgranite,
-        OrePrefixes.oreMarble,
-        OrePrefixes.oreNetherrack,
+    public static final Set<OrePrefixes> BASIC_STONE_TYPES = Sets.newHashSet(OrePrefixes.ore, OrePrefixes.oreBasalt,
+        OrePrefixes.oreBlackgranite, OrePrefixes.oreRedgranite, OrePrefixes.oreMarble, OrePrefixes.oreNetherrack,
         OrePrefixes.oreEndstone);
 
-    public static final Set<OrePrefixes> BASIC_STONE_TYPES_EXCEPT_NORMAL = Sets.newHashSet(
-        OrePrefixes.oreBasalt,
-        OrePrefixes.oreBlackgranite,
-        OrePrefixes.oreRedgranite,
-        OrePrefixes.oreMarble,
-        OrePrefixes.oreNetherrack,
+    public static final Set<OrePrefixes> BASIC_STONE_TYPES_EXCEPT_NORMAL = Sets.newHashSet(OrePrefixes.oreBasalt,
+        OrePrefixes.oreBlackgranite, OrePrefixes.oreRedgranite, OrePrefixes.oreMarble, OrePrefixes.oreNetherrack,
         OrePrefixes.oreEndstone);
 
     /**
@@ -139,10 +124,8 @@ public class OreProcessingRecipes {
             for (ItemStack input : OreDictionary.getOres(oreName)) {
                 if (input == null || input.getItem() == null) continue;
                 ItemStack singleInput = GTUtility.copyAmountUnsafe(1, input);
-                if (OreProcessingRecipes.findRecipeQuery()
-                    .items(singleInput)
-                    .notUnificated(true)
-                    .find() != null) continue;
+                if (OreProcessingRecipes.findRecipeQuery().items(singleInput).notUnificated(true).find() != null)
+                    continue;
                 addRecipe(singleInput, GTUtility.copyAmountUnsafe(dustAmount, dust));
             }
         }
@@ -160,25 +143,21 @@ public class OreProcessingRecipes {
         for (RecipeMap<?> map : new RecipeMap<?>[] { RecipeMaps.maceratorRecipes, RecipeMaps.thermalCentrifugeRecipes,
             RecipeMaps.centrifugeRecipes }) {
             for (GTRecipe source : map.getAllRecipes()) {
-                if (!source.mEnabled || source.mInputs.length != 1
-                    || source.mInputs[0] == null
-                    || source.mInputs[0].stackSize != 1
-                    || source.mOutputs.length < 2
-                    || source.mFluidInputs.length != 0
-                    || source.mFluidOutputs.length != 0
-                    || source.mSpecialItems != null) continue;
+                if (
+                    !source.mEnabled || source.mInputs.length != 1
+                        || source.mInputs[0] == null
+                        || source.mInputs[0].stackSize != 1
+                        || source.mOutputs.length < 2
+                        || source.mFluidInputs.length != 0
+                        || source.mFluidOutputs.length != 0
+                        || source.mSpecialItems != null
+                ) continue;
                 for (int oreId : OreDictionary.getOreIDs(source.mInputs[0])) {
                     String name = OreDictionary.getOreName(oreId);
                     OrePrefixes prefix = inputPrefix(name);
                     if (prefix == null || BASIC_STONE_TYPES.contains(prefix) || prefix == OrePrefixes.rawOre) continue;
-                    if (!matchesMaterial(
-                        source.mInputs[0],
-                        name.substring(
-                            prefix.name()
-                                .length())))
-                        continue;
-                    sources.computeIfAbsent(name, ignored -> new ArrayList<>())
-                        .add(source);
+                    if (!matchesMaterial(source.mInputs[0], name.substring(prefix.name().length()))) continue;
+                    sources.computeIfAbsent(name, ignored -> new ArrayList<>()).add(source);
                 }
             }
         }
@@ -190,9 +169,7 @@ public class OreProcessingRecipes {
                 String name = OreDictionary.getOreName(oreId);
                 OrePrefixes prefix = inputPrefix(name);
                 if (prefix == null) continue;
-                String material = name.substring(
-                    prefix.name()
-                        .length());
+                String material = name.substring(prefix.name().length());
                 if (!matchesMaterial(recipe.mInputs[0], material)) continue;
                 List<ByproductGroup> selected = new ArrayList<>();
                 boolean found = false;
@@ -204,10 +181,12 @@ public class OreProcessingRecipes {
                         List<ByproductGroup> groups = new ArrayList<>();
                         for (int slot = 1; slot < source.mOutputs.length; slot++) {
                             ItemStack output = source.mOutputs[slot];
-                            if (output == null || output.stackSize <= 0
-                                || source.getOutputChance(slot) <= 0
-                                || isGangue(output)
-                                || hasOutput(recipe.mOutputs, output)) continue;
+                            if (
+                                output == null || output.stackSize <= 0
+                                    || source.getOutputChance(slot) <= 0
+                                    || isGangue(output)
+                                    || hasOutput(recipe.mOutputs, output)
+                            ) continue;
                             ByproductGroup group = findGroup(groups, output);
                             if (group == null) {
                                 group = new ByproductGroup(source, output);
@@ -236,24 +215,20 @@ public class OreProcessingRecipes {
                     int multiplier = isRichOre(prefix) ? 2 : 1;
                     for (ByproductGroup group : selected) {
                         for (int slot : group.slots) {
-                            outputs.add(
-                                GTUtility.copyAmountUnsafe(
-                                    group.source.mOutputs[slot].stackSize * multiplier,
-                                    group.source.mOutputs[slot]));
+                            outputs.add(GTUtility.copyAmountUnsafe(group.source.mOutputs[slot].stackSize * multiplier,
+                                group.source.mOutputs[slot]));
                             chances.add(group.source.getOutputChance(slot));
                         }
                     }
                     recipe.mOutputs = outputs.toArray(new ItemStack[0]);
-                    recipe.mOutputChances = chances.stream()
-                        .mapToInt(Integer::intValue)
-                        .toArray();
+                    recipe.mOutputChances = chances.stream().mapToInt(Integer::intValue).toArray();
                     supplemented++;
                 }
                 break;
             }
         }
-        GTNotGood.LOG
-            .info("Added native grinding and centrifuging products to {} large ore processor recipes", supplemented);
+        GTNotGood.LOG.info("Added native grinding and centrifuging products to {} large ore processor recipes",
+            supplemented);
     }
 
     /** Progressed inputs must not collect byproducts from stages they have already passed. */
@@ -262,8 +237,9 @@ public class OreProcessingRecipes {
             return new OrePrefixes[] { OrePrefixes.crushedPurified, OrePrefixes.crushedCentrifuged,
                 OrePrefixes.dustPure };
         }
-        if (input == OrePrefixes.crushedCentrifuged || input == OrePrefixes.dustPure
-            || input == OrePrefixes.dustImpure) {
+        if (
+            input == OrePrefixes.crushedCentrifuged || input == OrePrefixes.dustPure || input == OrePrefixes.dustImpure
+        ) {
             return new OrePrefixes[] { input };
         }
         return byproductStages;
@@ -283,16 +259,17 @@ public class OreProcessingRecipes {
             if (output == null) continue;
             if (GTUtility.areStacksEqual(output, candidate)) return true;
             ItemData existing = GTOreDictUnificator.getAssociation(output);
-            if (existing != null && expected != null
-                && isDust(existing.mPrefix)
-                && isDust(expected.mPrefix)
-                && existing.mMaterial != null
-                && expected.mMaterial != null
-                && expected.mMaterial.mMaterial != null
-                && existing.mMaterial.mMaterial == expected.mMaterial.mMaterial
-                && (long) output.stackSize * existing.mPrefix.getMaterialAmount()
-                    >= (long) candidate.stackSize * expected.mPrefix.getMaterialAmount())
-                return true;
+            if (
+                existing != null && expected != null
+                    && isDust(existing.mPrefix)
+                    && isDust(expected.mPrefix)
+                    && existing.mMaterial != null
+                    && expected.mMaterial != null
+                    && expected.mMaterial.mMaterial != null
+                    && existing.mMaterial.mMaterial == expected.mMaterial.mMaterial
+                    && (long) output.stackSize * existing.mPrefix.getMaterialAmount()
+                        >= (long) candidate.stackSize * expected.mPrefix.getMaterialAmount()
+            ) return true;
         }
         return false;
     }
@@ -344,12 +321,14 @@ public class OreProcessingRecipes {
     private static void addSiftingOutputs() {
         Map<String, GTRecipe> siftingRecipes = new HashMap<>();
         for (GTRecipe recipe : RecipeMaps.sifterRecipes.getAllRecipes()) {
-            if (!recipe.mEnabled || recipe.mInputs.length != 1
-                || recipe.mInputs[0] == null
-                || recipe.mInputs[0].stackSize != 1
-                || recipe.mFluidInputs.length != 0
-                || recipe.mFluidOutputs.length != 0
-                || recipe.mSpecialItems != null) continue;
+            if (
+                !recipe.mEnabled || recipe.mInputs.length != 1
+                    || recipe.mInputs[0] == null
+                    || recipe.mInputs[0].stackSize != 1
+                    || recipe.mFluidInputs.length != 0
+                    || recipe.mFluidOutputs.length != 0
+                    || recipe.mSpecialItems != null
+            ) continue;
             for (int oreId : OreDictionary.getOreIDs(recipe.mInputs[0])) {
                 String oreName = OreDictionary.getOreName(oreId);
                 if (oreName.startsWith("crushedPurified")) {
@@ -394,9 +373,7 @@ public class OreProcessingRecipes {
                 }
                 if (outputs.size() > recipe.mOutputs.length) {
                     recipe.mOutputs = outputs.toArray(new ItemStack[0]);
-                    recipe.mOutputChances = chances.stream()
-                        .mapToInt(Integer::intValue)
-                        .toArray();
+                    recipe.mOutputChances = chances.stream().mapToInt(Integer::intValue).toArray();
                     supplemented++;
                 }
                 break;
@@ -488,9 +465,11 @@ public class OreProcessingRecipes {
                 }
             } else {
                 for (Materials byproduct : material.mOreByProducts) {
-                    if (byproduct == null || byproduct == Materials.Netherrack
-                        || byproduct == Materials.Endstone
-                        || byproduct == Materials.Stone) continue;
+                    if (
+                        byproduct == null || byproduct == Materials.Netherrack
+                            || byproduct == Materials.Endstone
+                            || byproduct == Materials.Stone
+                    ) continue;
                     outputs.add(getDustStack(byproduct, 2));
                 }
             }
@@ -557,13 +536,9 @@ public class OreProcessingRecipes {
             processIntermediateForm(material, OrePrefixes.crushed, input -> getOutputs(input, false));
             processIntermediateForm(material, OrePrefixes.crushedPurified, input -> getOutputs(input, false));
             processIntermediateForm(material, OrePrefixes.crushedCentrifuged, input -> getOutputs(input, false));
-            processIntermediateForm(
-                material,
-                OrePrefixes.dustImpure,
+            processIntermediateForm(material, OrePrefixes.dustImpure,
                 input -> new ItemStack[] { getDustStack(input, 6) });
-            processIntermediateForm(
-                material,
-                OrePrefixes.dustPure,
+            processIntermediateForm(material, OrePrefixes.dustPure,
                 input -> new ItemStack[] { getDustStack(input, 7) });
         }
     }
@@ -619,12 +594,8 @@ public class OreProcessingRecipes {
         }
         if (nonNullOutputs.isEmpty()) return;
 
-        GTRecipeBuilder.builder()
-            .itemInputs(input)
-            .itemOutputs(nonNullOutputs.toArray(new ItemStack[0]))
-            .eut(EUT)
-            .duration(DURATION_TICKS)
-            .addTo(OreProcessingRecipes);
+        GTRecipeBuilder.builder().itemInputs(input).itemOutputs(nonNullOutputs.toArray(new ItemStack[0])).eut(EUT)
+            .duration(DURATION_TICKS).addTo(OreProcessingRecipes);
     }
 
     /**

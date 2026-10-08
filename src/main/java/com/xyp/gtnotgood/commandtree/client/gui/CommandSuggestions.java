@@ -42,6 +42,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
+import java.lang.reflect.Method;
 
 /** Renders the interactive command dropdown and highlights parsed arguments. */
 public class CommandSuggestions {
@@ -473,7 +474,7 @@ public class CommandSuggestions {
                List<String> tooltipLines = new ArrayList<String>();
                tooltipLines.add(ComponentUtils.fromMessage(tooltip).getFormattedText());
                try {
-                  java.lang.reflect.Method m = net.minecraft.client.gui.GuiScreen.class.getDeclaredMethod("func_146283_a", List.class, int.class, int.class);
+                  Method m = GuiScreen.class.getDeclaredMethod("func_146283_a", List.class, int.class, int.class);
                   m.setAccessible(true);
                   m.invoke(CommandSuggestions.this.screen, tooltipLines, mouseX, mouseY);
                } catch (Exception e) {

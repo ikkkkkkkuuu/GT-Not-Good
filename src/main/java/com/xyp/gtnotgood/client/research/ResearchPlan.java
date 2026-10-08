@@ -9,19 +9,27 @@ import java.util.Set;
 import net.minecraft.entity.player.EntityPlayer;
 
 import thaumcraft.api.research.ResearchItem;
+import thaumcraft.common.config.Config;
 import thaumcraft.common.lib.research.ResearchManager;
 
 public final class ResearchPlan {
 
     public enum Action {
-        COMPLETED,
-        LEARN_DISCOVERY,
-        SOLVE_EXISTING,
-        GENERATE_AND_SOLVE,
-        WAIT_FOR_PREREQUISITES,
-        HIDDEN,
-        DIRECT,
-        UNSUPPORTED
+
+        Completed("tcautores.plan_action.completed"),
+        LearnDiscovery("tcautores.plan_action.learn_discovery"),
+        SolveExisting("tcautores.plan_action.solve_existing"),
+        GenerateAndSolve("tcautores.plan_action.generate_and_solve"),
+        WaitForPrerequisites("tcautores.plan_action.wait_for_prerequisites"),
+        Hidden("tcautores.plan_action.hidden"),
+        Direct("tcautores.plan_action.direct"),
+        Unsupported("tcautores.plan_action.unsupported");
+
+        public final String translationKey;
+
+        Action(String translationKey) {
+            this.translationKey = translationKey;
+        }
     }
 
     public static final class Entry {
@@ -67,23 +75,24 @@ public final class ResearchPlan {
     }
 
     public boolean canExecute() {
-        return count(Action.HIDDEN) == 0 && count(Action.UNSUPPORTED) == 0;
+        return count(Action.Hidden) == 0 && count(Action.Unsupported) == 0;
     }
 
     private static Action classify(GuiResearchTableHelperInterface helper, String username, Set<String> completed,
         ResearchItem research) {
-        if (completed.contains(research.key)) return Action.COMPLETED;
-        if (!ResearchCatalog.isRevealed(research, completed)) return Action.HIDDEN;
-        if (helper.findCompletedResearchNoteSlot(research.key) >= 0) return Action.LEARN_DISCOVERY;
-        if (helper.countIncompleteResearchNotes(research.key) > 0) return Action.SOLVE_EXISTING;
-        if (research.isVirtual() || research.isStub()
-            || research.isAutoUnlock()
-            || research.tags == null
-            || research.tags.size() == 0
-            || research.getResearchPrimaryTag() == null) return Action.UNSUPPORTED;
-        if (ResearchCatalog.completesDirectly(research, thaumcraft.common.config.Config.researchDifficulty))
-            return Action.DIRECT;
-        if (!ResearchManager.doesPlayerHaveRequisites(username, research.key)) return Action.WAIT_FOR_PREREQUISITES;
-        return Action.GENERATE_AND_SOLVE;
+        if (completed.contains(research.key)) return Action.Completed;
+        if (!ResearchCatalog.isRevealed(research, completed)) return Action.Hidden;
+        if (helper.findCompletedResearchNoteSlot(research.key) >= 0) return Action.LearnDiscovery;
+        if (helper.countIncompleteResearchNotes(research.key) > 0) return Action.SolveExisting;
+        if (
+            research.isVirtual() || research.isStub()
+                || research.isAutoUnlock()
+                || research.tags == null
+                || research.tags.size() == 0
+                || research.getResearchPrimaryTag() == null
+        ) return Action.Unsupported;
+        if (ResearchCatalog.completesDirectly(research, Config.researchDifficulty)) return Action.Direct;
+        if (!ResearchManager.doesPlayerHaveRequisites(username, research.key)) return Action.WaitForPrerequisites;
+        return Action.GenerateAndSolve;
     }
 }

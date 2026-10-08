@@ -88,19 +88,17 @@ public final class PatternSorter {
     public static boolean reorder(ItemStack[] inventory, List<Entry> entries, String firstGroup) {
         boolean[] seen = new boolean[inventory.length];
         for (Entry entry : entries) {
-            if (entry.slot < 0 || entry.slot >= inventory.length
-                || seen[entry.slot]
-                || !ItemStack.areItemStacksEqual(inventory[entry.slot], entry.stack)) return false;
+            if (
+                entry.slot < 0 || entry.slot >= inventory.length
+                    || seen[entry.slot]
+                    || !ItemStack.areItemStacksEqual(inventory[entry.slot], entry.stack)
+            ) return false;
             seen[entry.slot] = true;
         }
         List<Entry> sorted = new ArrayList<>(entries);
-        sorted.sort(
-            Comparator.comparingInt(
-                (Entry entry) -> entry.group()
-                    .equals(firstGroup) ? 0 : 1)
-                .thenComparingInt(entry -> entry.status)
-                .thenComparingInt(entry -> entry.circuit)
-                .thenComparingInt(entry -> entry.mold));
+        sorted.sort(Comparator.comparingInt((Entry entry) -> entry.group().equals(firstGroup) ? 0 : 1)
+            .thenComparingInt(entry -> entry.status).thenComparingInt(entry -> entry.circuit)
+            .thenComparingInt(entry -> entry.mold));
         List<ItemStack> original = new ArrayList<>();
         for (Entry entry : sorted) original.add(inventory[entry.slot]);
         for (int i = 0; i < entries.size(); i++) inventory[entries.get(i).slot] = original.get(i);

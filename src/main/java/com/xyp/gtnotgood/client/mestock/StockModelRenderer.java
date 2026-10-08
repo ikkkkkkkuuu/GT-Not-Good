@@ -49,12 +49,8 @@ public final class StockModelRenderer implements ISimpleBlockRenderingHandler {
         Map<String, IIcon> registered = new HashMap<>();
         JsonObject bindings = readJson("texture_bindings");
         for (Map.Entry<String, JsonElement> entry : bindings.entrySet()) {
-            registered.put(
-                entry.getKey(),
-                register.registerIcon(
-                    ModList.GTNotGood.getResourcePath(
-                        entry.getValue()
-                            .getAsString())));
+            registered.put(entry.getKey(),
+                register.registerIcon(ModList.GTNotGood.getResourcePath(entry.getValue().getAsString())));
         }
         textures = Collections.unmodifiableMap(registered);
     }
@@ -84,34 +80,15 @@ public final class StockModelRenderer implements ISimpleBlockRenderingHandler {
     public static void inventory(String model) {
         Tessellator tess = Tessellator.instance;
         tess.startDrawingQuads();
-        draw(
-            model,
-            0,
-            0,
-            0,
-            ForgeDirection.EAST,
-            ForgeDirection.UP,
-            ForgeDirection.SOUTH,
-            0xf000f0,
-            AEColor.Transparent,
-            true);
+        draw(model, 0, 0, 0, ForgeDirection.EAST, ForgeDirection.UP, ForgeDirection.SOUTH, 0xf000f0,
+            AEColor.Transparent, true);
         tess.draw();
     }
 
     public static void part(String model, int x, int y, int z, IPartRenderHelper helper, RenderBlocks renderer,
         AEColor color) {
-        draw(
-            model,
-            x + 0.5,
-            y + 0.5,
-            z + 0.5,
-            helper.getWorldX(),
-            helper.getWorldY(),
-            helper.getWorldZ(),
-            helper.getBlock()
-                .getMixedBrightnessForBlock(renderer.blockAccess, x, y, z),
-            color,
-            false);
+        draw(model, x + 0.5, y + 0.5, z + 0.5, helper.getWorldX(), helper.getWorldY(), helper.getWorldZ(),
+            helper.getBlock().getMixedBrightnessForBlock(renderer.blockAccess, x, y, z), color, false);
     }
 
     @Override
@@ -127,16 +104,8 @@ public final class StockModelRenderer implements ISimpleBlockRenderingHandler {
             : forward.offsetZ == -1 ? ForgeDirection.WEST
                 : forward.offsetX == 1 ? ForgeDirection.NORTH : ForgeDirection.SOUTH;
         boolean active = world.getTileEntity(x, y, z) instanceof TileMERequester requester && requester.renderActive();
-        draw(
-            active ? "merequester:block/requester_active" : "merequester:block/requester",
-            x + 0.5,
-            y + 0.5,
-            z + 0.5,
-            right,
-            ForgeDirection.UP,
-            forward,
-            block.getMixedBrightnessForBlock(world, x, y, z),
-            AEColor.Transparent,
+        draw(active ? "merequester:block/requester_active" : "merequester:block/requester", x + 0.5, y + 0.5, z + 0.5,
+            right, ForgeDirection.UP, forward, block.getMixedBrightnessForBlock(world, x, y, z), AEColor.Transparent,
             false);
         return true;
     }
@@ -172,19 +141,15 @@ public final class StockModelRenderer implements ISimpleBlockRenderingHandler {
             float shade = inventory || !quad.shade || quad.fullBright ? 1
                 : ny > 0 ? 1 : ny < 0 ? 0.5f : nz != 0 ? 0.8f : 0.6f;
             tess.setBrightness(quad.fullBright ? 0xf000f0 : brightness);
-            tess.setColorOpaque_F(
-                (tint >> 16 & 255) / 255f * shade,
-                (tint >> 8 & 255) / 255f * shade,
+            tess.setColorOpaque_F((tint >> 16 & 255) / 255f * shade, (tint >> 8 & 255) / 255f * shade,
                 (tint & 255) / 255f * shade);
             tess.setNormal(nx, ny, nz);
             for (int vertex = 0; vertex < 4; vertex++) {
                 double vx = quad.vertices[vertex * 3], vy = quad.vertices[vertex * 3 + 1],
                     vz = quad.vertices[vertex * 3 + 2];
-                tess.addVertexWithUV(
-                    x + vx * right.offsetX + vy * up.offsetX + vz * forward.offsetX,
+                tess.addVertexWithUV(x + vx * right.offsetX + vy * up.offsetX + vz * forward.offsetX,
                     y + vx * right.offsetY + vy * up.offsetY + vz * forward.offsetY,
-                    z + vx * right.offsetZ + vy * up.offsetZ + vz * forward.offsetZ,
-                    quad.uv[vertex * 2],
+                    z + vx * right.offsetZ + vy * up.offsetZ + vz * forward.offsetZ, quad.uv[vertex * 2],
                     quad.uv[vertex * 2 + 1]);
             }
         }
@@ -197,24 +162,17 @@ public final class StockModelRenderer implements ISimpleBlockRenderingHandler {
         for (JsonElement value : definition.getAsJsonArray("elements")) {
             JsonObject element = value.getAsJsonObject();
             double[] from = vector(element.getAsJsonArray("from")), to = vector(element.getAsJsonArray("to"));
-            for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject("faces")
-                .entrySet()) {
-                ForgeDirection face = ForgeDirection.valueOf(
-                    entry.getKey()
-                        .toUpperCase(Locale.ROOT));
-                JsonObject details = entry.getValue()
-                    .getAsJsonObject();
-                String texture = details.get("texture")
-                    .getAsString();
+            for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject("faces").entrySet()) {
+                ForgeDirection face = ForgeDirection.valueOf(entry.getKey().toUpperCase(Locale.ROOT));
+                JsonObject details = entry.getValue().getAsJsonObject();
+                String texture = details.get("texture").getAsString();
                 for (int depth = 0; texture.startsWith("#") && depth < 16; depth++)
-                    texture = bindings.get(texture.substring(1))
-                        .getAsString();
+                    texture = bindings.get(texture.substring(1)).getAsString();
                 IIcon icon = icon(texture);
                 double[] uv = details.has("uv") ? vector(details.getAsJsonArray("uv")) : defaultUV(face, from, to);
                 double[] vertices = vertices(face, from, to);
                 double[] spriteUV = new double[8];
-                int rotation = details.has("rotation") ? details.get("rotation")
-                    .getAsInt() / 90 : 0;
+                int rotation = details.has("rotation") ? details.get("rotation").getAsInt() / 90 : 0;
                 for (int vertex = 0; vertex < 4; vertex++) {
                     int corner = (vertex + rotation) & 3;
                     spriteUV[vertex * 2] = icon.getInterpolatedU(corner < 2 ? uv[0] : uv[2]);
@@ -228,18 +186,10 @@ public final class StockModelRenderer implements ISimpleBlockRenderingHandler {
                 ForgeDirection normal = face == ForgeDirection.UP || face == ForgeDirection.DOWN ? face
                     : face.getOpposite();
                 JsonObject light = details.getAsJsonObject("neoforge_data");
-                quads.add(
-                    new Quad(
-                        vertices,
-                        spriteUV,
-                        normal,
-                        details.has("tintindex") ? details.get("tintindex")
-                            .getAsInt() : -1,
-                        !element.has("shade") || element.get("shade")
-                            .getAsBoolean(),
-                        light != null && light.has("block_light")
-                            && light.get("block_light")
-                                .getAsInt() > 0));
+                quads.add(new Quad(vertices, spriteUV, normal,
+                    details.has("tintindex") ? details.get("tintindex").getAsInt() : -1,
+                    !element.has("shade") || element.get("shade").getAsBoolean(),
+                    light != null && light.has("block_light") && light.get("block_light").getAsInt() > 0));
             }
         }
         Quad[] result = quads.toArray(new Quad[0]);
@@ -251,22 +201,19 @@ public final class StockModelRenderer implements ISimpleBlockRenderingHandler {
         if (cached != null) return cached;
         JsonObject own = readJson(identifier.replace(':', '/'));
         JsonObject result = new JsonObject(), textures = new JsonObject();
-        if (own.has("parent") && !own.get("parent")
-            .getAsString()
-            .startsWith("minecraft:")
-            && own.get("parent")
-                .getAsString()
-                .contains(":")) {
-            JsonObject parent = definition(
-                own.get("parent")
-                    .getAsString());
+        if (
+            own.has("parent") && !own.get("parent").getAsString().startsWith("minecraft:")
+                && own.get("parent").getAsString().contains(":")
+        ) {
+            JsonObject parent = definition(own.get("parent").getAsString());
             for (Map.Entry<String, JsonElement> entry : parent.entrySet()) result.add(entry.getKey(), entry.getValue());
-            if (parent.has("textures")) for (Map.Entry<String, JsonElement> entry : parent.getAsJsonObject("textures")
-                .entrySet()) textures.add(entry.getKey(), entry.getValue());
+            if (parent.has("textures"))
+                for (Map.Entry<String, JsonElement> entry : parent.getAsJsonObject("textures").entrySet())
+                    textures.add(entry.getKey(), entry.getValue());
         }
         for (Map.Entry<String, JsonElement> entry : own.entrySet()) result.add(entry.getKey(), entry.getValue());
-        if (own.has("textures")) for (Map.Entry<String, JsonElement> entry : own.getAsJsonObject("textures")
-            .entrySet()) textures.add(entry.getKey(), entry.getValue());
+        if (own.has("textures")) for (Map.Entry<String, JsonElement> entry : own.getAsJsonObject("textures").entrySet())
+            textures.add(entry.getKey(), entry.getValue());
         result.add("textures", textures);
         definitions.put(identifier, result);
         return result;
@@ -276,8 +223,7 @@ public final class StockModelRenderer implements ISimpleBlockRenderingHandler {
         try (InputStream stream = StockModelRenderer.class
             .getResourceAsStream("/META-INF/me-stock-port/models/" + path + ".json")) {
             if (stream == null) throw new IllegalStateException("Missing stock model: " + path);
-            return new JsonParser().parse(new InputStreamReader(stream, StandardCharsets.UTF_8))
-                .getAsJsonObject();
+            return new JsonParser().parse(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
         } catch (Exception error) {
             throw new IllegalStateException("Cannot load stock model: " + path, error);
         }
@@ -285,8 +231,7 @@ public final class StockModelRenderer implements ISimpleBlockRenderingHandler {
 
     private static double[] vector(JsonArray values) {
         double[] result = new double[values.size()];
-        for (int i = 0; i < result.length; i++) result[i] = values.get(i)
-            .getAsDouble();
+        for (int i = 0; i < result.length; i++) result[i] = values.get(i).getAsDouble();
         return result;
     }
 

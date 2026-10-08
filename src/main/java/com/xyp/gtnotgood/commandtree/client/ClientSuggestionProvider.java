@@ -13,6 +13,9 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.client.C14PacketTabComplete;
+import com.xyp.gtnotgood.commandtree.shadow.brigadier.context.StringRange;
+import com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion.Suggestion;
+import net.minecraft.client.gui.GuiPlayerInfo;
 
 /** Requests vanilla server tab completions for Brigadier's asynchronous suggestions. */
 public class ClientSuggestionProvider implements ISuggestionProvider {
@@ -30,9 +33,9 @@ public class ClientSuggestionProvider implements ISuggestionProvider {
       List<String> list = Lists.newArrayList();
       if (this.mc.thePlayer != null && this.mc.thePlayer.sendQueue != null) {
          @SuppressWarnings("unchecked")
-         List<net.minecraft.client.gui.GuiPlayerInfo> playerInfoList =
-             (List<net.minecraft.client.gui.GuiPlayerInfo>) this.mc.thePlayer.sendQueue.playerInfoList;
-         for (net.minecraft.client.gui.GuiPlayerInfo info : playerInfoList) {
+         List<GuiPlayerInfo> playerInfoList =
+             (List<GuiPlayerInfo>) this.mc.thePlayer.sendQueue.playerInfoList;
+         for (GuiPlayerInfo info : playerInfoList) {
             list.add(info.name);
          }
       }
@@ -62,11 +65,11 @@ public class ClientSuggestionProvider implements ISuggestionProvider {
       if (request == null) return;
       int lastSpace = request.command.lastIndexOf(' ');
       int start = lastSpace < 0 ? 0 : lastSpace + 1;
-      com.xyp.gtnotgood.commandtree.shadow.brigadier.context.StringRange range =
-          com.xyp.gtnotgood.commandtree.shadow.brigadier.context.StringRange.between(start, request.command.length());
-      List<com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion.Suggestion> suggestions = Lists.newArrayList();
+      StringRange range =
+          StringRange.between(start, request.command.length());
+      List<Suggestion> suggestions = Lists.newArrayList();
       for (String match : matches) {
-         suggestions.add(new com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion.Suggestion(range, match));
+         suggestions.add(new Suggestion(range, match));
       }
       request.future.complete(new Suggestions(range, suggestions));
    }

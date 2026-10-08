@@ -59,8 +59,7 @@ public final class NetworkBlockRenderer implements ISimpleBlockRenderingHandler 
         renderer.renderStandardBlock(block, x, y, z);
         for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
             if (!network.connects(world, x, y, z, direction)) continue;
-            renderer.setRenderBounds(
-                direction.offsetX < 0 ? 0 : direction.offsetX > 0 ? high : 0.3125,
+            renderer.setRenderBounds(direction.offsetX < 0 ? 0 : direction.offsetX > 0 ? high : 0.3125,
                 direction.offsetY < 0 ? 0 : direction.offsetY > 0 ? high : 0.3125,
                 direction.offsetZ < 0 ? 0 : direction.offsetZ > 0 ? high : 0.3125,
                 direction.offsetX > 0 ? 1 : direction.offsetX < 0 ? low : 0.6875,

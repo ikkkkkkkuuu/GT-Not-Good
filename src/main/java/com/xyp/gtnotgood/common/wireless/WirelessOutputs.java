@@ -74,30 +74,24 @@ public final class WirelessOutputs {
         BigInteger guaranteed = count.multiply(BigInteger.valueOf(chance / 10000));
         int fraction = chance % 10000;
         if (fraction == 0) return guaranteed;
-        if (count.bitLength() < 32) return guaranteed.add(
-            BigInteger
-                .valueOf(ParallelHelper.calculateIntegralChancedOutputMultiplier(fraction, count.intValueExact())));
+        if (count.bitLength() < 32) return guaranteed.add(BigInteger
+            .valueOf(ParallelHelper.calculateIntegralChancedOutputMultiplier(fraction, count.intValueExact())));
         // Native GT also uses a normal approximation at large sample sizes. Keep the mean and variance in big
         // arithmetic so extremely large counts cannot become infinity or lose their low digits via a double cast.
-        BigInteger mean = count.multiply(BigInteger.valueOf(fraction))
-            .divide(BigInteger.valueOf(10000));
+        BigInteger mean = count.multiply(BigInteger.valueOf(fraction)).divide(BigInteger.valueOf(10000));
         BigInteger variance = count.multiply(BigInteger.valueOf((long) fraction * (10000 - fraction)))
             .divide(BigInteger.valueOf(100000000));
         BigInteger stdDev = sqrt(variance);
         BigInteger noise = new BigDecimal(stdDev).multiply(BigDecimal.valueOf(XSTR.XSTR_INSTANCE.nextGaussian()))
             .toBigInteger();
-        return guaranteed.add(
-            mean.add(noise)
-                .max(BigInteger.ZERO)
-                .min(count));
+        return guaranteed.add(mean.add(noise).max(BigInteger.ZERO).min(count));
     }
 
     private static BigInteger sqrt(BigInteger value) {
         if (value.signum() == 0) return BigInteger.ZERO;
         BigInteger current = BigInteger.ONE.shiftLeft((value.bitLength() + 1) / 2);
         while (true) {
-            BigInteger next = current.add(value.divide(current))
-                .shiftRight(1);
+            BigInteger next = current.add(value.divide(current)).shiftRight(1);
             if (next.compareTo(current) >= 0) return current;
             current = next;
         }
@@ -117,8 +111,7 @@ public final class WirelessOutputs {
     public boolean flush(MTEMultiBlockBase machine) {
         BigInteger largest = largest();
         if (largest.signum() == 0) return true;
-        int high = largest.min(BigInteger.valueOf(Integer.MAX_VALUE))
-            .intValueExact();
+        int high = largest.min(BigInteger.valueOf(Integer.MAX_VALUE)).intValueExact();
         if (transfer(machine, largest, high, false)) {
             transfer(machine, largest, high, true);
             return largest().signum() == 0;
@@ -137,30 +130,28 @@ public final class WirelessOutputs {
 
     private static int slice(BigInteger amount, BigInteger largest, int units) {
         if (amount.signum() == 0) return 0;
-        return amount.multiply(BigInteger.valueOf(units))
-            .divide(largest)
-            .max(BigInteger.ONE)
-            .intValueExact();
+        return amount.multiply(BigInteger.valueOf(units)).divide(largest).max(BigInteger.ONE).intValueExact();
     }
 
     private boolean transfer(MTEMultiBlockBase machine, BigInteger largest, int units, boolean commit) {
         ItemEjectionHelper itemHelper = new ItemEjectionHelper(machine.getOutputBusses(), machine.protectsExcessItem());
-        FluidEjectionHelper fluidHelper = new FluidEjectionHelper(
-            machine.getOutputHatches(),
+        FluidEjectionHelper fluidHelper = new FluidEjectionHelper(machine.getOutputHatches(),
             machine.protectsExcessFluid());
         int[] itemSlice = new int[items.length];
         int[] fluidSlice = new int[fluids.length];
         for (int i = 0; i < items.length; i++) {
             itemSlice[i] = slice(itemAmounts[i], largest, units);
-            if (itemSlice[i] > 0
-                && itemHelper.ejectItems(Collections.singletonList(items[i]), itemSlice[i]) != itemSlice[i])
-                return false;
+            if (
+                itemSlice[i] > 0
+                    && itemHelper.ejectItems(Collections.singletonList(items[i]), itemSlice[i]) != itemSlice[i]
+            ) return false;
         }
         for (int i = 0; i < fluids.length; i++) {
             fluidSlice[i] = slice(fluidAmounts[i], largest, units);
-            if (fluidSlice[i] > 0
-                && fluidHelper.ejectFluids(Collections.singletonList(fluids[i]), fluidSlice[i]) != fluidSlice[i])
-                return false;
+            if (
+                fluidSlice[i] > 0
+                    && fluidHelper.ejectFluids(Collections.singletonList(fluids[i]), fluidSlice[i]) != fluidSlice[i]
+            ) return false;
         }
         if (commit) {
             itemHelper.commit();
@@ -201,16 +192,10 @@ public final class WirelessOutputs {
         for (int i = 0; i < fluids.length; i++)
             fluids[i] = FluidStack.loadFluidStackFromNBT(fluidTags.getCompoundTagAt(i));
         WirelessOutputs result = new WirelessOutputs(items, fluids);
-        for (int i = 0; i < items.length; i++) if (itemTags.getCompoundTagAt(i)
-            .hasKey("amount", 8))
-            result.itemAmounts[i] = new BigInteger(
-                itemTags.getCompoundTagAt(i)
-                    .getString("amount"));
-        for (int i = 0; i < fluids.length; i++) if (fluidTags.getCompoundTagAt(i)
-            .hasKey("bigAmount", 8))
-            result.fluidAmounts[i] = new BigInteger(
-                fluidTags.getCompoundTagAt(i)
-                    .getString("bigAmount"));
+        for (int i = 0; i < items.length; i++) if (itemTags.getCompoundTagAt(i).hasKey("amount", 8))
+            result.itemAmounts[i] = new BigInteger(itemTags.getCompoundTagAt(i).getString("amount"));
+        for (int i = 0; i < fluids.length; i++) if (fluidTags.getCompoundTagAt(i).hasKey("bigAmount", 8))
+            result.fluidAmounts[i] = new BigInteger(fluidTags.getCompoundTagAt(i).getString("bigAmount"));
         return result;
     }
 }

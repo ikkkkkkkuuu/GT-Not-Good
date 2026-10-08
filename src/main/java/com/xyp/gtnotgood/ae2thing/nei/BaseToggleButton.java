@@ -14,7 +14,6 @@ public class BaseToggleButton extends OptionToggleButton {
 
     public BaseToggleButton(String name, boolean defaultValue) {
         super(name, true);
-        tag.getTag(name)
-            .getBooleanValue(defaultValue);
+        tag.getTag(name).getBooleanValue(defaultValue);
     }
 }

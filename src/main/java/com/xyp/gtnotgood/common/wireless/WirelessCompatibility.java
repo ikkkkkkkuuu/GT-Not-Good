@@ -25,17 +25,13 @@ import gregtech.api.metatileentity.implementations.MTEMultiBlockBase;
  */
 public final class WirelessCompatibility {
 
-    private static final Set<String> CONTROLLERS = new HashSet<>(
-        Arrays.asList(
-            MTEMultiBlockBase.class.getName(),
-            "com.Nxer.TwistSpaceTechnology.common.machine.multiMachineClasses.GTCM_MultiMachineBase",
-            "com.science.gtnl.common.machine.multiMachineBase.MultiMachineBase",
-            "com.science.gtnl.common.machine.multiMachineBase.GTMMultiMachineBase"));
-    private static final Set<String> HELPERS = new HashSet<>(
-        Arrays.asList(
-            ProcessingLogic.class.getName(),
-            "com.Nxer.TwistSpaceTechnology.common.machine.multiMachineClasses.processingLogics.GTCM_ProcessingLogic",
-            "com.science.gtnl.utils.recipes.GTNLProcessingLogic"));
+    private static final Set<String> CONTROLLERS = new HashSet<>(Arrays.asList(MTEMultiBlockBase.class.getName(),
+        "com.Nxer.TwistSpaceTechnology.common.machine.multiMachineClasses.GTCM_MultiMachineBase",
+        "com.science.gtnl.common.machine.multiMachineBase.MultiMachineBase",
+        "com.science.gtnl.common.machine.multiMachineBase.GTMMultiMachineBase"));
+    private static final Set<String> HELPERS = new HashSet<>(Arrays.asList(ProcessingLogic.class.getName(),
+        "com.Nxer.TwistSpaceTechnology.common.machine.multiMachineClasses.processingLogics.GTCM_ProcessingLogic",
+        "com.science.gtnl.utils.recipes.GTNLProcessingLogic"));
     private static final ClassValue<Boolean> CONTROLLER_SUPPORT = new ClassValue<Boolean>() {
 
         @Override
@@ -70,16 +66,12 @@ public final class WirelessCompatibility {
         for (Class<?> current = type; current != null; current = current.getSuperclass()) {
             try {
                 Method method = current.getDeclaredMethod(name, args);
-                return method.getDeclaringClass()
-                    .getName();
+                return method.getDeclaringClass().getName();
             } catch (NoSuchMethodException ignored) {} catch (LinkageError unavailableOptionalApi) {
                 // Reflection resolves every method signature, including unrelated optional integration types.
                 // Reading the declaration avoids turning an absent optional API into a controller rejection.
-                GTNotGood.LOG.warn(
-                    "Wireless declaration reflection failed for {}.{}; reading class bytes: {}",
-                    current.getName(),
-                    name,
-                    unavailableOptionalApi.toString());
+                GTNotGood.LOG.warn("Wireless declaration reflection failed for {}.{}; reading class bytes: {}",
+                    current.getName(), name, unavailableOptionalApi.toString());
                 return declaringFromBytes(current, name, args);
             }
         }
@@ -92,9 +84,8 @@ public final class WirelessCompatibility {
         signature.append(')');
         for (Class<?> current = type; current != null; current = current.getSuperclass()) {
             boolean[] found = { false };
-            try (InputStream bytes = current.getResourceAsStream(
-                "/" + current.getName()
-                    .replace('.', '/') + ".class")) {
+            try (
+                InputStream bytes = current.getResourceAsStream("/" + current.getName().replace('.', '/') + ".class")) {
                 if (bytes == null) return "";
                 new ClassReader(bytes).accept(new ClassVisitor(asmApi()) {
 
@@ -107,8 +98,8 @@ public final class WirelessCompatibility {
                 }, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                 if (found[0]) return current.getName();
             } catch (IOException | RuntimeException unavailableClassBytes) {
-                GTNotGood.LOG
-                    .warn("Cannot inspect wireless entry point {}.{}", current.getName(), name, unavailableClassBytes);
+                GTNotGood.LOG.warn("Cannot inspect wireless entry point {}.{}", current.getName(), name,
+                    unavailableClassBytes);
                 return "";
             }
         }
@@ -118,8 +109,7 @@ public final class WirelessCompatibility {
     /** Forge's compile API is ASM 5; the Java 17+ launcher supplies ASM 9 for multi-release class files. */
     private static int asmApi() {
         try {
-            return Opcodes.class.getField("ASM9")
-                .getInt(null);
+            return Opcodes.class.getField("ASM9").getInt(null);
         } catch (ReflectiveOperationException olderAsm) {
             return Opcodes.ASM5;
         }

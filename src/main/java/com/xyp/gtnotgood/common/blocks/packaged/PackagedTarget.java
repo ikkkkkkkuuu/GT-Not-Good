@@ -21,12 +21,12 @@ public final class PackagedTarget {
     }
 
     public TileEntity resolve(World world) {
-        if (world == null || world.provider.dimensionId != dimension
-            || y < 0
-            || y >= world.getHeight()
-            || !world.getChunkProvider()
-                .chunkExists(x >> 4, z >> 4))
-            return null;
+        if (
+            world == null || world.provider.dimensionId != dimension
+                || y < 0
+                || y >= world.getHeight()
+                || !world.getChunkProvider().chunkExists(x >> 4, z >> 4)
+        ) return null;
         return world.getTileEntity(x, y, z);
     }
 

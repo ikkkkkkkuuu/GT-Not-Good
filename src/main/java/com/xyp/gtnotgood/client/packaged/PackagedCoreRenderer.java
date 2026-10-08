@@ -3,6 +3,8 @@
 // Upstream authors and exact source mappings: META-INF/ae2lt-port/CODE_PORT_NOTES.md
 package com.xyp.gtnotgood.client.packaged;
 
+import java.util.function.Supplier;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -24,10 +26,10 @@ import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 public final class PackagedCoreRenderer implements IItemRenderer {
 
     private final RenderItem renderer = new RenderItem();
-    private final java.util.function.Supplier<ItemStack> targetIcon;
+    private final Supplier<ItemStack> targetIcon;
 
     /** Uses the installed mod's controller icon without copying any of its textures. */
-    public PackagedCoreRenderer(java.util.function.Supplier<ItemStack> targetIcon) {
+    public PackagedCoreRenderer(Supplier<ItemStack> targetIcon) {
         this.targetIcon = targetIcon;
     }
 
@@ -56,18 +58,10 @@ public final class PackagedCoreRenderer implements IItemRenderer {
                 GL11.glScalef(.45f, .45f, .02f);
             } else {
                 if (type == ItemRenderType.ENTITY) GL11.glTranslatef(-.5f, -.5f, 0);
-                mc.getTextureManager()
-                    .bindTexture(TextureMap.locationItemsTexture);
+                mc.getTextureManager().bindTexture(TextureMap.locationItemsTexture);
                 IIcon icon = base.getIconIndex();
-                ItemRenderer.renderItemIn2D(
-                    Tessellator.instance,
-                    icon.getMaxU(),
-                    icon.getMinV(),
-                    icon.getMinU(),
-                    icon.getMaxV(),
-                    icon.getIconWidth(),
-                    icon.getIconHeight(),
-                    .0625f);
+                ItemRenderer.renderItemIn2D(Tessellator.instance, icon.getMaxU(), icon.getMinV(), icon.getMinU(),
+                    icon.getMaxV(), icon.getIconWidth(), icon.getIconHeight(), .0625f);
                 GL11.glTranslatef(.78f, .22f, .07f);
                 GL11.glScalef(.45f / 16, -.45f / 16, .45f * .02f / 16);
                 GL11.glTranslatef(-8, -8, 0);

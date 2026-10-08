@@ -79,25 +79,17 @@ public final class FactoryCanvasWidget extends Widget<FactoryCanvasWidget> imple
         for (FactoryGraph.Node node : graph.nodes) {
             int x = positionX(node), y = positionY(node);
             if (x < 0 || y < 0 || x + WIDTH > getArea().width || y + HEIGHT > getArea().height) continue;
-            Gui.drawRect(
-                x,
-                y,
-                x + WIDTH,
-                y + HEIGHT,
-                node.id == linking ? 0xffdaa453
-                    : node.id == selected.getAsInt() ? 0xff62d8dd : node.target ? 0xffe6c15c : 0xff526780);
+            Gui.drawRect(x, y, x + WIDTH, y + HEIGHT, node.id == linking ? 0xffdaa453
+                : node.id == selected.getAsInt() ? 0xff62d8dd : node.target ? 0xffe6c15c : 0xff526780);
             Gui.drawRect(x + 1, y + 1, x + WIDTH - 1, y + HEIGHT - 1, 0xff24384e);
             FactoryRecipeCatalog.Entry entry = FactoryRecipeCatalog.get(node.recipe);
             String title = (node.target ? "★ " : "") + "#"
                 + node.id
                 + " "
-                + (entry == null ? FactoryText.EMPTY.text() : entry.title());
+                + (entry == null ? FactoryText.Empty.text() : entry.title());
             text(title, x + 4, y + 4, 0xffedf5ff);
-            text(
-                node.wholeLineBatch ? "OC " + node.overclocks : "P " + node.parallel + " / OC " + node.overclocks,
-                x + 4,
-                y + 16,
-                0xff9ccce3);
+            text(node.wholeLineBatch ? "OC " + node.overclocks : "P " + node.parallel + " / OC " + node.overclocks,
+                x + 4, y + 16, 0xff9ccce3);
             text(status.apply(node.id), x + 4, y + 28, 0xffb2d2b9);
         }
     }
@@ -132,9 +124,11 @@ public final class FactoryCanvasWidget extends Widget<FactoryCanvasWidget> imple
         int x = getContext().getMouseX(), y = getContext().getMouseY();
         FactoryGraph.Node hit = null;
         for (FactoryGraph.Node node : graph.nodes) {
-            if (x >= positionX(node) && x < positionX(node) + WIDTH
-                && y >= positionY(node)
-                && y < positionY(node) + HEIGHT) hit = node;
+            if (
+                x >= positionX(node) && x < positionX(node) + WIDTH
+                    && y >= positionY(node)
+                    && y < positionY(node) + HEIGHT
+            ) hit = node;
         }
         if (button == 1) {
             if (hit == null) linking = -1;

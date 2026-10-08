@@ -53,12 +53,8 @@ public class EffectTextLayout {
             }
             glyphs.add(new Glyph(visible, formatting, token.style(), glyphWidth, token.start(), token.end()));
         }
-        return new Layout(
-            ImmutableList.copyOf(glyphs),
-            Math.max(width, lineWidth),
-            fontHeight(font),
-            parameters.getGlyphSpacing(),
-            lines);
+        return new Layout(ImmutableList.copyOf(glyphs), Math.max(width, lineWidth), fontHeight(font),
+            parameters.getGlyphSpacing(), lines);
     }
 
     public static float fontHeight(FontRenderer font) {
@@ -66,10 +62,7 @@ public class EffectTextLayout {
     }
 
     private static Cursor cursor(String text) {
-        return new Cursor(
-            text,
-            FontRendering::preprocessText,
-            FontRendering.hexColorResetsStyles(),
+        return new Cursor(text, FontRendering::preprocessText, FontRendering.hexColorResetsStyles(),
             identifier -> TextEffectRegistry.get(identifier) != null);
     }
 
@@ -88,10 +81,8 @@ public class EffectTextLayout {
         boolean spaced = false;
         int lastSpace = -1;
         for (Glyph glyph : layout.glyphs()) {
-            if (glyph.text()
-                .equals("\n")) return glyph.sourceStart();
-            if (glyph.text()
-                .equals(" ")) lastSpace = glyph.sourceStart();
+            if (glyph.text().equals("\n")) return glyph.sourceStart();
+            if (glyph.text().equals(" ")) lastSpace = glyph.sourceStart();
             used += glyph.width() + (spaced && glyph.width() > 0 ? layout.spacing() : 0);
             if (Math.ceil(used) > Math.max(0, width)) return lastSpace >= 0 ? lastSpace : glyph.sourceStart();
             spaced |= glyph.width() > 0;
@@ -103,8 +94,7 @@ public class EffectTextLayout {
         Cursor cursor = cursor(text);
         int last = -1;
         for (Token token; (token = cursor.next()) != null;) {
-            if (!token.formattingCode() && token.text()
-                .equals(" ")) last = token.start();
+            if (!token.formattingCode() && token.text().equals(" ")) last = token.start();
         }
         return last;
     }
@@ -119,8 +109,7 @@ public class EffectTextLayout {
         boolean spaced = false;
         while (reverse ? start > 0 : end < glyphs.size()) {
             Glyph glyph = glyphs.get(reverse ? start - 1 : end);
-            if (glyph.text()
-                .equals("\n")) break;
+            if (glyph.text().equals("\n")) break;
             float next = used + glyph.width() + (spaced && glyph.width() > 0 ? layout.spacing() : 0);
             if (Math.ceil(next) > width) break;
             used = next;
@@ -130,16 +119,10 @@ public class EffectTextLayout {
         }
         if (reverse) {
             if (start == end) return "";
-            return text.substring(
-                start == 0 ? 0
-                    : glyphs.get(start - 1)
-                        .sourceEnd());
+            return text.substring(start == 0 ? 0 : glyphs.get(start - 1).sourceEnd());
         }
         // Chat and text fields use this length to slice the original source.
-        return text.substring(
-            0,
-            end < glyphs.size() ? glyphs.get(end)
-                .sourceStart() : text.length());
+        return text.substring(0, end < glyphs.size() ? glyphs.get(end).sourceStart() : text.length());
     }
 
     public static List<String> wrap(FontRenderer font, String text, int width) {
@@ -154,21 +137,17 @@ public class EffectTextLayout {
             boolean spaced = false;
             while (end < glyphs.size()) {
                 Glyph glyph = glyphs.get(end);
-                if (glyph.text()
-                    .equals("\n")) break;
+                if (glyph.text().equals("\n")) break;
                 float next = used + glyph.width() + (spaced && glyph.width() > 0 ? layout.spacing() : 0);
                 if (Math.ceil(next) > Math.max(0, width) && end > start) break;
-                if (glyph.text()
-                    .equals(" ")) lastSpace = end;
+                if (glyph.text().equals(" ")) lastSpace = end;
                 used = next;
                 spaced |= glyph.width() > 0;
                 end++;
             }
             int next = end;
             if (end < glyphs.size()) {
-                if (glyphs.get(end)
-                    .text()
-                    .equals("\n")) next++;
+                if (glyphs.get(end).text().equals("\n")) next++;
                 else if (lastSpace >= start) {
                     end = lastSpace;
                     next = lastSpace + 1;
@@ -177,9 +156,7 @@ public class EffectTextLayout {
             lines.add(encode(glyphs, start, end));
             start = next;
         }
-        if (glyphs.isEmpty() || glyphs.get(glyphs.size() - 1)
-            .text()
-            .equals("\n")) lines.add("");
+        if (glyphs.isEmpty() || glyphs.get(glyphs.size() - 1).text().equals("\n")) lines.add("");
         return lines;
     }
 
@@ -195,8 +172,7 @@ public class EffectTextLayout {
                 active = null;
             }
             if (formattingChanged) {
-                if (formatting != null) result.append('\u00a7')
-                    .append('r');
+                if (formatting != null) result.append('\u00a7').append('r');
                 formatting = glyph.formatting();
                 result.append(formatting);
             }
@@ -217,8 +193,7 @@ public class EffectTextLayout {
         boolean spaced = false;
         for (int start = 0; start < glyphs.size();) {
             Glyph first = glyphs.get(start);
-            if (first.text()
-                .equals("\n")) {
+            if (first.text().equals("\n")) {
                 x = 0;
                 y += height;
                 spaced = false;
@@ -230,11 +205,10 @@ public class EffectTextLayout {
             StringBuilder text = new StringBuilder(first.formatting());
             while (end < glyphs.size()) {
                 Glyph glyph = glyphs.get(end);
-                if (glyph.text()
-                    .equals("\n") || !Objects.equals(glyph.style(), first.style())
-                    || !glyph.formatting()
-                        .equals(first.formatting()))
-                    break;
+                if (
+                    glyph.text().equals("\n") || !Objects.equals(glyph.style(), first.style())
+                        || !glyph.formatting().equals(first.formatting())
+                ) break;
                 if (end > start && glyph.width() > 0) width += spacing;
                 width += glyph.width();
                 text.append(glyph.text());

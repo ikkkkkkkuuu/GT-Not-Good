@@ -29,16 +29,20 @@ public abstract class MatrixWildcardPatternOptimizationMixin {
     private Object gtng$findWildcardTemplate(ItemStackMap<?> lookup, ItemStack physicalPattern,
         Operation<Object> original) {
         Object exact = original.call(lookup, physicalPattern);
-        if (exact != null || !WildcardPatternGenerator.isWildcardPattern(physicalPattern)
-            || WildcardPatternGenerator.isGeneratedPattern(physicalPattern)) return exact;
+        if (
+            exact != null || !WildcardPatternGenerator.isWildcardPattern(physicalPattern)
+                || WildcardPatternGenerator.isGeneratedPattern(physicalPattern)
+        ) return exact;
 
         Pair<?, ?> selected = null;
         int multiplier = 0;
         for (ItemStackMap.Entry<?> entry : lookup.entries()) {
-            if (!WildcardPatternGenerator.isGeneratedPattern(entry.key) || !sameTemplate(physicalPattern, entry.key)
-                || !(entry.value instanceof Pair<?, ?>candidate)
-                || !(candidate.getRight() instanceof Integer bits)
-                || bits <= multiplier) continue;
+            if (
+                !WildcardPatternGenerator.isGeneratedPattern(entry.key) || !sameTemplate(physicalPattern, entry.key)
+                    || !(entry.value instanceof Pair<?, ?>candidate)
+                    || !(candidate.getRight() instanceof Integer bits)
+                    || bits <= multiplier
+            ) continue;
             selected = candidate;
             multiplier = bits;
         }
@@ -57,8 +61,7 @@ public abstract class MatrixWildcardPatternOptimizationMixin {
 
     private static NBTTagCompound templateTag(ItemStack stack) {
         NBTTagCompound tag = stack.getTagCompound() == null ? new NBTTagCompound()
-            : (NBTTagCompound) stack.getTagCompound()
-                .copy();
+            : (NBTTagCompound) stack.getTagCompound().copy();
         tag.removeTag("in");
         tag.removeTag("out");
         tag.removeTag("crafting");

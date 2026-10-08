@@ -48,9 +48,9 @@ public abstract class LargeInterfaceTerminalEntryMixin {
     @Unique
     private boolean largeinterface$isLargeInterface() {
         if (selfRep == null) return false;
-        ItemStack block = GTNGItemList.LargeInterface.getInternalStack_unsafe();
-        ItemStack part = GTNGItemList.LargeInterfacePart.getInternalStack_unsafe();
-        ItemStack matrix = GTNGItemList.AssemblerMatrix.getInternalStack_unsafe();
+        ItemStack block = GTNGItemList.LargeInterface.getInternalStackUnsafe();
+        ItemStack part = GTNGItemList.LargeInterfacePart.getInternalStackUnsafe();
+        ItemStack matrix = GTNGItemList.AssemblerMatrix.getInternalStackUnsafe();
         return (block != null && selfRep.isItemEqual(block)) || (part != null && selfRep.isItemEqual(part))
             || (matrix != null && selfRep.isItemEqual(matrix));
     }

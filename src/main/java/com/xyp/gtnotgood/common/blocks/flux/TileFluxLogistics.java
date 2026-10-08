@@ -1,8 +1,11 @@
 package com.xyp.gtnotgood.common.blocks.flux;
 
 import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -142,10 +145,7 @@ public final class TileFluxLogistics extends TileMEBridgeReceiver {
             if (target == null || target instanceof TileFluxLogistics) return;
             ForgeDirection input = outputSide().getOpposite();
             IInventory inventory = target instanceof IInventory slots ? slots : null;
-            if (worldObj.getBlock(
-                target.xCoord,
-                target.yCoord,
-                target.zCoord) instanceof net.minecraft.block.BlockChest chest) {
+            if (worldObj.getBlock(target.xCoord, target.yCoord, target.zCoord) instanceof BlockChest chest) {
                 inventory = chest.func_149951_m(worldObj, target.xCoord, target.yCoord, target.zCoord);
             }
             if (importing) {
@@ -170,22 +170,14 @@ public final class TileFluxLogistics extends TileMEBridgeReceiver {
     private void returnPending() throws GridAccessException {
         MachineSource source = new MachineSource(this);
         if (pendingItem != null) {
-            var remainder = Platform.poweredInsert(
-                getProxy().getEnergy(),
-                getProxy().getStorage()
-                    .getItemInventory(),
-                AEItemStack.create(pendingItem),
-                source);
+            var remainder = Platform.poweredInsert(getProxy().getEnergy(), getProxy().getStorage().getItemInventory(),
+                AEItemStack.create(pendingItem), source);
             pendingItem = remainder == null ? null : remainder.getItemStack();
             markDirty();
         }
         if (pendingFluid != null) {
-            var remainder = Platform.poweredInsert(
-                getProxy().getEnergy(),
-                getProxy().getStorage()
-                    .getFluidInventory(),
-                AEFluidStack.create(pendingFluid),
-                source);
+            var remainder = Platform.poweredInsert(getProxy().getEnergy(), getProxy().getStorage().getFluidInventory(),
+                AEFluidStack.create(pendingFluid), source);
             pendingFluid = remainder == null ? null : remainder.getFluidStack();
             markDirty();
         }
@@ -203,12 +195,8 @@ public final class TileFluxLogistics extends TileMEBridgeReceiver {
         if (capacity == 0) return;
         var request = AEItemStack.create(filter);
         request.setStackSize(capacity);
-        var extracted = Platform.poweredExtraction(
-            getProxy().getEnergy(),
-            getProxy().getStorage()
-                .getItemInventory(),
-            request,
-            new MachineSource(this));
+        var extracted = Platform.poweredExtraction(getProxy().getEnergy(), getProxy().getStorage().getItemInventory(),
+            request, new MachineSource(this));
         if (extracted == null || extracted.getStackSize() <= 0) return;
         pendingItem = extracted.getItemStack();
         markDirty();
@@ -223,7 +211,7 @@ public final class TileFluxLogistics extends TileMEBridgeReceiver {
         int[] slots = LogisticsStock.accessibleSlots(inventory, side.ordinal());
         if (slots == null || slots.length == 0) return;
         int start = importCursor;
-        java.util.Set<Integer> visited = new java.util.HashSet<>();
+        Set<Integer> visited = new HashSet<>();
         for (int i = 0; i < slots.length && pendingItem == null; i++) {
             int index = Math.floorMod(start + i, slots.length);
             int slot = slots[index];
@@ -231,13 +219,8 @@ public final class TileFluxLogistics extends TileMEBridgeReceiver {
             ItemStack stack = LogisticsStock.extractable(inventory, slot, side.ordinal());
             if (stack == null) continue;
             var offer = AEItemStack.create(stack);
-            var remainder = Platform.poweredInsert(
-                getProxy().getEnergy(),
-                getProxy().getStorage()
-                    .getItemInventory(),
-                offer,
-                new MachineSource(this),
-                Actionable.SIMULATE);
+            var remainder = Platform.poweredInsert(getProxy().getEnergy(), getProxy().getStorage().getItemInventory(),
+                offer, new MachineSource(this), Actionable.SIMULATE);
             int accepted = (int) (offer.getStackSize() - (remainder == null ? 0 : remainder.getStackSize()));
             if (accepted <= 0) continue;
             pendingItem = inventory.decrStackSize(slot, accepted);
@@ -271,13 +254,8 @@ public final class TileFluxLogistics extends TileMEBridgeReceiver {
         FluidStack available = tank.drain(side, wanted, false);
         if (available == null || available.amount <= 0 || !sample.isFluidEqual(available)) return false;
         var offer = AEFluidStack.create(available);
-        var remainder = Platform.poweredInsert(
-            getProxy().getEnergy(),
-            getProxy().getStorage()
-                .getFluidInventory(),
-            offer,
-            new MachineSource(this),
-            Actionable.SIMULATE);
+        var remainder = Platform.poweredInsert(getProxy().getEnergy(), getProxy().getStorage().getFluidInventory(),
+            offer, new MachineSource(this), Actionable.SIMULATE);
         int accepted = (int) (offer.getStackSize() - (remainder == null ? 0 : remainder.getStackSize()));
         if (accepted <= 0) return false;
         wanted.amount = accepted;
@@ -307,12 +285,8 @@ public final class TileFluxLogistics extends TileMEBridgeReceiver {
         if (capacity == 0) return;
         var request = AEFluidStack.create(filter);
         request.setStackSize(capacity);
-        var extracted = Platform.poweredExtraction(
-            getProxy().getEnergy(),
-            getProxy().getStorage()
-                .getFluidInventory(),
-            request,
-            new MachineSource(this));
+        var extracted = Platform.poweredExtraction(getProxy().getEnergy(), getProxy().getStorage().getFluidInventory(),
+            request, new MachineSource(this));
         if (extracted == null || extracted.getStackSize() <= 0) return;
         pendingFluid = extracted.getFluidStack();
         markDirty();

@@ -92,54 +92,35 @@ public final class LargeInterfaceGui {
 
     private ModularPanel build() {
         ModularPanel panel = ModularPanel.defaultPanel("large_interface", 190, 207)
-            .background(LargeInterfaceGuiTextures.BACKGROUND)
-            .disableHoverBackground();
+            .background(LargeInterfaceGuiTextures.BACKGROUND).disableHoverBackground();
         // #tr gui.large_interface.title
         // # Large ME Dual Interface
         // # zh_CN 大容量 ME 二合一接口
         panel.child(
-            IKey.lang("gui.large_interface.title")
-                .color(LargeInterfaceGuiTextures.TEXT_COLOR)
-                .asWidget()
-                .pos(8, 7));
+            IKey.lang("gui.large_interface.title").color(LargeInterfaceGuiTextures.TEXT_COLOR).asWidget().pos(8, 7));
         // #tr gui.large_interface.patterns
         // # Patterns (900)
         // # zh_CN 样板（900）
-        panel.child(
-            IKey.lang("gui.large_interface.patterns")
-                .color(LargeInterfaceGuiTextures.TEXT_COLOR)
-                .asWidget()
-                .pos(8, 21));
+        panel.child(IKey.lang("gui.large_interface.patterns").color(LargeInterfaceGuiTextures.TEXT_COLOR).asWidget()
+            .pos(8, 21));
         panel.child(patternGrid().pos(8, 32));
         addUpgrades(panel);
         addSettings(panel);
-        var priorityPanel = sync
-            .syncedPanel("large_interface_priority", true, (manager, handler) -> priorityPanel(manager));
-        panel.child(
-            new ButtonWidget<>().name("priority")
-                .pos(166, -5)
-                .size(22)
-                .background(LargeInterfaceGuiTextures.TAB)
-                .hoverBackground(LargeInterfaceGuiTextures.TAB_HOVER)
-                .overlay(
-                    icon(66).asIcon()
-                        .size(16))
-                .excludeAreaInRecipeViewer()
-                .addTooltipLine(GuiText.Priority.getLocal())
-                .onMousePressed(mouse -> {
+        var priorityPanel = sync.syncedPanel("large_interface_priority", true,
+            (manager, handler) -> priorityPanel(manager));
+        panel
+            .child(new ButtonWidget<>().name("priority").pos(166, -5).size(22).background(LargeInterfaceGuiTextures.TAB)
+                .hoverBackground(LargeInterfaceGuiTextures.TAB_HOVER).overlay(icon(66).asIcon().size(16))
+                .excludeAreaInRecipeViewer().addTooltipLine(GuiText.Priority.getLocal()).onMousePressed(mouse -> {
                     if (mouse != 0 && mouse != 1) return false;
                     priorityPanel.openPanel();
                     panel.setEnabled(false);
                     return true;
                 }));
-        panel.child(
-            IKey.lang("container.inventory")
-                .color(LargeInterfaceGuiTextures.TEXT_COLOR)
-                .asWidget()
-                .pos(8, 109));
-        panel.child(
-            SlotGroupWidget.playerInventory((index, slot) -> slot.background(LargeInterfaceGuiTextures.SLOT))
-                .pos(8, 120));
+        panel
+            .child(IKey.lang("container.inventory").color(LargeInterfaceGuiTextures.TEXT_COLOR).asWidget().pos(8, 109));
+        panel.child(SlotGroupWidget.playerInventory((index, slot) -> slot.background(LargeInterfaceGuiTextures.SLOT))
+            .pos(8, 120));
         return panel;
     }
 
@@ -150,8 +131,7 @@ public final class LargeInterfaceGui {
         sync.syncValue("patternActions", actions);
         int rows = patterns.getSizeInventory() / COLUMNS;
         sync.registerSlotGroup("patterns", rows);
-        return new Grid().name("pattern_grid")
-            .minColWidth(SLOT_SIZE)
+        return new Grid().name("pattern_grid").minColWidth(SLOT_SIZE)
             .gridOfWidthHeight(COLUMNS, rows, (x, y, index) -> new PatternSlot() {
 
                 @Override
@@ -167,11 +147,9 @@ public final class LargeInterfaceGui {
                     actions.change(index, direction.modifier > 0 ? 1 : -1);
                     return true;
                 }
-            }.disableThemeBackground(true)
-                .disableHoverThemeBackground(true)
-                .slot(
-                    new AuthorizedSlot(inventory, index, 1).slotGroup("patterns")
-                        .filter(stack -> stack.getItem() instanceof ICraftingPatternItem)))
+            }.disableThemeBackground(true).disableHoverThemeBackground(true)
+                .slot(new AuthorizedSlot(inventory, index, 1).slotGroup("patterns")
+                    .filter(stack -> stack.getItem() instanceof ICraftingPatternItem)))
             .size(COLUMNS * SLOT_SIZE + 12, VISIBLE_ROWS * SLOT_SIZE)
             .scrollable(new VerticalScrollData(false, 12).texture(LargeInterfaceGuiTextures.SCROLL_HANDLE))
             .showScrollShadows(false);
@@ -181,32 +159,20 @@ public final class LargeInterfaceGui {
         InvWrapper upgrades = new InvWrapper(duality.getUpgrades());
         sync.registerSlotGroup("upgrades", 1);
         panel.child(
-            LargeInterfaceGuiTextures.UPGRADES_FRAME.asWidget()
-                .pos(186, 30)
-                .size(28, 82)
-                .excludeAreaInRecipeViewer());
+            LargeInterfaceGuiTextures.UPGRADES_FRAME.asWidget().pos(186, 30).size(28, 82).excludeAreaInRecipeViewer());
         for (int i = 0; i < 4; i++) {
             panel.child(new ItemSlot() {
 
                 @Override
                 protected void drawOverlay() {
                     if (isSynced() && getSlot().getStack() == null) {
-                        LargeInterfaceGuiTextures.UPGRADE_SLOT_HINT.draw(
-                            getContext(),
-                            0,
-                            0,
-                            SLOT_SIZE,
-                            SLOT_SIZE,
+                        LargeInterfaceGuiTextures.UPGRADE_SLOT_HINT.draw(getContext(), 0, 0, SLOT_SIZE, SLOT_SIZE,
                             getWidgetThemeInternal(getPanel().getTheme()).getTheme());
                     }
                     super.drawOverlay();
                 }
-            }.name("upgrade_" + i)
-                .slot(
-                    new AuthorizedSlot(upgrades, i, 1).slotGroup("upgrades")
-                        .canDragInto(false))
-                .background(LargeInterfaceGuiTextures.SLOT)
-                .tooltip(t -> t.addLine(IKey.dynamic(this::upgradeTooltip)))
+            }.name("upgrade_" + i).slot(new AuthorizedSlot(upgrades, i, 1).slotGroup("upgrades").canDragInto(false))
+                .background(LargeInterfaceGuiTextures.SLOT).tooltip(t -> t.addLine(IKey.dynamic(this::upgradeTooltip)))
                 .pos(190, 35 + i * SLOT_SIZE));
         }
     }
@@ -232,11 +198,8 @@ public final class LargeInterfaceGui {
             int maximum = upgrades.getMaxInstalled(upgrade);
             ItemStack card = UPGRADE_CARDS.get(upgrade);
             if (maximum <= 0 || card == null) continue;
-            text.append("\n- ")
-                .append(card.getDisplayName());
-            if (maximum > 1) text.append(" (")
-                .append(maximum)
-                .append(')');
+            text.append("\n- ").append(card.getDisplayName());
+            if (maximum > 1) text.append(" (").append(maximum).append(')');
         }
         return text.toString();
     }
@@ -246,22 +209,18 @@ public final class LargeInterfaceGui {
         panel.child(setting(Settings.SMART_BLOCK, -36, 1, null));
         panel.child(setting(Settings.INTERFACE_TERMINAL, -18, 23, null));
         panel.child(setting(Settings.INSERTION_MODE, -18, 45, null));
-        panel.child(
-            new ButtonWidget<>().name("double_patterns")
-                .pos(-18, 67)
-                .size(18, 20)
-                .background(LargeInterfaceGuiTextures.SIDE_BUTTON)
-                .hoverBackground(LargeInterfaceGuiTextures.SIDE_BUTTON_HOVER)
-                .overlay(sideIcon(icon(71)))
-                .excludeAreaInRecipeViewer()
-                .addTooltipLine(ButtonToolTips.DoublePatterns.getLocal())
-                .addTooltipLine(ButtonToolTips.DoublePatternsHint.getLocal())
-                .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
-                    if (!mouse.isClient() && authorized.getAsBoolean()
-                        && (mouse.mouseButton == 0 || mouse.mouseButton == 1)) {
-                        multiplyPatterns(mouse);
-                    }
-                })));
+        panel.child(new ButtonWidget<>().name("double_patterns").pos(-18, 67).size(18, 20)
+            .background(LargeInterfaceGuiTextures.SIDE_BUTTON)
+            .hoverBackground(LargeInterfaceGuiTextures.SIDE_BUTTON_HOVER).overlay(sideIcon(icon(71)))
+            .excludeAreaInRecipeViewer().addTooltipLine(ButtonToolTips.DoublePatterns.getLocal())
+            .addTooltipLine(ButtonToolTips.DoublePatternsHint.getLocal())
+            .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
+                if (
+                    !mouse.isClient() && authorized.getAsBoolean() && (mouse.mouseButton == 0 || mouse.mouseButton == 1)
+                ) {
+                    multiplyPatterns(mouse);
+                }
+            })));
         panel.child(setting(Settings.PATTERN_OPTIMIZATION, -18, 89, null));
         panel.child(setting(Settings.ADVANCED_BLOCKING_MODE, -18, 111, Upgrades.ADVANCED_BLOCKING));
         panel.child(setting(Settings.LOCK_CRAFTING_MODE, -18, 133, Upgrades.LOCK_CRAFTING));
@@ -272,32 +231,23 @@ public final class LargeInterfaceGui {
     }
 
     private ButtonWidget<?> setting(Settings setting, int x, int y, Upgrades required) {
-        IntSyncValue value = new IntSyncValue(
-            () -> duality.getConfigManager()
-                .getSetting(setting)
-                .ordinal());
+        IntSyncValue value = new IntSyncValue(() -> duality.getConfigManager().getSetting(setting).ordinal());
         sync.syncValue("setting_" + setting.name(), value);
         IDrawable drawable = (context, dx, dy, w, h, theme) -> icon(settingIcon(setting, value.getIntValue()))
             .draw(context, dx, dy, w, h, theme);
-        ButtonWidget<?> button = new ButtonWidget<>().name(
-            setting.name()
-                .toLowerCase(Locale.ROOT))
-            .pos(x, y)
-            .size(18, 20)
-            .background(LargeInterfaceGuiTextures.SIDE_BUTTON)
-            .hoverBackground(LargeInterfaceGuiTextures.SIDE_BUTTON_HOVER)
-            .overlay(sideIcon(drawable))
+        ButtonWidget<?> button = new ButtonWidget<>().name(setting.name().toLowerCase(Locale.ROOT)).pos(x, y)
+            .size(18, 20).background(LargeInterfaceGuiTextures.SIDE_BUTTON)
+            .hoverBackground(LargeInterfaceGuiTextures.SIDE_BUTTON_HOVER).overlay(sideIcon(drawable))
             .excludeAreaInRecipeViewer()
             .tooltip(t -> t.addLine(IKey.dynamic(() -> settingTooltip(setting, value.getIntValue()))))
             .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
-                if (mouse.isClient() || !authorized.getAsBoolean()
-                    || (mouse.mouseButton != 0 && mouse.mouseButton != 1)) return;
+                if (
+                    mouse.isClient() || !authorized.getAsBoolean() || (mouse.mouseButton != 0 && mouse.mouseButton != 1)
+                ) return;
                 if (required != null && duality.getInstalledUpgrades(required) <= 0) return;
                 var manager = duality.getConfigManager();
-                manager.putSetting(
-                    setting,
-                    Platform
-                        .rotateEnum(manager.getSetting(setting), mouse.mouseButton == 1, setting.getPossibleValues()));
+                manager.putSetting(setting, Platform.rotateEnum(manager.getSetting(setting), mouse.mouseButton == 1,
+                    setting.getPossibleValues()));
                 host.saveChanges();
             }));
         if (required != null) {
@@ -314,24 +264,14 @@ public final class LargeInterfaceGui {
 
     private ModularPanel priorityPanel(PanelSyncManager manager) {
         ModularPanel panel = ModularPanel.defaultPanel("large_interface_priority", 176, 125)
-            .background(LargeInterfaceGuiTextures.PRIORITY_BACKGROUND)
-            .disableHoverBackground();
-        panel.onCloseAction(
-            () -> panel.getScreen()
-                .getMainPanel()
-                .setEnabled(true));
-        IntSyncValue priority = new IntSyncValue(
-            duality::getPriority,
-            value -> {
-                if (!host.getTileEntity()
-                    .getWorldObj().isRemote && authorized.getAsBoolean()) duality.setPriority(value);
-            }).allowC2S();
+            .background(LargeInterfaceGuiTextures.PRIORITY_BACKGROUND).disableHoverBackground();
+        panel.onCloseAction(() -> panel.getScreen().getMainPanel().setEnabled(true));
+        IntSyncValue priority = new IntSyncValue(duality::getPriority, value -> {
+            if (!host.getTileEntity().getWorldObj().isRemote && authorized.getAsBoolean()) duality.setPriority(value);
+        }).allowC2S();
         manager.syncValue("priority", priority);
         panel.child(
-            IKey.str(GuiText.Priority.getLocal())
-                .color(LargeInterfaceGuiTextures.TEXT_COLOR)
-                .asWidget()
-                .pos(8, 6));
+            IKey.str(GuiText.Priority.getLocal()).color(LargeInterfaceGuiTextures.TEXT_COLOR).asWidget().pos(8, 6));
         panel.child(new TextFieldWidget() {
 
             @Override
@@ -339,13 +279,8 @@ public final class LargeInterfaceGui {
                 return isFocused() ? LargeInterfaceGuiTextures.TEXT_FIELD_FOCUSED
                     : LargeInterfaceGuiTextures.TEXT_FIELD;
             }
-        }.name("priority_value")
-            .pos(60, 55)
-            .size(61, 12)
-            .background(LargeInterfaceGuiTextures.TEXT_FIELD)
-            .disableHoverBackground()
-            .setTextColor(LargeInterfaceGuiTextures.TEXT_COLOR)
-            .value(priority)
+        }.name("priority_value").pos(60, 55).size(61, 12).background(LargeInterfaceGuiTextures.TEXT_FIELD)
+            .disableHoverBackground().setTextColor(LargeInterfaceGuiTextures.TEXT_COLOR).value(priority)
             .numbersInt(Integer.MIN_VALUE, Integer.MAX_VALUE));
         int[] steps = { 1, 10, 100, 1000 };
         if (AEConfig.instance != null) {
@@ -355,48 +290,34 @@ public final class LargeInterfaceGui {
         int[] widths = { 22, 28, 32, 38 };
         for (int row = 0; row < 2; row++) for (int col = 0; col < steps.length; col++) {
             int amount = (row == 0 ? 1 : -1) * steps[col];
-            panel.child(
-                new ButtonWidget<>().name("priority_" + row + "_" + col)
-                    .pos(positions[col], row == 0 ? 30 : 72)
-                    .size(widths[col], 20)
-                    .background(LargeInterfaceGuiTextures.BUTTON)
-                    .hoverBackground(LargeInterfaceGuiTextures.BUTTON_HOVER)
-                    .overlay(
-                        IKey.str((amount > 0 ? "+" : "") + amount)
-                            .color(LargeInterfaceGuiTextures.TEXT_COLOR))
-                    .hoverOverlay(
-                        IKey.str((amount > 0 ? "+" : "") + amount)
-                            .color(LargeInterfaceGuiTextures.HOVER_TEXT_COLOR))
-                    .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
-                        if (mouse.isClient() || !authorized.getAsBoolean() || mouse.mouseButton != 0) return;
-                        long result = (long) duality.getPriority() + amount;
-                        duality.setPriority((int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, result)));
-                    })));
+            panel.child(new ButtonWidget<>().name("priority_" + row + "_" + col).pos(positions[col], row == 0 ? 30 : 72)
+                .size(widths[col], 20).background(LargeInterfaceGuiTextures.BUTTON)
+                .hoverBackground(LargeInterfaceGuiTextures.BUTTON_HOVER)
+                .overlay(IKey.str((amount > 0 ? "+" : "") + amount).color(LargeInterfaceGuiTextures.TEXT_COLOR))
+                .hoverOverlay(
+                    IKey.str((amount > 0 ? "+" : "") + amount).color(LargeInterfaceGuiTextures.HOVER_TEXT_COLOR))
+                .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
+                    if (mouse.isClient() || !authorized.getAsBoolean() || mouse.mouseButton != 0) return;
+                    long result = (long) duality.getPriority() + amount;
+                    duality.setPriority((int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, result)));
+                })));
         }
-        panel.child(
-            ButtonWidget.panelCloseButton()
-                .pos(152, -5)
-                .size(20)
-                .background(LargeInterfaceGuiTextures.TAB)
-                .hoverBackground(LargeInterfaceGuiTextures.TAB_HOVER)
-                .overlay(
-                    new ItemDrawable(
-                        (host instanceof IPart ? GTNGItemList.LargeInterfacePart : GTNGItemList.LargeInterface).get(1))
-                            .asIcon()
-                            .size(16))
-                // #tr gui.large_interface.back
-                // # Return to the interface
-                // # zh_CN 返回二合一接口
-                .tooltip(t -> t.addLine(IKey.lang("gui.large_interface.back")))
-                .excludeAreaInRecipeViewer());
+        panel.child(ButtonWidget.panelCloseButton().pos(152, -5).size(20).background(LargeInterfaceGuiTextures.TAB)
+            .hoverBackground(LargeInterfaceGuiTextures.TAB_HOVER)
+            .overlay(new ItemDrawable(
+                (host instanceof IPart ? GTNGItemList.LargeInterfacePart : GTNGItemList.LargeInterface).get(1)).asIcon()
+                    .size(16))
+            // #tr gui.large_interface.back
+            // # Return to the interface
+            // # zh_CN 返回二合一接口
+            .tooltip(t -> t.addLine(IKey.lang("gui.large_interface.back"))).excludeAreaInRecipeViewer());
         return panel;
     }
 
     private void multiplyPatterns(MouseData mouse) {
         CraftingGridCache.pauseRebuilds();
         try {
-            for (int i = 0; i < duality.getPatterns()
-                .getSizeInventory(); i++) {
+            for (int i = 0; i < duality.getPatterns().getSizeInventory(); i++) {
                 modifyPattern(i, mouse.mouseButton == 1 ? -1 : 1, mouse.shift);
             }
         } finally {
@@ -411,10 +332,7 @@ public final class LargeInterfaceGui {
         if (index < 0 || index >= patterns.getSizeInventory()) return;
         ItemStack stack = patterns.getStackInSlot(index);
         if (stack == null || !(stack.getItem() instanceof ICraftingPatternItem item)) return;
-        ICraftingPatternDetails details = item.getPatternForItem(
-            stack,
-            host.getTileEntity()
-                .getWorldObj());
+        ICraftingPatternDetails details = item.getPatternForItem(stack, host.getTileEntity().getWorldObj());
         if (details == null || details.isCraftable()) return;
         int maximum = direction < 0 ? PatternMultiplierHelper.getMaxBitDivider(details)
             : PatternMultiplierHelper.getMaxBitMultiplier(details);
@@ -426,11 +344,8 @@ public final class LargeInterfaceGui {
 
     private static UITexture icon(int index) {
         if (ICONS[index] == null) {
-            ICONS[index] = UITexture.builder()
-                .location(ModList.AE2.getResourceLocation(), "guis/states")
-                .imageSize(256, 256)
-                .subAreaXYWH(index % 16 * 16, index / 16 * 16, 16, 16)
-                .build();
+            ICONS[index] = UITexture.builder().location(ModList.AE2.getResourceLocation(), "guis/states")
+                .imageSize(256, 256).subAreaXYWH(index % 16 * 16, index / 16 * 16, 16, 16).build();
         }
         return ICONS[index];
     }
@@ -460,11 +375,9 @@ public final class LargeInterfaceGui {
 
     private static String settingTooltip(Settings setting, int ordinal) {
         return switch (setting) {
-            case BLOCK -> text(
-                ButtonToolTips.InterfaceBlockingMode,
+            case BLOCK -> text(ButtonToolTips.InterfaceBlockingMode,
                 ordinal == YesNo.YES.ordinal() ? ButtonToolTips.Blocking : ButtonToolTips.NonBlocking);
-            case SMART_BLOCK -> text(
-                ButtonToolTips.InterfaceSmartBlockingMode,
+            case SMART_BLOCK -> text(ButtonToolTips.InterfaceSmartBlockingMode,
                 ordinal == YesNo.YES.ordinal() ? ButtonToolTips.SmartBlocking : ButtonToolTips.NonSmartBlocking);
             case INTERFACE_TERMINAL -> GuiText.InterfaceTerminal.getLocal() + "\n"
                 + GuiText.InterfaceTerminalHint.getLocal();
@@ -472,18 +385,15 @@ public final class LargeInterfaceGui {
                 + GuiText.PatternOptimizationHint.getLocal();
             case INSERTION_MODE -> switch (InsertionMode.values()[clamp(ordinal, InsertionMode.values().length)]) {
                     case DEFAULT -> text(ButtonToolTips.InsertionModeDefault, ButtonToolTips.InsertionModeDefaultDesc);
-                    case PREFER_EMPTY -> text(
-                        ButtonToolTips.InsertionModePreferEmpty,
+                    case PREFER_EMPTY -> text(ButtonToolTips.InsertionModePreferEmpty,
                         ButtonToolTips.InsertionModePreferEmptyDesc);
-                    case ONLY_EMPTY -> text(
-                        ButtonToolTips.InsertionModeOnlyEmpty,
+                    case ONLY_EMPTY -> text(ButtonToolTips.InsertionModeOnlyEmpty,
                         ButtonToolTips.InsertionModeOnlyEmptyDesc);
                 };
             case ADVANCED_BLOCKING_MODE -> ordinal == AdvancedBlockingMode.DEFAULT.ordinal()
                 ? text(ButtonToolTips.AdvancedBlockingModeDefault, ButtonToolTips.AdvancedBlockingModeDefaultDesc)
                 : text(ButtonToolTips.AdvancedBlockingModeAll, ButtonToolTips.AdvancedBlockingModeAllDesc);
-            case LOCK_CRAFTING_MODE -> text(
-                ButtonToolTips.LockCraftingMode,
+            case LOCK_CRAFTING_MODE -> text(ButtonToolTips.LockCraftingMode,
                 switch (LockCraftingMode.values()[clamp(ordinal, LockCraftingMode.values().length)]) {
                 case NONE -> ButtonToolTips.LockCraftingModeNone;
                 case LOCK_UNTIL_PULSE -> ButtonToolTips.LockCraftingUntilRedstonePulse;
@@ -491,8 +401,7 @@ public final class LargeInterfaceGui {
                 case LOCK_WHILE_LOW -> ButtonToolTips.LockCraftingWhileRedstoneLow;
                 case LOCK_UNTIL_RESULT -> ButtonToolTips.LockCraftingUntilResultReturned;
                 });
-            case FUZZY_MODE -> text(
-                ButtonToolTips.FuzzyMode,
+            case FUZZY_MODE -> text(ButtonToolTips.FuzzyMode,
                 switch (FuzzyMode.values()[clamp(ordinal, FuzzyMode.values().length)]) {
                 case PERCENT_1 -> ButtonToolTips.FZPercent_1;
                 case PERCENT_10 -> ButtonToolTips.FZPercent_10;
@@ -539,14 +448,14 @@ public final class LargeInterfaceGui {
 
         @Override
         public boolean isItemValid(ItemStack stack) {
-            return (host.getTileEntity()
-                .getWorldObj().isRemote || authorized.getAsBoolean()) && super.isItemValid(stack);
+            return (host.getTileEntity().getWorldObj().isRemote || authorized.getAsBoolean())
+                && super.isItemValid(stack);
         }
 
         @Override
         public boolean canTakeStack(EntityPlayer player) {
-            return (host.getTileEntity()
-                .getWorldObj().isRemote || authorized.getAsBoolean()) && super.canTakeStack(player);
+            return (host.getTileEntity().getWorldObj().isRemote || authorized.getAsBoolean())
+                && super.canTakeStack(player);
         }
     }
 

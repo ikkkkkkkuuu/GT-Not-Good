@@ -149,14 +149,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         }
 
         public PatternSlot(ItemStack pattern, NBTTagCompound nbt, P parent) {
-            this(
-                pattern,
-                nbt,
-                parent,
-                ((ICraftingPatternItem) pattern.getItem()).getPatternForItem(
-                    pattern,
-                    parent.getBaseMetaTileEntity()
-                        .getWorld()));
+            this(pattern, nbt, parent, ((ICraftingPatternItem) pattern.getItem()).getPatternForItem(pattern,
+                parent.getBaseMetaTileEntity().getWorld()));
         }
 
         protected PatternSlot(ItemStack pattern, NBTTagCompound nbt, P parent,
@@ -201,8 +195,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
         public boolean hasChanged(ItemStack newPattern, World world) {
             return newPattern == null || patternDetails == null
-                || (!ItemStack.areItemStacksEqual(pattern, newPattern) && !this.patternDetails.equals(
-                    ((ICraftingPatternItem) Objects.requireNonNull(pattern.getItem()))
+                || (!ItemStack.areItemStacksEqual(pattern, newPattern)
+                    && !this.patternDetails.equals(((ICraftingPatternItem) Objects.requireNonNull(pattern.getItem()))
                         .getPatternForItem(newPattern, world)));
         }
 
@@ -254,16 +248,12 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         /** Full buffered quantities for diagnostics; specialized slots can expose long reserves beyond recipe views. */
         public List<IAEItemStack> getStoredItems() {
             updateSlotItems();
-            return itemInventory.stream()
-                .map(AEItemStack::create)
-                .collect(Collectors.toList());
+            return itemInventory.stream().map(AEItemStack::create).collect(Collectors.toList());
         }
 
         public List<IAEFluidStack> getStoredFluids() {
             updateSlotFluids();
-            return fluidInventory.stream()
-                .map(AEFluidStack::create)
-                .collect(Collectors.toList());
+            return fluidInventory.stream().map(AEFluidStack::create).collect(Collectors.toList());
         }
 
         @Nullable
@@ -301,33 +291,19 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
          * to the world (the fluids are dropped as AE2FC fluid drop). Otherwise, they are still left in the inventory.
          */
         public void refund(AENetworkProxy proxy, BaseActionSource src, boolean shouldDrop) throws GridAccessException {
-            IMEMonitor<IAEItemStack> sg = proxy.getStorage()
-                .getItemInventory();
+            IMEMonitor<IAEItemStack> sg = proxy.getStorage().getItemInventory();
             for (ItemStack itemStack : itemInventory) {
                 if (itemStack == null || itemStack.stackSize == 0) continue;
-                IAEItemStack rest = Platform.poweredInsert(
-                    proxy.getEnergy(),
-                    sg,
-                    AEApi.instance()
-                        .storage()
-                        .createItemStack(itemStack),
-                    src);
+                IAEItemStack rest = Platform.poweredInsert(proxy.getEnergy(), sg,
+                    AEApi.instance().storage().createItemStack(itemStack), src);
                 itemStack.stackSize = rest != null && rest.getStackSize() > 0 ? (int) rest.getStackSize() : 0;
 
                 if (Gregtech.machines.allowCribDropItems && shouldDrop && itemStack.stackSize > 0) {
-                    World world = parentMTE.getBaseMetaTileEntity()
-                        .getWorld();
-                    EntityItem entityItem = new EntityItem(
-                        world,
-                        parentMTE.getBaseMetaTileEntity()
-                            .getXCoord() + XSTR_INSTANCE.nextFloat() * 0.8F
-                            + 0.1F,
-                        parentMTE.getBaseMetaTileEntity()
-                            .getYCoord() + XSTR_INSTANCE.nextFloat() * 0.8F
-                            + 0.1F,
-                        parentMTE.getBaseMetaTileEntity()
-                            .getZCoord() + XSTR_INSTANCE.nextFloat() * 0.8F
-                            + 0.1F,
+                    World world = parentMTE.getBaseMetaTileEntity().getWorld();
+                    EntityItem entityItem = new EntityItem(world,
+                        parentMTE.getBaseMetaTileEntity().getXCoord() + XSTR_INSTANCE.nextFloat() * 0.8F + 0.1F,
+                        parentMTE.getBaseMetaTileEntity().getYCoord() + XSTR_INSTANCE.nextFloat() * 0.8F + 0.1F,
+                        parentMTE.getBaseMetaTileEntity().getZCoord() + XSTR_INSTANCE.nextFloat() * 0.8F + 0.1F,
                         GTUtility.copy(itemStack));
                     entityItem.motionX = XSTR_INSTANCE.nextGaussian() * 0.05;
                     entityItem.motionY = XSTR_INSTANCE.nextGaussian() * 0.25;
@@ -337,37 +313,23 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
                     itemStack.stackSize = 0;
                 }
             }
-            IMEMonitor<IAEFluidStack> fsg = proxy.getStorage()
-                .getFluidInventory();
+            IMEMonitor<IAEFluidStack> fsg = proxy.getStorage().getFluidInventory();
             for (FluidStack fluidStack : fluidInventory) {
                 if (fluidStack == null || fluidStack.amount == 0) continue;
-                IAEFluidStack rest = Platform.poweredInsert(
-                    proxy.getEnergy(),
-                    fsg,
-                    AEApi.instance()
-                        .storage()
-                        .createFluidStack(fluidStack),
-                    src);
+                IAEFluidStack rest = Platform.poweredInsert(proxy.getEnergy(), fsg,
+                    AEApi.instance().storage().createFluidStack(fluidStack), src);
                 fluidStack.amount = rest != null && rest.getStackSize() > 0 ? (int) rest.getStackSize() : 0;
 
                 if (Gregtech.machines.allowCribDropItems && shouldDrop && fluidStack.amount > 0) {
-                    World world = parentMTE.getBaseMetaTileEntity()
-                        .getWorld();
+                    World world = parentMTE.getBaseMetaTileEntity().getWorld();
 
                     ItemStack fluidPacketItemStack = ItemFluidPacket.newStack(fluidStack);
                     if (fluidPacketItemStack == null) continue;
 
-                    EntityItem entityItem = new EntityItem(
-                        world,
-                        parentMTE.getBaseMetaTileEntity()
-                            .getXCoord() + XSTR_INSTANCE.nextFloat() * 0.8F
-                            + 0.1F,
-                        parentMTE.getBaseMetaTileEntity()
-                            .getYCoord() + XSTR_INSTANCE.nextFloat() * 0.8F
-                            + 0.1F,
-                        parentMTE.getBaseMetaTileEntity()
-                            .getZCoord() + XSTR_INSTANCE.nextFloat() * 0.8F
-                            + 0.1F,
+                    EntityItem entityItem = new EntityItem(world,
+                        parentMTE.getBaseMetaTileEntity().getXCoord() + XSTR_INSTANCE.nextFloat() * 0.8F + 0.1F,
+                        parentMTE.getBaseMetaTileEntity().getYCoord() + XSTR_INSTANCE.nextFloat() * 0.8F + 0.1F,
+                        parentMTE.getBaseMetaTileEntity().getZCoord() + XSTR_INSTANCE.nextFloat() * 0.8F + 0.1F,
                         fluidPacketItemStack);
                     entityItem.motionX = XSTR_INSTANCE.nextGaussian() * 0.05;
                     entityItem.motionY = XSTR_INSTANCE.nextGaussian() * 0.25;
@@ -447,15 +409,12 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     }
 
     // mInventory is used for storing patterns, circuit and manual slot (typically NC items)
-    // Modified: Changed from 4*9=36 to 100*9=900 pattern slots for massive crafting capacity
-    private static final int MAX_PATTERN_COUNT = 100 * 9; // 900 个样板槽位，100 行
+    private static final int MAX_PATTERN_COUNT = 100 * 9;
     private static final int SLOT_MANUAL_SIZE = 9;
     private static final int SLOT_CIRCUIT = MAX_PATTERN_COUNT;
     public static final int SLOT_MANUAL_START = SLOT_CIRCUIT + 1;
     public static final int SLOT_MOLD = SLOT_MANUAL_START + SLOT_MANUAL_SIZE;
 
-    // 所有可选择的模具列表（Shape_Mold_* 和 Shape_Extruder_* 系列物品）
-    // 使用外部模具数据管理器，便于维护和扩展
     @Deprecated
     public static final ItemStack[] CRIB_MOLDS = MoldDataManager.getMolds();
     private BaseActionSource requestSource = null;
@@ -532,12 +491,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
     @Override
     public MetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
-        return new SuperMTEHatchCraftingInputME(
-            mName,
-            mTier,
-            mDescriptionArray,
-            mTextures,
-            supportFluids,
+        return new SuperMTEHatchCraftingInputME(mName, mTier, mDescriptionArray, mTextures, supportFluids,
             getPatternCount() / 9);
     }
 
@@ -623,8 +577,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             proxy.setColor(AEColor.values()[Dyes.transformDyeIndex(color)]);
         }
         if (proxy.getNode() != null) {
-            proxy.getNode()
-                .updateState();
+            proxy.getNode().updateState();
         }
     }
 
@@ -654,13 +607,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         float aX, float aY, float aZ, ItemStack aTool) {
         if (aPlayer.isSneaking()) {
             IGregTechTileEntity te = getBaseMetaTileEntity();
-            aPlayer.openGui(
-                AppEng.instance(),
-                GuiBridge.GUI_RENAMER.ordinal() << 5 | (side.ordinal()),
-                te.getWorld(),
-                te.getXCoord(),
-                te.getYCoord(),
-                te.getZCoord());
+            aPlayer.openGui(AppEng.instance(), GuiBridge.GUI_RENAMER.ordinal() << 5 | (side.ordinal()), te.getWorld(),
+                te.getXCoord(), te.getYCoord(), te.getZCoord());
             return true;
         }
 
@@ -689,8 +637,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             gridProxy.setFlags(GridFlags.REQUIRE_CHANNEL);
             updateValidGridProxySides();
             if (getBaseMetaTileEntity().getWorld() != null) gridProxy.setOwner(
-                getBaseMetaTileEntity().getWorld()
-                    .getPlayerEntityByName(getBaseMetaTileEntity().getOwnerName()));
+                getBaseMetaTileEntity().getWorld().getPlayerEntityByName(getBaseMetaTileEntity().getOwnerName()));
         }
 
         return this.gridProxy;
@@ -698,11 +645,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
     @Override
     public DimensionalCoord getLocation() {
-        return new DimensionalCoord(
-            getBaseMetaTileEntity().getWorld(),
-            getBaseMetaTileEntity().getXCoord(),
-            getBaseMetaTileEntity().getYCoord(),
-            getBaseMetaTileEntity().getZCoord());
+        return new DimensionalCoord(getBaseMetaTileEntity().getWorld(), getBaseMetaTileEntity().getXCoord(),
+            getBaseMetaTileEntity().getYCoord(), getBaseMetaTileEntity().getZCoord());
     }
 
     @Override
@@ -776,8 +720,10 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
     private String getRecipeMapNameKey() {
         RecipeMap<?> map = this.mRecipeMap != null ? this.mRecipeMap : this.controllerRecipeMap;
         for (var watcher : watchers) {
-            if (watcher instanceof MTEMultiBlockBase controller && controller.isValid()
-                && controller.mDualInputHatches.contains(this)) {
+            if (
+                watcher instanceof MTEMultiBlockBase controller && controller.isValid()
+                    && controller.mDualInputHatches.contains(this)
+            ) {
                 map = controller.getRecipeMap();
                 break;
             }
@@ -810,14 +756,9 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             preferred = new ChatComponentGhostCircuitSuffix(Collections.singletonList(circuit.getItemDamage()));
         }
 
-        // The meta values below are plain numbers, so a literal component is enough — there is nothing for the client
-        // to localize, unlike the provider suffix above.
         StringBuilder metaSuffix = new StringBuilder();
 
-        // Manual slots hold non-consumed recipe inputs. Use their metadata just like
-        // ghost circuits and the mold slot so the interface name matches NEI's
-        // auto-search rule (for example "Assembler 2 32"), instead of GT's
-        // default server-localized "{English Item Name}" suffix.
+        // 手动槽与虚拟模具使用 metadata 后缀，以匹配 NEI 自动搜索规则（例如 "Assembler 2 32"）。
         for (int i = getManualSlotStart(); i < getManualSlotStart() + SLOT_MANUAL_SIZE; i++) {
             ItemStack manualStack = mInventory[i];
             if (manualStack == null) continue;
@@ -827,9 +768,6 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             } catch (IllegalFormatException ignored) {}
         }
 
-        // Also surface the phantom mold slot's item so the interface terminal name reflects the selected mold.
-        // Show its meta value (item damage) rather than the display name, matching the ghost-circuit suffix style
-        // (see CommonBaseMetaTileEntity.getInterfaceNameSuffix) so NEI-overwrite auto-naming stays consistent.
         ItemStack mold = hasVirtualMoldSlot() ? mInventory[getMoldSlot()] : null;
         if (mold != null) {
             try {
@@ -914,8 +852,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             if (internalInventory[i] != null) {
                 NBTTagCompound internalInventorySlotNBT = new NBTTagCompound();
                 internalInventorySlotNBT.setInteger("patternSlot", i);
-                internalInventorySlotNBT
-                    .setTag("patternSlotNBT", internalInventory[i].writeToNBT(new NBTTagCompound()));
+                internalInventorySlotNBT.setTag("patternSlotNBT",
+                    internalInventory[i].writeToNBT(new NBTTagCompound()));
                 internalInventoryNBT.appendTag(internalInventorySlotNBT);
             }
         }
@@ -953,13 +891,17 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         int oldPatternCount = 4 * 8;
         int oldSlotManual = oldPatternCount + 1;
 
-        if (oldSlotManual < internalInventory.length && internalInventory[oldSlotManual] == null
-            && mInventory[oldSlotManual] != null) {
+        if (
+            oldSlotManual < internalInventory.length && internalInventory[oldSlotManual] == null
+                && mInventory[oldSlotManual] != null
+        ) {
             mInventory[getManualSlotStart()] = mInventory[oldSlotManual];
             mInventory[oldSlotManual] = null;
         }
-        if (oldPatternCount < internalInventory.length && internalInventory[oldPatternCount] == null
-            && mInventory[oldPatternCount] != null) {
+        if (
+            oldPatternCount < internalInventory.length && internalInventory[oldPatternCount] == null
+                && mInventory[oldPatternCount] != null
+        ) {
             mInventory[getCircuitSlot()] = mInventory[oldPatternCount];
             mInventory[oldPatternCount] = null;
         }
@@ -994,52 +936,39 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
     private String describePattern(ICraftingPatternDetails patternDetails) {
         return Arrays.stream(patternDetails.getCondensedOutputs())
-            .map(
-                aeItemStack -> aeItemStack.getItem()
-                    .getItemStackDisplayName(aeItemStack.getItemStack()))
+            .map(aeItemStack -> aeItemStack.getItem().getItemStackDisplayName(aeItemStack.getItemStack()))
             .collect(Collectors.joining(", "));
     }
 
     @Override
     public String[] getInfoData() {
         List<String> ret = new ArrayList<>();
-        ret.add(
-            (getProxy() != null && getProxy().isActive())
-                ? StatCollector.translateToLocal("GT5U.infodata.hatch.crafting_input_me.bus.online")
-                : StatCollector.translateToLocalFormatted(
-                    "GT5U.infodata.hatch.crafting_input_me.bus.offline",
-                    getAEDiagnostics()));
-        ret.add(
-            StatCollector.translateToLocal(
-                "GT5U.infodata.hatch.crafting_input_me.show_pattern." + (showPattern ? "enable" : "disabled")));
+        ret.add((getProxy() != null && getProxy().isActive())
+            ? StatCollector.translateToLocal("GT5U.infodata.hatch.crafting_input_me.bus.online")
+            : StatCollector.translateToLocalFormatted("GT5U.infodata.hatch.crafting_input_me.bus.offline",
+                getAEDiagnostics()));
+        ret.add(StatCollector.translateToLocal(
+            "GT5U.infodata.hatch.crafting_input_me.show_pattern." + (showPattern ? "enable" : "disabled")));
         ret.add(StatCollector.translateToLocal("GT5U.infodata.hatch.internal_inventory"));
         int i = 0;
         for (PatternSlot<SuperMTEHatchCraftingInputME> slot : internalInventory) {
             if (slot == null) continue;
             if (slot.getPatternDetails() == null) continue;
             i += 1;
-            ret.add(
-                StatCollector.translateToLocalFormatted(
-                    "GT5U.infodata.hatch.internal_inventory.slot",
-                    i,
-                    EnumChatFormatting.BLUE + describePattern(slot.getPatternDetails()) + EnumChatFormatting.RESET));
+            ret.add(StatCollector.translateToLocalFormatted("GT5U.infodata.hatch.internal_inventory.slot", i,
+                EnumChatFormatting.BLUE + describePattern(slot.getPatternDetails()) + EnumChatFormatting.RESET));
             Map<GTUtility.ItemId, BigInteger> itemMap = new HashMap<>();
             for (IAEItemStack stack : slot.getStoredItems()) {
-                ItemStack item = stack.copy()
-                    .setStackSize(1)
-                    .getItemStack();
+                ItemStack item = stack.copy().setStackSize(1).getItemStack();
                 itemMap.merge(GTUtility.ItemId.create(item), BigInteger.valueOf(stack.getStackSize()), BigInteger::add);
             }
             for (Map.Entry<GTUtility.ItemId, BigInteger> entry : itemMap.entrySet()) {
-                ItemStack item = entry.getKey()
-                    .getItemStack();
+                ItemStack item = entry.getKey().getItemStack();
                 BigInteger amount = entry.getValue();
-                ret.add(
-                    item.getItem()
-                        .getItemStackDisplayName(item) + ": "
-                        + EnumChatFormatting.GOLD
-                        + readableAmount(amount)
-                        + EnumChatFormatting.RESET);
+                ret.add(item.getItem().getItemStackDisplayName(item) + ": "
+                    + EnumChatFormatting.GOLD
+                    + readableAmount(amount)
+                    + EnumChatFormatting.RESET);
             }
             Map<Fluid, BigInteger> fluidMap = new HashMap<>();
             for (IAEFluidStack stack : slot.getStoredFluids()) {
@@ -1048,11 +977,10 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             for (Map.Entry<Fluid, BigInteger> entry : fluidMap.entrySet()) {
                 FluidStack fluid = new FluidStack(entry.getKey(), 1);
                 BigInteger amount = entry.getValue();
-                ret.add(
-                    fluid.getLocalizedName() + ": "
-                        + EnumChatFormatting.AQUA
-                        + readableAmount(amount)
-                        + EnumChatFormatting.RESET);
+                ret.add(fluid.getLocalizedName() + ": "
+                    + EnumChatFormatting.AQUA
+                    + readableAmount(amount)
+                    + EnumChatFormatting.RESET);
             }
         }
         return ret.toArray(new String[0]);
@@ -1161,8 +1089,10 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
                 } catch (GridAccessException ignored) {}
                 if (patternDetailsPatternSlotMap.remove(originalPattern.getPatternDetails(), originalPattern)) {
                     for (PatternSlot<SuperMTEHatchCraftingInputME> duplicate : internalInventory) {
-                        if (duplicate != null && duplicate != originalPattern
-                            && Objects.equals(duplicate.getPatternDetails(), originalPattern.getPatternDetails())) {
+                        if (
+                            duplicate != null && duplicate != originalPattern
+                                && Objects.equals(duplicate.getPatternDetails(), originalPattern.getPatternDetails())
+                        ) {
                             patternDetailsPatternSlotMap.put(duplicate.getPatternDetails(), duplicate);
                             break;
                         }
@@ -1227,9 +1157,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         NBTTagCompound tag = accessor.getNBTData();
         if (tag.hasKey("name"))
             currenttip.add(EnumChatFormatting.AQUA + tag.getString("name") + EnumChatFormatting.RESET);
-        currenttip.add(
-            StatCollector.translateToLocal(
-                "GT5U.infodata.hatch.crafting_input_me.show_pattern." + (showPattern ? "enable" : "disabled")));
+        currenttip.add(StatCollector.translateToLocal(
+            "GT5U.infodata.hatch.crafting_input_me.show_pattern." + (showPattern ? "enable" : "disabled")));
         if (tag.hasKey("inventory")) {
             NBTTagList inventory = tag.getTagList("inventory", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < inventory.tagCount(); ++i) {
@@ -1252,17 +1181,11 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         for (Iterator<PatternSlot<SuperMTEHatchCraftingInputME>> it = inventories(); it.hasNext();) {
             PatternSlot<SuperMTEHatchCraftingInputME> i = it.next();
             for (IAEItemStack item : i.getStoredItems()) {
-                String name = item.copy()
-                    .setStackSize(1)
-                    .getItemStack()
-                    .getDisplayName();
+                String name = item.copy().setStackSize(1).getItemStack().getDisplayName();
                 nameToAmount.merge(name, BigInteger.valueOf(item.getStackSize()), BigInteger::add);
             }
             for (IAEFluidStack fluid : i.getStoredFluids()) {
-                String name = fluid.copy()
-                    .setStackSize(1)
-                    .getFluidStack()
-                    .getLocalizedName();
+                String name = fluid.copy().setStackSize(1).getFluidStack().getLocalizedName();
                 nameToAmount.merge(name, BigInteger.valueOf(fluid.getStackSize()), BigInteger::add);
             }
         }
@@ -1282,8 +1205,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
     private static String readableAmount(BigInteger amount) {
         return amount.bitLength() <= 63 ? ReadableNumberConverter.INSTANCE.toWideReadableForm(amount.longValue())
-            : NumberFormat.getIntegerInstance(Locale.ROOT)
-                .format(amount);
+            : NumberFormat.getIntegerInstance(Locale.ROOT).format(amount);
     }
 
     @Override
@@ -1294,10 +1216,9 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             if (slot == null) continue;
             ICraftingPatternDetails details = slot.getPatternDetails();
             if (details == null) {
-                GTLoggers.GT_FML_LOGGER.warn(
-                    "Found an invalid pattern at " + getBaseMetaTileEntity().getCoords()
-                        + " in dim "
-                        + getBaseMetaTileEntity().getWorld().provider.dimensionId);
+                GTLoggers.GT_FML_LOGGER.warn("Found an invalid pattern at " + getBaseMetaTileEntity().getCoords()
+                    + " in dim "
+                    + getBaseMetaTileEntity().getWorld().provider.dimensionId);
                 continue;
             }
             craftingTracker.addCraftingOption(this, details);
@@ -1312,8 +1233,10 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
         for (int i = 0; i < table.getSizeInventory(); ++i) {
             IAEStack<?> stackInSlot = meic.getAEStackInSlot(i);
-            if (stackInSlot == null || stackInSlot instanceof IAEItemStack
-                || (supportFluids && stackInSlot instanceof IAEFluidStack)) {
+            if (
+                stackInSlot == null || stackInSlot instanceof IAEItemStack
+                    || (supportFluids && stackInSlot instanceof IAEFluidStack)
+            ) {
                 continue;
             }
 
@@ -1342,17 +1265,12 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
 
     @Override
     public Iterator<PatternSlot<SuperMTEHatchCraftingInputME>> inventories() {
-        return Arrays.stream(internalInventory)
-            .filter(Objects::nonNull)
-            .iterator();
+        return Arrays.stream(internalInventory).filter(Objects::nonNull).iterator();
     }
 
     public Iterator<PatternSlot<SuperMTEHatchCraftingInputME>> inventoriesReversed() {
-        return IntStream.range(0, internalInventory.length)
-            .map(i -> internalInventory.length - 1 - i)
-            .mapToObj(i -> internalInventory[i])
-            .filter(Objects::nonNull)
-            .iterator();
+        return IntStream.range(0, internalInventory.length).map(i -> internalInventory.length - 1 - i)
+            .mapToObj(i -> internalInventory[i]).filter(Objects::nonNull).iterator();
     }
 
     @Override
@@ -1404,9 +1322,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         tag.setInteger("z", aBaseMetaTileEntity.getZCoord());
 
         dataStick.stackTagCompound = tag;
-        dataStick.setStackDisplayName(
-            "Crafting Input Buffer Link Data Stick (" + aBaseMetaTileEntity
-                .getXCoord() + ", " + aBaseMetaTileEntity.getYCoord() + ", " + aBaseMetaTileEntity.getZCoord() + ")");
+        dataStick.setStackDisplayName("Crafting Input Buffer Link Data Stick (" + aBaseMetaTileEntity
+            .getXCoord() + ", " + aBaseMetaTileEntity.getYCoord() + ", " + aBaseMetaTileEntity.getZCoord() + ")");
         aPlayer.addChatMessage(new ChatComponentText("Saved Link Data to Data Stick"));
     }
 
@@ -1417,13 +1334,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         if (is != null && is.getItem() instanceof ToolQuartzCuttingKnife) {
             if (ForgeEventFactory.onItemUseStart(aPlayer, is, 1) <= 0) return false;
             IGregTechTileEntity te = getBaseMetaTileEntity();
-            aPlayer.openGui(
-                AppEng.instance(),
-                GuiBridge.GUI_RENAMER.ordinal() << 5 | (side.ordinal()),
-                te.getWorld(),
-                te.getXCoord(),
-                te.getYCoord(),
-                te.getZCoord());
+            aPlayer.openGui(AppEng.instance(), GuiBridge.GUI_RENAMER.ordinal() << 5 | (side.ordinal()), te.getWorld(),
+                te.getXCoord(), te.getYCoord(), te.getZCoord());
             return true;
         }
         return super.onRightclick(aBaseMetaTileEntity, aPlayer, side, aX, aY, aZ);
@@ -1438,8 +1350,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         // don't post until it's active
         if (!getProxy().isActive()) return false;
         try {
-            getProxy().getGrid()
-                .postEvent(new MENetworkCraftingPatternChange(this, getProxy().getNode()));
+            getProxy().getGrid().postEvent(new MENetworkCraftingPatternChange(this, getProxy().getNode()));
         } catch (GridAccessException ignored) {
             return false;
         }
@@ -1489,8 +1400,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
             if (slot == null) continue;
             if (slot.getPatternDetails() == null) continue;
 
-            IAEItemStack[] outputs = slot.getPatternDetails()
-                .getCondensedOutputs();
+            IAEItemStack[] outputs = slot.getPatternDetails().getCondensedOutputs();
             list.add(outputs[0].getItemStack());
         }
         return list;
@@ -1512,8 +1422,8 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
                             : PatternMultiplierHelper.getMaxBitMultiplier(details);
                         if (max > 0) {
                             ItemStack copy = stack.copy();
-                            PatternMultiplierHelper
-                                .applyModification(copy, (fast ? Math.min(3, max) : 1) * (backwards ? -1 : 1));
+                            PatternMultiplierHelper.applyModification(copy,
+                                (fast ? Math.min(3, max) : 1) * (backwards ? -1 : 1));
                             patterns.setInventorySlotContents(i, copy);
                         }
                     }
@@ -1536,8 +1446,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         // #tr tooltip.gtnotgood.crafting_input.tier
         // # Hatch Tier: %s
         // # zh_CN 舱室等级：%s
-        String tier = StatCollector.translateToLocalFormatted(
-            "tooltip.gtnotgood.crafting_input.tier",
+        String tier = StatCollector.translateToLocalFormatted("tooltip.gtnotgood.crafting_input.tier",
             TIER_COLORS[supportFluids ? 10 : 6] + VN[supportFluids ? 10 : 6]);
         // #tr tooltip.gtnotgood.crafting_input.processes
         // # Processes patterns directly from ME
@@ -1563,8 +1472,7 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         // # Also ignores other patterns within the same bus
         // # zh_CN 同一总线内的不同样板也互不共用输入
         String ignoresPatterns = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.ignores_patterns");
-        return PatternMEOutput.describe(
-            new String[] { type, itemInput, tier, processes, supportFluids ? supportsFluids : noFluids, connection,
-                ignoresHatches, ignoresPatterns });
+        return PatternMEOutput.describe(new String[] { type, itemInput, tier, processes,
+            supportFluids ? supportsFluids : noFluids, connection, ignoresHatches, ignoresPatterns });
     }
 }

@@ -31,8 +31,7 @@ public abstract class Grade5WaterPurificationMixin extends MTEPurificationUnitBa
 
                 Object state = stateField.get(this);
 
-                if (state.toString()
-                    .equals("Heating")) {
+                if (state.toString().equals("Heating")) {
                     stateField.set(this, Enum.valueOf((Class<Enum>) state.getClass(), "Cooling"));
                 }
             } catch (NoSuchFieldException | IllegalAccessException e) {

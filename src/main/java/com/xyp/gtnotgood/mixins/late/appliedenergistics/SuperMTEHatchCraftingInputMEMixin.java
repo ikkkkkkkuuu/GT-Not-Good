@@ -65,8 +65,7 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
             return;
         }
 
-        this.patternDetailsPatternSlotMap.values()
-            .removeIf(s -> s instanceof WildcardPatternSlotSuper);
+        this.patternDetailsPatternSlotMap.values().removeIf(s -> s instanceof WildcardPatternSlotSuper);
 
         IInventory patterns = getPatterns();
         World world = getWorld();
@@ -107,8 +106,7 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
             .get(patternDetails);
         if (slot != null && !isCurrentInternalSlot(slot)) {
             SuperMTEHatchCraftingInputME.PatternSlot detachedSlot = slot;
-            this.patternDetailsPatternSlotMap.values()
-                .removeIf(s -> s == detachedSlot);
+            this.patternDetailsPatternSlotMap.values().removeIf(s -> s == detachedSlot);
             slot = null;
         }
 
@@ -138,8 +136,7 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
         }
 
         SuperMTEHatchCraftingInputME hatch = (SuperMTEHatchCraftingInputME) (Object) this;
-        if (!hatch.isActive() || !hatch.getBaseMetaTileEntity()
-            .isAllowedToWork()) {
+        if (!hatch.isActive() || !hatch.getBaseMetaTileEntity().isAllowedToWork()) {
             cir.setReturnValue(false);
             return;
         }
@@ -173,9 +170,7 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
         Map<Integer, NBTTagCompound> activePatternTags = readSavedActivePatternTags(tag);
         boolean hasItems = false;
         for (int index = 0; index < this.internalInventory.length && index < patterns.getSizeInventory(); index++) {
-            registerExpandedPatterns(
-                index,
-                patterns.getStackInSlot(index),
+            registerExpandedPatterns(index, patterns.getStackInSlot(index),
                 activePatternTags.get(Integer.valueOf(index)));
             SuperMTEHatchCraftingInputME.PatternSlot slot = this.internalInventory[index];
             if (slot != null && (slot.getItemInputs().length > 0 || slot.getFluidInputs().length > 0)) {
@@ -233,8 +228,7 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
 
         SuperMTEHatchCraftingInputME.PatternSlot targetSlot = this.internalInventory[index];
         if (targetSlot != null) {
-            this.patternDetailsPatternSlotMap.values()
-                .removeIf(s -> s == targetSlot);
+            this.patternDetailsPatternSlotMap.values().removeIf(s -> s == targetSlot);
         }
 
         SuperMTEHatchCraftingInputME.PatternSlot slot = getOrCreateWildcardSlot(index);
@@ -243,8 +237,7 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
         }
 
         if (slot != targetSlot) {
-            this.patternDetailsPatternSlotMap.values()
-                .removeIf(s -> s == slot);
+            this.patternDetailsPatternSlotMap.values().removeIf(s -> s == slot);
         }
 
         List<ICraftingPatternDetails> detailsList = getExpandedDetails(slot, stack, getWorld());
@@ -257,10 +250,8 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
     }
 
     private void removeDetachedWildcardMappings() {
-        this.patternDetailsPatternSlotMap.values()
-            .removeIf(
-                s -> s instanceof WildcardPatternSlotSuper
-                    && !isCurrentInternalSlot((SuperMTEHatchCraftingInputME.PatternSlot) s));
+        this.patternDetailsPatternSlotMap.values().removeIf(s -> s instanceof WildcardPatternSlotSuper
+            && !isCurrentInternalSlot((SuperMTEHatchCraftingInputME.PatternSlot) s));
     }
 
     private boolean isCurrentInternalSlot(SuperMTEHatchCraftingInputME.PatternSlot slot) {
@@ -282,8 +273,10 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
             NBTTagCompound slotWrapper = inventory.getCompoundTagAt(index);
             int patternSlot = slotWrapper.getInteger("patternSlot");
             NBTTagCompound slotTag = slotWrapper.getCompoundTag("patternSlotNBT");
-            if (slotTag.hasKey(WildcardPatternSlotSuper.KEY_ACTIVE_PATTERN, NBT.TAG_COMPOUND)
-                || slotTag.hasKey(WildcardPatternSlotSuper.KEY_ACTIVE_PATTERN_ID)) {
+            if (
+                slotTag.hasKey(WildcardPatternSlotSuper.KEY_ACTIVE_PATTERN, NBT.TAG_COMPOUND)
+                    || slotTag.hasKey(WildcardPatternSlotSuper.KEY_ACTIVE_PATTERN_ID)
+            ) {
                 result.put(Integer.valueOf(patternSlot), slotTag);
             }
         }
@@ -334,8 +327,7 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
         if (processingLogic == null) {
             return;
         }
-        for (Method method : processingLogic.getClass()
-            .getMethods()) {
+        for (Method method : processingLogic.getClass().getMethods()) {
             if (!"removeInventoryRecipeCache".equals(method.getName()) || method.getParameterTypes().length != 1) {
                 continue;
             }
@@ -391,10 +383,8 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
             return slot;
         }
 
-        WildcardPatternSlotSuper wrapped = new WildcardPatternSlotSuper(
-            (SuperMTEHatchCraftingInputME) (Object) this,
-            stack,
-            slot);
+        WildcardPatternSlotSuper wrapped = new WildcardPatternSlotSuper((SuperMTEHatchCraftingInputME) (Object) this,
+            stack, slot);
         this.internalInventory[index] = wrapped;
         return wrapped;
     }
@@ -422,8 +412,10 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
         if (leftPattern == null || rightPattern == null) {
             return false;
         }
-        if (leftPattern.getItem() != rightPattern.getItem()
-            || leftPattern.getItemDamage() != rightPattern.getItemDamage()) {
+        if (
+            leftPattern.getItem() != rightPattern.getItem()
+                || leftPattern.getItemDamage() != rightPattern.getItemDamage()
+        ) {
             return false;
         }
         String leftId = WildcardPatternGenerator.getGeneratedPatternId(leftPattern);
@@ -443,7 +435,6 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
     }
 
     private World getWorld() {
-        return ((SuperMTEHatchCraftingInputME) (Object) this).getBaseMetaTileEntity()
-            .getWorld();
+        return ((SuperMTEHatchCraftingInputME) (Object) this).getBaseMetaTileEntity().getWorld();
     }
 }

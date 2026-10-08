@@ -111,14 +111,10 @@ public class GenericRadialMenu extends Gui {
 
             float angle = startAngle + anglePerItem * visibleIndex;
 
-            if (isPointInWedge(
-                mouseX,
-                mouseY,
-                centerX,
-                centerY,
-                radiusIn * animProgress,
-                angle - anglePerItem / 2,
-                angle + anglePerItem / 2)) {
+            if (
+                isPointInWedge(mouseX, mouseY, centerX, centerY, radiusIn * animProgress, angle - anglePerItem / 2,
+                    angle + anglePerItem / 2)
+            ) {
                 itemHovering = item;
             }
 
@@ -143,14 +139,8 @@ public class GenericRadialMenu extends Gui {
             float angle = startAngle + anglePerItem * visibleIndex;
 
             // Draw background wedge: highlight (0x80FFFFFF) when hovered, normal (0x60000000) otherwise
-            drawWedge(
-                centerX,
-                centerY,
-                radiusIn * animProgress,
-                radiusOut * animProgress,
-                angle - anglePerItem / 2,
-                angle + anglePerItem / 2,
-                i == getItemIndex(itemHovering) ? 0x80FFFFFF : 0x60000000);
+            drawWedge(centerX, centerY, radiusIn * animProgress, radiusOut * animProgress, angle - anglePerItem / 2,
+                angle + anglePerItem / 2, i == getItemIndex(itemHovering) ? 0x80FFFFFF : 0x60000000);
 
             visibleIndex++;
         }

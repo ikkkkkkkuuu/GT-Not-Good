@@ -62,8 +62,7 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
     private final Slot[] slots;
     private final VerticalScrollData fluidScroll = new VerticalScrollData();
     private int selectedSlot;
-    private final IntSyncValue selection = new IntSyncValue(
-        () -> selectedSlot,
+    private final IntSyncValue selection = new IntSyncValue(() -> selectedSlot,
         value -> selectedSlot = Math.max(0, Math.min(SLOT_COUNT - 1, value))).allowC2S();
     private IPanelHandler policyPanel;
 
@@ -75,15 +74,12 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
     @Override
     protected ParentWidget<?> createContentSection(ModularPanel panel, PanelSyncManager syncManager) {
         syncManager.syncValue("selectedFluid", selection);
-        policyPanel = syncManager
-            .syncedPanel("fluidPolicy", true, (manager, handler) -> createPolicyPanel(panel, manager));
-        BooleanSyncValue isAutoPullSyncer = new BooleanSyncValue(
-            machine::isAutoPullFluidList,
+        policyPanel = syncManager.syncedPanel("fluidPolicy", true,
+            (manager, handler) -> createPolicyPanel(panel, manager));
+        BooleanSyncValue isAutoPullSyncer = new BooleanSyncValue(machine::isAutoPullFluidList,
             machine::setAutoPullFluidList).allowC2S();
 
-        Flow mainRow = Flow.row()
-            .coverChildren()
-            .crossAxisAlignment(Alignment.CrossAxis.START);
+        Flow mainRow = Flow.row().coverChildren().crossAxisAlignment(Alignment.CrossAxis.START);
 
         mainRow.child(createFilterSlots(syncManager, isAutoPullSyncer));
         mainRow.child(createMiddleColumn(syncManager, panel, isAutoPullSyncer));
@@ -153,32 +149,24 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
                     }
                 }
             }
-        }.phantom(true)
-            .controlsAmount(false))
-            .backgroundOverlay(
-                new DynamicDrawable(
-                    () -> !isAutoPullSyncer.getBoolValue() ? GTGuiTextures.SLOT_FLUID_DARK : GuiTextures.SLOT_FLUID),
-                GTGuiTextures.OVERLAY_SLOT_ARROW_ME))
-            .size(9 * SLOT_SIZE + 4, 4 * SLOT_SIZE)
-            .scrollable(fluidScroll);
+        }.phantom(true).controlsAmount(false)).backgroundOverlay(
+            new DynamicDrawable(
+                () -> !isAutoPullSyncer.getBoolValue() ? GTGuiTextures.SLOT_FLUID_DARK : GuiTextures.SLOT_FLUID),
+            GTGuiTextures.OVERLAY_SLOT_ARROW_ME)).size(9 * SLOT_SIZE + 4, 4 * SLOT_SIZE).scrollable(fluidScroll);
     }
 
     private boolean containsSuchStack(FluidStack tStack) {
-        return Stream.of(slots)
-            .filter(Objects::nonNull)
+        return Stream.of(slots).filter(Objects::nonNull)
             .anyMatch(slot -> GTUtility.areFluidsEqual(slot.config, tStack));
     }
 
     private Flow createMiddleColumn(PanelSyncManager syncManager, ModularPanel panel,
         BooleanSyncValue isAutoPullSyncer) {
-        Flow mainColumn = Flow.col()
-            .width(18)
-            .mainAxisAlignment(Alignment.MainAxis.START)
-            .coverChildrenHeight();
+        Flow mainColumn = Flow.col().width(18).mainAxisAlignment(Alignment.MainAxis.START).coverChildrenHeight();
 
         // toggle button for config panel
-        IPanelHandler settingsPanel = syncManager
-            .syncedPanel("configPanel", true, (manager, handler) -> createStackSizeConfigurationPanel(panel));
+        IPanelHandler settingsPanel = syncManager.syncedPanel("configPanel", true,
+            (manager, handler) -> createStackSizeConfigurationPanel(panel));
         mainColumn.child(new ToggleButton() {
 
             @Override
@@ -196,96 +184,57 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
                 }
                 return Result.IGNORE;
             }
-        }.value(isAutoPullSyncer)
-            .size(16)
-            .margin(1)
-            .setEnabledIf(b -> machine.autoPullAvailable)
+        }.value(isAutoPullSyncer).size(16).margin(1).setEnabledIf(b -> machine.autoPullAvailable)
             .overlay(true, GTGuiTextures.OVERLAY_BUTTON_AUTOPULL_ME)
-            .overlay(false, GTGuiTextures.OVERLAY_BUTTON_AUTOPULL_ME_DISABLED)
-            .tooltip(t -> {
+            .overlay(false, GTGuiTextures.OVERLAY_BUTTON_AUTOPULL_ME_DISABLED).tooltip(t -> {
                 t.addLine(IKey.lang("GT5U.machines.stocking_hatch.auto_pull.tooltip.1"));
                 t.addLine(IKey.lang("GT5U.machines.stocking_hatch.auto_pull.tooltip.2"));
             }));
 
         // arrow
-        mainColumn.child(
-            GTGuiTextures.PICTURE_ARROW_DOUBLE.asWidget()
-                .size(12)
-                .margin(3));
+        mainColumn.child(GTGuiTextures.PICTURE_ARROW_DOUBLE.asWidget().size(12).margin(3));
 
         BooleanSyncValue limited = new BooleanSyncValue(machine::isLimitedMode, machine::setLimitedMode).allowC2S();
         BooleanSyncValue fixed = new BooleanSyncValue(machine::isFixedMode, machine::setFixedMode).allowC2S();
         // #tr gtng.super_storage.limit_mode
         // # Reserve mode: keep each fluid's configured reserve in ME
         // # zh_CN 限制模式：在ME中保留每种流体设定的数量
-        mainColumn.child(
-            new ToggleButton().value(limited)
-                .size(16)
-                .margin(1)
-                .overlay(true, GTGuiTextures.OVERLAY_BUTTON_LOCKED)
-                .overlay(false, GTGuiTextures.OVERLAY_BUTTON_LOCK)
-                .addTooltipLine(IKey.lang("gtng.super_storage.limit_mode")));
+        mainColumn.child(new ToggleButton().value(limited).size(16).margin(1)
+            .overlay(true, GTGuiTextures.OVERLAY_BUTTON_LOCKED).overlay(false, GTGuiTextures.OVERLAY_BUTTON_LOCK)
+            .addTooltipLine(IKey.lang("gtng.super_storage.limit_mode")));
         // #tr gtng.super_storage.fixed_mode
         // # Fixed mode: offer each fluid's configured quantity per recipe check
         // # zh_CN 固定模式：每次配方检查提供各流体设定的数量
-        mainColumn.child(
-            new ToggleButton().value(fixed)
-                .size(16)
-                .margin(1)
-                .overlay(true, GTGuiTextures.OVERLAY_BUTTON_CHECKMARK)
-                .overlay(false, GTGuiTextures.OVERLAY_BUTTON_CROSS)
-                .addTooltipLine(IKey.lang("gtng.super_storage.fixed_mode")));
+        mainColumn.child(new ToggleButton().value(fixed).size(16).margin(1)
+            .overlay(true, GTGuiTextures.OVERLAY_BUTTON_CHECKMARK).overlay(false, GTGuiTextures.OVERLAY_BUTTON_CROSS)
+            .addTooltipLine(IKey.lang("gtng.super_storage.fixed_mode")));
         return mainColumn;
     }
 
     private ModularPanel createStackSizeConfigurationPanel(ModularPanel parent) {
-        IntSyncValue minAutoPullAmountSyncer = new IntSyncValue(
-            machine::getMinAutoPullAmount,
+        IntSyncValue minAutoPullAmountSyncer = new IntSyncValue(machine::getMinAutoPullAmount,
             machine::setMinAutoPullAmount).allowC2S();
-        IntSyncValue autoPullRefreshTimeSyncer = new IntSyncValue(
-            machine::getAutoPullRefreshTime,
+        IntSyncValue autoPullRefreshTimeSyncer = new IntSyncValue(machine::getAutoPullRefreshTime,
             machine::setAutoPullRefreshTime).allowC2S();
 
-        Flow mainColumn = Flow.col()
-            .coverChildren()
-            .marginTop(15)
-            .childPadding(3);
+        Flow mainColumn = Flow.col().coverChildren().marginTop(15).childPadding(3);
 
         // stack size label
-        mainColumn.child(
-            IKey.lang("GT5U.machines.stocking_hatch.min_amount")
-                .asWidget());
+        mainColumn.child(IKey.lang("GT5U.machines.stocking_hatch.min_amount").asWidget());
 
         // stack size text field
-        mainColumn.child(
-            new TextFieldWidget().value(minAutoPullAmountSyncer)
-                .numbersInt(1, Integer.MAX_VALUE)
-                .formatAsInteger(true)
-                .setMaxLength(10)
-                .setTextAlignment(Alignment.CENTER)
-                .width(72));
+        mainColumn.child(new TextFieldWidget().value(minAutoPullAmountSyncer).numbersInt(1, Integer.MAX_VALUE)
+            .formatAsInteger(true).setMaxLength(10).setTextAlignment(Alignment.CENTER).width(72));
 
         // refresh time label
         mainColumn.child(
-            IKey.lang("GT5U.machines.stocking_bus.refresh_time")
-                .asWidget()
-                .maxWidth(72)
-                .textAlign(Alignment.Center));
+            IKey.lang("GT5U.machines.stocking_bus.refresh_time").asWidget().maxWidth(72).textAlign(Alignment.Center));
 
         // refresh time text field
-        mainColumn.child(
-            new TextFieldWidget().value(autoPullRefreshTimeSyncer)
-                .numbersInt(1, Integer.MAX_VALUE)
-                .formatAsInteger(true)
-                .setMaxLength(10)
-                .setTextAlignment(Alignment.CENTER)
-                .width(72));
+        mainColumn.child(new TextFieldWidget().value(autoPullRefreshTimeSyncer).numbersInt(1, Integer.MAX_VALUE)
+            .formatAsInteger(true).setMaxLength(10).setTextAlignment(Alignment.CENTER).width(72));
 
-        return createPopUpPanel("configPanel").coverChildren()
-            .relative(parent)
-            .padding(5)
-            .child(mainColumn)
-            .leftRel(1)
+        return createPopUpPanel("configPanel").coverChildren().relative(parent).padding(5).child(mainColumn).leftRel(1)
             .topRel(0);
     }
 
@@ -300,11 +249,8 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
 
                 if (fluid != null) {
                     tooltip.addFromFluid(fluid);
-                    tooltip.addLine(
-                        IKey.lang(
-                            "modularui2.fluid.phantom.amount",
-                            this.formatFluidTooltipAmount(fluid.amount),
-                            this.getBaseUnit()));
+                    tooltip.addLine(IKey.lang("modularui2.fluid.phantom.amount",
+                        this.formatFluidTooltipAmount(fluid.amount), this.getBaseUnit()));
                     addAdditionalFluidInfo(tooltip, fluid);
 
                     if (!Interactable.hasShiftDown()) {
@@ -321,9 +267,7 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
 
             @Override
             public void tryScrollPhantom(MouseData mouseData) {}
-        }.phantom(true))
-            .backgroundOverlay(GTGuiTextures.SLOT_ITEM_DARK))
-            .size(9 * SLOT_SIZE + 4, 4 * SLOT_SIZE)
+        }.phantom(true)).backgroundOverlay(GTGuiTextures.SLOT_ITEM_DARK)).size(9 * SLOT_SIZE + 4, 4 * SLOT_SIZE)
             .scrollable(fluidScroll);
     }
 
@@ -348,17 +292,13 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
             String state = WailaText.getPowerState(isActive, isPowered, isBooting);
 
             if (isActive && isPowered) {
-                return MessageFormat.format(
-                    "{0} ({1})",
-                    EnumChatFormatting.GREEN + state + EnumChatFormatting.RESET,
+                return MessageFormat.format("{0} ({1})", EnumChatFormatting.GREEN + state + EnumChatFormatting.RESET,
                     IKey.lang(
                         isAllowedToWorkSyncer.getBoolValue() ? "GT5U.gui.text.enabled" : "GT5U.gui.text.disabled"));
             } else {
                 return EnumChatFormatting.DARK_RED + state + EnumChatFormatting.RESET;
             }
-        })
-            .asWidget()
-            .widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
+        }).asWidget().widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
 
         return super.createBottomLeftCornerFlow(panel, syncManager).child(status);
     }
@@ -374,10 +314,8 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
                 copy.extracted = slot.extracted == null ? null : slot.extracted.copy();
                 copy.extractedAmount = slot.extractedAmount;
                 return copy;
-            }))
-            .setter(slots2 -> System.arraycopy(slots2.toArray(new Slot[0]), 0, slots, 0, SLOT_COUNT))
-            .adapter(new MTEHatchInputMESlotAdapter())
-            .build();
+            })).setter(slots2 -> System.arraycopy(slots2.toArray(new Slot[0]), 0, slots, 0, SLOT_COUNT))
+            .adapter(new MTEHatchInputMESlotAdapter()).build();
         syncManager.syncValue("slots", slotSyncHandler);
     }
 
@@ -404,52 +342,28 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
                 machine.policyChanged();
             }
         }).allowC2S();
-        Flow content = Flow.col()
-            .coverChildren()
-            .childPadding(4)
-            .marginTop(16);
+        Flow content = Flow.col().coverChildren().childPadding(4).marginTop(16);
         content.child(IKey.dynamic(() -> {
             FluidStack fluid = machine.getSlotConfig(selection.getIntValue());
             return fluid == null ? "" : fluid.getLocalizedName();
-        })
-            .asWidget()
-            .maxWidth(200));
+        }).asWidget().maxWidth(200));
         // #tr gtng.super_storage.reserve_amount
         // # Keep in ME (mB)
         // # zh_CN ME网络保留量（mB）
-        content.child(
-            IKey.lang("gtng.super_storage.reserve_amount")
-                .asWidget());
-        content.child(
-            new TextFieldWidget().value(reserve)
-                .numbersLong(0, Long.MAX_VALUE)
-                .formatAsInteger(true)
-                .setMaxLength(19)
-                .width(180));
+        content.child(IKey.lang("gtng.super_storage.reserve_amount").asWidget());
+        content.child(new TextFieldWidget().value(reserve).numbersLong(0, Long.MAX_VALUE).formatAsInteger(true)
+            .setMaxLength(19).width(180));
         // #tr gtng.super_storage.batch_amount
         // # Available per recipe check (mB)
         // # zh_CN 每次配方检查可用量（mB）
-        content.child(
-            IKey.lang("gtng.super_storage.batch_amount")
-                .asWidget());
-        content.child(
-            new TextFieldWidget().value(batch)
-                .numbersInt(1, Integer.MAX_VALUE)
-                .formatAsInteger(true)
-                .setMaxLength(10)
-                .width(180));
+        content.child(IKey.lang("gtng.super_storage.batch_amount").asWidget());
+        content.child(new TextFieldWidget().value(batch).numbersInt(1, Integer.MAX_VALUE).formatAsInteger(true)
+            .setMaxLength(10).width(180));
         // #tr gtng.super_storage.batch_help
         // # Waits for the full amount; consumes only what the recipe needs
         // # zh_CN 不足设定量则等待，实际只扣除配方消耗
-        content.child(
-            IKey.lang("gtng.super_storage.batch_help")
-                .asWidget()
-                .maxWidth(200));
-        return createPopUpPanel("fluidPolicy").size(224, 160)
-            .relative(parent)
-            .center()
-            .padding(8)
-            .child(content);
+        content.child(IKey.lang("gtng.super_storage.batch_help").asWidget().maxWidth(200));
+        return createPopUpPanel("fluidPolicy").size(224, 160).relative(parent).center().padding(8).child(content);
     }
 
     protected class ConfigFluidTank implements IFluidTank {

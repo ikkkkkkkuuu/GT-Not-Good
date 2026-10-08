@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -86,9 +88,9 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
     private static final int MODE_DETERMINISTIC = 0;
     private static final int MODE_MUTATION_POOL = 1;
     private static final String STRUCTURE_PIECE_MAIN = "main";
-    private static final int HORIZONTAL_OFF_SET = 2;
-    private static final int VERTICAL_OFF_SET = 2;
-    private static final int DEPTH_OFF_SET = 0;
+    private static final int HORIZONTAL_OFFSET = 2;
+    private static final int VERTICAL_OFFSET = 2;
+    private static final int DEPTH_OFFSET = 0;
     private static final int POOL_BREEDING_EUT = 32;
     private static final int POOL_BREEDING_DURATION = 20 * 20;
     private static final int MAX_ARCHIVE_STEPS_PER_CYCLE = 1;
@@ -190,47 +192,34 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         if (structureDefinition == null) {
             structureDefinition = StructureDefinition.<LargeCropBreeder>builder()
                 .addShape(STRUCTURE_PIECE_MAIN, transpose(SHAPE))
-                .addElement(
-                    'B',
+                .addElement('B',
                     ofChain(
                         buildHatchAdder(LargeCropBreeder.class)
                             .atLeast(InputBus, OutputBus, Energy.or(ExoticEnergy), Maintenance)
-                            .casingIndex(getSteelCasingTextureId())
-                            .hint(1)
-                            .buildAndChain(),
+                            .casingIndex(getSteelCasingTextureId()).hint(1).buildAndChain(),
                         onElementPass(machine -> ++machine.casingCount, ofBlock(sBlockCasings2, 0))))
-                .addElement('A', ofBlock(ItemRegistry.bw_realglas, 0))
-                .addElement('C', ofBlock(sBlockCasings2, 13))
-                .addElement('D', ofBlock(sBlockFrames, (int) Materials.Steel.mMetaItemSubID))
-                .build();
+                .addElement('A', ofBlock(ItemRegistry.bw_realglas, 0)).addElement('C', ofBlock(sBlockCasings2, 13))
+                .addElement('D', ofBlock(sBlockFrames, (int) Materials.Steel.mMetaItemSubID)).build();
         }
         return structureDefinition;
     }
 
     @Override
     public void construct(ItemStack stackSize, boolean hintsOnly) {
-        buildPiece(STRUCTURE_PIECE_MAIN, stackSize, hintsOnly, HORIZONTAL_OFF_SET, VERTICAL_OFF_SET, DEPTH_OFF_SET);
+        buildPiece(STRUCTURE_PIECE_MAIN, stackSize, hintsOnly, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET);
     }
 
     @Override
     public int survivalConstruct(ItemStack stackSize, int elementBudget, ISurvivalBuildEnvironment env) {
         if (mMachine) return -1;
-        return survivalBuildPiece(
-            STRUCTURE_PIECE_MAIN,
-            stackSize,
-            HORIZONTAL_OFF_SET,
-            VERTICAL_OFF_SET,
-            DEPTH_OFF_SET,
-            elementBudget,
-            env,
-            false,
-            true);
+        return survivalBuildPiece(STRUCTURE_PIECE_MAIN, stackSize, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET,
+            elementBudget, env, false, true);
     }
 
     @Override
     public void checkMachine(IGregTechTileEntity baseTileEntity, ItemStack stack, List<StructureError> errors) {
         casingCount = 0;
-        if (!checkPiece(STRUCTURE_PIECE_MAIN, HORIZONTAL_OFF_SET, VERTICAL_OFF_SET, DEPTH_OFF_SET, errors)) return;
+        if (!checkPiece(STRUCTURE_PIECE_MAIN, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET, errors)) return;
         checkCasingMin(errors, casingCount, 3);
         if (mInputBusses.isEmpty()) errors.add(StructureErrors.hatchCount(ErrorType.TOO_FEW, InputBus, 0, 1));
         if (mOutputBusses.isEmpty()) errors.add(StructureErrors.hatchCount(ErrorType.TOO_FEW, OutputBus, 0, 1));
@@ -350,8 +339,8 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
             CheckRecipeResult poolResult = tryPrepareArchivedPoolMutation(targetCrop);
             if (poolResult != null) return poolResult;
         } else {
-            List<CropBreedingPlanner.Step> readySteps = breedingPlan
-                .getReadySteps(cropArchive.getAvailableCropIds(), MAX_ARCHIVE_STEPS_PER_CYCLE);
+            List<CropBreedingPlanner.Step> readySteps = breedingPlan.getReadySteps(cropArchive.getAvailableCropIds(),
+                MAX_ARCHIVE_STEPS_PER_CYCLE);
             if (!readySteps.isEmpty()) {
                 CheckRecipeResult stepResult = tryPrepareArchivedDeterministicMutation(readySteps.get(0));
                 if (stepResult != null) return stepResult;
@@ -398,8 +387,8 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
 
         ItemStack[] catalystSlots = getCatalystSlots();
         ArrayList<ICropCard> parentCards = new ArrayList<>(mutation.getParents());
-        int[] catalystConsumption = CropMutationMachineRequirements
-            .canBreedIgnoringSubSoil(mutation, parentCards, getBaseMetaTileEntity(), catalystSlots);
+        int[] catalystConsumption = CropMutationMachineRequirements.canBreedIgnoringSubSoil(mutation, parentCards,
+            getBaseMetaTileEntity(), catalystSlots);
         if (catalystConsumption == null) return null;
 
         ISeedStats outputStats = cropArchive.averageStats(mutation.getParents());
@@ -408,12 +397,7 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         int duration = Math.max(1, mutation.getBreedingMachineRecipeDuration());
         consumeCatalysts(catalystSlots, catalystConsumption);
         updateSlots();
-        prepareArchiveBreeding(
-            mutation.getOutput()
-                .getId(),
-            outputStats,
-            duration,
-            mutationEUt);
+        prepareArchiveBreeding(mutation.getOutput().getId(), outputStats, duration, mutationEUt);
         return CheckRecipeResultRegistry.SUCCESSFUL;
     }
 
@@ -563,8 +547,7 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
             }
 
             boolean targetUnlocked = cropArchive.hasCrop(targetCropId);
-            boolean hasReadyStep = !breedingPlan.getReadySteps(cropArchive.getAvailableCropIds(), 1)
-                .isEmpty();
+            boolean hasReadyStep = !breedingPlan.getReadySteps(cropArchive.getAvailableCropIds(), 1).isEmpty();
             ICropCard targetCrop = CropRegistry.instance.get(targetCropId);
             boolean hasReadyPoolFallback = !targetUnlocked && getPoolFallbackTarget(targetCrop) != null;
             allTasksBlocked = pendingSeedOutputs > 0 && !targetUnlocked && !hasReadyStep && !hasReadyPoolFallback;
@@ -574,9 +557,11 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         }
 
         updateChainDisplayInfo();
-        if (previousBlocked != allTasksBlocked || !java.util.Objects.equals(previousMissing, missingCropId)
-            || previousMissingRequirements != missingBreedingRequirements
-            || previousCompleted != chainCompletedSteps) {
+        if (
+            previousBlocked != allTasksBlocked || !Objects.equals(previousMissing, missingCropId)
+                || previousMissingRequirements != missingBreedingRequirements
+                || previousCompleted != chainCompletedSteps
+        ) {
             markDisplayDirty();
         }
     }
@@ -608,12 +593,11 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
             tag.setInteger("eut", step.eut);
             if (cropArchive.hasCrop(step.result)) {
                 tag.setByte("status", (byte) 2);
-            } else if (cropArchive.getAvailableCropIds()
-                .containsAll(step.parents)) {
-                    tag.setByte("status", (byte) 1);
-                } else {
-                    tag.setByte("status", (byte) 0);
-                }
+            } else if (cropArchive.getAvailableCropIds().containsAll(step.parents)) {
+                tag.setByte("status", (byte) 1);
+            } else {
+                tag.setByte("status", (byte) 0);
+            }
             result.add(tag);
         }
         return result;
@@ -655,11 +639,9 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
             parentStats.add(stats);
         }
         if (parentStats.size() < 2) return null;
-        return new SeedStats(
-            TileEntityCropSticks.variateStat(false, parentStats, ISeedStats::getGrowth),
+        return new SeedStats(TileEntityCropSticks.variateStat(false, parentStats, ISeedStats::getGrowth),
             TileEntityCropSticks.variateStat(false, parentStats, ISeedStats::getGain),
-            TileEntityCropSticks.variateStat(false, parentStats, ISeedStats::getResistance),
-            true);
+            TileEntityCropSticks.variateStat(false, parentStats, ISeedStats::getResistance), true);
     }
 
     @Nullable
@@ -676,21 +658,18 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         ICropCard exact = CropRegistry.instance.get(candidate);
         if (exact != null) return exact;
 
-        String normalized = candidate.toLowerCase(java.util.Locale.ROOT);
+        String normalized = candidate.toLowerCase(Locale.ROOT);
         for (ICropCard crop : CropRegistry.instance.getAllInRegistrationOrder()) {
             if (crop == null) continue;
-            if (crop.getId()
-                .equalsIgnoreCase(candidate)) {
+            if (crop.getId().equalsIgnoreCase(candidate)) {
                 return crop;
             }
             String unlocalizedName = crop.getUnlocalizedName();
-            if (unlocalizedName != null && unlocalizedName.toLowerCase(java.util.Locale.ROOT)
-                .contains(normalized)) {
+            if (unlocalizedName != null && unlocalizedName.toLowerCase(Locale.ROOT).contains(normalized)) {
                 return crop;
             }
             String localizedName = getCropDisplayName(crop);
-            if (localizedName != null && localizedName.toLowerCase(java.util.Locale.ROOT)
-                .contains(normalized)) {
+            if (localizedName != null && localizedName.toLowerCase(Locale.ROOT).contains(normalized)) {
                 return crop;
             }
         }
@@ -874,15 +853,10 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         // # Steel pipe casing seed bed
         // # zh_CN 钢级管道外壳种床
         String seedBed = StatCollector.translateToLocal("Tooltip_LargeCropBreeder_SeedBed");
-        tt.beginStructureBlock(5, 4, 3, false)
-            .addController(controller)
-            .addOtherStructurePart(glass, "A", 2)
-            .addInputBus("1+", casing, 1)
-            .addOutputBus("1+", casing, 1)
-            .addEnergyHatch("1+", casing, 1)
+        tt.beginStructureBlock(5, 4, 3, false).addController(controller).addOtherStructurePart(glass, "A", 2)
+            .addInputBus("1+", casing, 1).addOutputBus("1+", casing, 1).addEnergyHatch("1+", casing, 1)
             .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1)
-            .addOtherStructurePart(seedBed, "C", 3)
-            .toolTipFinisher();
+            .addOtherStructurePart(seedBed, "C", 3).toolTipFinisher();
         return tt;
     }
 
@@ -892,14 +866,10 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         int casingId = getSteelCasingTextureId();
         if (side == facing) {
             return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(casingId), TextureFactory.builder()
-                .addIcon(active ? OVERLAY_FRONT_CROP_BREEDER_ACTIVE : OVERLAY_FRONT_CROP_BREEDER)
-                .extFacing()
-                .build(),
+                .addIcon(active ? OVERLAY_FRONT_CROP_BREEDER_ACTIVE : OVERLAY_FRONT_CROP_BREEDER).extFacing().build(),
                 TextureFactory.builder()
                     .addIcon(active ? OVERLAY_FRONT_CROP_BREEDER_ACTIVE_GLOW : OVERLAY_FRONT_CROP_BREEDER_GLOW)
-                    .extFacing()
-                    .glow()
-                    .build() };
+                    .extFacing().glow().build() };
         }
         return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(casingId) };
     }

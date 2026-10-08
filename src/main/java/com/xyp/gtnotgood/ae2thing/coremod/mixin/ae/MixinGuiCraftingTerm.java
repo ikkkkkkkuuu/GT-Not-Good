@@ -17,6 +17,8 @@ import com.xyp.gtnotgood.ae2thing.common.item.ItemWirelessDualInterfaceTerminal;
 import com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType;
 import com.xyp.gtnotgood.ae2thing.network.CPacketSwitchGuis;
 
+import appeng.api.config.ActionItems;
+import appeng.api.config.Settings;
 import appeng.api.storage.ITerminalHost;
 import appeng.client.gui.AEBaseGui;
 import appeng.client.gui.implementations.GuiCraftingTerm;
@@ -57,8 +59,10 @@ public abstract class MixinGuiCraftingTerm extends AEBaseGui {
         int y = this.guiTop;
         GuiImgButton pinsButton = null;
         for (Object o : this.buttonList) {
-            if (o instanceof GuiImgButton pinsBtn && pinsBtn.getSetting() == appeng.api.config.Settings.ACTIONS
-                && pinsBtn.getCurrentValue() == appeng.api.config.ActionItems.PINS) {
+            if (
+                o instanceof GuiImgButton pinsBtn && pinsBtn.getSetting() == Settings.ACTIONS
+                    && pinsBtn.getCurrentValue() == ActionItems.PINS
+            ) {
                 pinsButton = pinsBtn;
             } else if (o instanceof GuiButton button && button.visible && button.xPosition == x) {
                 y = Math.max(y, button.yPosition + 20);
@@ -72,10 +76,8 @@ public abstract class MixinGuiCraftingTerm extends AEBaseGui {
         // #tr gtnotgood.tooltip.switch_to_dual_interface_terminal
         // # Switch to Dual Interface Terminal
         // # zh_CN 切换到二合一接口终端
-        this.switchBackButton = new CompactItemTabButton(
-            new ItemStack(Blocks.crafting_table),
-            I18n.format("gtnotgood.tooltip.switch_to_dual_interface_terminal"),
-            AEBaseGui.aeRenderItem);
+        this.switchBackButton = new CompactItemTabButton(new ItemStack(Blocks.crafting_table),
+            I18n.format("gtnotgood.tooltip.switch_to_dual_interface_terminal"), AEBaseGui.aeRenderItem);
         this.switchBackButton.xPosition = x;
         this.switchBackButton.yPosition = y;
         this.buttonList.add(this.switchBackButton);
@@ -84,7 +86,7 @@ public abstract class MixinGuiCraftingTerm extends AEBaseGui {
     @Inject(method = "actionPerformed", at = @At("HEAD"))
     private void gtnotgood$onSwitchBack(GuiButton btn, CallbackInfo ci) {
         if (this.switchBackButton != null && btn == this.switchBackButton) {
-            AE2Thing.proxy.netHandler.sendToServer(new CPacketSwitchGuis(GuiType.WIRELESS_DUAL_INTERFACE_TERMINAL));
+            AE2Thing.proxy.netHandler.sendToServer(new CPacketSwitchGuis(GuiType.WirelessDualInterfaceTerminal));
         }
     }
 }

@@ -3,6 +3,7 @@ package com.xyp.gtnotgood.common.recipe.gtnotgood;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,14 +59,8 @@ public class CombProcessingRecipes {
             if (!isComb(r.mInputs[0])) continue;
             if (!seenCombs.add(combId(r.mInputs[0]))) continue;
             // 粉尘配方：直接复制离心机产物（保留原输入数量）
-            GTRecipeBuilder.builder()
-                .itemInputs(r.mInputs[0])
-                .itemOutputs(r.mOutputs)
-                .outputChances(r.mOutputChances)
-                .fluidOutputs(r.mFluidOutputs)
-                .eut(30)
-                .duration(r.mDuration)
-                .addTo(RM);
+            GTRecipeBuilder.builder().itemInputs(r.mInputs[0]).itemOutputs(r.mOutputs).outputChances(r.mOutputChances)
+                .fluidOutputs(r.mFluidOutputs).eut(30).duration(r.mDuration).addTo(RM);
             count++;
         }
         return count;
@@ -92,12 +87,7 @@ public class CombProcessingRecipes {
             if (!seenCombs.add(combId(r.mInputs[0]))) continue;
             ItemStack comb = copyAmount(r.mInputs[0], 1);
             ItemStack[] outputs = convertOutputsToDust(r.mOutputs);
-            GTRecipeBuilder.builder()
-                .itemInputs(comb)
-                .itemOutputs(outputs)
-                .eut(30)
-                .duration(100)
-                .addTo(RM);
+            GTRecipeBuilder.builder().itemInputs(comb).itemOutputs(outputs).eut(30).duration(100).addTo(RM);
             count++;
         }
         return count;
@@ -112,12 +102,8 @@ public class CombProcessingRecipes {
             if (r.mInputs == null || r.mInputs.length == 0) continue;
             if (!isComb(r.mInputs[0])) continue;
             if (!seenCombs.add(combId(r.mInputs[0]))) continue;
-            GTRecipeBuilder.builder()
-                .itemInputs(r.mInputs[0])
-                .fluidOutputs(r.mFluidOutputs)
-                .eut(30)
-                .duration(r.mDuration)
-                .addTo(RM);
+            GTRecipeBuilder.builder().itemInputs(r.mInputs[0]).fluidOutputs(r.mFluidOutputs).eut(30)
+                .duration(r.mDuration).addTo(RM);
             count++;
         }
         return count;
@@ -151,10 +137,7 @@ public class CombProcessingRecipes {
 
     /** 类名回退检测：所有蜂类模组的蜂窝 item 类名都包含 "Comb" */
     private static boolean isCombByClassName(Item item) {
-        return item.getClass()
-            .getSimpleName()
-            .toLowerCase(java.util.Locale.ROOT)
-            .contains("comb");
+        return item.getClass().getSimpleName().toLowerCase(Locale.ROOT).contains("comb");
     }
 
     private static ItemStack[] convertOutputsToDust(ItemStack[] outputs) {
@@ -169,15 +152,19 @@ public class CombProcessingRecipes {
     private static ItemStack convertToDust(ItemStack stack) {
         if (stack == null) return null;
         ItemData assoc = GTOreDictUnificator.getAssociation(stack);
-        if (assoc != null && assoc.mPrefix == OrePrefixes.crushedPurified
-            && assoc.mMaterial != null
-            && assoc.mMaterial.mMaterial != null) {
+        if (
+            assoc != null && assoc.mPrefix == OrePrefixes.crushedPurified
+                && assoc.mMaterial != null
+                && assoc.mMaterial.mMaterial != null
+        ) {
             return GTOreDictUnificator.get(OrePrefixes.dust, assoc.mMaterial.mMaterial, stack.stackSize);
         }
         // nugget → dust (Platinum, Osmium, Iridium, Neutronium 等特殊金属)
-        if (assoc != null && assoc.mPrefix == OrePrefixes.nugget
-            && assoc.mMaterial != null
-            && assoc.mMaterial.mMaterial != null) {
+        if (
+            assoc != null && assoc.mPrefix == OrePrefixes.nugget
+                && assoc.mMaterial != null
+                && assoc.mMaterial.mMaterial != null
+        ) {
             int dustCount = Math.max(1, stack.stackSize / 9);
             return GTOreDictUnificator.get(OrePrefixes.dust, assoc.mMaterial.mMaterial, dustCount);
         }

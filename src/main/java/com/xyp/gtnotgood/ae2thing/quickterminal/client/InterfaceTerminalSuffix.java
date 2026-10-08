@@ -24,10 +24,7 @@ final class InterfaceTerminalSuffix {
         } catch (RuntimeException ignored) {
             // Older providers may send plain text rather than a serialized component.
         }
-        String cleaned = text.replace("[", "")
-            .replace("]", "")
-            .trim()
-            .replaceAll("\\s+", " ");
+        String cleaned = text.replace("[", "").replace("]", "").trim().replaceAll("\\s+", " ");
         return IChatComponent.Serializer.func_150696_a(new ChatComponentText(cleaned.isEmpty() ? "" : " " + cleaned));
     }
 }

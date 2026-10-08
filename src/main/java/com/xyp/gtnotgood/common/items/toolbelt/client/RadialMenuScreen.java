@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -54,7 +55,7 @@ public class RadialMenuScreen extends GuiScreen {
             }
 
             @Override
-            public net.minecraft.client.gui.FontRenderer getFontRenderer() {
+            public FontRenderer getFontRenderer() {
                 return fontRendererObj;
             }
         }) {
@@ -107,8 +108,7 @@ public class RadialMenuScreen extends GuiScreen {
 
         // When animation is fully closed, remove the GUI screen
         if (menu.isClosed()) {
-            Minecraft.getMinecraft()
-                .displayGuiScreen(null);
+            Minecraft.getMinecraft().displayGuiScreen(null);
             return;
         }
 
@@ -146,8 +146,7 @@ public class RadialMenuScreen extends GuiScreen {
         // Hide the OS cursor — selection is shown via wedge highlight, not a pointer.
         try {
             IntBuffer buf = BufferUtils.createIntBuffer(1);
-            buf.put(0)
-                .rewind();
+            buf.put(0).rewind();
             Mouse.setNativeCursor(new Cursor(1, 1, 0, 0, 1, buf, null));
         } catch (Exception ignored) {}
     }
@@ -243,7 +242,6 @@ public class RadialMenuScreen extends GuiScreen {
     }
 
     void close() {
-        Minecraft.getMinecraft()
-            .displayGuiScreen(null);
+        Minecraft.getMinecraft().displayGuiScreen(null);
     }
 }

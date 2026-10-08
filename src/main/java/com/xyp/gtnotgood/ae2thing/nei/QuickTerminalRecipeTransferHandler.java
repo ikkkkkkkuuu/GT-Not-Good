@@ -3,6 +3,7 @@ package com.xyp.gtnotgood.ae2thing.nei;
 import static com.xyp.gtnotgood.ae2thing.nei.NEI_TH_Config.getConfigValue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -65,16 +66,16 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
             var arcaneLayout = ThaumcraftRecipeExtractor.isArcane(recipe.getOverlayIdentifier())
                 ? ThaumcraftRecipeExtractor.arcaneLayout(safeList(recipe.getIngredientStacks(recipeIndex)))
                 : null;
-            List<OrderStack<?>> namedInputs = FluidRecipe
-                .getPackageInputs(recipe, recipeIndex, !crafting && terminal.shouldPrioritizeFluids());
+            List<OrderStack<?>> namedInputs = FluidRecipe.getPackageInputs(recipe, recipeIndex,
+                !crafting && terminal.shouldPrioritizeFluids());
             String interfaceSearch = getConfigValue(ButtonConstants.DUAL_INTERFACE_TERMINAL)
                 ? interfaceSearchText(recipe, namedInputs, crafting)
                 : null;
             List<OrderStack<?>> transferInputs = !crafting && terminal.shouldKeepNonConsumables()
                 ? retainSupportedNonConsumables(namedInputs)
                 : namedInputs;
-            List<OrderStack<?>> transferOutputs = FluidRecipe
-                .getPackageOutputs(recipe, recipeIndex, useOtherStacks(recipe));
+            List<OrderStack<?>> transferOutputs = FluidRecipe.getPackageOutputs(recipe, recipeIndex,
+                useOtherStacks(recipe));
             if (!crafting) {
                 if (terminal.shouldCombine()) {
                     transferInputs = NEIUtils.compress(transferInputs);
@@ -107,8 +108,7 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
             // GT-Not-Cool has one processing layout: every processing recipe is
             // transferred as 4x4, while crafting recipes keep their shaped 3x3 positions.
             terminal.transferRecipe(
-                new RecipeTransferPayload(crafting, encode, 4, false, inputs, outputs, arcaneLayout),
-                interfaceSearch);
+                new RecipeTransferPayload(crafting, encode, 4, false, inputs, outputs, arcaneLayout), interfaceSearch);
         } catch (RuntimeException | LinkageError failure) {
             AELog.warn(failure, "Failed to transfer an NEI recipe to the GT-Not-Cool quick terminal");
         }
@@ -121,8 +121,10 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
             if (order == null) continue;
             if (order.getStack() instanceof ItemStack item) {
                 ItemStack copy = item.copy();
-                if (copy.stackSize == 0 && (copy.getItem() instanceof ItemIntegratedCircuit
-                    || SuperMTEHatchCraftingInputME.findMatchingMold(copy) != null)) copy.stackSize = 1;
+                if (
+                    copy.stackSize == 0 && (copy.getItem() instanceof ItemIntegratedCircuit
+                        || SuperMTEHatchCraftingInputME.findMatchingMold(copy) != null)
+                ) copy.stackSize = 1;
                 result.add(new OrderStack<>(copy, order.getIndex()));
             } else {
                 result.add(order);
@@ -133,12 +135,7 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
 
     private static String interfaceSearchText(IRecipeHandler recipe, List<OrderStack<?>> inputs, boolean crafting) {
         if (crafting) {
-            ItemStack assembler = AEApi.instance()
-                .definitions()
-                .blocks()
-                .molecularAssembler()
-                .maybeStack(1)
-                .orNull();
+            ItemStack assembler = AEApi.instance().definitions().blocks().molecularAssembler().maybeStack(1).orNull();
             return assembler == null ? recipe.getRecipeName() : Platform.getItemDisplayName(assembler);
         }
         if (Mods.isGt5UnofficialLoaded() || Mods.isLegacyGt5Loaded()) {
@@ -226,17 +223,16 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
                 candidate.setStackSize(1);
                 if (firstType == null) {
                     firstType = candidate;
-                } else if (!firstType.toNBTGeneric()
-                    .equals(candidate.toNBTGeneric())) {
-                        return true;
-                    }
+                } else if (!firstType.toNBTGeneric().equals(candidate.toNBTGeneric())) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     private static List<PositionedStack> safeList(List<PositionedStack> stacks) {
-        return stacks == null ? java.util.Collections.emptyList() : stacks;
+        return stacks == null ? Collections.emptyList() : stacks;
     }
 
     private static boolean isAltDown() {
@@ -253,10 +249,7 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
         List<PositionedStack> ingredients = safeList(
             overlay.handlerRef.handler.getIngredientStacks(overlay.handlerRef.recipeIndex));
         for (PositionedStack ingredient : ingredients) {
-            IAEStack<?> replacement = findAdjacentAlternative(
-                ingredient,
-                current,
-                direction,
+            IAEStack<?> replacement = findAdjacentAlternative(ingredient, current, direction,
                 terminal.isCraftingEncodingMode());
             if (replacement == null) continue;
             // Processing alternatives carry their own recipe quantity (e.g. water 37 mB, lubricant 9 mB).

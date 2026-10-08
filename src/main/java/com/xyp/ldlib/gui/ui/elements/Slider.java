@@ -22,11 +22,13 @@ public final class Slider extends UIElement {
     public Slider(int x, int y, int width, int height, double min, double max, double step, boolean vertical,
         IGuiTexture track, IGuiTexture handle) {
         super(x, y, width, height);
-        if (!Double.isFinite(min) || !Double.isFinite(max)
-            || !Double.isFinite(max - min)
-            || max <= min
-            || !Double.isFinite(step)
-            || step <= 0) throw new IllegalArgumentException("Invalid slider range");
+        if (
+            !Double.isFinite(min) || !Double.isFinite(max)
+                || !Double.isFinite(max - min)
+                || max <= min
+                || !Double.isFinite(step)
+                || step <= 0
+        ) throw new IllegalArgumentException("Invalid slider range");
         this.min = min;
         this.max = max;
         this.step = step;
@@ -106,12 +108,7 @@ public final class Slider extends UIElement {
         double fraction = (value - min) / (max - min);
         int size = handleSize();
         int offset = (int) Math.round((vertical ? 1 - fraction : fraction) * ((vertical ? height : width) - size));
-        handle.draw(
-            mx,
-            my,
-            px + x + (vertical ? 0 : offset),
-            py + y + (vertical ? offset : 0),
-            vertical ? width : size,
+        handle.draw(mx, my, px + x + (vertical ? 0 : offset), py + y + (vertical ? offset : 0), vertical ? width : size,
             vertical ? size : height);
     }
 }

@@ -58,8 +58,7 @@ public abstract class BlackHoleCompressorMixin extends MTEExtendedPowerMultiBloc
 
     static {
         Method method = null;
-        if (FMLLaunchHandler.side()
-            .isClient()) {
+        if (FMLLaunchHandler.side().isClient()) {
             try {
                 method = MTEBlackHoleCompressor.class.getDeclaredMethod("playBlackHoleSounds");
                 method.setAccessible(true);

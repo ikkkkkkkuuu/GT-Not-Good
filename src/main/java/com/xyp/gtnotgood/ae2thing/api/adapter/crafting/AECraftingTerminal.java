@@ -46,9 +46,8 @@ public class AECraftingTerminal implements ICraftingTerminalAdapter {
             if (gui instanceof GuiCraftingTerm) {
                 PacketNEIRecipe packet = new PacketNEIRecipe(packIngredients(gui, ingredients, false));
                 if (packet.size() >= 32 * 1024) {
-                    AELog.warn(
-                        "Recipe for " + recipe.getRecipeName()
-                            + " has too many variants, reduced version will be used");
+                    AELog.warn("Recipe for " + recipe.getRecipeName()
+                        + " has too many variants, reduced version will be used");
                     packet = new PacketNEIRecipe(packIngredients(gui, ingredients, true));
                 }
                 NetworkHandler.instance.sendToServer(packet);

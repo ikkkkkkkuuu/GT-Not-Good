@@ -4,6 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.xyp.gtnotgood.ae2thing.util.Util;
+
 import appeng.core.AELog;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.IAEAppEngInventory;
@@ -72,7 +74,7 @@ public class ItemBiggerAppEngInventory extends AppEngInternalInventory {
     public void markDirty() {
         this.writeToNBT(Platform.openNbtData(is), this.name);
         if (Platform.isServer()) {
-            com.xyp.gtnotgood.ae2thing.util.Util.writeBackTerminal(this.player, this.slot, this.is);
+            Util.writeBackTerminal(this.player, this.slot, this.is);
         }
     }
 

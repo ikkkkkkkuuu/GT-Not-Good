@@ -37,8 +37,8 @@ public class MEContainerTest {
         loader.setAccessible(true);
         loader.set(null, unsafe.allocateInstance(Loader.class));
         HeadlessBlockRegistry.bootstrap();
-        Method register = Item.itemRegistry.getClass()
-            .getDeclaredMethod("addObjectRaw", int.class, String.class, Object.class);
+        Method register = Item.itemRegistry.getClass().getDeclaredMethod("addObjectRaw", int.class, String.class,
+            Object.class);
         register.setAccessible(true);
         register.invoke(Item.itemRegistry, 31001, "test:me_container_item", ITEM);
         FluidRegistry.registerFluid(FLUID);
@@ -91,8 +91,7 @@ public class MEContainerTest {
     public void failedHopperInsertionRestoresLastItem() {
         TileMEContainer tile = new ServerTile();
         tile.setInventorySlotContents(0, new ItemStack(ITEM));
-        ItemStack before = tile.getStackInSlot(0)
-            .copy();
+        ItemStack before = tile.getStackInSlot(0).copy();
         assertEquals(1, tile.decrStackSize(0, 1).stackSize);
         assertNull(tile.getStackInSlot(0));
         tile.setInventorySlotContents(0, before);
@@ -145,8 +144,7 @@ public class MEContainerTest {
         TileMEContainer tile = fluidTile();
         ItemStack stack = new ItemStack(ITEM, 37);
         stack.setTagCompound(new NBTTagCompound());
-        stack.getTagCompound()
-            .setString("variant", "specific");
+        stack.getTagCompound().setString("variant", "specific");
         tile.setInventorySlotContents(0, stack);
         tile.itemFilters[0] = stack.copy();
         tile.fluidFilters[0] = new FluidStack(FLUID, 1);
@@ -159,10 +157,7 @@ public class MEContainerTest {
         assertEquals(37, restored.getStackInSlot(0).stackSize);
         assertEquals(9000, restored.bufferedFluid().amount);
         assertEquals(1, restored.itemFilters[0].stackSize);
-        assertEquals(
-            "specific",
-            restored.itemFilters[0].getTagCompound()
-                .getString("variant"));
+        assertEquals("specific", restored.itemFilters[0].getTagCompound().getString("variant"));
         assertTrue(restored.fluidFilters[0].isFluidEqual(tile.fluidFilters[0]));
         assertFalse(TileMEContainer.sameItem(restored.itemFilters[0], new ItemStack(ITEM)));
     }
@@ -233,8 +228,7 @@ public class MEContainerTest {
         for (int i = 0; i < 36; i++) {
             ItemStack item = new ItemStack(ITEM);
             item.setTagCompound(new NBTTagCompound());
-            item.getTagCompound()
-                .setInteger("variant", i);
+            item.getTagCompound().setInteger("variant", i);
             FluidStack fluid = new FluidStack(FLUID, 1);
             fluid.tag = new NBTTagCompound();
             fluid.tag.setInteger("variant", i);
@@ -246,10 +240,7 @@ public class MEContainerTest {
         ServerTile restored = new ServerTile();
         restored.readContents(tag);
         for (int i = 0; i < 36; i++) {
-            assertEquals(
-                i,
-                restored.itemFilters[i].getTagCompound()
-                    .getInteger("variant"));
+            assertEquals(i, restored.itemFilters[i].getTagCompound().getInteger("variant"));
             assertEquals(i, restored.fluidFilters[i].tag.getInteger("variant"));
             assertNull(restored.getStackInSlot(i));
         }

@@ -82,15 +82,13 @@ public final class VirtualScrollerView<T> extends ScrollerView {
         updateContentHeight();
         setScroll(getScroll());
         int first = Math.max(0, getScroll() / rowHeight - 1);
-        int end = Math.min(
-            items.size(),
+        int end = Math.min(items.size(),
             (int) Math.min(Integer.MAX_VALUE, ((long) getScroll() + height + rowHeight - 1) / rowHeight + 1));
-        rows.entrySet()
-            .removeIf(entry -> {
-                if (entry.getKey() >= first && entry.getKey() < end) return false;
-                removeChild(entry.getValue());
-                return true;
-            });
+        rows.entrySet().removeIf(entry -> {
+            if (entry.getKey() >= first && entry.getKey() < end) return false;
+            removeChild(entry.getValue());
+            return true;
+        });
         for (int i = first; i < end; i++) {
             UIElement row = rows.get(i);
             if (row == null) {

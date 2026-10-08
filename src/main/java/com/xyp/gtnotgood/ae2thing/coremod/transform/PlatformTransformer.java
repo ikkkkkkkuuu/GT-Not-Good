@@ -40,24 +40,15 @@ public class PlatformTransformer extends ClassTransformer.ClassMapper {
             @Override
             public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
                 switch (name) {
-                    case "getModId" -> super.visitMethodInsn(
-                        Opcodes.INVOKESTATIC,
-                        "com/xyp/gtnotgood/ae2thing/coremod/hooker/CoreModHooksClient",
-                        "getModId",
-                        "(Lappeng/api/storage/data/IAEItemStack;)Ljava/lang/String;",
-                        false);
-                    case "getItemDisplayName" -> super.visitMethodInsn(
-                        Opcodes.INVOKESTATIC,
-                        "com/xyp/gtnotgood/ae2thing/coremod/hooker/CoreModHooksClient",
-                        "getItemDisplayName",
-                        "(Ljava/lang/Object;)Ljava/lang/String;",
-                        false);
-                    case "getTooltip" -> super.visitMethodInsn(
-                        Opcodes.INVOKESTATIC,
-                        "com/xyp/gtnotgood/ae2thing/coremod/hooker/CoreModHooksClient",
-                        "getTooltip",
-                        "(Ljava/lang/Object;)Ljava/util/List;",
-                        false);
+                    case "getModId" -> super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                        "com/xyp/gtnotgood/ae2thing/coremod/hooker/CoreModHooksClient", "getModId",
+                        "(Lappeng/api/storage/data/IAEItemStack;)Ljava/lang/String;", false);
+                    case "getItemDisplayName" -> super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                        "com/xyp/gtnotgood/ae2thing/coremod/hooker/CoreModHooksClient", "getItemDisplayName",
+                        "(Ljava/lang/Object;)Ljava/lang/String;", false);
+                    case "getTooltip" -> super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                        "com/xyp/gtnotgood/ae2thing/coremod/hooker/CoreModHooksClient", "getTooltip",
+                        "(Ljava/lang/Object;)Ljava/util/List;", false);
                     default -> super.visitMethodInsn(opcode, owner, name, desc, itf);
                 }
 

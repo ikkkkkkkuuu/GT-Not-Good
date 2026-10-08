@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 
 import org.lwjgl.input.Keyboard;
 
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.widgets.PagedWidget;
@@ -32,7 +33,7 @@ public final class FluxConnectorScreen extends ModularScreen {
             return true;
         }
         if (close) {
-            for (com.cleanroommc.modularui.api.widget.IWidget widget : getMainPanel().getChildren()) {
+            for (IWidget widget : getMainPanel().getChildren()) {
                 if (widget instanceof PagedWidget<?>pages && pages.getCurrentPageIndex() != 0) {
                     pages.setPage(0);
                     return true;

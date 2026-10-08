@@ -25,8 +25,10 @@ public class CraftingJobV2Transformer extends ClassTransformer.ClassMapper {
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-            if (name.equals("<init>") && desc.equals(
-                "(Lnet/minecraft/world/World;Lappeng/api/networking/IGrid;Lappeng/api/networking/security/BaseActionSource;Lappeng/api/storage/data/IAEItemStack;Lappeng/api/config/CraftingMode;Lappeng/api/networking/crafting/ICraftingCallback;)V")) {
+            if (
+                name.equals("<init>") && desc.equals(
+                    "(Lnet/minecraft/world/World;Lappeng/api/networking/IGrid;Lappeng/api/networking/security/BaseActionSource;Lappeng/api/storage/data/IAEItemStack;Lappeng/api/config/CraftingMode;Lappeng/api/networking/crafting/ICraftingCallback;)V")
+            ) {
                 return new TransformInit(api, super.visitMethod(access, name, desc, signature, exceptions));
             } else if (name.equals("remove")) {
                 return new TransformRemove(api, super.visitMethod(access, name, desc, signature, exceptions));
@@ -45,12 +47,8 @@ public class CraftingJobV2Transformer extends ClassTransformer.ClassMapper {
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
                 if (opcode == Opcodes.INVOKESTATIC) {
                     super.visitVarInsn(Opcodes.ALOAD, 0);
-                    super.visitMethodInsn(
-                        Opcodes.INVOKESTATIC,
-                        "com/xyp/gtnotgood/ae2thing/api/CraftingDebugHelper",
-                        "remove",
-                        "(Lappeng/me/GridStorage;)V",
-                        false);
+                    super.visitMethodInsn(Opcodes.INVOKESTATIC, "com/xyp/gtnotgood/ae2thing/api/CraftingDebugHelper",
+                        "remove", "(Lappeng/me/GridStorage;)V", false);
                 }
             }
         }
@@ -72,9 +70,7 @@ public class CraftingJobV2Transformer extends ClassTransformer.ClassMapper {
                     super.visitVarInsn(Opcodes.ALOAD, 4);
                     super.visitVarInsn(Opcodes.ALOAD, 5);
                     super.visitVarInsn(Opcodes.ALOAD, 6);
-                    super.visitMethodInsn(
-                        Opcodes.INVOKESTATIC,
-                        "com/xyp/gtnotgood/ae2thing/api/CraftingDebugHelper",
+                    super.visitMethodInsn(Opcodes.INVOKESTATIC, "com/xyp/gtnotgood/ae2thing/api/CraftingDebugHelper",
                         "craftingHelper",
                         "(Lappeng/crafting/v2/CraftingJobV2;Lnet/minecraft/world/World;Lappeng/api/networking/IGrid;Lappeng/api/networking/security/BaseActionSource;Lappeng/api/storage/data/IAEItemStack;Lappeng/api/config/CraftingMode;Lappeng/api/networking/crafting/ICraftingCallback;)V",
                         false);

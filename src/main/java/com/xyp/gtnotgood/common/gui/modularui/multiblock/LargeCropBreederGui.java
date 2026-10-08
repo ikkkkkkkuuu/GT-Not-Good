@@ -4,6 +4,7 @@ import static gregtech.api.metatileentity.BaseTileEntity.TOOLTIP_DELAY;
 import static net.minecraft.util.StatCollector.translateToLocal;
 
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
@@ -56,8 +57,8 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
     protected void registerSyncValues(PanelSyncManager syncManager) {
         super.registerSyncValues(syncManager);
         syncManager.syncValue("targetCrop", new StringSyncValue(breeder::getTargetCropId, value -> {}));
-        syncManager
-            .syncValue("targetDraft", new StringSyncValue(() -> targetDraft, value -> targetDraft = value).allowC2S());
+        syncManager.syncValue("targetDraft",
+            new StringSyncValue(() -> targetDraft, value -> targetDraft = value).allowC2S());
         syncManager.syncValue("targetInputValid", new BooleanSyncValue(breeder::isTargetInputValid));
         syncManager.syncValue("applyTarget", new InteractionSyncHandler().setOnMousePressed(mouse -> {
             if (mouse.side.isServer() && mouse.mouseButton == 0) {
@@ -76,32 +77,19 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
         syncManager.syncValue("missingRequirements", new BooleanSyncValue(breeder::isMissingBreedingRequirements));
         syncManager.syncValue("poolEUt", new IntSyncValue(() -> (int) breeder.getPoolBreedingEUt()));
         syncManager.syncValue("poolDuration", new IntSyncValue(breeder::getPoolBreedingDuration));
-        syncManager.syncValue(
-            "archiveCrops",
-            new GenericListSyncHandler<>(
-                breeder::getSyncedArchiveCrops,
-                breeder::setSyncedArchiveCrops,
-                ByteBufUtils::readUTF8String,
-                ByteBufUtils::writeUTF8String,
-                String::equals,
-                value -> value));
-        syncManager.syncValue(
-            "chainSteps",
-            new GenericListSyncHandler<>(
-                breeder::getSyncedChainSteps,
-                breeder::setSyncedChainSteps,
-                ByteBufUtils::readTag,
-                ByteBufUtils::writeTag,
-                NBTTagCompound::equals,
+        syncManager.syncValue("archiveCrops",
+            new GenericListSyncHandler<>(breeder::getSyncedArchiveCrops, breeder::setSyncedArchiveCrops,
+                ByteBufUtils::readUTF8String, ByteBufUtils::writeUTF8String, String::equals, value -> value));
+        syncManager.syncValue("chainSteps",
+            new GenericListSyncHandler<>(breeder::getSyncedChainSteps, breeder::setSyncedChainSteps,
+                ByteBufUtils::readTag, ByteBufUtils::writeTag, NBTTagCompound::equals,
                 value -> (NBTTagCompound) value.copy()));
     }
 
     @Override
     public Flow createMainColumn(ModularPanel panel, PanelSyncManager syncManager) {
         panel.background(GTNGGuiTextures.MODERN_BACKGROUND);
-        return Flow.column()
-            .padding(4)
-            .child(createTerminalRow(panel, syncManager))
+        return Flow.column().padding(4).child(createTerminalRow(panel, syncManager))
             .child(createTargetInputRow(panel, syncManager))
             .childIf(multiblock.canBeMuffled(), this::createMuffleButton)
             .childIf(multiblock.supportsInventoryRow(), () -> createInventoryRow(panel, syncManager));
@@ -122,26 +110,20 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
         label.widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
 
         CropSeedDropTextField input = new CropSeedDropTextField();
-        input.value(draftSync)
-            .size(94, 14)
-            .background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
+        input.value(draftSync).size(94, 14).background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
             // #tr gui.gtnotgood.crop_breeder.target.tooltip
             // # Input the target crop id or name, or drag a CropsNH seed from NEI
             // # zh_CN 输入目标作物 ID 或名称，或从 NEI 拖入 CropsNH 种子
             .tooltipBuilder(t -> t.addLine(translateToLocal("gui.gtnotgood.crop_breeder.target.tooltip")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
 
-        ButtonWidget<?> applyButton = new ButtonWidget<>().size(22, 18)
-            .background(
-                new DynamicDrawable(
-                    () -> validSync.getBoolValue()
-                        && java.util.Objects.equals(draftSync.getStringValue(), targetSync.getStringValue())
-                            ? GTNGGuiTextures.MODERN_BUTTON_PRESSED
-                            : GTNGGuiTextures.MODERN_BUTTON))
+        ButtonWidget<?> applyButton = new ButtonWidget<>().size(22, 18).background(new DynamicDrawable(
+            () -> validSync.getBoolValue() && Objects.equals(draftSync.getStringValue(), targetSync.getStringValue())
+                ? GTNGGuiTextures.MODERN_BUTTON_PRESSED
+                : GTNGGuiTextures.MODERN_BUTTON))
             .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
-            .overlay(
-                IKey.dynamic(
-                    () -> validSync.getBoolValue() ? EnumChatFormatting.GREEN + "OK" : EnumChatFormatting.RED + "!"))
+            .overlay(IKey.dynamic(
+                () -> validSync.getBoolValue() ? EnumChatFormatting.GREEN + "OK" : EnumChatFormatting.RED + "!"))
             .syncHandler(applySync)
             // #tr gui.gtnotgood.crop_breeder.apply
             // # Apply target
@@ -149,20 +131,16 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
             .tooltipBuilder(t -> t.addLine(IKey.lang("gui.gtnotgood.crop_breeder.apply")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
 
-        IPanelHandler chainPanel = syncManager
-            .syncedPanel("cropChainPanel", false, (sm, sh) -> createChainPanel(syncManager, parent));
+        IPanelHandler chainPanel = syncManager.syncedPanel("cropChainPanel", false,
+            (sm, sh) -> createChainPanel(syncManager, parent));
         ButtonWidget<?> chainButton = new ButtonWidget<>().size(22, 18)
-            .background(
-                new DynamicDrawable(
-                    () -> chainPanel.isPanelOpen() ? GTNGGuiTextures.MODERN_BUTTON_PRESSED
-                        : GTNGGuiTextures.MODERN_BUTTON))
-            .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
-            .overlay(IKey.dynamic(() -> {
+            .background(new DynamicDrawable(
+                () -> chainPanel.isPanelOpen() ? GTNGGuiTextures.MODERN_BUTTON_PRESSED : GTNGGuiTextures.MODERN_BUTTON))
+            .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER).overlay(IKey.dynamic(() -> {
                 int total = chainTotalSync.getIntValue();
                 if (total == 0) return EnumChatFormatting.DARK_GRAY + "--";
                 return EnumChatFormatting.YELLOW + "" + chainCompletedSync.getIntValue() + "/" + total;
-            }))
-            .onMousePressed(mouse -> {
+            })).onMousePressed(mouse -> {
                 if (chainPanel.isPanelOpen()) {
                     chainPanel.closePanel();
                 } else {
@@ -176,17 +154,8 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
             .tooltipBuilder(t -> t.addLine(IKey.lang("gui.gtnotgood.crop_breeder.view_chain")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
 
-        return Flow.row()
-            .fullWidth()
-            .height(20)
-            .paddingLeft(5)
-            .paddingRight(5)
-            .marginTop(4)
-            .marginBottom(2)
-            .child(label)
-            .child(input)
-            .child(applyButton)
-            .child(chainButton);
+        return Flow.row().fullWidth().height(20).paddingLeft(5).paddingRight(5).marginTop(4).marginBottom(2)
+            .child(label).child(input).child(applyButton).child(chainButton);
     }
 
     @Override
@@ -195,15 +164,12 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
     }
 
     private IWidget createArchiveButton(PanelSyncManager syncManager, ModularPanel parent) {
-        IPanelHandler archivePanel = syncManager
-            .syncedPanel("cropArchivePanel", false, (sm, sh) -> createArchivePanel(syncManager, parent));
+        IPanelHandler archivePanel = syncManager.syncedPanel("cropArchivePanel", false,
+            (sm, sh) -> createArchivePanel(syncManager, parent));
         return new ButtonWidget<>().size(18, 18)
-            .background(
-                new DynamicDrawable(
-                    () -> archivePanel.isPanelOpen() ? GTNGGuiTextures.MODERN_BUTTON_PRESSED
-                        : GTNGGuiTextures.MODERN_BUTTON))
-            .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER)
-            .overlay(GTGuiTextures.OVERLAY_BUTTON_WHITELIST)
+            .background(new DynamicDrawable(() -> archivePanel.isPanelOpen() ? GTNGGuiTextures.MODERN_BUTTON_PRESSED
+                : GTNGGuiTextures.MODERN_BUTTON))
+            .hoverBackground(GTNGGuiTextures.MODERN_BUTTON_HOVER).overlay(GTGuiTextures.OVERLAY_BUTTON_WHITELIST)
             .onMousePressed(mouse -> {
                 if (archivePanel.isPanelOpen()) {
                     archivePanel.closePanel();
@@ -220,27 +186,18 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
     }
 
     private ModularPanel createArchivePanel(PanelSyncManager syncManager, ModularPanel parent) {
-        GenericListSyncHandler<String> archiveCrops = syncManager
-            .findSyncHandler("archiveCrops", GenericListSyncHandler.class);
+        GenericListSyncHandler<String> archiveCrops = syncManager.findSyncHandler("archiveCrops",
+            GenericListSyncHandler.class);
         IntSyncValue archiveSize = syncManager.findSyncHandler("archiveSize", IntSyncValue.class);
-        ModularPanel panel = ModularPanel.defaultPanel("cropArchivePanel")
-            .relative(parent)
-            .leftRel(1)
-            .topRel(0)
-            .size(150, 160)
-            .background(GTNGGuiTextures.MODERN_DISPLAY);
+        ModularPanel panel = ModularPanel.defaultPanel("cropArchivePanel").relative(parent).leftRel(1).topRel(0)
+            .size(150, 160).background(GTNGGuiTextures.MODERN_DISPLAY);
 
         ListWidget<IWidget, ?> list = new ListWidget<>();
-        list.padding(6)
-            .size(150, 160)
-            .child(
-                // #tr gui.gtnotgood.crop_breeder.archive
-                // # Crop Archive
-                // # zh_CN 作物档案
-                IKey.lang("gui.gtnotgood.crop_breeder.archive")
-                    .asWidget()
-                    .height(12)
-                    .marginBottom(2))
+        list.padding(6).size(150, 160).child(
+            // #tr gui.gtnotgood.crop_breeder.archive
+            // # Crop Archive
+            // # zh_CN 作物档案
+            IKey.lang("gui.gtnotgood.crop_breeder.archive").asWidget().height(12).marginBottom(2))
             .child(new TextWidget<>(IKey.dynamic(() -> {
                 List<String> crops = archiveCrops.getValue();
                 if (crops == null || crops.isEmpty()) {
@@ -254,16 +211,11 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
                     // #tr gui.gtnotgood.crop_breeder.count
                     // # Count
                     // # zh_CN 数量
-                    .append(translateToLocal("gui.gtnotgood.crop_breeder.count"))
-                    .append(": ")
-                    .append(archiveSize.getIntValue())
-                    .append("\n\n")
-                    .append(EnumChatFormatting.AQUA);
+                    .append(translateToLocal("gui.gtnotgood.crop_breeder.count")).append(": ")
+                    .append(archiveSize.getIntValue()).append("\n\n").append(EnumChatFormatting.AQUA);
                 for (String cropId : crops) {
                     if (cropId != null && !cropId.isEmpty()) {
-                        sb.append("  * ")
-                            .append(LargeCropBreeder.getCropDisplayName(cropId))
-                            .append("\n");
+                        sb.append("  * ").append(LargeCropBreeder.getCropDisplayName(cropId)).append("\n");
                     }
                 }
                 return sb.toString();
@@ -272,48 +224,33 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
     }
 
     private ModularPanel createChainPanel(PanelSyncManager syncManager, ModularPanel parent) {
-        GenericListSyncHandler<NBTTagCompound> chainSteps = syncManager
-            .findSyncHandler("chainSteps", GenericListSyncHandler.class);
+        GenericListSyncHandler<NBTTagCompound> chainSteps = syncManager.findSyncHandler("chainSteps",
+            GenericListSyncHandler.class);
         IntSyncValue chainTotal = syncManager.findSyncHandler("chainTotal", IntSyncValue.class);
         IntSyncValue chainCompleted = syncManager.findSyncHandler("chainCompleted", IntSyncValue.class);
-        ModularPanel panel = ModularPanel.defaultPanel("cropChainPanel")
-            .relative(parent)
-            .leftRel(1)
-            .topRel(0)
-            .size(200, 160)
-            .background(GTNGGuiTextures.MODERN_DISPLAY);
+        ModularPanel panel = ModularPanel.defaultPanel("cropChainPanel").relative(parent).leftRel(1).topRel(0)
+            .size(200, 160).background(GTNGGuiTextures.MODERN_DISPLAY);
 
         ListWidget<IWidget, ?> list = new ListWidget<>();
-        list.padding(6)
-            .size(200, 160)
-            .child(
-                // #tr gui.gtnotgood.crop_breeder.plan
-                // # Breeding Plan
-                // # zh_CN 繁育计划
-                IKey.lang("gui.gtnotgood.crop_breeder.plan")
-                    .asWidget()
-                    .height(12)
-                    .marginBottom(2))
+        list.padding(6).size(200, 160).child(
+            // #tr gui.gtnotgood.crop_breeder.plan
+            // # Breeding Plan
+            // # zh_CN 繁育计划
+            IKey.lang("gui.gtnotgood.crop_breeder.plan").asWidget().height(12).marginBottom(2))
             .child(new TextWidget<>(IKey.dynamic(() -> {
                 StringBuilder sb = new StringBuilder();
                 sb.append(EnumChatFormatting.GOLD)
                     // #tr gui.gtnotgood.crop_breeder.progress
                     // # Progress
                     // # zh_CN 进度
-                    .append(translateToLocal("gui.gtnotgood.crop_breeder.progress"))
-                    .append(": ")
-                    .append(chainCompleted.getIntValue())
-                    .append("/")
-                    .append(chainTotal.getIntValue())
-                    .append("\n\n");
+                    .append(translateToLocal("gui.gtnotgood.crop_breeder.progress")).append(": ")
+                    .append(chainCompleted.getIntValue()).append("/").append(chainTotal.getIntValue()).append("\n\n");
                 List<NBTTagCompound> steps = chainSteps.getValue();
                 if (steps == null || steps.isEmpty()) {
-                    sb.append(EnumChatFormatting.GRAY)
-                        .append(translateToLocal("gui.gtnotgood.crop_breeder.empty"));
+                    sb.append(EnumChatFormatting.GRAY).append(translateToLocal("gui.gtnotgood.crop_breeder.empty"));
                 } else {
                     for (NBTTagCompound step : steps) {
-                        sb.append(formatStep(step))
-                            .append("\n");
+                        sb.append(formatStep(step)).append("\n");
                     }
                 }
                 return sb.toString();
@@ -324,21 +261,15 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
     @Override
     protected ListWidget<IWidget, ?> createTerminalTextWidget(PanelSyncManager syncManager, ModularPanel parent) {
         return super.createTerminalTextWidget(syncManager, parent).child(createTargetCropRow(syncManager))
-            .child(createCurrentChainRow(syncManager))
-            .child(createPendingOutputRow(syncManager))
-            .child(createPowerRow(syncManager))
-            .child(createMissingRow(syncManager));
+            .child(createCurrentChainRow(syncManager)).child(createPendingOutputRow(syncManager))
+            .child(createPowerRow(syncManager)).child(createMissingRow(syncManager));
     }
 
     private IWidget createTargetCropRow(PanelSyncManager syncManager) {
         StringSyncValue targetSync = syncManager.findSyncHandler("targetCrop", StringSyncValue.class);
-        return Flow.row()
-            .fullWidth()
-            .height(DISPLAY_ROW_HEIGHT)
-            .child(
-                new TextWidget<>(IKey.lang("gui.gtnotgood.crop_breeder.target"))
-                    .widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE)
-                    .scale(0.75f))
+        return Flow.row().fullWidth().height(DISPLAY_ROW_HEIGHT)
+            .child(new TextWidget<>(IKey.lang("gui.gtnotgood.crop_breeder.target"))
+                .widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE).scale(0.75f))
             .child(new TextWidget<>(IKey.dynamic(() -> {
                 String target = targetSync.getStringValue();
                 if (target == null || target.isEmpty()) {
@@ -348,13 +279,12 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
                     return EnumChatFormatting.GRAY + translateToLocal("gt.blockmachines.multimachine.notset");
                 }
                 return EnumChatFormatting.GOLD + LargeCropBreeder.getCropDisplayName(target);
-            })).widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE)
-                .scale(0.75f));
+            })).widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE).scale(0.75f));
     }
 
     private IWidget createCurrentChainRow(PanelSyncManager syncManager) {
-        GenericListSyncHandler<NBTTagCompound> chainSteps = syncManager
-            .findSyncHandler("chainSteps", GenericListSyncHandler.class);
+        GenericListSyncHandler<NBTTagCompound> chainSteps = syncManager.findSyncHandler("chainSteps",
+            GenericListSyncHandler.class);
         return new TextWidget<>(IKey.dynamic(() -> {
             List<NBTTagCompound> steps = chainSteps.getValue();
             if (steps == null || steps.isEmpty()) return "";
@@ -362,9 +292,7 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
                 if (step.getByte("status") == 1) return formatStep(step);
             }
             return "";
-        })).height(DISPLAY_ROW_HEIGHT)
-            .scale(0.75f)
-            .widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
+        })).height(DISPLAY_ROW_HEIGHT).scale(0.75f).widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
     }
 
     private IWidget createPendingOutputRow(PanelSyncManager syncManager) {
@@ -377,9 +305,7 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
                 + ": "
                 + EnumChatFormatting.GREEN
                 + pendingSync.getIntValue();
-        })).height(DISPLAY_ROW_HEIGHT)
-            .scale(0.75f)
-            .widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
+        })).height(DISPLAY_ROW_HEIGHT).scale(0.75f).widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
     }
 
     private IWidget createPowerRow(PanelSyncManager syncManager) {
@@ -405,9 +331,7 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
                 + EnumChatFormatting.GREEN
                 + (poolDuration.getIntValue() / 20.0f)
                 + "s";
-        })).height(DISPLAY_ROW_HEIGHT)
-            .scale(0.75f)
-            .widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
+        })).height(DISPLAY_ROW_HEIGHT).scale(0.75f).widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
     }
 
     private IWidget createMissingRow(PanelSyncManager syncManager) {
@@ -433,9 +357,7 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
                 + ": "
                 + EnumChatFormatting.GOLD
                 + missing;
-        })).height(DISPLAY_ROW_HEIGHT)
-            .scale(0.75f)
-            .widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
+        })).height(DISPLAY_ROW_HEIGHT).scale(0.75f).widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
     }
 
     private static String formatStep(NBTTagCompound step) {

@@ -18,17 +18,18 @@ public final class BeeMutationConditionFilter {
         if (!(genome0 instanceof IBeeGenome)) return false;
 
         Config.ensureLoaded();
-        String name = condition.getClass()
-            .getName();
+        String name = condition.getClass().getName();
 
         if (Config.enableBeeIgnoreDimensionMutation && name.endsWith("DimensionMutationCondition")) {
             return true;
         }
 
         if (Config.enableBeeIgnoreResourceMutation) {
-            if (name.equals("forestry.core.genetics.mutations.MutationConditionRequiresResource")
-                || name.equals("forestry.core.genetics.mutations.MutationConditionRequiresResourceOreDict")
-                || name.endsWith("ActiveGTMachineMutationCondition")) {
+            if (
+                name.equals("forestry.core.genetics.mutations.MutationConditionRequiresResource")
+                    || name.equals("forestry.core.genetics.mutations.MutationConditionRequiresResourceOreDict")
+                    || name.endsWith("ActiveGTMachineMutationCondition")
+            ) {
                 return true;
             }
         }

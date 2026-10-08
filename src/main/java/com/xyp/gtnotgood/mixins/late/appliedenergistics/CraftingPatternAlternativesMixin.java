@@ -31,10 +31,8 @@ public abstract class CraftingPatternAlternativesMixin {
         Function<IAEStack<?>, Set<ICraftingPatternDetails>> factory, Operation<Object> original) {
         // craftingMethods already groups equal recipes. Priority alone is not recipe identity: dropping a tied
         // chemical-bath recipe can leave only a plate -> molten material -> plate cycle in the planner.
-        Function<IAEStack<?>, Set<ICraftingPatternDetails>> alternatives = key -> new TreeSet<>(
-            Comparator.comparingInt(ICraftingPatternDetails::getPriority)
-                .reversed()
-                .thenComparing(Ordering.arbitrary()));
+        Function<IAEStack<?>, Set<ICraftingPatternDetails>> alternatives = key -> new TreeSet<>(Comparator
+            .comparingInt(ICraftingPatternDetails::getPriority).reversed().thenComparing(Ordering.arbitrary()));
         return original.call(patterns, output, alternatives);
     }
 }

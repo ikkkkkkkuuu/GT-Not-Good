@@ -83,8 +83,7 @@ public final class BlockMERequester extends Block {
         if (world.getTileEntity(x, y, z) instanceof TileMERequester tile) {
             stack.setTagCompound(new NBTTagCompound());
             tile.writeSettings(stack.getTagCompound());
-            if (!tile.name()
-                .isEmpty()) stack.setStackDisplayName(tile.name());
+            if (!tile.name().isEmpty()) stack.setStackDisplayName(tile.name());
         }
         result.add(stack);
         return result;
@@ -112,9 +111,8 @@ public final class BlockMERequester extends Block {
     @SideOnly(Side.CLIENT)
     public IIcon getIcon(int side, int metadata) {
         if (side == front(metadata)) return blockIcon;
-        return StockModelRenderer.icon(
-            "ae2:block/generics/"
-                + (side == 0 ? "bottom" : side == 1 ? "top" : side == (front(metadata) ^ 1) ? "back" : "side"));
+        return StockModelRenderer.icon("ae2:block/generics/"
+            + (side == 0 ? "bottom" : side == 1 ? "top" : side == (front(metadata) ^ 1) ? "back" : "side"));
     }
 
     /** Legacy metadata zero keeps its original south-facing front. */

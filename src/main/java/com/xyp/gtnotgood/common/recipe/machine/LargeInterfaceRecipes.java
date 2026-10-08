@@ -20,9 +20,7 @@ public final class LargeInterfaceRecipes {
     private LargeInterfaceRecipes() {}
 
     public static void register() {
-        GameRegistry.addShapelessRecipe(
-            GTNGItemList.LargeInterface.get(1),
-            ModsItemlist.AE2FluidCraftBlockFluidInterface.get(1),
+        GameRegistry.addShapelessRecipe(GTNGItemList.LargeInterface.get(1), ModsItemlist.FluidInterfaceBlock.get(1),
             GTNGItemList.SuperMTEHatchCraftingInputME.get(1));
         GameRegistry.addRecipe(new Conversion(GTNGItemList.LargeInterface, GTNGItemList.LargeInterfacePart));
         GameRegistry.addRecipe(new Conversion(GTNGItemList.LargeInterfacePart, GTNGItemList.LargeInterface));
@@ -30,11 +28,10 @@ public final class LargeInterfaceRecipes {
 
     /** Copies the original interface's supported cards after all mods finish their upgrade registration. */
     public static void registerUpgrades() {
-        ItemStack original = ModsItemlist.AE2FluidCraftBlockFluidInterface.get(1);
+        ItemStack original = ModsItemlist.FluidInterfaceBlock.get(1);
         for (Upgrades upgrade : Upgrades.values()) {
             int maximum = 0;
-            for (Map.Entry<ItemStack, Integer> supported : upgrade.getSupported()
-                .entrySet()) {
+            for (Map.Entry<ItemStack, Integer> supported : upgrade.getSupported().entrySet()) {
                 if (Platform.isSameItemPrecise(original, supported.getKey()))
                     maximum = Math.max(maximum, supported.getValue());
             }
@@ -59,9 +56,7 @@ public final class LargeInterfaceRecipes {
             for (int slot = 0; slot < inventory.getSizeInventory(); slot++) {
                 ItemStack source = inventory.getStackInSlot(slot);
                 if (source != null && source.hasTagCompound()) {
-                    result.setTagCompound(
-                        (NBTTagCompound) source.getTagCompound()
-                            .copy());
+                    result.setTagCompound((NBTTagCompound) source.getTagCompound().copy());
                     break;
                 }
             }

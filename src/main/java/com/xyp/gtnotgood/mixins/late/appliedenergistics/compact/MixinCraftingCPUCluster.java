@@ -83,7 +83,7 @@ public abstract class MixinCraftingCPUCluster {
         Object progress = craftingEntry.getValue();
         if (!(progress instanceof AccessorTaskProgress taskProgress)) {
             GTNotGood.LOG.error("AE crafting task progress is missing the GTNL accessor for pattern {}", details);
-            contextRef.set(new BatchDispatchContext(details, null, MediumStrategy.NATIVE));
+            contextRef.set(new BatchDispatchContext(details, null, MediumStrategy.Native));
             return media;
         }
 
@@ -117,13 +117,8 @@ public abstract class MixinCraftingCPUCluster {
             }
         }
         boolean freeDispatch = cluster instanceof ECraftingCPUCluster || !physicalHatch;
-        BatchPlan plan = GTNL$BATCH_PLANNER.plan(
-            requestedCrafts,
-            context.mediumStrategy,
-            expandedInputs,
-            details.getCondensedAEOutputs(),
-            this.inventory,
-            requested -> freeDispatch ? requested
+        BatchPlan plan = GTNL$BATCH_PLANNER.plan(requestedCrafts, context.mediumStrategy, expandedInputs,
+            details.getCondensedAEOutputs(), this.inventory, requested -> freeDispatch ? requested
                 : eg.extractAEPower(requested, Actionable.SIMULATE, PowerMultiplier.CONFIG));
         context.resetForPlan(plan);
         if (!plan.isBatched()) return expandedInputs;
@@ -131,11 +126,8 @@ public abstract class MixinCraftingCPUCluster {
         try {
             return GTNL$BATCH_PLANNER.scaleInputs(expandedInputs, plan.getCrafts());
         } catch (ArithmeticException exception) {
-            GTNotGood.LOG.error(
-                "AE batch input scaling violated its checked plan for pattern {} and {} crafts",
-                details,
-                plan.getCrafts(),
-                exception);
+            GTNotGood.LOG.error("AE batch input scaling violated its checked plan for pattern {} and {} crafts",
+                details, plan.getCrafts(), exception);
             context.reject();
             return expandedInputs;
         }
@@ -160,9 +152,7 @@ public abstract class MixinCraftingCPUCluster {
 
         GTNotGood.LOG.error(
             "AE batch extraction contract changed after planning for pattern {}: requested {}, extracted {}",
-            context.details,
-            request.getStackSize(),
-            extracted == null ? 0 : extracted.getStackSize());
+            context.details, request.getStackSize(), extracted == null ? 0 : extracted.getStackSize());
         context.reject();
         if (extracted != null) craftingInventory.injectItems(extracted, Actionable.MODULATE);
         return null;
@@ -193,8 +183,8 @@ public abstract class MixinCraftingCPUCluster {
 
         CommitResult commit;
         try {
-            commit = GTNL$BATCH_PLANNER
-                .commit(context.plan, true, context.taskProgress.getValue(), this.remainingOperations);
+            commit = GTNL$BATCH_PLANNER.commit(context.plan, true, context.taskProgress.getValue(),
+                this.remainingOperations);
         } catch (RuntimeException exception) {
             GTNotGood.LOG.error("AE batch commit precondition failed for pattern {}", details, exception);
             context.reject();
@@ -233,9 +223,7 @@ public abstract class MixinCraftingCPUCluster {
         if (consumedCrafts > 0 && consumedCrafts < context.plan.getCrafts()) {
             GTNotGood.LOG.error(
                 "AE batch diagnostics session counts ended early for pattern {}: planned {}, consumed {}",
-                context.details,
-                context.plan.getCrafts(),
-                consumedCrafts);
+                context.details, context.plan.getCrafts(), consumedCrafts);
         }
         return context.sessionConsumption.getFirstSessionId();
     }
@@ -279,9 +267,7 @@ public abstract class MixinCraftingCPUCluster {
         if (scaledOutput.getStackSize() % crafts != 0) {
             GTNotGood.LOG.error(
                 "AE batch diagnostics received a non-divisible output for pattern {}: amount {}, crafts {}",
-                context.details,
-                scaledOutput.getStackSize(),
-                crafts);
+                context.details, scaledOutput.getStackSize(), crafts);
             return;
         }
 

@@ -46,10 +46,7 @@ public final class CircuitPatternMolds {
         if (!GregTechAPI.sFullLoadFinished) return findMolds(details);
         int recipeCount = 0;
         for (RecipeMap<?> map : RecipeMap.ALL_RECIPE_MAPS.values()) {
-            if (!map.getBackend()
-                .doesOverwriteFindRecipe())
-                recipeCount += map.getAllRecipes()
-                    .size();
+            if (!map.getBackend().doesOverwriteFindRecipe()) recipeCount += map.getAllRecipes().size();
         }
         if (cachedRecipeCount != recipeCount || cachedMapCount != RecipeMap.ALL_RECIPE_MAPS.size()) {
             cache.clear();
@@ -67,22 +64,19 @@ public final class CircuitPatternMolds {
             if (stack == null) continue;
             if (stack.getStackSize() < 0 || stack.getStackSize() > Integer.MAX_VALUE) return new ItemStack[0];
             if (stack instanceof IAEItemStack item) {
-                ItemStack value = item.getItemStack()
-                    .copy();
+                ItemStack value = item.getItemStack().copy();
                 value.stackSize = (int) stack.getStackSize();
                 // GT's integrated-circuit helper returns a zero-size catalyst, also accepted by native AE patterns.
                 if (value.getItem() instanceof ItemIntegratedCircuit) value.stackSize = 1;
                 else if (value.stackSize == 0) return new ItemStack[0];
                 items.add(value);
                 int mold = VirtualMachineMolds.indexOf(value);
-                if (mold >= 0 && encodedMolds.stream()
-                    .noneMatch(existing -> sameItem(existing, value))) {
+                if (mold >= 0 && encodedMolds.stream().noneMatch(existing -> sameItem(existing, value))) {
                     encodedMolds.add(VirtualMachineMolds.at(mold));
                 }
             } else if (stack instanceof IAEFluidStack fluid) {
                 if (stack.getStackSize() == 0) return new ItemStack[0];
-                FluidStack value = fluid.getFluidStack()
-                    .copy();
+                FluidStack value = fluid.getFluidStack().copy();
                 value.amount = (int) stack.getStackSize();
                 fluids.add(value);
             } else return new ItemStack[0];
@@ -101,16 +95,10 @@ public final class CircuitPatternMolds {
         List<ItemStack> commonMolds = null;
         for (RecipeMap<?> map : RecipeMap.ALL_RECIPE_MAPS.values()) {
             // Dynamic backends can depend on machine state or perform diagnostic side effects during lookup.
-            if (map.getBackend()
-                .doesOverwriteFindRecipe()) continue;
+            if (map.getBackend().doesOverwriteFindRecipe()) continue;
             ItemStack[] queryItems = copy(items.toArray(new ItemStack[0]));
-            FluidStack[] queryFluids = fluids.stream()
-                .map(FluidStack::copy)
-                .toArray(FluidStack[]::new);
-            try (Stream<GTRecipe> candidates = map.findRecipeQuery()
-                .items(queryItems)
-                .fluids(queryFluids)
-                .findAll()) {
+            FluidStack[] queryFluids = fluids.stream().map(FluidStack::copy).toArray(FluidStack[]::new);
+            try (Stream<GTRecipe> candidates = map.findRecipeQuery().items(queryItems).fluids(queryFluids).findAll()) {
                 Iterator<GTRecipe> iterator = candidates.iterator();
                 while (iterator.hasNext()) {
                     GTRecipe recipe = iterator.next();
@@ -129,14 +117,14 @@ public final class CircuitPatternMolds {
                     }
                     ItemStack[] supplied = copy(items.toArray(new ItemStack[0]));
                     for (ItemStack item : supplied) {
-                        if (item.getItem() instanceof ItemIntegratedCircuit || nonConsumed.stream()
-                            .anyMatch(mold -> sameItem(item, mold))) item.stackSize = 0;
+                        if (
+                            item.getItem() instanceof ItemIntegratedCircuit
+                                || nonConsumed.stream().anyMatch(mold -> sameItem(item, mold))
+                        ) item.stackSize = 0;
                     }
                     if (CircuitRecipeInputs.batches(recipe, null, supplied, queryFluids) != batches) continue;
                     if (commonMolds == null) commonMolds = new ArrayList<>(nonConsumed);
-                    else commonMolds.removeIf(
-                        mold -> nonConsumed.stream()
-                            .noneMatch(other -> sameItem(mold, other)));
+                    else commonMolds.removeIf(mold -> nonConsumed.stream().noneMatch(other -> sameItem(mold, other)));
                     if (commonMolds.isEmpty()) return new ItemStack[0];
                 }
             } catch (RuntimeException unsupportedMap) {
@@ -153,14 +141,18 @@ public final class CircuitPatternMolds {
         Map<Ingredient, Long> outputs = new HashMap<>();
         for (int i = 0; i < recipe.mOutputs.length; i++) {
             ItemStack item = recipe.mOutputs[i];
-            if (item != null && item.stackSize > 0
-                && recipe.getOutputChance(i) == 10000
-                && !add(outputs, new Ingredient(item), item.stackSize)) return 0;
+            if (
+                item != null && item.stackSize > 0
+                    && recipe.getOutputChance(i) == 10000
+                    && !add(outputs, new Ingredient(item), item.stackSize)
+            ) return 0;
         }
         for (int i = 0; i < recipe.mFluidOutputs.length; i++) {
             FluidStack fluid = recipe.mFluidOutputs[i];
-            if (recipe.mFluidOutputChances != null && i < recipe.mFluidOutputChances.length
-                && recipe.mFluidOutputChances[i] != 10000) continue;
+            if (
+                recipe.mFluidOutputChances != null && i < recipe.mFluidOutputChances.length
+                    && recipe.mFluidOutputChances[i] != 10000
+            ) continue;
             if (fluid != null && fluid.amount > 0 && !add(outputs, new Ingredient(fluid), fluid.amount)) return 0;
         }
         return CircuitPatternQuantities.requestedOutputBatches(outputs, encoded);
@@ -194,8 +186,7 @@ public final class CircuitPatternMolds {
             ItemStack unified = GTOreDictUnificator.get(item);
             type = unified.getItem();
             damage = unified.getItemDamage();
-            tag = unified.hasTagCompound() ? (NBTTagCompound) unified.getTagCompound()
-                .copy() : null;
+            tag = unified.hasTagCompound() ? (NBTTagCompound) unified.getTagCompound().copy() : null;
         }
 
         private Ingredient(FluidStack fluid) {

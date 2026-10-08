@@ -99,8 +99,7 @@ public abstract class SPacketMEBaseInvUpdate implements IMessage {
             while (uncompressed.readableBytes() > 0) {
                 IAEStack<?> stack = IAEStack.fromPacketGeneric(uncompressed);
                 if (stack != null) {
-                    this.getList()
-                        .add(stack);
+                    this.getList().add(stack);
                 }
             }
         } catch (Exception e) {

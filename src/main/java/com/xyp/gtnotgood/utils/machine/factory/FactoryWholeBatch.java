@@ -34,8 +34,7 @@ public final class FactoryWholeBatch {
             BigInteger unit = BigInteger.valueOf(FactoryRuntime.outputBatch(recipe));
             BigInteger ticks = BigInteger.valueOf(Math.max(1, recipe.mDuration));
             BigInteger required = ticks.multiply(unit.divide(unit.gcd(BigInteger.valueOf(node.parallel))));
-            period = period.divide(period.gcd(required))
-                .multiply(required);
+            period = period.divide(period.gcd(required)).multiply(required);
         }
         List<Port> inputs = new ArrayList<>(), outputs = new ArrayList<>();
         List<BigInteger> energies = new ArrayList<>();
@@ -43,14 +42,12 @@ public final class FactoryWholeBatch {
         for (FactoryGraph.Node node : nodes) {
             FactoryRecipeCatalog.Entry entry = FactoryRecipeCatalog.get(node.recipe);
             GTRecipe recipe = entry.recipe;
-            long[] timing = FactoryGraph
-                .timing(node.customEUt < 0 ? recipe.mEUt : node.customEUt, recipe.mDuration, 1, node.overclocks);
+            long[] timing = FactoryGraph.timing(node.customEUt < 0 ? recipe.mEUt : node.customEUt, recipe.mDuration, 1,
+                node.overclocks);
             // Material ratios use the unoverclocked recipe; OC changes only processing time and energy.
             BigInteger repetitions = period.divide(BigInteger.valueOf(Math.max(1, recipe.mDuration)))
                 .multiply(BigInteger.valueOf(node.parallel));
-            energies.add(
-                period.multiply(BigInteger.valueOf(timing[0]))
-                    .multiply(BigInteger.valueOf(node.parallel)));
+            energies.add(period.multiply(BigInteger.valueOf(timing[0])).multiply(BigInteger.valueOf(node.parallel)));
             plan.voltage = Math.max(plan.voltage, timing[0]);
             if (plan.inputs == null) plan.inputs = entry.consumableRecipe.copy();
             for (ItemStack item : entry.consumableRecipe.mInputs) {
@@ -77,16 +74,12 @@ public final class FactoryWholeBatch {
         combine(outputs);
         // The former per-tick boundary now defines one batch. Duration no longer shrinks with that normalization.
         BigInteger divisor = period;
-        int duration = FactoryBatchDuration.ticks(
-            nodes,
-            node -> (int) FactoryGraph
-                .timing(0, FactoryRecipeCatalog.get(node.recipe).recipe.mDuration, 1, node.overclocks)[1]);
+        int duration = FactoryBatchDuration.ticks(nodes, node -> (int) FactoryGraph.timing(0,
+            FactoryRecipeCatalog.get(node.recipe).recipe.mDuration, 1, node.overclocks)[1]);
         for (int i = 0; i < nodes.size(); i++) {
             FactoryRuntime.State job = new FactoryRuntime.State();
             job.duration = job.remaining = duration;
-            BigInteger[] energy = energies.get(i)
-                .divide(divisor)
-                .divideAndRemainder(BigInteger.valueOf(duration));
+            BigInteger[] energy = energies.get(i).divide(divisor).divideAndRemainder(BigInteger.valueOf(duration));
             job.eut = energy[0].longValueExact();
             job.extraEnergyTicks = energy[1].intValueExact();
             plan.eut = Math.addExact(plan.eut, job.tickEUt());
@@ -129,10 +122,7 @@ public final class FactoryWholeBatch {
     }
 
     private static int ceiling(BigInteger amount, BigInteger divisor) {
-        return amount.add(divisor)
-            .subtract(BigInteger.ONE)
-            .divide(divisor)
-            .intValueExact();
+        return amount.add(divisor).subtract(BigInteger.ONE).divide(divisor).intValueExact();
     }
 
     private static Port item(int node, ItemStack item, BigInteger amount) {
@@ -191,8 +181,7 @@ public final class FactoryWholeBatch {
             demand[i] = arc(graph, 1 + outputs.size() + i, sink, inputs.get(i).amount);
         for (int o = 0; o < outputs.size(); o++) for (int i = 0; i < inputs.size(); i++) {
             Port out = outputs.get(o), in = inputs.get(i);
-            boolean connected = nodes.stream()
-                .anyMatch(n -> n.id == in.node && n.sources.contains(out.node));
+            boolean connected = nodes.stream().anyMatch(n -> n.id == in.node && n.sources.contains(out.node));
             boolean matches = out.item != null ? in.match != null && in.match.matchesType(out.item)
                 : in.fluid != null && in.fluid.isFluidEqual(out.fluid);
             if (connected && matches) arc(graph, 1 + o, 1 + outputs.size() + i, out.amount.min(in.amount));
@@ -204,10 +193,8 @@ public final class FactoryWholeBatch {
             int head = 0, tail = 1;
             while (head < tail && parent[sink] < 0) {
                 int from = queue[head++];
-                for (int e = 0; e < graph.get(from)
-                    .size(); e++) {
-                    Arc arc = graph.get(from)
-                        .get(e);
+                for (int e = 0; e < graph.get(from).size(); e++) {
+                    Arc arc = graph.get(from).get(e);
                     if (arc.remaining.signum() <= 0 || parent[arc.to] >= 0) continue;
                     parent[arc.to] = from;
                     edge[arc.to] = e;
@@ -217,16 +204,13 @@ public final class FactoryWholeBatch {
             if (parent[sink] < 0) break;
             BigInteger amount = null;
             for (int at = sink; at != 0; at = parent[at]) {
-                BigInteger remaining = graph.get(parent[at])
-                    .get(edge[at]).remaining;
+                BigInteger remaining = graph.get(parent[at]).get(edge[at]).remaining;
                 amount = amount == null ? remaining : amount.min(remaining);
             }
             for (int at = sink; at != 0; at = parent[at]) {
-                Arc arc = graph.get(parent[at])
-                    .get(edge[at]);
+                Arc arc = graph.get(parent[at]).get(edge[at]);
                 arc.remaining = arc.remaining.subtract(amount);
-                Arc reverse = graph.get(at)
-                    .get(arc.reverse);
+                Arc reverse = graph.get(at).get(arc.reverse);
                 reverse.remaining = reverse.remaining.add(amount);
             }
         }
@@ -235,20 +219,10 @@ public final class FactoryWholeBatch {
     }
 
     private static Arc arc(List<List<Arc>> graph, int from, int to, BigInteger amount) {
-        Arc forward = new Arc(
-            to,
-            graph.get(to)
-                .size(),
-            amount);
-        Arc reverse = new Arc(
-            from,
-            graph.get(from)
-                .size(),
-            BigInteger.ZERO);
-        graph.get(from)
-            .add(forward);
-        graph.get(to)
-            .add(reverse);
+        Arc forward = new Arc(to, graph.get(to).size(), amount);
+        Arc reverse = new Arc(from, graph.get(from).size(), BigInteger.ZERO);
+        graph.get(from).add(forward);
+        graph.get(to).add(reverse);
         return forward;
     }
 }

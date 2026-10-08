@@ -31,6 +31,7 @@ import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.GuiOverlayButton;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import cpw.mods.fml.relauncher.ReflectionHelper;
+import gregtech.common.items.ItemFluidDisplay;
 
 /** Keeps Shift+wheel ingredient cycling for native AE2 pattern terminals without depending on the removed dual GUI. */
 public final class NativePatternIngredientCycler {
@@ -53,8 +54,8 @@ public final class NativePatternIngredientCycler {
             ItemStack slotItem = slot.getStack();
             if (slotItem == null) return false;
 
-            Constants.MouseWheel wheel = event.scrollAmount == -1 ? Constants.MouseWheel.NEXT
-                : Constants.MouseWheel.PREVIEW;
+            Constants.MouseWheel wheel = event.scrollAmount == -1 ? Constants.MouseWheel.Next
+                : Constants.MouseWheel.Preview;
             List<PositionedStack> ingredients = button.handlerRef.handler
                 .getIngredientStacks(button.handlerRef.recipeIndex);
             FluidStack slotFluid = extractFluid(slotItem);
@@ -111,11 +112,10 @@ public final class NativePatternIngredientCycler {
 
     private static FluidStack extractFluid(ItemStack stack) {
         if (stack == null || stack.getItem() == null) return null;
-        if (stack.getItem() instanceof gregtech.common.items.ItemFluidDisplay) {
+        if (stack.getItem() instanceof ItemFluidDisplay) {
             if (stack.getTagCompound() == null) return null;
             Fluid fluid = FluidRegistry.getFluid(stack.getItemDamage());
-            int amount = (int) stack.getTagCompound()
-                .getLong("mFluidDisplayAmount");
+            int amount = (int) stack.getTagCompound().getLong("mFluidDisplayAmount");
             return amount > 0 && fluid != null ? new FluidStack(fluid, amount) : null;
         }
         if (FluidDropCompat.isFluidDrop(stack)) return FluidDropCompat.getFluidStack(stack);

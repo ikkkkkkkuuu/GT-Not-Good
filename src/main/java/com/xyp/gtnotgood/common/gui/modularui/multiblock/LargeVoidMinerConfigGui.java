@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
@@ -24,9 +25,11 @@ import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
+import com.xyp.gtnotgood.client.gui.LDLibVoidMinerView;
 import com.xyp.gtnotgood.common.api.gui.OreEntryInfo;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidMiner;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.ldlib.integration.modularui.LDLibModularScreen;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -51,13 +54,8 @@ public final class LargeVoidMinerConfigGui implements IGuiHolder<PosGuiData> {
 
     @Override
     public ModularPanel buildUI(PosGuiData data, PanelSyncManager sync, UISettings settings) {
-        ores = new GenericListSyncHandler<>(
-            miner::getOreEntries,
-            null,
-            LargeVoidMinerConfigGui::readOreInfo,
-            LargeVoidMinerConfigGui::writeOreInfo,
-            LargeVoidMinerConfigGui::oreInfoEqual,
-            null);
+        ores = new GenericListSyncHandler<>(miner::getOreEntries, null, LargeVoidMinerConfigGui::readOreInfo,
+            LargeVoidMinerConfigGui::writeOreInfo, LargeVoidMinerConfigGui::oreInfoEqual, null);
         actions = new LargeVoidMinerConfigGui.MinerActionSyncHandler(miner);
         oreMode = new IntSyncValue(() -> miner.mOreMode);
         fortune = new IntSyncValue(() -> miner.mFortuneLevel);
@@ -77,15 +75,10 @@ public final class LargeVoidMinerConfigGui implements IGuiHolder<PosGuiData> {
         sync.syncValue("weightIncrease", weightIncrease);
         sync.syncValue("dimIncrease", dimIncrease);
         sync.syncValue("dimension", dimension);
-        enabled = new BooleanSyncValue(
-            () -> miner.getBaseMetaTileEntity()
-                .isAllowedToWork(),
-            value -> {
-                if (value) miner.getBaseMetaTileEntity()
-                    .enableWorking();
-                else miner.getBaseMetaTileEntity()
-                    .disableWorking();
-            });
+        enabled = new BooleanSyncValue(() -> miner.getBaseMetaTileEntity().isAllowedToWork(), value -> {
+            if (value) miner.getBaseMetaTileEntity().enableWorking();
+            else miner.getBaseMetaTileEntity().disableWorking();
+        });
         enabled.allowC2S();
         sync.syncValue("ores", ores);
         sync.syncValue("actions", actions);
@@ -101,29 +94,20 @@ public final class LargeVoidMinerConfigGui implements IGuiHolder<PosGuiData> {
         InvWrapper inventory = new InvWrapper(miner.getPluginSlotInventory());
         for (int i = 0; i < 25; i++) {
             ItemSlot slot = new ItemSlot()
-                .slot(
-                    new ModularSlot(inventory, i).filter(LargeVoidMiner::isDimensionDisplayItem)
-                        .singletonSlotGroup())
-                .pos(12 + (i % 5) * 18, 72 + (i / 5) * 18)
-                .size(18);
-            if (i == 0) slot.tooltipDynamic(
-                t -> t.addLine(com.cleanroommc.modularui.api.drawable.IKey.lang(VoidMinerGuiText.SLOT1_HINT)));
+                .slot(new ModularSlot(inventory, i).filter(LargeVoidMiner::isDimensionDisplayItem).singletonSlotGroup())
+                .pos(12 + (i % 5) * 18, 72 + (i / 5) * 18).size(18);
+            if (i == 0) slot.tooltipDynamic(t -> t.addLine(IKey.lang(VoidMinerGuiText.SLOT1_HINT)));
             panel.child(slot);
         }
-        panel.child(
-            SlotGroupWidget.playerInventory(true)
-                .left(156)
-                .bottom(7));
+        panel.child(SlotGroupWidget.playerInventory(true).left(156).bottom(7));
         return panel;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public ModularScreen createScreen(PosGuiData data, ModularPanel panel) {
-        return new com.xyp.ldlib.integration.modularui.LDLibModularScreen(
-            ModList.GTNotGood.getID(),
-            panel,
-            new com.xyp.gtnotgood.client.gui.LDLibVoidMinerView(((ModelPanel) panel).model));
+        return new LDLibModularScreen(ModList.GTNotGood.getID(), panel,
+            new LDLibVoidMinerView(((ModelPanel) panel).model));
     }
 
     /** Carries the panel's model because position factories resolve a fresh holder when creating the client screen. */

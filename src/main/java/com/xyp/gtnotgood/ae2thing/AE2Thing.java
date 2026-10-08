@@ -43,8 +43,8 @@ public class AE2Thing {
         proxy = FMLLaunchHandler.side() == Side.CLIENT ? new ClientProxy() : new CommonProxy();
         ChannelLoader.INSTANCE.run();
         proxy.preInit(event);
-        ItemAndBlockHolder.ITEM_WIRELESS_DUAL_INTERFACE_TERMINAL = new ItemWirelessDualInterfaceTerminal().register();
-        GTNGItemList.WirelessDualInterfaceTerminal.set(ItemAndBlockHolder.ITEM_WIRELESS_DUAL_INTERFACE_TERMINAL);
+        ItemAndBlockHolder.wirelessDualInterfaceTerminal = new ItemWirelessDualInterfaceTerminal().register();
+        GTNGItemList.WirelessDualInterfaceTerminal.set(ItemAndBlockHolder.wirelessDualInterfaceTerminal);
     }
 
     public static void init(FMLInitializationEvent event) {

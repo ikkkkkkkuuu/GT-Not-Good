@@ -52,11 +52,7 @@ public final class CompactItemTabButton extends GuiTabButton {
                 GL11.glTranslatef(centerX, centerY, 0.0F);
                 GL11.glScalef(ICON_SCALE, ICON_SCALE, 1.0F);
                 GL11.glTranslatef(-centerX, -centerY, 0.0F);
-                itemRenderer.renderItemAndEffectIntoGUI(
-                    minecraft.fontRenderer,
-                    minecraft.renderEngine,
-                    icon,
-                    xPosition,
+                itemRenderer.renderItemAndEffectIntoGUI(minecraft.fontRenderer, minecraft.renderEngine, icon, xPosition,
                     yPosition);
             } finally {
                 GL11.glPopMatrix();

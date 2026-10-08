@@ -23,11 +23,9 @@ final class MEDataStickSnapshot {
             copy.stackSize = 1;
             next.put(ItemId.create(copy.getItem(), copy.getItemDamage(), copy.getTagCompound()), copy);
         }
-        if (sticks.keySet()
-            .equals(next.keySet())) return false;
+        if (sticks.keySet().equals(next.keySet())) return false;
         sticks = next;
-        slots = next.values()
-            .toArray(new ItemStack[0]);
+        slots = next.values().toArray(new ItemStack[0]);
         return true;
     }
 

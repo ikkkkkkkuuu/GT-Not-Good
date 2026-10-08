@@ -33,12 +33,13 @@ public final class ConfigTooltipHandler {
         }
         GuiConfig screen = (GuiConfig) event.gui;
         GuiConfigEntries entries = screen.entryList;
-        if (!ModList.GTNotGood.getID()
-            .equals(screen.modID) || entries == null
-            || event.mouseY <= entries.top
-            || event.mouseY >= entries.bottom
-            || event.mouseX < entries.controlX
-            || event.mouseX >= entries.controlX + entries.controlWidth) {
+        if (
+            !ModList.GTNotGood.getID().equals(screen.modID) || entries == null
+                || event.mouseY <= entries.top
+                || event.mouseY >= entries.bottom
+                || event.mouseX < entries.controlX
+                || event.mouseX >= entries.controlX + entries.controlWidth
+        ) {
             reset();
             return;
         }
@@ -47,8 +48,7 @@ public final class ConfigTooltipHandler {
             reset();
             return;
         }
-        IConfigElement<?> element = entries.getListEntry(index)
-            .getConfigElement();
+        IConfigElement<?> element = entries.getListEntry(index).getConfigElement();
         if (!element.isProperty()) {
             reset();
             return;
@@ -61,15 +61,13 @@ public final class ConfigTooltipHandler {
         if (Minecraft.getSystemTime() - hoverStarted < 500) return;
 
         String description = element.getComment();
-        if (description == null || description.trim()
-            .isEmpty()) return;
+        if (description == null || description.trim().isEmpty()) return;
         String name = I18n.format(element.getLanguageKey());
         if (name.equals(element.getLanguageKey())) name = element.getName();
         String tooltip = EnumChatFormatting.GREEN + name + "\n" + EnumChatFormatting.YELLOW + description;
         screen.drawToolTip(
             Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(tooltip, Math.min(300, screen.width - 20)),
-            event.mouseX,
-            event.mouseY);
+            event.mouseX, event.mouseY);
     }
 
     private void reset() {

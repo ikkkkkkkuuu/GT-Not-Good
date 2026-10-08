@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.common.blocks.mechanicaluser;
 
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -64,13 +65,12 @@ public final class TileMechanicalUser extends TileEntity implements ISidedInvent
             player.inventory.mainInventory[0] = inventory[slot];
             equipped = inventory[slot] == null ? null : inventory[slot].copy();
             inventory[slot] = null;
-            if (equipped != null) player.getAttributeMap()
-                .applyAttributeModifiers(equipped.getAttributeModifiers());
+            if (equipped != null) player.getAttributeMap().applyAttributeModifiers(equipped.getAttributeModifiers());
             perform(x, y, z, direction);
         } finally {
             if (player != null) {
-                if (equipped != null) player.getAttributeMap()
-                    .removeAttributeModifiers(equipped.getAttributeModifiers());
+                if (equipped != null)
+                    player.getAttributeMap().removeAttributeModifiers(equipped.getAttributeModifiers());
                 inventory[slot] = clean(player.inventory.mainInventory[0]);
                 player.inventory.mainInventory[0] = null;
                 // Buckets, bottles and modded tools may place byproducts into other player slots.
@@ -122,12 +122,9 @@ public final class TileMechanicalUser extends TileEntity implements ISidedInvent
         float yaw = direction == ForgeDirection.NORTH ? 180
             : direction == ForgeDirection.WEST ? 90 : direction == ForgeDirection.EAST ? -90 : 0;
         float pitch = direction == ForgeDirection.UP ? -90 : direction == ForgeDirection.DOWN ? 90 : 0;
-        player.setPositionAndRotation(
-            xCoord + 0.5 + direction.offsetX * 0.51,
-            yCoord + 0.5 + direction.offsetY * 0.51 - player.getEyeHeight(),
-            zCoord + 0.5 + direction.offsetZ * 0.51,
-            yaw,
-            pitch);
+        player.setPositionAndRotation(xCoord + 0.5 + direction.offsetX * 0.51,
+            yCoord + 0.5 + direction.offsetY * 0.51 - player.getEyeHeight(), zCoord + 0.5 + direction.offsetZ * 0.51,
+            yaw, pitch);
         player.rotationYawHead = yaw;
         player.inventory.currentItem = 0;
         player.setSneaking(false);
@@ -139,15 +136,14 @@ public final class TileMechanicalUser extends TileEntity implements ISidedInvent
             return;
         }
         ItemStack held = player.getHeldItem();
-        int side = direction.getOpposite()
-            .ordinal();
+        int side = direction.getOpposite().ordinal();
         float hitX = 0.5F - direction.offsetX * 0.5F;
         float hitY = 0.5F - direction.offsetY * 0.5F;
         float hitZ = 0.5F - direction.offsetZ * 0.5F;
         if (mode == 4) {
             if (leftClick || held == null) return;
-            PlayerInteractEvent event = ForgeEventFactory
-                .onPlayerInteract(player, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, x, y, z, -1, worldObj);
+            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(player,
+                PlayerInteractEvent.Action.RIGHT_CLICK_AIR, x, y, z, -1, worldObj);
             if (!event.isCanceled() && event.useItem != Event.Result.DENY) {
                 player.theItemInWorldManager.tryUseItem(player, worldObj, held);
             }
@@ -161,22 +157,22 @@ public final class TileMechanicalUser extends TileEntity implements ISidedInvent
         }
         if (mode == 0) {
             if (worldObj.isAirBlock(x, y, z)) {
-                PlayerInteractEvent event = ForgeEventFactory
-                    .onPlayerInteract(player, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, x, y, z, -1, worldObj);
+                PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(player,
+                    PlayerInteractEvent.Action.RIGHT_CLICK_AIR, x, y, z, -1, worldObj);
                 if (held != null && !event.isCanceled() && event.useItem != Event.Result.DENY) {
                     player.theItemInWorldManager.tryUseItem(player, worldObj, held);
                 }
             } else {
-                player.theItemInWorldManager
-                    .activateBlockOrUseItem(player, worldObj, held, x, y, z, side, hitX, hitY, hitZ);
+                player.theItemInWorldManager.activateBlockOrUseItem(player, worldObj, held, x, y, z, side, hitX, hitY,
+                    hitZ);
             }
             return;
         }
         if (mode == 1) {
-            if (held == null || !(held.getItem() instanceof ItemBlock)
-                || !worldObj.getBlock(x, y, z)
-                    .isReplaceable(worldObj, x, y, z))
-                return;
+            if (
+                held == null || !(held.getItem() instanceof ItemBlock)
+                    || !worldObj.getBlock(x, y, z).isReplaceable(worldObj, x, y, z)
+            ) return;
             // Click our working face, placing exactly into the adjacent target cell.
             x = xCoord;
             y = yCoord;
@@ -186,8 +182,8 @@ public final class TileMechanicalUser extends TileEntity implements ISidedInvent
             hitY = 0.5F + direction.offsetY * 0.5F;
             hitZ = 0.5F + direction.offsetZ * 0.5F;
         }
-        PlayerInteractEvent event = ForgeEventFactory
-            .onPlayerInteract(player, PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, x, y, z, side, worldObj);
+        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(player,
+            PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, x, y, z, side, worldObj);
         if (event.isCanceled()) return;
         if (mode == 3) {
             if (event.useBlock != Event.Result.DENY) {
@@ -195,16 +191,15 @@ public final class TileMechanicalUser extends TileEntity implements ISidedInvent
                 block.onBlockActivated(worldObj, x, y, z, player, side, hitX, hitY, hitZ);
             }
         } else if (held != null && event.useItem != Event.Result.DENY) {
-            if (!held.getItem()
-                .onItemUseFirst(held, player, worldObj, x, y, z, side, hitX, hitY, hitZ)) {
+            if (!held.getItem().onItemUseFirst(held, player, worldObj, x, y, z, side, hitX, hitY, hitZ)) {
                 held.tryPlaceItemIntoWorld(player, worldObj, x, y, z, side, hitX, hitY, hitZ);
             }
         }
     }
 
     private void interactEntity(int x, int y, int z) {
-        List<?> entities = worldObj
-            .getEntitiesWithinAABBExcludingEntity(player, AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 1, z + 1));
+        List<?> entities = worldObj.getEntitiesWithinAABBExcludingEntity(player,
+            AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 1, z + 1));
         for (Object object : entities) {
             Entity entity = (Entity) object;
             if (entity.isDead || entity instanceof EntityItem || entity instanceof EntityPlayer) continue;
@@ -283,8 +278,8 @@ public final class TileMechanicalUser extends TileEntity implements ISidedInvent
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
         inventory[slot] = clean(stack);
-        if (inventory[slot] != null) inventory[slot].stackSize = Math
-            .min(stack.stackSize, Math.min(getInventoryStackLimit(), stack.getMaxStackSize()));
+        if (inventory[slot] != null) inventory[slot].stackSize = Math.min(stack.stackSize,
+            Math.min(getInventoryStackLimit(), stack.getMaxStackSize()));
         markDirty();
     }
 
@@ -358,7 +353,7 @@ public final class TileMechanicalUser extends TileEntity implements ISidedInvent
         mode = Math.max(0, Math.min(5, tag.getInteger("Mode")));
         leftClick = tag.getBoolean("LeftClick");
         firstSlotOnly = tag.getBoolean("FirstSlotOnly");
-        java.util.Arrays.fill(inventory, null);
+        Arrays.fill(inventory, null);
         NBTTagList items = tag.getTagList("Items", 10);
         for (int i = 0; i < items.tagCount(); i++) {
             NBTTagCompound entry = items.getCompoundTagAt(i);

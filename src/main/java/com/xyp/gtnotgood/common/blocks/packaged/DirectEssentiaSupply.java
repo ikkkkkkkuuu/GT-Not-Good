@@ -34,8 +34,7 @@ public final class DirectEssentiaSupply {
         var world = matrix.getWorldObj();
         if (route == null || world == null || world.isRemote) return reduced;
         int x = route.getInteger("X"), z = route.getInteger("Z");
-        if (!world.getChunkProvider()
-            .chunkExists(x >> 4, z >> 4)) return reduced;
+        if (!world.getChunkProvider().chunkExists(x >> 4, z >> 4)) return reduced;
         if (!(world.getTileEntity(x, route.getInteger("Y"), z) instanceof TilePackagedProvider provider))
             return reduced;
         for (int i = 1; i < Math.min(32, provider.essentiaSpeed) && remaining.getAmount(aspect) > 0; i++) {
@@ -69,22 +68,20 @@ public final class DirectEssentiaSupply {
         var world = matrix.getWorldObj();
         if (world == null || world.isRemote || !matrix.crafting || aspect == null) return false;
         int x = route.getInteger("X"), y = route.getInteger("Y"), z = route.getInteger("Z");
-        if (!world.getChunkProvider()
-            .chunkExists(x >> 4, z >> 4)) return false;
-        if (!(world.getTileEntity(x, y, z) instanceof TilePackagedProvider provider) || provider.isInvalid()
-            || !provider.networkEssentia
-            || !provider.essentiaIdentity()
-                .equals(route.getString("Identity"))
-            || !provider
-                .busy(new PackagedTarget(world.provider.dimensionId, matrix.xCoord, matrix.yCoord, matrix.zCoord, 1)))
-            return false;
-        if (!provider.getProxy()
-            .isActive() || !ModList.ThaumicEnergistics.isModLoaded()) {
-            provider.altarStatus = AltarStatus.ESSENTIA;
+        if (!world.getChunkProvider().chunkExists(x >> 4, z >> 4)) return false;
+        if (
+            !(world.getTileEntity(x, y, z) instanceof TilePackagedProvider provider) || provider.isInvalid()
+                || !provider.networkEssentia
+                || !provider.essentiaIdentity().equals(route.getString("Identity"))
+                || !provider.busy(
+                    new PackagedTarget(world.provider.dimensionId, matrix.xCoord, matrix.yCoord, matrix.zCoord, 1))
+        ) return false;
+        if (!provider.getProxy().isActive() || !ModList.ThaumicEnergistics.isModLoaded()) {
+            provider.altarStatus = AltarStatus.Essentia;
             return false;
         }
         boolean supplied = ThaumicEnergisticsSupply.extractOne(provider, aspect);
-        provider.altarStatus = supplied ? AltarStatus.RUNNING : AltarStatus.ESSENTIA;
+        provider.altarStatus = supplied ? AltarStatus.Running : AltarStatus.Essentia;
         return supplied;
     }
 }

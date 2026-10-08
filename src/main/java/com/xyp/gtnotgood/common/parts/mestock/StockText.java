@@ -106,7 +106,7 @@ enum StockText {
     // #tr gui.mestock.cpu
     // # Waiting for CPU
     // # zh_CN 等待合成 CPU
-    CPU("gui.mestock.cpu"),
+    Cpu("gui.mestock.cpu"),
     // #tr gui.mestock.offline
     // # Offline / redstone paused
     // # zh_CN 离线或红石暂停

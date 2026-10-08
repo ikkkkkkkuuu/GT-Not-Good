@@ -25,8 +25,7 @@ public final class MEBridgeReceiverRegistry {
 
     public static void add(String channel, TileMEBridgeReceiver tile) {
         if (channel == null || channel.isEmpty() || tile == null) return;
-        if (BY_CHANNEL.computeIfAbsent(channel, k -> new HashSet<>())
-            .add(tile)) {
+        if (BY_CHANNEL.computeIfAbsent(channel, k -> new HashSet<>()).add(tile)) {
             revision++;
         }
     }

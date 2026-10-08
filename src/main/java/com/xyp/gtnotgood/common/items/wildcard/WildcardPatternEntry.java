@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.common.items.wildcard;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -28,10 +29,6 @@ import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTUtility;
 import lombok.Getter;
 
-/**
- * 通配样板符条目
- * 存储单个输入/输出规则的配置信息
- */
 public class WildcardPatternEntry {
 
     private static final String KEY_MODE = "Mode";
@@ -58,7 +55,6 @@ public class WildcardPatternEntry {
     private static final Map<OrePrefixes, String> PREFIX_NAME_CACHE = new ConcurrentHashMap<>();
 
     private boolean oreDictMode;
-    /** 获取流体类型。 */
     @Getter
     private FluidState fluidType;
     private ItemStack stack;
@@ -66,9 +62,6 @@ public class WildcardPatternEntry {
     private String matcher;
     private long amount;
 
-    /**
-     * 从物品堆创建条目
-     */
     public static WildcardPatternEntry fromStack(ItemStack stack) {
         WildcardPatternEntry entry = new WildcardPatternEntry();
         entry.stack = stack == null ? null : stack.copy();
@@ -119,9 +112,6 @@ public class WildcardPatternEntry {
         return entry;
     }
 
-    /**
-     * 从AE2样板槽位NBT创建条目
-     */
     public static WildcardPatternEntry fromPatternSlot(NBTTagCompound tag) {
         ItemStack stack = tag == null ? null : Platform.loadItemStackFromNBT(tag);
         if (stack != null && stack.stackSize == 0 && tag.hasKey("Cnt")) {
@@ -130,9 +120,6 @@ public class WildcardPatternEntry {
         return fromStack(stack);
     }
 
-    /**
-     * 从NBT标签创建条目
-     */
     public static WildcardPatternEntry fromNbt(NBTTagCompound tag) {
         WildcardPatternEntry entry = new WildcardPatternEntry();
         entry.oreDictMode = tag.getBoolean(KEY_MODE);
@@ -162,9 +149,6 @@ public class WildcardPatternEntry {
         return entry;
     }
 
-    /**
-     * 转换为NBT标签
-     */
     public NBTTagCompound toNbt() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setBoolean(KEY_MODE, this.oreDictMode);
@@ -186,14 +170,10 @@ public class WildcardPatternEntry {
         return tag;
     }
 
-    /**
-     * 根据材料名创建物品堆
-     */
     public ItemStack createStack(String materialName, ItemStack configStack) {
         if (isEmpty()) {
             return null;
         }
-        // 流体模式: 创建流体drop
         if (this.fluidType != null) {
             return createFluidStack(materialName, configStack);
         }
@@ -203,11 +183,7 @@ public class WildcardPatternEntry {
         return createNameMatchedStack(materialName, configStack);
     }
 
-    /**
-     * 获取候选材料列表
-     */
     public Set<String> getCandidateMaterials() {
-        // 流体模式: 从Materials收集具有对应流体的材料
         if (isFluid()) {
             String fluidMatcher = normalizeOreMatcher(this.matcher);
             if (fluidMatcher.isEmpty() || isMatchAllPattern(fluidMatcher)) {
@@ -220,11 +196,8 @@ public class WildcardPatternEntry {
             if (oreMatcher.isEmpty() || isMatchAllPattern(oreMatcher)) {
                 return new LinkedHashSet<>();
             }
-            return new LinkedHashSet<>(
-                cachedUserMatcher(
-                    ORE_CANDIDATE_CACHE,
-                    oreMatcher,
-                    WildcardPatternEntry::collectOreDictCandidateMaterials));
+            return new LinkedHashSet<>(cachedUserMatcher(ORE_CANDIDATE_CACHE, oreMatcher,
+                WildcardPatternEntry::collectOreDictCandidateMaterials));
         }
 
         String nameMatcher = getMatcher();
@@ -238,16 +211,10 @@ public class WildcardPatternEntry {
             cachedUserMatcher(NAME_CANDIDATE_CACHE, nameMatcher, WildcardPatternEntry::collectNameCandidateMaterials));
     }
 
-    /**
-     * 判断是否可以转换为矿辞模式
-     */
     public boolean canOreDict() {
         return isFluid() || getDisplayPrefix() != null;
     }
 
-    /**
-     * 转换为矿辞模式
-     */
     public void convertToOreDict() {
         this.oreDictMode = true;
         if (isFluid()) {
@@ -255,7 +222,6 @@ public class WildcardPatternEntry {
             this.matcher = prefix + "*";
             return;
         }
-        // 检查matcher文本是否为流体前缀模式
         FluidState detected = detectFluidFromPrefix(getMatcher());
         if (detected != null) {
             this.fluidType = detected;
@@ -265,15 +231,11 @@ public class WildcardPatternEntry {
         OrePrefixes prefix = getDisplayPrefix();
         if (prefix != null) {
             this.matcher = getPrefixName(prefix) + "*";
-        } else if (this.matcher == null || this.matcher.trim()
-            .isEmpty()) {
-                this.matcher = "*";
-            }
+        } else if (this.matcher == null || this.matcher.trim().isEmpty()) {
+            this.matcher = "*";
+        }
     }
 
-    /**
-     * 转换为物品模式
-     */
     public void convertToItem() {
         this.oreDictMode = false;
         this.fluidType = null;
@@ -283,9 +245,6 @@ public class WildcardPatternEntry {
         }
     }
 
-    /**
-     * 获取显示物品堆
-     */
     public ItemStack getDisplayStack() {
         // 流体模式: 返回GT5原生流体展示物品(新版流体图标)
         if (isFluid()) {
@@ -317,91 +276,54 @@ public class WildcardPatternEntry {
         return null;
     }
 
-    /**
-     * 获取标签文本
-     */
     public String getLabel() {
         return getMatcher();
     }
 
-    /**
-     * 是否为矿辞模式
-     */
     public boolean isOreDict() {
         return this.oreDictMode;
     }
 
-    /**
-     * 是否为流体模式
-     */
     public boolean isFluid() {
         return this.fluidType != null;
     }
 
-    /**
-     * 是否为空
-     */
     public boolean isEmpty() {
         return getMatcher().isEmpty() && this.stack == null && this.displayStack == null;
     }
 
-    /**
-     * 获取匹配器字符串
-     */
     public String getMatcher() {
         return this.matcher == null ? "" : this.matcher.trim();
     }
 
-    /**
-     * 设置匹配器字符串
-     */
     public void setMatcher(String matcher) {
         this.matcher = matcher == null ? "" : matcher.trim();
     }
 
-    /**
-     * 设置矿辞名称或前缀
-     */
     public void setOreNameOrPrefix(String oreNameOrPrefix) {
         setMatcher(oreNameOrPrefix);
-        // 检测流体前缀并设置fluidType
         FluidState detected = detectFluidFromPrefix(oreNameOrPrefix);
         if (detected != null) {
             this.fluidType = detected;
         }
     }
 
-    /**
-     * 获取数量
-     */
     public int getAmount() {
         return getClampedAmount();
     }
 
-    /**
-     * 获取数量(long)
-     */
     public long getAmountLong() {
         return Math.max(1L, Math.min(MAX_AMOUNT, this.amount));
     }
 
-    /**
-     * 设置数量
-     */
     public void setAmount(int amount) {
         setAmount((long) amount);
     }
 
-    /**
-     * 设置数量(long)
-     */
     public void setAmount(long amount) {
         this.amount = Math.max(1L, Math.min(MAX_AMOUNT, amount));
     }
 
-    /**
-     * 乘以倍数
-     */
     public void multiplyAmount(int factor) {
         if (factor <= 1) {
             return;
@@ -414,9 +336,6 @@ public class WildcardPatternEntry {
         setAmount(current * factor);
     }
 
-    /**
-     * 除以倍数
-     */
     public void divideAmount(int divisor) {
         if (divisor <= 1) {
             return;
@@ -424,9 +343,6 @@ public class WildcardPatternEntry {
         this.amount = Math.max(1L, getAmountLong() / divisor);
     }
 
-    /**
-     * 设置物品堆
-     */
     public void setStack(ItemStack stack) {
         this.stack = stack == null ? null : stack.copy();
         this.displayStack = this.stack == null ? null : this.stack.copy();
@@ -436,14 +352,9 @@ public class WildcardPatternEntry {
         }
     }
 
-    /**
-     * 获取物品堆
-     */
     public ItemStack getStack() {
         return this.stack == null ? null : this.stack.copy();
     }
-
-    // ========== 私有方法 ==========
 
     private Set<String> getDirectCandidateMaterials() {
         Set<String> result = new LinkedHashSet<>();
@@ -473,10 +384,11 @@ public class WildcardPatternEntry {
 
     private ItemStack createOreDictStack(String materialName, ItemStack configStack) {
         String matcherValue = normalizeOreMatcher(this.matcher);
-        if (matcherValue.isEmpty() || isMatchAllPattern(matcherValue)
-            || materialName == null
-            || materialName.trim()
-                .isEmpty()) {
+        if (
+            matcherValue.isEmpty() || isMatchAllPattern(matcherValue)
+                || materialName == null
+                || materialName.trim().isEmpty()
+        ) {
             return null;
         }
 
@@ -507,8 +419,7 @@ public class WildcardPatternEntry {
     }
 
     private ItemStack createNameMatchedStack(String materialName, ItemStack configStack) {
-        if (materialName == null || materialName.trim()
-            .isEmpty()) {
+        if (materialName == null || materialName.trim().isEmpty()) {
             return null;
         }
 
@@ -530,9 +441,11 @@ public class WildcardPatternEntry {
 
         ItemStack source = this.stack != null ? this.stack : this.displayStack;
         String sourceMaterial = getAssociatedMaterialName(source);
-        if (source != null && !sourceMaterial.isEmpty()
-            && sourceMaterial.equalsIgnoreCase(materialName)
-            && matchesName(safeGetDisplayName(source), this.matcher)) {
+        if (
+            source != null && !sourceMaterial.isEmpty()
+                && sourceMaterial.equalsIgnoreCase(materialName)
+                && matchesName(safeGetDisplayName(source), this.matcher)
+        ) {
             ItemStack copy = source.copy();
             copy.stackSize = getClampedAmount();
             return copy;
@@ -558,8 +471,9 @@ public class WildcardPatternEntry {
             ArrayList<ItemStack> options = OreDictionary.getOres(oreName);
             if (options == null || options.isEmpty()) continue;
             for (ItemStack option : options) {
-                if (option == null || option.getItem() == null
-                    || !matchesName(safeGetDisplayName(option), this.matcher)) {
+                if (
+                    option == null || option.getItem() == null || !matchesName(safeGetDisplayName(option), this.matcher)
+                ) {
                     continue;
                 }
                 ItemStack copy = option.copy();
@@ -667,9 +581,7 @@ public class WildcardPatternEntry {
                 return option.copy();
             }
         }
-        return options.get(0) == null ? null
-            : options.get(0)
-                .copy();
+        return options.get(0) == null ? null : options.get(0).copy();
     }
 
     private static Set<String> collectOreDictCandidateMaterials(String matcher) {
@@ -766,8 +678,7 @@ public class WildcardPatternEntry {
     private static String normalizeOreToken(String value) {
         String token = value == null ? "" : value.trim();
         if (token.endsWith("*")) {
-            token = token.substring(0, token.length() - 1)
-                .trim();
+            token = token.substring(0, token.length() - 1).trim();
         }
         return token;
     }
@@ -784,8 +695,7 @@ public class WildcardPatternEntry {
             return displayName.equalsIgnoreCase(pattern);
         }
         Pattern compiled = cachedUserMatcher(NAME_PATTERN_CACHE, pattern, WildcardPatternEntry::compileNamePattern);
-        return compiled != null && compiled.matcher(displayName)
-            .find();
+        return compiled != null && compiled.matcher(displayName).find();
     }
 
     private static boolean matchesOreName(String oreName, String pattern) {
@@ -796,12 +706,9 @@ public class WildcardPatternEntry {
         if (!containsWildcard(normalizedPattern)) {
             return normalizedOre.equalsIgnoreCase(normalizedPattern);
         }
-        Pattern compiled = cachedUserMatcher(
-            ORE_PATTERN_CACHE,
-            normalizedPattern,
+        Pattern compiled = cachedUserMatcher(ORE_PATTERN_CACHE, normalizedPattern,
             WildcardPatternEntry::compileOrePattern);
-        return compiled != null && compiled.matcher(normalizedOre)
-            .matches();
+        return compiled != null && compiled.matcher(normalizedOre).matches();
     }
 
     /**
@@ -817,8 +724,7 @@ public class WildcardPatternEntry {
         T cached = cache.get(key);
         if (cached != null) return cached;
         if (cache.size() >= USER_MATCHER_CACHE_LIMIT) {
-            java.util.Iterator<String> keys = cache.keySet()
-                .iterator();
+            Iterator<String> keys = cache.keySet().iterator();
             if (keys.hasNext()) cache.remove(keys.next());
         }
         return cache.computeIfAbsent(key, build);
@@ -896,20 +802,15 @@ public class WildcardPatternEntry {
 
     private static String getPrefixName(OrePrefixes prefix) {
         if (prefix == null) return "";
-        // Reflection resolved once per prefix and cached; called inside OrePrefixes.VALUES / oreName loops.
         return PREFIX_NAME_CACHE.computeIfAbsent(prefix, WildcardPatternEntry::resolvePrefixName);
     }
 
     private static String resolvePrefixName(OrePrefixes prefix) {
         try {
-            return (String) prefix.getClass()
-                .getMethod("getName")
-                .invoke(prefix);
+            return (String) prefix.getClass().getMethod("getName").invoke(prefix);
         } catch (Exception ignored) {}
         try {
-            return (String) prefix.getClass()
-                .getMethod("name")
-                .invoke(prefix);
+            return (String) prefix.getClass().getMethod("name").invoke(prefix);
         } catch (Exception ignored) {}
         return prefix.toString();
     }
@@ -1010,23 +911,19 @@ public class WildcardPatternEntry {
         if (prefixName.isEmpty() || oreName == null || oreName.length() <= prefixName.length()) {
             return "";
         }
-        return oreName.substring(prefixName.length())
-            .trim();
+        return oreName.substring(prefixName.length()).trim();
     }
 
-    /**
-     * 判断给定的文本是否看起来像矿辞模式或流体模式
-     */
     public static boolean looksLikeOreDictPattern(String text) {
         if (text == null || text.isEmpty()) return false;
-        // 检查流体前缀
         String lower = text.toLowerCase(Locale.ROOT);
-        if (lower.startsWith(FLUID_PREFIX_MOLTEN) || lower.startsWith(FLUID_PREFIX_PLASMA)
-            || lower.startsWith(FLUID_PREFIX_GAS)
-            || lower.startsWith(FLUID_PREFIX_LIQUID)) {
+        if (
+            lower.startsWith(FLUID_PREFIX_MOLTEN) || lower.startsWith(FLUID_PREFIX_PLASMA)
+                || lower.startsWith(FLUID_PREFIX_GAS)
+                || lower.startsWith(FLUID_PREFIX_LIQUID)
+        ) {
             return true;
         }
-        // 检查是否包含典型的矿辞前缀关键词
         return lower.contains("ore") || lower.contains("ingot")
             || lower.contains("plate")
             || lower.contains("dust")
@@ -1043,18 +940,15 @@ public class WildcardPatternEntry {
         Materials cached = MATERIAL_NAME_CACHE.get(normalized);
         if (cached != null) return cached;
         for (Materials material : Materials.getAll()) {
-            if (material == null || material == Materials._NULL
-                || material == Materials.Empty
-                || material.mName == null) continue;
+            if (
+                material == null || material == Materials._NULL || material == Materials.Empty || material.mName == null
+            ) continue;
             MATERIAL_NAME_CACHE.putIfAbsent(material.mName.toLowerCase(Locale.ROOT), material);
         }
         Materials material = MATERIAL_NAME_CACHE.get(normalized);
         return material == null ? Materials._NULL : material;
     }
 
-    /**
-     * 获取所有已知材料名称
-     */
     public static Set<String> getAllKnownMaterialNames() {
         Set<String> built = new LinkedHashSet<>();
         for (Materials material : Materials.getAll()) {
@@ -1071,9 +965,6 @@ public class WildcardPatternEntry {
         return new LinkedHashSet<>(built);
     }
 
-    /**
-     * 收集具有指定流体类型的材料名称(用于流体模式的候选材料)
-     */
     private Set<String> collectFluidCandidateMaterials(String matcher) {
         Set<String> result = new LinkedHashSet<>();
         String token = normalizeOreToken(matcher);
@@ -1091,7 +982,6 @@ public class WildcardPatternEntry {
             if (isWildcard) {
                 result.add(material.mName);
             } else {
-                // 精确匹配：fluidPrefix + materialName
                 String fullPattern = getFluidPrefixString(this.fluidType) + material.mName;
                 if (fullPattern.equalsIgnoreCase(matcher)) {
                     result.add(material.mName);
@@ -1101,9 +991,6 @@ public class WildcardPatternEntry {
         return result;
     }
 
-    /**
-     * 检查材料是否具有指定类型的流体
-     */
     private static boolean hasMatchingFluid(Materials material, FluidState state) {
         if (material == null || state == null) return false;
         switch (state) {
@@ -1119,14 +1006,8 @@ public class WildcardPatternEntry {
         }
     }
 
-    // ========== 流体相关方法 ==========
-
-    /**
-     * 根据材料名和流体类型创建流体drop
-     */
     private ItemStack createFluidStack(String materialName, ItemStack configStack) {
-        if (materialName == null || materialName.trim()
-            .isEmpty() || this.fluidType == null) {
+        if (materialName == null || materialName.trim().isEmpty() || this.fluidType == null) {
             return null;
         }
 
@@ -1145,9 +1026,6 @@ public class WildcardPatternEntry {
         return FluidDropCompat.newStack(fluidStack);
     }
 
-    /**
-     * 根据流体类型获取材料对应的FluidStack
-     */
     private static FluidStack getMaterialFluid(Materials material, FluidState state, long amount) {
         if (material == null || state == null) return null;
         switch (state) {
@@ -1163,37 +1041,29 @@ public class WildcardPatternEntry {
         }
     }
 
-    /**
-     * 解析流体名,提取材料和流体状态
-     */
     private static FluidParseResult parseFluidName(FluidStack fluidStack) {
         if (fluidStack == null || fluidStack.getFluid() == null) {
             return new FluidParseResult(null, null);
         }
-        String fluidName = fluidStack.getFluid()
-            .getName();
+        String fluidName = fluidStack.getFluid().getName();
         if (fluidName == null || fluidName.isEmpty()) {
             return new FluidParseResult(null, null);
         }
 
         String lower = fluidName.toLowerCase(Locale.ROOT);
 
-        // 检查molten.前缀
         if (lower.startsWith(FLUID_PREFIX_MOLTEN)) {
             String materialPart = fluidName.substring(FLUID_PREFIX_MOLTEN.length());
             return new FluidParseResult(FluidState.MOLTEN, materialPart);
         }
-        // 检查plasma.前缀
         if (lower.startsWith(FLUID_PREFIX_PLASMA)) {
             String materialPart = fluidName.substring(FLUID_PREFIX_PLASMA.length());
             return new FluidParseResult(FluidState.PLASMA, materialPart);
         }
-        // 检查gas.前缀
         if (lower.startsWith(FLUID_PREFIX_GAS)) {
             String materialPart = fluidName.substring(FLUID_PREFIX_GAS.length());
             return new FluidParseResult(FluidState.GAS, materialPart);
         }
-        // 检查liquid.前缀
         if (lower.startsWith(FLUID_PREFIX_LIQUID)) {
             String materialPart = fluidName.substring(FLUID_PREFIX_LIQUID.length());
             return new FluidParseResult(FluidState.LIQUID, materialPart);
@@ -1202,10 +1072,8 @@ public class WildcardPatternEntry {
         // 没有前缀,尝试通过遍历Materials匹配流体
         for (Materials material : Materials.getAll()) {
             if (!isRealMaterial(material)) continue;
-            // 检查各流体类型
             if (checkFluidMatch(material, fluidStack)) {
                 String matName = material.mName;
-                // 判断是哪种流体状态
                 Fluid stateFluid = material.mFluid;
                 Fluid gasFluid = material.mGas;
                 Fluid plasmaFluid = material.mPlasma;
@@ -1231,9 +1099,6 @@ public class WildcardPatternEntry {
         return new FluidParseResult(null, null);
     }
 
-    /**
-     * 检查材料的流体是否匹配给定的FluidStack
-     */
     private static boolean checkFluidMatch(Materials material, FluidStack fluidStack) {
         Fluid target = fluidStack.getFluid();
         return (material.mFluid != null && material.mFluid == target)
@@ -1242,9 +1107,6 @@ public class WildcardPatternEntry {
             || (material.mStandardMoltenFluid != null && material.mStandardMoltenFluid == target);
     }
 
-    /**
-     * 获取流体类型对应的前缀字符串
-     */
     private static String getFluidPrefixString(FluidState state) {
         if (state == null) return "";
         switch (state) {
@@ -1261,9 +1123,6 @@ public class WildcardPatternEntry {
         }
     }
 
-    /**
-     * 从文本中检测流体前缀并返回对应的FluidState
-     */
     private static FluidState detectFluidFromPrefix(String text) {
         if (text == null || text.isEmpty()) return null;
         String lower = text.toLowerCase(Locale.ROOT);
@@ -1274,9 +1133,6 @@ public class WildcardPatternEntry {
         return null;
     }
 
-    /**
-     * 流体解析结果
-     */
     private static final class FluidParseResult {
 
         final FluidState state;

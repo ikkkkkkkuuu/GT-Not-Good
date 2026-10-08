@@ -54,8 +54,7 @@ public class SuperAdvancedMEInputBusGui extends MTEHatchBaseGui<SuperAdvancedMEI
     private final Slot[] slots;
     private final VerticalScrollData itemScroll = new VerticalScrollData();
     private int selectedSlot;
-    private final IntSyncValue selection = new IntSyncValue(
-        () -> selectedSlot,
+    private final IntSyncValue selection = new IntSyncValue(() -> selectedSlot,
         value -> selectedSlot = Math.max(0, Math.min(SLOT_COUNT - 1, value))).allowC2S();
     private IPanelHandler policyPanel;
 
@@ -67,10 +66,9 @@ public class SuperAdvancedMEInputBusGui extends MTEHatchBaseGui<SuperAdvancedMEI
     @Override
     protected ParentWidget<?> createContentSection(ModularPanel panel, PanelSyncManager syncManager) {
         syncManager.syncValue("selectedItem", selection);
-        policyPanel = syncManager
-            .syncedPanel("itemPolicy", true, (manager, handler) -> createPolicyPanel(panel, manager));
-        BooleanSyncValue isAutoPullSyncer = new BooleanSyncValue(
-            machine::isAutoPullItemList,
+        policyPanel = syncManager.syncedPanel("itemPolicy", true,
+            (manager, handler) -> createPolicyPanel(panel, manager));
+        BooleanSyncValue isAutoPullSyncer = new BooleanSyncValue(machine::isAutoPullItemList,
             machine::setAutoPullItemList).allowC2S();
 
         IItemHandlerModifiable configItemHandler = new IItemHandlerModifiable() {
@@ -123,9 +121,7 @@ public class SuperAdvancedMEInputBusGui extends MTEHatchBaseGui<SuperAdvancedMEI
             }
         };
 
-        Flow mainRow = Flow.row()
-            .coverChildren()
-            .crossAxisAlignment(Alignment.CrossAxis.START);
+        Flow mainRow = Flow.row().coverChildren().crossAxisAlignment(Alignment.CrossAxis.START);
 
         mainRow.child(createFilterSlots(syncManager, configItemHandler, isAutoPullSyncer));
         mainRow.child(createMiddleColumn(syncManager, panel, isAutoPullSyncer));
@@ -153,26 +149,19 @@ public class SuperAdvancedMEInputBusGui extends MTEHatchBaseGui<SuperAdvancedMEI
             // #tr gtng.super_storage_bus.configure_slot
             // # Right-click: configure reserve and fixed availability
             // # zh_CN 右键：配置保留量与固定可用量
-            widget.itemTooltip()
-                .tooltipBuilder(t -> t.addLine(IKey.lang("gtng.super_storage_bus.configure_slot")));
+            widget.itemTooltip().tooltipBuilder(t -> t.addLine(IKey.lang("gtng.super_storage_bus.configure_slot")));
             return widget.slot(
-                new ModularSlot(handler, index).slotGroup(FILTER_INV_NAME)
-                    .filter(stack -> !autoPull.getBoolValue()));
-        })
-            .size(9 * SLOT_SIZE + 4, 4 * SLOT_SIZE)
-            .scrollable(itemScroll);
+                new ModularSlot(handler, index).slotGroup(FILTER_INV_NAME).filter(stack -> !autoPull.getBoolValue()));
+        }).size(9 * SLOT_SIZE + 4, 4 * SLOT_SIZE).scrollable(itemScroll);
     }
 
     private Flow createMiddleColumn(PanelSyncManager syncManager, ModularPanel panel,
         BooleanSyncValue isAutoPullSyncer) {
-        Flow mainColumn = Flow.col()
-            .width(18)
-            .mainAxisAlignment(Alignment.MainAxis.START)
-            .coverChildrenHeight();
+        Flow mainColumn = Flow.col().width(18).mainAxisAlignment(Alignment.MainAxis.START).coverChildrenHeight();
 
         // toggle button for config panel
-        IPanelHandler settingsPanel = syncManager
-            .syncedPanel("configPanel", true, (manager, handler) -> createStackSizeConfigurationPanel(panel));
+        IPanelHandler settingsPanel = syncManager.syncedPanel("configPanel", true,
+            (manager, handler) -> createStackSizeConfigurationPanel(panel));
         mainColumn.child(new ToggleButton() {
 
             @Override
@@ -190,132 +179,81 @@ public class SuperAdvancedMEInputBusGui extends MTEHatchBaseGui<SuperAdvancedMEI
                 }
                 return Result.IGNORE;
             }
-        }.value(isAutoPullSyncer)
-            .size(16)
-            .margin(1)
-            .setEnabledIf(b -> machine.autoPullAvailable)
+        }.value(isAutoPullSyncer).size(16).margin(1).setEnabledIf(b -> machine.autoPullAvailable)
             .overlay(true, GTGuiTextures.OVERLAY_BUTTON_AUTOPULL_ME)
-            .overlay(false, GTGuiTextures.OVERLAY_BUTTON_AUTOPULL_ME_DISABLED)
-            .tooltip(t -> {
+            .overlay(false, GTGuiTextures.OVERLAY_BUTTON_AUTOPULL_ME_DISABLED).tooltip(t -> {
                 t.addLine(IKey.lang("GT5U.machines.stocking_bus.auto_pull.tooltip.1"));
                 t.addLine(IKey.lang("GT5U.machines.stocking_bus.auto_pull.tooltip.2"));
             }));
 
         // arrow
-        mainColumn.child(
-            GTGuiTextures.PICTURE_ARROW_DOUBLE.asWidget()
-                .size(12)
-                .margin(3));
+        mainColumn.child(GTGuiTextures.PICTURE_ARROW_DOUBLE.asWidget().size(12).margin(3));
 
         BooleanSyncValue limited = new BooleanSyncValue(machine::isLimitedMode, machine::setLimitedMode).allowC2S();
         BooleanSyncValue fixed = new BooleanSyncValue(machine::isFixedMode, machine::setFixedMode).allowC2S();
         // #tr gtng.super_storage_bus.limit_mode
         // # Reserve mode: keep each item's configured reserve in ME
         // # zh_CN 限制模式：在ME中保留每种物品设定的数量
-        mainColumn.child(
-            new ToggleButton().value(limited)
-                .size(16)
-                .margin(1)
-                .overlay(true, GTGuiTextures.OVERLAY_BUTTON_LOCKED)
-                .overlay(false, GTGuiTextures.OVERLAY_BUTTON_LOCK)
-                .addTooltipLine(IKey.lang("gtng.super_storage_bus.limit_mode")));
+        mainColumn.child(new ToggleButton().value(limited).size(16).margin(1)
+            .overlay(true, GTGuiTextures.OVERLAY_BUTTON_LOCKED).overlay(false, GTGuiTextures.OVERLAY_BUTTON_LOCK)
+            .addTooltipLine(IKey.lang("gtng.super_storage_bus.limit_mode")));
         // #tr gtng.super_storage_bus.fixed_mode
         // # Fixed mode: offer each item's configured quantity per recipe check
         // # zh_CN 固定模式：每次配方检查提供各物品设定的数量
-        mainColumn.child(
-            new ToggleButton().value(fixed)
-                .size(16)
-                .margin(1)
-                .overlay(true, GTGuiTextures.OVERLAY_BUTTON_CHECKMARK)
-                .overlay(false, GTGuiTextures.OVERLAY_BUTTON_CROSS)
-                .addTooltipLine(IKey.lang("gtng.super_storage_bus.fixed_mode")));
+        mainColumn.child(new ToggleButton().value(fixed).size(16).margin(1)
+            .overlay(true, GTGuiTextures.OVERLAY_BUTTON_CHECKMARK).overlay(false, GTGuiTextures.OVERLAY_BUTTON_CROSS)
+            .addTooltipLine(IKey.lang("gtng.super_storage_bus.fixed_mode")));
         return mainColumn;
     }
 
     private ModularPanel createStackSizeConfigurationPanel(ModularPanel parent) {
-        IntSyncValue minAutoPullStackSizeSyncer = new IntSyncValue(
-            machine::getMinAutoPullStackSize,
+        IntSyncValue minAutoPullStackSizeSyncer = new IntSyncValue(machine::getMinAutoPullStackSize,
             machine::setMinAutoPullStackSize).allowC2S();
-        IntSyncValue autoPullRefreshTimeSyncer = new IntSyncValue(
-            machine::getAutoPullRefreshTime,
+        IntSyncValue autoPullRefreshTimeSyncer = new IntSyncValue(machine::getAutoPullRefreshTime,
             machine::setAutoPullRefreshTime).allowC2S();
 
-        Flow mainColumn = Flow.col()
-            .coverChildren()
-            .marginTop(15)
-            .childPadding(3);
+        Flow mainColumn = Flow.col().coverChildren().marginTop(15).childPadding(3);
 
         // stack size label
-        mainColumn.child(
-            IKey.lang("GT5U.machines.stocking_bus.min_stack_size")
-                .asWidget());
+        mainColumn.child(IKey.lang("GT5U.machines.stocking_bus.min_stack_size").asWidget());
 
         // stack size text field
-        mainColumn.child(
-            new TextFieldWidget().value(minAutoPullStackSizeSyncer)
-                .numbersInt(1, Integer.MAX_VALUE)
-                .formatAsInteger(true)
-                .setMaxLength(10)
-                .setTextAlignment(Alignment.CENTER)
-                .width(72));
+        mainColumn.child(new TextFieldWidget().value(minAutoPullStackSizeSyncer).numbersInt(1, Integer.MAX_VALUE)
+            .formatAsInteger(true).setMaxLength(10).setTextAlignment(Alignment.CENTER).width(72));
 
         // refresh time label
         mainColumn.child(
-            IKey.lang("GT5U.machines.stocking_bus.refresh_time")
-                .asWidget()
-                .maxWidth(72)
-                .textAlign(Alignment.Center));
+            IKey.lang("GT5U.machines.stocking_bus.refresh_time").asWidget().maxWidth(72).textAlign(Alignment.Center));
 
         // refresh time text field
-        mainColumn.child(
-            new TextFieldWidget().value(autoPullRefreshTimeSyncer)
-                .numbersInt(1, Integer.MAX_VALUE)
-                .formatAsInteger(true)
-                .setMaxLength(10)
-                .setTextAlignment(Alignment.CENTER)
-                .width(72));
+        mainColumn.child(new TextFieldWidget().value(autoPullRefreshTimeSyncer).numbersInt(1, Integer.MAX_VALUE)
+            .formatAsInteger(true).setMaxLength(10).setTextAlignment(Alignment.CENTER).width(72));
 
-        return createPopUpPanel("configPanel").coverChildren()
-            .relative(parent)
-            .padding(5)
-            .child(mainColumn)
-            .leftRel(1)
+        return createPopUpPanel("configPanel").coverChildren().relative(parent).padding(5).child(mainColumn).leftRel(1)
             .topRel(0);
     }
 
     private Grid createStockSlots(PanelSyncManager syncManager, IItemHandlerModifiable handler) {
         syncManager.registerSlotGroup(STOCK_INV_NAME, STOCK_SLOT_PER_ROW);
         return new Grid()
-            .gridOfWidthHeight(
-                STOCK_SLOT_PER_ROW,
-                STOCK_SLOT_ROW,
-                (x, y, index) -> new ItemSlot()
-                    .slot(
-                        new ModularSlot(handler, SLOT_COUNT + index).slotGroup(STOCK_INV_NAME)
-                            .accessibility(false, false))
-                    .backgroundOverlay(GTGuiTextures.SLOT_ITEM_DARK))
-            .size(9 * SLOT_SIZE + 4, 4 * SLOT_SIZE)
-            .scrollable(itemScroll);
+            .gridOfWidthHeight(STOCK_SLOT_PER_ROW, STOCK_SLOT_ROW,
+                (x, y,
+                    index) -> new ItemSlot().slot(new ModularSlot(handler, SLOT_COUNT + index).slotGroup(STOCK_INV_NAME)
+                        .accessibility(false, false)).backgroundOverlay(GTGuiTextures.SLOT_ITEM_DARK))
+            .size(9 * SLOT_SIZE + 4, 4 * SLOT_SIZE).scrollable(itemScroll);
     }
 
     @Override
     protected Flow createBottomRightCornerFlow(ModularPanel panel, PanelSyncManager syncManager) {
-        return Flow.row()
-            .coverChildren()
-            .childPadding(2)
-            .verticalCenter()
-            .rightRel(0)
+        return Flow.row().coverChildren().childPadding(2).verticalCenter().rightRel(0)
             .child(createCircuitSlot(syncManager))
-            .child(
-                new ItemSlot().slot(
-                    new ModularSlot(machine.inventoryHandler, machine.getManualSlot()).slotGroup("item_inv")
-                        .changeListener((stack, amountOnly, client, init) -> {
-                            if (!client) {
-                                baseMetaTileEntity.enableTicking();
-                                machine.onContentsChanged(machine.getManualSlot());
-                            }
-                        }))
-                    .addTooltipLine(IKey.lang("GT5U.machines.stocking_bus.manual_slot.tooltip.1")))
+            .child(new ItemSlot().slot(new ModularSlot(machine.inventoryHandler, machine.getManualSlot())
+                .slotGroup("item_inv").changeListener((stack, amountOnly, client, init) -> {
+                    if (!client) {
+                        baseMetaTileEntity.enableTicking();
+                        machine.onContentsChanged(machine.getManualSlot());
+                    }
+                })).addTooltipLine(IKey.lang("GT5U.machines.stocking_bus.manual_slot.tooltip.1")))
             .child(makeLogoWidget());
     }
 
@@ -340,17 +278,13 @@ public class SuperAdvancedMEInputBusGui extends MTEHatchBaseGui<SuperAdvancedMEI
             String state = WailaText.getPowerState(isActive, isPowered, isBooting);
 
             if (isActive && isPowered) {
-                return MessageFormat.format(
-                    "{0} ({1})",
-                    EnumChatFormatting.GREEN + state + EnumChatFormatting.RESET,
+                return MessageFormat.format("{0} ({1})", EnumChatFormatting.GREEN + state + EnumChatFormatting.RESET,
                     IKey.lang(
                         isAllowedToWorkSyncer.getBoolValue() ? "GT5U.gui.text.enabled" : "GT5U.gui.text.disabled"));
             } else {
                 return EnumChatFormatting.DARK_RED + state + EnumChatFormatting.RESET;
             }
-        })
-            .asWidget()
-            .widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
+        }).asWidget().widgetTheme(GTWidgetThemes.DISPLAY_TEXT_WHITE);
 
         return super.createBottomLeftCornerFlow(panel, syncManager).child(status);
     }
@@ -367,10 +301,8 @@ public class SuperAdvancedMEInputBusGui extends MTEHatchBaseGui<SuperAdvancedMEI
                 copy.extracted = slot.extracted == null ? null : slot.extracted.copy();
                 copy.extractedAmount = slot.extractedAmount;
                 return copy;
-            }))
-            .setter(slots2 -> System.arraycopy(slots2.toArray(new Slot[0]), 0, slots, 0, SLOT_COUNT))
-            .adapter(new MTEHatchInputBusMESlotAdapter())
-            .build();
+            })).setter(slots2 -> System.arraycopy(slots2.toArray(new Slot[0]), 0, slots, 0, SLOT_COUNT))
+            .adapter(new MTEHatchInputBusMESlotAdapter()).build();
         syncManager.syncValue("slots", slotSyncHandler);
     }
 
@@ -397,52 +329,28 @@ public class SuperAdvancedMEInputBusGui extends MTEHatchBaseGui<SuperAdvancedMEI
                 machine.policyChanged();
             }
         }).allowC2S();
-        Flow content = Flow.col()
-            .coverChildren()
-            .childPadding(4)
-            .marginTop(16);
+        Flow content = Flow.col().coverChildren().childPadding(4).marginTop(16);
         content.child(IKey.dynamic(() -> {
             ItemStack item = machine.getSlotConfig(selection.getIntValue());
             return item == null ? "" : item.getDisplayName();
-        })
-            .asWidget()
-            .maxWidth(200));
+        }).asWidget().maxWidth(200));
         // #tr gtng.super_storage_bus.reserve_amount
         // # Keep in ME (items)
         // # zh_CN ME网络保留量（个）
-        content.child(
-            IKey.lang("gtng.super_storage_bus.reserve_amount")
-                .asWidget());
-        content.child(
-            new TextFieldWidget().value(reserve)
-                .numbersLong(0, Long.MAX_VALUE)
-                .formatAsInteger(true)
-                .setMaxLength(19)
-                .width(180));
+        content.child(IKey.lang("gtng.super_storage_bus.reserve_amount").asWidget());
+        content.child(new TextFieldWidget().value(reserve).numbersLong(0, Long.MAX_VALUE).formatAsInteger(true)
+            .setMaxLength(19).width(180));
         // #tr gtng.super_storage_bus.batch_amount
         // # Available per recipe check (items)
         // # zh_CN 每次配方检查可用量（个）
-        content.child(
-            IKey.lang("gtng.super_storage_bus.batch_amount")
-                .asWidget());
-        content.child(
-            new TextFieldWidget().value(batch)
-                .numbersInt(1, Integer.MAX_VALUE)
-                .formatAsInteger(true)
-                .setMaxLength(10)
-                .width(180));
+        content.child(IKey.lang("gtng.super_storage_bus.batch_amount").asWidget());
+        content.child(new TextFieldWidget().value(batch).numbersInt(1, Integer.MAX_VALUE).formatAsInteger(true)
+            .setMaxLength(10).width(180));
         // #tr gtng.super_storage_bus.batch_help
         // # Waits for the full amount; consumes only what the recipe needs
         // # zh_CN 不足设定量则等待，实际只扣除配方消耗
-        content.child(
-            IKey.lang("gtng.super_storage_bus.batch_help")
-                .asWidget()
-                .maxWidth(200));
-        return createPopUpPanel("itemPolicy").size(224, 160)
-            .relative(parent)
-            .center()
-            .padding(8)
-            .child(content);
+        content.child(IKey.lang("gtng.super_storage_bus.batch_help").asWidget().maxWidth(200));
+        return createPopUpPanel("itemPolicy").size(224, 160).relative(parent).center().padding(8).child(content);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.ae2thing.network;
 
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -21,7 +23,7 @@ import io.netty.buffer.ByteBuf;
 /**
  * Sent from the client when the player presses the "send held item to network" keybind. The server locates any wireless
  * terminal in the player's main inventory or baubles slots, resolves its ME network and injects the currently held
- * stack into network storage. Mirrors the extraction path of {@link CPacketInventoryActionExtend}'s REQUEST_ITEM.
+ * stack into network storage. Mirrors the extraction path of {@link CPacketInventoryActionExtend}'s RequestItem.
  */
 public class CPacketSendHeldItemToNetwork implements IMessage {
 
@@ -70,13 +72,12 @@ public class CPacketSendHeldItemToNetwork implements IMessage {
                 return null;
             }
 
-            java.util.List<ItemStack> terminals = InvUtil.matcher(
-                player,
+            List<ItemStack> terminals = InvUtil.matcher(player,
                 stack -> stack != null && stack.getItem() instanceof ItemWirelessDualInterfaceTerminal);
 
             if (terminals.isEmpty()) {
-                terminals = InvUtil
-                    .matcher(player, stack -> stack != null && stack.getItem() instanceof IWirelessTermHandler);
+                terminals = InvUtil.matcher(player,
+                    stack -> stack != null && stack.getItem() instanceof IWirelessTermHandler);
             }
 
             for (ItemStack terminal : terminals) {
@@ -99,8 +100,8 @@ public class CPacketSendHeldItemToNetwork implements IMessage {
                     IAEItemStack simulatedOffer = remaining.copy();
                     long offered = simulatedOffer.getStackSize();
 
-                    IAEItemStack simulatedRemainder = object.getItemInventory()
-                        .injectItems(simulatedOffer, Actionable.SIMULATE, object.getSource());
+                    IAEItemStack simulatedRemainder = object.getItemInventory().injectItems(simulatedOffer,
+                        Actionable.SIMULATE, object.getSource());
 
                     long simulatedLeft = simulatedRemainder == null ? 0
                         : Math.max(0, Math.min(offered, simulatedRemainder.getStackSize()));
@@ -113,8 +114,8 @@ public class CPacketSendHeldItemToNetwork implements IMessage {
                     IAEItemStack actualOffer = remaining.copy();
                     actualOffer.setStackSize(canInsert);
 
-                    IAEItemStack actualRemainder = object.getItemInventory()
-                        .injectItems(actualOffer, Actionable.MODULATE, object.getSource());
+                    IAEItemStack actualRemainder = object.getItemInventory().injectItems(actualOffer,
+                        Actionable.MODULATE, object.getSource());
 
                     long actualLeft = actualRemainder == null ? 0
                         : Math.max(0, Math.min(canInsert, actualRemainder.getStackSize()));

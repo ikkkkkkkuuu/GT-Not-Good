@@ -53,41 +53,32 @@ public final class ShimmerRecoveryRules {
         inputBlacklist.add(new GTItemStack(CustomItemList.hatch_CreativeMaintenance.get(1)));
 
         if (Mods.Railcraft.isModLoaded()) {
-            inputBlacklist.add(new GTItemStack(ModsItemlist.RailcraftTrack.get(1)));
-            inputBlacklist.add(new GTItemStack(ModsItemlist.RailcraftTrackLegacyDamage736.get(1)));
-            inputBlacklist.add(new GTItemStack(ModsItemlist.RailcraftTrackLegacyDamage816.get(1)));
+            inputBlacklist.add(new GTItemStack(ModsItemlist.Track.get(1)));
+            inputBlacklist.add(new GTItemStack(ModsItemlist.TrackLegacyDamage736.get(1)));
+            inputBlacklist.add(new GTItemStack(ModsItemlist.TrackLegacyDamage816.get(1)));
         }
 
-        inputBlacklist.add(new GTItemStack(ModsItemlist.IC2MixedMetalIngot.get(1)));
-        inputBlacklist.add(new GTItemStack(ModsItemlist.RailcraftWaterTankWall.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.MixedMetalIngot.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.WaterTankWall.get(1)));
 
         // region transformer
         inputBlacklist.add(new GTItemStack(ItemList.Transformer_MV_LV.get(1L)));
-        inputBlacklist.add(new GTItemStack(ModsItemlist.IC2LVTransformer.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.LVTransformer.get(1)));
         inputBlacklist.add(new GTItemStack(ItemList.Transformer_HV_MV.get(1L)));
-        inputBlacklist.add(new GTItemStack(ModsItemlist.IC2MVTransformer.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.MVTransformer.get(1)));
         inputBlacklist.add(new GTItemStack(ItemList.Transformer_EV_HV.get(1L)));
-        inputBlacklist.add(new GTItemStack(ModsItemlist.IC2HVTransformer.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.HVTransformer.get(1)));
         inputBlacklist.add(new GTItemStack(ItemList.Transformer_IV_EV.get(1L)));
-        inputBlacklist.add(new GTItemStack(ModsItemlist.IC2EVTransformer.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.EVTransformer.get(1)));
         // endregion
 
-        var aeParts = AEApi.instance()
-            .definitions()
-            .parts();
+        var aeParts = AEApi.instance().definitions().parts();
 
-        inputBlacklist.add(
-            new GTItemStack(
-                aeParts.craftingTerminal()
-                    .maybeStack(1)
-                    .orNull()));
-        inputBlacklist.add(
-            new GTItemStack(
-                aeParts.cableDense()
-                    .stack(AEColor.Transparent, 1)));
+        inputBlacklist.add(new GTItemStack(aeParts.craftingTerminal().maybeStack(1).orNull()));
+        inputBlacklist.add(new GTItemStack(aeParts.cableDense().stack(AEColor.Transparent, 1)));
 
         // Radiation Proof Plate
-        inputBlacklist.add(new GTItemStack(ModsItemlist.GoodGeneratorRadiationProtectionPlate.get(1)));
+        inputBlacklist.add(new GTItemStack(ModsItemlist.RadiationProtectionPlate.get(1)));
     }
 
     public static ObjectList<ItemStack> handleRecipeTransformation(ItemStack[] outputs,
@@ -98,9 +89,11 @@ public final class ShimmerRecoveryRules {
             ItemStack itemInSlotIdx = outputs[idx];
             ItemData itemDataInSlotIdx = GTOreDictUnificator.getItemData(itemInSlotIdx);
 
-            if (itemDataInSlotIdx == null || itemDataInSlotIdx.mMaterial == null
-                || itemDataInSlotIdx.mMaterial.mMaterial == null
-                || itemDataInSlotIdx.mPrefix == null) {
+            if (
+                itemDataInSlotIdx == null || itemDataInSlotIdx.mMaterial == null
+                    || itemDataInSlotIdx.mMaterial.mMaterial == null
+                    || itemDataInSlotIdx.mPrefix == null
+            ) {
                 retOutputs[idx] = itemInSlotIdx;
                 continue;
             }
@@ -112,16 +105,17 @@ public final class ShimmerRecoveryRules {
                     if (idx >= otherOutputs.length) continue;
 
                     ItemData dataAgainst = GTOreDictUnificator.getItemData(otherOutputs[idx]);
-                    if (dataAgainst != null && dataAgainst.mMaterial != null
-                        && dataAgainst.mMaterial.mMaterial != null
-                        && dataAgainst.mPrefix == itemDataInSlotIdx.mPrefix) {
+                    if (
+                        dataAgainst != null && dataAgainst.mMaterial != null
+                            && dataAgainst.mMaterial.mMaterial != null
+                            && dataAgainst.mPrefix == itemDataInSlotIdx.mPrefix
+                    ) {
 
                         // 1. replace cheaper
                         Materials cheaper = replaceCheaperOrNull(thisMaterial, dataAgainst.mMaterial.mMaterial);
                         if (cheaper != null) {
                             retOutputs[idx] = GTOreDictUnificator.get(
-                                OrePrefixes.getPrefix(itemDataInSlotIdx.mPrefix.getName()),
-                                cheaper,
+                                OrePrefixes.getPrefix(itemDataInSlotIdx.mPrefix.getName()), cheaper,
                                 itemInSlotIdx.stackSize);
                             continue;
                         }
@@ -130,8 +124,7 @@ public final class ShimmerRecoveryRules {
                         Materials nonAny = replaceAnyOrNull(thisMaterial);
                         if (nonAny != null) {
                             retOutputs[idx] = GTOreDictUnificator.get(
-                                OrePrefixes.getPrefix(itemDataInSlotIdx.mPrefix.getName()),
-                                nonAny,
+                                OrePrefixes.getPrefix(itemDataInSlotIdx.mPrefix.getName()), nonAny,
                                 itemInSlotIdx.stackSize);
                         }
                     }
@@ -141,10 +134,8 @@ public final class ShimmerRecoveryRules {
             // 3. unprocessed fallback
             Materials unprocessed = getUnprocessedMaterials(thisMaterial);
             if (unprocessed != null) {
-                retOutputs[idx] = GTOreDictUnificator.get(
-                    OrePrefixes.getPrefix(itemDataInSlotIdx.mPrefix.getName()),
-                    unprocessed,
-                    itemInSlotIdx.stackSize);
+                retOutputs[idx] = GTOreDictUnificator.get(OrePrefixes.getPrefix(itemDataInSlotIdx.mPrefix.getName()),
+                    unprocessed, itemInSlotIdx.stackSize);
             }
 
             // 4. replace circuit
@@ -173,8 +164,7 @@ public final class ShimmerRecoveryRules {
 
             for (Object2ObjectMap.Entry<ItemStack, ItemStack> entry : getAlwaysReplace().object2ObjectEntrySet()) {
                 if (GTUtility.areStacksEqual(current, entry.getKey(), true)) {
-                    retOutputs[idx] = entry.getValue()
-                        .copy();
+                    retOutputs[idx] = entry.getValue().copy();
                     break;
                 }
             }
@@ -184,8 +174,7 @@ public final class ShimmerRecoveryRules {
             retOutputs[idx] = handleContainerItem(retOutputs[idx]);
         }
 
-        return Arrays.stream(retOutputs)
-            .filter(Objects::nonNull)
+        return Arrays.stream(retOutputs).filter(Objects::nonNull)
             .collect(Collectors.toCollection(ObjectArrayList::new));
     }
 
@@ -270,8 +259,7 @@ public final class ShimmerRecoveryRules {
 
     public static Object2ObjectMap<ItemStack, ItemStack> getAlwaysReplace() {
         Object2ObjectMap<ItemStack, ItemStack> map = new Object2ObjectLinkedOpenHashMap<>();
-        map.put(
-            new ItemStack(Blocks.trapped_chest, 1, OreDictionary.WILDCARD_VALUE),
+        map.put(new ItemStack(Blocks.trapped_chest, 1, OreDictionary.WILDCARD_VALUE),
             new ItemStack(Blocks.chest, 1, OreDictionary.WILDCARD_VALUE));
         return map;
     }
@@ -282,8 +270,7 @@ public final class ShimmerRecoveryRules {
                 String oreName = OreDictionary.getOreName(oreId);
                 Object2ObjectMap<String, ItemStack> oreDictReplace = getOreDictReplace();
                 if (oreDictReplace.containsKey(oreName)) {
-                    ItemStack result = oreDictReplace.get(oreName)
-                        .copy();
+                    ItemStack result = oreDictReplace.get(oreName).copy();
                     result.stackSize = stack.stackSize;
                     return result;
                 }
@@ -293,17 +280,14 @@ public final class ShimmerRecoveryRules {
     }
 
     public static ItemStack handleWildcard(ItemStack stack) {
-        if (stack != null && stack.getItemDamage() == OreDictionary.WILDCARD_VALUE
-            && !stack.getItem()
-                .isDamageable()) {
+        if (stack != null && stack.getItemDamage() == OreDictionary.WILDCARD_VALUE && !stack.getItem().isDamageable()) {
             stack.setItemDamage(0);
         }
         return stack;
     }
 
     public static ItemStack handleContainerItem(ItemStack stack) {
-        if (stack != null && stack.getItem()
-            .hasContainerItem(stack)) {
+        if (stack != null && stack.getItem().hasContainerItem(stack)) {
             return null;
         }
         return stack;
@@ -339,9 +323,7 @@ public final class ShimmerRecoveryRules {
     }
 
     public static boolean hasUnpackerRecipe(ItemStack stack) {
-        return RecipeMaps.unpackagerRecipes.findRecipeQuery()
-            .items(stack)
-            .find() != null;
+        return RecipeMaps.unpackagerRecipes.findRecipeQuery().items(stack).find() != null;
     }
 
     public static boolean isOre(ItemStack stack) {

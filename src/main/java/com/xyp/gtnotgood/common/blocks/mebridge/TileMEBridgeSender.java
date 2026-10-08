@@ -6,11 +6,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.loader.BlockLoader;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import lombok.Getter;
 
 public class TileMEBridgeSender extends TileMEBridgeBase implements IGuiHolder<PosGuiData> {
@@ -56,43 +59,31 @@ public class TileMEBridgeSender extends TileMEBridgeBase implements IGuiHolder<P
     }
 
     public MEBridgeChannelChangeResult trySetChannelName(String name) {
-        if (worldObj == null || worldObj.isRemote) return MEBridgeChannelChangeResult.NOT_SERVER_SIDE;
+        if (worldObj == null || worldObj.isRemote) return MEBridgeChannelChangeResult.NotServerSide;
 
         String normalized = MEBridgeChannelName.normalize(name);
-        if (!MEBridgeChannelName.isValid(normalized)) return MEBridgeChannelChangeResult.INVALID_NAME;
+        if (!MEBridgeChannelName.isValid(normalized)) return MEBridgeChannelChangeResult.InvalidName;
 
         if (channelName.isEmpty() && !channelColorAssigned) {
             channelColor = MEBridgeChannelColor.defaultFor(normalized);
             channelColorAssigned = true;
         }
 
-        MEBridgeChannelInfo info = new MEBridgeChannelInfo(
-            normalized,
-            xCoord,
-            yCoord,
-            zCoord,
-            worldObj.provider.dimensionId,
-            channelColor,
-            null);
+        MEBridgeChannelInfo info = new MEBridgeChannelInfo(normalized, xCoord, yCoord, zCoord,
+            worldObj.provider.dimensionId, channelColor, null);
         MEBridgeChannelChangeResult result = MEBridgeChannelManager.replaceSenderChannel(channelName, info, this);
         if (!result.isSuccess()) return result;
 
         channelName = normalized;
         receiverTopologyRevision = Long.MIN_VALUE;
         markDirty();
-        return MEBridgeChannelChangeResult.SUCCESS;
+        return MEBridgeChannelChangeResult.Success;
     }
 
     private boolean registerSelf() {
         if (channelName.isEmpty() || worldObj == null || worldObj.isRemote) return false;
-        MEBridgeChannelInfo info = new MEBridgeChannelInfo(
-            channelName,
-            xCoord,
-            yCoord,
-            zCoord,
-            worldObj.provider.dimensionId,
-            channelColor,
-            null);
+        MEBridgeChannelInfo info = new MEBridgeChannelInfo(channelName, xCoord, yCoord, zCoord,
+            worldObj.provider.dimensionId, channelColor, null);
         return MEBridgeChannelManager.register(info, this);
     }
 
@@ -142,9 +133,9 @@ public class TileMEBridgeSender extends TileMEBridgeBase implements IGuiHolder<P
     }
 
     @Override
-    @cpw.mods.fml.relauncher.SideOnly(cpw.mods.fml.relauncher.Side.CLIENT)
-    public com.cleanroommc.modularui.screen.ModularScreen createScreen(PosGuiData data, ModularPanel mainPanel) {
-        return new com.cleanroommc.modularui.screen.ModularScreen(GTNotGood.MODID, mainPanel);
+    @SideOnly(Side.CLIENT)
+    public ModularScreen createScreen(PosGuiData data, ModularPanel mainPanel) {
+        return new ModularScreen(GTNotGood.MODID, mainPanel);
     }
 
     @Override

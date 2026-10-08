@@ -77,22 +77,15 @@ public abstract class GuiAmount extends AEBaseGui implements IGuiDrawSlot, IGuiC
 
         setOriginGUI(((AEBaseContainer) this.inventorySlots).getTarget());
         if (this.originalGui != null && this.myIcon != null) {
-            this.buttonList.add(
-                this.originalGuiBtn = new GuiTabButton(
-                    this.guiLeft + 151,
-                    this.guiTop - 4,
-                    this.myIcon,
-                    this.myIcon.getDisplayName(),
-                    itemRender));
+            this.buttonList.add(this.originalGuiBtn = new GuiTabButton(this.guiLeft + 151, this.guiTop - 4, this.myIcon,
+                this.myIcon.getDisplayName(), itemRender));
             this.originalGuiBtn.setHideEdge(13);
         }
         this.amountBox = new MEGuiTextField(61, 12) {
 
             @Override
             public void onTextChange(String oldText) {
-                this.setMessage(
-                    "= " + NumberFormat.getInstance()
-                        .format(getAmount()));
+                this.setMessage("= " + NumberFormat.getInstance().format(getAmount()));
             }
 
         };
@@ -123,13 +116,13 @@ public abstract class GuiAmount extends AEBaseGui implements IGuiDrawSlot, IGuiC
 
     public enum Operator {
 
-        PLUS("+"),
-        MINUS("-"),
-        MULTIPLY("*"),
-        DIVIDE("/"),
-        MOD("%"),
-        POWER("^"),
-        SCIENTIFIC("e");
+        Plus("+"),
+        Minus("-"),
+        Multiply("*"),
+        Divide("/"),
+        Mod("%"),
+        Power("^"),
+        Scientific("e");
 
         public final String sign;
 
@@ -148,8 +141,7 @@ public abstract class GuiAmount extends AEBaseGui implements IGuiDrawSlot, IGuiC
         super.drawScreen(mouseX, mouseY, btn);
         if (this.amountBox.isVisible() && this.amountBox.isMouseIn(mouseX, mouseY)) {
             for (var i : Operator.values()) {
-                if (this.amountBox.getText()
-                    .contains(i.sign)) {
+                if (this.amountBox.getText().contains(i.sign)) {
                     this.drawTooltip(mouseX, mouseY, this.amountBox.getMessage());
                     break;
                 }

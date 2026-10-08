@@ -22,8 +22,7 @@ final class NetworkDeviceDisplay {
         TileEntity target = endpoint == null ? null : endpoint.target();
         if (target == null) return null;
         if (target instanceof IGregTechTileEntity gt && gt.getMetaTileEntity() != null) {
-            return gt.getMetaTileEntity()
-                .getStackForm(1);
+            return gt.getMetaTileEntity().getStackForm(1);
         }
         // Forge's pick-block implementation calls client-only Block.getItem/getDamageValue methods.
         // The dedicated server strips those methods, although a single-player integrated server retains them.
@@ -42,8 +41,7 @@ final class NetworkDeviceDisplay {
                 stack = new ItemStack(stack.getItem(), 1, stack.getItemDamage());
                 bytes = CompressedStreamTools.compress(stack.writeToNBT(new NBTTagCompound()));
             }
-            return Base64.getEncoder()
-                .encodeToString(bytes);
+            return Base64.getEncoder().encodeToString(bytes);
         } catch (IOException e) {
             return "";
         }
@@ -53,10 +51,7 @@ final class NetworkDeviceDisplay {
         if (encoded == null || encoded.isEmpty() || encoded.length() > 1024) return null;
         try {
             return ItemStack.loadItemStackFromNBT(
-                CompressedStreamTools.func_152457_a(
-                    Base64.getDecoder()
-                        .decode(encoded),
-                    new NBTSizeTracker(32768)));
+                CompressedStreamTools.func_152457_a(Base64.getDecoder().decode(encoded), new NBTSizeTracker(32768)));
         } catch (IOException | IllegalArgumentException e) {
             return null;
         }

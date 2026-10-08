@@ -85,11 +85,8 @@ public class CPacketTransferRecipe implements IMessage {
         @Override
         public IMessage onMessage(CPacketTransferRecipe message, MessageContext ctx) {
             Container c = ctx.getServerHandler().playerEntity.openContainer;
-            IPatternTerminalAdapter adapter = AE2ThingAPI.instance()
-                .terminal()
-                .getPatternTerminal(c);
-            if (adapter != null && adapter.getIdentifiers()
-                .containsKey(message.identifier)) {
+            IPatternTerminalAdapter adapter = AE2ThingAPI.instance().terminal().getPatternTerminal(c);
+            if (adapter != null && adapter.getIdentifiers().containsKey(message.identifier)) {
                 adapter.transfer(c, message.inputs, message.outputs, message.identifier, message);
                 return null;
             }

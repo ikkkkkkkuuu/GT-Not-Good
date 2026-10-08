@@ -38,8 +38,7 @@ public final class WirelessInputBatch {
         BigInteger remaining = limit == null ? materialBound : limit.min(materialBound);
         BigInteger total = BigInteger.ZERO;
         while (remaining.signum() > 0) {
-            int cap = remaining.min(NATIVE_LIMIT)
-                .intValueExact();
+            int cap = remaining.min(NATIVE_LIMIT).intValueExact();
             int batch = (int) recipe.maxParallelCalculatedByInputs(cap, fluids, items);
             if (batch <= 0) break;
             recipe.consumeInput(batch, fluids, items);

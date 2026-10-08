@@ -55,12 +55,7 @@ public final class FactoryGraph {
             tag.setBoolean("target", target);
             tag.setBoolean("wholeLineBatch", wholeLineBatch);
             tag.setLong("customEUt", customEUt);
-            tag.setIntArray(
-                "sources",
-                sources.stream()
-                    .sorted()
-                    .mapToInt(Integer::intValue)
-                    .toArray());
+            tag.setIntArray("sources", sources.stream().sorted().mapToInt(Integer::intValue).toArray());
             return tag;
         }
     }
@@ -148,8 +143,10 @@ public final class FactoryGraph {
                 Node current = queue.get(i);
                 targetFound |= current.target;
                 for (Node other : nodes) {
-                    if ((current.sources.contains(other.id) || other.sources.contains(current.id))
-                        && visited.add(other.id)) queue.add(other);
+                    if (
+                        (current.sources.contains(other.id) || other.sources.contains(current.id))
+                            && visited.add(other.id)
+                    ) queue.add(other);
                 }
             }
             if (!targetFound) return false;

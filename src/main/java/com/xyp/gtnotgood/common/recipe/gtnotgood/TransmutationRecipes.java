@@ -47,9 +47,7 @@ public final class TransmutationRecipes {
         if (loaded || scheduled) return;
         if (ModList.GTNotLeisure.isModLoaded()) {
             scheduled = true;
-            FMLCommonHandler.instance()
-                .bus()
-                .register(deferred);
+            FMLCommonHandler.instance().bus().register(deferred);
         } else loadRecipes();
     }
 
@@ -65,9 +63,7 @@ public final class TransmutationRecipes {
 
     private void loadAfterGtnl(TickEvent.Phase phase) {
         if (phase != TickEvent.Phase.END) return;
-        FMLCommonHandler.instance()
-            .bus()
-            .unregister(this);
+        FMLCommonHandler.instance().bus().unregister(this);
         loadRecipes();
         GTMod.proxy.reloadNEICache();
     }
@@ -78,17 +74,17 @@ public final class TransmutationRecipes {
         if (!importShimmer()) {
             Map<GTItemStack, List<GTRecipe>> groups = new LinkedHashMap<>();
             for (GTRecipe recipe : RecipeMaps.assemblerRecipes.getAllRecipes()) {
-                if (recipe.mInputs == null || recipe.mOutputs == null
-                    || !ShimmerRecoveryRules.shouldDisassemble(recipe.mOutputs)) continue;
-                groups.computeIfAbsent(new GTItemStack(recipe.mOutputs[0]), key -> new ArrayList<>())
-                    .add(recipe);
+                if (
+                    recipe.mInputs == null || recipe.mOutputs == null
+                        || !ShimmerRecoveryRules.shouldDisassemble(recipe.mOutputs)
+                ) continue;
+                groups.computeIfAbsent(new GTItemStack(recipe.mOutputs[0]), key -> new ArrayList<>()).add(recipe);
             }
             for (List<GTRecipe> recipes : groups.values()) {
                 GTRecipe first = recipes.get(0);
                 ObjectOpenHashSet<ItemStack[]> alternatives = new ObjectOpenHashSet<>();
                 for (GTRecipe recipe : recipes) alternatives.add(copy(recipe.mInputs));
-                register(
-                    first.mOutputs[0],
+                register(first.mOutputs[0],
                     ShimmerRecoveryRules.handleRecipeTransformation(copy(first.mInputs), alternatives),
                     first.mFluidInputs);
             }
@@ -97,10 +93,8 @@ public final class TransmutationRecipes {
             ShimmerCraftingRegistry.registerAll();
         }
         ShimmerCraftingRegistry.clear();
-        GTNotGood.LOG.info(
-            "Registered {} Shimmer-compatible transmutation recipes",
-            GTNGRecipeMaps.TransmutationRecipes.getAllRecipes()
-                .size());
+        GTNotGood.LOG.info("Registered {} Shimmer-compatible transmutation recipes",
+            GTNGRecipeMaps.TransmutationRecipes.getAllRecipes().size());
     }
 
     /** Imports GTNL's hard overrides when available; disabled Shimmer leaves local recovery independent. */
@@ -108,21 +102,16 @@ public final class TransmutationRecipes {
         if (!ModList.GTNotLeisure.isModLoaded()) return false;
         try {
             Class<?> owner = Class.forName("com.science.gtnl.common.recipe.gtnl.ShimmerRecipes");
-            Map<?, ?> conversions = (Map<?, ?>) owner.getField("conversionMap")
-                .get(null);
+            Map<?, ?> conversions = (Map<?, ?>) owner.getField("conversionMap").get(null);
             if (conversions.isEmpty()) {
                 GTNotGood.LOG.info("GTNL Shimmer conversions are empty; generating local transmutation recipes");
                 return false;
             }
             for (Object entries : conversions.values()) for (Object entry : (Iterable<?>) entries) {
-                ItemStack input = (ItemStack) entry.getClass()
-                    .getMethod("input")
-                    .invoke(entry);
+                ItemStack input = (ItemStack) entry.getClass().getMethod("input").invoke(entry);
                 List<ItemStack> items = new ArrayList<>();
                 List<FluidStack> fluids = new ArrayList<>();
-                for (Object raw : (Iterable<?>) entry.getClass()
-                    .getMethod("outputs")
-                    .invoke(entry)) {
+                for (Object raw : (Iterable<?>) entry.getClass().getMethod("outputs").invoke(entry)) {
                     ItemStack stack = (ItemStack) raw;
                     if (stack == null || stack.stackSize <= 0) continue;
                     if (stack.getItem() instanceof ItemFluidPacket) {
@@ -167,21 +156,13 @@ public final class TransmutationRecipes {
         if (fluidOutputs != null) for (FluidStack fluid : fluidOutputs)
             if (fluid != null && fluid.getFluid() != null && fluid.amount > 0) fluids.add(fluid.copy());
         if (items.isEmpty() && fluids.isEmpty()) return;
-        GTRecipeBuilder.builder()
-            .itemInputs(input.copy())
-            .itemOutputs(items.toArray(new ItemStack[0]))
-            .fluidOutputs(fluids.toArray(new FluidStack[0]))
-            .duration(100)
-            .eut(TierEU.RECIPE_EV)
-            .nbtSensitive()
+        GTRecipeBuilder.builder().itemInputs(input.copy()).itemOutputs(items.toArray(new ItemStack[0]))
+            .fluidOutputs(fluids.toArray(new FluidStack[0])).duration(100).eut(TierEU.RECIPE_EV).nbtSensitive()
             .addTo(GTNGRecipeMaps.TransmutationRecipes);
-        REGISTERED.computeIfAbsent(input.getItem(), key -> new ArrayList<>())
-            .add(input.copy());
+        REGISTERED.computeIfAbsent(input.getItem(), key -> new ArrayList<>()).add(input.copy());
     }
 
     private static ItemStack[] copy(ItemStack[] source) {
-        return Arrays.stream(source)
-            .map(stack -> stack == null ? null : stack.copy())
-            .toArray(ItemStack[]::new);
+        return Arrays.stream(source).map(stack -> stack == null ? null : stack.copy()).toArray(ItemStack[]::new);
     }
 }

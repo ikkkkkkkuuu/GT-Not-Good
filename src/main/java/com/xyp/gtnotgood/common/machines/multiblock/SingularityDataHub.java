@@ -47,6 +47,8 @@ import com.xyp.gtnotgood.common.gui.BlockIcons;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.SingularityDataHubGui;
 import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiBlockBase;
+import com.xyp.gtnotgood.common.machines.storage.VaultStackSnapshots;
+import com.xyp.gtnotgood.common.machines.storage.VaultStorageUsage;
 import com.xyp.gtnotgood.utils.StructureUtils;
 import com.xyp.gtnotgood.utils.Utils;
 import com.xyp.gtnotgood.utils.item.ItemId;
@@ -79,16 +81,16 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
     implements ISurvivalConstructable, IItemVault {
 
-    public static long MAX_DISTINCT_ITEMS = Long.MAX_VALUE - 1;
-    public static long MAX_DISTINCT_FLUIDS = Long.MAX_VALUE - 1;
+    public static long maxDistinctItems = Long.MAX_VALUE - 1;
+    public static long maxDistinctFluids = Long.MAX_VALUE - 1;
     public static final long MAX_STORAGE_BYTES = 5_764_607_523_034_234_870L;
     private static final int BYTES_PER_TYPE = 8;
     private static final int ITEMS_PER_BYTE = 8;
     private static final int FLUID_MB_PER_BYTE = 8 * 256;
 
-    public static BigInteger MAX_CAPACITY_ITEM = BigInteger.valueOf(MAX_STORAGE_BYTES)
+    public static BigInteger maxItemCapacity = BigInteger.valueOf(MAX_STORAGE_BYTES)
         .multiply(BigInteger.valueOf(ITEMS_PER_BYTE));
-    public static BigInteger MAX_CAPACITY_FLUID = BigInteger.valueOf(MAX_STORAGE_BYTES)
+    public static BigInteger maxFluidCapacity = BigInteger.valueOf(MAX_STORAGE_BYTES)
         .multiply(BigInteger.valueOf(FLUID_MB_PER_BYTE));
 
     public long capacityPerItem = Long.MAX_VALUE;
@@ -103,59 +105,28 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
     public int mCountCasing = 0;
 
     private static final String STRUCTURE_PIECE_MAIN = "main";
-    private static final String SDH_STRUCTURE_FILE_PATH = RESOURCE_ROOT_ID + ":" + "multiblock/singularity_data_hub";
-    private static final String[][] shape = StructureUtils.readStructureFromFile(SDH_STRUCTURE_FILE_PATH);
-    private static final int HORIZONTAL_OFF_SET = 1;
-    private static final int VERTICAL_OFF_SET = 1;
-    private static final int DEPTH_OFF_SET = 0;
+    private static final String STRUCTURE_FILE_PATH = RESOURCE_ROOT_ID + ":" + "multiblock/singularity_data_hub";
+    private static final String[][] shape = StructureUtils.readStructureFromFile(STRUCTURE_FILE_PATH);
+    private static final int HORIZONTAL_OFFSET = 1;
+    private static final int VERTICAL_OFFSET = 1;
+    private static final int DEPTH_OFFSET = 0;
 
     public static NumberFormat nf = NumberFormat.getNumberInstance();
 
-    public IItemList<IAEItemStack> storedItems = AEApi.instance()
-        .storage()
-        .createItemList();
+    private IItemList<IAEItemStack> storedItems = AEApi.instance().storage().createItemList();
 
-    public IItemList<IAEFluidStack> storedFluids = AEApi.instance()
-        .storage()
-        .createFluidList();
+    private IItemList<IAEFluidStack> storedFluids = AEApi.instance().storage().createFluidList();
+
+    private final VaultStorageUsage storageUsage = new VaultStorageUsage(MAX_STORAGE_BYTES, BYTES_PER_TYPE);
 
     public long getUsedStorageBytes() {
-        long used = 0;
-        for (IAEItemStack item : storedItems) {
-            used = saturatingAdd(used, BYTES_PER_TYPE);
-            used = saturatingAdd(used, bytesForAmount(item.getStackSize(), ITEMS_PER_BYTE));
-        }
-        for (IAEFluidStack fluid : storedFluids) {
-            used = saturatingAdd(used, BYTES_PER_TYPE);
-            used = saturatingAdd(used, bytesForAmount(fluid.getStackSize(), FLUID_MB_PER_BYTE));
-        }
-        return Math.min(used, MAX_STORAGE_BYTES);
+        return storageUsage.usedBytes();
     }
 
-    private long getInsertableAmount(long currentAmount, long requestedAmount, int amountPerByte, boolean newType) {
-        if (requestedAmount <= 0) return 0;
-        long freeBytes = MAX_STORAGE_BYTES - getUsedStorageBytes();
-        if (newType) freeBytes -= BYTES_PER_TYPE;
-        if (freeBytes < 0) return 0;
-        long unusedAmount = currentAmount <= 0 ? 0 : (amountPerByte - currentAmount % amountPerByte) % amountPerByte;
-        long byteLimitedAmount = saturatingAdd(unusedAmount, saturatingMultiply(freeBytes, amountPerByte));
-        long stackLimitedAmount = Long.MAX_VALUE - currentAmount;
-        return Math.min(requestedAmount, Math.min(byteLimitedAmount, stackLimitedAmount));
-    }
-
-    private static long bytesForAmount(long amount, int amountPerByte) {
-        if (amount <= 0) return 0;
-        return amount / amountPerByte + (amount % amountPerByte == 0 ? 0 : 1);
-    }
-
-    private static long saturatingAdd(long first, long second) {
-        if (first >= Long.MAX_VALUE - second) return Long.MAX_VALUE;
-        return first + second;
-    }
-
-    private static long saturatingMultiply(long value, int factor) {
-        if (value > Long.MAX_VALUE / factor) return Long.MAX_VALUE;
-        return value * factor;
+    private void rebuildStorageUsage() {
+        storageUsage.clear();
+        for (IAEItemStack item : storedItems) storageUsage.update(0, item.getStackSize(), ITEMS_PER_BYTE);
+        for (IAEFluidStack fluid : storedFluids) storageUsage.update(0, fluid.getStackSize(), FLUID_MB_PER_BYTE);
     }
 
     public SingularityDataHub(int aID, String aName, String aNameRegional) {
@@ -178,12 +149,12 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public long maxItemCount() {
-        return MAX_DISTINCT_ITEMS;
+        return maxDistinctItems;
     }
 
     @Override
     public long maxFluidCount() {
-        return MAX_DISTINCT_FLUIDS;
+        return maxDistinctFluids;
     }
 
     @Override
@@ -292,25 +263,19 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
             // #tr Info_SingularityDataHub_AutoVoiding
             // # Auto-voiding: %b
             // # zh_CN 自动销毁溢出: %b
-            GTUtility.sendChatToPlayer(
-                aPlayer,
+            GTUtility.sendChatToPlayer(aPlayer,
                 StatCollector.translateToLocalFormatted("Info_SingularityDataHub_AutoVoiding", doVoidExcess));
         }
     }
 
     @Override
     public IStructureDefinition<SingularityDataHub> getStructureDefinition() {
-        return StructureDefinition.<SingularityDataHub>builder()
-            .addShape(STRUCTURE_PIECE_MAIN, transpose(shape))
-            .addElement(
-                'A',
+        return StructureDefinition.<SingularityDataHub>builder().addShape(STRUCTURE_PIECE_MAIN, transpose(shape))
+            .addElement('A',
                 ofChain(
                     buildHatchAdder(SingularityDataHub.class).hatchClass(VaultPortHatch.class)
-                        .shouldReject(t -> t.portHatch != null)
-                        .adder(SingularityDataHub::addPortBusToMachineList)
-                        .casingIndex(getCasingTextureID())
-                        .hint(1)
-                        .build(),
+                        .shouldReject(t -> t.portHatch != null).adder(SingularityDataHub::addPortBusToMachineList)
+                        .casingIndex(getCasingTextureID()).hint(1).build(),
                     onElementPass(t -> t.mCountCasing++, ofBlock(sBlockCasings2, 0))))
             .build();
     }
@@ -320,7 +285,7 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
         mCountCasing = 0;
 
-        if (!checkPiece(STRUCTURE_PIECE_MAIN, HORIZONTAL_OFF_SET, VERTICAL_OFF_SET, DEPTH_OFF_SET, errors)) {
+        if (!checkPiece(STRUCTURE_PIECE_MAIN, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET, errors)) {
             return;
         }
 
@@ -361,22 +326,14 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public void construct(ItemStack stackSize, boolean hintsOnly) {
-        buildPiece(STRUCTURE_PIECE_MAIN, stackSize, hintsOnly, HORIZONTAL_OFF_SET, VERTICAL_OFF_SET, DEPTH_OFF_SET);
+        buildPiece(STRUCTURE_PIECE_MAIN, stackSize, hintsOnly, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET);
     }
 
     @Override
     public int survivalConstruct(ItemStack stackSize, int elementBudget, ISurvivalBuildEnvironment env) {
         if (mMachine) return -1;
-        return survivalBuildPiece(
-            STRUCTURE_PIECE_MAIN,
-            stackSize,
-            HORIZONTAL_OFF_SET,
-            VERTICAL_OFF_SET,
-            DEPTH_OFF_SET,
-            elementBudget,
-            env,
-            false,
-            true);
+        return survivalBuildPiece(STRUCTURE_PIECE_MAIN, stackSize, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET,
+            elementBudget, env, false, true);
     }
 
     public MultiblockTooltipBuilder createTooltip() {
@@ -424,10 +381,8 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
             .addCasing("10+", StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"), false)
             .addInputBus("0+", StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"), 1)
             .addInputHatch("0+", StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"), 1)
-            .addOtherStructurePart(
-                "1 " + StatCollector.translateToLocal("NameVaultPortHatch"),
-                StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"),
-                1)
+            .addOtherStructurePart("1 " + StatCollector.translateToLocal("NameVaultPortHatch"),
+                StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"), 1)
             .toolTipFinisher();
         return tt;
     }
@@ -436,21 +391,14 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
     public ITexture[] getTexture(IGregTechTileEntity aBaseMetaTileEntity, ForgeDirection side, ForgeDirection facing,
         int colorIndex, boolean aActive, boolean aRedstone) {
         if (side == facing) {
-            if (aActive) return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(getCasingTextureID()),
-                TextureFactory.builder()
-                    .addIcon(BlockIcons.OVERLAY_FRONT_SINGULARITY_DATA_HUB_ACTIVE)
-                    .extFacing()
-                    .build(),
-                TextureFactory.builder()
-                    .addIcon(BlockIcons.OVERLAY_FRONT_SINGULARITY_DATA_HUB_ACTIVE_GLOW)
-                    .extFacing()
-                    .glow()
+            if (
+                aActive
+            ) return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(getCasingTextureID()),
+                TextureFactory.builder().addIcon(BlockIcons.OverlayFrontSingularityDataHubActive).extFacing().build(),
+                TextureFactory.builder().addIcon(BlockIcons.OverlayFrontSingularityDataHubActiveGlow).extFacing().glow()
                     .build() };
             return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(getCasingTextureID()),
-                TextureFactory.builder()
-                    .addIcon(BlockIcons.OVERLAY_FRONT_SINGULARITY_DATA_HUB)
-                    .extFacing()
-                    .build() };
+                TextureFactory.builder().addIcon(BlockIcons.OverlayFrontSingularityDataHub).extFacing().build() };
         }
         return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(getCasingTextureID()) };
     }
@@ -466,15 +414,12 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
         // #tr Info_SingularityDataHub_StoredItems
         // # Stored Items:
         // # zh_CN 已存储物品：
-        ll.add(
-            EnumChatFormatting.YELLOW + StatCollector.translateToLocal("Info_SingularityDataHub_StoredItems")
-                + EnumChatFormatting.RESET);
+        ll.add(EnumChatFormatting.YELLOW + StatCollector.translateToLocal("Info_SingularityDataHub_StoredItems")
+            + EnumChatFormatting.RESET);
 
         int i = 0;
         for (IAEItemStack tank : storedItems) {
-            String localizedName = Objects.requireNonNull(
-                tank.getItem()
-                    .getItemStackDisplayName(tank.getItemStack()));
+            String localizedName = Objects.requireNonNull(tank.getItem().getItemStackDisplayName(tank.getItemStack()));
             String amount = nf.format(tank.getStackSize());
             String percentage = capacityPerItem > 0 ? String.valueOf(tank.getStackSize() * 100 / capacityPerItem) : "";
             ll.add(MessageFormat.format("{0} - {1}: {2} ({3}%)", i++, localizedName, amount, percentage));
@@ -484,15 +429,12 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
         // #tr Info_SingularityDataHub_StoredFluids
         // # Stored Fluids:
         // # zh_CN 已存储流体：
-        ll.add(
-            EnumChatFormatting.YELLOW + StatCollector.translateToLocal("Info_SingularityDataHub_StoredFluids")
-                + EnumChatFormatting.RESET);
+        ll.add(EnumChatFormatting.YELLOW + StatCollector.translateToLocal("Info_SingularityDataHub_StoredFluids")
+            + EnumChatFormatting.RESET);
 
         int j = 0;
         for (IAEFluidStack tank : storedFluids) {
-            String localizedName = Objects.requireNonNull(
-                tank.getFluid()
-                    .getLocalizedName(tank.getFluidStack()));
+            String localizedName = Objects.requireNonNull(tank.getFluid().getLocalizedName(tank.getFluidStack()));
             String amount = nf.format(tank.getStackSize());
             String percentage = capacityPerFluid > 0 ? String.valueOf(tank.getStackSize() * 100 / capacityPerFluid)
                 : "";
@@ -503,27 +445,24 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
         // #tr Info_SingularityDataHub_OperationalData
         // # Operational Data
         // # zh_CN 运行数据
-        ll.add(
-            EnumChatFormatting.YELLOW + StatCollector.translateToLocal("Info_SingularityDataHub_OperationalData")
-                + EnumChatFormatting.RESET);
+        ll.add(EnumChatFormatting.YELLOW + StatCollector.translateToLocal("Info_SingularityDataHub_OperationalData")
+            + EnumChatFormatting.RESET);
 
         // #tr Info_SingularityDataHub_ItemUsed
         // # Item Used Capacity: %s
         // # zh_CN 已用物品容量: %s
-        ll.add(
-            StatCollector
-                .translateToLocalFormatted("Info_SingularityDataHub_ItemUsed", nf.format(getItemStoredAmount())));
+        ll.add(StatCollector.translateToLocalFormatted("Info_SingularityDataHub_ItemUsed",
+            nf.format(getItemStoredAmount())));
         // #tr Info_SingularityDataHub_ItemTotal
         // # Item Total Capacity: %s
         // # zh_CN 物品总容量: %s
         ll.add(
-            StatCollector.translateToLocalFormatted("Info_SingularityDataHub_ItemTotal", nf.format(MAX_CAPACITY_ITEM)));
+            StatCollector.translateToLocalFormatted("Info_SingularityDataHub_ItemTotal", nf.format(maxItemCapacity)));
         // #tr Info_SingularityDataHub_PerItemCapacity
         // # Per-Item Capacity: %s
         // # zh_CN 每种物品容量: %s
-        ll.add(
-            StatCollector
-                .translateToLocalFormatted("Info_SingularityDataHub_PerItemCapacity", nf.format(capacityPerItem)));
+        ll.add(StatCollector.translateToLocalFormatted("Info_SingularityDataHub_PerItemCapacity",
+            nf.format(capacityPerItem)));
         // #tr Info_SingularityDataHub_ItemUsedTypes
         // # Item Used Type: %s
         // # zh_CN 已用物品种类: %s
@@ -532,40 +471,34 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
         // #tr Info_SingularityDataHub_ItemTotalTypes
         // # Item Total Type: %s
         // # zh_CN 物品总种类: %s
-        ll.add(
-            StatCollector
-                .translateToLocalFormatted("Info_SingularityDataHub_ItemTotalTypes", nf.format(maxItemCount())));
+        ll.add(StatCollector.translateToLocalFormatted("Info_SingularityDataHub_ItemTotalTypes",
+            nf.format(maxItemCount())));
 
         // #tr Info_SingularityDataHub_FluidUsed
         // # Fluid Used Capacity: %s
         // # zh_CN 已用流体容量: %s
-        ll.add(
-            StatCollector
-                .translateToLocalFormatted("Info_SingularityDataHub_FluidUsed", nf.format(getFluidStoredAmount())));
+        ll.add(StatCollector.translateToLocalFormatted("Info_SingularityDataHub_FluidUsed",
+            nf.format(getFluidStoredAmount())));
         // #tr Info_SingularityDataHub_FluidTotal
         // # Fluid Total Capacity: %s
         // # zh_CN 流体总容量: %s
         ll.add(
-            StatCollector
-                .translateToLocalFormatted("Info_SingularityDataHub_FluidTotal", nf.format(MAX_CAPACITY_FLUID)));
+            StatCollector.translateToLocalFormatted("Info_SingularityDataHub_FluidTotal", nf.format(maxFluidCapacity)));
         // #tr Info_SingularityDataHub_PerFluidCapacity
         // # Per-Fluid Capacity: %s
         // # zh_CN 每种流体容量: %s
-        ll.add(
-            StatCollector
-                .translateToLocalFormatted("Info_SingularityDataHub_PerFluidCapacity", nf.format(capacityPerFluid)));
+        ll.add(StatCollector.translateToLocalFormatted("Info_SingularityDataHub_PerFluidCapacity",
+            nf.format(capacityPerFluid)));
         // #tr Info_SingularityDataHub_FluidUsedTypes
         // # Fluid Used Type: %s
         // # zh_CN 已用流体种类: %s
-        ll.add(
-            StatCollector
-                .translateToLocalFormatted("Info_SingularityDataHub_FluidUsedTypes", nf.format(fluidsCount())));
+        ll.add(StatCollector.translateToLocalFormatted("Info_SingularityDataHub_FluidUsedTypes",
+            nf.format(fluidsCount())));
         // #tr Info_SingularityDataHub_FluidTotalTypes
         // # Fluid Total Type: %s
         // # zh_CN 流体总种类: %s
-        ll.add(
-            StatCollector
-                .translateToLocalFormatted("Info_SingularityDataHub_FluidTotalTypes", nf.format(maxFluidCount())));
+        ll.add(StatCollector.translateToLocalFormatted("Info_SingularityDataHub_FluidTotalTypes",
+            nf.format(maxFluidCount())));
 
         // #tr Info_SingularityDataHub_RunningCost
         // # Running Cost: %dEU/t
@@ -649,6 +582,8 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public void loadNBTData(NBTTagCompound aNBT) {
+        storedItems = AEApi.instance().storage().createItemList();
+        storedFluids = AEApi.instance().storage().createFluidList();
         this.setDoVoidExcess(aNBT.getBoolean("doVoidExcess"));
         this.locked = aNBT.getBoolean("locked");
         wirelessMode = aNBT.getBoolean("wirelessMode");
@@ -692,24 +627,24 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
                 storedFluids.add(AEFluidStack.loadFluidStackFromNBT(fluidNbt.getCompoundTagAt(i)));
             }
         }
+        rebuildStorageUsage();
         super.loadNBTData(aNBT);
     }
 
     @Override
     public int injectItems(ItemStack aItem, boolean doInput) {
-        if (locked) return 0;
-        var aeItem = getStoredItem(aItem);
+        if (locked || aItem == null || aItem.stackSize <= 0) return 0;
+        var aeItem = findStoredItem(aItem);
         long size = aeItem == null ? 0 : aeItem.getStackSize();
-        long accepted = getInsertableAmount(size, aItem.stackSize, ITEMS_PER_BYTE, aeItem == null);
+        long accepted = storageUsage.insertableAmount(size, aItem.stackSize, ITEMS_PER_BYTE);
         if (accepted <= 0) return doVoidExcess ? aItem.stackSize : 0;
         if (doInput) {
             if (aeItem == null) {
-                storedItems.addStorage(
-                    AEItemStack.create(aItem)
-                        .setStackSize(accepted));
+                storedItems.addStorage(AEItemStack.create(aItem).setStackSize(accepted));
             } else {
                 aeItem.setStackSize(size + accepted);
             }
+            storageUsage.update(size, size + accepted, ITEMS_PER_BYTE);
             portHatch.postUpdateItem(aItem, accepted);
         }
         return doVoidExcess ? aItem.stackSize : (int) accepted;
@@ -717,19 +652,18 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public long injectItems(IAEItemStack aItem, boolean doInput) {
-        if (locked) return 0;
-        var aeItem = getStoredItem(aItem.getItemStack());
+        if (locked || aItem == null || aItem.getStackSize() <= 0) return 0;
+        var aeItem = findStoredItem(aItem.getItemStack());
         long size = aeItem == null ? 0 : aeItem.getStackSize();
-        long accepted = getInsertableAmount(size, aItem.getStackSize(), ITEMS_PER_BYTE, aeItem == null);
+        long accepted = storageUsage.insertableAmount(size, aItem.getStackSize(), ITEMS_PER_BYTE);
         if (accepted <= 0) return doVoidExcess ? aItem.getStackSize() : 0;
         if (doInput) {
             if (aeItem == null) {
-                storedItems.addStorage(
-                    aItem.copy()
-                        .setStackSize(accepted));
+                storedItems.addStorage(VaultStackSnapshots.item(aItem).setStackSize(accepted));
             } else {
                 aeItem.setStackSize(size + accepted);
             }
+            storageUsage.update(size, size + accepted, ITEMS_PER_BYTE);
             portHatch.postUpdateItem(aItem.getItemStack(), accepted);
         }
         return doVoidExcess ? aItem.getStackSize() : accepted;
@@ -737,19 +671,18 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public int injectFluids(FluidStack aFluid, boolean doInput) {
-        if (locked) return 0;
-        var aeFluid = getStoredFluid(aFluid);
+        if (locked || aFluid == null || aFluid.amount <= 0) return 0;
+        var aeFluid = findStoredFluid(aFluid);
         long size = aeFluid == null ? 0 : aeFluid.getStackSize();
-        long accepted = getInsertableAmount(size, aFluid.amount, FLUID_MB_PER_BYTE, aeFluid == null);
+        long accepted = storageUsage.insertableAmount(size, aFluid.amount, FLUID_MB_PER_BYTE);
         if (accepted <= 0) return doVoidExcess ? aFluid.amount : 0;
         if (doInput) {
             if (aeFluid == null) {
-                storedFluids.addStorage(
-                    AEFluidStack.create(aFluid)
-                        .setStackSize(accepted));
+                storedFluids.addStorage(AEFluidStack.create(aFluid).setStackSize(accepted));
             } else {
                 aeFluid.setStackSize(size + accepted);
             }
+            storageUsage.update(size, size + accepted, FLUID_MB_PER_BYTE);
             portHatch.postUpdateFluid(aFluid, accepted);
         }
         return doVoidExcess ? aFluid.amount : (int) accepted;
@@ -757,19 +690,18 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public long injectFluids(IAEFluidStack aFluid, boolean doInput) {
-        if (locked) return 0;
-        var aeFluid = getStoredFluid(aFluid.getFluidStack());
+        if (locked || aFluid == null || aFluid.getStackSize() <= 0) return 0;
+        var aeFluid = findStoredFluid(aFluid.getFluidStack());
         long size = aeFluid == null ? 0 : aeFluid.getStackSize();
-        long accepted = getInsertableAmount(size, aFluid.getStackSize(), FLUID_MB_PER_BYTE, aeFluid == null);
+        long accepted = storageUsage.insertableAmount(size, aFluid.getStackSize(), FLUID_MB_PER_BYTE);
         if (accepted <= 0) return doVoidExcess ? aFluid.getStackSize() : 0;
         if (doInput) {
             if (aeFluid == null) {
-                storedFluids.addStorage(
-                    aFluid.copy()
-                        .setStackSize(accepted));
+                storedFluids.addStorage(aFluid.copy().setStackSize(accepted));
             } else {
                 aeFluid.setStackSize(size + accepted);
             }
+            storageUsage.update(size, size + accepted, FLUID_MB_PER_BYTE);
             portHatch.postUpdateFluid(aFluid.getFluidStack(), accepted);
         }
         return doVoidExcess ? aFluid.getStackSize() : accepted;
@@ -777,20 +709,22 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public long extractItems(IAEItemStack aItem, boolean doOutput) {
-        if (locked) return 0;
-        var aeItem = getStoredItem(aItem.getItemStack());
+        if (locked || aItem == null || aItem.getStackSize() <= 0) return 0;
+        var aeItem = findStoredItem(aItem.getItemStack());
         if (aeItem == null) return 0;
         long storedSize = aeItem.getStackSize();
         long requestSize = aItem.getStackSize();
         if (storedSize > requestSize) {
             if (doOutput) {
                 aeItem.setStackSize(storedSize - requestSize);
+                storageUsage.update(storedSize, storedSize - requestSize, ITEMS_PER_BYTE);
                 portHatch.postUpdateItem(aItem.getItemStack(), -requestSize);
             }
             return requestSize;
         } else {
             if (doOutput) {
                 aeItem.setStackSize(0);
+                storageUsage.update(storedSize, 0, ITEMS_PER_BYTE);
                 portHatch.postUpdateItem(aItem.getItemStack(), -storedSize);
             }
             return storedSize;
@@ -799,20 +733,22 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public long extractFluids(IAEFluidStack aFluid, boolean doOutput) {
-        if (locked) return 0;
-        var aeFluid = getStoredFluid(aFluid.getFluidStack());
+        if (locked || aFluid == null || aFluid.getStackSize() <= 0) return 0;
+        var aeFluid = findStoredFluid(aFluid.getFluidStack());
         if (aeFluid == null) return 0;
         long storedSize = aeFluid.getStackSize();
         long requestSize = aFluid.getStackSize();
         if (storedSize > requestSize) {
             if (doOutput) {
                 aeFluid.setStackSize(storedSize - requestSize);
+                storageUsage.update(storedSize, storedSize - requestSize, FLUID_MB_PER_BYTE);
                 portHatch.postUpdateFluid(aFluid.getFluidStack(), -requestSize);
             }
             return requestSize;
         } else {
             if (doOutput) {
                 aeFluid.setStackSize(0);
+                storageUsage.update(storedSize, 0, FLUID_MB_PER_BYTE);
                 portHatch.postUpdateFluid(aFluid.getFluidStack(), -storedSize);
             }
             return storedSize;
@@ -831,24 +767,36 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public IAEItemStack getStoredItem(@Nullable ItemStack aItem) {
+        IAEItemStack stored = findStoredItem(aItem);
+        return stored == null ? null : VaultStackSnapshots.item(stored);
+    }
+
+    private IAEItemStack findStoredItem(@Nullable ItemStack aItem) {
         if (aItem == null) return null;
         return storedItems.findPrecise(AEItemStack.create(aItem));
     }
 
     @Override
     public IAEFluidStack getStoredFluid(@Nullable FluidStack aFluid) {
+        IAEFluidStack stored = findStoredFluid(aFluid);
+        return stored == null ? null : stored.copy();
+    }
+
+    private IAEFluidStack findStoredFluid(@Nullable FluidStack aFluid) {
         if (aFluid == null) return null;
         return storedFluids.findPrecise(AEFluidStack.create(aFluid));
     }
 
     @Override
     public boolean containsItems(ItemStack aItem) {
-        return getStoredItem(aItem) != null;
+        IAEItemStack stored = findStoredItem(aItem);
+        return stored != null && stored.getStackSize() > 0;
     }
 
     @Override
     public boolean containsFluids(FluidStack aFluid) {
-        return getStoredFluid(aFluid) != null;
+        IAEFluidStack stored = findStoredFluid(aFluid);
+        return stored != null && stored.getStackSize() > 0;
     }
 
     public BigInteger getItemStoredAmount() {
@@ -869,12 +817,26 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public IItemList<IAEItemStack> getStoreItems() {
-        return storedItems;
+        IItemList<IAEItemStack> snapshot = AEApi.instance().storage().createItemList();
+        copyItemsTo(snapshot);
+        return snapshot;
     }
 
     @Override
     public IItemList<IAEFluidStack> getStoreFluids() {
-        return storedFluids;
+        IItemList<IAEFluidStack> snapshot = AEApi.instance().storage().createFluidList();
+        copyFluidsTo(snapshot);
+        return snapshot;
+    }
+
+    @Override
+    public void copyItemsTo(IItemList<IAEItemStack> out) {
+        for (IAEItemStack item : storedItems) out.addStorage(VaultStackSnapshots.item(item));
+    }
+
+    @Override
+    public void copyFluidsTo(IItemList<IAEFluidStack> out) {
+        for (IAEFluidStack fluid : storedFluids) out.addStorage(fluid.copy());
     }
 
     @Override

@@ -33,8 +33,8 @@ public final class TextEffectPreferences {
         File file = new File(Config.getConfigDirectory(), ModList.GTNotGood.getID() + "-text-effects.cfg");
         config = new Configuration(file);
         config.load();
-        String renderer = config
-            .getString("Renderer", CATEGORY, TextEffects.EXOTIC_RAINBOW.rendererId(), "机器提示署名使用的文字特效。");
+        String renderer = config.getString("Renderer", CATEGORY, TextEffects.EXOTIC_RAINBOW.rendererId(),
+            "机器提示署名使用的文字特效。");
         boolean palette = config.getBoolean("CustomPalette", CATEGORY, false, "机器署名使用预览页中的自定义配色。");
         boolean bold = config.getBoolean("Bold", CATEGORY, false, "机器署名使用粗体。");
         boolean italic = config.getBoolean("Italic", CATEGORY, false, "机器署名使用斜体。");
@@ -60,21 +60,15 @@ public final class TextEffectPreferences {
         if (config == null) load();
         TextEffectStyle style = TextEffectFormat.readInline(rendererId);
         AnimatedText.configureCredit(customPalette ? style.withColors(PREVIEW_PALETTE) : style, bold, italic);
-        config.get(CATEGORY, "Renderer", rendererId)
-            .set(rendererId);
-        config.get(CATEGORY, "CustomPalette", customPalette)
-            .set(customPalette);
-        config.get(CATEGORY, "Bold", bold)
-            .set(bold);
-        config.get(CATEGORY, "Italic", italic)
-            .set(italic);
+        config.get(CATEGORY, "Renderer", rendererId).set(rendererId);
+        config.get(CATEGORY, "CustomPalette", customPalette).set(customPalette);
+        config.get(CATEGORY, "Bold", bold).set(bold);
+        config.get(CATEGORY, "Italic", italic).set(italic);
         config.save();
     }
 
     /** @return true when the saved machine credit uses the preview's alternate colors */
     public static boolean customPalette() {
-        return !AnimatedText.creditStyle()
-            .colors()
-            .isEmpty();
+        return !AnimatedText.creditStyle().colors().isEmpty();
     }
 }

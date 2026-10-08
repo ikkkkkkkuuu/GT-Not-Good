@@ -20,19 +20,10 @@ public final class MEBridgeChannelListCodec {
             if (channel.name == null || channel.name.isEmpty()) continue;
             int receiverCount = MEBridgeReceiverRegistry.count(channel.name);
             if (encoded.length() > 0) encoded.append(RECORD_SEPARATOR);
-            encoded.append(encodeName(channel.name))
-                .append(FIELD_SEPARATOR)
-                .append(receiverCount > 0 ? '1' : '0')
-                .append(FIELD_SEPARATOR)
-                .append(channel.x)
-                .append(FIELD_SEPARATOR)
-                .append(channel.y)
-                .append(FIELD_SEPARATOR)
-                .append(channel.z)
-                .append(FIELD_SEPARATOR)
-                .append(channel.dim)
-                .append(FIELD_SEPARATOR)
-                .append(receiverCount);
+            encoded.append(encodeName(channel.name)).append(FIELD_SEPARATOR).append(receiverCount > 0 ? '1' : '0')
+                .append(FIELD_SEPARATOR).append(channel.x).append(FIELD_SEPARATOR).append(channel.y)
+                .append(FIELD_SEPARATOR).append(channel.z).append(FIELD_SEPARATOR).append(channel.dim)
+                .append(FIELD_SEPARATOR).append(receiverCount);
         }
         return encoded.toString();
     }
@@ -48,30 +39,19 @@ public final class MEBridgeChannelListCodec {
                 String name = decodeName(fields[0]);
                 if (name.isEmpty()) continue;
                 entries.add(
-                    new Entry(
-                        name,
-                        "1".equals(fields[1]),
-                        Integer.parseInt(fields[2]),
-                        Integer.parseInt(fields[3]),
-                        Integer.parseInt(fields[4]),
-                        Integer.parseInt(fields[5]),
-                        Integer.parseInt(fields[6])));
+                    new Entry(name, "1".equals(fields[1]), Integer.parseInt(fields[2]), Integer.parseInt(fields[3]),
+                        Integer.parseInt(fields[4]), Integer.parseInt(fields[5]), Integer.parseInt(fields[6])));
             } catch (IllegalArgumentException ignored) {}
         }
         return entries;
     }
 
     private static String encodeName(String name) {
-        return Base64.getUrlEncoder()
-            .withoutPadding()
-            .encodeToString(name.getBytes(StandardCharsets.UTF_8));
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(name.getBytes(StandardCharsets.UTF_8));
     }
 
     private static String decodeName(String encodedName) {
-        return new String(
-            Base64.getUrlDecoder()
-                .decode(encodedName),
-            StandardCharsets.UTF_8);
+        return new String(Base64.getUrlDecoder().decode(encodedName), StandardCharsets.UTF_8);
     }
 
     public static final class Entry {

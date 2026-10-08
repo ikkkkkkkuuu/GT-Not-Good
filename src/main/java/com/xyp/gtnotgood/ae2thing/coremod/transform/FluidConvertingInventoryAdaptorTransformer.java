@@ -42,10 +42,8 @@ public class FluidConvertingInventoryAdaptorTransformer extends ClassTransformer
             @Override
             public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
                 if (name.equals("getAdaptor")) {
-                    super.visitMethodInsn(
-                        Opcodes.INVOKESTATIC,
-                        "com/xyp/gtnotgood/ae2thing/coremod/hooker/CoreModHooks",
-                        "getAdaptor",
+                    super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                        "com/xyp/gtnotgood/ae2thing/coremod/hooker/CoreModHooks", "getAdaptor",
                         "(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraftforge/common/util/ForgeDirection;)Lappeng/util/InventoryAdaptor;",
                         false);
                 } else {

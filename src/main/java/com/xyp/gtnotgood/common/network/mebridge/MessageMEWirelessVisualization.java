@@ -2,6 +2,9 @@ package com.xyp.gtnotgood.common.network.mebridge;
 
 import java.util.Arrays;
 
+import net.minecraft.client.Minecraft;
+
+import com.xyp.gtnotgood.client.mebridge.MEWirelessNodeRenderer;
 import com.xyp.gtnotgood.common.blocks.mebridge.MEWirelessVisualizationSync;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -65,10 +68,8 @@ public final class MessageMEWirelessVisualization implements IMessage {
         @Override
         @SideOnly(Side.CLIENT)
         public IMessage onMessage(MessageMEWirelessVisualization message, MessageContext context) {
-            net.minecraft.client.Minecraft.getMinecraft()
-                .func_152344_a(
-                    () -> com.xyp.gtnotgood.client.mebridge.MEWirelessNodeRenderer
-                        .update(message.dimension, message.positions));
+            Minecraft.getMinecraft()
+                .func_152344_a(() -> MEWirelessNodeRenderer.update(message.dimension, message.positions));
             return null;
         }
     }

@@ -35,9 +35,7 @@ public final class WirelessLaserDynamoHatch extends MTEHatchWirelessDynamoMulti 
         // #tr gtng.wireless.laser.output.name
         // # %1$s %2$sA Wireless Laser Dynamo Hatch
         // # zh_CN %2$s安%1$s无线激光动力仓
-        return StatCollector.translateToLocalFormatted(
-            "gtng.wireless.laser.output.name",
-            GTValues.VN[mTier],
+        return StatCollector.translateToLocalFormatted("gtng.wireless.laser.output.name", GTValues.VN[mTier],
             NumberFormatUtil.formatNumber(maxAmperes));
     }
 

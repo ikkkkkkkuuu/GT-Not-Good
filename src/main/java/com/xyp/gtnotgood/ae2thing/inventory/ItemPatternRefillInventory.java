@@ -4,6 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.xyp.gtnotgood.ae2thing.util.Util;
+
 import appeng.api.AEApi;
 import appeng.core.AELog;
 import appeng.tile.inventory.AppEngInternalInventory;
@@ -59,16 +61,12 @@ public class ItemPatternRefillInventory extends AppEngInternalInventory {
     @Override
     public void markDirty() {
         this.writeToNBT(Platform.openNbtData(is), this.name);
-        if (Platform.isServer()) com.xyp.gtnotgood.ae2thing.util.Util.writeBackTerminal(this.player, slot, this.is);
+        if (Platform.isServer()) Util.writeBackTerminal(this.player, slot, this.is);
     }
 
     @Override
     public boolean isItemValidForSlot(final int i, final ItemStack itemstack) {
         return i == 0 && getStackInSlot(0) == null
-            && AEApi.instance()
-                .definitions()
-                .materials()
-                .basicCard()
-                .isSameAs(itemstack);
+            && AEApi.instance().definitions().materials().basicCard().isSameAs(itemstack);
     }
 }

@@ -7,13 +7,16 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidHandler;
 
 import com.cleanroommc.modularui.factory.TileEntityGuiFactory;
 import com.xyp.gtnotgood.client.GTNGCreativeTabs;
@@ -110,8 +113,7 @@ public class BlockNetwork extends Block {
             }
             if (!data.hasNoTags()) {
                 stack.setTagCompound(new NBTTagCompound());
-                stack.getTagCompound()
-                    .setTag("networkData", data);
+                stack.getTagCompound().setTag("networkData", data);
             }
         }
         drops.add(stack);
@@ -121,17 +123,16 @@ public class BlockNetwork extends Block {
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {
         if (!world.isRemote && kind == CONTROLLER) {
-            int quadrant = net.minecraft.util.MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+            int quadrant = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
             int facing = new int[] { 2, 5, 3, 4 }[quadrant];
             world.setBlockMetadataWithNotify(x, y, z, facing, 2);
         }
-        if (!world.isRemote && stack.hasTagCompound()
-            && stack.getTagCompound()
-                .hasKey("networkData")
-            && world.getTileEntity(x, y, z) instanceof TileNetworkNode node) {
-            NBTTagCompound data = (NBTTagCompound) stack.getTagCompound()
-                .getCompoundTag("networkData")
-                .copy();
+        if (
+            !world.isRemote && stack.hasTagCompound()
+                && stack.getTagCompound().hasKey("networkData")
+                && world.getTileEntity(x, y, z) instanceof TileNetworkNode node
+        ) {
+            NBTTagCompound data = (NBTTagCompound) stack.getTagCompound().getCompoundTag("networkData").copy();
             data.setInteger("x", x);
             data.setInteger("y", y);
             data.setInteger("z", z);
@@ -147,8 +148,7 @@ public class BlockNetwork extends Block {
         if (world instanceof World actual && !actual.blockExists(nx, ny, nz)) return false;
         if (world.getBlock(nx, ny, nz) instanceof BlockNetwork) return true;
         TileEntity target = world.getTileEntity(nx, ny, nz);
-        return kind == CONNECTOR && (target instanceof net.minecraft.inventory.IInventory
-            || target instanceof net.minecraftforge.fluids.IFluidHandler);
+        return kind == CONNECTOR && (target instanceof IInventory || target instanceof IFluidHandler);
     }
 
     @Override
@@ -159,8 +159,7 @@ public class BlockNetwork extends Block {
         }
         float low = kind == CONNECTOR ? 0.25F : 0.3125F;
         float high = 1 - low;
-        setBlockBounds(
-            connects(world, x, y, z, ForgeDirection.WEST) ? 0 : low,
+        setBlockBounds(connects(world, x, y, z, ForgeDirection.WEST) ? 0 : low,
             connects(world, x, y, z, ForgeDirection.DOWN) ? 0 : low,
             connects(world, x, y, z, ForgeDirection.NORTH) ? 0 : low,
             connects(world, x, y, z, ForgeDirection.EAST) ? 1 : high,
@@ -186,9 +185,8 @@ public class BlockNetwork extends Block {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister register) {
-        blockIcon = register.registerIcon(
-            ModList.GTNotGood.getResourcePath(
-                "network/" + (kind == CONTROLLER ? "machine_side" : kind == PIPE ? "netcable" : "connector_side")));
+        blockIcon = register.registerIcon(ModList.GTNotGood.getResourcePath(
+            "network/" + (kind == CONTROLLER ? "machine_side" : kind == PIPE ? "netcable" : "connector_side")));
         if (kind == CONTROLLER)
             front = register.registerIcon(ModList.GTNotGood.getResourcePath("network/machine_controller"));
     }

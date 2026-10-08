@@ -10,7 +10,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.cleanroommc.modularui.factory.TileEntityGuiFactory;
@@ -57,7 +59,7 @@ public final class BlockMechanicalUser extends Block {
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
         float hitY, float hitZ) {
-        if (player instanceof net.minecraftforge.common.util.FakePlayer) return false;
+        if (player instanceof FakePlayer) return false;
         if (!world.isRemote) TileEntityGuiFactory.INSTANCE.open(player, x, y, z);
         return true;
     }
@@ -99,7 +101,7 @@ public final class BlockMechanicalUser extends Block {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIcon(net.minecraft.world.IBlockAccess world, int x, int y, int z, int side) {
+    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
         int facing = world.getBlockMetadata(x, y, z);
         return side == facing ? front : side == (facing ^ 1) ? back : blockIcon;
     }

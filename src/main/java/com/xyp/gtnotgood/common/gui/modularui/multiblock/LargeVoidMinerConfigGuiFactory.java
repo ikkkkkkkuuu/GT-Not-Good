@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import com.xyp.gtnotgood.common.gui.modularui.PosMetaTileGuiFactory;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidMiner;
+import com.xyp.gtnotgood.utils.enums.ModList;
 
 /**
  * ModularUI2 factory for the Large Void Miner configuration terminal.
@@ -11,9 +12,7 @@ import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidMiner;
 public final class LargeVoidMinerConfigGuiFactory {
 
     public static final PosMetaTileGuiFactory<LargeVoidMiner> INSTANCE = new PosMetaTileGuiFactory<>(
-        com.xyp.gtnotgood.utils.enums.ModList.GTNotGood.getID() + ":lvm_config",
-        LargeVoidMiner.class,
-        LargeVoidMinerConfigGui::new,
+        ModList.GTNotGood.getID() + ":lvm_config", LargeVoidMiner.class, LargeVoidMinerConfigGui::new,
         "Large Void Miner");
 
     private LargeVoidMinerConfigGuiFactory() {}

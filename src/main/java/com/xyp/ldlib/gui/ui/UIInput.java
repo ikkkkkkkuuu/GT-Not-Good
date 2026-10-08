@@ -46,8 +46,7 @@ public final class UIInput {
             focus(savedFocus.remove(scope));
             if (focused == null && scope != root) cycleFocus(false);
         }
-        savedFocus.keySet()
-            .removeIf(element -> !element.belongsTo(root));
+        savedFocus.keySet().removeIf(element -> !element.belongsTo(root));
         if (focused != null && (!valid(focused) || !focused.isFocusable())) focus(null);
         if (!valid(captured)) {
             captured = null;

@@ -219,8 +219,7 @@ public final class GraphView extends UIElement {
             right = Math.max(right, node.x + node.width);
             bottom = Math.max(bottom, node.y + node.height);
         }
-        scale = Math.max(
-            .25,
+        scale = Math.max(.25,
             Math.min(4, Math.min(Math.max(1, width - 20) / (right - left), Math.max(1, height - 20) / (bottom - top))));
         offsetX = (left + right - width / scale) / 2;
         offsetY = (top + bottom - height / scale) / 2;
@@ -242,9 +241,11 @@ public final class GraphView extends UIElement {
                 GL11.glScaled(scale, scale, 1);
                 drawConnections();
                 for (Node node : nodes) {
-                    if (node.x + node.width < offsetX || node.y + node.height < offsetY
-                        || node.x > offsetX + width / scale
-                        || node.y > offsetY + height / scale) continue;
+                    if (
+                        node.x + node.width < offsetX || node.y + node.height < offsetY
+                            || node.x > offsetX + width / scale
+                            || node.y > offsetY + height / scale
+                    ) continue;
                     int nx = (int) Math.round(node.x), ny = (int) Math.round(node.y);
                     if (node == selected)
                         Gui.drawRect(nx - 2, ny - 2, nx + node.width + 2, ny + node.height + 2, 0xFFA5D8FF);
@@ -253,8 +254,8 @@ public final class GraphView extends UIElement {
             } finally {
                 GL11.glPopMatrix();
             }
-            new TextTexture(() -> Math.round(scale * 100) + "%", 0xFFFFFFFF)
-                .draw(mx, my, left, top + height - 14, 42, 14);
+            new TextTexture(() -> Math.round(scale * 100) + "%", 0xFFFFFFFF).draw(mx, my, left, top + height - 14, 42,
+                14);
         }
     }
 

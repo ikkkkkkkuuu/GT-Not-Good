@@ -18,15 +18,7 @@ public final class WildcardPatternRecipes {
      * Adds the shapeless upgrade from an AE2 blank pattern to the wildcard pattern.
      */
     public static void loadRecipes() {
-        GameRegistry.addRecipe(
-            new ItemStack(ItemsLoader.wildcardPattern),
-            "B",
-            'B',
-            AEApi.instance()
-                .definitions()
-                .materials()
-                .blankPattern()
-                .maybeStack(1)
-                .orNull());
+        GameRegistry.addRecipe(new ItemStack(ItemsLoader.wildcardPattern), "B", 'B',
+            AEApi.instance().definitions().materials().blankPattern().maybeStack(1).orNull());
     }
 }

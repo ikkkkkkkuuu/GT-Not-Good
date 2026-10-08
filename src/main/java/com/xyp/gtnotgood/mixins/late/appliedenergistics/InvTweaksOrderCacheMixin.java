@@ -33,8 +33,7 @@ public abstract class InvTweaksOrderCacheMixin {
     private void cacheOrder(String id, int damage, CallbackInfoReturnable<Integer> cir) {
         if (id == null) return;
         if (itemOrderCache == null) itemOrderCache = new HashMap<>();
-        itemOrderCache.computeIfAbsent(id, ignored -> new Int2IntOpenHashMap())
-            .put(damage, cir.getReturnValueI());
+        itemOrderCache.computeIfAbsent(id, ignored -> new Int2IntOpenHashMap()).put(damage, cir.getReturnValueI());
     }
 
     @Inject(method = { "reset", "addItem" }, at = @At("HEAD"))

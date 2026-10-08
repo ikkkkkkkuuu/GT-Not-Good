@@ -98,13 +98,12 @@ public class CPacketInventoryActionExtend implements IMessage {
 
             IAEItemStack extractedTotal = null;
 
-            List<ItemStack> items = InvUtil.matcher(
-                player,
+            List<ItemStack> items = InvUtil.matcher(player,
                 stack -> stack != null && stack.getItem() instanceof ItemWirelessDualInterfaceTerminal);
 
             if (items.isEmpty()) {
-                items = InvUtil
-                    .matcher(player, stack -> stack != null && stack.getItem() instanceof IWirelessTermHandler);
+                items = InvUtil.matcher(player,
+                    stack -> stack != null && stack.getItem() instanceof IWirelessTermHandler);
             }
 
             for (ItemStack item : items) {
@@ -123,8 +122,8 @@ public class CPacketInventoryActionExtend implements IMessage {
                      * object it receives; the authoritative remaining request must stay under our control.
                      */
                     IAEItemStack attempt = requestItem.copy();
-                    IAEItemStack result = object.getItemInventory()
-                        .extractItems(attempt, Actionable.MODULATE, object.getSource());
+                    IAEItemStack result = object.getItemInventory().extractItems(attempt, Actionable.MODULATE,
+                        object.getSource());
 
                     if (result == null || result.getStackSize() <= 0) {
                         continue;
@@ -152,10 +151,12 @@ public class CPacketInventoryActionExtend implements IMessage {
         @Override
         public IMessage onMessage(CPacketInventoryActionExtend message, MessageContext ctx) {
             final EntityPlayerMP sender = ctx.getServerHandler().playerEntity;
-            if (message.action == InventoryActionExtend.REQUEST_ITEM && message.stack != null
-                && message.slot >= 0
-                && message.slot < sender.inventory.mainInventory.length
-                && sender.inventory.mainInventory[message.slot] == null) {
+            if (
+                message.action == InventoryActionExtend.RequestItem && message.stack != null
+                    && message.slot >= 0
+                    && message.slot < sender.inventory.mainInventory.length
+                    && sender.inventory.mainInventory[message.slot] == null
+            ) {
 
                 // id == 1 -> extract a single item (Shift+middle click); otherwise a full legal stack.
                 ItemStack requestTemplate = message.stack.getItemStack();

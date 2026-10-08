@@ -41,28 +41,21 @@ public interface MixinIOverlayHandler extends IOverlayHandler {
         final List<PositionedStack> ingredients = recipe.getIngredientStacks(recipeIndex);
         IItemList<IAEStack<?>> list = null;
         boolean displayFluid = false;
-        if (AE2ThingAPI.instance()
-            .terminal()
-            .isTerminal(firstGui)) {
+        if (AE2ThingAPI.instance().terminal().isTerminal(firstGui)) {
             IDisplayRepo repo = Util.getDisplayRepo((AEBaseGui) firstGui);
             if (repo instanceof ItemRepo) {
                 list = Ae2ReflectClient.getList((ItemRepo) repo);
             }
         }
         final List<ItemStack> invStacks = firstGui.inventorySlots.inventorySlots.stream()
-            .filter(
-                s -> s != null && s.getStack() != null
-                    && s.getStack().stackSize > 0
-                    && s.isItemValid(s.getStack())
-                    && s.canTakeStack(firstGui.mc.thePlayer))
-            .map(
-                s -> s.getStack()
-                    .copy())
-            .collect(Collectors.toCollection(ArrayList::new));
+            .filter(s -> s != null && s.getStack() != null
+                && s.getStack().stackSize > 0
+                && s.isItemValid(s.getStack())
+                && s.canTakeStack(firstGui.mc.thePlayer))
+            .map(s -> s.getStack().copy()).collect(Collectors.toCollection(ArrayList::new));
 
         for (PositionedStack stack : ingredients) {
-            Optional<ItemStack> used = invStacks.stream()
-                .filter(is -> is.stackSize > 0 && stack.contains(is))
+            Optional<ItemStack> used = invStacks.stream().filter(is -> is.stackSize > 0 && stack.contains(is))
                 .findAny();
             if (used.isPresent()) {
                 ItemStack is = used.get();
@@ -82,8 +75,7 @@ public interface MixinIOverlayHandler extends IOverlayHandler {
                 }
                 if (list.findPrecise(item) != null) {
                     found = true;
-                    isCraftable = list.findPrecise(item)
-                        .isCraftable();
+                    isCraftable = list.findPrecise(item).isCraftable();
                 } else if (fs == null) {
                     for (IAEStack<?> is : list.findFuzzy(item, FuzzyMode.IGNORE_ALL)) {
                         if (is instanceof IAEItemStack ais && stack.contains(ais.getItemStack())) {

@@ -54,19 +54,10 @@ public class FluxDropDataTest {
         assertEquals(1, reloaded.amperage());
         assertTrue(reloaded.enabled());
         assertTrue(reloaded.connected());
-        assertEquals(
-            "preserve",
-            dropped.getTagCompound()
-                .getString("customExtension"));
-        assertFalse(
-            dropped.getTagCompound()
-                .hasKey("fluxVoltage"));
-        assertFalse(
-            dropped.getTagCompound()
-                .hasKey("fluxAmperage"));
-        assertFalse(
-            dropped.getTagCompound()
-                .hasKey("fluxLimit"));
+        assertEquals("preserve", dropped.getTagCompound().getString("customExtension"));
+        assertFalse(dropped.getTagCompound().hasKey("fluxVoltage"));
+        assertFalse(dropped.getTagCompound().hasKey("fluxAmperage"));
+        assertFalse(dropped.getTagCompound().hasKey("fluxLimit"));
     }
 
     @Test

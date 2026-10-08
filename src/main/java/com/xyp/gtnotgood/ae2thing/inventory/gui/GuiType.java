@@ -21,9 +21,9 @@ import appeng.container.implementations.ContainerCraftingStatus;
 
 public enum GuiType {
 
-    WIRELESS_DUAL_INTERFACE_TERMINAL(new QuickEncodingTerminalGuiFactory()),
-    WIRELESS_CRAFTING_TERMINAL(new WirelessCraftingTerminalGuiFactory()),
-    CRAFTING_CONFIRM(new PartGuiFactory<>(THPart.class) {
+    WirelessDualInterfaceTerminal(new QuickEncodingTerminalGuiFactory()),
+    WirelessCraftingTerminal(new WirelessCraftingTerminalGuiFactory()),
+    CraftingConfirm(new PartGuiFactory<>(THPart.class) {
 
         @Override
         protected Object createServerGui(EntityPlayer player, THPart inv) {
@@ -35,7 +35,7 @@ public enum GuiType {
             return new GuiCraftConfirm(player.inventory, inv);
         }
     }),
-    CRAFTING_CONFIRM_ITEM(new ItemGuiFactory<>(ITerminalHost.class) {
+    CraftingConfirmItem(new ItemGuiFactory<>(ITerminalHost.class) {
 
         @Override
         protected Object createServerGui(EntityPlayer player, ITerminalHost inv) {
@@ -47,7 +47,7 @@ public enum GuiType {
             return new GuiCraftConfirm(player.inventory, inv);
         }
     }),
-    RENAMER(new ItemGuiFactory<>(ITerminalHost.class) {
+    Renamer(new ItemGuiFactory<>(ITerminalHost.class) {
 
         @Override
         protected Object createServerGui(EntityPlayer player, ITerminalHost inv) {
@@ -59,7 +59,7 @@ public enum GuiType {
             return new GuiRenamer(player.inventory, inv);
         }
     }),
-    CRAFTING_STATUS(new PartGuiFactory<>(ITerminalHost.class) {
+    CraftingStatus(new PartGuiFactory<>(ITerminalHost.class) {
 
         @Override
         protected Object createServerGui(EntityPlayer player, ITerminalHost inv) {
@@ -71,7 +71,7 @@ public enum GuiType {
             return new GuiCraftingStatus(player.inventory, inv);
         }
     }),
-    CRAFTING_STATUS_ITEM(new ItemGuiFactory<>(ITerminalHost.class) {
+    CraftingStatusItem(new ItemGuiFactory<>(ITerminalHost.class) {
 
         @Override
         protected Object createServerGui(EntityPlayer player, ITerminalHost inv) {
@@ -83,7 +83,7 @@ public enum GuiType {
             return new GuiCraftingStatus(player.inventory, inv);
         }
     }),
-    CRAFTING_AMOUNT(new PartGuiFactory<>(ITerminalHost.class) {
+    CraftingAmount(new PartGuiFactory<>(ITerminalHost.class) {
 
         @Override
         protected Object createServerGui(EntityPlayer player, ITerminalHost inv) {
@@ -95,7 +95,7 @@ public enum GuiType {
             return new GuiCraftAmount(player.inventory, inv);
         }
     }),
-    CRAFTING_AMOUNT_ITEM(new ItemGuiFactory<>(ITerminalHost.class) {
+    CraftingAmountItem(new ItemGuiFactory<>(ITerminalHost.class) {
 
         @Override
         protected Object createServerGui(EntityPlayer player, ITerminalHost inv) {

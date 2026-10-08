@@ -211,8 +211,7 @@ public abstract class GTNGCleanWirelessMultiMachineBase<T extends GTNGCleanWirel
             @Override
             protected OverclockCalculator createOverclockCalculator(@NotNull GTRecipe recipe) {
                 if (isWirelessModeActive() && useNoOverclockInWirelessMode()) {
-                    return OverclockCalculator.ofNoOverclock(recipe)
-                        .setEUtDiscount(getEuModifier())
+                    return OverclockCalculator.ofNoOverclock(recipe).setEUtDiscount(getEuModifier())
                         .setDurationModifier(getSpeedBonus());
                 }
                 return super.createOverclockCalculator(recipe);
@@ -227,14 +226,11 @@ public abstract class GTNGCleanWirelessMultiMachineBase<T extends GTNGCleanWirel
 
                 long recipeEUt = Math.max(1L, (long) Math.ceil(recipe.mEUt * getEuModifier()));
                 int recipeDuration = Math.max(1, (int) Math.ceil(recipe.mDuration * getSpeedBonus()));
-                BigInteger recipeEU = BigInteger.valueOf(recipeEUt)
-                    .multiply(BigInteger.valueOf(recipeDuration));
+                BigInteger recipeEU = BigInteger.valueOf(recipeEUt).multiply(BigInteger.valueOf(recipeDuration));
                 if (ownerUUID == null || getUserEU(ownerUUID).compareTo(recipeEU) < 0) {
                     return CheckRecipeResultRegistry.insufficientStartupPower(recipeEU);
                 }
-                maxParallel = getUserEU(ownerUUID).divide(recipeEU)
-                    .min(BigInteger.valueOf(maxParallel))
-                    .intValue();
+                maxParallel = getUserEU(ownerUUID).divide(recipeEU).min(BigInteger.valueOf(maxParallel)).intValue();
                 return validateWirelessPowerForRecipe(recipeEUt, recipeDuration, maxParallel);
             }
 
@@ -242,20 +238,14 @@ public abstract class GTNGCleanWirelessMultiMachineBase<T extends GTNGCleanWirel
             @Override
             protected CheckRecipeResult onRecipeStart(@NotNull GTRecipe recipe) {
                 if (isWirelessModeActive()) {
-                    CheckRecipeResult wirelessResult = startWirelessRecipe(
-                        recipe,
-                        calculatedParallels,
-                        calculatedEut,
-                        duration,
-                        inputFluids,
-                        inputItems);
+                    CheckRecipeResult wirelessResult = startWirelessRecipe(recipe, calculatedParallels, calculatedEut,
+                        duration, inputFluids, inputItems);
                     if (!wirelessResult.wasSuccessful()) return wirelessResult;
                     overwriteCalculatedEut(0);
                 }
                 return super.onRecipeStart(recipe);
             }
-        }.setMaxParallelSupplier(this::getLimitedMaxParallel)
-            .setUnlimitedTierSkips();
+        }.setMaxParallelSupplier(this::getLimitedMaxParallel).setUnlimitedTierSkips();
     }
 
     @Override
@@ -362,9 +352,7 @@ public abstract class GTNGCleanWirelessMultiMachineBase<T extends GTNGCleanWirel
     }
 
     private static BigInteger calculateWirelessCost(long eut, int duration) {
-        return BigInteger.valueOf(eut)
-            .abs()
-            .multiply(BigInteger.valueOf(Math.max(1, duration)));
+        return BigInteger.valueOf(eut).abs().multiply(BigInteger.valueOf(Math.max(1, duration)));
     }
 
     private static ArrayList<ItemStack> copyItems(ItemStack[] items) {
@@ -438,14 +426,13 @@ public abstract class GTNGCleanWirelessMultiMachineBase<T extends GTNGCleanWirel
         // #tr machine.gtnotgood.wireless.cost
         // # EU Cost
         // # zh_CN 耗电
-        currentTip.add(
-            EnumChatFormatting.AQUA + StatCollector.translateToLocal("machine.gtnotgood.wireless.cost")
-                + EnumChatFormatting.RESET
-                + ": "
-                + EnumChatFormatting.GOLD
-                + tag.getString("gtngWirelessCost")
-                + EnumChatFormatting.RESET
-                + " EU");
+        currentTip.add(EnumChatFormatting.AQUA + StatCollector.translateToLocal("machine.gtnotgood.wireless.cost")
+            + EnumChatFormatting.RESET
+            + ": "
+            + EnumChatFormatting.GOLD
+            + tag.getString("gtngWirelessCost")
+            + EnumChatFormatting.RESET
+            + " EU");
     }
 
     @Override

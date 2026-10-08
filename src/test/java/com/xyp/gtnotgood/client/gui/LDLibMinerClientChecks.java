@@ -9,10 +9,18 @@ import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 
+import org.lwjgl.input.Keyboard;
+
+import com.cleanroommc.modularui.ModularUIConfig;
+import com.cleanroommc.modularui.api.UpOrDown;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.GuiContainerWrapper;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.xyp.gtnotgood.common.api.gui.OreEntryInfo;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidMiner;
 import com.xyp.gtnotgood.utils.enums.GTNGMachineID;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.ldlib.gui.ui.elements.VirtualScrollerView;
 import com.xyp.ldlib.integration.modularui.LDLibModularScreen;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -42,10 +50,8 @@ public final class LDLibMinerClientChecks {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         if (Boolean.getBoolean("gtng.ldminer.qa")) {
-            com.cleanroommc.modularui.ModularUIConfig.guiDebugMode = false;
-            FMLCommonHandler.instance()
-                .bus()
-                .register(this);
+            ModularUIConfig.guiDebugMode = false;
+            FMLCommonHandler.instance().bus().register(this);
         }
     }
 
@@ -56,9 +62,7 @@ public final class LDLibMinerClientChecks {
         if (++clientTicks > 3600) throw new AssertionError("LDLIB_MINER_QA_TIMEOUT stage=" + stage);
         if (!started && mc.theWorld == null && mc.currentScreen != null) {
             started = true;
-            mc.launchIntegratedServer(
-                "ldlib-miner-qa-" + System.currentTimeMillis(),
-                "LDLib Miner QA",
+            mc.launchIntegratedServer("ldlib-miner-qa-" + System.currentTimeMillis(), "LDLib Miner QA",
                 new WorldSettings(24L, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT));
         }
     }
@@ -66,8 +70,7 @@ public final class LDLibMinerClientChecks {
     @SubscribeEvent
     public void server(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        var server = FMLCommonHandler.instance()
-            .getMinecraftServerInstance();
+        var server = FMLCommonHandler.instance().getMinecraftServerInstance();
         if (server.getConfigurationManager().playerEntityList.isEmpty()) return;
         EntityPlayerMP viewer = (EntityPlayerMP) server.getConfigurationManager().playerEntityList.get(0);
         if (miner == null) {
@@ -87,25 +90,17 @@ public final class LDLibMinerClientChecks {
         }
         if (++serverTicks == 60) {
             miner.onRightclick(miner.getBaseMetaTileEntity(), viewer);
-            System.out.println(
-                "LDLIB_MINER_QA opened; ores=" + miner.getOreEntries()
-                    .size());
+            System.out.println("LDLIB_MINER_QA opened; ores=" + miner.getOreEntries().size());
         }
         if (requested == 1 && miner.mOreMode == 1) verified = 1;
         if (requested == 2 && miner.mFortuneLevel == 5) verified = 2;
         if (requested == 3 && miner.getDirectionalMode()) {
-            initialEnabled = miner.getBaseMetaTileEntity()
-                .isAllowedToWork();
+            initialEnabled = miner.getBaseMetaTileEntity().isAllowedToWork();
             verified = 3;
         }
-        if (requested == 4 && miner.getBaseMetaTileEntity()
-            .isAllowedToWork() != initialEnabled) verified = 4;
-        if (requested == 5 && miner.getOreEntries()
-            .stream()
-            .anyMatch(ore -> ore.aimed)) verified = 5;
-        if (requested == 6 && miner.getOreEntries()
-            .stream()
-            .noneMatch(ore -> ore.aimed)) verified = 6;
+        if (requested == 4 && miner.getBaseMetaTileEntity().isAllowedToWork() != initialEnabled) verified = 4;
+        if (requested == 5 && miner.getOreEntries().stream().anyMatch(ore -> ore.aimed)) verified = 5;
+        if (requested == 6 && miner.getOreEntries().stream().noneMatch(ore -> ore.aimed)) verified = 6;
         if (requested >= 7 && requested <= 11 && miner.getOverclockLevel() == (requested - 6) % 5) {
             verified = requested;
         }
@@ -115,12 +110,13 @@ public final class LDLibMinerClientChecks {
         int[] ticks = { 400, 100, 25, 6, 1 };
         long baseEnergy = miner.getEnergyCostPerTick();
         for (int level = 0; level < ticks.length; level++) {
-            if (miner.getOverclockLevel() != level || miner.getCycleDurationTicks() != ticks[level]
-                || miner.getEnergyCostPerTick() != baseEnergy * (1L << (level * 2))) {
+            if (
+                miner.getOverclockLevel() != level || miner.getCycleDurationTicks() != ticks[level]
+                    || miner.getEnergyCostPerTick() != baseEnergy * (1L << (level * 2))
+            ) {
                 throw new AssertionError("Incorrect overclock at level " + level);
             }
-            if (!miner.checkProcessing()
-                .wasSuccessful() || miner.mMaxProgresstime != ticks[level]) {
+            if (!miner.checkProcessing().wasSuccessful() || miner.mMaxProgresstime != ticks[level]) {
                 throw new AssertionError("Overclock did not apply to processing at level " + level);
             }
             NBTTagCompound saved = new NBTTagCompound();
@@ -156,9 +152,7 @@ public final class LDLibMinerClientChecks {
         if (!(wrapper.getScreen() instanceof LDLibModularScreen screen)) {
             if (!openedFromPrimary && ++frames >= 60) {
                 capture("primary");
-                var button = configButton(
-                    wrapper.getScreen()
-                        .getMainPanel());
+                var button = configButton(wrapper.getScreen().getMainPanel());
                 if (button == null) throw new AssertionError("Missing original configuration button");
                 button.onMousePressed(0);
                 openedFromPrimary = true;
@@ -193,7 +187,7 @@ public final class LDLibMinerClientChecks {
                 break;
             case 5:
                 capture("dialog");
-                screen.onKeyPressed((char) 27, org.lwjgl.input.Keyboard.KEY_ESCAPE);
+                screen.onKeyPressed((char) 27, Keyboard.KEY_ESCAPE);
                 break;
             case 6:
                 click(screen, 200, 100);
@@ -224,13 +218,11 @@ public final class LDLibMinerClientChecks {
                 click(screen, 400, 80);
                 break;
             case 12:
-                if (oreRows(screen).getItems()
-                    .size() != 64) throw new AssertionError("Unselected category");
+                if (oreRows(screen).getItems().size() != 64) throw new AssertionError("Unselected category");
                 click(screen, 400, 80);
                 break;
             case 13:
-                if (!oreRows(screen).getItems()
-                    .isEmpty()) throw new AssertionError("Selected category after clear");
+                if (!oreRows(screen).getItems().isEmpty()) throw new AssertionError("Selected category after clear");
                 capture("empty-category");
                 click(screen, 400, 80);
                 break;
@@ -242,7 +234,7 @@ public final class LDLibMinerClientChecks {
             case 15:
                 checkOrder(screen, false);
                 click(screen, 250, 120);
-                for (int i = 0; i < 100; i++) screen.onMouseScroll(com.cleanroommc.modularui.api.UpOrDown.DOWN, 1);
+                for (int i = 0; i < 100; i++) screen.onMouseScroll(UpOrDown.DOWN, 1);
                 break;
             case 16:
                 capture("scrolled-descending");
@@ -271,16 +263,14 @@ public final class LDLibMinerClientChecks {
     }
 
     @SuppressWarnings("unchecked")
-    private static com.xyp.ldlib.gui.ui.elements.VirtualScrollerView<com.xyp.gtnotgood.common.api.gui.OreEntryInfo> oreRows(
-        LDLibModularScreen screen) {
+    private static VirtualScrollerView<OreEntryInfo> oreRows(LDLibModularScreen screen) {
         try {
             var controls = LDLibModularScreen.class.getDeclaredField("controls");
             controls.setAccessible(true);
             var view = controls.get(screen);
             var rows = LDLibVoidMinerView.class.getDeclaredField("rows");
             rows.setAccessible(true);
-            return (com.xyp.ldlib.gui.ui.elements.VirtualScrollerView<com.xyp.gtnotgood.common.api.gui.OreEntryInfo>) rows
-                .get(view);
+            return (VirtualScrollerView<OreEntryInfo>) rows.get(view);
         } catch (ReflectiveOperationException error) {
             throw new AssertionError(error);
         }
@@ -295,13 +285,11 @@ public final class LDLibMinerClientChecks {
         }
     }
 
-    private static com.cleanroommc.modularui.widgets.ButtonWidget<?> configButton(
-        com.cleanroommc.modularui.api.widget.IWidget widget) {
-        if (widget instanceof com.cleanroommc.modularui.widgets.ButtonWidget<?>button && button.isSynced()
-            && button.getSyncHandler()
-                .getKey()
-                .startsWith("gtng.vm.openConfig"))
-            return button;
+    private static ButtonWidget<?> configButton(IWidget widget) {
+        if (
+            widget instanceof ButtonWidget<?>button && button.isSynced()
+                && button.getSyncHandler().getKey().startsWith("gtng.vm.openConfig")
+        ) return button;
         for (var child : widget.getChildren()) {
             var found = configButton(child);
             if (found != null) return found;
@@ -310,10 +298,8 @@ public final class LDLibMinerClientChecks {
     }
 
     private static void click(LDLibModularScreen screen, int x, int y) {
-        var area = screen.getMainPanel()
-            .getArea();
-        screen.getContext()
-            .updateState(area.x + x, area.y + y, 0);
+        var area = screen.getMainPanel().getArea();
+        screen.getContext().updateState(area.x + x, area.y + y, 0);
         screen.onMousePressed(0);
         screen.onMouseRelease(0);
     }

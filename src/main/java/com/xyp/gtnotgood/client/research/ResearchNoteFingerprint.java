@@ -23,8 +23,7 @@ public final class ResearchNoteFingerprint {
         Collections.sort(entries);
         StringBuilder result = new StringBuilder(identity(note));
         result.append("|grid:");
-        for (String entry : entries) result.append(entry)
-            .append(';');
+        for (String entry : entries) result.append(entry).append(';');
         return result.toString();
     }
 
@@ -39,11 +38,8 @@ public final class ResearchNoteFingerprint {
         }
         Collections.sort(anchors);
         StringBuilder result = new StringBuilder(note.key == null ? "" : note.key);
-        result.append('|')
-            .append(note.color)
-            .append("|anchors:");
-        for (String anchor : anchors) result.append(anchor)
-            .append(';');
+        result.append('|').append(note.color).append("|anchors:");
+        for (String anchor : anchors) result.append(anchor).append(';');
         return result.toString();
     }
 
@@ -51,17 +47,15 @@ public final class ResearchNoteFingerprint {
         if (note == null) return "";
         List<String> entries = new ArrayList<>();
         for (Map.Entry<String, ResearchManager.HexEntry> entry : note.hexEntries.entrySet()) {
-            entries.add(
-                entry.getKey() + ':'
-                    + entry.getValue().type
-                    + '='
-                    + (entry.getValue().aspect == null ? "" : entry.getValue().aspect.getTag()));
+            entries.add(entry.getKey() + ':'
+                + entry.getValue().type
+                + '='
+                + (entry.getValue().aspect == null ? "" : entry.getValue().aspect.getTag()));
         }
         Collections.sort(entries);
         StringBuilder result = new StringBuilder(topology(note));
         result.append("|state:");
-        for (String entry : entries) result.append(entry)
-            .append(';');
+        for (String entry : entries) result.append(entry).append(';');
         return result.toString();
     }
 }

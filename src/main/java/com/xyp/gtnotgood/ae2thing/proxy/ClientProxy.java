@@ -52,7 +52,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void onLoadComplete(FMLLoadCompleteEvent event) {
         super.onLoadComplete(event);
-        if (Mods.NOT_ENOUGH_ITEMS.isModLoaded()) {
+        if (Mods.NotEnoughItems.isModLoaded()) {
             new DefaultExtractorLoader().run();
         }
     }
@@ -61,9 +61,7 @@ public class ClientProxy extends CommonProxy {
     public void trackingMissingItems(CraftTracking c) {
         GuiScreen screen = Minecraft.getMinecraft().currentScreen;
         IItemList<IAEItemStack> list = c.getItems();
-        if (!list.isEmpty() && AE2ThingAPI.instance()
-            .terminal()
-            .isCraftingTerminal(screen)) {
+        if (!list.isEmpty() && AE2ThingAPI.instance().terminal().isCraftingTerminal(screen)) {
             for (IAEItemStack is : list) {
                 AE2Thing.proxy.netHandler.sendToServer(new CPacketCraftRequest(is, isShiftKeyDown()));
                 is.reset();
@@ -92,41 +90,21 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent event) {
         super.init(event);
         (new KeybindLoader()).run();
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerTerminal(GuiMEMonitorable.class);
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerTerminal(GuiCraftingTerm.class);
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerTerminal(GuiPatternTerm.class);
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerTerminal(GuiPatternTermEx.class);
+        AE2ThingAPI.instance().terminal().registerTerminal(GuiMEMonitorable.class);
+        AE2ThingAPI.instance().terminal().registerTerminal(GuiCraftingTerm.class);
+        AE2ThingAPI.instance().terminal().registerTerminal(GuiPatternTerm.class);
+        AE2ThingAPI.instance().terminal().registerTerminal(GuiPatternTermEx.class);
 
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerTerminalBlackList(GuiQuickEncodingTerminal.class);
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerTerminalSet(DualInterfaceTerminal.instance);
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerTerminalSet(FCBaseItemTerminal.instance);
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerTerminalSet(FCUltraTerminal.instance);
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerTerminalSet(new AETerminal());
+        AE2ThingAPI.instance().terminal().registerTerminalBlackList(GuiQuickEncodingTerminal.class);
+        AE2ThingAPI.instance().terminal().registerTerminalSet(DualInterfaceTerminal.instance);
+        AE2ThingAPI.instance().terminal().registerTerminalSet(FCBaseItemTerminal.instance);
+        AE2ThingAPI.instance().terminal().registerTerminalSet(FCUltraTerminal.instance);
+        AE2ThingAPI.instance().terminal().registerTerminalSet(new AETerminal());
     }
 
     @SubscribeEvent
     public void tickEvent(TickEvent.PlayerTickEvent event) {
-        AE2ThingAPI.instance()
-            .getPinned()
-            .updateCraftingItems();
+        AE2ThingAPI.instance().getPinned().updateCraftingItems();
     }
 
     @SubscribeEvent
@@ -147,9 +125,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void initGuiEvent(GuiScreenEvent.InitGuiEvent.Post event) {
-        if (AE2ThingAPI.instance()
-            .terminal()
-            .isCraftingTerminal(event.gui)) {
+        if (AE2ThingAPI.instance().terminal().isCraftingTerminal(event.gui)) {
             MinecraftForge.EVENT_BUS.post(new CraftTracking());
         }
         if (UpdateAmountTextEvent.needUpdateAmountText()) {
@@ -159,19 +135,13 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void initGuiEvent(GuiScreenEvent.InitGuiEvent.Pre event) {
-        if (AE2ThingAPI.instance()
-            .terminal()
-            .isPinTerminal(event.gui)) {
-            AE2ThingAPI.instance()
-                .getPinned()
-                .prune();
+        if (AE2ThingAPI.instance().terminal().isPinTerminal(event.gui)) {
+            AE2ThingAPI.instance().getPinned().prune();
         }
     }
 
     @SubscribeEvent
     public void ClientDisconnectionFromServerEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
-        AE2ThingAPI.instance()
-            .getPinned()
-            .clear();
+        AE2ThingAPI.instance().getPinned().clear();
     }
 }

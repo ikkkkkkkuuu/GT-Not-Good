@@ -17,18 +17,14 @@ public class AE2ThingIndexedCodec extends SimpleIndexedCodec {
         super.encodeInto(ctx, msg, target);
 
         if (AEConfig.instance.isFeatureEnabled(AEFeature.PacketLogging)) {
-            AELog.info(
-                " -> " + msg.getClass()
-                    .getName() + " : " + target.readableBytes());
+            AELog.info(" -> " + msg.getClass().getName() + " : " + target.readableBytes());
         }
     }
 
     @Override
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, IMessage msg) {
         if (AEConfig.instance.isFeatureEnabled(AEFeature.PacketLogging)) {
-            AELog.info(
-                " <- " + msg.getClass()
-                    .getName() + " : " + (source.readableBytes() + DISCRIMINATOR_BYTE));
+            AELog.info(" <- " + msg.getClass().getName() + " : " + (source.readableBytes() + DISCRIMINATOR_BYTE));
         }
 
         super.decodeInto(ctx, source, msg);

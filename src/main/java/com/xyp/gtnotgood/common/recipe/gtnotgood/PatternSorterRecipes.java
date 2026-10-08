@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.common.recipe.gtnotgood;
 
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
@@ -13,12 +14,7 @@ public final class PatternSorterRecipes {
     private PatternSorterRecipes() {}
 
     public static void register() {
-        net.minecraft.item.ItemStack pattern = AEApi.instance()
-            .definitions()
-            .materials()
-            .blankPattern()
-            .maybeStack(1)
-            .orNull();
+        ItemStack pattern = AEApi.instance().definitions().materials().blankPattern().maybeStack(1).orNull();
         if (pattern != null)
             GameRegistry.addShapelessRecipe(GTNGItemList.PatternSorter.get(1), pattern, Items.compass, Items.paper);
     }

@@ -33,8 +33,7 @@ public abstract class WirelessTerminal
 
     public WirelessTerminal(WirelessObject obj) {
         this.obj = obj;
-        this.ips = (ToolWirelessTerminal) obj.getItemStack()
-            .getItem();
+        this.ips = (ToolWirelessTerminal) obj.getItemStack().getItem();
         this.obj.setEnergySource(this);
     }
 
@@ -108,22 +107,18 @@ public abstract class WirelessTerminal
     @NotNull
     public IAEStack<?> injectStack(IAEStack<?> stack, Actionable mode) {
         if (stack instanceof IAEItemStack) {
-            return this.getItemInventory()
-                .injectItems((IAEItemStack) stack, mode, this.getActionSource());
+            return this.getItemInventory().injectItems((IAEItemStack) stack, mode, this.getActionSource());
         } else {
-            return this.getFluidInventory()
-                .injectItems((IAEFluidStack) stack, mode, this.getActionSource());
+            return this.getFluidInventory().injectItems((IAEFluidStack) stack, mode, this.getActionSource());
         }
     }
 
     @NotNull
     public IAEStack<?> extractStack(IAEStack<?> stack, Actionable mode) {
         if (stack instanceof IAEItemStack) {
-            return this.getItemInventory()
-                .extractItems((IAEItemStack) stack, mode, this.getActionSource());
+            return this.getItemInventory().extractItems((IAEItemStack) stack, mode, this.getActionSource());
         } else {
-            return this.getFluidInventory()
-                .extractItems((IAEFluidStack) stack, mode, this.getActionSource());
+            return this.getFluidInventory().extractItems((IAEFluidStack) stack, mode, this.getActionSource());
         }
     }
 }

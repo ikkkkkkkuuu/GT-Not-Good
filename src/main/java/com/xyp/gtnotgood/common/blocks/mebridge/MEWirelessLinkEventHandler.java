@@ -27,9 +27,7 @@ public final class MEWirelessLinkEventHandler {
     @SubscribeEvent
     public void onChunkUnload(ChunkEvent.Unload event) {
         if (!event.world.isRemote) {
-            MEWirelessLinkManager.onChunkUnload(
-                event.world.provider.dimensionId,
-                event.getChunk().xPosition,
+            MEWirelessLinkManager.onChunkUnload(event.world.provider.dimensionId, event.getChunk().xPosition,
                 event.getChunk().zPosition);
         }
     }

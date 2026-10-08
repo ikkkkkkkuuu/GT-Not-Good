@@ -19,12 +19,8 @@ public class DualInterfaceTerminalHandler implements ITerminalHandler {
             for (int i = 0; i < player.inventory.mainInventory.length; i++) {
                 ItemStack stack = player.inventory.getStackInSlot(i);
                 if (Platform.isSameItemPrecise(stack, item)) {
-                    InventoryHandler.openGui(
-                        player,
-                        player.worldObj,
-                        new BlockPos(i, 0, 0),
-                        ForgeDirection.UNKNOWN,
-                        GuiType.WIRELESS_DUAL_INTERFACE_TERMINAL);
+                    InventoryHandler.openGui(player, player.worldObj, new BlockPos(i, 0, 0), ForgeDirection.UNKNOWN,
+                        GuiType.WirelessDualInterfaceTerminal);
                     return;
                 }
             }

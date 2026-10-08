@@ -63,10 +63,8 @@ public class DireCraftingPatternDetails implements ICraftingPatternDetails {
     }
 
     public DireCraftingPatternDetails(ICraftingPatternDetails is) {
-        pattern = is.getPattern()
-            .copy();
-        if (pattern.hasTagCompound()) pattern.getTagCompound()
-            .removeTag(SERIALIZED_MULTIPLIER);
+        pattern = is.getPattern().copy();
+        if (pattern.hasTagCompound()) pattern.getTagCompound().removeTag(SERIALIZED_MULTIPLIER);
         inputs = copyStacks(is.getInputs());
         baseInputSizes = captureStackSizes(inputs);
         var list = new ItemList();
@@ -136,8 +134,7 @@ public class DireCraftingPatternDetails implements ICraftingPatternDetails {
     public ItemStack getPattern() {
         ItemStack serialized = pattern.copy();
         if (!serialized.hasTagCompound()) serialized.setTagCompound(new NBTTagCompound());
-        serialized.getTagCompound()
-            .setInteger(SERIALIZED_MULTIPLIER, multiply);
+        serialized.getTagCompound().setInteger(SERIALIZED_MULTIPLIER, multiply);
         return serialized;
     }
 
@@ -159,8 +156,7 @@ public class DireCraftingPatternDetails implements ICraftingPatternDetails {
     @Override
     public int hashCode() {
         int hash = 31 * Item.getIdFromItem(pattern.getItem()) + pattern.getItemDamage();
-        hash = 31 * hash + (pattern.hasTagCompound() ? pattern.getTagCompound()
-            .hashCode() : 0);
+        hash = 31 * hash + (pattern.hasTagCompound() ? pattern.getTagCompound().hashCode() : 0);
         return 31 * hash + multiply;
     }
 

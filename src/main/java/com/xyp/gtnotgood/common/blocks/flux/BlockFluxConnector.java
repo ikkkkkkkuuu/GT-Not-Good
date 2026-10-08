@@ -130,8 +130,7 @@ public class BlockFluxConnector extends Block {
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
         float low = plug ? 0.25F : 0.34375F, high = 1 - low;
-        setBlockBounds(
-            connects(world, x, y, z, ForgeDirection.WEST) ? 0 : low,
+        setBlockBounds(connects(world, x, y, z, ForgeDirection.WEST) ? 0 : low,
             connects(world, x, y, z, ForgeDirection.DOWN) ? 0 : low,
             connects(world, x, y, z, ForgeDirection.NORTH) ? 0 : low,
             connects(world, x, y, z, ForgeDirection.EAST) ? 1 : high,

@@ -43,11 +43,7 @@ public final class WildcardExpansion {
         List<IWildcardFilterComponent> filters) {
         if (inputs == null || outputs == null || (!hasNonEmpty(inputs) && !hasNonEmpty(outputs)))
             return new ArrayList<>();
-        return expand(
-            inputs,
-            outputs,
-            filters,
-            WildcardMaterials.expandableMaterialNames(),
+        return expand(inputs, outputs, filters, WildcardMaterials.expandableMaterialNames(),
             hasMaterialForm(inputs) || hasMaterialForm(outputs));
     }
 
@@ -79,11 +75,7 @@ public final class WildcardExpansion {
     public static int countExpanded(List<IWildcardIOComponent> inputs, List<IWildcardIOComponent> outputs,
         List<IWildcardFilterComponent> filters) {
         if (inputs == null || outputs == null || (!hasNonEmpty(inputs) && !hasNonEmpty(outputs))) return 0;
-        return countExpanded(
-            inputs,
-            outputs,
-            filters,
-            WildcardMaterials.expandableMaterialNames(),
+        return countExpanded(inputs, outputs, filters, WildcardMaterials.expandableMaterialNames(),
             hasMaterialForm(inputs) || hasMaterialForm(outputs));
     }
 
@@ -94,8 +86,10 @@ public final class WildcardExpansion {
         int count = 0;
         for (String materialName : materialNames) {
             if (!addonForms && !WildcardMaterials.isRealMaterial(WildcardMaterials.findByName(materialName))) continue;
-            if (passesFilters(materialName, filters) && canApplyAll(inputs, materialName)
-                && canApplyAll(outputs, materialName)) count++;
+            if (
+                passesFilters(materialName, filters) && canApplyAll(inputs, materialName)
+                    && canApplyAll(outputs, materialName)
+            ) count++;
         }
         return count;
     }
@@ -142,8 +136,10 @@ public final class WildcardExpansion {
 
     private static boolean hasMaterialForm(List<IWildcardIOComponent> components) {
         for (IWildcardIOComponent component : components) {
-            if (component != null && !component.isEmpty()
-                && (component instanceof PrefixIOComponent || component instanceof FluidIOComponent)) return true;
+            if (
+                component != null && !component.isEmpty()
+                    && (component instanceof PrefixIOComponent || component instanceof FluidIOComponent)
+            ) return true;
         }
         return false;
     }

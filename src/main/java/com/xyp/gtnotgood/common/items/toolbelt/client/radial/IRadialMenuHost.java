@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.common.items.toolbelt.client.radial;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 
@@ -9,5 +10,5 @@ public interface IRadialMenuHost {
 
     GuiScreen getScreen();
 
-    net.minecraft.client.gui.FontRenderer getFontRenderer();
+    FontRenderer getFontRenderer();
 }

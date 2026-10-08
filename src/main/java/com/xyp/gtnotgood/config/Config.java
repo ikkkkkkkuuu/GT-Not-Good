@@ -25,11 +25,9 @@ public class Config {
     private static final String CATEGORY_TOOL_BELT = "Tool_Belt";
     private static final String CATEGORY_WIRELESS_MULTIBLOCK = "Wireless_Multiblock";
 
-    private static final File DEFAULT_CONFIG_DIRECTORY = new File(
-        System.getProperty("user.dir"),
+    private static final File DEFAULT_CONFIG_DIRECTORY = new File(System.getProperty("user.dir"),
         "config/" + "GTNOTGOOD");
-    private static final File DEFAULT_CONFIG_FILE = new File(
-        DEFAULT_CONFIG_DIRECTORY,
+    private static final File DEFAULT_CONFIG_FILE = new File(DEFAULT_CONFIG_DIRECTORY,
         ModList.ModIds.GT_NOT_GOOD + ".cfg");
     private static boolean configLoaded = false;
     /** Whole visible Vis points produced by one primal essentia unit; fractions are retained by the provider. */
@@ -150,26 +148,17 @@ public class Config {
         Config.configDirectory = configDirectory;
 
         greeting = configuration.getString("greeting", Configuration.CATEGORY_GENERAL, greeting, "How shall I greet?");
-        configuration
-            .addCustomCategoryComment(CATEGORY_RTS, "官方 RTS Building 集成。启用后默认按 G 进入；详细选项位于 config/rts_building。");
-        enableRTSBuilding = configuration
-            .getBoolean("enableRTSBuilding", CATEGORY_RTS, false, "加载内置官方 RTS 功能；更改后需重启游戏和服务器。集成验证阶段默认关闭。");
+        configuration.addCustomCategoryComment(CATEGORY_RTS,
+            "官方 RTS Building 集成。启用后默认按 G 进入；详细选项位于 config/rts_building。");
+        enableRTSBuilding = configuration.getBoolean("enableRTSBuilding", CATEGORY_RTS, false,
+            "加载内置官方 RTS 功能；更改后需重启游戏和服务器。集成验证阶段默认关闭。");
         configuration.addCustomCategoryComment(CATEGORY_CLIENT, "仅影响本机客户端的显示设置。");
         useEdgeWindowIcon = configuration
-            .get(
-                CATEGORY_CLIENT,
-                "useEdgeWindowIcon",
-                false,
+            .get(CATEGORY_CLIENT, "useEdgeWindowIcon", false,
                 "开启后将运行中的客户端窗口及任务栏图标替换为 Microsoft Edge 图标。默认关闭，修改后重启游戏生效。")
-            .setRequiresMcRestart(true)
-            .getBoolean(false);
-        hideWindowsTaskbarButton = configuration
-            .get(
-                CATEGORY_CLIENT,
-                "hideWindowsTaskbarButton",
-                false,
-                "开启后在 Windows 上隐藏本客户端的任务栏按钮；游戏窗口仍可正常使用。默认关闭，可在游戏内设置中即时切换。")
-            .getBoolean(false);
+            .setRequiresMcRestart(true).getBoolean(false);
+        hideWindowsTaskbarButton = configuration.get(CATEGORY_CLIENT, "hideWindowsTaskbarButton", false,
+            "开启后在 Windows 上隐藏本客户端的任务栏按钮；游戏窗口仍可正常使用。默认关闭，可在游戏内设置中即时切换。").getBoolean(false);
         configuration.addCustomCategoryComment(CATEGORY_CUT_CORNERS, "配方提速配置");
         configuration.addCustomCategoryComment(CATEGORY_CROPSNH, "CropsNH 作物配置");
         configuration.addCustomCategoryComment(CATEGORY_FORESTRY, "Forestry 蜜蜂杂交配置");
@@ -177,254 +166,139 @@ public class Config {
         configuration.addCustomCategoryComment(CATEGORY_GREGTECH, "GregTech 机器、工具与客户端显示配置");
         configuration.addCustomCategoryComment(CATEGORY_SPICE_OF_LIFE, "Spice of Life 食物收益配置");
         configuration.addCustomCategoryComment(CATEGORY_FUEL_ROD, "铁燃料棒参数。修改后重启游戏生效，服务器和客户端应使用相同数值。");
-        FuelRod.energyPercent = configuration
-            .getInt("energyPercent", CATEGORY_FUEL_ROD, 10000, 1, 10000, "相对于四联铀燃料棒的基础产能百分比。100 表示相同产能。");
-        FuelRod.durationPercent = configuration
-            .getInt("durationPercent", CATEGORY_FUEL_ROD, 10000, 1, 10000, "相对于四联铀燃料棒的寿命百分比。100 表示相同寿命。");
-        FuelRod.heatPercent = configuration
-            .getInt("heatPercent", CATEGORY_FUEL_ROD, 100, 1, 10000, "相对于四联铀燃料棒的反应堆热量百分比。100 表示相同热量。");
+        FuelRod.energyPercent = configuration.getInt("energyPercent", CATEGORY_FUEL_ROD, 10000, 1, 10000,
+            "相对于四联铀燃料棒的基础产能百分比。100 表示相同产能。");
+        FuelRod.durationPercent = configuration.getInt("durationPercent", CATEGORY_FUEL_ROD, 10000, 1, 10000,
+            "相对于四联铀燃料棒的寿命百分比。100 表示相同寿命。");
+        FuelRod.heatPercent = configuration.getInt("heatPercent", CATEGORY_FUEL_ROD, 100, 1, 10000,
+            "相对于四联铀燃料棒的反应堆热量百分比。100 表示相同热量。");
         configuration.addCustomCategoryComment(CATEGORY_THAUMCRAFT, "Thaumcraft 扭曲与研究配置");
         configuration.addCustomCategoryComment(CATEGORY_TOOL_BELT, "工具腰带的配置设置");
         configuration.addCustomCategoryComment(CATEGORY_WIRELESS_MULTIBLOCK, "无线多方块跨配方并行配置");
         enableEasyWirelessRecipes = configuration
-            .get(
-                "Wireless_Energy",
-                "enableEasyWirelessRecipes",
-                true,
+            .get("Wireless_Energy", "enableEasyWirelessRecipes", true,
                 "启用无线仓组装机配方及激光雕刻机转换配方，激光仓成本按前置仓或安培元件数量区分。关闭不移除机器或原版配方；重启生效。")
-            .setRequiresMcRestart(true)
-            .getBoolean(true);
+            .setRequiresMcRestart(true).getBoolean(true);
 
-        enableBrickedBlastFurnaceAutomation = configuration.getBoolean(
-            "enableBrickedBlastFurnaceAutomation",
-            CATEGORY_GREGTECH,
-            true,
-            "开启后,砖高炉控制器各面支持自动输入原料和输出产物;关闭恢复原版手动上下料。默认开启,修改后重启游戏生效。");
+        enableBrickedBlastFurnaceAutomation = configuration.getBoolean("enableBrickedBlastFurnaceAutomation",
+            CATEGORY_GREGTECH, true, "开启后,砖高炉控制器各面支持自动输入原料和输出产物;关闭恢复原版手动上下料。默认开启,修改后重启游戏生效。");
 
-        enableAutomaticMachineCircuit = configuration.getBoolean(
-            "enableAutomaticMachineCircuit",
-            CATEGORY_GREGTECH,
-            true,
-            "ME接口和流体接口自动选择相邻GT单方块机器的虚拟电路。样板不写电路;同配方可续料,换电路须加工结束且输入清空;整批须装得下,歧义则等待。关闭恢复普通投料。");
+        enableAutomaticMachineCircuit = configuration.getBoolean("enableAutomaticMachineCircuit", CATEGORY_GREGTECH,
+            true, "ME接口和流体接口自动选择相邻GT单方块机器的虚拟电路。样板不写电路;同配方可续料,换电路须加工结束且输入清空;整批须装得下,歧义则等待。关闭恢复普通投料。");
 
-        requireCleanroom = configuration.getBoolean(
-            "requireCleanroom",
-            CATEGORY_GREGTECH,
-            false,
+        requireCleanroom = configuration.getBoolean("requireCleanroom", CATEGORY_GREGTECH, false,
             "是否要求配方满足超净间条件。默认关闭,所有使用GT超净间判定的配方免除超净间要求及洁净度损失;开启恢复原版判定。");
 
-        wirelessCrossRecipeDurationTicks = configuration.getInt(
-            "crossRecipeDurationTicks",
-            CATEGORY_WIRELESS_MULTIBLOCK,
-            wirelessCrossRecipeDurationTicks,
-            1,
-            Integer.MAX_VALUE,
+        wirelessCrossRecipeDurationTicks = configuration.getInt("crossRecipeDurationTicks",
+            CATEGORY_WIRELESS_MULTIBLOCK, wirelessCrossRecipeDurationTicks, 1, Integer.MAX_VALUE,
             "无线跨配方每批固定工作时间,单位 tick。修改后重启游戏生效。");
 
-        wirelessCrossRecipeParallelLimit = configuration.getInt(
-            "crossRecipeParallelLimit",
-            CATEGORY_WIRELESS_MULTIBLOCK,
-            wirelessCrossRecipeParallelLimit,
-            1,
-            Integer.MAX_VALUE,
+        wirelessCrossRecipeParallelLimit = configuration.getInt("crossRecipeParallelLimit",
+            CATEGORY_WIRELESS_MULTIBLOCK, wirelessCrossRecipeParallelLimit, 1, Integer.MAX_VALUE,
             "无线跨配方每批最多处理的配方数量。修改后重启游戏生效。");
 
-        recipeSpeedMode = configuration
-            .getInt("mode", CATEGORY_CUT_CORNERS, recipeSpeedMode, 0, 2, "配方时长修改模式。0=不修改; 1=固定时长; 2=倍率缩短。");
+        recipeSpeedMode = configuration.getInt("mode", CATEGORY_CUT_CORNERS, recipeSpeedMode, 0, 2,
+            "配方时长修改模式。0=不修改; 1=固定时长; 2=倍率缩短。");
 
-        recipeSpeedFixedDuration = configuration.getInt(
-            "fixedDuration",
-            CATEGORY_CUT_CORNERS,
-            recipeSpeedFixedDuration,
-            1,
-            Integer.MAX_VALUE,
-            "mode=1 时生效,所有配方时长固定为此 tick 数。");
+        recipeSpeedFixedDuration = configuration.getInt("fixedDuration", CATEGORY_CUT_CORNERS, recipeSpeedFixedDuration,
+            1, Integer.MAX_VALUE, "mode=1 时生效,所有配方时长固定为此 tick 数。");
 
-        recipeSpeedMultiplier = configuration.getFloat(
-            "multiplier",
-            CATEGORY_CUT_CORNERS,
-            recipeSpeedMultiplier,
-            0.0001F,
-            Float.MAX_VALUE,
-            "mode=2 时生效,配方时长乘以此倍率,结果至少为 1 tick。");
+        recipeSpeedMultiplier = configuration.getFloat("multiplier", CATEGORY_CUT_CORNERS, recipeSpeedMultiplier,
+            0.0001F, Float.MAX_VALUE, "mode=2 时生效,配方时长乘以此倍率,结果至少为 1 tick。");
 
-        recipeSpeedFullFluidOutput = configuration.getBoolean(
-            "fullFluidOutput",
-            CATEGORY_CUT_CORNERS,
-            recipeSpeedFullFluidOutput,
-            "开启后,单方块机器自动输出流体时一次抽干内部储罐,避免高速配方导致流体堵塞。");
+        recipeSpeedFullFluidOutput = configuration.getBoolean("fullFluidOutput", CATEGORY_CUT_CORNERS,
+            recipeSpeedFullFluidOutput, "开启后,单方块机器自动输出流体时一次抽干内部储罐,避免高速配方导致流体堵塞。");
 
-        enableCropInstantGrowth = configuration
-            .getBoolean("enableInstantGrowth", CATEGORY_CROPSNH, enableCropInstantGrowth, "开启后,CropsNH 作物棒在生长判定时直接成熟。");
+        enableCropInstantGrowth = configuration.getBoolean("enableInstantGrowth", CATEGORY_CROPSNH,
+            enableCropInstantGrowth, "开启后,CropsNH 作物棒在生长判定时直接成熟。");
 
-        railcraftBoilerInstantHeat = configuration.getBoolean(
-            "boilerInstantHeat",
-            CATEGORY_RAILCRAFT,
-            railcraftBoilerInstantHeat,
-            "开启后，高压和低压多方块锅炉在燃烧时瞬间升至最高温度；仍需燃料和水。");
-        railcraftBoilerSteamMultiplier = configuration.getFloat(
-            "boilerSteamMultiplier",
-            CATEGORY_RAILCRAFT,
-            railcraftBoilerSteamMultiplier,
-            1F,
-            1000F,
-            "多方块锅炉蒸汽产量倍率，默认 10；耗水和耗燃料规则不变，实际输出受储罐和管道限制。");
+        railcraftBoilerInstantHeat = configuration.getBoolean("boilerInstantHeat", CATEGORY_RAILCRAFT,
+            railcraftBoilerInstantHeat, "开启后，高压和低压多方块锅炉在燃烧时瞬间升至最高温度；仍需燃料和水。");
+        railcraftBoilerSteamMultiplier = configuration.getFloat("boilerSteamMultiplier", CATEGORY_RAILCRAFT,
+            railcraftBoilerSteamMultiplier, 1F, 1000F, "多方块锅炉蒸汽产量倍率，默认 10；耗水和耗燃料规则不变，实际输出受储罐和管道限制。");
 
-        enableCropMaxStats = configuration.getBoolean(
-            "enableMaxStats",
-            CATEGORY_CROPSNH,
-            enableCropMaxStats,
+        enableCropMaxStats = configuration.getBoolean("enableMaxStats", CATEGORY_CROPSNH, enableCropMaxStats,
             "开启后,所有新生成的 CropsNH 种子生长/产量/抗性三项属性都拉满到 31。");
 
-        enableCropGuaranteedSeedDrop = configuration.getBoolean(
-            "enableGuaranteedSeedDrop",
-            CATEGORY_CROPSNH,
-            enableCropGuaranteedSeedDrop,
-            "开启后,左键收获成熟 CropsNH 作物必定掉落种子,绕过抗性概率判定。");
+        enableCropGuaranteedSeedDrop = configuration.getBoolean("enableGuaranteedSeedDrop", CATEGORY_CROPSNH,
+            enableCropGuaranteedSeedDrop, "开启后,左键收获成熟 CropsNH 作物必定掉落种子,绕过抗性概率判定。");
 
-        workingApiarySpeed = configuration
-            .getFloat("speed", "WorkingApiary", 1F, 0.05F, 64F, "工作蜂箱速度倍率。1 为原版；同时加速生产、繁殖、寿命消耗、蜂框磨损和蜜蜂效果。重启生效。");
-        workingApiaryProducts = configuration
-            .getFloat("products", "WorkingApiary", 5F, 0F, 64F, "普通产物数量倍率。0 禁用，1 为原版；小数部分按概率取整，不改变原版出产概率。重启生效。");
-        workingApiarySpecialties = configuration
-            .getFloat("specialties", "WorkingApiary", 5F, 0F, 64F, "特产数量倍率。仍需满足现有特产条件；0 禁用，1 为原版。重启生效。");
-        workingApiaryLifespan = configuration.getFloat(
-            "lifespan",
-            "WorkingApiary",
-            2_147_436F,
-            0.05F,
-            100_000_000F,
+        workingApiarySpeed = configuration.getFloat("speed", "WorkingApiary", 1F, 0.05F, 64F,
+            "工作蜂箱速度倍率。1 为原版；同时加速生产、繁殖、寿命消耗、蜂框磨损和蜜蜂效果。重启生效。");
+        workingApiaryProducts = configuration.getFloat("products", "WorkingApiary", 5F, 0F, 64F,
+            "普通产物数量倍率。0 禁用，1 为原版；小数部分按概率取整，不改变原版出产概率。重启生效。");
+        workingApiarySpecialties = configuration.getFloat("specialties", "WorkingApiary", 5F, 0F, 64F,
+            "特产数量倍率。仍需满足现有特产条件；0 禁用，1 为原版。重启生效。");
+        workingApiaryLifespan = configuration.getFloat("lifespan", "WorkingApiary", 2_147_436F, 0.05F, 100_000_000F,
             "蜂后寿命倍率。默认 2147436 倍；1 为原版，增大可抵消加速的寿命消耗。重启生效。");
-        workingApiaryMutation = configuration
-            .getFloat("mutation", "WorkingApiary", 1F, 0F, 64F, "杂交概率倍率。与蜂框、养蜂模式等原版修正叠加；1 为原版，0 禁用突变。重启生效。");
+        workingApiaryMutation = configuration.getFloat("mutation", "WorkingApiary", 1F, 0F, 64F,
+            "杂交概率倍率。与蜂框、养蜂模式等原版修正叠加；1 为原版，0 禁用突变。重启生效。");
 
-        enableBeeAlwaysJubilant = configuration.getBoolean(
-            "enableBeeAlwaysJubilant",
-            CATEGORY_FORESTRY,
-            enableBeeAlwaysJubilant,
-            "开启后,所有蜜蜂产出特殊产物时都视为气候满足,普通蜂箱也能在任意气候下产出特产。");
+        enableBeeAlwaysJubilant = configuration.getBoolean("enableBeeAlwaysJubilant", CATEGORY_FORESTRY,
+            enableBeeAlwaysJubilant, "开启后,所有蜜蜂产出特殊产物时都视为气候满足,普通蜂箱也能在任意气候下产出特产。");
 
-        enableBeeHomozygousOffspring = configuration.getBoolean(
-            "enableHomozygousOffspring",
-            CATEGORY_FORESTRY,
-            enableBeeHomozygousOffspring,
-            "开启后,普通蜂箱/蜂房杂交产出的后代只保留纯合基因,不产出杂合子。");
+        enableBeeHomozygousOffspring = configuration.getBoolean("enableHomozygousOffspring", CATEGORY_FORESTRY,
+            enableBeeHomozygousOffspring, "开启后,普通蜂箱/蜂房杂交产出的后代只保留纯合基因,不产出杂合子。");
 
-        enableBeeMaxGenomeOnBreed = configuration.getBoolean(
-            "enableMaxGenomeOnBreed",
-            CATEGORY_FORESTRY,
-            enableBeeMaxGenomeOnBreed,
-            "开启后,普通蜂箱/蜂房杂交产出的后代会被真正写成满基因,物种保留不变。");
+        enableBeeMaxGenomeOnBreed = configuration.getBoolean("enableMaxGenomeOnBreed", CATEGORY_FORESTRY,
+            enableBeeMaxGenomeOnBreed, "开启后,普通蜂箱/蜂房杂交产出的后代会被真正写成满基因,物种保留不变。");
 
-        enableBeeIgnoreDimensionMutation = configuration.getBoolean(
-            "enableBeeIgnoreDimensionMutation",
-            CATEGORY_FORESTRY,
-            enableBeeIgnoreDimensionMutation,
-            "开启后,蜜蜂杂交忽略维度限制,原本要求特定维度的蜂可在任意维度杂交。");
+        enableBeeIgnoreDimensionMutation = configuration.getBoolean("enableBeeIgnoreDimensionMutation",
+            CATEGORY_FORESTRY, enableBeeIgnoreDimensionMutation, "开启后,蜜蜂杂交忽略维度限制,原本要求特定维度的蜂可在任意维度杂交。");
 
-        enableBeeIgnoreResourceMutation = configuration.getBoolean(
-            "enableBeeIgnoreResourceMutation",
-            CATEGORY_FORESTRY,
-            enableBeeIgnoreResourceMutation,
-            "开启后,蜜蜂杂交忽略蜂箱下方指定方块或运行中 GT 机器之类的硬性条件。");
+        enableBeeIgnoreResourceMutation = configuration.getBoolean("enableBeeIgnoreResourceMutation", CATEGORY_FORESTRY,
+            enableBeeIgnoreResourceMutation, "开启后,蜜蜂杂交忽略蜂箱下方指定方块或运行中 GT 机器之类的硬性条件。");
 
-        disableSpiceOfLifeDiminishingReturns = configuration.getBoolean(
-            "disableDiminishingReturns",
-            CATEGORY_SPICE_OF_LIFE,
-            disableSpiceOfLifeDiminishingReturns,
+        disableSpiceOfLifeDiminishingReturns = configuration.getBoolean("disableDiminishingReturns",
+            CATEGORY_SPICE_OF_LIFE, disableSpiceOfLifeDiminishingReturns,
             "开启后,所有食物始终恢复原本的饱食度与饱和度,进食时间也不再随重复食用而延长。关闭后恢复 Spice of Life 原本规则。");
 
-        disableWarpEvents = configuration.getBoolean(
-            "disableWarpEvents",
-            CATEGORY_THAUMCRAFT,
-            disableWarpEvents,
+        disableWarpEvents = configuration.getBoolean("disableWarpEvents", CATEGORY_THAUMCRAFT, disableWarpEvents,
             "开启后,神秘时代及 WarpTheory 的扭曲事件永不触发,但永久/临时/黏滞扭曲值及临时扭曲的正常衰减不受影响。");
 
-        tcUnlockAllResearch = configuration.getBoolean(
-            "unlockAllResearch",
-            CATEGORY_THAUMCRAFT,
-            tcUnlockAllResearch,
+        tcUnlockAllResearch = configuration.getBoolean("unlockAllResearch", CATEGORY_THAUMCRAFT, tcUnlockAllResearch,
             "开启后,所有研究都视为已完成。注意:研究笔记本 GUI 可能显示异常。");
 
-        tcFreeResearchAspects = configuration.getBoolean(
-            "freeResearchAspects",
-            CATEGORY_THAUMCRAFT,
-            tcFreeResearchAspects,
-            "开启后,研究点数不会因研究消耗而减少,但扫描获得的研究点照常增加。");
+        tcFreeResearchAspects = configuration.getBoolean("freeResearchAspects", CATEGORY_THAUMCRAFT,
+            tcFreeResearchAspects, "开启后,研究点数不会因研究消耗而减少,但扫描获得的研究点照常增加。");
 
-        tcScanIgnoreParentAspects = configuration.getBoolean(
-            "scanIgnoreParentAspects",
-            CATEGORY_THAUMCRAFT,
-            tcScanIgnoreParentAspects,
-            "开启后,扫描源质时无视必须先发现父源质的顺序要求,可直接发现复合源质。");
+        tcScanIgnoreParentAspects = configuration.getBoolean("scanIgnoreParentAspects", CATEGORY_THAUMCRAFT,
+            tcScanIgnoreParentAspects, "开启后,扫描源质时无视必须先发现父源质的顺序要求,可直接发现复合源质。");
 
-        tcInfusionNoInstability = configuration.getBoolean(
-            "infusionNoInstability",
-            CATEGORY_THAUMCRAFT,
-            tcInfusionNoInstability,
-            "开启后,注魔祭坛注魔时不会产生失稳负面事件,合成进度照常进行。");
+        tcInfusionNoInstability = configuration.getBoolean("infusionNoInstability", CATEGORY_THAUMCRAFT,
+            tcInfusionNoInstability, "开启后,注魔祭坛注魔时不会产生失稳负面事件,合成进度照常进行。");
 
-        tcInfiniteVis = configuration
-            .getBoolean("infiniteVis", CATEGORY_THAUMCRAFT, tcInfiniteVis, "开启后,从 vis 网络抽取魔力永远成功且不消耗节点存量。");
-        arcaneVisPerEssentia = configuration.getInt(
-            "arcaneVisPerEssentia",
-            CATEGORY_THAUMCRAFT,
-            arcaneVisPerEssentia,
-            1,
-            1000,
-            "奥术封包中每单位基础源质转换的 Vis 点数；默认 1。小数余量保留在供应器内。");
+        tcInfiniteVis = configuration.getBoolean("infiniteVis", CATEGORY_THAUMCRAFT, tcInfiniteVis,
+            "开启后,从 vis 网络抽取魔力永远成功且不消耗节点存量。");
+        arcaneVisPerEssentia = configuration.getInt("arcaneVisPerEssentia", CATEGORY_THAUMCRAFT, arcaneVisPerEssentia,
+            1, 1000, "奥术封包中每单位基础源质转换的 Vis 点数；默认 1。小数余量保留在供应器内。");
 
-        gtToolsCraftingDurability = configuration.getFloat(
-            "gtToolsCraftingDurability",
-            CATEGORY_GREGTECH,
-            gtToolsCraftingDurability,
-            1.0F,
-            Float.MAX_VALUE,
-            "GT 工具合成耐久消耗的除数。1 为原版,默认 100;正数消耗向上取整且至少为 1。不影响挖掘和攻击。");
+        gtToolsCraftingDurability = configuration.getFloat("gtToolsCraftingDurability", CATEGORY_GREGTECH,
+            gtToolsCraftingDurability, 1.0F, Float.MAX_VALUE, "GT 工具合成耐久消耗的除数。1 为原版,默认 100;正数消耗向上取整且至少为 1。不影响挖掘和攻击。");
 
-        enableAlwaysDisplayRecipeOwner = configuration.getBoolean(
-            "enableAlwaysDisplayRecipeOwner",
-            CATEGORY_GREGTECH,
-            enableAlwaysDisplayRecipeOwner,
-            "开启后,强制 GregTech 的 NEI 配方页面显示配方所属模组。");
+        enableAlwaysDisplayRecipeOwner = configuration.getBoolean("enableAlwaysDisplayRecipeOwner", CATEGORY_GREGTECH,
+            enableAlwaysDisplayRecipeOwner, "开启后,强制 GregTech 的 NEI 配方页面显示配方所属模组。");
 
-        enableAlwaysDisplayWailaAverageNS = configuration.getBoolean(
-            "enableAlwaysDisplayWailaAverageNS",
-            CATEGORY_GREGTECH,
-            enableAlwaysDisplayWailaAverageNS,
-            "开启后,强制 GregTech 的 Waila 信息显示平均耗时(ns)。");
+        enableAlwaysDisplayWailaAverageNS = configuration.getBoolean("enableAlwaysDisplayWailaAverageNS",
+            CATEGORY_GREGTECH, enableAlwaysDisplayWailaAverageNS, "开启后,强制 GregTech 的 Waila 信息显示平均耗时(ns)。");
 
-        enableAlwaysDisplayNEIOriginalVoltage = configuration.getBoolean(
-            "enableAlwaysDisplayNEIOriginalVoltage",
-            CATEGORY_GREGTECH,
-            enableAlwaysDisplayNEIOriginalVoltage,
-            "开启后,强制 GregTech 的 NEI 配方页面显示原始电压等级。");
+        enableAlwaysDisplayNEIOriginalVoltage = configuration.getBoolean("enableAlwaysDisplayNEIOriginalVoltage",
+            CATEGORY_GREGTECH, enableAlwaysDisplayNEIOriginalVoltage, "开启后,强制 GregTech 的 NEI 配方页面显示原始电压等级。");
 
-        releaseToSwap = configuration
-            .getBoolean("config.toolbelt.releaseToSwap", CATEGORY_TOOL_BELT, releaseToSwap, "开启后,松开工具腰带按键时与高亮物品交换。");
+        releaseToSwap = configuration.getBoolean("config.toolbelt.releaseToSwap", CATEGORY_TOOL_BELT, releaseToSwap,
+            "开启后,松开工具腰带按键时与高亮物品交换。");
 
-        allowClickOutsideBounds = configuration.getBoolean(
-            "config.toolbelt.allowClickOutsideBounds",
-            CATEGORY_TOOL_BELT,
-            allowClickOutsideBounds,
-            "开启后,允许点击径向菜单死区来关闭工具腰带。");
+        allowClickOutsideBounds = configuration.getBoolean("config.toolbelt.allowClickOutsideBounds",
+            CATEGORY_TOOL_BELT, allowClickOutsideBounds, "开启后,允许点击径向菜单死区来关闭工具腰带。");
 
-        displayEmptySlots = configuration
-            .getBoolean("config.toolbelt.displayEmptySlots", CATEGORY_TOOL_BELT, displayEmptySlots, "开启后,显示径向菜单中的空槽位。");
+        displayEmptySlots = configuration.getBoolean("config.toolbelt.displayEmptySlots", CATEGORY_TOOL_BELT,
+            displayEmptySlots, "开启后,显示径向菜单中的空槽位。");
 
-        minecraftHasNoCircles = configuration.getBoolean(
-            "config.toolbelt.minecraftHasNoCircles",
-            CATEGORY_TOOL_BELT,
-            minecraftHasNoCircles,
-            "开启后,使用方形风格绘制径向菜单。");
+        minecraftHasNoCircles = configuration.getBoolean("config.toolbelt.minecraftHasNoCircles", CATEGORY_TOOL_BELT,
+            minecraftHasNoCircles, "开启后,使用方形风格绘制径向菜单。");
 
-        radialDeadzoneOffset = configuration.getFloat(
-            "config.toolbelt.radialDeadzoneOffset",
-            CATEGORY_TOOL_BELT,
-            radialDeadzoneOffset,
-            0.0f,
-            64.0f,
-            "工具腰带径向菜单中心死区额外偏移像素数。");
+        radialDeadzoneOffset = configuration.getFloat("config.toolbelt.radialDeadzoneOffset", CATEGORY_TOOL_BELT,
+            radialDeadzoneOffset, 0.0f, 64.0f, "工具腰带径向菜单中心死区额外偏移像素数。");
 
         ConfigData.syncFromMainConfig();
 
@@ -449,8 +323,7 @@ public class Config {
     /** Applies the taskbar option edited through Forge's live configuration screen. */
     public static synchronized void refreshClientTaskbarButton() {
         ensureLoaded();
-        hideWindowsTaskbarButton = configuration.getCategory(CATEGORY_CLIENT)
-            .get("hideWindowsTaskbarButton")
+        hideWindowsTaskbarButton = configuration.getCategory(CATEGORY_CLIENT).get("hideWindowsTaskbarButton")
             .getBoolean(false);
     }
 

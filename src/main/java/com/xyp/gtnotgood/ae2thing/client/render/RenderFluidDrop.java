@@ -17,9 +17,7 @@ public class RenderFluidDrop implements ISlotRender {
     @Override
     public Predicate<Slot> get() {
         // [液滴分类] 可迁原生：仅判定槽位是否为流体以决定是否走本渲染器，属图标渲染
-        return slot -> FluidDropCompat.isFluidDrop(
-            slot.getStack()
-                .getItem());
+        return slot -> FluidDropCompat.isFluidDrop(slot.getStack().getItem());
     }
 
     @Override

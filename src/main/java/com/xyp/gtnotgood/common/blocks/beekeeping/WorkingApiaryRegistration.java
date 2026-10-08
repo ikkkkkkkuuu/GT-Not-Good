@@ -24,8 +24,7 @@ public final class WorkingApiaryRegistration {
     /** Converts an existing apiary, preserving the pack's original acquisition requirements. */
     public static void registerRecipe() {
         if (PluginApiculture.blocks == null || PluginApiculture.blocks.apiculture == null) return;
-        GameRegistry.addShapelessRecipe(
-            GTNGItemList.WorkingApiary.get(1),
+        GameRegistry.addShapelessRecipe(GTNGItemList.WorkingApiary.get(1),
             PluginApiculture.blocks.apiculture.get(BlockApicultureType.APIARY));
     }
 }

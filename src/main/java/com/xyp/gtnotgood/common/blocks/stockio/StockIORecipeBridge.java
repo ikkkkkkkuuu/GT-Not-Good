@@ -28,10 +28,12 @@ public final class StockIORecipeBridge {
 
     /** ME inventory changes do not touch a machine slot, so idle machines retry once per second. */
     public static void retryIdle(MTEBasicMachine machine, IGregTechTileEntity base, long tick) {
-        if (base.isServerSide() && tick % 20 == 0
-            && machine.mMaxProgresstime <= 0
-            && base.isAllowedToWork()
-            && find(base) != null) base.markInventoryBeenModified();
+        if (
+            base.isServerSide() && tick % 20 == 0
+                && machine.mMaxProgresstime <= 0
+                && base.isAllowedToWork()
+                && find(base) != null
+        ) base.markInventoryBeenModified();
     }
 
     /**
@@ -90,8 +92,9 @@ public final class StockIORecipeBridge {
             if (tile == null || tile.isInvalid()) continue;
             StockIOLogic logic = null;
             if (tile instanceof TileStockIOInterface block) logic = block.getLogic();
-            else if (tile instanceof IPartHost host
-                && host.getPart(side.getOpposite()) instanceof PartStockIOInterface part) logic = part.getLogic();
+            else if (
+                tile instanceof IPartHost host && host.getPart(side.getOpposite()) instanceof PartStockIOInterface part
+            ) logic = part.getLogic();
             if (logic != null && logic.getTargetSide() == side.getOpposite() && logic.isEnabled() && logic.isOnline())
                 return logic;
         }
@@ -110,8 +113,7 @@ public final class StockIORecipeBridge {
         private Attempt(MTEBasicMachine machine, StockIOSnapshot snapshot) {
             this.machine = machine;
             inputs = new LocalInputs(snapshot);
-            outputs = Arrays.stream(machine.mOutputItems)
-                .map(stack -> stack == null ? null : stack.copy())
+            outputs = Arrays.stream(machine.mOutputItems).map(stack -> stack == null ? null : stack.copy())
                 .toArray(ItemStack[]::new);
             outputFluid = machine.mOutputFluid == null ? null : machine.mOutputFluid.copy();
             duration = machine.mMaxProgresstime;
@@ -144,8 +146,7 @@ public final class StockIORecipeBridge {
         ItemStack[] items(ItemStack[] local) {
             if (items != null) return items;
             itemOwners = local == null ? new ItemStack[0] : local.clone();
-            itemCopies = Arrays.stream(itemOwners)
-                .map(stack -> stack == null ? null : stack.copy())
+            itemCopies = Arrays.stream(itemOwners).map(stack -> stack == null ? null : stack.copy())
                 .toArray(ItemStack[]::new);
             int count = itemCopies.length;
             for (ItemStack stack : snapshot.items) if (stack != null) count++;
@@ -158,8 +159,7 @@ public final class StockIORecipeBridge {
         FluidStack[] fluids(FluidStack[] local) {
             if (fluids != null) return fluids;
             fluidOwners = local == null ? new FluidStack[0] : local.clone();
-            fluidCopies = Arrays.stream(fluidOwners)
-                .map(stack -> stack == null ? null : stack.copy())
+            fluidCopies = Arrays.stream(fluidOwners).map(stack -> stack == null ? null : stack.copy())
                 .toArray(FluidStack[]::new);
             int count = fluidCopies.length;
             for (FluidStack stack : snapshot.fluids) if (stack != null) count++;
@@ -174,19 +174,23 @@ public final class StockIORecipeBridge {
                 for (int i = 0; i < itemOwners.length; i++) {
                     ItemStack owner = itemOwners[i];
                     ItemStack copy = itemCopies[i];
-                    if (owner != null && (copy == null || !owner.isItemEqual(copy)
-                        || !ItemStack.areItemStackTagsEqual(owner, copy)
-                        || copy.stackSize < 0
-                        || copy.stackSize > owner.stackSize)) return false;
+                    if (
+                        owner != null && (copy == null || !owner.isItemEqual(copy)
+                            || !ItemStack.areItemStackTagsEqual(owner, copy)
+                            || copy.stackSize < 0
+                            || copy.stackSize > owner.stackSize)
+                    ) return false;
                 }
             }
             if (fluidOwners != null) {
                 for (int i = 0; i < fluidOwners.length; i++) {
                     FluidStack owner = fluidOwners[i];
                     FluidStack copy = fluidCopies[i];
-                    if (owner != null
-                        && (copy == null || !owner.isFluidEqual(copy) || copy.amount < 0 || copy.amount > owner.amount))
-                        return false;
+                    if (
+                        owner != null && (copy == null || !owner.isFluidEqual(copy)
+                            || copy.amount < 0
+                            || copy.amount > owner.amount)
+                    ) return false;
                 }
             }
             return true;

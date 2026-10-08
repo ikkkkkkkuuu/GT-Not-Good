@@ -78,9 +78,11 @@ public final class ThaumcraftRecipeExtractor implements IRecipeExtractor {
     @Override
     public List<OrderStack<?>> getOutputIngredients(List<PositionedStack> rawOutputs) {
         // FluidRecipe always places getResultStack first; later entries are informational other stacks.
-        if (rawOutputs.isEmpty() || rawOutputs.get(0) == null
-            || rawOutputs.get(0).item == null
-            || isAspectDisplay(rawOutputs.get(0).item)) {
+        if (
+            rawOutputs.isEmpty() || rawOutputs.get(0) == null
+                || rawOutputs.get(0).item == null
+                || isAspectDisplay(rawOutputs.get(0).item)
+        ) {
             return Collections.emptyList();
         }
         return Collections.singletonList(new OrderStack<>(rawOutputs.get(0).item.copy(), 0));
@@ -94,11 +96,12 @@ public final class ThaumcraftRecipeExtractor implements IRecipeExtractor {
      * @return whether the stack represents an aspect rather than a physical ingredient
      */
     private static boolean isAspectDisplay(ItemStack stack) {
-        for (Class<?> type = stack.getItem()
-            .getClass(); type != null; type = type.getSuperclass()) {
+        for (Class<?> type = stack.getItem().getClass(); type != null; type = type.getSuperclass()) {
             String name = type.getName();
-            if ("com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect".equals(name)
-                || "com.djgiannuzz.thaumcraftneiplugin.items.ItemAspect".equals(name)) return true;
+            if (
+                "com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect".equals(name)
+                    || "com.djgiannuzz.thaumcraftneiplugin.items.ItemAspect".equals(name)
+            ) return true;
         }
         return false;
     }

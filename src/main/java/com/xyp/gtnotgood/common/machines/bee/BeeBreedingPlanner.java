@@ -33,16 +33,10 @@ public final class BeeBreedingPlanner {
         Set<String> unlocked = unlockedSpecies == null ? Collections.emptySet() : new HashSet<>(unlockedSpecies);
         Candidate candidate = resolve(targetUID, unlocked, new HashSet<>(), new HashMap<>());
         if (candidate == null) {
-            return new Plan(
-                targetUID,
-                Collections.emptyList(),
-                Collections.singleton(targetUID),
+            return new Plan(targetUID, Collections.emptyList(), Collections.singleton(targetUID),
                 Double.POSITIVE_INFINITY);
         }
-        return new Plan(
-            targetUID,
-            new ArrayList<>(candidate.stepsByResult.values()),
-            candidate.missingSpecies,
+        return new Plan(targetUID, new ArrayList<>(candidate.stepsByResult.values()), candidate.missingSpecies,
             candidate.expectedAttempts());
     }
 
@@ -55,16 +49,13 @@ public final class BeeBreedingPlanner {
         if (!visiting.add(species)) return null;
 
         List<BeeBreedingHelper.MutationData> mutations = BeeBreedingHelper.getMutationsForUID(species);
-        mutations.removeIf(
-            mutation -> mutation.parent1 == null || mutation.parent1.isEmpty()
-                || mutation.parent2 == null
-                || mutation.parent2.isEmpty()
-                || mutation.parent1.equals(species)
-                || mutation.parent2.equals(species));
-        mutations.sort(
-            Comparator.comparing((BeeBreedingHelper.MutationData mutation) -> mutation.parent1)
-                .thenComparing(mutation -> mutation.parent2)
-                .thenComparingDouble(mutation -> -mutation.chance));
+        mutations.removeIf(mutation -> mutation.parent1 == null || mutation.parent1.isEmpty()
+            || mutation.parent2 == null
+            || mutation.parent2.isEmpty()
+            || mutation.parent1.equals(species)
+            || mutation.parent2.equals(species));
+        mutations.sort(Comparator.comparing((BeeBreedingHelper.MutationData mutation) -> mutation.parent1)
+            .thenComparing(mutation -> mutation.parent2).thenComparingDouble(mutation -> -mutation.chance));
 
         Candidate best = null;
         for (BeeBreedingHelper.MutationData mutation : mutations) {
@@ -72,9 +63,7 @@ public final class BeeBreedingPlanner {
             Candidate parent2 = resolve(mutation.parent2, unlocked, visiting, memo);
             if (parent1 == null || parent2 == null) continue;
 
-            Candidate candidate = Candidate.combine(
-                parent1,
-                parent2,
+            Candidate candidate = Candidate.combine(parent1, parent2,
                 new BeeBreedingHelper.BreedingStep(mutation.parent1, mutation.parent2, species, mutation.chance));
             if (best == null || compare(candidate, best) < 0) {
                 best = candidate;
@@ -98,8 +87,7 @@ public final class BeeBreedingPlanner {
 
         int stepCount = Integer.compare(left.stepsByResult.size(), right.stepsByResult.size());
         if (stepCount != 0) return stepCount;
-        return left.signature()
-            .compareTo(right.signature());
+        return left.signature().compareTo(right.signature());
     }
 
     private static final class Candidate {
@@ -146,11 +134,7 @@ public final class BeeBreedingPlanner {
         private String signature() {
             StringBuilder signature = new StringBuilder();
             for (BeeBreedingHelper.BreedingStep step : stepsByResult.values()) {
-                signature.append(step.parent1)
-                    .append('+')
-                    .append(step.parent2)
-                    .append('>')
-                    .append(step.result)
+                signature.append(step.parent1).append('+').append(step.parent2).append('>').append(step.result)
                     .append(';');
             }
             return signature.toString();
@@ -181,9 +165,7 @@ public final class BeeBreedingPlanner {
         }
 
         public String getFirstMissingSpecies() {
-            return missingSpecies.isEmpty() ? ""
-                : missingSpecies.iterator()
-                    .next();
+            return missingSpecies.isEmpty() ? "" : missingSpecies.iterator().next();
         }
 
         public List<BeeBreedingHelper.BreedingStep> getReadySteps(Set<String> unlockedSpecies, int limit) {

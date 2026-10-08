@@ -30,8 +30,7 @@ public abstract class MixinRecipeItemInputHandler {
                 return;
             }
             if (g.getFirstScreenGeneral() instanceof AEBaseGui aeBaseGui) {
-                Minecraft.getMinecraft()
-                    .displayGuiScreen(g.getFirstScreenGeneral());
+                Minecraft.getMinecraft().displayGuiScreen(g.getFirstScreenGeneral());
                 Util.setSearchFieldText(aeBaseGui, item.getDisplayName());
                 cir.setReturnValue(true);
             }

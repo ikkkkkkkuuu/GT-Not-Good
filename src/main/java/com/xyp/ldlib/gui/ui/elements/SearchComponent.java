@@ -59,9 +59,7 @@ public final class SearchComponent<T> extends UIElement {
     public List<T> search(String query) {
         String needle = query.toLowerCase(Locale.ROOT);
         List<T> result = new ArrayList<>();
-        for (T item : candidates) if (names.apply(item)
-            .toLowerCase(Locale.ROOT)
-            .contains(needle)) result.add(item);
+        for (T item : candidates) if (names.apply(item).toLowerCase(Locale.ROOT).contains(needle)) result.add(item);
         return result;
     }
 
@@ -74,8 +72,7 @@ public final class SearchComponent<T> extends UIElement {
 
     @Override
     public void layout() {
-        getChildren().get(0)
-            .setSize(width, height);
+        getChildren().get(0).setSize(width, height);
         super.layout();
     }
 
@@ -92,10 +89,9 @@ public final class SearchComponent<T> extends UIElement {
             TextField field = theme.textField(3, 3, panel.getWidth() - 6, 20);
             results = new VirtualScrollerView<>(3, 26, panel.getWidth() - 6, 102, 20, (item, index) -> {
                 UIElement row = new UIElement(0, 0, 0, 20);
-                row.setBackground(
-                    (mx, my, x, y, w, h) -> theme
-                        .text(index == selected ? theme.accent : theme.button, () -> names.apply(item))
-                        .draw(mx, my, x, y, w, h));
+                row.setBackground((mx, my, x, y, w, h) -> theme
+                    .text(index == selected ? theme.accent : theme.button, () -> names.apply(item))
+                    .draw(mx, my, x, y, w, h));
                 row.addEventListener(UIEvents.CLICK, e -> { if (e.button == 0) choose(item); });
                 return row;
             });
@@ -110,15 +106,12 @@ public final class SearchComponent<T> extends UIElement {
             panel.addChild(results);
             addChild(panel);
             addEventListener(UIEvents.KEY_DOWN, e -> {
-                int count = results.getItems()
-                    .size();
+                int count = results.getItems().size();
                 if (e.keyCode == Keyboard.KEY_UP || e.keyCode == Keyboard.KEY_DOWN) {
                     selected = Math.max(0, Math.min(count - 1, selected + (e.keyCode == Keyboard.KEY_UP ? -1 : 1)));
                     results.revealIndex(selected);
                 } else if (e.keyCode == Keyboard.KEY_RETURN || e.keyCode == Keyboard.KEY_NUMPADENTER) {
-                    if (count > 0) choose(
-                        results.getItems()
-                            .get(selected));
+                    if (count > 0) choose(results.getItems().get(selected));
                 } else return;
                 e.preventDefault();
                 e.stopPropagation();
@@ -143,9 +136,7 @@ public final class SearchComponent<T> extends UIElement {
             if (top + h > getHeight()) top -= h + SearchComponent.this.height;
             panel.setPosition(Math.max(0, Math.min(left, getWidth() - w)), Math.max(0, top));
             panel.setSize(w, h);
-            panel.getChildren()
-                .get(0)
-                .setSize(Math.max(0, w - 6), 20);
+            panel.getChildren().get(0).setSize(Math.max(0, w - 6), 20);
             results.setSize(Math.max(0, w - 6), Math.max(0, h - 30));
             results.layout();
         }

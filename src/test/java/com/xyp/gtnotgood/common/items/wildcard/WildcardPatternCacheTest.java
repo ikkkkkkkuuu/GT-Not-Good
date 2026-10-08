@@ -27,8 +27,7 @@ public class WildcardPatternCacheTest {
         for (int i = 0; i < 1000; i++) {
             assertEquals(Integer.valueOf(0), cache.get(stack, null, () -> {
                 builds.incrementAndGet();
-                stack.getTagCompound()
-                    .setInteger("WPExpandedCount", 0);
+                stack.getTagCompound().setInteger("WPExpandedCount", 0);
                 return 0;
             }));
         }
@@ -41,16 +40,11 @@ public class WildcardPatternCacheTest {
         ItemStack stack = pattern();
         AtomicInteger builds = new AtomicInteger();
         assertEquals(Integer.valueOf(1), cache.get(stack, null, builds::incrementAndGet));
-        stack.getTagCompound()
-            .getTagList("WPInputComponents", 10)
-            .getCompoundTagAt(0)
-            .setLong("Amount", 2000);
+        stack.getTagCompound().getTagList("WPInputComponents", 10).getCompoundTagAt(0).setLong("Amount", 2000);
         assertEquals(Integer.valueOf(2), cache.get(stack, null, builds::incrementAndGet));
-        stack.getTagCompound()
-            .setString("WPFilterComponents", "Copper");
+        stack.getTagCompound().setString("WPFilterComponents", "Copper");
         assertEquals(Integer.valueOf(3), cache.get(stack, null, builds::incrementAndGet));
-        stack.getTagCompound()
-            .removeTag("WPFilterComponents");
+        stack.getTagCompound().removeTag("WPFilterComponents");
         assertEquals(Integer.valueOf(4), cache.get(stack, null, builds::incrementAndGet));
         assertEquals(Integer.valueOf(4), cache.get(stack.copy(), null, builds::incrementAndGet));
     }
@@ -69,9 +63,7 @@ public class WildcardPatternCacheTest {
         Object nextWorld = new Object();
         assertEquals(Integer.valueOf(3), cache.get(stack, nextWorld, builds::incrementAndGet));
         ItemStack replacement = new ItemStack(new Item(), 64, 1);
-        replacement.setTagCompound(
-            (NBTTagCompound) stack.getTagCompound()
-                .copy());
+        replacement.setTagCompound((NBTTagCompound) stack.getTagCompound().copy());
         assertEquals(Integer.valueOf(4), cache.get(replacement, nextWorld, builds::incrementAndGet));
     }
 

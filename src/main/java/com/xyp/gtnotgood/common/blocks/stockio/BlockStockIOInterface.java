@@ -45,19 +45,15 @@ public final class BlockStockIOInterface extends BlockMEBridgeBase {
     @Override
     public int onBlockPlaced(World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ,
         int metadata) {
-        return ForgeDirection.getOrientation(side)
-            .getOpposite()
-            .ordinal();
+        return ForgeDirection.getOrientation(side).getOpposite().ordinal();
     }
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, x, y, z, placer, stack);
         if (!world.isRemote && world.getTileEntity(x, y, z) instanceof TileStockIOInterface tile) {
-            if (stack.hasTagCompound()) tile.getLogic()
-                .readContents(stack.getTagCompound());
-            tile.getLogic()
-                .setTargetSide(ForgeDirection.getOrientation(world.getBlockMetadata(x, y, z)));
+            if (stack.hasTagCompound()) tile.getLogic().readContents(stack.getTagCompound());
+            tile.getLogic().setTargetSide(ForgeDirection.getOrientation(world.getBlockMetadata(x, y, z)));
             tile.markDirty();
         }
     }
@@ -72,9 +68,7 @@ public final class BlockStockIOInterface extends BlockMEBridgeBase {
         ArrayList<ItemStack> drops = new ArrayList<>();
         ItemStack portable = new ItemStack(this);
         if (world.getTileEntity(x, y, z) instanceof TileStockIOInterface tile) {
-            portable.setTagCompound(
-                tile.getLogic()
-                    .getRemovalContents());
+            portable.setTagCompound(tile.getLogic().getRemovalContents());
         }
         drops.add(portable);
         return drops;

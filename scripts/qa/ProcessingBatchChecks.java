@@ -162,7 +162,7 @@ public final class ProcessingBatchChecks {
         TestCpu cpu = new TestCpu(computer, details, 1_000_000_000L);
         var plan = planner.plan(
             1_000_000_000L,
-            MediumStrategy.BATCH,
+            MediumStrategy.Batch,
             Arrays.asList(inputs),
             details.getCondensedAEOutputs(),
             cpu.stock(),

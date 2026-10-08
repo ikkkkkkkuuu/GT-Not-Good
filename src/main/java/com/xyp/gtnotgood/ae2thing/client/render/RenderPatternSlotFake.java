@@ -27,11 +27,7 @@ import appeng.util.item.AEItemStack;
 
 public class RenderPatternSlotFake implements ISlotRender {
 
-    private static final ItemStack PATTERN = AEApi.instance()
-        .definitions()
-        .items()
-        .encodedPattern()
-        .maybeStack(1)
+    private static final ItemStack PATTERN = AEApi.instance().definitions().items().encodedPattern().maybeStack(1)
         .orNull();
 
     @Override

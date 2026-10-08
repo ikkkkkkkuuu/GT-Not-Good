@@ -57,13 +57,10 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      * @return the same button instance after applying backgrounds
      */
     protected ButtonWidget<?> applyModernButton(ButtonWidget<?> button, BooleanSupplier enabled) {
-        button.background(
-            new DynamicDrawable(
-                () -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
-        button.hoverBackground(
-            new DynamicDrawable(
-                () -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON_HOVER
-                    : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
+        button.background(new DynamicDrawable(
+            () -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
+        button.hoverBackground(new DynamicDrawable(() -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON_HOVER
+            : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
         return button;
     }
 
@@ -85,10 +82,8 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
             if (!enabled.getAsBoolean()) return GTNGGuiTextures.MODERN_BUTTON_DISABLED;
             return selected.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON_PRESSED : GTNGGuiTextures.MODERN_BUTTON;
         }));
-        button.hoverBackground(
-            new DynamicDrawable(
-                () -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON_HOVER
-                    : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
+        button.hoverBackground(new DynamicDrawable(() -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON_HOVER
+            : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
         return button;
     }
 
@@ -103,25 +98,16 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      * @return the same toggle button instance after applying backgrounds
      */
     protected ToggleButton applyModernToggleButton(ToggleButton button, BooleanSupplier enabled) {
-        button.background(
-            false,
-            new DynamicDrawable(
-                () -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
-        button.background(
-            true,
-            new DynamicDrawable(
-                () -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON_PRESSED
-                    : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
-        button.hoverBackground(
-            false,
-            new DynamicDrawable(
-                () -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON_HOVER
-                    : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
-        button.hoverBackground(
-            true,
-            new DynamicDrawable(
-                () -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON_HOVER
-                    : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
+        button.background(false, new DynamicDrawable(
+            () -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
+        button.background(true, new DynamicDrawable(() -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON_PRESSED
+            : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
+        button.hoverBackground(false,
+            new DynamicDrawable(() -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON_HOVER
+                : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
+        button.hoverBackground(true,
+            new DynamicDrawable(() -> enabled.getAsBoolean() ? GTNGGuiTextures.MODERN_BUTTON_HOVER
+                : GTNGGuiTextures.MODERN_BUTTON_DISABLED));
         return button;
     }
 
@@ -143,21 +129,13 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      */
     @Override
     protected ParentWidget<?> createTerminalParentWidget(ModularPanel panel, PanelSyncManager syncManager) {
-        return new ParentWidget<>().size(getTerminalWidgetWidth(), getTerminalWidgetHeight())
-            .paddingTop(4)
-            .paddingBottom(4)
-            .paddingLeft(4)
-            .paddingRight(0)
-            .background(GTNGGuiTextures.MODERN_VAULT_PANEL_BORDER)
-            .child(
-                createTerminalTextWidget(syncManager, panel)
-                    .size(getTerminalWidgetWidth() - 4, getTerminalWidgetHeight() - 8)
-                    .collapseDisabledChild())
-            .childIf(
-                multiblock.supportsTerminalRightCornerColumn(),
+        return new ParentWidget<>().size(getTerminalWidgetWidth(), getTerminalWidgetHeight()).paddingTop(4)
+            .paddingBottom(4).paddingLeft(4).paddingRight(0).background(GTNGGuiTextures.MODERN_VAULT_PANEL_BORDER)
+            .child(createTerminalTextWidget(syncManager, panel)
+                .size(getTerminalWidgetWidth() - 4, getTerminalWidgetHeight() - 8).collapseDisabledChild())
+            .childIf(multiblock.supportsTerminalRightCornerColumn(),
                 () -> createTerminalRightCornerColumn(panel, syncManager))
-            .childIf(
-                multiblock.supportsTerminalLeftCornerColumn(),
+            .childIf(multiblock.supportsTerminalLeftCornerColumn(),
                 () -> createTerminalLeftCornerColumn(panel, syncManager));
     }
 
@@ -173,14 +151,8 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      */
     @Override
     protected IWidget createInventoryRow(ModularPanel panel, PanelSyncManager syncManager) {
-        return Flow.row()
-            .fullWidth()
-            .height(76)
-            .childIf(
-                multiblock.doesBindPlayerInventory(),
-                () -> SlotGroupWidget
-                    .playerInventory((index, slot) -> slot.background(GTNGGuiTextures.MODERN_VAULT_ITEM_SLOT))
-                    .marginLeft(4))
+        return Flow.row().fullWidth().height(76).childIf(multiblock.doesBindPlayerInventory(), () -> SlotGroupWidget
+            .playerInventory((index, slot) -> slot.background(GTNGGuiTextures.MODERN_VAULT_ITEM_SLOT)).marginLeft(4))
             .child(createButtonColumn(panel, syncManager));
     }
 
@@ -198,8 +170,7 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
                     return GTNGGuiTextures.OVERLAY_BUTTON_STRUCTURE_CHECK;
                 }
                 return GTNGGuiTextures.OVERLAY_BUTTON_STRUCTURE_CHECK_OFF;
-            }))
-            .tooltipShowUpTimer(TOOLTIP_DELAY);
+            })).tooltipShowUpTimer(TOOLTIP_DELAY);
         return applyModernToggleButton(button, () -> true);
     }
 
@@ -210,14 +181,12 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      */
     @Override
     protected ToggleButton createPowerSwitchButton() {
-        ToggleButton button = super.createPowerSwitchButton().size(16)
-            .overlay(new DynamicDrawable(() -> {
-                if (multiblock.isAllowedToWork()) {
-                    return GTNGGuiTextures.OVERLAY_BUTTON_POWER_SWITCH_ON;
-                }
-                return GTNGGuiTextures.OVERLAY_BUTTON_POWER_SWITCH_DISABLED;
-            }))
-            .tooltipShowUpTimer(TOOLTIP_DELAY);
+        ToggleButton button = super.createPowerSwitchButton().size(16).overlay(new DynamicDrawable(() -> {
+            if (multiblock.isAllowedToWork()) {
+                return GTNGGuiTextures.OVERLAY_BUTTON_POWER_SWITCH_ON;
+            }
+            return GTNGGuiTextures.OVERLAY_BUTTON_POWER_SWITCH_DISABLED;
+        })).tooltipShowUpTimer(TOOLTIP_DELAY);
         return applyModernToggleButton(button, () -> !isPowerSwitchDisabled());
     }
 
@@ -256,8 +225,7 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
                     return GTNGGuiTextures.OVERLAY_BUTTON_INPUT_SEPARATION;
                 }
                 return GTNGGuiTextures.OVERLAY_BUTTON_INPUT_SEPARATION_OFF;
-            }))
-            .tooltipShowUpTimer(TOOLTIP_DELAY);
+            })).tooltipShowUpTimer(TOOLTIP_DELAY);
         return applyModernToggleButton(button, multiblock::supportsInputSeparation);
     }
 
@@ -275,8 +243,7 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
                     return GTNGGuiTextures.OVERLAY_BUTTON_BATCH_MODE;
                 }
                 return GTNGGuiTextures.OVERLAY_BUTTON_BATCH_MODE_OFF;
-            }))
-            .tooltipShowUpTimer(TOOLTIP_DELAY);
+            })).tooltipShowUpTimer(TOOLTIP_DELAY);
         return applyModernToggleButton(button, multiblock::supportsBatchMode);
     }
 
@@ -294,8 +261,7 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
                     return GTNGGuiTextures.OVERLAY_BUTTON_RECIPE_LOCKED;
                 }
                 return GTNGGuiTextures.OVERLAY_BUTTON_RECIPE_UNLOCKED;
-            }))
-            .tooltipShowUpTimer(TOOLTIP_DELAY);
+            })).tooltipShowUpTimer(TOOLTIP_DELAY);
         return applyModernToggleButton(button, multiblock::supportsSingleRecipeLocking);
     }
 
@@ -337,22 +303,16 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      */
     @Override
     protected Flow createTerminalRightCornerColumn(ModularPanel panel, PanelSyncManager syncManager) {
-        return Flow.column()
-            .coverChildren()
-            .rightRel(0, 6, 0)
-            .bottomRel(0, 6, 0)
-            .childIf(
-                multiblock.supportsShutdownReasonHoverable(),
+        return Flow.column().coverChildren().rightRel(0, 6, 0).bottomRel(0, 6, 0)
+            .childIf(multiblock.supportsShutdownReasonHoverable(),
                 () -> createShutdownReasonHoverableTerminal(syncManager))
-            .childIf(
-                multiblock.supportsMaintenanceIssueHoverable(),
+            .childIf(multiblock.supportsMaintenanceIssueHoverable(),
                 () -> createMaintIssueHoverableTerminal(syncManager))
             .child(makeLogoWidget(syncManager, panel));
     }
 
     @Override
     protected Widget<? extends Widget<?>> makeLogoWidget(PanelSyncManager syncManager, ModularPanel parent) {
-        return new IDrawable.DrawableWidget(GTNGGuiTextures.PICTURE_GODFORGE_LOGO).size(18)
-            .marginTop(4);
+        return new IDrawable.DrawableWidget(GTNGGuiTextures.PICTURE_GODFORGE_LOGO).size(18).marginTop(4);
     }
 }

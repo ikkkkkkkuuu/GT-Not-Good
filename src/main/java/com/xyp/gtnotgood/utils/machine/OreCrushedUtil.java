@@ -24,10 +24,7 @@ public final class OreCrushedUtil {
     public static ItemStack getCrushedProduct(ItemStack item) {
         if (item == null || item.getItem() == null) return null;
         try {
-            GTRecipe recipe = RecipeMaps.maceratorRecipes.findRecipeQuery()
-                .caching(true)
-                .items(item)
-                .find();
+            GTRecipe recipe = RecipeMaps.maceratorRecipes.findRecipeQuery().caching(true).items(item).find();
             if (recipe != null && recipe.mOutputs.length > 0 && recipe.mOutputs[0] != null) {
                 return recipe.mOutputs[0].copy();
             }

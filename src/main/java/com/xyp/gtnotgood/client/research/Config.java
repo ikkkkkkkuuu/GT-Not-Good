@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,12 +17,26 @@ import thaumcraft.api.aspects.AspectList;
 public final class Config {
 
     public enum SolveMode {
-        NORMAL,
-        WEIGHTED
+
+        Normal("NORMAL"),
+        Weighted("WEIGHTED");
+
+        public final String configValue;
+
+        SolveMode(String configValue) {
+            this.configValue = configValue;
+        }
+
+        public static SolveMode fromConfig(String value) {
+            for (SolveMode mode : values()) {
+                if (mode.configValue.equalsIgnoreCase(value)) return mode;
+            }
+            throw new IllegalArgumentException("Unknown solve mode: " + value);
+        }
     }
 
     private static boolean autoResearch;
-    private static SolveMode solveMode = SolveMode.WEIGHTED;
+    private static SolveMode solveMode = SolveMode.Weighted;
     private static boolean previewResult = true;
     private static boolean reportBoardPreview = true;
     private static boolean inventoryAware = true;
@@ -44,40 +57,24 @@ public final class Config {
     public static synchronized void synchronizeConfiguration() {
         configDirectoryPath = com.xyp.gtnotgood.config.Config.getConfigDirectory();
         config = com.xyp.gtnotgood.config.Config.getConfiguration();
-        autoResearch = config
-            .getBoolean("AutoResearch", CATEGORY_AUTO_RESEARCH, false, "Enable the Research Auto Start");
-        String mode = config
-            .getString("SolveMode", CATEGORY_AUTO_RESEARCH, SolveMode.WEIGHTED.name(), "NORMAL or WEIGHTED");
+        autoResearch = config.getBoolean("AutoResearch", CATEGORY_AUTO_RESEARCH, false,
+            "Enable the Research Auto Start");
+        String mode = config.getString("SolveMode", CATEGORY_AUTO_RESEARCH, SolveMode.Weighted.configValue,
+            "NORMAL or WEIGHTED");
         try {
-            solveMode = SolveMode.valueOf(mode.toUpperCase(Locale.ROOT));
+            solveMode = SolveMode.fromConfig(mode);
         } catch (IllegalArgumentException ignored) {
-            solveMode = SolveMode.WEIGHTED;
+            solveMode = SolveMode.Weighted;
         }
-        previewResult = config
-            .getBoolean("PreviewResult", CATEGORY_AUTO_RESEARCH, true, "Preview a solution before placing aspects");
-        reportBoardPreview = config.getBoolean(
-            "ReportBoardPreview",
-            CATEGORY_AUTO_RESEARCH,
-            true,
+        previewResult = config.getBoolean("PreviewResult", CATEGORY_AUTO_RESEARCH, true,
+            "Preview a solution before placing aspects");
+        reportBoardPreview = config.getBoolean("ReportBoardPreview", CATEGORY_AUTO_RESEARCH, true,
             "Show the research board in the completion report");
-        inventoryAware = config.getBoolean(
-            "InventoryAware",
-            CATEGORY_AUTO_RESEARCH,
-            true,
+        inventoryAware = config.getBoolean("InventoryAware", CATEGORY_AUTO_RESEARCH, true,
             "Prefer plans that use aspects currently available to the player");
-        solveTimeoutMs = config.getInt(
-            "SolveTimeoutMs",
-            CATEGORY_AUTO_RESEARCH,
-            8000,
-            500,
-            60000,
+        solveTimeoutMs = config.getInt("SolveTimeoutMs", CATEGORY_AUTO_RESEARCH, 8000, 500, 60000,
             "Maximum weighted solver time in milliseconds");
-        beamWidth = config.getInt(
-            "BeamWidth",
-            CATEGORY_AUTO_RESEARCH,
-            12,
-            1,
-            64,
+        beamWidth = config.getInt("BeamWidth", CATEGORY_AUTO_RESEARCH, 12, 1, 64,
             "Number of partial multi-anchor plans retained by the weighted solver");
         loadWeights();
         if (config.hasChanged()) {
@@ -95,12 +92,8 @@ public final class Config {
             int split = entry.indexOf('=');
             if (split <= 0) continue;
             try {
-                AspectCosts.put(
-                    AspectWeights.normalize(entry.substring(0, split)),
-                    AspectWeights.clamp(
-                        Integer.parseInt(
-                            entry.substring(split + 1)
-                                .trim())));
+                AspectCosts.put(AspectWeights.normalize(entry.substring(0, split)),
+                    AspectWeights.clamp(Integer.parseInt(entry.substring(split + 1).trim())));
             } catch (NumberFormatException ignored) {}
         }
         DisabledAspects.clear();
@@ -116,26 +109,17 @@ public final class Config {
     public static synchronized void saveSolverConfiguration() {
         if (config == null) return;
         if (!dirty && !config.hasChanged()) return;
-        config.get(CATEGORY_AUTO_RESEARCH, "AutoResearch", false)
-            .set(autoResearch);
-        config.get(CATEGORY_AUTO_RESEARCH, "SolveMode", SolveMode.WEIGHTED.name())
-            .set(solveMode.name());
-        config.get(CATEGORY_AUTO_RESEARCH, "PreviewResult", true)
-            .set(previewResult);
-        config.get(CATEGORY_AUTO_RESEARCH, "ReportBoardPreview", true)
-            .set(reportBoardPreview);
-        config.get(CATEGORY_AUTO_RESEARCH, "InventoryAware", true)
-            .set(inventoryAware);
-        config.get(CATEGORY_AUTO_RESEARCH, "SolveTimeoutMs", 8000)
-            .set(solveTimeoutMs);
-        config.get(CATEGORY_AUTO_RESEARCH, "BeamWidth", 12)
-            .set(beamWidth);
-        config.get(CATEGORY_WEIGHTS, "AspectCosts", new String[0])
-            .set(serializeWeights(AspectCosts));
+        config.get(CATEGORY_AUTO_RESEARCH, "AutoResearch", false).set(autoResearch);
+        config.get(CATEGORY_AUTO_RESEARCH, "SolveMode", SolveMode.Weighted.configValue).set(solveMode.configValue);
+        config.get(CATEGORY_AUTO_RESEARCH, "PreviewResult", true).set(previewResult);
+        config.get(CATEGORY_AUTO_RESEARCH, "ReportBoardPreview", true).set(reportBoardPreview);
+        config.get(CATEGORY_AUTO_RESEARCH, "InventoryAware", true).set(inventoryAware);
+        config.get(CATEGORY_AUTO_RESEARCH, "SolveTimeoutMs", 8000).set(solveTimeoutMs);
+        config.get(CATEGORY_AUTO_RESEARCH, "BeamWidth", 12).set(beamWidth);
+        config.get(CATEGORY_WEIGHTS, "AspectCosts", new String[0]).set(serializeWeights(AspectCosts));
         List<String> disabled = new ArrayList<>(DisabledAspects);
         Collections.sort(disabled);
-        config.get(CATEGORY_WEIGHTS, "DisabledAspects", new String[0])
-            .set(disabled.toArray(new String[0]));
+        config.get(CATEGORY_WEIGHTS, "DisabledAspects", new String[0]).set(disabled.toArray(new String[0]));
         config.save();
         dirty = false;
     }
@@ -258,15 +242,8 @@ public final class Config {
     }
 
     public static synchronized SolverSettings snapshot() {
-        return new SolverSettings(
-            solveMode,
-            previewResult,
-            inventoryAware,
-            solveTimeoutMs,
-            beamWidth,
-            revision,
-            new LinkedHashMap<>(AspectCosts),
-            new LinkedHashSet<>(DisabledAspects));
+        return new SolverSettings(solveMode, previewResult, inventoryAware, solveTimeoutMs, beamWidth, revision,
+            new LinkedHashMap<>(AspectCosts), new LinkedHashSet<>(DisabledAspects));
     }
 
     private static String[] serializeWeights(Map<String, Integer> weights) {
@@ -335,34 +312,18 @@ public final class Config {
 
         public String fingerprint() {
             StringBuilder result = new StringBuilder();
-            result.append(mode)
-                .append('|')
-                .append(inventoryAware)
-                .append('|')
-                .append(timeoutMs)
-                .append('|')
-                .append(beamWidth)
-                .append('|');
-            for (String entry : serializeWeights(costs)) result.append(entry)
-                .append(';');
+            result.append(mode.configValue).append('|').append(inventoryAware).append('|').append(timeoutMs).append('|')
+                .append(beamWidth).append('|');
+            for (String entry : serializeWeights(costs)) result.append(entry).append(';');
             List<String> disabledTags = new ArrayList<>(disabled);
             Collections.sort(disabledTags);
-            for (String tag : disabledTags) result.append('!')
-                .append(tag)
-                .append(';');
+            for (String tag : disabledTags) result.append('!').append(tag).append(';');
             return result.toString();
         }
 
         SolverSettings withBeamWidth(int replacement) {
-            return new SolverSettings(
-                mode,
-                preview,
-                inventoryAware,
-                timeoutMs,
-                replacement,
-                revision,
-                new LinkedHashMap<>(costs),
-                new LinkedHashSet<>(disabled));
+            return new SolverSettings(mode, preview, inventoryAware, timeoutMs, replacement, revision,
+                new LinkedHashMap<>(costs), new LinkedHashSet<>(disabled));
         }
     }
 

@@ -67,8 +67,7 @@ public final class ArcaneWorkbenchPatterns {
     /** Validates untrusted pattern NBT; every occupied slot describes exactly one ingredient per craft. */
     static TileMagicWorkbench grid(ItemStack pattern, World world) {
         if (pattern == null || !pattern.hasTagCompound()) return null;
-        NBTTagList entries = pattern.getTagCompound()
-            .getTagList(GRID, 10);
+        NBTTagList entries = pattern.getTagCompound().getTagList(GRID, 10);
         if (entries.tagCount() != 9) return null;
         TileMagicWorkbench grid = new TileMagicWorkbench();
         grid.setWorldObj(world);
@@ -88,15 +87,18 @@ public final class ArcaneWorkbenchPatterns {
      * pattern in the player's main inventory. The example ingredients and wand remain on the table.
      */
     static void capture(TilePackagedProvider provider, EntityPlayer player, int index) {
-        if (!provider.isServerSide() || !provider.canConfigure(player)
-            || index < 0
-            || index >= provider.targets.size()
-            || !(PackagedCoreRegistry
-                .get(provider.getStackInSlot(TilePackagedProvider.CORE)) instanceof ArcaneWorkbenchAdapter))
-            return;
+        if (
+            !provider.isServerSide() || !provider.canConfigure(player)
+                || index < 0
+                || index >= provider.targets.size()
+                || !(PackagedCoreRegistry
+                    .get(provider.getStackInSlot(TilePackagedProvider.CORE)) instanceof ArcaneWorkbenchAdapter)
+        ) return;
         PackagedTarget target = provider.targets.get(index);
-        if (provider.busy(target) || !(target.resolve(provider.getWorldObj()) instanceof TileArcaneWorkbench workbench)
-            || !player.worldObj.canMineBlock(player, target.x, target.y, target.z)) return;
+        if (
+            provider.busy(target) || !(target.resolve(provider.getWorldObj()) instanceof TileArcaneWorkbench workbench)
+                || !player.worldObj.canMineBlock(player, target.x, target.y, target.z)
+        ) return;
         TileMagicWorkbench example = new TileMagicWorkbench();
         example.setWorldObj(player.worldObj);
         example.xCoord = workbench.xCoord;
@@ -120,12 +122,7 @@ public final class ArcaneWorkbenchPatterns {
                 break;
             }
         }
-        ItemStack blank = AEApi.instance()
-            .definitions()
-            .materials()
-            .blankPattern()
-            .maybeStack(1)
-            .get();
+        ItemStack blank = AEApi.instance().definitions().materials().blankPattern().maybeStack(1).get();
         for (int i = 0; i < player.inventory.mainInventory.length; i++) {
             if (TilePackagedProvider.sameItem(blank, player.inventory.mainInventory[i])) {
                 blankSlot = i;
@@ -151,12 +148,7 @@ public final class ArcaneWorkbenchPatterns {
 
     /** Encodes both AE's unordered bill of materials and the exact TC4 matching layout. */
     static ItemStack encode(TileMagicWorkbench example, ItemStack result) {
-        ItemStack encoded = AEApi.instance()
-            .definitions()
-            .items()
-            .encodedPattern()
-            .maybeStack(1)
-            .get();
+        ItemStack encoded = AEApi.instance().definitions().items().encodedPattern().maybeStack(1).get();
         NBTTagCompound tag = new NBTTagCompound();
         NBTTagList layout = new NBTTagList();
         NBTTagList inputs = new NBTTagList();

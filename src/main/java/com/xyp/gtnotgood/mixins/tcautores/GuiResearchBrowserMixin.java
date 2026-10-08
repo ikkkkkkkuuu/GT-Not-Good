@@ -60,12 +60,7 @@ public abstract class GuiResearchBrowserMixin extends GuiScreen {
     @Inject(method = { "initGui", "func_73866_w_" }, at = @At("TAIL"), require = 1)
     private void tcAutoResearch$addGenerateCategoryButton(CallbackInfo ci) {
         int y = Math.min(height - 22, (height + paneHeight) / 2 + 2);
-        tcAutoResearch$generateCategoryButton = new GuiButtonExt(
-            202,
-            width / 2 - 54,
-            y,
-            108,
-            20,
+        tcAutoResearch$generateCategoryButton = new GuiButtonExt(202, width / 2 - 54, y, 108, 20,
             StatCollector.translateToLocal("tcautores.generate_category"));
         buttonList.add(tcAutoResearch$generateCategoryButton);
     }
@@ -76,12 +71,9 @@ public abstract class GuiResearchBrowserMixin extends GuiScreen {
             if (ResearchNoteGenerationController.isRunning()) {
                 ResearchNoteGenerationController.cancel();
             } else {
-                ResearchNoteGenerationController.start(
-                    mc.thePlayer,
-                    mc,
-                    ResearchCatalog.generatable(mc.thePlayer, ResearchCatalog.Scope.CURRENT_CATEGORY, selectedCategory),
-                    null,
-                    true);
+                ResearchNoteGenerationController.start(mc.thePlayer, mc,
+                    ResearchCatalog.generatable(mc.thePlayer, ResearchCatalog.Scope.CurrentCategory, selectedCategory),
+                    null, true);
             }
             ci.cancel();
         }

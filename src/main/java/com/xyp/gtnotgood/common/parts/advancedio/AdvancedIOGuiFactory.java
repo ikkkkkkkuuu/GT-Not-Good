@@ -12,11 +12,16 @@ import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.AbstractUIFactory;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.glodblock.github.util.Util;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import appeng.api.config.SecurityPermissions;
+import appeng.api.parts.IPart;
 import appeng.api.parts.IPartHost;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /** Position-and-face UI locator with distance, part identity and AE security checks on the server. */
 public final class AdvancedIOGuiFactory extends AbstractUIFactory<AdvancedIOGuiFactory.Data> {
@@ -36,14 +41,7 @@ public final class AdvancedIOGuiFactory extends AbstractUIFactory<AdvancedIOGuiF
         if (!(player instanceof EntityPlayerMP serverPlayer) || player instanceof FakePlayer) return;
         if (amountSlot >= 0 && (amountSlot >= part.availableSlots() || part.filter(amountSlot) == null)) return;
         var tile = part.getTile();
-        var data = new Data(
-            player,
-            tile.xCoord,
-            tile.yCoord,
-            tile.zCoord,
-            part.getSide()
-                .ordinal(),
-            amountSlot);
+        var data = new Data(player, tile.xCoord, tile.yCoord, tile.zCoord, part.getSide().ordinal(), amountSlot);
         if (canInteractWith(player, data)) GuiManager.open(this, data, serverPlayer);
     }
 
@@ -55,10 +53,9 @@ public final class AdvancedIOGuiFactory extends AbstractUIFactory<AdvancedIOGuiF
     }
 
     @Override
-    @cpw.mods.fml.relauncher.SideOnly(cpw.mods.fml.relauncher.Side.CLIENT)
-    public com.cleanroommc.modularui.screen.ModularScreen createScreen(Data data,
-        com.cleanroommc.modularui.screen.ModularPanel panel) {
-        return new com.cleanroommc.modularui.screen.ModularScreen(ModList.GTNotGood.getID(), panel);
+    @SideOnly(Side.CLIENT)
+    public ModularScreen createScreen(Data data, ModularPanel panel) {
+        return new ModularScreen(ModList.GTNotGood.getID(), panel);
     }
 
     @Override
@@ -66,8 +63,7 @@ public final class AdvancedIOGuiFactory extends AbstractUIFactory<AdvancedIOGuiF
         return super.canInteractWith(player, data) && data.getSquaredDistance(player) <= 64
             && data.part != null
             && data.resolve() == data.part
-            && (player.worldObj.isRemote
-                || Util.hasPermission(player, SecurityPermissions.BUILD, (appeng.api.parts.IPart) data.part));
+            && (player.worldObj.isRemote || Util.hasPermission(player, SecurityPermissions.BUILD, (IPart) data.part));
     }
 
     @Override
@@ -81,12 +77,7 @@ public final class AdvancedIOGuiFactory extends AbstractUIFactory<AdvancedIOGuiF
 
     @Override
     public @Nonnull Data readGuiData(EntityPlayer player, PacketBuffer buffer) {
-        return new Data(
-            player,
-            buffer.readInt(),
-            buffer.readInt(),
-            buffer.readInt(),
-            buffer.readUnsignedByte(),
+        return new Data(player, buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readUnsignedByte(),
             buffer.readInt());
     }
 
@@ -106,8 +97,10 @@ public final class AdvancedIOGuiFactory extends AbstractUIFactory<AdvancedIOGuiF
 
         private PartAdvancedIOBus resolve() {
             if (side < 0 || side >= 6 || !getWorld().blockExists(getX(), getY(), getZ())) return null;
-            if (getTileEntity() instanceof IPartHost host
-                && host.getPart(ForgeDirection.getOrientation(side)) instanceof PartAdvancedIOBus bus) return bus;
+            if (
+                getTileEntity() instanceof IPartHost host
+                    && host.getPart(ForgeDirection.getOrientation(side)) instanceof PartAdvancedIOBus bus
+            ) return bus;
             return null;
         }
     }

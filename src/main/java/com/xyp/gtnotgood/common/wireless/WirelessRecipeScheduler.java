@@ -94,8 +94,7 @@ public final class WirelessRecipeScheduler {
             return true;
         }
         status = 0;
-        UUID owner = hatch.getBaseMetaTileEntity()
-            .getOwnerUuid();
+        UUID owner = hatch.getBaseMetaTileEntity().getOwnerUuid();
         if (!tasks.isEmpty()) {
             display(machine);
             boolean running = false;

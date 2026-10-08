@@ -18,17 +18,11 @@ public final class IntegratedProductionFactoryRecipes {
     /** Uses standard EV components and ore-dictionary circuits, without late-game materials. */
     public static void loadRecipes() {
         GTValues.RA.stdBuilder()
-            .itemInputs(
-                ItemList.Hull_EV.get(2),
-                new Object[] { OrePrefixes.circuit.get(Materials.EV), 4 },
-                ItemList.Robot_Arm_EV.get(2),
-                ItemList.Conveyor_Module_EV.get(4),
-                Materials.StainlessSteel.getPlates(16),
-                GTUtility.getIntegratedCircuit(24))
+            .itemInputs(ItemList.Hull_EV.get(2), new Object[] { OrePrefixes.circuit.get(Materials.EV), 4 },
+                ItemList.Robot_Arm_EV.get(2), ItemList.Conveyor_Module_EV.get(4),
+                Materials.StainlessSteel.getPlates(16), GTUtility.getIntegratedCircuit(24))
             .fluidInputs(Materials.SolderingAlloy.getMolten(1152))
-            .itemOutputs(GTNGItemList.IntegratedProductionFactory.get(1))
-            .eut(TierEU.RECIPE_EV)
-            .duration(20 * 120)
+            .itemOutputs(GTNGItemList.IntegratedProductionFactory.get(1)).eut(TierEU.RECIPE_EV).duration(20 * 120)
             .addTo(RecipeMaps.assemblerRecipes);
     }
 }

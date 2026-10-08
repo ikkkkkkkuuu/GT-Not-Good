@@ -57,13 +57,9 @@ public class PatternTerminalMouseWheelLoader implements Runnable {
             }
         };
 
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerPatternTerminal(new FCPatternTerminal(ContainerPatternTerm.class))
+        AE2ThingAPI.instance().terminal().registerPatternTerminal(new FCPatternTerminal(ContainerPatternTerm.class))
             .registerIdentifier(Constants.NEI_MOUSE_WHEEL, handler);
-        AE2ThingAPI.instance()
-            .terminal()
-            .registerPatternTerminal(new FCPatternTerminal(ContainerPatternTermEx.class))
+        AE2ThingAPI.instance().terminal().registerPatternTerminal(new FCPatternTerminal(ContainerPatternTermEx.class))
             .registerIdentifier(Constants.NEI_MOUSE_WHEEL, handler);
     }
 

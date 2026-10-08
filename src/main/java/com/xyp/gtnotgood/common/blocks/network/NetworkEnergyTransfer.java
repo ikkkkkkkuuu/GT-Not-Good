@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.common.blocks.network;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -28,17 +29,13 @@ final class NetworkEnergyTransfer {
         for (Endpoint endpoint : controller.topology().endpoints) {
             NetworkRule rule = channel.rules.get(endpoint.key);
             if (rule == null || !(endpoint.target() instanceof IGregTechTileEntity)) continue;
-            if (rule.mode == 1 && rule.due(
-                controller.getWorldObj()
-                    .getTotalWorldTime()))
-                sources.add(endpoint);
+            if (rule.mode == 1 && rule.due(controller.getWorldObj().getTotalWorldTime())) sources.add(endpoint);
             if (rule.mode == 2) sinks.add(endpoint);
         }
         if (sinks.isEmpty()) return false;
-        if (channel.distribution != 2) java.util.Collections.rotate(sinks, -(channel.cursor % sinks.size()));
-        if (channel.distribution == 2) sinks.sort(
-            Comparator.comparingInt((Endpoint e) -> channel.rules.get(e.key).priority)
-                .reversed());
+        if (channel.distribution != 2) Collections.rotate(sinks, -(channel.cursor % sinks.size()));
+        if (channel.distribution == 2)
+            sinks.sort(Comparator.comparingInt((Endpoint e) -> channel.rules.get(e.key).priority).reversed());
         boolean changed = false;
         int probes = 8192;
         if (!channel.hasCargo()) {
@@ -46,8 +43,7 @@ final class NetworkEnergyTransfer {
                 if (--probes < 0) break;
                 Endpoint source = sources.get((channel.cursor + i) % sources.size());
                 if (!(source.target() instanceof IGregTechTileEntity tile)) continue;
-                ForgeDirection side = channel.rules.get(source.key)
-                    .face(source);
+                ForgeDirection side = channel.rules.get(source.key).face(source);
                 if (!tile.outputsEnergyTo(side)) continue;
                 long amperes = Math.max(0, tile.getOutputAmperage() - drawn.getOrDefault(tile, 0L));
                 long limit = Math.min(channel.rules.get(source.key).rate, Math.max(0, tile.getStoredEU()));
@@ -58,11 +54,10 @@ final class NetworkEnergyTransfer {
                 for (Endpoint sink : sinks) {
                     if (--probes < 0) break;
                     if (deviceKey(source).equals(deviceKey(sink))) continue;
-                    if (sink.target() instanceof IGregTechTileEntity target && capacity(
-                        target,
-                        channel.rules.get(sink.key)
-                            .face(sink),
-                        channel.rules.get(sink.key).rate) > 0) {
+                    if (
+                        sink.target() instanceof IGregTechTileEntity target && capacity(target,
+                            channel.rules.get(sink.key).face(sink), channel.rules.get(sink.key).rate) > 0
+                    ) {
                         hasDestination = true;
                         break;
                     }
@@ -85,10 +80,8 @@ final class NetworkEnergyTransfer {
         for (int i = 0; i < sinks.size(); i++) {
             Endpoint sink = sinks.get(i);
             NetworkRule rule = channel.rules.get(sink.key);
-            if (!rule.due(
-                controller.getWorldObj()
-                    .getTotalWorldTime())
-                || deviceKey(sink).equals(channel.source)) continue;
+            if (!rule.due(controller.getWorldObj().getTotalWorldTime()) || deviceKey(sink).equals(channel.source))
+                continue;
             if (!(sink.target() instanceof IGregTechTileEntity target)) continue;
             demand[i] = capacity(target, rule.face(sink), rule.rate);
             long voltage = target.getInputVoltage(), amperes = target.getInputAmperage();
@@ -101,12 +94,7 @@ final class NetworkEnergyTransfer {
             if (allocations[i] == 0) continue;
             Endpoint sink = sinks.get(i);
             if (!(sink.target() instanceof IGregTechTileEntity target)) continue;
-            long moved = deliver(
-                target,
-                channel.rules.get(sink.key)
-                    .face(sink),
-                channel.energy,
-                allocations[i]);
+            long moved = deliver(target, channel.rules.get(sink.key).face(sink), channel.energy, allocations[i]);
             if (moved > 0) {
                 channel.energy -= moved;
                 target.markDirty();

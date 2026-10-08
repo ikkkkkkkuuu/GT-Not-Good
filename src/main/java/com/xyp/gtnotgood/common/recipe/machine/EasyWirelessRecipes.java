@@ -60,10 +60,12 @@ public final class EasyWirelessRecipes {
     public static boolean supports(IMetaTileEntity machine) {
         if (machine == null) return false;
         Class<?> type = machine.getClass();
-        if (type != MTEWirelessEnergy.class && type != MTEHatchWirelessMulti.class
-            && type != MTEHatchWirelessDynamoMulti.class
-            && type != WirelessLaserEnergyHatch.class
-            && type != WirelessLaserDynamoHatch.class) return false;
+        if (
+            type != MTEWirelessEnergy.class && type != MTEHatchWirelessMulti.class
+                && type != MTEHatchWirelessDynamoMulti.class
+                && type != WirelessLaserEnergyHatch.class
+                && type != WirelessLaserDynamoHatch.class
+        ) return false;
         MTEHatch hatch = (MTEHatch) machine;
         int amperes = amperes(hatch);
         return hatch.mTier >= (amperes > 64 ? VoltageIndex.LV : VoltageIndex.ULV) && hatch.mTier <= VoltageIndex.MAX
@@ -104,19 +106,12 @@ public final class EasyWirelessRecipes {
             Materials.IV, Materials.LuV, Materials.ZPM, Materials.UV, Materials.UHV, Materials.UEV, Materials.UIV,
             Materials.UMV, Materials.UXV, Materials.MAX };
         GTValues.RA.stdBuilder()
-            .itemInputs(
-                base,
-                new Object[] { OrePrefixes.circuit.get(circuitMaterials[tier]), circuits },
-                ItemList.valueOf("Emitter_" + GTValues.VN[componentTier])
-                    .get(1),
-                ItemList.valueOf("Sensor_" + GTValues.VN[componentTier])
-                    .get(1))
+            .itemInputs(base, new Object[] { OrePrefixes.circuit.get(circuitMaterials[tier]), circuits },
+                ItemList.valueOf("Emitter_" + GTValues.VN[componentTier]).get(1),
+                ItemList.valueOf("Sensor_" + GTValues.VN[componentTier]).get(1))
             .circuit(dynamo ? 22 : circuitSetting(amperes))
-            .fluidInputs(Materials.SolderingAlloy.getMolten(144L * solderIngots))
-            .itemOutputs(hatch.getStackForm(1))
-            .duration(80)
-            .eut(GTValues.VP[tier])
-            .addTo(RecipeMaps.assemblerRecipes);
+            .fluidInputs(Materials.SolderingAlloy.getMolten(144L * solderIngots)).itemOutputs(hatch.getStackForm(1))
+            .duration(80).eut(GTValues.VP[tier]).addTo(RecipeMaps.assemblerRecipes);
     }
 
     /**
@@ -152,12 +147,8 @@ public final class EasyWirelessRecipes {
         // Eight native covers replace the minimum two 1 A covers per custom 4 A cover in GT-Not-Cool.
         ItemStack covers = ItemList.WIRELESS_ENERGY_COVERS[tier - VoltageIndex.LV].get(8);
         if (wired != null) {
-            GTValues.RA.stdBuilder()
-                .itemInputs(wired, covers, CustomItemList.Machine_Multi_Transformer.get(1))
-                .circuit(dynamo ? 2 : 1)
-                .itemOutputs(hatch.getStackForm(1))
-                .duration(200)
-                .eut(GTValues.VP[tier])
+            GTValues.RA.stdBuilder().itemInputs(wired, covers, CustomItemList.Machine_Multi_Transformer.get(1))
+                .circuit(dynamo ? 2 : 1).itemOutputs(hatch.getStackForm(1)).duration(200).eut(GTValues.VP[tier])
                 .addTo(RecipeMaps.laserEngraverRecipes);
             return;
         }
@@ -167,21 +158,13 @@ public final class EasyWirelessRecipes {
             .get(1);
         // Native GT lacks LV-EV lasers and many higher-tier combinations. Charge for their components directly.
         GTValues.RA.stdBuilder()
-            .itemInputs(
-                base,
-                GTOreDictUnificator.get(OrePrefixes.lens, Materials.Diamond, parts),
-                ItemList.valueOf("Sensor_" + GTValues.VN[tier])
-                    .get(parts),
-                ItemList.valueOf("Electric_Pump_" + GTValues.VN[tier])
-                    .get(parts),
-                covers,
+            .itemInputs(base, GTOreDictUnificator.get(OrePrefixes.lens, Materials.Diamond, parts),
+                ItemList.valueOf("Sensor_" + GTValues.VN[tier]).get(parts),
+                ItemList.valueOf("Electric_Pump_" + GTValues.VN[tier]).get(parts), covers,
                 tier < VoltageIndex.IV ? ItemList.Cover_EnergyDetector.get(1)
                     : CustomItemList.Machine_Multi_Transformer.get(1))
             .circuit(dynamo ? 22 : circuitSetting(amperes))
-            .fluidInputs(Materials.SolderingAlloy.getMolten(144L * parts))
-            .itemOutputs(hatch.getStackForm(1))
-            .duration(200 + 50 * parts)
-            .eut(GTValues.VP[tier])
-            .addTo(RecipeMaps.assemblerRecipes);
+            .fluidInputs(Materials.SolderingAlloy.getMolten(144L * parts)).itemOutputs(hatch.getStackForm(1))
+            .duration(200 + 50 * parts).eut(GTValues.VP[tier]).addTo(RecipeMaps.assemblerRecipes);
     }
 }

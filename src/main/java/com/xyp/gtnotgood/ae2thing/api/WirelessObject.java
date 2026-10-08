@@ -11,6 +11,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import com.xyp.gtnotgood.ae2thing.common.item.ItemWirelessDualInterfaceTerminal;
 import com.xyp.gtnotgood.ae2thing.inventory.item.WirelessTerminal;
+import com.xyp.gtnotgood.ae2thing.util.Util;
 
 import appeng.api.AEApi;
 import appeng.api.config.Actionable;
@@ -74,13 +75,10 @@ public class WirelessObject implements IActionHost {
         if (Platform.isServer()) {
             this.gridNode = getWirelessGrid();
             if (gridNode == null || !rangeCheck()) {
-                throw new AppEngException(
-                    PlayerMessages.OutOfRange.toChat()
-                        .toString());
+                throw new AppEngException(PlayerMessages.OutOfRange.toChat().toString());
             }
             this.grid = this.gridNode.getGrid();
-            IStorageGrid iStorageGrid = this.getGrid()
-                .getCache(IStorageGrid.class);
+            IStorageGrid iStorageGrid = this.getGrid().getCache(IStorageGrid.class);
             this.itemInv = iStorageGrid.getItemInventory();
             this.fluidInv = iStorageGrid.getFluidInventory();
             this.source = new PlayerSource(this.player, this);
@@ -104,24 +102,21 @@ public class WirelessObject implements IActionHost {
     }
 
     public boolean rangeCheck() {
-        if (this.getItemStack() != null && this.getItemStack()
-            .getItem() != null) {
-            Item i = this.getItemStack()
-                .getItem();
+        if (this.getItemStack() != null && this.getItemStack().getItem() != null) {
+            Item i = this.getItemStack().getItem();
             if (i instanceof ItemWirelessDualInterfaceTerminal && this.hasInfinityBoosterCard()) {
                 return true;
             }
         }
         boolean canConnect = false;
-        for (IGridNode node : this.gridNode.getGrid()
-            .getMachines(TileWireless.class)) {
+        for (IGridNode node : this.gridNode.getGrid().getMachines(TileWireless.class)) {
             IWirelessAccessPoint accessPoint = (IWirelessAccessPoint) node.getMachine();
-            if (accessPoint.isActive() && accessPoint.getLocation()
-                .getDimension() == player.dimension) {
-                WorldCoord distance = accessPoint.getLocation()
-                    .subtract((int) player.posX, (int) player.posY, (int) player.posZ);
-                int squaredDistance = distance.x * distance.x + distance.y * distance.y + distance.z * distance.z;
-                if (squaredDistance <= accessPoint.getRange() * accessPoint.getRange()) {
+            if (accessPoint.isActive() && accessPoint.getLocation().getDimension() == player.dimension) {
+                WorldCoord location = accessPoint.getLocation();
+                if (
+                    WirelessRange.contains(location.x, location.y, location.z, (int) player.posX, (int) player.posY,
+                        (int) player.posZ, accessPoint.getRange())
+                ) {
                     canConnect = true;
                     break;
                 }
@@ -133,8 +128,7 @@ public class WirelessObject implements IActionHost {
     public Object getInventory(Class<?> obj)
         throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (wirelessTerminal == null) {
-            this.wirelessTerminal = (WirelessTerminal) obj.getConstructor(WirelessObject.class)
-                .newInstance(this);
+            this.wirelessTerminal = (WirelessTerminal) obj.getConstructor(WirelessObject.class).newInstance(this);
         }
         return wirelessTerminal;
     }
@@ -142,9 +136,7 @@ public class WirelessObject implements IActionHost {
     public IGridNode getWirelessGrid() {
         if (item.getItem() instanceof ToolWirelessTerminal) {
             String key = ((ToolWirelessTerminal) item.getItem()).getEncryptionKey(item);
-            IGridHost securityTerminal = (IGridHost) AEApi.instance()
-                .registries()
-                .locatable()
+            IGridHost securityTerminal = (IGridHost) AEApi.instance().registries().locatable()
                 .getLocatableBy(Long.parseLong(key));
             if (securityTerminal == null) return null;
             return securityTerminal.getGridNode(ForgeDirection.UNKNOWN);
@@ -167,7 +159,7 @@ public class WirelessObject implements IActionHost {
         if (this.energySource == null) closeGui();
         double result = energySource.extractAEPower(amt, mode, usePowerMultiplier);
         if (result == 0) closeGui();
-        com.xyp.gtnotgood.ae2thing.util.Util.writeBackTerminal(this.player, getSlot(), getItemStack());
+        Util.writeBackTerminal(this.player, getSlot(), getItemStack());
         ticks = 0;
         return ticks;
     }
@@ -215,9 +207,7 @@ public class WirelessObject implements IActionHost {
 
     @Override
     public void securityBreak() {
-        this.getGridNode(ForgeDirection.UNKNOWN)
-            .getMachine()
-            .securityBreak();
+        this.getGridNode(ForgeDirection.UNKNOWN).getMachine().securityBreak();
     }
 
 }

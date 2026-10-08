@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.common.blocks.packaged.ArcaneWorkbenchPatterns;
 import com.xyp.gtnotgood.common.compat.FluidDropCompat;
@@ -57,13 +58,11 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
 
     /** Whether an imported arcane recipe is displayed in the workbench panel instead of the processing panel. */
     public boolean isArcaneWorkbenchView() {
-        return !Platform.openNbtData(getItemStack())
-            .getBoolean("GTNGArcaneProcessingView");
+        return !Platform.openNbtData(getItemStack()).getBoolean("GTNGArcaneProcessingView");
     }
 
     public void setArcaneWorkbenchView(boolean workbench) {
-        Platform.openNbtData(getItemStack())
-            .setBoolean("GTNGArcaneProcessingView", !workbench);
+        Platform.openNbtData(getItemStack()).setBoolean("GTNGArcaneProcessingView", !workbench);
     }
 
     /** Restores shaped positions after AE loads the unordered bill from an encoded workbench pattern. */
@@ -72,8 +71,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
         var inputs = getAEInventoryByName(StorageName.CRAFTING_INPUT);
         if (isCraftingRecipe() || inputs == null || !ArcaneWorkbenchPatterns.matchesInputs(layout, inputs)) return;
         for (int i = 0; i < inputs.getSizeInventory(); i++) {
-            inputs.putAEStackInSlot(
-                i,
+            inputs.putAEStackInSlot(i,
                 i < 9 ? AEItemStack.create(ItemStack.loadItemStackFromNBT(layout.getCompoundTagAt(i))) : null);
         }
     }
@@ -93,8 +91,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
     @Override
     public void writeInventory() {
         super.writeInventory();
-        NBTTagCompound data = Platform.openNbtData(getItemStack())
-            .getCompoundTag(NATIVE_PATTERN_DATA);
+        NBTTagCompound data = Platform.openNbtData(getItemStack()).getCompoundTag(NATIVE_PATTERN_DATA);
         // AE2 writes these fields only for mode 2; retain them for the custom terminal mode as well.
         data.setBoolean("inverted", isInverted());
         data.setInteger("activePage", getActivePage());
@@ -108,9 +105,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
     }
 
     public NBTTagList getArcaneLayout() {
-        return (NBTTagList) Platform.openNbtData(getItemStack())
-            .getTagList(ArcaneWorkbenchPatterns.GRID, 10)
-            .copy();
+        return (NBTTagList) Platform.openNbtData(getItemStack()).getTagList(ArcaneWorkbenchPatterns.GRID, 10).copy();
     }
 
     /** Loading an existing pattern restores its layout; taking the encoded result leaves the pending recipe intact. */
@@ -119,8 +114,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
         ItemStack added) {
         if (!encodingPattern && inventory == getInventoryByName("pattern") && slot == 1 && added != null) {
             setArcaneLayout(
-                added.hasTagCompound() ? added.getTagCompound()
-                    .getTagList(ArcaneWorkbenchPatterns.GRID, 10) : null);
+                added.hasTagCompound() ? added.getTagCompound().getTagList(ArcaneWorkbenchPatterns.GRID, 10) : null);
         }
         super.onChangeInventory(inventory, slot, operation, removed, added);
         if (!encodingPattern && inventory == getInventoryByName("pattern") && slot == 1 && added != null) {
@@ -138,8 +132,9 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
         BaseActionSource actionSource, String author, World world) {
         NBTTagList layout = getArcaneLayout();
         boolean arcane = !isCraftingRecipe() && layout.tagCount() == 9;
-        if (arcane
-            && !ArcaneWorkbenchPatterns.matchesInputs(layout, getAEInventoryByName(StorageName.CRAFTING_INPUT))) {
+        if (
+            arcane && !ArcaneWorkbenchPatterns.matchesInputs(layout, getAEInventoryByName(StorageName.CRAFTING_INPUT))
+        ) {
             return false;
         }
         encodingPattern = true;
@@ -147,8 +142,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
             if (!super.encode(powerSource, itemMonitor, actionSource, author, world)) return false;
             if (arcane) {
                 IInventory patterns = getInventoryByName("pattern");
-                NBTTagCompound encoded = patterns.getStackInSlot(1)
-                    .getTagCompound();
+                NBTTagCompound encoded = patterns.getStackInSlot(1).getTagCompound();
                 encoded.setTag(ArcaneWorkbenchPatterns.GRID, layout);
                 encoded.setBoolean("substitute", false);
                 patterns.markDirty();
@@ -169,10 +163,10 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
         for (int i = 0; i < 9; i++) {
             NBTTagCompound entry = layout.getCompoundTagAt(i);
             ItemStack current = ItemStack.loadItemStackFromNBT(entry);
-            if (current != null && current.isItemEqual(previous)
-                && ItemStack.areItemStackTagsEqual(current, previous)) {
-                ItemStack replacement = ((IAEItemStack) to).getItemStack()
-                    .copy();
+            if (
+                current != null && current.isItemEqual(previous) && ItemStack.areItemStackTagsEqual(current, previous)
+            ) {
+                ItemStack replacement = ((IAEItemStack) to).getItemStack().copy();
                 replacement.stackSize = 1;
                 entry = replacement.writeToNBT(new NBTTagCompound());
             }
@@ -206,9 +200,11 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
             data.setBoolean(QUICK_PRIORITIZE_FLUIDS, data.getBoolean("priorization"));
         }
         if (data.hasKey(NATIVE_PATTERN_DATA, 10)) return;
-        if (!data.hasKey(LEGACY_CRAFTING, 10) && !data.hasKey(LEGACY_PROCESSING_INPUTS, 10)
-            && !data.hasKey(LEGACY_PROCESSING_OUTPUTS, 10)
-            && !data.hasKey("pattern", 10)) return;
+        if (
+            !data.hasKey(LEGACY_CRAFTING, 10) && !data.hasKey(LEGACY_PROCESSING_INPUTS, 10)
+                && !data.hasKey(LEGACY_PROCESSING_OUTPUTS, 10)
+                && !data.hasKey("pattern", 10)
+        ) return;
 
         IAEStack<?>[] craftingInputs = readLegacyInventory(data, LEGACY_CRAFTING, 32);
         IAEStack<?>[] processingInputs = readLegacyInventory(data, LEGACY_PROCESSING_INPUTS, 32);
@@ -223,10 +219,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
         nativePattern.setTag("craftingGrid", writeStackInventory(craftingMode ? craftingInputs : processingInputs));
         if (!craftingMode) nativePattern.setTag("outputList", writeStackInventory(processingOutputs));
         if (data.hasKey("pattern", 10)) {
-            nativePattern.setTag(
-                "pattern",
-                data.getCompoundTag("pattern")
-                    .copy());
+            nativePattern.setTag("pattern", data.getCompoundTag("pattern").copy());
         }
         data.setTag(NATIVE_PATTERN_DATA, nativePattern);
         data.setBoolean(QUICK_CRAFTING_MODE, craftingMode);
@@ -254,16 +247,10 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
         NBTTagCompound backup = new NBTTagCompound();
         backup.setTag(NATIVE_PATTERN_DATA, nativePattern.copy());
         if (data.hasKey(QUICK_CRAFTING_SNAPSHOT, 10)) {
-            backup.setTag(
-                QUICK_CRAFTING_SNAPSHOT,
-                data.getCompoundTag(QUICK_CRAFTING_SNAPSHOT)
-                    .copy());
+            backup.setTag(QUICK_CRAFTING_SNAPSHOT, data.getCompoundTag(QUICK_CRAFTING_SNAPSHOT).copy());
         }
         if (data.hasKey(QUICK_PROCESSING_SNAPSHOT, 10)) {
-            backup.setTag(
-                QUICK_PROCESSING_SNAPSHOT,
-                data.getCompoundTag(QUICK_PROCESSING_SNAPSHOT)
-                    .copy());
+            backup.setTag(QUICK_PROCESSING_SNAPSHOT, data.getCompoundTag(QUICK_PROCESSING_SNAPSHOT).copy());
         }
         data.setTag(QUICK_LEGACY_32_SLOT_BACKUP, backup);
     }
@@ -286,8 +273,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
 
     private static boolean hasStackListOverflow(NBTTagList entries) {
         for (int index = 0; index < entries.tagCount(); index++) {
-            if (entries.getCompoundTagAt(index)
-                .getInteger("Slot") >= 16) return true;
+            if (entries.getCompoundTagAt(index).getInteger("Slot") >= 16) return true;
         }
         return false;
     }
@@ -302,7 +288,7 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
             ItemStack item = Platform.loadItemStackFromNBT(itemTag);
             if (item == null) continue;
             if (FluidDropCompat.isFluidDrop(item)) {
-                net.minecraftforge.fluids.FluidStack fluid = FluidDropCompat.getFluidStack(item);
+                FluidStack fluid = FluidDropCompat.getFluidStack(item);
                 result[slot] = fluid == null ? null : AEFluidStack.create(fluid);
             } else {
                 result[slot] = AEItemStack.create(item);
@@ -362,33 +348,27 @@ public final class DualTerminalGuiObject extends WirelessPatternTerminalGuiObjec
     }
 
     public boolean shouldCombine() {
-        return Platform.openNbtData(getItemStack())
-            .getBoolean(QUICK_COMBINE);
+        return Platform.openNbtData(getItemStack()).getBoolean(QUICK_COMBINE);
     }
 
     public void setCombine(boolean combine) {
-        Platform.openNbtData(getItemStack())
-            .setBoolean(QUICK_COMBINE, combine);
+        Platform.openNbtData(getItemStack()).setBoolean(QUICK_COMBINE, combine);
     }
 
     public boolean shouldPrioritizeFluids() {
-        return Platform.openNbtData(getItemStack())
-            .getBoolean(QUICK_PRIORITIZE_FLUIDS);
+        return Platform.openNbtData(getItemStack()).getBoolean(QUICK_PRIORITIZE_FLUIDS);
     }
 
     public void setPrioritizeFluids(boolean prioritizeFluids) {
-        Platform.openNbtData(getItemStack())
-            .setBoolean(QUICK_PRIORITIZE_FLUIDS, prioritizeFluids);
+        Platform.openNbtData(getItemStack()).setBoolean(QUICK_PRIORITIZE_FLUIDS, prioritizeFluids);
     }
 
     public boolean shouldKeepNonConsumables() {
-        return Platform.openNbtData(getItemStack())
-            .getBoolean(QUICK_KEEP_NON_CONSUMABLES);
+        return Platform.openNbtData(getItemStack()).getBoolean(QUICK_KEEP_NON_CONSUMABLES);
     }
 
     public void setKeepNonConsumables(boolean keep) {
-        Platform.openNbtData(getItemStack())
-            .setBoolean(QUICK_KEEP_NON_CONSUMABLES, keep);
+        Platform.openNbtData(getItemStack()).setBoolean(QUICK_KEEP_NON_CONSUMABLES, keep);
     }
 
     public int getCraftingPinRows(int fallback) {

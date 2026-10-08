@@ -40,13 +40,8 @@ public final class CircuitRecipeInputs {
     public static long batches(GTRecipe recipe, ItemStack circuit, ItemStack[] items, FluidStack[] fluids) {
         long count = quantityBatches(recipe, items, fluids);
         if (count <= 0 || count > Integer.MAX_VALUE || !deterministic(recipe)) return 0;
-        return simulate(
-            count,
-            circuit,
-            items,
-            fluids,
-            (operations, copiedItems, copiedFluids) -> recipe
-                .isRecipeInputEqual(true, false, operations, copiedFluids, copiedItems));
+        return simulate(count, circuit, items, fluids, (operations, copiedItems, copiedFluids) -> recipe
+            .isRecipeInputEqual(true, false, operations, copiedFluids, copiedItems));
     }
 
     /** GT's matching-and-consumption operation, separated so copy isolation can be tested without a running Forge. */

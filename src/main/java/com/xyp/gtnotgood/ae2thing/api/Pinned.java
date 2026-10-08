@@ -30,15 +30,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class Pinned {
 
     private final HashMap<IAEItemStack, PinInfo> pinInfo = new HashMap<>();
-    public static int MAX_PINNED = 9;
+    public static int maxPinned = 9;
     public static Pinned INSTANCE = new Pinned();
     private long lastRunTime;
     private static final int interval = 1000;
     private static final Comparator<Map.Entry<IAEItemStack, PinInfo>> TIME_COMPARATOR = Comparator
         .comparing(e -> e.getValue().since);
-    private static final IItemDisplayRegistry registry = AEApi.instance()
-        .registries()
-        .itemDisplay();
+    private static final IItemDisplayRegistry registry = AEApi.instance().registries().itemDisplay();
 
     public Set<IAEItemStack> getPinnedItems() {
         return pinInfo.keySet();
@@ -50,9 +48,7 @@ public class Pinned {
 
     public void add(IAEItemStack item) {
         if (item == null) return;
-        if (registry.isBlacklisted(item.getItem()) || registry.isBlacklisted(
-            item.getItem()
-                .getClass())) {
+        if (registry.isBlacklisted(item.getItem()) || registry.isBlacklisted(item.getItem().getClass())) {
             return;
         }
         PinInfo info = pinInfo.get(item);
@@ -60,13 +56,13 @@ public class Pinned {
             info.since = Instant.now();
             info.canPrune = false;
         } else {
-            pinInfo.put(item, new PinInfo(PinReason.CRAFTING));
+            pinInfo.put(item, new PinInfo(PinReason.Crafting));
         }
 
-        if (pinInfo.size() > MAX_PINNED) {
+        if (pinInfo.size() > maxPinned) {
             List<Map.Entry<IAEItemStack, PinInfo>> toRemove = new ArrayList<>(pinInfo.entrySet());
             toRemove.sort(TIME_COMPARATOR);
-            for (Map.Entry<IAEItemStack, PinInfo> entry : toRemove.subList(0, toRemove.size() - MAX_PINNED)) {
+            for (Map.Entry<IAEItemStack, PinInfo> entry : toRemove.subList(0, toRemove.size() - maxPinned)) {
                 pinInfo.remove(entry.getKey());
             }
         }
@@ -104,14 +100,12 @@ public class Pinned {
     }
 
     public int getMaxPinSize() {
-        return MAX_PINNED;
+        return maxPinned;
     }
 
     public void updatePinnedItems(List<IAEItemStack> items) {
         GuiScreen gui = Minecraft.getMinecraft().currentScreen;
-        if (!AE2ThingAPI.instance()
-            .terminal()
-            .isPinTerminal(gui)) return;
+        if (!AE2ThingAPI.instance().terminal().isPinTerminal(gui)) return;
         if (items == null || items.isEmpty()) {
             for (PinInfo info : pinInfo.values()) {
                 info.canPrune = true;
@@ -128,8 +122,7 @@ public class Pinned {
 
     public void prune() {
         if (getConfigValue(ButtonConstants.PINNED_BAR_REMOVE)) {
-            pinInfo.values()
-                .removeIf(v -> v.canPrune);
+            pinInfo.values().removeIf(v -> v.canPrune);
         }
     }
 
@@ -140,9 +133,7 @@ public class Pinned {
     public void updateCraftingItems(boolean force) {
         GuiScreen gui = Minecraft.getMinecraft().currentScreen;
         if (gui == null) return;
-        if (!AE2ThingAPI.instance()
-            .terminal()
-            .isPinTerminal(gui)) return;
+        if (!AE2ThingAPI.instance().terminal().isPinTerminal(gui)) return;
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastRunTime >= interval || force) {
             CPacketNetworkCraftingItems p = new CPacketNetworkCraftingItems();
@@ -168,7 +159,7 @@ public class Pinned {
     }
 
     public enum PinReason {
-        CRAFTING
+        Crafting
     }
 
 }

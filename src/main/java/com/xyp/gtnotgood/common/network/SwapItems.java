@@ -77,8 +77,7 @@ public class SwapItems implements IMessage {
                         inSlot.stackSize = max;
                         data.setStackInSlot(i, inSlot);
                         inHand.stackSize = acc - max;
-                        player.inventory.setInventorySlotContents(
-                            player.inventory.currentItem,
+                        player.inventory.setInventorySlotContents(player.inventory.currentItem,
                             inHand.stackSize > 0 ? inHand : null);
                     }
                 } else if (inSlot == null) {

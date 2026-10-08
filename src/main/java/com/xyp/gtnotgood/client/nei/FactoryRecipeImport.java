@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.util.StatCollector;
 
 import com.cleanroommc.modularui.api.IMuiScreen;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.IntegratedProductionFactoryGui.FactoryActions;
@@ -30,12 +31,9 @@ public final class FactoryRecipeImport {
     }
 
     private static FactoryActions actions(GuiContainer firstGui) {
-        if (!(firstGui instanceof IMuiScreen screen) || screen.getScreen()
-            .getSyncManager() == null) return null;
-        return screen.getScreen()
-            .getSyncManager()
-            .getMainPSM()
-            .findSyncHandlerNullable("factoryActions", FactoryActions.class);
+        if (!(firstGui instanceof IMuiScreen screen) || screen.getScreen().getSyncManager() == null) return null;
+        return screen.getScreen().getSyncManager().getMainPSM().findSyncHandlerNullable("factoryActions",
+            FactoryActions.class);
     }
 
     /** Captures the import context when NEI builds the button; closed or locked panels cannot import. */
@@ -51,17 +49,19 @@ public final class FactoryRecipeImport {
             super(original.firstGui, original.handlerRef, original.xPosition, original.yPosition);
             this.actions = actions;
             this.node = actions.importTarget();
-            if (handlerRef.handler instanceof GTNEIDefaultHandler handler && handlerRef.recipeIndex >= 0
-                && handlerRef.recipeIndex < handler.arecipes.size()
-                && handler.arecipes
-                    .get(handlerRef.recipeIndex) instanceof GTNEIDefaultHandler.CachedDefaultRecipe recipe) {
+            if (
+                handlerRef.handler instanceof GTNEIDefaultHandler handler && handlerRef.recipeIndex >= 0
+                    && handlerRef.recipeIndex < handler.arecipes.size()
+                    && handler.arecipes
+                        .get(handlerRef.recipeIndex) instanceof GTNEIDefaultHandler.CachedDefaultRecipe recipe
+            ) {
                 entry = FactoryRecipeCatalog.find(handler.getRecipeMap(), recipe.mRecipe);
                 FactoryText reason = FactoryRecipeCatalog.unsupportedReason(handler.getRecipeMap(), recipe.mRecipe);
-                rejection = reason == null ? FactoryText.IMPORT_UNREGISTERED : reason;
+                rejection = reason == null ? FactoryText.ImportUnregistered : reason;
                 recipeMap = handler.getRecipeMap() == null ? "" : handler.getRecipeMap().unlocalizedName;
             } else {
                 entry = null;
-                rejection = FactoryText.IMPORT_HANDLER;
+                rejection = FactoryText.ImportHandler;
                 recipeMap = "";
             }
             enabled = entry != null;
@@ -85,9 +85,9 @@ public final class FactoryRecipeImport {
 
         @Override
         public List<String> handleTooltip(List<String> tooltip) {
-            tooltip.add(entry == null ? rejection.text() : FactoryText.IMPORT_HELP.text());
+            tooltip.add(entry == null ? rejection.text() : FactoryText.ImportHelp.text());
             if (entry == null && !recipeMap.isEmpty()) {
-                tooltip.add(net.minecraft.util.StatCollector.translateToLocal(recipeMap));
+                tooltip.add(StatCollector.translateToLocal(recipeMap));
                 tooltip.add(recipeMap);
             }
             return tooltip;
@@ -97,8 +97,7 @@ public final class FactoryRecipeImport {
         public void mouseReleased(int mouseX, int mouseY) {
             if (entry == null || actions.importTarget() != node || actions(firstGui) != actions) return;
             actions.send(node == -2 ? 13 : 8, node, 0, 0, entry.id);
-            Minecraft.getMinecraft()
-                .displayGuiScreen(firstGui);
+            Minecraft.getMinecraft().displayGuiScreen(firstGui);
         }
     }
 }

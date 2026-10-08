@@ -1,6 +1,6 @@
 package com.xyp.gtnotgood.ae2thing.coremod.mixin.ae;
 
-import static com.xyp.gtnotgood.ae2thing.api.Constants.MessageType.ADD_PINNED_ITEM;
+import static com.xyp.gtnotgood.ae2thing.api.Constants.MessageType.AddPinnedItem;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -49,7 +49,7 @@ public abstract class MixinContainerCraftConfirm extends AEBaseContainer {
     @Inject(method = "startJob()V", at = @At("HEAD"), remap = false)
     public void startJob(CallbackInfo ci) {
         if (this.result != null && !this.isSimulation() && getGrid() != null && is != null) {
-            SPacketMEItemInvUpdate piu = new SPacketMEItemInvUpdate(ADD_PINNED_ITEM);
+            SPacketMEItemInvUpdate piu = new SPacketMEItemInvUpdate(AddPinnedItem);
             piu.appendStack(is);
             AE2Thing.proxy.netHandler.sendTo(piu, (EntityPlayerMP) this.getPlayerInv().player);
             is = null;

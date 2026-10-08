@@ -51,16 +51,17 @@ public class BRUtil {
         ItemStack item;
         for (int i = 0; i < ingredients.size(); i++) {
             item = ingredients.get(i);
-            if (!((Mods.isGt5UnofficialLoaded() || Mods.isLegacyGt5Loaded())
-                && NEI_TH_Config.getConfigValue(ButtonConstants.BLOCK_RENDER)
-                && GTUtil.isHatchItem(item))) {
+            if (
+                !((Mods.isGt5UnofficialLoaded() || Mods.isLegacyGt5Loaded())
+                    && NEI_TH_Config.getConfigValue(ButtonConstants.BLOCK_RENDER)
+                    && GTUtil.isHatchItem(item))
+            ) {
                 in.add(new OrderStack<>(item, i));
             }
         }
         try {
             ItemStack object = paper.copy();
-            String name = ((GuiRecipe<?>) Minecraft.getMinecraft().currentScreen).getHandler()
-                .getRecipeName();
+            String name = ((GuiRecipe<?>) Minecraft.getMinecraft().currentScreen).getHandler().getRecipeName();
             object.setStackDisplayName(name.equals(defaultName) ? multiBlockName : name);
             out.add(new OrderStack<>(object, 0));
         } catch (Exception ignored) {}
@@ -76,8 +77,10 @@ public class BRUtil {
     }
 
     public static boolean sendToServer(List<ItemStack> ingredients) {
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiRecipe<?>recipeScreen)
-            || !(recipeScreen.firstGui instanceof GuiQuickEncodingTerminal terminal)) return false;
+        if (
+            !(Minecraft.getMinecraft().currentScreen instanceof GuiRecipe<?>recipeScreen)
+                || !(recipeScreen.firstGui instanceof GuiQuickEncodingTerminal terminal)
+        ) return false;
         try {
             ImmutablePair<List<OrderStack<?>>, List<OrderStack<?>>> result = handler.handler(ingredients);
             if (result.left.size() > RecipeTransferPayload.SLOT_COUNT) {
@@ -95,17 +98,9 @@ public class BRUtil {
                 // # zh_CN 多方块结构
                 interfaceSearch = StatCollector.translateToLocal(NameConst.GUI_MULTIBLOCK_STRUCTURE);
             }
-            terminal.transferRecipe(
-                new RecipeTransferPayload(
-                    false,
-                    GuiScreen.isShiftKeyDown(),
-                    4,
-                    false,
-                    toAEStacks(result.left),
-                    toAEStacks(result.right)),
-                interfaceSearch);
-            Minecraft.getMinecraft()
-                .displayGuiScreen(recipeScreen.firstGui);
+            terminal.transferRecipe(new RecipeTransferPayload(false, GuiScreen.isShiftKeyDown(), 4, false,
+                toAEStacks(result.left), toAEStacks(result.right)), interfaceSearch);
+            Minecraft.getMinecraft().displayGuiScreen(recipeScreen.firstGui);
             return true;
         } catch (Exception ignored) {
             return false;
@@ -115,8 +110,7 @@ public class BRUtil {
     private static IAEStack<?>[] toAEStacks(List<OrderStack<?>> stacks) {
         IAEStack<?>[] result = new IAEStack<?>[RecipeTransferPayload.SLOT_COUNT];
         for (int index = 0; index < stacks.size(); index++) {
-            Object stack = stacks.get(index)
-                .getStack();
+            Object stack = stacks.get(index).getStack();
             if (stack instanceof ItemStack item) {
                 result[index] = AEItemStack.create(item.copy());
             } else if (stack instanceof FluidStack fluid) {

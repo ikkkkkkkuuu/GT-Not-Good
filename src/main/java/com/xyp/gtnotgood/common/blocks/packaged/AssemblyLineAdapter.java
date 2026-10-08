@@ -23,6 +23,7 @@ import gregtech.api.metatileentity.implementations.MTEHatchOutputBus;
 import gregtech.api.metatileentity.implementations.MTEMultiBlockBase;
 import gregtech.api.util.AssemblyLineUtils;
 import gregtech.api.util.GTRecipe.RecipeAssemblyLine;
+import gregtech.api.util.shutdown.ShutDownReasonRegistry;
 import gregtech.common.tileentities.machines.multi.MTEAssemblyLine;
 
 /**
@@ -66,7 +67,7 @@ public final class AssemblyLineAdapter implements PackagedCoreRegistry.Adapter {
     public boolean interrupt(TilePackagedProvider provider, TileEntity target, ItemStack expected) {
         MTEMultiBlockBase line = machine(target);
         if (line == null || !accessible(provider, line)) return false;
-        line.stopMachine(gregtech.api.util.shutdown.ShutDownReasonRegistry.NONE);
+        line.stopMachine(ShutDownReasonRegistry.NONE);
         line.markDirty();
         return true;
     }
@@ -77,29 +78,35 @@ public final class AssemblyLineAdapter implements PackagedCoreRegistry.Adapter {
         MTEMultiBlockBase line = machine(target.resolve(provider.getWorldObj()));
         boolean continuing = provider.busy(target);
         if (!provider.canQueue(target, this, pattern.getPattern())) return null;
-        if (line == null || !line.mMachine
-            || !continuing && line.mMaxProgresstime > 0
-            || !line.getBaseMetaTileEntity()
-                .isAllowedToWork()
-            || !accessible(provider, line)) return null;
+        if (
+            line == null || !line.mMachine
+                || !continuing && line.mMaxProgresstime > 0
+                || !line.getBaseMetaTileEntity().isAllowedToWork()
+                || !accessible(provider, line)
+        ) return null;
         var outputs = pattern.getCondensedOutputs();
         if (outputs == null || outputs.length != 1 || outputs[0] == null) return null;
         ItemStack expected = outputs[0].getItemStack();
-        if (expected == null || outputs[0].getStackSize() <= 0
-            || outputs[0].getStackSize() > expected.getMaxStackSize()) return null;
+        if (
+            expected == null || outputs[0].getStackSize() <= 0 || outputs[0].getStackSize() > expected.getMaxStackSize()
+        ) return null;
         // A new lane must be empty; an owned lane may hold earlier batches of this exact pattern.
         if (line.mOutputBusses.size() != 1) return null;
         var output = line.mOutputBusses.get(0);
-        if (output.getClass() != MTEHatchOutputBus.class || !accessible(provider, output)
-            || !continuing && !empty(output)) return null;
+        if (
+            output.getClass() != MTEHatchOutputBus.class || !accessible(provider, output)
+                || !continuing && !empty(output)
+        ) return null;
         for (var bus : line.mInputBusses) {
             if (bus.getClass() != MTEHatchInputBus.class || !accessible(provider, bus) || !continuing && !empty(bus))
                 return null;
         }
         for (var hatch : line.mInputHatches) {
-            if (hatch.getClass() != MTEHatchInput.class || !accessible(provider, hatch)
-                || !empty(hatch)
-                || !continuing && hatch.getFluid() != null) return null;
+            if (
+                hatch.getClass() != MTEHatchInput.class || !accessible(provider, hatch)
+                    || !empty(hatch)
+                    || !continuing && hatch.getFluid() != null
+            ) return null;
         }
         List<RecipeAssemblyLine> recipes = new ArrayList<>();
         ItemStack stick = line.getStackInSlot(1);
@@ -114,10 +121,12 @@ public final class AssemblyLineAdapter implements PackagedCoreRegistry.Adapter {
             }
         }
         for (var recipe : recipes) {
-            if (!TilePackagedProvider.sameItem(recipe.mOutput, expected)
-                || recipe.mOutput.stackSize != expected.stackSize
-                || recipe.mInputs.length > line.mInputBusses.size()
-                || recipe.mFluidInputs.length > line.mInputHatches.size()) continue;
+            if (
+                !TilePackagedProvider.sameItem(recipe.mOutput, expected)
+                    || recipe.mOutput.stackSize != expected.stackSize
+                    || recipe.mInputs.length > line.mInputBusses.size()
+                    || recipe.mFluidInputs.length > line.mInputHatches.size()
+            ) continue;
             ItemStack[] planned = planItems(recipe, ingredients);
             if (planned == null || !matchesFluids(recipe, ingredients)) continue;
             boolean fits = true;
@@ -130,14 +139,15 @@ public final class AssemblyLineAdapter implements PackagedCoreRegistry.Adapter {
                 var hatch = line.mInputHatches.get(i);
                 var stored = hatch.getFluid();
                 var required = recipe.mFluidInputs[i];
-                if (stored != null && !stored.isFluidEqual(required)
-                    || (long) required.amount + (stored == null ? 0 : stored.amount) > hatch.getCapacity())
-                    fits = false;
+                if (
+                    stored != null && !stored.isFluidEqual(required)
+                        || (long) required.amount + (stored == null ? 0 : stored.amount) > hatch.getCapacity()
+                ) fits = false;
             }
             for (int i = planned.length; i < line.mInputBusses.size(); i++)
                 if (!empty(line.mInputBusses.get(i))) fits = false;
-            for (int i = recipe.mFluidInputs.length; i < line.mInputHatches.size(); i++) if (line.mInputHatches.get(i)
-                .getFluid() != null) fits = false;
+            for (int i = recipe.mFluidInputs.length; i < line.mInputHatches.size(); i++)
+                if (line.mInputHatches.get(i).getFluid() != null) fits = false;
             if (!fits) continue;
             for (int i = 0; i < planned.length; i++) {
                 var bus = line.mInputBusses.get(i);
@@ -167,8 +177,7 @@ public final class AssemblyLineAdapter implements PackagedCoreRegistry.Adapter {
         return base != null && owner != null
             && owner.worldObj == world
             && base.getWorld() == world
-            && world.getChunkProvider()
-                .chunkExists(base.getXCoord() >> 4, base.getZCoord() >> 4)
+            && world.getChunkProvider().chunkExists(base.getXCoord() >> 4, base.getZCoord() >> 4)
             && world.getTileEntity(base.getXCoord(), base.getYCoord(), base.getZCoord()) == base
             && base.getMetaTileEntity() == meta
             && world.canMineBlock(owner, base.getXCoord(), base.getYCoord(), base.getZCoord());
@@ -194,9 +203,10 @@ public final class AssemblyLineAdapter implements PackagedCoreRegistry.Adapter {
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++) {
             if (inventory instanceof MTEHatchInputBus bus && !bus.isValidSlot(slot)) continue;
             ItemStack stored = inventory.getStackInSlot(slot);
-            if (stored != null
-                && (!TilePackagedProvider.sameItem(stored, ingredient) || stored.stackSize % ingredient.stackSize != 0))
-                return -1;
+            if (
+                stored != null && (!TilePackagedProvider.sameItem(stored, ingredient)
+                    || stored.stackSize % ingredient.stackSize != 0)
+            ) return -1;
             // Sorting may compact into full stacks. Avoid a short first stack blocking later ingredients.
             if (slot > 0 && limit % ingredient.stackSize != 0) continue;
             if (selected < 0 && (stored == null || (long) stored.stackSize + ingredient.stackSize <= limit))
@@ -233,8 +243,7 @@ public final class AssemblyLineAdapter implements PackagedCoreRegistry.Adapter {
     private static boolean allocate(RecipeAssemblyLine recipe, List<ItemStack> items, ItemStack[] result, int lane,
         int[] budget) {
         if (--budget[0] < 0) return false;
-        if (lane == result.length) return items.stream()
-            .allMatch(stack -> stack.stackSize == 0);
+        if (lane == result.length) return items.stream().allMatch(stack -> stack.stackSize == 0);
         ItemStack[] alternatives = recipe.mOreDictAlt == null ? null : recipe.mOreDictAlt[lane];
         for (ItemStack item : items) {
             int amount = RecipeAssemblyLine.getMatchedIngredientAmount(item, recipe.mInputs[lane], alternatives);
@@ -268,8 +277,7 @@ public final class AssemblyLineAdapter implements PackagedCoreRegistry.Adapter {
             }
             if (remaining != 0) return false;
         }
-        return supplied.stream()
-            .allMatch(fluid -> fluid.amount == 0);
+        return supplied.stream().allMatch(fluid -> fluid.amount == 0);
     }
 
     /**
@@ -281,11 +289,12 @@ public final class AssemblyLineAdapter implements PackagedCoreRegistry.Adapter {
      * @return an independent fluid stack, or null for a nonfluid/invalid slot
      */
     private static FluidStack fluidInput(InventoryCrafting ingredients, int slot) {
-        if (ingredients instanceof MEInventoryCrafting nativeInventory
-            && nativeInventory.getAEStackInSlot(slot) instanceof IAEFluidStack fluid) {
+        if (
+            ingredients instanceof MEInventoryCrafting nativeInventory
+                && nativeInventory.getAEStackInSlot(slot) instanceof IAEFluidStack fluid
+        ) {
             if (fluid.getStackSize() <= 0 || fluid.getStackSize() > Integer.MAX_VALUE) return null;
-            return fluid.getFluidStack()
-                .copy();
+            return fluid.getFluidStack().copy();
         }
         return FluidDropCompat.getFluidStack(ingredients.getStackInSlot(slot));
     }
@@ -296,13 +305,12 @@ public final class AssemblyLineAdapter implements PackagedCoreRegistry.Adapter {
         if (line == null || !line.mMachine || line.mOutputBusses.size() != 1) return null;
         var bus = line.mOutputBusses.get(0);
         var base = bus.getBaseMetaTileEntity();
-        if (bus.getClass() != MTEHatchOutputBus.class || base == null
-            || !target.getWorldObj()
-                .getChunkProvider()
-                .chunkExists(base.getXCoord() >> 4, base.getZCoord() >> 4)
-            || target.getWorldObj()
-                .getTileEntity(base.getXCoord(), base.getYCoord(), base.getZCoord()) != base
-            || base.getMetaTileEntity() != bus) return null;
+        if (
+            bus.getClass() != MTEHatchOutputBus.class || base == null
+                || !target.getWorldObj().getChunkProvider().chunkExists(base.getXCoord() >> 4, base.getZCoord() >> 4)
+                || target.getWorldObj().getTileEntity(base.getXCoord(), base.getYCoord(), base.getZCoord()) != base
+                || base.getMetaTileEntity() != bus
+        ) return null;
         return bus;
     }
 }

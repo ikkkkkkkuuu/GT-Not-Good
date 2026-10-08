@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.common.items.wildcard.model.filter;
 
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
@@ -32,7 +34,7 @@ public final class PropertyFilterComponent extends AbstractFilterComponent {
     }
 
     public static PropertyFilterComponent empty() {
-        return new PropertyFilterComponent(WildcardMaterials.Property.METAL, null, true);
+        return new PropertyFilterComponent(WildcardMaterials.Property.Metal, null, true);
     }
 
     public static PropertyFilterComponent readData(NBTTagCompound data) {
@@ -46,7 +48,7 @@ public final class PropertyFilterComponent extends AbstractFilterComponent {
     public void setExample(Materials example) {
         this.example = WildcardMaterials.isRealMaterial(example) ? example : null;
         if (this.example != null) {
-            java.util.List<WildcardMaterials.Property> avail = WildcardMaterials.propertiesOf(this.example);
+            List<WildcardMaterials.Property> avail = WildcardMaterials.propertiesOf(this.example);
             if (!avail.isEmpty() && (property == null || !avail.contains(property))) {
                 property = avail.get(0);
             }
@@ -66,49 +68,51 @@ public final class PropertyFilterComponent extends AbstractFilterComponent {
         if (property != null && materialName != null) {
             OrePrefixes prefix = null;
             switch (property) {
-                case DUST:
+                case Dust:
                     prefix = OrePrefixes.dust;
                     break;
-                case METAL:
-                case INGOT:
+                case Metal:
+                case Ingot:
                     prefix = OrePrefixes.ingot;
                     break;
-                case GEM:
+                case Gem:
                     prefix = OrePrefixes.gem;
                     break;
-                case ORE:
+                case Ore:
                     prefix = OrePrefixes.ore;
                     break;
-                case CELL:
+                case Cell:
                     prefix = OrePrefixes.cell;
                     break;
-                case GEAR:
+                case Gear:
                     prefix = OrePrefixes.gearGt;
                     break;
-                case TOOL:
-                case TOOL_HEAD:
+                case Tool:
+                case ToolHead:
                     prefix = OrePrefixes.toolHeadHammer;
                     break;
-                case FLUID_PIPE:
+                case FluidPipe:
                     prefix = OrePrefixes.pipeTiny;
                     break;
                 default:
                     break;
             }
             if (prefix != null) matches = WildcardMaterials.makePrefixStack(prefix, materialName, 1) != null;
-            else if (property == WildcardMaterials.Property.PLASMA || property == WildcardMaterials.Property.FLUID
-                || property == WildcardMaterials.Property.GAS) {
-                    FluidState state = property == WildcardMaterials.Property.PLASMA ? FluidState.PLASMA
-                        : property == WildcardMaterials.Property.GAS ? FluidState.GAS : FluidState.MOLTEN;
-                    matches = WildcardMaterials.makeFluidStack(state, materialName, 1) != null;
-                }
+            else if (
+                property == WildcardMaterials.Property.Plasma || property == WildcardMaterials.Property.Fluid
+                    || property == WildcardMaterials.Property.Gas
+            ) {
+                FluidState state = property == WildcardMaterials.Property.Plasma ? FluidState.PLASMA
+                    : property == WildcardMaterials.Property.Gas ? FluidState.GAS : FluidState.MOLTEN;
+                matches = WildcardMaterials.makeFluidStack(state, materialName, 1) != null;
+            }
         }
         return materialName != null && isWhitelist() == matches;
     }
 
     @Override
     public String describe() {
-        return (isWhitelist() ? "+" : "-") + (property == null ? "?" : property.name());
+        return (isWhitelist() ? "+" : "-") + (property == null ? "?" : property.serializedName);
     }
 
     @Override
@@ -119,7 +123,7 @@ public final class PropertyFilterComponent extends AbstractFilterComponent {
     @Override
     public NBTTagCompound writeData() {
         NBTTagCompound data = baseData();
-        data.setString(KEY_PROPERTY, property == null ? "" : property.name());
+        data.setString(KEY_PROPERTY, property == null ? "" : property.serializedName);
         if (example != null) data.setString(KEY_EXAMPLE, example.mName);
         return data;
     }

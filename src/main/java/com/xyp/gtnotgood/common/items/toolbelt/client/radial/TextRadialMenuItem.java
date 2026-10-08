@@ -14,11 +14,9 @@ public class TextRadialMenuItem extends RadialMenuItem {
     @Override
     public void draw(DrawingContext context) {
         String displayText = text;
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(
-            displayText,
+        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(displayText,
             (int) context.x - Minecraft.getMinecraft().fontRenderer.getStringWidth(displayText) / 2,
-            (int) context.y - 4,
-            0xFFFFFF);
+            (int) context.y - 4, 0xFFFFFF);
     }
 
     @Override

@@ -65,8 +65,7 @@ public final class BlockLoader {
     // #tr tile.network_controller.name
     // # Programmable Network Controller
     // # zh_CN 可编程网络控制器
-    public static final BlockNetwork networkController = new BlockNetwork(
-        BlockNetwork.CONTROLLER,
+    public static final BlockNetwork networkController = new BlockNetwork(BlockNetwork.CONTROLLER,
         "network_controller");
     // #tr tile.network_pipe.name
     // # Network Cable
@@ -99,10 +98,7 @@ public final class BlockLoader {
         registerStockIOInterface();
         largeInterface.register();
         GTNGItemList.LargeInterface.set(new ItemStack(largeInterface));
-        AEApi.instance()
-            .registries()
-            .interfaceTerminal()
-            .register(TileLargeInterface.class);
+        AEApi.instance().registries().interfaceTerminal().register(TileLargeInterface.class);
         registerNetworkBlocks();
         registerMEBridgeBlocks();
     }
@@ -110,17 +106,11 @@ public final class BlockLoader {
     private static void registerPackagedProvider() {
         BlockPackagedProvider packagedProvider = new BlockPackagedProvider();
         GameRegistry.registerBlock(packagedProvider, "wireless_packaged_pattern_provider");
-        GameRegistry.registerTileEntity(
-            TilePackagedProvider.class,
+        GameRegistry.registerTileEntity(TilePackagedProvider.class,
             ModList.GTNotGood.getResourcePath("wireless_packaged_pattern_provider"));
         GTNGItemList.WirelessPackagedPatternProvider.set(new ItemStack(packagedProvider));
-        AEApi.instance()
-            .registries()
-            .interfaceTerminal()
-            .register(TilePackagedProvider.class);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new PackagedServerActions());
+        AEApi.instance().registries().interfaceTerminal().register(TilePackagedProvider.class);
+        FMLCommonHandler.instance().bus().register(new PackagedServerActions());
     }
 
     private static void registerMechanicalUser() {
@@ -137,12 +127,10 @@ public final class BlockLoader {
         GTNGItemList.FluxPlug.set(new ItemStack(fluxPlug));
         GTNGItemList.FluxPoint.set(new ItemStack(fluxPoint));
         GameRegistry.registerBlock(fluxLogistics, ItemBlockFluxConnector.class, "flux_logistics_plug");
-        GameRegistry
-            .registerTileEntity(TileFluxLogistics.class, ModList.GTNotGood.getResourcePath("flux_logistics_plug"));
+        GameRegistry.registerTileEntity(TileFluxLogistics.class,
+            ModList.GTNotGood.getResourcePath("flux_logistics_plug"));
         GTNGItemList.FluxLogisticsPlug.set(new ItemStack(fluxLogistics));
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new FluxTransferScheduler());
+        FMLCommonHandler.instance().bus().register(new FluxTransferScheduler());
         ForgeChunkManager.setForcedChunkLoadingCallback(GTNotGood.instance, new FluxChunkLoading());
     }
 
@@ -154,8 +142,8 @@ public final class BlockLoader {
 
     private static void registerStockIOInterface() {
         GameRegistry.registerBlock(stockIOInterface, ItemBlockMEBridge.class, "stock_io_interface");
-        GameRegistry
-            .registerTileEntity(TileStockIOInterface.class, ModList.GTNotGood.getResourcePath("stock_io_interface"));
+        GameRegistry.registerTileEntity(TileStockIOInterface.class,
+            ModList.GTNotGood.getResourcePath("stock_io_interface"));
         GTNGItemList.StockIOInterface.set(new ItemStack(stockIOInterface));
     }
 
@@ -164,8 +152,8 @@ public final class BlockLoader {
         GameRegistry.registerBlock(networkPipe, "network_pipe");
         GameRegistry.registerBlock(networkConnector, "network_connector");
         GameRegistry.registerTileEntity(TileNetworkNode.class, ModList.GTNotGood.getResourcePath("network_node"));
-        GameRegistry
-            .registerTileEntity(TileNetworkController.class, ModList.GTNotGood.getResourcePath("network_controller"));
+        GameRegistry.registerTileEntity(TileNetworkController.class,
+            ModList.GTNotGood.getResourcePath("network_controller"));
         MinecraftForge.EVENT_BUS.register(new NetworkTopology.Events());
         GTNGItemList.NetworkController.set(new ItemStack(networkController));
         GTNGItemList.NetworkPipe.set(new ItemStack(networkPipe));

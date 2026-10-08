@@ -52,9 +52,7 @@ public class TextEffectPreview extends GuiScreen {
     public void initGui() {
         List<Entry> registered = new ArrayList<>();
         for (String identifier : TextEffectRegistry.identifiers()) {
-            TextEffectStyle style = new TextEffectStyle(
-                identifier,
-                ImmutableList.of(),
+            TextEffectStyle style = new TextEffectStyle(identifier, ImmutableList.of(),
                 wirelessMonitor ? activeStyle().speed() : 1);
             String alias = TextEffectFormat.aliasFor(identifier);
             String name = effectName(style);
@@ -65,10 +63,7 @@ public class TextEffectPreview extends GuiScreen {
             String active = activeStyle().rendererId();
             selectedIndex = 0;
             for (int i = 0; i < entries.size(); i++) {
-                if (entries.get(i)
-                    .style()
-                    .rendererId()
-                    .equals(active)) {
+                if (entries.get(i).style().rendererId().equals(active)) {
                     selectedIndex = i;
                     break;
                 }
@@ -88,50 +83,26 @@ public class TextEffectPreview extends GuiScreen {
         sample.setFocused(true);
         buttonList.clear();
         int buttonWidth = Math.max(1, (width - 51) / 4);
-        buttonList.add(
-            new GuiButton(
-                0,
-                18,
-                height - 25,
-                buttonWidth,
-                20,
-                // #tr gtnotgood.text_effect.palette
-                // # Toggle palette
-                // # zh_CN 切换配色
-                StatCollector.translateToLocal("gtnotgood.text_effect.palette")));
-        buttonList.add(
-            new GuiButton(
-                1,
-                23 + buttonWidth,
-                height - 25,
-                buttonWidth,
-                20,
-                // #tr gtnotgood.text_effect.bold
-                // # Toggle bold
-                // # zh_CN 切换粗体
-                StatCollector.translateToLocal("gtnotgood.text_effect.bold")));
-        buttonList.add(
-            new GuiButton(
-                4,
-                28 + buttonWidth * 2,
-                height - 25,
-                buttonWidth,
-                20,
-                // #tr gtnotgood.text_effect.italic
-                // # Toggle italic
-                // # zh_CN 切换斜体
-                StatCollector.translateToLocal("gtnotgood.text_effect.italic")));
-        buttonList.add(
-            new GuiButton(
-                5,
-                33 + buttonWidth * 3,
-                height - 25,
-                buttonWidth,
-                20,
-                // #tr gtnotgood.text_effect.apply
-                // # Apply to machine credits
-                // # zh_CN 应用到机器署名
-                wirelessMonitor ? wirelessApplyText() : StatCollector.translateToLocal("gtnotgood.text_effect.apply")));
+        buttonList.add(new GuiButton(0, 18, height - 25, buttonWidth, 20,
+            // #tr gtnotgood.text_effect.palette
+            // # Toggle palette
+            // # zh_CN 切换配色
+            StatCollector.translateToLocal("gtnotgood.text_effect.palette")));
+        buttonList.add(new GuiButton(1, 23 + buttonWidth, height - 25, buttonWidth, 20,
+            // #tr gtnotgood.text_effect.bold
+            // # Toggle bold
+            // # zh_CN 切换粗体
+            StatCollector.translateToLocal("gtnotgood.text_effect.bold")));
+        buttonList.add(new GuiButton(4, 28 + buttonWidth * 2, height - 25, buttonWidth, 20,
+            // #tr gtnotgood.text_effect.italic
+            // # Toggle italic
+            // # zh_CN 切换斜体
+            StatCollector.translateToLocal("gtnotgood.text_effect.italic")));
+        buttonList.add(new GuiButton(5, 33 + buttonWidth * 3, height - 25, buttonWidth, 20,
+            // #tr gtnotgood.text_effect.apply
+            // # Apply to machine credits
+            // # zh_CN 应用到机器署名
+            wirelessMonitor ? wirelessApplyText() : StatCollector.translateToLocal("gtnotgood.text_effect.apply")));
         buttonList.add(new GuiButton(2, width - 70, 50, 24, 20, "<"));
         buttonList.add(new GuiButton(3, width - 42, 50, 24, 20, ">"));
     }
@@ -146,21 +117,17 @@ public class TextEffectPreview extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
-        drawCenteredString(
-            fontRendererObj,
+        drawCenteredString(fontRendererObj,
             // #tr gtnotgood.text_effect.title
             // # Animated text effects
             // # zh_CN 动态文字效果
-            StatCollector.translateToLocal("gtnotgood.text_effect.title"),
-            width / 2,
-            10,
-            0xFFFFFF);
+            StatCollector.translateToLocal("gtnotgood.text_effect.title"), width / 2, 10, 0xFFFFFF);
         sample.drawTextBox();
         // #tr gtnotgood.text_effect.select_hint
         // # Click an effect row to select it; * marks the active effect.
         // # zh_CN 点击效果行选择；* 表示当前效果。
-        fontRendererObj
-            .drawString(StatCollector.translateToLocal("gtnotgood.text_effect.select_hint"), 18, 56, 0xB0B0B0);
+        fontRendererObj.drawString(StatCollector.translateToLocal("gtnotgood.text_effect.select_hint"), 18, 56,
+            0xB0B0B0);
         fontRendererObj.drawString((page + 1) + " / " + pageCount(), width - 112, 56, 0xB0B0B0);
         float rowHeight = Math.max(20, EffectTextLayout.fontHeight(fontRendererObj) * 2.8f);
         int count = Math.min(PAGE_SIZE, entries.size() - page * PAGE_SIZE);
@@ -179,11 +146,7 @@ public class TextEffectPreview extends GuiScreen {
     private void drawEffects(float rowHeight, float availableWidth) {
         int labelWidth = 0;
         for (int i = page * PAGE_SIZE; i < Math.min(entries.size(), (page + 1) * PAGE_SIZE); i++) {
-            labelWidth = Math.max(
-                labelWidth,
-                fontRendererObj.getStringWidth(
-                    entries.get(i)
-                        .label()));
+            labelWidth = Math.max(labelWidth, fontRendererObj.getStringWidth(entries.get(i).label()));
         }
         int textX = (int) Math.min(labelWidth + 36, availableWidth * 0.6f);
         String value = (bold ? "\u00a7l" : "") + (italic ? "\u00a7o" : "") + sample.getText() + "\u00a7r";
@@ -192,30 +155,22 @@ public class TextEffectPreview extends GuiScreen {
             Entry entry = entries.get(i);
             TextEffectStyle preset = entry.style();
             TextEffectStyle style = customPalette
-                ? (wirelessMonitor ? new TextEffectStyle(
-                    preset.rendererId(),
-                    WirelessMonitorPreferences.paletteStyle()
-                        .colors(),
-                    preset.speed()) : preset.withColors(0x33CCFF, 0xFFAA33, 0xDD77FF))
+                ? (wirelessMonitor
+                    ? new TextEffectStyle(preset.rendererId(), WirelessMonitorPreferences.paletteStyle().colors(),
+                        preset.speed())
+                    : preset.withColors(0x33CCFF, 0xFFAA33, 0xDD77FF))
                 : preset;
-            String prefix = entry.style()
-                .rendererId()
-                .equals(activeStyle().rendererId()) ? "* " : "  ";
+            String prefix = entry.style().rendererId().equals(activeStyle().rendererId()) ? "* " : "  ";
             String name = fontRendererObj.trimStringToWidth(prefix + entry.label(), textX - 30);
             fontRendererObj.drawString(name, 18, (int) y, i == selectedIndex ? 0xFFFF55 : 0xB0B0B0);
             String rendered = TextEffectsCompat.format(style) + value;
             fontRendererObj.drawStringWithShadow(
-                fontRendererObj.trimStringToWidth(rendered, (int) availableWidth - textX - 20),
-                textX,
-                (int) y,
+                fontRendererObj.trimStringToWidth(rendered, (int) availableWidth - textX - 20), textX, (int) y,
                 0xFFFFFF);
             y += rowHeight;
         }
         if (!entries.isEmpty() && y + 77 + 30 < height - 25) {
-            String mixed = "Plain + " + TextEffectsCompat.apply(
-                value,
-                entries.get(page * PAGE_SIZE)
-                    .style())
+            String mixed = "Plain + " + TextEffectsCompat.apply(value, entries.get(page * PAGE_SIZE).style())
                 + " + plain";
             fontRendererObj.drawSplitString(mixed, 18, (int) y, width - 36, 0xFFFFFF);
         }
@@ -242,24 +197,16 @@ public class TextEffectPreview extends GuiScreen {
         if (button.id == 4) italic = !italic;
         if (button.id == 2) page = Math.floorMod(page - 1, pageCount());
         if (button.id == 3) page = (page + 1) % pageCount();
-        if ((button.id == 2 || button.id == 3)
-            && (selectedIndex < page * PAGE_SIZE || selectedIndex >= (page + 1) * PAGE_SIZE)) {
+        if (
+            (button.id == 2 || button.id == 3)
+                && (selectedIndex < page * PAGE_SIZE || selectedIndex >= (page + 1) * PAGE_SIZE)
+        ) {
             selectedIndex = Math.min(page * PAGE_SIZE, entries.size() - 1);
         }
         if (button.id == 5 && selectedIndex >= 0 && selectedIndex < entries.size()) {
-            if (wirelessMonitor) WirelessMonitorPreferences.apply(
-                entries.get(selectedIndex)
-                    .style()
-                    .rendererId(),
-                customPalette,
-                bold,
-                italic);
-            else TextEffectPreferences.apply(
-                entries.get(selectedIndex)
-                    .style()
-                    .rendererId(),
-                customPalette,
-                bold,
+            if (wirelessMonitor) WirelessMonitorPreferences.apply(entries.get(selectedIndex).style().rendererId(),
+                customPalette, bold, italic);
+            else TextEffectPreferences.apply(entries.get(selectedIndex).style().rendererId(), customPalette, bold,
                 italic);
         }
     }

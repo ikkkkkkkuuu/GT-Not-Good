@@ -20,23 +20,15 @@ public final class MaxCapacityMEOutputRecipes {
     /** Adds upgrades that retain the ordinary ME output bus and hatch as crafting prerequisites. */
     public static void loadRecipes() {
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Hatch_Output_Bus_ME.get(1L),
-                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
+            .itemInputs(ItemList.Hatch_Output_Bus_ME.get(1L), new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
-            .itemOutputs(GTNGItemList.MaxCapacityMEOutputBus.get(1))
-            .duration(5 * SECONDS)
-            .eut(RECIPE_LV)
+            .itemOutputs(GTNGItemList.MaxCapacityMEOutputBus.get(1)).duration(5 * SECONDS).eut(RECIPE_LV)
             .addTo(assemblerRecipes);
 
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Hatch_Output_ME.get(1L),
-                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
+            .itemInputs(ItemList.Hatch_Output_ME.get(1L), new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
-            .itemOutputs(GTNGItemList.MaxCapacityMEOutputHatch.get(1))
-            .duration(5 * SECONDS)
-            .eut(RECIPE_LV)
+            .itemOutputs(GTNGItemList.MaxCapacityMEOutputHatch.get(1)).duration(5 * SECONDS).eut(RECIPE_LV)
             .addTo(assemblerRecipes);
     }
 }

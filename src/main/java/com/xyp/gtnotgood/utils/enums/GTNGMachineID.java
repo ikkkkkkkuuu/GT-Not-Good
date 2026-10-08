@@ -1,16 +1,7 @@
 package com.xyp.gtnotgood.utils.enums;
 
-/**
- * Allocates stable GregTech meta-tile entity IDs for GT Not Good machines.
- */
 public enum GTNGMachineID {
 
-    /**
-     * Base ID for GT Not Good meta-tile entities.
-     * <p>
-     * The nearby {@code 28001-28055} range is occupied by CropsNH in the GTNH environment, so this mod starts at
-     * {@code 28100} to keep its private machine IDs away from that shipped addon range.
-     */
     Machine(28500),
     BasicMachine(28600),
     /** LV through MAX: seven laser inputs and one dynamo slot per tier, 28700-28811. */

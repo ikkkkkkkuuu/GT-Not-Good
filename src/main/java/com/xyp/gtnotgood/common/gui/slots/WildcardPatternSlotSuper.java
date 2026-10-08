@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.common.gui.slots;
 
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
@@ -32,7 +33,7 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
     @Getter
     private String activeGeneratedPatternId = "";
     private final WildcardPatternCache<List<ICraftingPatternDetails>> expansionCache = new WildcardPatternCache<>();
-    private List<ICraftingPatternDetails> cachedExpandedDetails = java.util.Collections.emptyList();
+    private List<ICraftingPatternDetails> cachedExpandedDetails = Collections.emptyList();
 
     public WildcardPatternSlotSuper(SuperMTEHatchCraftingInputME parent, ItemStack pattern,
         SuperMTEHatchCraftingInputME.PatternSlot<SuperMTEHatchCraftingInputME> originalSlot) {
@@ -63,8 +64,8 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
     }
 
     public List<ICraftingPatternDetails> getExpandedDetails(ItemStack patternStack, World world) {
-        this.cachedExpandedDetails = expansionCache
-            .get(patternStack, world, () -> WildcardPatternGenerator.generateAllDetails(patternStack, world));
+        this.cachedExpandedDetails = expansionCache.get(patternStack, world,
+            () -> WildcardPatternGenerator.generateAllDetails(patternStack, world));
         return this.cachedExpandedDetails;
     }
 
@@ -160,8 +161,7 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
         if (this.pattern == null) {
             return this.cachedExpandedDetails;
         }
-        World world = this.parentMTE.getBaseMetaTileEntity()
-            .getWorld();
+        World world = this.parentMTE.getBaseMetaTileEntity().getWorld();
         if (world == null) {
             return this.cachedExpandedDetails;
         }
@@ -189,8 +189,7 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
         if (patternStack == null) {
             return null;
         }
-        World world = this.parentMTE.getBaseMetaTileEntity()
-            .getWorld();
+        World world = this.parentMTE.getBaseMetaTileEntity().getWorld();
         return WildcardPatternGenerator.createDetailForCurrentStack(patternStack.copy(), world);
     }
 
@@ -230,8 +229,9 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
                 continue;
             }
             ItemStack inputStack = input.getItemStack();
-            if (inputStack == null || isFluidPatternInput(inputStack)
-                || !GTUtility.areStacksEqual(inputStack, expected)) {
+            if (
+                inputStack == null || isFluidPatternInput(inputStack) || !GTUtility.areStacksEqual(inputStack, expected)
+            ) {
                 continue;
             }
             required += Math.max(Math.max(1L, input.getStackSize()), inputStack.stackSize);
@@ -301,8 +301,9 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
                 continue;
             }
             ItemStack inputStack = input.getItemStack();
-            if (inputStack != null && !isFluidPatternInput(inputStack)
-                && GTUtility.areStacksEqual(stored, inputStack)) {
+            if (
+                inputStack != null && !isFluidPatternInput(inputStack) && GTUtility.areStacksEqual(stored, inputStack)
+            ) {
                 return true;
             }
         }
@@ -336,8 +337,9 @@ public class WildcardPatternSlotSuper extends SuperMTEHatchCraftingInputME.Patte
             return null;
         }
         for (ICraftingPatternDetails details : detailsList) {
-            if (details != null
-                && savedId.equals(WildcardPatternGenerator.getGeneratedPatternId(details.getPattern()))) {
+            if (
+                details != null && savedId.equals(WildcardPatternGenerator.getGeneratedPatternId(details.getPattern()))
+            ) {
                 return details;
             }
         }

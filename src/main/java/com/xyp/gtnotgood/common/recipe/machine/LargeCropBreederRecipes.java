@@ -26,19 +26,12 @@ public final class LargeCropBreederRecipes {
      */
     public static void loadRecipes() {
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Hull_MV.get(1L),
-                CropsNHItemList.cropSticks.get(16),
+            .itemInputs(ItemList.Hull_MV.get(1L), CropsNHItemList.cropSticks.get(16),
                 GTOreDictUnificator.get(OrePrefixes.frameGt, Materials.Steel, 4),
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 8),
-                new Object[] { OrePrefixes.circuit.get(Materials.MV), 4 },
-                ItemList.Electric_Motor_MV.get(2L),
-                ItemList.Electric_Piston_MV.get(2L),
-                GTUtility.getIntegratedCircuit(23))
-            .fluidInputs(Materials.SolderingAlloy.getMolten(576))
-            .itemOutputs(GTNGItemList.LargeCropBreeder.get(1))
-            .duration(30 * SECONDS)
-            .eut(TierEU.RECIPE_MV)
-            .addTo(assemblerRecipes);
+                new Object[] { OrePrefixes.circuit.get(Materials.MV), 4 }, ItemList.Electric_Motor_MV.get(2L),
+                ItemList.Electric_Piston_MV.get(2L), GTUtility.getIntegratedCircuit(23))
+            .fluidInputs(Materials.SolderingAlloy.getMolten(576)).itemOutputs(GTNGItemList.LargeCropBreeder.get(1))
+            .duration(30 * SECONDS).eut(TierEU.RECIPE_MV).addTo(assemblerRecipes);
     }
 }

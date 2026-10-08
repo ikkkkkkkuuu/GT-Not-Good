@@ -117,7 +117,7 @@ public interface IItemVault {
      * 获取存储的物品
      *
      * @param aItem 要查询的物品
-     * @return 存储的AE物品，如果不存在返回null
+     * @return 存储的AE物品副本，如果不存在返回null；修改副本不会改变仓库
      */
     IAEItemStack getStoredItem(@Nullable ItemStack aItem);
 
@@ -125,7 +125,7 @@ public interface IItemVault {
      * 获取存储的流体
      *
      * @param aFluid 要查询的流体
-     * @return 存储的AE流体，如果不存在返回null
+     * @return 存储的AE流体副本，如果不存在返回null；修改副本不会改变仓库
      */
     IAEFluidStack getStoredFluid(@Nullable FluidStack aFluid);
 
@@ -162,16 +162,26 @@ public interface IItemVault {
     /**
      * 获取所有存储的物品
      *
-     * @return 物品列表
+     * @return 独立的物品快照；通过注入或提取方法修改仓库
      */
     IItemList<IAEItemStack> getStoreItems();
 
     /**
      * 获取所有存储的流体
      *
-     * @return 流体列表
+     * @return 独立的流体快照；通过注入或提取方法修改仓库
      */
     IItemList<IAEFluidStack> getStoreFluids();
+
+    /** Copies stored items into an AE result list without exposing mutable vault entries. */
+    default void copyItemsTo(IItemList<IAEItemStack> out) {
+        getStoreItems().forEach(out::addStorage);
+    }
+
+    /** Copies stored fluids into an AE result list without exposing mutable vault entries. */
+    default void copyFluidsTo(IItemList<IAEFluidStack> out) {
+        getStoreFluids().forEach(out::addStorage);
+    }
 
     /**
      * 设置是否销毁过量物品

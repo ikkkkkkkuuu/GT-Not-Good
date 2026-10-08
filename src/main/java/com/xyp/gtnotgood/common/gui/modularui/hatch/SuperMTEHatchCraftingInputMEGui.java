@@ -59,18 +59,15 @@ public class SuperMTEHatchCraftingInputMEGui extends MTEHatchBaseGui<SuperMTEHat
         int rows = machine.getPatternCount() / PATTERN_SLOT_PER_ROW;
         syncManager.registerSlotGroup(PATTERN_INV_NAME, rows);
         Grid grid = new Grid().minColWidth(SLOT_SIZE)
-            .gridOfWidthHeight(
-                PATTERN_SLOT_PER_ROW,
-                rows,
-                ($x, $y, index) -> new PatternSlot().slot(
-                    new ModularSlot(machine.inventoryHandler, index)
+            .gridOfWidthHeight(PATTERN_SLOT_PER_ROW, rows,
+                ($x, $y,
+                    index) -> new PatternSlot().slot(new ModularSlot(machine.inventoryHandler, index)
                         .filter(itemStack -> itemStack.getItem() instanceof ICraftingPatternItem)
                         .changeListener((itemStack, onlyAmount, client, init) -> {
                             if (!client) {
                                 machine.onPatternChange(index, itemStack);
                             }
-                        })
-                        .slotGroup(PATTERN_INV_NAME)))
+                        }).slotGroup(PATTERN_INV_NAME)))
             .size(PATTERN_SLOT_PER_ROW * SLOT_SIZE + 4, visiblePatternRows() * SLOT_SIZE);
         return rows > visiblePatternRows() ? grid.scrollable() : grid;
     }
@@ -78,43 +75,33 @@ public class SuperMTEHatchCraftingInputMEGui extends MTEHatchBaseGui<SuperMTEHat
     @Override
     protected Flow createBottomLeftCornerFlow(ModularPanel panel, PanelSyncManager syncManager) {
         Flow flow = super.createBottomLeftCornerFlow(panel, syncManager).child(createOptimizerButton())
-            .child(createShowPatternButton())
-            .child(createExportButton())
-            .child(createDoublePatternButton())
+            .child(createShowPatternButton()).child(createExportButton()).child(createDoublePatternButton())
             .child(createManualItemsButton(syncManager));
         if (machine.hasVirtualMoldSlot()) flow.child(createMoldSlotButton(syncManager));
         return flow;
     }
 
     private ToggleButton createOptimizerButton() {
-        BooleanSyncValue optimizerSync = new BooleanSyncValue(
-            () -> !machine.disablePatternOptimization,
+        BooleanSyncValue optimizerSync = new BooleanSyncValue(() -> !machine.disablePatternOptimization,
             val -> machine.disablePatternOptimization = !val).allowC2S();
 
-        return new ToggleButton().value(optimizerSync)
-            .overlay(GTGuiTextures.OVERLAY_BUTTON_PATTERN_OPTIMIZE)
+        return new ToggleButton().value(optimizerSync).overlay(GTGuiTextures.OVERLAY_BUTTON_PATTERN_OPTIMIZE)
             .addTooltipLine(StatCollector.translateToLocal("GT5U.infodata.hatch.crafting_input_me.optimize_pattern"))
-            .addTooltip(
-                true,
+            .addTooltip(true,
                 StatCollector.translateToLocal("GT5U.infodata.hatch.crafting_input_me.optimize_pattern.enable"))
-            .addTooltip(
-                false,
+            .addTooltip(false,
                 StatCollector.translateToLocal("GT5U.infodata.hatch.crafting_input_me.optimize_pattern.disabled"));
     }
 
     private ToggleButton createShowPatternButton() {
-        BooleanSyncValue showPatternSync = new BooleanSyncValue(
-            () -> machine.showPattern,
+        BooleanSyncValue showPatternSync = new BooleanSyncValue(() -> machine.showPattern,
             val -> machine.showPattern = val).allowC2S();
 
-        return new ToggleButton().value(showPatternSync)
-            .overlay(true, GTGuiTextures.OVERLAY_BUTTON_WHITELIST)
+        return new ToggleButton().value(showPatternSync).overlay(true, GTGuiTextures.OVERLAY_BUTTON_WHITELIST)
             .overlay(false, GTGuiTextures.OVERLAY_BUTTON_BLACKLIST)
-            .addTooltip(
-                true,
+            .addTooltip(true,
                 StatCollector.translateToLocal("GT5U.infodata.hatch.crafting_input_me.show_pattern.enable"))
-            .addTooltip(
-                false,
+            .addTooltip(false,
                 StatCollector.translateToLocal("GT5U.infodata.hatch.crafting_input_me.show_pattern.disabled"));
     }
 
@@ -125,8 +112,7 @@ public class SuperMTEHatchCraftingInputMEGui extends MTEHatchBaseGui<SuperMTEHat
             }
         });
 
-        return new ButtonWidget<>().syncHandler(exportSyncHandler)
-            .overlay(GTGuiTextures.OVERLAY_BUTTON_EXPORT)
+        return new ButtonWidget<>().syncHandler(exportSyncHandler).overlay(GTGuiTextures.OVERLAY_BUTTON_EXPORT)
             .addTooltipLine(StatCollector.translateToLocal("GT5U.gui.tooltip.hatch.crafting_input_me.export"));
     }
 
@@ -139,14 +125,13 @@ public class SuperMTEHatchCraftingInputMEGui extends MTEHatchBaseGui<SuperMTEHat
             }
         });
 
-        return new ButtonWidget<>().syncHandler(doubleSyncHandler)
-            .overlay(GTGuiTextures.OVERLAY_BUTTON_X2)
+        return new ButtonWidget<>().syncHandler(doubleSyncHandler).overlay(GTGuiTextures.OVERLAY_BUTTON_X2)
             .addTooltipLine(StatCollector.translateToLocal("gui.tooltips.appliedenergistics2.DoublePatterns"));
     }
 
     private ButtonWidget<?> createManualItemsButton(PanelSyncManager syncManager) {
-        IPanelHandler popupPanel = syncManager
-            .syncedPanel("manual_slots_panel", true, (manager, handler) -> createManualSlotUI(manager));
+        IPanelHandler popupPanel = syncManager.syncedPanel("manual_slots_panel", true,
+            (manager, handler) -> createManualSlotUI(manager));
 
         return new ButtonWidget<>().overlay(GTGuiTextures.OVERLAY_BUTTON_PLUS_LARGE)
             .addTooltipLine(
@@ -165,15 +150,9 @@ public class SuperMTEHatchCraftingInputMEGui extends MTEHatchBaseGui<SuperMTEHat
     }
 
     private ModularPanel createManualSlotUI(PanelSyncManager syncManager) {
-        return createPopUpPanel("manual_slots_panel").size(68, 76)
-            .bottomRelOffset(0.5f, 52)
-            .child(
-                new ItemSlotGridBuilder(machine.inventoryHandler, syncManager)
-                    .size(MANUAL_SLOT_PER_ROW, MANUAL_SLOT_ROW)
-                    .slotGroupKey(MANUAL_ITEM_INV_NAME)
-                    .indexOffset(machine.getManualSlotStart())
-                    .build()
-                    .marginTop(16)
-                    .horizontalCenter());
+        return createPopUpPanel("manual_slots_panel").size(68, 76).bottomRelOffset(0.5f, 52)
+            .child(new ItemSlotGridBuilder(machine.inventoryHandler, syncManager)
+                .size(MANUAL_SLOT_PER_ROW, MANUAL_SLOT_ROW).slotGroupKey(MANUAL_ITEM_INV_NAME)
+                .indexOffset(machine.getManualSlotStart()).build().marginTop(16).horizontalCenter());
     }
 }

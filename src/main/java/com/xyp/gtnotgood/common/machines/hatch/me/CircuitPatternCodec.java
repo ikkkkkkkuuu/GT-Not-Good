@@ -56,8 +56,7 @@ public final class CircuitPatternCodec {
         if (details == null || details.isCraftable()) return result;
         for (IAEStack<?> stack : details.getAEInputs()) {
             if (!isCircuit(stack)) continue;
-            int config = ((IAEItemStack) stack).getItemStack()
-                .getItemDamage();
+            int config = ((IAEItemStack) stack).getItemStack().getItemDamage();
             if (config < 0 || config > 24 || result >= 0 && result != config) return -2;
             result = config;
         }
@@ -81,13 +80,11 @@ public final class CircuitPatternCodec {
         if (config < 0 && molds.length == 0) return original;
         ItemStack runtime = withoutVirtualItems(pattern, molds);
         if (runtime == null) return null;
-        if (config >= 0) runtime.getTagCompound()
-            .setInteger("gtngPatternCircuit", config);
+        if (config >= 0) runtime.getTagCompound().setInteger("gtngPatternCircuit", config);
         if (molds.length > 0) {
             NBTTagList tools = new NBTTagList();
             for (ItemStack mold : molds) tools.appendTag(mold.writeToNBT(new NBTTagCompound()));
-            runtime.getTagCompound()
-                .setTag("gtngPatternMolds", tools);
+            runtime.getTagCompound().setTag("gtngPatternMolds", tools);
         }
         ICraftingPatternDetails decoded = decode(runtime, world);
         if (decoded == null || decoded.getCondensedAEInputs().length == 0 || circuit(decoded) != -1) return null;

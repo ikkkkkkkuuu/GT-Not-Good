@@ -131,14 +131,10 @@ public final class WildcardPatternState {
         initializeFromPattern(stack);
         NBTTagCompound exported = new NBTTagCompound();
         NBTTagCompound source = getOrCreateTag(stack);
-        exported.setTag(
-            KEY_INPUT_COMPONENTS,
-            source.getTagList(KEY_INPUT_COMPONENTS, Constants.NBT.TAG_COMPOUND)
-                .copy());
-        exported.setTag(
-            KEY_OUTPUT_COMPONENTS,
-            source.getTagList(KEY_OUTPUT_COMPONENTS, Constants.NBT.TAG_COMPOUND)
-                .copy());
+        exported.setTag(KEY_INPUT_COMPONENTS,
+            source.getTagList(KEY_INPUT_COMPONENTS, Constants.NBT.TAG_COMPOUND).copy());
+        exported.setTag(KEY_OUTPUT_COMPONENTS,
+            source.getTagList(KEY_OUTPUT_COMPONENTS, Constants.NBT.TAG_COMPOUND).copy());
         copyIfPresent(source, exported, "WildcardGlobalExcludeMaterials");
         copyIfPresent(source, exported, "WildcardRuleIncludeMaterials");
         copyIfPresent(source, exported, "WildcardRuleExcludeMaterials");
@@ -284,10 +280,7 @@ public final class WildcardPatternState {
 
     private static void copyIfPresent(NBTTagCompound source, NBTTagCompound target, String key) {
         if (source.hasKey(key)) {
-            target.setTag(
-                key,
-                source.getTag(key)
-                    .copy());
+            target.setTag(key, source.getTag(key).copy());
         }
     }
 

@@ -27,9 +27,9 @@ public class GuiAspectWeights extends GuiWeightScreen {
     private static final int LIST_Y = 82;
 
     private enum SortMode {
-        NAME,
-        COST,
-        INVENTORY
+        Name,
+        Cost,
+        Inventory
     }
 
     private final GuiScreen parent;
@@ -39,7 +39,7 @@ public class GuiAspectWeights extends GuiWeightScreen {
     private GuiTextField costField;
     private GuiTextField searchField;
     private AspectList inventory = new AspectList();
-    private SortMode sortMode = SortMode.NAME;
+    private SortMode sortMode = SortMode.Name;
     private boolean onlyDisabled;
     private boolean onlyMissing;
     private long nextInventoryRefresh;
@@ -63,14 +63,8 @@ public class GuiAspectWeights extends GuiWeightScreen {
         buttonList.add(weightButton(1, center + 55, 36, 100, 18, modeText()));
         buttonList.add(
             weightButton(2, center + 55, 56, 49, 18, StatCollector.translateToLocal("tcautores.preset_wiki_short")));
-        buttonList.add(
-            weightButton(
-                3,
-                center + 106,
-                56,
-                49,
-                18,
-                StatCollector.translateToLocal("tcautores.preset_inventory_short")));
+        buttonList.add(weightButton(3, center + 106, 56, 49, 18,
+            StatCollector.translateToLocal("tcautores.preset_inventory_short")));
         buttonList.add(weightButton(4, center + 55, 116, 100, 18, enabledText()));
         buttonList.add(weightButton(5, center + 55, 136, 48, 18, "-"));
         buttonList.add(weightButton(6, center + 107, 136, 48, 18, "+"));
@@ -85,14 +79,8 @@ public class GuiAspectWeights extends GuiWeightScreen {
         buttonList.add(weightButton(10, listX(), 60, 88, 20, sortText()));
         buttonList.add(weightButton(11, listX() + 90, 60, 54, 20, disabledFilterText()));
         buttonList.add(weightButton(12, listX() + 146, 60, 54, 20, missingFilterText()));
-        buttonList.add(
-            weightButton(
-                13,
-                listX(),
-                height - 22,
-                100,
-                20,
-                StatCollector.translateToLocal("tcautores.profile_manage")));
+        buttonList.add(weightButton(13, listX(), height - 22, 100, 20,
+            StatCollector.translateToLocal("tcautores.profile_manage")));
         refreshInventory(true);
         updateFilter();
         syncField();
@@ -105,7 +93,7 @@ public class GuiAspectWeights extends GuiWeightScreen {
             mc.displayGuiScreen(parent);
         } else if (button.id == 1) {
             Config.setSolveMode(
-                Config.solveMode() == Config.SolveMode.WEIGHTED ? Config.SolveMode.NORMAL : Config.SolveMode.WEIGHTED);
+                Config.solveMode() == Config.SolveMode.Weighted ? Config.SolveMode.Normal : Config.SolveMode.Weighted);
             button.displayString = modeText();
         } else if (button.id == 2) {
             Config.applyWikiDefaults();
@@ -162,7 +150,7 @@ public class GuiAspectWeights extends GuiWeightScreen {
         if (costField.textboxKeyTyped(typedChar, keyCode)) return;
         if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER) {
             commitField();
-            if (sortMode == SortMode.COST) updateFilter();
+            if (sortMode == SortMode.Cost) updateFilter();
             return;
         }
         if (keyCode == Keyboard.KEY_ESCAPE) {
@@ -179,9 +167,11 @@ public class GuiAspectWeights extends GuiWeightScreen {
         searchField.mouseClicked(mouseX, mouseY, mouseButton);
         int listX = listX();
         int rows = visibleRows();
-        if (mouseX >= listX && mouseX < listX + LIST_WIDTH
-            && mouseY >= LIST_Y
-            && mouseY < LIST_Y + rows * LIST_ROW_HEIGHT) {
+        if (
+            mouseX >= listX && mouseX < listX + LIST_WIDTH
+                && mouseY >= LIST_Y
+                && mouseY < LIST_Y + rows * LIST_ROW_HEIGHT
+        ) {
             int index = scroll + (mouseY - LIST_Y) / LIST_ROW_HEIGHT;
             if (index >= 0 && index < filteredAspects.size()) {
                 commitField();
@@ -209,17 +199,12 @@ public class GuiAspectWeights extends GuiWeightScreen {
         int rows = visibleRows();
         drawWeightPanel(x - 4, SEARCH_Y - 6, x + LIST_WIDTH + 4, LIST_Y + rows * LIST_ROW_HEIGHT + 3);
         drawWeightPanel(width / 2 + 50, 30, width / 2 + 160, height - 26);
-        drawCenteredString(
-            fontRendererObj,
-            StatCollector.translateToLocal("tcautores.weights"),
-            width / 2,
-            14,
+        drawCenteredString(fontRendererObj, StatCollector.translateToLocal("tcautores.weights"), width / 2, 14,
             0xFFFFFF);
         searchField.drawTextBox();
-        if (searchField.getText()
-            .isEmpty() && !searchField.isFocused()) {
-            fontRendererObj
-                .drawString(StatCollector.translateToLocal("tcautores.search"), listX() + 4, SEARCH_Y + 5, 0x777777);
+        if (searchField.getText().isEmpty() && !searchField.isFocused()) {
+            fontRendererObj.drawString(StatCollector.translateToLocal("tcautores.search"), listX() + 4, SEARCH_Y + 5,
+                0x777777);
         }
         for (int row = 0; row < rows && scroll + row < filteredAspects.size(); row++) {
             Aspect aspect = filteredAspects.get(scroll + row);
@@ -234,25 +219,17 @@ public class GuiAspectWeights extends GuiWeightScreen {
             String name = fontRendererObj.trimStringToWidth(AspectLocalization.name(aspect), 132);
             fontRendererObj.drawString(name, x + 23, rowY + 5, color);
             String value = disabled ? "OFF" : String.valueOf(Config.getAspectCost(aspect.getTag()));
-            fontRendererObj
-                .drawString(value, x + LIST_WIDTH - 6 - fontRendererObj.getStringWidth(value), rowY + 5, color);
+            fontRendererObj.drawString(value, x + LIST_WIDTH - 6 - fontRendererObj.getStringWidth(value), rowY + 5,
+                color);
         }
         if (filteredAspects.isEmpty()) {
-            drawCenteredString(
-                fontRendererObj,
-                StatCollector.translateToLocal("tcautores.no_search_results"),
-                x + LIST_WIDTH / 2,
-                LIST_Y + 8,
-                0xAAAAAA);
+            drawCenteredString(fontRendererObj, StatCollector.translateToLocal("tcautores.no_search_results"),
+                x + LIST_WIDTH / 2, LIST_Y + 8, 0xAAAAAA);
         }
         if (selected != null) {
             String selectedName = AspectLocalization.name(selected) + " (" + selected.getTag() + ")";
-            drawCenteredString(
-                fontRendererObj,
-                fontRendererObj.trimStringToWidth(selectedName, 78),
-                width / 2 + 116,
-                82,
-                0xD7E7DF);
+            drawCenteredString(fontRendererObj, fontRendererObj.trimStringToWidth(selectedName, 78), width / 2 + 116,
+                82, 0xD7E7DF);
         }
         drawAspectTags(x, rows);
         costField.drawTextBox();
@@ -265,10 +242,7 @@ public class GuiAspectWeights extends GuiWeightScreen {
         GuiThemeRenderer.isolated(() -> {
             for (int row = 0; row < rows && scroll + row < filteredAspects.size(); row++) {
                 Aspect aspect = filteredAspects.get(scroll + row);
-                drawColoredTag(
-                    x + 3,
-                    LIST_Y + row * LIST_ROW_HEIGHT + 1,
-                    aspect,
+                drawColoredTag(x + 3, LIST_Y + row * LIST_ROW_HEIGHT + 1, aspect,
                     Config.isAspectDisabled(aspect.getTag()) ? 0.45F : 1.0F);
             }
             if (selected != null) {
@@ -310,19 +284,15 @@ public class GuiAspectWeights extends GuiWeightScreen {
     }
 
     private void updateFilter() {
-        String query = searchField.getText()
-            .trim()
-            .toLowerCase(Locale.ROOT);
+        String query = searchField.getText().trim().toLowerCase(Locale.ROOT);
         filteredAspects.clear();
         for (Aspect aspect : aspects) {
-            if ((!onlyDisabled || Config.isAspectDisabled(aspect.getTag()))
-                && (!onlyMissing || inventory.getAmount(aspect) <= 0)
-                && (query.isEmpty() || aspect.getTag()
-                    .toLowerCase(Locale.ROOT)
-                    .contains(query)
-                    || AspectLocalization.name(aspect)
-                        .toLowerCase(Locale.ROOT)
-                        .contains(query))) {
+            if (
+                (!onlyDisabled || Config.isAspectDisabled(aspect.getTag()))
+                    && (!onlyMissing || inventory.getAmount(aspect) <= 0)
+                    && (query.isEmpty() || aspect.getTag().toLowerCase(Locale.ROOT).contains(query)
+                        || AspectLocalization.name(aspect).toLowerCase(Locale.ROOT).contains(query))
+            ) {
                 filteredAspects.add(aspect);
             }
         }
@@ -349,13 +319,12 @@ public class GuiAspectWeights extends GuiWeightScreen {
     private Comparator<Aspect> aspectComparator() {
         Comparator<Aspect> byName = Comparator.comparing(AspectLocalization::name, String.CASE_INSENSITIVE_ORDER)
             .thenComparing(Aspect::getTag);
-        if (sortMode == SortMode.COST) {
+        if (sortMode == SortMode.Cost) {
             return Comparator.comparingInt((Aspect aspect) -> Config.getAspectCost(aspect.getTag()))
                 .thenComparing(byName);
         }
-        if (sortMode == SortMode.INVENTORY) {
-            return Comparator.comparingInt((Aspect aspect) -> inventory.getAmount(aspect))
-                .reversed()
+        if (sortMode == SortMode.Inventory) {
+            return Comparator.comparingInt((Aspect aspect) -> inventory.getAmount(aspect)).reversed()
                 .thenComparing(byName);
         }
         return byName;
@@ -374,7 +343,7 @@ public class GuiAspectWeights extends GuiWeightScreen {
         inventory = current;
         if (fingerprint != inventoryFingerprint) {
             inventoryFingerprint = fingerprint;
-            if (searchField != null && (sortMode == SortMode.INVENTORY || onlyMissing)) updateFilter();
+            if (searchField != null && (sortMode == SortMode.Inventory || onlyMissing)) updateFilter();
         }
     }
 
@@ -382,8 +351,7 @@ public class GuiAspectWeights extends GuiWeightScreen {
         AspectList result = new AspectList();
         String username = mc.thePlayer.getCommandSenderName();
         for (Aspect aspect : aspects) {
-            int amount = Thaumcraft.proxy.getPlayerKnowledge()
-                .getAspectPoolFor(username, aspect);
+            int amount = Thaumcraft.proxy.getPlayerKnowledge().getAspectPoolFor(username, aspect);
             if (amount > 0) result.add(aspect, amount);
         }
         return result;
@@ -399,28 +367,21 @@ public class GuiAspectWeights extends GuiWeightScreen {
 
     private void drawAspectTooltip(Aspect aspect, int mouseX, int mouseY) {
         List<String> tooltip = new ArrayList<>();
-        tooltip.add(
-            EnumChatFormatting.AQUA + AspectLocalization
-                .name(aspect) + EnumChatFormatting.GRAY + " (" + aspect.getTag() + ")");
+        tooltip.add(EnumChatFormatting.AQUA + AspectLocalization
+            .name(aspect) + EnumChatFormatting.GRAY + " (" + aspect.getTag() + ")");
         Aspect[] components = aspect.getComponents();
         if (components == null) {
             tooltip.add(StatCollector.translateToLocal("tcautores.tooltip_primal"));
         } else {
-            tooltip.add(
-                String.format(
-                    StatCollector.translateToLocal("tcautores.tooltip_components"),
-                    AspectLocalization.name(components[0]),
-                    AspectLocalization.name(components[1])));
+            tooltip.add(String.format(StatCollector.translateToLocal("tcautores.tooltip_components"),
+                AspectLocalization.name(components[0]), AspectLocalization.name(components[1])));
         }
         tooltip.add(
             String.format(StatCollector.translateToLocal("tcautores.tooltip_inventory"), inventory.getAmount(aspect)));
-        tooltip.add(
-            String.format(
-                StatCollector.translateToLocal("tcautores.tooltip_weight"),
-                Config.getAspectCost(aspect.getTag())));
-        tooltip.add(
-            StatCollector.translateToLocal(
-                Config.isAspectDisabled(aspect.getTag()) ? "tcautores.tooltip_disabled" : "tcautores.tooltip_enabled"));
+        tooltip.add(String.format(StatCollector.translateToLocal("tcautores.tooltip_weight"),
+            Config.getAspectCost(aspect.getTag())));
+        tooltip.add(StatCollector.translateToLocal(
+            Config.isAspectDisabled(aspect.getTag()) ? "tcautores.tooltip_disabled" : "tcautores.tooltip_enabled"));
         drawHoveringText(tooltip, mouseX, mouseY, fontRendererObj);
     }
 
@@ -428,7 +389,7 @@ public class GuiAspectWeights extends GuiWeightScreen {
         if (selected == null) return;
         Config.setAspectCost(selected.getTag(), Config.getAspectCost(selected.getTag()) + amount);
         syncField();
-        if (sortMode == SortMode.COST) updateFilter();
+        if (sortMode == SortMode.Cost) updateFilter();
     }
 
     private void commitField() {
@@ -458,7 +419,7 @@ public class GuiAspectWeights extends GuiWeightScreen {
 
     private String modeText() {
         return StatCollector.translateToLocal(
-            Config.solveMode() == Config.SolveMode.WEIGHTED ? "tcautores.mode_weighted" : "tcautores.mode_normal");
+            Config.solveMode() == Config.SolveMode.Weighted ? "tcautores.mode_weighted" : "tcautores.mode_normal");
     }
 
     private String enabledText() {
@@ -478,8 +439,8 @@ public class GuiAspectWeights extends GuiWeightScreen {
     }
 
     private String sortText() {
-        String key = sortMode == SortMode.NAME ? "tcautores.sort_name"
-            : sortMode == SortMode.COST ? "tcautores.sort_weight" : "tcautores.sort_inventory";
+        String key = sortMode == SortMode.Name ? "tcautores.sort_name"
+            : sortMode == SortMode.Cost ? "tcautores.sort_weight" : "tcautores.sort_inventory";
         return StatCollector.translateToLocal(key);
     }
 

@@ -13,6 +13,8 @@ import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import appeng.api.networking.crafting.ICraftingPatternDetails;
+import appeng.util.inv.MEInventoryCrafting;
+import cpw.mods.fml.common.FMLCommonHandler;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.common.items.wands.ItemWandCasting;
@@ -48,20 +50,22 @@ public final class ArcaneWorkbenchAdapter implements PackagedCoreRegistry.Adapte
         InventoryCrafting ingredients) {
         provider.arcaneMissingAspect = "";
         provider.arcaneMissingUnits = 0;
-        provider.altarStatus = AltarStatus.UNLOADED;
+        provider.altarStatus = AltarStatus.Unloaded;
         if (!(target.resolve(provider.getWorldObj()) instanceof TileArcaneWorkbench workbench)) return null;
         EntityPlayer owner = provider.getOwnerPlayer();
-        provider.altarStatus = AltarStatus.ARCANE_OWNER;
-        if (owner == null || owner.worldObj != workbench.getWorldObj()
-            || !owner.worldObj.canMineBlock(owner, target.x, target.y, target.z)) return null;
-        provider.altarStatus = AltarStatus.ARCANE_OCCUPIED;
+        provider.altarStatus = AltarStatus.ArcaneOwner;
+        if (
+            owner == null || owner.worldObj != workbench.getWorldObj()
+                || !owner.worldObj.canMineBlock(owner, target.x, target.y, target.z)
+        ) return null;
+        provider.altarStatus = AltarStatus.ArcaneOccupied;
         if (workbench.eventHandler != null) return null;
         for (int i = 0; i < 10; i++) if (workbench.getStackInSlot(i) != null) return null;
-        provider.altarStatus = AltarStatus.ARCANE_WAND;
+        provider.altarStatus = AltarStatus.ArcaneWand;
         ItemStack installed = workbench.getStackInSlot(10);
         if (installed == null || !(installed.getItem() instanceof ItemWandCasting wand) || wand.isStaff(installed))
             return null;
-        provider.altarStatus = AltarStatus.ARCANE_RECIPE;
+        provider.altarStatus = AltarStatus.ArcaneRecipe;
         TileMagicWorkbench grid = ArcaneWorkbenchPatterns.grid(pattern.getPattern(), owner.worldObj);
         if (grid == null || !matchesIngredients(grid, ingredients)) return null;
         grid.xCoord = workbench.xCoord;
@@ -71,34 +75,36 @@ public final class ArcaneWorkbenchAdapter implements PackagedCoreRegistry.Adapte
         ItemStack result = ThaumcraftCraftingManager.findMatchingArcaneRecipe(grid, owner);
         AspectList cost = ThaumcraftCraftingManager.findMatchingArcaneRecipeAspects(grid, owner);
         var outputs = pattern.getCondensedOutputs();
-        if (result == null || result.stackSize <= 0
-            || cost == null
-            || outputs == null
-            || outputs.length != 1
-            || outputs[0] == null
-            || !TilePackagedProvider.sameItem(result, outputs[0].getItemStack())
-            || result.stackSize != outputs[0].getStackSize()) return null;
+        if (
+            result == null || result.stackSize <= 0
+                || cost == null
+                || outputs == null
+                || outputs.length != 1
+                || outputs[0] == null
+                || !TilePackagedProvider.sameItem(result, outputs[0].getItemStack())
+                || result.stackSize != outputs[0].getStackSize()
+        ) return null;
 
         List<ItemStack> returns = new ArrayList<>();
         returns.add(result.copy());
         for (int i = 0; i < 9; i++) {
             ItemStack input = grid.getStackInSlot(i);
-            if (input == null || !input.getItem()
-                .hasContainerItem(input)) continue;
-            ItemStack container = input.getItem()
-                .getContainerItem(input.copy());
-            if (container != null && container.stackSize > 0
-                && (!container.isItemStackDamageable() || container.getItemDamage() <= container.getMaxDamage())) {
+            if (input == null || !input.getItem().hasContainerItem(input)) continue;
+            ItemStack container = input.getItem().getContainerItem(input.copy());
+            if (
+                container != null && container.stackSize > 0
+                    && (!container.isItemStackDamageable() || container.getItemDamage() <= container.getMaxDamage())
+            ) {
                 returns.add(container.copy());
             }
         }
-        provider.altarStatus = AltarStatus.ARCANE_RETURNS_FULL;
+        provider.altarStatus = AltarStatus.ArcaneReturnsFull;
         ItemStack[] planned = provider.planArcaneReturns(returns);
         if (planned == null) return null;
 
         ItemStack paidWand = installed.copy();
         AspectList missing = new AspectList();
-        provider.altarStatus = AltarStatus.ARCANE_CAPACITY;
+        provider.altarStatus = AltarStatus.ArcaneCapacity;
         if (cost.size() > 0) for (Aspect aspect : cost.getAspects()) {
             if (aspect == null || !aspect.isPrimal() || cost.getAmount(aspect) < 0) return null;
             double raw = (double) cost.getAmount(aspect) * 100;
@@ -109,11 +115,12 @@ public final class ArcaneWorkbenchAdapter implements PackagedCoreRegistry.Adapte
             int deficit = Math.max(0, required - wand.getVis(paidWand, aspect));
             if (deficit > 0) missing.add(aspect, deficit);
         }
-        provider.altarStatus = AltarStatus.ARCANE_ESSENTIA;
+        provider.altarStatus = AltarStatus.ArcaneEssentia;
         if (missing.size() > 0) {
-            if (!ModList.ThaumicEnergistics.isModLoaded() || !ThaumicEnergisticsSupply
-                .reserveArcane(provider, missing, Math.max(1, Math.min(1000, Config.arcaneVisPerEssentia)) * 100))
-                return null;
+            if (
+                !ModList.ThaumicEnergistics.isModLoaded() || !ThaumicEnergisticsSupply.reserveArcane(provider, missing,
+                    Math.max(1, Math.min(1000, Config.arcaneVisPerEssentia)) * 100)
+            ) return null;
             for (Aspect aspect : missing.getAspects()) {
                 if (wand.addRealVis(paidWand, aspect, missing.getAmount(aspect), true) != 0) return null;
             }
@@ -132,8 +139,7 @@ public final class ArcaneWorkbenchAdapter implements PackagedCoreRegistry.Adapte
         provider.commitArcaneReturns(planned);
         // The AE CPU relinquishes the supplied items only when this dispatch returns success.
         result.onCrafting(owner.worldObj, owner, result.stackSize);
-        cpw.mods.fml.common.FMLCommonHandler.instance()
-            .firePlayerCraftingEvent(owner, result.copy(), grid);
+        FMLCommonHandler.instance().firePlayerCraftingEvent(owner, result.copy(), grid);
         return result;
     }
 
@@ -142,7 +148,7 @@ public final class ArcaneWorkbenchAdapter implements PackagedCoreRegistry.Adapte
         int[] remaining = new int[supplied.getSizeInventory()];
         int total = 0;
         for (int i = 0; i < remaining.length; i++) {
-            if (supplied instanceof appeng.util.inv.MEInventoryCrafting nativeTable) {
+            if (supplied instanceof MEInventoryCrafting nativeTable) {
                 var stack = nativeTable.getAEStackInSlot(i);
                 if (stack != null && (!stack.isItem() || stack.getStackSize() <= 0 || stack.getStackSize() > 9))
                     return false;

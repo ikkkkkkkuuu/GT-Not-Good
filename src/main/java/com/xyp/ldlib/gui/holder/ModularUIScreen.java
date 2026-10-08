@@ -86,10 +86,8 @@ public class ModularUIScreen extends GuiScreen {
         int delta = Mouse.getEventDWheel();
         if (delta != 0) {
             try (PixelFontScope ignored = new PixelFontScope()) {
-                input.mouseWheel(
-                    Mouse.getEventX() * width / mc.displayWidth,
-                    height - Mouse.getEventY() * height / mc.displayHeight - 1,
-                    delta);
+                input.mouseWheel(Mouse.getEventX() * width / mc.displayWidth,
+                    height - Mouse.getEventY() * height / mc.displayHeight - 1, delta);
             }
         }
     }
@@ -98,8 +96,8 @@ public class ModularUIScreen extends GuiScreen {
     protected void keyTyped(char character, int keyCode) {
         boolean handled;
         try (PixelFontScope ignored = new PixelFontScope()) {
-            handled = input
-                .keyTyped(character, keyCode, isShiftKeyDown(), isCtrlKeyDown(), keyCode == Keyboard.KEY_TAB);
+            handled = input.keyTyped(character, keyCode, isShiftKeyDown(), isCtrlKeyDown(),
+                keyCode == Keyboard.KEY_TAB);
         }
         if (!handled) {
             super.keyTyped(character, keyCode);

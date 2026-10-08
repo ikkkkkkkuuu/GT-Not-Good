@@ -39,9 +39,7 @@ public final class TextEffectsCompat {
     static TextEffectStyle renderingStyle(TextEffectStyle style, boolean upstream) {
         String identifier = style.rendererId();
         if (!upstream || !identifier.startsWith(localNamespace)) return style;
-        return new TextEffectStyle(
-            upstreamNamespace + identifier.substring(localNamespace.length()),
-            style.colors(),
+        return new TextEffectStyle(upstreamNamespace + identifier.substring(localNamespace.length()), style.colors(),
             style.speed());
     }
 }

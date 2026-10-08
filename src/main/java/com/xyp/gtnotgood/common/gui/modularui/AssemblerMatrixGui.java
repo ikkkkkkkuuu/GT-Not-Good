@@ -6,8 +6,10 @@ package com.xyp.gtnotgood.common.gui.modularui;
 import static gregtech.api.metatileentity.BaseTileEntity.TOOLTIP_DELAY;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -64,88 +66,61 @@ public class AssemblerMatrixGui extends GTNGModernMultiBlockBaseGui<AssemblerMat
 
     public AssemblerMatrixGui(AssemblerMatrix multiblock) {
         super(multiblock);
-        withMachineModeIcons(
-            GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_PACKAGER,
-            GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_UNPACKAGER,
-            GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_DEFAULT);
+        withMachineModeIcons(GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_PACKAGER,
+            GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_UNPACKAGER, GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_DEFAULT);
     }
 
     @Override
     protected void registerSyncValues(PanelSyncManager syncManager) {
         super.registerSyncValues(syncManager);
-        syncManager.syncValue(
-            PATTERN_USED_SYNC_KEY,
-            new IntSyncValue(
-                () -> multiblock.getInventory()
-                    .size()));
-        syncManager.syncValue(
-            SHOW_PATTERN_SYNC_KEY,
+        syncManager.syncValue(PATTERN_USED_SYNC_KEY, new IntSyncValue(() -> multiblock.getInventory().size()));
+        syncManager.syncValue(SHOW_PATTERN_SYNC_KEY,
             new BooleanSyncValue(multiblock::isShowPattern, multiblock::setShowPattern).allowC2S());
-        syncManager.syncValue(
-            CUSTOM_NAME_SYNC_KEY,
+        syncManager.syncValue(CUSTOM_NAME_SYNC_KEY,
             new StringSyncValue(multiblock::getGuiCustomName, multiblock::setCustomName).allowC2S());
-        syncManager.syncValue(
-            PATTERN_MULTIPLY_SYNC_KEY,
+        syncManager.syncValue(PATTERN_MULTIPLY_SYNC_KEY,
             new IntSyncValue(multiblock::getPatternMultiply, multiblock::setPatternMultiply).allowC2S());
         GenericListSyncHandler<IAEItemStack> patternOutputsSyncer = new GenericListSyncHandler<>(
-            multiblock::getCachedPatternOutputsForGui,
-            multiblock::setCachedPatternOutputsFromGui,
-            AssemblerMatrix::loadAEItemStackForGui,
-            AssemblerMatrix::writeAEItemStackForGui,
-            AssemblerMatrixGui::areAEItemStacksEqual,
-            AssemblerMatrixGui::copyAEItemStack);
+            multiblock::getCachedPatternOutputsForGui, multiblock::setCachedPatternOutputsFromGui,
+            AssemblerMatrix::loadAEItemStackForGui, AssemblerMatrix::writeAEItemStackForGui,
+            AssemblerMatrixGui::areAEItemStacksEqual, AssemblerMatrixGui::copyAEItemStack);
         syncManager.syncValue(PATTERN_OUTPUTS_SYNC_KEY, patternOutputsSyncer);
-        syncManager.syncValue(
-            PATTERN_OUTPUTS_WIDGET_SYNC_KEY,
-            new DynamicLinkedSyncHandler<>(patternOutputsSyncer)
-                .widgetProvider((panelSyncManager, syncValue) -> createPatternOutputsWidget(syncValue.getValue())));
+        syncManager.syncValue(PATTERN_OUTPUTS_WIDGET_SYNC_KEY, new DynamicLinkedSyncHandler<>(patternOutputsSyncer)
+            .widgetProvider((panelSyncManager, syncValue) -> createPatternOutputsWidget(syncValue.getValue())));
     }
 
     @Override
     protected ListWidget<IWidget, ?> createTerminalTextWidget(PanelSyncManager syncManager, ModularPanel parent) {
         IntSyncValue usedSyncer = syncManager.findSyncHandler(PATTERN_USED_SYNC_KEY, IntSyncValue.class);
-        return super.createTerminalTextWidget(syncManager, parent)
-            .child(
-                IKey.dynamic(
-                    () -> StatCollector.translateToLocalFormatted(
-                        // #tr gtng.compact.matrix.pattern_usage
-                        // # Patterns: %s/144
-                        // # zh_CN 样板：%s/144
-                        "gtng.compact.matrix.pattern_usage",
-                        usedSyncer.getIntValue()))
-                    .asWidget()
-                    .color(Color.WHITE.main)
-                    .fullWidth())
-            .child(createPatternOutputsWidget(syncManager));
+        return super.createTerminalTextWidget(syncManager, parent).child(IKey
+            .dynamic(() -> StatCollector.translateToLocalFormatted(
+                // #tr gtng.compact.matrix.pattern_usage
+                // # Patterns: %s/144
+                // # zh_CN 样板：%s/144
+                "gtng.compact.matrix.pattern_usage", usedSyncer.getIntValue()))
+            .asWidget().color(Color.WHITE.main).fullWidth()).child(createPatternOutputsWidget(syncManager));
     }
 
     @Override
     protected Flow createLeftPanelGapRow(ModularPanel parent, PanelSyncManager syncManager) {
         Flow row = super.createLeftPanelGapRow(parent, syncManager);
-        row.child(createShowPatternButton(syncManager))
-            .child(createCustomNameField(syncManager));
+        row.child(createShowPatternButton(syncManager)).child(createCustomNameField(syncManager));
         return row;
     }
 
     @Override
     protected IWidget createModeSwitchButton(PanelSyncManager syncManager) {
         IntSyncValue machineModeSyncer = syncManager.findSyncHandler("machineMode", IntSyncValue.class);
-        return new CycleButtonWidget().size(18, 18)
-            .syncHandler("machineMode")
-            .length(machineModeIcons.size())
+        return new CycleButtonWidget().size(18, 18).syncHandler("machineMode").length(machineModeIcons.size())
             .overlay(new DynamicDrawable(() -> getMachineModeIcon(machineModeSyncer.getIntValue())))
-            .tooltipBuilder(this::createModeSwitchTooltip)
-            .tooltipShowUpTimer(TOOLTIP_DELAY);
+            .tooltipBuilder(this::createModeSwitchTooltip).tooltipShowUpTimer(TOOLTIP_DELAY);
     }
 
     @Override
     protected ButtonWidget<?> createPowerPanelButton(PanelSyncManager syncManager, ModularPanel parent) {
-        IPanelHandler powerPanel = syncManager.syncedPanel(
-            "assemblerMatrixPowerPanel",
-            true,
+        IPanelHandler powerPanel = syncManager.syncedPanel("assemblerMatrixPowerPanel", true,
             (panelSyncManager, panelHandler) -> createPatternPowerPanel(parent, syncManager));
-        return new ButtonWidget<>().size(18, 18)
-            .overlay(GTGuiTextures.TT_OVERLAY_BUTTON_POWER_PANEL)
+        return new ButtonWidget<>().size(18, 18).overlay(GTGuiTextures.TT_OVERLAY_BUTTON_POWER_PANEL)
             .onMousePressed(mouseButton -> {
                 if (powerPanel.isPanelOpen()) {
                     powerPanel.closePanel();
@@ -163,130 +138,92 @@ public class AssemblerMatrixGui extends GTNGModernMultiBlockBaseGui<AssemblerMat
 
     @Override
     protected Widget<? extends Widget<?>> makeLogoWidget(PanelSyncManager syncManager, ModularPanel parent) {
-        return new ParentWidget<>().size(18, 40)
-            .marginTop(4)
-            .child(createCirculationLogo())
-            .child(createGtnlLogo());
+        return new ParentWidget<>().size(18, 40).marginTop(4).child(createCirculationLogo()).child(createGtnlLogo());
     }
 
     private IWidget createCirculationLogo() {
-        return new IDrawable.DrawableWidget(GTNGGuiTextures.OVERLAY_BUTTON_BATCH_MODE).size(18, 18)
-            .pos(0, 0);
+        return new IDrawable.DrawableWidget(GTNGGuiTextures.OVERLAY_BUTTON_BATCH_MODE).size(18, 18).pos(0, 0);
     }
 
     private IWidget createGtnlLogo() {
-        return new IDrawable.DrawableWidget(GTNGGuiTextures.PICTURE_GODFORGE_LOGO).size(18, 18)
-            .pos(0, 22);
+        return new IDrawable.DrawableWidget(GTNGGuiTextures.PICTURE_GODFORGE_LOGO).size(18, 18).pos(0, 22);
     }
 
     private IWidget createShowPatternButton(PanelSyncManager syncManager) {
         BooleanSyncValue showPatternSyncer = syncManager.findSyncHandler(SHOW_PATTERN_SYNC_KEY, BooleanSyncValue.class);
         return new ButtonWidget<>().size(18, 18)
             .background(
-                new DynamicDrawable(
-                    () -> showPatternSyncer.getBoolValue() ? GTGuiTextures.BUTTON_STANDARD_PRESSED
-                        : GTGuiTextures.BUTTON_STANDARD))
+                new DynamicDrawable(() -> showPatternSyncer.getBoolValue() ? GTGuiTextures.BUTTON_STANDARD_PRESSED
+                    : GTGuiTextures.BUTTON_STANDARD))
             .overlay(
                 new DynamicDrawable(
-                    () -> showPatternSyncer.getBoolValue() ? GTGuiTextures.OVERLAY_BUTTON_WHITELIST
-                        : GTGuiTextures.OVERLAY_BUTTON_BLACKLIST))
-            .syncHandler(
-                new InteractionSyncHandler().setOnMousePressed(
-                    mouseData -> {
-                        if (!mouseData.isClient())
-                            showPatternSyncer.setBoolValue(!showPatternSyncer.getBoolValue(), true, true);
-                    }))
-            .tooltipDynamic(
-                tooltip -> tooltip.addLine(
-                    IKey.dynamic(
-                        () -> StatCollector
-                            .translateToLocal(AssemblerMatrix.patternVisibilityKey(showPatternSyncer.getBoolValue())))))
-            .tooltipAutoUpdate(true)
-            .tooltipShowUpTimer(TOOLTIP_DELAY);
+                    () -> showPatternSyncer
+                        .getBoolValue() ? GTGuiTextures.OVERLAY_BUTTON_WHITELIST
+                            : GTGuiTextures.OVERLAY_BUTTON_BLACKLIST))
+            .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouseData -> {
+                if (!mouseData.isClient())
+                    showPatternSyncer.setBoolValue(!showPatternSyncer.getBoolValue(), true, true);
+            }))
+            .tooltipDynamic(tooltip -> tooltip.addLine(IKey.dynamic(() -> StatCollector
+                .translateToLocal(AssemblerMatrix.patternVisibilityKey(showPatternSyncer.getBoolValue())))))
+            .tooltipAutoUpdate(true).tooltipShowUpTimer(TOOLTIP_DELAY);
     }
 
     private IWidget createCustomNameField(PanelSyncManager syncManager) {
         StringSyncValue customNameSyncer = syncManager.findSyncHandler(CUSTOM_NAME_SYNC_KEY, StringSyncValue.class);
-        return new TextFieldWidget().value(customNameSyncer)
-            .setTextAlignment(Alignment.Center)
-            .setTextColor(Color.WHITE.main)
-            .background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
+        return new TextFieldWidget().value(customNameSyncer).setTextAlignment(Alignment.Center)
+            .setTextColor(Color.WHITE.main).background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
             // #tr gtng.compact.machine.assembler_matrix.info.3
             // # Set Assembler Matrix custom name
             // # zh_CN 设置装配矩阵自定义名称
             .tooltipBuilder(tooltip -> tooltip.addLine(IKey.lang("gtng.compact.machine.assembler_matrix.info.3")))
-            .tooltipShowUpTimer(TOOLTIP_DELAY)
-            .size(126, 18);
+            .tooltipShowUpTimer(TOOLTIP_DELAY).size(126, 18);
     }
 
     private ModularPanel createPatternPowerPanel(ModularPanel parent, PanelSyncManager syncManager) {
         IntSyncValue patternMultiplySyncer = syncManager.findSyncHandler(PATTERN_MULTIPLY_SYNC_KEY, IntSyncValue.class);
         Dialog<?> panel = new Dialog<>("assemblerMatrixPowerPanel", null);
-        panel.relative(parent)
-            .leftRel(1)
-            .topRel(0)
-            .size(100, 80)
-            .background(GTGuiTextures.BACKGROUND_POPUP_STANDARD);
-        panel.setDisablePanelsBelow(false)
-            .setCloseOnOutOfBoundsClick(false)
-            .setDraggable(true);
+        panel.relative(parent).leftRel(1).topRel(0).size(100, 80).background(GTGuiTextures.BACKGROUND_POPUP_STANDARD);
+        panel.setDisablePanelsBelow(false).setCloseOnOutOfBoundsClick(false).setDraggable(true);
 
         panel.child(ButtonWidget.panelCloseButton());
-        panel.child(
-            IKey.str(
-                // #tr gtng.compact.machine.assembler_matrix.info.1
-                // # Pattern Multiplier Control Panel
-                // # zh_CN 样板倍率控制面板
-                EnumChatFormatting.UNDERLINE
-                    + StatCollector.translateToLocal("gtng.compact.machine.assembler_matrix.info.1"))
-                .asWidget()
-                .pos(0, 2)
-                .size(100, 18)
-                .textAlign(Alignment.Center));
+        panel.child(IKey.str(
+            // #tr gtng.compact.machine.assembler_matrix.info.1
+            // # Pattern Multiplier Control Panel
+            // # zh_CN 样板倍率控制面板
+            EnumChatFormatting.UNDERLINE
+                + StatCollector.translateToLocal("gtng.compact.machine.assembler_matrix.info.1"))
+            .asWidget().pos(0, 2).size(100, 18).textAlign(Alignment.Center));
         panel.child(
             // #tr gtng.compact.machine.assembler_matrix.info.2
             // # Current Multiplier
             // # zh_CN 当前倍率
-            IKey.lang("gtng.compact.machine.assembler_matrix.info.2")
-                .asWidget()
-                .pos(0, 24)
-                .size(100, 18)
+            IKey.lang("gtng.compact.machine.assembler_matrix.info.2").asWidget().pos(0, 24).size(100, 18)
                 .textAlign(Alignment.Center));
-        panel.child(
-            new TextFieldWidget().value(patternMultiplySyncer)
-                .numbersInt(1, Integer.MAX_VALUE)
-                .scrollValues(1, 4, 64, 256)
-                .setTextAlignment(Alignment.Center)
-                .setTextColor(Color.WHITE.main)
-                .background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
-                .tooltipBuilder(
-                    tooltip -> tooltip.addLine(
-                        IKey.dynamic(
-                            () -> StatCollector
-                                .translateToLocalFormatted("GT5U.gui.text.rangedvalue", 1, Integer.MAX_VALUE))))
-                .tooltipShowUpTimer(TOOLTIP_DELAY)
-                .pos(15, 40)
-                .size(70, 18));
+        panel.child(new TextFieldWidget().value(patternMultiplySyncer).numbersInt(1, Integer.MAX_VALUE)
+            .scrollValues(1, 4, 64, 256).setTextAlignment(Alignment.Center).setTextColor(Color.WHITE.main)
+            .background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
+            .tooltipBuilder(tooltip -> tooltip.addLine(IKey.dynamic(
+                () -> StatCollector.translateToLocalFormatted("GT5U.gui.text.rangedvalue", 1, Integer.MAX_VALUE))))
+            .tooltipShowUpTimer(TOOLTIP_DELAY).pos(15, 40).size(70, 18));
         return panel;
     }
 
     private IWidget createPatternOutputsWidget(PanelSyncManager syncManager) {
-        DynamicLinkedSyncHandler<?> outputsWidgetSyncer = syncManager
-            .findSyncHandler(PATTERN_OUTPUTS_WIDGET_SYNC_KEY, DynamicLinkedSyncHandler.class);
+        DynamicLinkedSyncHandler<?> outputsWidgetSyncer = syncManager.findSyncHandler(PATTERN_OUTPUTS_WIDGET_SYNC_KEY,
+            DynamicLinkedSyncHandler.class);
         return new DynamicSyncedWidget<>().syncHandler(outputsWidgetSyncer)
-            .initialChild(createPatternOutputsWidget(java.util.Collections.emptyList()))
-            .fullWidth();
+            .initialChild(createPatternOutputsWidget(Collections.emptyList())).fullWidth();
     }
 
     private IWidget createPatternOutputsWidget(List<IAEItemStack> cachedOutputItems) {
-        return new ListWidget<>().fullWidth()
-            .crossAxisAlignment(Alignment.CrossAxis.START)
+        return new ListWidget<>().fullWidth().crossAxisAlignment(Alignment.CrossAxis.START)
             .children(createPatternOutputRows(cachedOutputItems));
     }
 
     private List<IWidget> createPatternOutputRows(List<IAEItemStack> cachedOutputItems) {
         if (cachedOutputItems == null || cachedOutputItems.isEmpty()) {
-            return java.util.Collections.emptyList();
+            return Collections.emptyList();
         }
 
         Reference2LongMap<IAEItemStack> nameToAmount = new Reference2LongOpenHashMap<>();
@@ -297,19 +234,14 @@ public class AssemblerMatrixGui extends GTNGModernMultiBlockBaseGui<AssemblerMat
 
         List<Reference2LongMap.Entry<IAEItemStack>> sortedMap = new ObjectArrayList<>(
             nameToAmount.reference2LongEntrySet());
-        sortedMap.sort(
-            ((Comparator<Reference2LongMap.Entry<IAEItemStack>> & Serializable) (left, right) -> Long
-                .compare(right.getLongValue(), left.getLongValue())));
+        sortedMap.sort(((Comparator<Reference2LongMap.Entry<IAEItemStack>> & Serializable) (left, right) -> Long
+            .compare(right.getLongValue(), left.getLongValue())));
 
-        return sortedMap.stream()
-            .map(this::createPatternOutputRow)
-            .collect(java.util.stream.Collectors.toList());
+        return sortedMap.stream().map(this::createPatternOutputRow).collect(Collectors.toList());
     }
 
     private IWidget createPatternOutputRow(Reference2LongMap.Entry<IAEItemStack> entry) {
-        ItemStack stack = entry.getKey()
-            .getItemStack()
-            .copy();
+        ItemStack stack = entry.getKey().getItemStack().copy();
         long itemCount = entry.getLongValue();
         String itemName = stack.getDisplayName();
         String itemAmountString = EnumChatFormatting.WHITE + " x "
@@ -323,19 +255,10 @@ public class AssemblerMatrixGui extends GTNGModernMultiBlockBaseGui<AssemblerMat
             + "\n"
             + GTUtility.appendRate(false, itemCount, false, multiblock.mMaxProgresstime);
 
-        return Flow.row()
-            .height(10)
-            .fullWidth()
-            .crossAxisAlignment(Alignment.CrossAxis.CENTER)
-            .child(
-                new ItemDisplayWidget().item(stack)
-                    .displayAmount(false)
-                    .size(8, 8))
-            .child(
-                new TextWidget<>(IKey.str(lineText)).textAlign(Alignment.CenterLeft)
-                    .size(170, 10)
-                    .marginLeft(2)
-                    .tooltipBuilder(tooltip -> tooltip.addLine(lineTooltip)));
+        return Flow.row().height(10).fullWidth().crossAxisAlignment(Alignment.CrossAxis.CENTER)
+            .child(new ItemDisplayWidget().item(stack).displayAmount(false).size(8, 8))
+            .child(new TextWidget<>(IKey.str(lineText)).textAlign(Alignment.CenterLeft).size(170, 10).marginLeft(2)
+                .tooltipBuilder(tooltip -> tooltip.addLine(lineTooltip)));
     }
 
     @Override

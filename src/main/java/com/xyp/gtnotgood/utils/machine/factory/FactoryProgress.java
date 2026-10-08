@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.utils.machine.factory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -43,7 +44,7 @@ public final class FactoryProgress {
         Map<Integer, List<FactoryGraph.Node>> cycles = FactoryCycles.groups(graph);
         for (FactoryGraph.Node node : graph.nodes) {
             if (byNode.containsKey(node.id)) continue;
-            List<FactoryGraph.Node> members = cycles.getOrDefault(node.id, java.util.Collections.singletonList(node));
+            List<FactoryGraph.Node> members = cycles.getOrDefault(node.id, Collections.singletonList(node));
             Stage stage = new Stage();
             stage.id = members.get(0).id;
             int[] durations = new int[members.size()];
@@ -52,10 +53,9 @@ public final class FactoryProgress {
                 durations[i] = (int) FactoryGraph.timing(0, baseDuration.applyAsInt(member), 1, member.overclocks)[1];
                 byNode.put(member.id, stage);
             }
-            stage.duration = members.stream()
-                .allMatch(member -> member.wholeLineBatch)
-                    ? FactoryWholeBatch.prepare(members).jobs.get(stage.id).duration
-                    : FactoryCycles.commonPeriod(durations);
+            stage.duration = members.stream().allMatch(member -> member.wholeLineBatch)
+                ? FactoryWholeBatch.prepare(members).jobs.get(stage.id).duration
+                : FactoryCycles.commonPeriod(durations);
             stages.add(stage);
         }
         for (FactoryGraph.Node node : graph.nodes) {
@@ -75,12 +75,10 @@ public final class FactoryProgress {
      * @param jobs current jobs before FactoryRuntime.advance decrements their remaining ticks
      */
     public void advance(Map<Integer, FactoryRuntime.State> jobs) {
-        boolean active = jobs.values()
-            .stream()
-            .anyMatch(job -> job.remaining > 0);
+        boolean active = jobs.values().stream().anyMatch(job -> job.remaining > 0);
         if (!active) return;
-        if (stages.stream()
-            .allMatch(stage -> stage.credited == stage.duration)) for (Stage stage : stages) stage.credited = 0;
+        if (stages.stream().allMatch(stage -> stage.credited == stage.duration))
+            for (Stage stage : stages) stage.credited = 0;
         for (Map.Entry<Integer, FactoryRuntime.State> entry : jobs.entrySet()) {
             Stage stage = byNode.get(entry.getKey());
             FactoryRuntime.State job = entry.getValue();

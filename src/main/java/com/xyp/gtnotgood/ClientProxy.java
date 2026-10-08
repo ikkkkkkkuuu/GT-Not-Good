@@ -10,8 +10,10 @@ import net.minecraftforge.common.MinecraftForge;
 
 import com.xyp.gtnotgood.ae2thing.nei.ButtonConstants;
 import com.xyp.gtnotgood.ae2thing.nei.NEI_TH_Config;
+import com.xyp.gtnotgood.client.EdgeWindowIcon;
 import com.xyp.gtnotgood.client.StructureCompassRenderer;
 import com.xyp.gtnotgood.client.WindowsTaskbarButton;
+import com.xyp.gtnotgood.client.config.ServerSettingsScreen;
 import com.xyp.gtnotgood.client.flux.FluxConnectorRenderer;
 import com.xyp.gtnotgood.client.gui.LibraryDemoCommand;
 import com.xyp.gtnotgood.client.gui.wildcard.WildcardPreviewCommand;
@@ -21,6 +23,8 @@ import com.xyp.gtnotgood.client.nei.FactoryRecipeImport;
 import com.xyp.gtnotgood.client.network.NetworkBlockRenderer;
 import com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer;
 import com.xyp.gtnotgood.client.packaged.WirelessConnectorRenderer;
+import com.xyp.gtnotgood.client.research.ClientResearchTickHandler;
+import com.xyp.gtnotgood.client.research.GuiHandler;
 import com.xyp.gtnotgood.client.text.EffectTextRenderer;
 import com.xyp.gtnotgood.client.text.TextEffectPreferences;
 import com.xyp.gtnotgood.client.text.effect.BuiltinTextEffects;
@@ -31,6 +35,7 @@ import com.xyp.gtnotgood.common.blocks.flux.BlockFluxConnector;
 import com.xyp.gtnotgood.common.blocks.mestock.BlockMERequester;
 import com.xyp.gtnotgood.common.blocks.network.BlockNetwork;
 import com.xyp.gtnotgood.common.gui.BlockIcons;
+import com.xyp.gtnotgood.common.network.ServerConfigMessage;
 import com.xyp.gtnotgood.common.network.WirelessMonitorSnapshot;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
@@ -65,9 +70,8 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void receiveServerConfig(com.xyp.gtnotgood.common.network.ServerConfigMessage message) {
-        Minecraft.getMinecraft()
-            .func_152344_a(() -> com.xyp.gtnotgood.client.config.ServerSettingsScreen.receive(message));
+    public void receiveServerConfig(ServerConfigMessage message) {
+        Minecraft.getMinecraft().func_152344_a(() -> ServerSettingsScreen.receive(message));
     }
 
     @Override
@@ -87,16 +91,14 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
         com.xyp.gtnotgood.client.research.Config.synchronizeConfiguration();
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new com.xyp.gtnotgood.client.research.ClientResearchTickHandler());
+        FMLCommonHandler.instance().bus().register(new ClientResearchTickHandler());
     }
 
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
-        MinecraftForgeClient
-            .registerItemRenderer(GTNGItemList.StructureCompass.getItem(), new StructureCompassRenderer());
+        MinecraftForgeClient.registerItemRenderer(GTNGItemList.StructureCompass.getItem(),
+            new StructureCompassRenderer());
         registerAEPartRenderer();
         initializeTextEffects();
         WirelessMonitorPreferences.load();
@@ -112,9 +114,7 @@ public class ClientProxy extends CommonProxy {
         for (GTNGItemList part : new GTNGItemList[] { GTNGItemList.AdvancedIOBus, GTNGItemList.StockIOInterfacePart,
             GTNGItemList.LargeInterfacePart, GTNGItemList.ThresholdExportBus, GTNGItemList.ThresholdLevelEmitter,
             GTNGItemList.MERequesterTerminal }) {
-            AEApi.instance()
-                .partHelper()
-                .setItemBusRenderer((IPartItem) part.getItem());
+            AEApi.instance().partHelper().setItemBusRenderer((IPartItem) part.getItem());
         }
         BlockMERequester.renderId = RenderingRegistry.getNextAvailableRenderId();
         StockModelRenderer stockRenderer = new StockModelRenderer();
@@ -126,8 +126,8 @@ public class ClientProxy extends CommonProxy {
         BuiltinTextEffects.register();
         TextEffectPreferences.load();
         if (!TextEffectsCompat.hasUpstreamRenderer()) {
-            ((IReloadableResourceManager) Minecraft.getMinecraft()
-                .getResourceManager()).registerReloadListener(EffectTextRenderer.INSTANCE);
+            ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager())
+                .registerReloadListener(EffectTextRenderer.INSTANCE);
         }
         ClientCommandHandler.instance.registerCommand(new TextEffectPreviewCommand());
     }
@@ -135,26 +135,20 @@ public class ClientProxy extends CommonProxy {
     /** Keeps optional mod access guarded and defers target icon creation until rendering. */
     private void registerPackagedCoreRenderers() {
         if (ModList.Thaumcraft.isModLoaded()) {
-            MinecraftForgeClient.registerItemRenderer(
-                GTNGItemList.ThaumcraftCrucibleCore.getItem(),
+            MinecraftForgeClient.registerItemRenderer(GTNGItemList.ThaumcraftCrucibleCore.getItem(),
                 new PackagedCoreRenderer(() -> new ItemStack(ConfigBlocks.blockMetalDevice, 1, 0)));
-            MinecraftForgeClient.registerItemRenderer(
-                GTNGItemList.ArcaneWorkbenchCore.getItem(),
+            MinecraftForgeClient.registerItemRenderer(GTNGItemList.ArcaneWorkbenchCore.getItem(),
                 new PackagedCoreRenderer(() -> new ItemStack(ConfigBlocks.blockTable, 1, 15)));
-            MinecraftForgeClient.registerItemRenderer(
-                GTNGItemList.ThaumcraftInfusionCore.getItem(),
+            MinecraftForgeClient.registerItemRenderer(GTNGItemList.ThaumcraftInfusionCore.getItem(),
                 new PackagedCoreRenderer(() -> new ItemStack(ConfigBlocks.blockStoneDevice, 1, 2)));
         }
         if (ModList.BloodMagic.isModLoaded()) {
-            MinecraftForgeClient.registerItemRenderer(
-                GTNGItemList.BloodAltarCore.getItem(),
+            MinecraftForgeClient.registerItemRenderer(GTNGItemList.BloodAltarCore.getItem(),
                 new PackagedCoreRenderer(() -> new ItemStack(ModBlocks.blockAltar)));
         }
-        MinecraftForgeClient.registerItemRenderer(
-            GTNGItemList.AssemblyLineCore.getItem(),
+        MinecraftForgeClient.registerItemRenderer(GTNGItemList.AssemblyLineCore.getItem(),
             new PackagedCoreRenderer(() -> ItemList.Machine_Multi_Assemblyline.get(1)));
-        MinecraftForgeClient.registerItemRenderer(
-            GTNGItemList.AdvancedAssemblyLineCore.getItem(),
+        MinecraftForgeClient.registerItemRenderer(GTNGItemList.AdvancedAssemblyLineCore.getItem(),
             new PackagedCoreRenderer(() -> GGItemList.AdvAssLine.get(1)));
     }
 
@@ -172,22 +166,16 @@ public class ClientProxy extends CommonProxy {
 
     /** Registers one shared client utility listener on both Forge and FML event buses. */
     private void registerClientEvents() {
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new ToolBeltClientEvents());
+        FMLCommonHandler.instance().bus().register(new ToolBeltClientEvents());
 
         SubscribeEventClientUtils clientUtils = new SubscribeEventClientUtils();
         MinecraftForge.EVENT_BUS.register(clientUtils);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(clientUtils);
+        FMLCommonHandler.instance().bus().register(clientUtils);
         MinecraftForge.EVENT_BUS.register(new MEWirelessNodeRenderer());
         MinecraftForge.EVENT_BUS.register(new WirelessConnectorRenderer());
         MinecraftForge.EVENT_BUS.register(new FactoryRecipeImport());
         MinecraftForge.EVENT_BUS.register(WirelessMonitorHud.INSTANCE);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(WirelessMonitorHud.INSTANCE);
+        FMLCommonHandler.instance().bus().register(WirelessMonitorHud.INSTANCE);
     }
 
     /**
@@ -200,17 +188,11 @@ public class ClientProxy extends CommonProxy {
     public void complete(FMLLoadCompleteEvent event) {
         super.complete(event);
         if (com.xyp.gtnotgood.config.Config.useEdgeWindowIcon) {
-            FMLCommonHandler.instance()
-                .bus()
-                .register(new com.xyp.gtnotgood.client.EdgeWindowIcon());
+            FMLCommonHandler.instance().bus().register(new EdgeWindowIcon());
         }
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new WindowsTaskbarButton());
+        FMLCommonHandler.instance().bus().register(new WindowsTaskbarButton());
         if (ModList.ThaumcraftResearchTweaks.isModLoaded()) {
-            NetworkRegistry.INSTANCE.registerGuiHandler(
-                ModList.ThaumcraftResearchTweaks.getID(),
-                new com.xyp.gtnotgood.client.research.GuiHandler());
+            NetworkRegistry.INSTANCE.registerGuiHandler(ModList.ThaumcraftResearchTweaks.getID(), new GuiHandler());
         }
     }
 }

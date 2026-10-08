@@ -26,12 +26,14 @@ import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.PlayerSource;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IAEStack;
 import appeng.container.AEBaseContainer;
 import appeng.container.ContainerOpenContext;
 import appeng.container.implementations.ContainerCraftAmount;
 import appeng.container.implementations.ContainerCraftConfirm;
 import appeng.core.AELog;
 import appeng.me.cache.CraftingGridCache;
+import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -47,8 +49,8 @@ public class CPacketCraftRequest implements IMessage {
     private CraftingMode craftingMode;
 
     private enum Mode {
-        ITEM,
-        STACK_SIZE
+        Item,
+        StackSize
     }
 
     public CPacketCraftRequest() {}
@@ -60,14 +62,14 @@ public class CPacketCraftRequest implements IMessage {
     public CPacketCraftRequest(final IAEItemStack item, final boolean shift, CraftingMode currentValue) {
         this.item = item;
         this.heldShift = shift;
-        this.mode = Mode.ITEM;
+        this.mode = Mode.Item;
         this.craftingMode = currentValue;
     }
 
     public CPacketCraftRequest(final long craftAmt, final boolean shift, CraftingMode currentValue) {
         this.amount = craftAmt;
         this.heldShift = shift;
-        this.mode = Mode.STACK_SIZE;
+        this.mode = Mode.StackSize;
         this.craftingMode = currentValue;
     }
 
@@ -79,7 +81,7 @@ public class CPacketCraftRequest implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeByte(mode.ordinal());
         buf.writeByte(craftingMode.ordinal());
-        if (mode == Mode.ITEM) {
+        if (mode == Mode.Item) {
             try {
                 item.writeToPacket(buf);
                 buf.writeBoolean(heldShift);
@@ -95,7 +97,7 @@ public class CPacketCraftRequest implements IMessage {
     public void fromBytes(ByteBuf buf) {
         mode = Mode.values()[buf.readByte()];
         craftingMode = CraftingMode.values()[buf.readByte()];
-        if (mode == Mode.ITEM) {
+        if (mode == Mode.Item) {
             try {
                 item = AEItemStack.loadItemStackFromPacket(buf);
                 heldShift = buf.readBoolean();
@@ -140,8 +142,8 @@ public class CPacketCraftRequest implements IMessage {
                         // target is treated as a raw leaf ingredient (shown as a lone drop, not expanded). Platform
                         // .convertStack turns the fluid_drop into its IAEFluidStack; item targets pass through unchanged.
                         // This mirrors what AE2FC's own TileLevelMaintainer does before requesting a fluid craft.
-                        appeng.api.storage.data.IAEStack<?> craftTarget =
-                            appeng.util.Platform.convertStack((IAEItemStack) cca.getItemToCraft());
+                        IAEStack<?> craftTarget =
+                            Platform.convertStack((IAEItemStack) cca.getItemToCraft());
                         if (cg instanceof CraftingGridCache cgc) {
                             futureJob = cgc.beginCraftingJob(
                                 cca.getWorld(),
@@ -169,14 +171,14 @@ public class CPacketCraftRequest implements IMessage {
                                         player.worldObj,
                                         new BlockPos(te),
                                         Objects.requireNonNull(context.getSide()),
-                                        GuiType.CRAFTING_CONFIRM);
+                                        GuiType.CraftingConfirm);
                             }else{
                                 InventoryHandler.openGui(
                                     player,
                                     player.worldObj,
                                     new BlockPos(((WirelessTerminal) target).getInventorySlot(),0,0),
                                     Objects.requireNonNull(cca.getOpenContext().getSide()),
-                                    GuiType.CRAFTING_CONFIRM_ITEM);
+                                    GuiType.CraftingConfirmItem);
                             }
 
                             if (player.openContainer instanceof final ContainerCraftConfirm ccc) {

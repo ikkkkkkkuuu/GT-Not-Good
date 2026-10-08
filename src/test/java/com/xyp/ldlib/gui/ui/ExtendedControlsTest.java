@@ -40,8 +40,7 @@ public class ExtendedControlsTest {
         UIElement root = new UIElement(10, 20, 200, 200);
         Slider slider = new Slider(5, 5, 100, 15, 10, 20, 2, false, texture(), texture());
         int[] notifications = { 0 };
-        slider.setOnChange(value -> notifications[0]++)
-            .setValue(13);
+        slider.setOnChange(value -> notifications[0]++).setValue(13);
         assertEquals(14, slider.getValue(), 0);
         assertEquals(0, notifications[0]);
         root.addChild(slider);
@@ -114,12 +113,7 @@ public class ExtendedControlsTest {
     public void virtualRowsStayBoundedAtEndAndAfterModelShrink() {
         List<Integer> items = new ArrayList<>();
         for (int i = 0; i < 10000; i++) items.add(i);
-        VirtualScrollerView<Integer> list = new VirtualScrollerView<>(
-            0,
-            0,
-            100,
-            100,
-            20,
+        VirtualScrollerView<Integer> list = new VirtualScrollerView<>(0, 0, 100, 100, 20,
             (item, index) -> new UIElement(0, 0, 90, 20));
         list.setItems(items);
         list.layout();
@@ -129,13 +123,7 @@ public class ExtendedControlsTest {
         list.layout();
         assertEquals(list.getMaxScroll(), list.getScroll());
         assertTrue(list.getInstantiatedRowCount() <= 7);
-        assertEquals(
-            199980,
-            list.getChildren()
-                .get(
-                    list.getChildren()
-                        .size() - 1)
-                .getY());
+        assertEquals(199980, list.getChildren().get(list.getChildren().size() - 1).getY());
         list.setItems(Arrays.asList(1, 2));
         list.layout();
         assertEquals(0, list.getScroll());
@@ -147,12 +135,7 @@ public class ExtendedControlsTest {
 
     @Test
     public void scrollbarDragReachesLastVirtualRowWithoutClickingContent() {
-        VirtualScrollerView<Integer> list = new VirtualScrollerView<>(
-            0,
-            0,
-            100,
-            100,
-            20,
+        VirtualScrollerView<Integer> list = new VirtualScrollerView<>(0, 0, 100, 100, 20,
             (item, index) -> new UIElement(0, 0, 100, 20));
         List<Integer> values = new ArrayList<>();
         for (int i = 0; i < 1000; i++) values.add(i);
@@ -208,13 +191,9 @@ public class ExtendedControlsTest {
         GraphView graph = new GraphView(0, 0, 100, 100);
         GraphView.Node a = new GraphView.Node(0, 0, 20, 20, texture());
         GraphView.Node b = new GraphView.Node(40, 0, 20, 20, texture());
-        graph.addNode(a)
-            .addNode(b)
-            .connect(a, b, 0xFFFFFF);
+        graph.addNode(a).addNode(b).connect(a, b, 0xFFFFFF);
         graph.removeNode(a);
-        assertTrue(
-            graph.getConnections()
-                .isEmpty());
+        assertTrue(graph.getConnections().isEmpty());
         assertNull(graph.nodeAt(5, 5));
     }
 
@@ -248,9 +227,7 @@ public class ExtendedControlsTest {
         search.setOnChange(value -> changes[0]++);
         search.setValue("Gold");
         assertEquals(Arrays.asList("Iron", "Iron dust"), search.search("IRON"));
-        assertTrue(
-            search.search("no match")
-                .isEmpty());
+        assertTrue(search.search("no match").isEmpty());
         assertEquals(0, changes[0]);
     }
 

@@ -5,7 +5,10 @@ import java.util.UUID;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldSettings;
 import net.minecraftforge.common.util.FakePlayer;
 
 import com.mojang.authlib.GameProfile;
@@ -20,23 +23,18 @@ final class MechanicalUserPlayer extends FakePlayer {
 
     MechanicalUserPlayer(WorldServer world) {
         super(world, new GameProfile(UUID.fromString("307c525e-3d17-4b8a-8e0a-bb73a0d35d49"), "[GTNGUser]"));
-        playerNetServerHandler = new NetHandlerPlayServer(
-            FMLCommonHandler.instance()
-                .getMinecraftServerInstance(),
-            new NetworkManager(false),
-            this) {
+        playerNetServerHandler = new NetHandlerPlayServer(FMLCommonHandler.instance().getMinecraftServerInstance(),
+            new NetworkManager(false), this) {
 
             @Override
             public void sendPacket(Packet packet) {}
         };
-        theItemInWorldManager.setGameType(net.minecraft.world.WorldSettings.GameType.SURVIVAL);
+        theItemInWorldManager.setGameType(WorldSettings.GameType.SURVIVAL);
     }
 
     @Override
-    public net.minecraft.util.ChunkCoordinates getPlayerCoordinates() {
-        return new net.minecraft.util.ChunkCoordinates(
-            net.minecraft.util.MathHelper.floor_double(posX),
-            net.minecraft.util.MathHelper.floor_double(posY),
-            net.minecraft.util.MathHelper.floor_double(posZ));
+    public ChunkCoordinates getPlayerCoordinates() {
+        return new ChunkCoordinates(MathHelper.floor_double(posX), MathHelper.floor_double(posY),
+            MathHelper.floor_double(posZ));
     }
 }

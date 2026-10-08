@@ -130,11 +130,7 @@ public class ScrollerView extends UIElement {
             thumbTexture.draw(mouseX, mouseY, parentX + x + width - 6, parentY + y + offset, 6, thumb);
             return;
         }
-        Gui.drawRect(
-            parentX + x + width - 3,
-            parentY + y + offset,
-            parentX + x + width,
-            parentY + y + offset + thumb,
+        Gui.drawRect(parentX + x + width - 3, parentY + y + offset, parentX + x + width, parentY + y + offset + thumb,
             0xFF5C839B);
     }
 }

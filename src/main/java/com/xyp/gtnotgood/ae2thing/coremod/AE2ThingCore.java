@@ -16,7 +16,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 @IFMLLoadingPlugin.TransformerExclusions("com.xyp.gtnotgood.ae2thing.coremod")
 public class AE2ThingCore implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
-    private static boolean DEV_ENVIRONMENT;
+    private static boolean devEnvironment;
 
     @Override
     public String[] getASMTransformerClass() {
@@ -37,7 +37,7 @@ public class AE2ThingCore implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     @Override
     public void injectData(Map<String, Object> data) {
-        DEV_ENVIRONMENT = !(boolean) data.get("runtimeDeobfuscationEnabled");
+        devEnvironment = !(boolean) data.get("runtimeDeobfuscationEnabled");
     }
 
     @Nullable
@@ -57,6 +57,6 @@ public class AE2ThingCore implements IFMLLoadingPlugin, IEarlyMixinLoader {
     }
 
     public static boolean isDevEnv() {
-        return DEV_ENVIRONMENT;
+        return devEnvironment;
     }
 }

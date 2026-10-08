@@ -3,6 +3,7 @@ package com.xyp.gtnotgood.common.blocks.mebridge;
 import java.util.EnumSet;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -35,7 +36,7 @@ public abstract class TileMEBridgeBase extends TileEntity implements IGridProxya
     private boolean ownerApplied = false;
 
     /** 子类提供用于 AE 视觉表现的物品(方块本身的 ItemStack)。可返回 null。 */
-    protected abstract net.minecraft.item.ItemStack getVisualRepresentation();
+    protected abstract ItemStack getVisualRepresentation();
 
     /** 方块放置时记录放置者(见 BlockMEBridgeBase.onBlockPlacedBy),用于 proxy owner + 安保。 */
     public void setOwnerName(String name) {
@@ -103,8 +104,7 @@ public abstract class TileMEBridgeBase extends TileEntity implements IGridProxya
         IGridNode node = gridProxy.getNode();
         // AE2 里孤立节点也有自己的单节点 grid,故不能用 getGrid()!=null 判定。
         // 用实际连接数:接了线缆 / 连上别的节点才算"在网"。
-        return node != null && !node.getConnections()
-            .isEmpty();
+        return node != null && !node.getConnections().isEmpty();
     }
 
     @Override

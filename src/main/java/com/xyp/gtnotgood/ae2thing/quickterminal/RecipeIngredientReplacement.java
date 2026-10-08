@@ -11,8 +11,7 @@ import io.netty.buffer.ByteBuf;
 public final class RecipeIngredientReplacement {
 
     public static final StreamCodec<RecipeIngredientReplacement> CODEC = StreamCodecs.of(
-        RecipeIngredientReplacement.class.getName(),
-        RecipeIngredientReplacement::write,
+        RecipeIngredientReplacement.class.getName(), RecipeIngredientReplacement::write,
         RecipeIngredientReplacement::read);
 
     private final IAEStack<?> from;

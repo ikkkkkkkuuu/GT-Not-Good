@@ -12,28 +12,23 @@ import gregtech.api.interfaces.IIconContainer;
 /** Registers the mod's block overlays with GregTech's deferred texture-loading list. */
 public enum BlockIcons implements IIconContainer, Runnable {
 
-    OVERLAY_FRONT_SINGULARITY_DATA_HUB,
-    OVERLAY_FRONT_SINGULARITY_DATA_HUB_ACTIVE,
-    OVERLAY_FRONT_SINGULARITY_DATA_HUB_ACTIVE_GLOW,
-    OVERLAY_FRONT_ITEMVAULTPORTHATCH,
-    OVERLAY_ENERGY_MONITOR;
+    OverlayFrontSingularityDataHub("OVERLAY_FRONT_SINGULARITY_DATA_HUB"),
+    OverlayFrontSingularityDataHubActive("OVERLAY_FRONT_SINGULARITY_DATA_HUB_ACTIVE"),
+    OverlayFrontSingularityDataHubActiveGlow("OVERLAY_FRONT_SINGULARITY_DATA_HUB_ACTIVE_GLOW"),
+    OverlayFrontItemVaultPortHatch("OVERLAY_FRONT_ITEMVAULTPORTHATCH"),
+    OverlayEnergyMonitor("OVERLAY_ENERGY_MONITOR");
 
     public static final String RES_PATH = RESOURCE_ROOT_ID + ":";
+    private final String iconName;
     private IIcon mIcon;
 
-    BlockIcons() {
+    BlockIcons(String iconName) {
+        this.iconName = iconName;
         GregTechAPI.sGTBlockIconload.add(this);
     }
 
-    /**
-     * Initializes the enum during client setup so every icon is queued before GregTech loads textures.
-     * Calling this static method triggers the enum constructors exactly once; repeated calls do not add icons again.
-     *
-     * @see com.xyp.gtnotgood.ClientProxy#init(cpw.mods.fml.common.event.FMLInitializationEvent)
-     */
-    public static void initialize() {
-        // Class initialization performs the registration; no additional work is required here.
-    }
+    /** Triggers enum construction during client setup, before GregTech loads textures. */
+    public static void initialize() {}
 
     @Override
     public IIcon getIcon() {
@@ -52,6 +47,6 @@ public enum BlockIcons implements IIconContainer, Runnable {
 
     @Override
     public void run() {
-        mIcon = GregTechAPI.sBlockIcons.registerIcon(RES_PATH + "iconsets/" + this);
+        mIcon = GregTechAPI.sBlockIcons.registerIcon(RES_PATH + "iconsets/" + iconName);
     }
 }

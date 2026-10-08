@@ -49,9 +49,7 @@ public final class KeyBindManager {
         // #tr key.gtnotgood.wireless_monitor.configure
         // # Configure Wireless HUD Colors
         // # zh_CN 配置无线 HUD 滚动颜色
-        configureWirelessMonitor = new KeyBinding(
-            "key.gtnotgood.wireless_monitor.configure",
-            Keyboard.KEY_NONE,
+        configureWirelessMonitor = new KeyBinding("key.gtnotgood.wireless_monitor.configure", Keyboard.KEY_NONE,
             CATEGORY);
 
         // #tr key.gtnotgood.wireless_monitor.move

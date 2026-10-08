@@ -9,8 +9,10 @@ import java.util.function.Consumer;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
+import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.menu.AbstractMenuButton;
@@ -114,38 +116,27 @@ public final class SelectorWidget extends AbstractMenuButton<SelectorWidget> {
 
     @Override
     protected Menu<?> createMenu() {
-        ListWidget<com.cleanroommc.modularui.api.widget.IWidget, ?> list = new ListWidget<>().widthRel(1f)
-            .maxSize(maxCount * 15)
-            .scrollDirection(
-                new com.cleanroommc.modularui.widget.scroll.VerticalScrollData(false, 4)
-                    .texture(new Rectangle().color(0xFFFFFFFF)));
+        ListWidget<IWidget, ?> list = new ListWidget<>().widthRel(1f).maxSize(maxCount * 15)
+            .scrollDirection(new VerticalScrollData(false, 4).texture(new Rectangle().color(0xFFFFFFFF)));
         for (String candidate : candidates) {
-            list.child(
-                new ButtonWidget<>().widthRel(1f)
-                    .height(15)
-                    .padding(0)
-                    .background(new DynamicDrawable(() -> candidate.equals(value) ? SELECTED : null))
-                    .disableHoverBackground()
-                    .overlay(new ScrollingTextDrawable(() -> candidate, 0xFFFFFFFF, true))
-                    .tooltipBuilder(tooltip -> tooltip.addLine(IKey.str(candidate)))
-                    .onMousePressed(mouse -> {
-                        if (mouse != 0) return false;
-                        if (!isValid() || !areAncestorsEnabled()) {
-                            closeMenu(false);
-                            return true;
-                        }
-                        if (candidates.contains(candidate)) {
-                            setValue(candidate);
-                            closeMenu(false);
-                            onChanged.accept(candidate);
-                        }
+            list.child(new ButtonWidget<>().widthRel(1f).height(15).padding(0)
+                .background(new DynamicDrawable(() -> candidate.equals(value) ? SELECTED : null))
+                .disableHoverBackground().overlay(new ScrollingTextDrawable(() -> candidate, 0xFFFFFFFF, true))
+                .tooltipBuilder(tooltip -> tooltip.addLine(IKey.str(candidate))).onMousePressed(mouse -> {
+                    if (mouse != 0) return false;
+                    if (!isValid() || !areAncestorsEnabled()) {
+                        closeMenu(false);
                         return true;
-                    }));
+                    }
+                    if (candidates.contains(candidate)) {
+                        setValue(candidate);
+                        closeMenu(false);
+                        onChanged.accept(candidate);
+                    }
+                    return true;
+                }));
         }
-        return new Menu<>().widthRel(1f)
-            .coverChildrenHeight()
-            .padding(0)
-            .background(new Rectangle().color(0xAA000000))
+        return new Menu<>().widthRel(1f).coverChildrenHeight().padding(0).background(new Rectangle().color(0xAA000000))
             .child(list);
     }
 }

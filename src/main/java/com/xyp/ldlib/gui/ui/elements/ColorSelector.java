@@ -31,20 +31,10 @@ public final class ColorSelector extends UIElement {
         plane.setBackground(this::drawPlane);
         plane.addEventListener(UIEvents.MOUSE_DOWN, this::pick);
         plane.addEventListener(UIEvents.MOUSE_MOVE, this::pick);
-        hueSlider = new Slider(
-            0,
-            height - 60,
-            width,
-            12,
-            0,
-            1,
-            1d / 360,
-            false,
-            (mx, my, left, top, w, h) -> drawHue(left, top, w, h),
-            theme.accent);
+        hueSlider = new Slider(0, height - 60, width, 12, 0, 1, 1d / 360, false,
+            (mx, my, left, top, w, h) -> drawHue(left, top, w, h), theme.accent);
         alphaSlider = new Slider(0, height - 44, width, 12, 0, 255, 1, false, theme.input, theme.accent);
-        hex = theme.textField(0, height - 26, Math.max(0, width - 30), 22)
-            .setMaxLength(8)
+        hex = theme.textField(0, height - 26, Math.max(0, width - 30), 22).setMaxLength(8)
             .setValidator(text -> text.matches("[0-9a-fA-F]{0,8}"));
         hueSlider.setOnChange(value -> {
             hue = (float) value;
@@ -67,11 +57,7 @@ public final class ColorSelector extends UIElement {
         addChild(hex);
         addChild(new UIElement(width - 26, height - 26, 26, 22).setBackground((mx, my, left, top, w, h) -> {
             for (int row = 0; row < h; row += 4) for (int col = 0; col < w; col += 4) {
-                Gui.drawRect(
-                    left + col,
-                    top + row,
-                    left + Math.min(w, col + 4),
-                    top + Math.min(h, row + 4),
+                Gui.drawRect(left + col, top + row, left + Math.min(w, col + 4), top + Math.min(h, row + 4),
                     ((row + col) / 4 % 2 == 0) ? 0xFFEEEEEE : 0xFF888888);
             }
             Gui.drawRect(left, top, left + w, top + h, getColor());
@@ -118,8 +104,8 @@ public final class ColorSelector extends UIElement {
     }
 
     private void drawHue(int left, int top, int w, int h) {
-        for (int col = 0; col < w; col++) Gui
-            .drawRect(left + col, top, left + col + 1, top + h, Color.HSBtoRGB((float) col / Math.max(1, w - 1), 1, 1));
+        for (int col = 0; col < w; col++) Gui.drawRect(left + col, top, left + col + 1, top + h,
+            Color.HSBtoRGB((float) col / Math.max(1, w - 1), 1, 1));
     }
 
     /** Batches the HSV plane into one tessellator draw, restoring fixed-function state afterwards. */
@@ -152,14 +138,10 @@ public final class ColorSelector extends UIElement {
     @Override
     public void layout() {
         plane.setSize(width, Math.max(0, height - 64));
-        hueSlider.setPosition(0, Math.max(0, height - 60))
-            .setSize(width, 12);
-        alphaSlider.setPosition(0, Math.max(0, height - 44))
-            .setSize(width, 12);
-        hex.setPosition(0, Math.max(0, height - 26))
-            .setSize(Math.max(0, width - 30), 22);
-        getChildren().get(4)
-            .setPosition(Math.max(0, width - 26), Math.max(0, height - 26));
+        hueSlider.setPosition(0, Math.max(0, height - 60)).setSize(width, 12);
+        alphaSlider.setPosition(0, Math.max(0, height - 44)).setSize(width, 12);
+        hex.setPosition(0, Math.max(0, height - 26)).setSize(Math.max(0, width - 30), 22);
+        getChildren().get(4).setPosition(Math.max(0, width - 26), Math.max(0, height - 26));
         super.layout();
     }
 }

@@ -67,8 +67,7 @@ public class EffectTextFieldView {
         for (int i = reverse ? last - 1 : first; i >= first && i < last; i += reverse ? -1 : 1) {
             Glyph glyph = glyphs.get(i);
             float next = used + glyph.width() + (spaced && glyph.width() > 0 ? layout.spacing() : 0);
-            if (glyph.text()
-                .equals("\n") || Math.ceil(next) > width) {
+            if (glyph.text().equals("\n") || Math.ceil(next) > width) {
                 return reverse ? source.substring(glyph.sourceEnd(), end)
                     : source.substring(start, glyph.sourceStart());
             }
@@ -84,8 +83,7 @@ public class EffectTextFieldView {
         int high = glyphs.size();
         while (low < high) {
             int middle = (low + high) >>> 1;
-            if (glyphs.get(middle)
-                .sourceStart() < sourceStart) low = middle + 1;
+            if (glyphs.get(middle).sourceStart() < sourceStart) low = middle + 1;
             else high = middle;
         }
         return low;
@@ -97,8 +95,7 @@ public class EffectTextFieldView {
         int high = glyphs.size();
         while (low < high) {
             int middle = (low + high) >>> 1;
-            if (glyphs.get(middle)
-                .sourceEnd() <= sourceEnd) low = middle + 1;
+            if (glyphs.get(middle).sourceEnd() <= sourceEnd) low = middle + 1;
             else high = middle;
         }
         return low;

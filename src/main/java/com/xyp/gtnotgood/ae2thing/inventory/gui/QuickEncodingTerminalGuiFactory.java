@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -16,6 +17,7 @@ import com.xyp.gtnotgood.ae2thing.quickterminal.client.GuiQuickEncodingTerminal;
 import appeng.api.AEApi;
 import appeng.api.features.IWirelessTermHandler;
 import appeng.core.localization.PlayerMessages;
+import appeng.util.Platform;
 import baubles.api.BaublesApi;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -28,10 +30,7 @@ public final class QuickEncodingTerminalGuiFactory implements IGuiFactory {
         ItemStack item = getItem(player, slot);
         if (item == null || item.getItem() == null) return null;
 
-        IWirelessTermHandler handler = AEApi.instance()
-            .registries()
-            .wireless()
-            .getWirelessTerminalHandler(item);
+        IWirelessTermHandler handler = AEApi.instance().registries().wireless().getWirelessTerminalHandler(item);
         if (handler == null) return null;
 
         // GT-Not-Cool and AE2 use different sentinel offsets for Baubles slots.
@@ -39,7 +38,7 @@ public final class QuickEncodingTerminalGuiFactory implements IGuiFactory {
         // normalize it before the slot is stored in WirelessTerminalGuiObject.
         int aeSlot = slot;
         if (slot >= Constants.BAUBLE_SLOT_OFFSET) {
-            aeSlot = appeng.util.Platform.baublesSlotsOffset + (slot - Constants.BAUBLE_SLOT_OFFSET);
+            aeSlot = Platform.baublesSlotsOffset + (slot - Constants.BAUBLE_SLOT_OFFSET);
         }
         return new DualTerminalGuiObject(handler, item, player, world, aeSlot);
     }
@@ -48,7 +47,7 @@ public final class QuickEncodingTerminalGuiFactory implements IGuiFactory {
     private static ItemStack getItem(EntityPlayer player, int slot) {
         if (slot == -1) return player.getCurrentEquippedItem();
         if (slot >= Constants.BAUBLE_SLOT_OFFSET) {
-            net.minecraft.inventory.IInventory baubles = BaublesApi.getBaubles(player);
+            IInventory baubles = BaublesApi.getBaubles(player);
             int baubleSlot = slot - Constants.BAUBLE_SLOT_OFFSET;
             return baubles != null && baubleSlot >= 0 && baubleSlot < baubles.getSizeInventory()
                 ? baubles.getStackInSlot(baubleSlot)

@@ -33,15 +33,15 @@ public final class WindowsTaskbarButton {
      */
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !Display.isCreated()
-            || running
-            || Config.hideWindowsTaskbarButton == hidden
-            || System.nanoTime() < nextAttemptAt) {
+        if (
+            event.phase != TickEvent.Phase.END || !Display.isCreated()
+                || running
+                || Config.hideWindowsTaskbarButton == hidden
+                || System.nanoTime() < nextAttemptAt
+        ) {
             return;
         }
-        if (!System.getProperty("os.name", "")
-            .toLowerCase(Locale.ROOT)
-            .startsWith("windows")) {
+        if (!System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows")) {
             return;
         }
         boolean desiredHidden = Config.hideWindowsTaskbarButton;
@@ -53,24 +53,13 @@ public final class WindowsTaskbarButton {
 
     private void setButtonHidden(boolean desiredHidden) {
         try {
-            String runtimeName = ManagementFactory.getRuntimeMXBean()
-                .getName();
+            String runtimeName = ManagementFactory.getRuntimeMXBean().getName();
             String processId = runtimeName.substring(0, runtimeName.indexOf('@'));
-            String script = readScript().replace("__PID__", processId)
-                .replace("__VISIBLE__", desiredHidden ? "$false" : "$true");
-            String command = Base64.getEncoder()
-                .encodeToString(script.getBytes(StandardCharsets.UTF_16LE));
-            Process process = new ProcessBuilder(
-                "powershell.exe",
-                "-NoProfile",
-                "-NonInteractive",
-                "-ExecutionPolicy",
-                "Bypass",
-                "-WindowStyle",
-                "Hidden",
-                "-EncodedCommand",
-                command).redirectErrorStream(true)
-                    .start();
+            String script = readScript().replace("__PID__", processId).replace("__VISIBLE__",
+                desiredHidden ? "$false" : "$true");
+            String command = Base64.getEncoder().encodeToString(script.getBytes(StandardCharsets.UTF_16LE));
+            Process process = new ProcessBuilder("powershell.exe", "-NoProfile", "-NonInteractive", "-ExecutionPolicy",
+                "Bypass", "-WindowStyle", "Hidden", "-EncodedCommand", command).redirectErrorStream(true).start();
             if (!process.waitFor(30, TimeUnit.SECONDS)) {
                 process.destroyForcibly();
                 GTNotGood.LOG.warn("Timed out changing the Windows taskbar button");
@@ -82,8 +71,7 @@ public final class WindowsTaskbarButton {
         } catch (IOException | RuntimeException e) {
             GTNotGood.LOG.warn("Could not change the Windows taskbar button", e);
         } catch (InterruptedException e) {
-            Thread.currentThread()
-                .interrupt();
+            Thread.currentThread().interrupt();
         } finally {
             nextAttemptAt = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
             running = false;

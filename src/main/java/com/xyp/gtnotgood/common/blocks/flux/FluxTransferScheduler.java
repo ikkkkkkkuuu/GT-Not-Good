@@ -40,12 +40,8 @@ public final class FluxTransferScheduler {
         if (event.phase != TickEvent.Phase.END) return;
         if (dirty) {
             ordered = new ArrayList<>(NODES);
-            ordered.sort(
-                Comparator.comparing(TileFluxConnector::isPlug)
-                    .reversed()
-                    .thenComparing(
-                        Comparator.comparingInt(TileFluxConnector::effectivePriority)
-                            .reversed()));
+            ordered.sort(Comparator.comparing(TileFluxConnector::isPlug).reversed()
+                .thenComparing(Comparator.comparingInt(TileFluxConnector::effectivePriority).reversed()));
             dirty = false;
         }
         for (TileFluxConnector tile : ordered) {

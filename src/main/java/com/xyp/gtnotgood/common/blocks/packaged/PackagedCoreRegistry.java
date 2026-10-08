@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -56,7 +57,7 @@ public final class PackagedCoreRegistry {
             InventoryCrafting ingredients);
 
         /** Returns the real completed output inventory, or null while crafting/unavailable. */
-        net.minecraft.inventory.IInventory output(TileEntity target);
+        IInventory output(TileEntity target);
 
         /** Called after the expected output has safely moved into the provider's return inventory. */
         default void collected(TileEntity target) {}

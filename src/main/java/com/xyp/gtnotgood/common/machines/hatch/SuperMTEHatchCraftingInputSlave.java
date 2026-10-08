@@ -130,18 +130,12 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
     public String[] getInfoData() {
         var ret = new ArrayList<String>();
         if (getMaster() != null) {
-            ret.add(
-                StatCollector.translateToLocalFormatted(
-                    "GT5U.infodata.hatch.crafting_input_slave.linked_to",
-                    masterX,
-                    masterY,
-                    masterZ));
+            ret.add(StatCollector.translateToLocalFormatted("GT5U.infodata.hatch.crafting_input_slave.linked_to",
+                masterX, masterY, masterZ));
             ret.addAll(Arrays.asList(getMaster().getInfoData()));
         } else ret.add(StatCollector.translateToLocal("GT5U.infodata.hatch.crafting_input_slave.not_linked_to"));
-        ret.add(
-            StatCollector.translateToLocalFormatted(
-                "GT5U.infodata.hatch.crafting_input_slave.reverseRecipes",
-                reverseRecipes ? "on" : "off"));
+        ret.add(StatCollector.translateToLocalFormatted("GT5U.infodata.hatch.crafting_input_slave.reverseRecipes",
+            reverseRecipes ? "on" : "off"));
         return ret.toArray(new String[0]);
     }
 
@@ -207,8 +201,7 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
     }
 
     public SuperMTEHatchCraftingInputME trySetMasterFromCoord(int x, int y, int z) {
-        var tileEntity = getBaseMetaTileEntity().getWorld()
-            .getTileEntity(x, y, z);
+        var tileEntity = getBaseMetaTileEntity().getWorld().getTileEntity(x, y, z);
         if (tileEntity == null) return null;
         if (!(tileEntity instanceof IGregTechTileEntity GTTE)) return null;
         if (!(GTTE.getMetaTileEntity() instanceof SuperMTEHatchCraftingInputME newMaster)) return null;
@@ -230,8 +223,7 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
         if (!ItemList.Tool_DataStick.isStackEqual(dataStick, false, true)) {
             return false;
         }
-        if (!ItemStackNBT.getString(dataStick, "type")
-            .equals("CraftingInputBuffer")) {
+        if (!ItemStackNBT.getString(dataStick, "type").equals("CraftingInputBuffer")) {
             return false;
         }
 
@@ -322,23 +314,16 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
         IWailaConfigHandler config) {
         NBTTagCompound tag = accessor.getNBTData();
         currenttip.add(
-            StatCollector.translateToLocal(
-                tag.getBoolean("linked") ? "GT5U.waila.hatch.crafting_input_slave.linked"
-                    : "GT5U.waila.hatch.crafting_input_slave.unlinked"));
+            StatCollector.translateToLocal(tag.getBoolean("linked") ? "GT5U.waila.hatch.crafting_input_slave.linked"
+                : "GT5U.waila.hatch.crafting_input_slave.unlinked"));
 
         if (tag.hasKey("masterX")) {
-            currenttip.add(
-                StatCollector.translateToLocalFormatted(
-                    "GT5U.waila.hatch.crafting_input_slave.bound_to",
-                    tag.getInteger("masterX"),
-                    tag.getInteger("masterY"),
-                    tag.getInteger("masterZ")));
+            currenttip.add(StatCollector.translateToLocalFormatted("GT5U.waila.hatch.crafting_input_slave.bound_to",
+                tag.getInteger("masterX"), tag.getInteger("masterY"), tag.getInteger("masterZ")));
         }
 
-        currenttip.add(
-            StatCollector.translateToLocalFormatted(
-                "GT5U.waila.hatch.crafting_input_slave.reverseRecipes",
-                tag.getBoolean("reverseRecipes") ? "on" : "off"));
+        currenttip.add(StatCollector.translateToLocalFormatted("GT5U.waila.hatch.crafting_input_slave.reverseRecipes",
+            tag.getBoolean("reverseRecipes") ? "on" : "off"));
 
         if (tag.hasKey("masterName")) {
             currenttip.add(EnumChatFormatting.GOLD + tag.getString("masterName") + EnumChatFormatting.RESET);
@@ -391,8 +376,8 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
         // #tr tooltip.gtnotgood.crafting_input_mirror.tier
         // # Hatch Tier: %s
         // # zh_CN 舱室等级：%s
-        String tier = StatCollector
-            .translateToLocalFormatted("tooltip.gtnotgood.crafting_input_mirror.tier", TIER_COLORS[11] + VN[11]);
+        String tier = StatCollector.translateToLocalFormatted("tooltip.gtnotgood.crafting_input_mirror.tier",
+            TIER_COLORS[11] + VN[11]);
         // #tr tooltip.gtnotgood.crafting_input_mirror.share
         // # Link with Crafting Input Buffer/Bus using Data Stick to share inventory
         // # zh_CN 使用数据棒连接样板输入总成或总线以共享库存

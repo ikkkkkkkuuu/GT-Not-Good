@@ -32,16 +32,10 @@ final class LongCircuitBuffer {
     private final Buffer<IAEFluidStack, FluidStack> fluids;
 
     LongCircuitBuffer(NBTTagCompound saved, Runnable changed) {
-        items = new Buffer<>(
-            IAEItemStack::getItemStack,
-            stack -> stack.stackSize,
-            (stack, count) -> stack.stackSize = count,
-            changed);
-        fluids = new Buffer<>(
-            IAEFluidStack::getFluidStack,
-            stack -> stack.amount,
-            (stack, count) -> stack.amount = count,
-            changed);
+        items = new Buffer<>(IAEItemStack::getItemStack, stack -> stack.stackSize,
+            (stack, count) -> stack.stackSize = count, changed);
+        fluids = new Buffer<>(IAEFluidStack::getFluidStack, stack -> stack.amount,
+            (stack, count) -> stack.amount = count, changed);
         if (saved == null) return;
         if (saved.hasKey("longItems") || saved.hasKey("longFluids")) {
             load(saved.getTagList("longItems", Constants.NBT.TAG_COMPOUND));
@@ -76,8 +70,10 @@ final class LongCircuitBuffer {
         for (int i = 0; i < table.getSizeInventory(); i++) {
             IAEStack<?> stack = table.getAEStackInSlot(i);
             if (stack == null || stack.getStackSize() == 0) continue;
-            if (stack.getStackSize() < 0 || CircuitPatternCodec.isCircuit(stack)
-                || CircuitPatternCodec.isMold(stack, virtualMolds)) return false;
+            if (
+                stack.getStackSize() < 0 || CircuitPatternCodec.isCircuit(stack)
+                    || CircuitPatternCodec.isMold(stack, virtualMolds)
+            ) return false;
             if (stack instanceof IAEItemStack item) {
                 if (!add(stagedItems, item)) return false;
             } else if (stack instanceof IAEFluidStack fluid) {
@@ -137,20 +133,10 @@ final class LongCircuitBuffer {
     /** A network rejection leaves the exact long remainder here; no quantity is narrowed to an item entity. */
     void refund(AENetworkProxy proxy, BaseActionSource source) throws GridAccessException {
         for (Entry<IAEItemStack, ItemStack> entry : items.entries) {
-            refund(
-                entry,
-                proxy,
-                proxy.getStorage()
-                    .getItemInventory(),
-                source);
+            refund(entry, proxy, proxy.getStorage().getItemInventory(), source);
         }
         for (Entry<IAEFluidStack, FluidStack> entry : fluids.entries) {
-            refund(
-                entry,
-                proxy,
-                proxy.getStorage()
-                    .getFluidInventory(),
-                source);
+            refund(entry, proxy, proxy.getStorage().getFluidInventory(), source);
         }
     }
 
@@ -161,11 +147,7 @@ final class LongCircuitBuffer {
         long safeRequest = Long.MAX_VALUE - Math.max(1, entry.stored.getAmountPerUnit());
         for (int attempt = 0; attempt < 2 && entry.stored.getStackSize() > 0; attempt++) {
             long sent = Math.min(entry.stored.getStackSize(), safeRequest);
-            T rest = Platform.poweredInsert(
-                proxy.getEnergy(),
-                inventory,
-                entry.stored.copy()
-                    .setStackSize(sent),
+            T rest = Platform.poweredInsert(proxy.getEnergy(), inventory, entry.stored.copy().setStackSize(sent),
                 source);
             entry.refunded(sent, rest);
             if (rest != null && rest.getStackSize() > 0) break;
@@ -244,9 +226,7 @@ final class LongCircuitBuffer {
         Entry(T stored, Buffer<T, V> owner) {
             this.stored = stored;
             this.owner = owner;
-            view = owner.view.apply(
-                stored.copy()
-                    .setStackSize(1));
+            view = owner.view.apply(stored.copy().setStackSize(1));
             refresh();
         }
 

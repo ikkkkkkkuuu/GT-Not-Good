@@ -230,9 +230,10 @@ public class UIElement {
         if (!isInteractive() || !contains(mouseX, mouseY, parentX, parentY)) return false;
         UIElement[] snapshot = childSnapshot;
         for (int i = snapshot.length - 1; i >= 0; i--) {
-            if (snapshot[i].parent == this && snapshot[i]
-                .mouseClicked(mouseX, mouseY, button, parentX + x + childOffsetX(), parentY + y + childOffsetY()))
-                return true;
+            if (
+                snapshot[i].parent == this && snapshot[i].mouseClicked(mouseX, mouseY, button,
+                    parentX + x + childOffsetX(), parentY + y + childOffsetY())
+            ) return true;
         }
         return false;
     }

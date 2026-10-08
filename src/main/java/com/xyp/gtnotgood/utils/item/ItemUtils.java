@@ -15,8 +15,8 @@ import gregtech.api.util.GTModHandler;
 public class ItemUtils {
 
     // Logo images for GUI (MUI1 UITexture)
-    public static final UITexture PICTURE_CIRCULATION = UITexture
-        .fullImage(RESOURCE_ROOT_ID, "gui/picture/circulation_");
+    public static final UITexture PICTURE_CIRCULATION = UITexture.fullImage(RESOURCE_ROOT_ID,
+        "gui/picture/circulation_");
 
     public static final UITexture PICTURE_GTNL_LOGO = UITexture.fullImage(RESOURCE_ROOT_ID, "gui/picture/gorge_logo");
 

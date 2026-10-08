@@ -28,8 +28,9 @@ public class NEIUtils {
                 if (storedStack == null || !(storedStack.getStack() instanceof ItemStack firstStack)) continue;
                 boolean areItemStackEqual = firstStack.isItemEqual(currentStack)
                     && ItemStack.areItemStackTagsEqual(firstStack, currentStack);
-                if (areItemStackEqual
-                    && (firstStack.stackSize + currentStack.stackSize) <= firstStack.getMaxStackSize()) {
+                if (
+                    areItemStackEqual && (firstStack.stackSize + currentStack.stackSize) <= firstStack.getMaxStackSize()
+                ) {
                     find = true;
                     ((ItemStack) storedStack.getStack()).stackSize = firstStack.stackSize + currentStack.stackSize;
                 }
@@ -38,19 +39,14 @@ public class NEIUtils {
                 comp.add(orderStack);
             }
         }
-        return comp.stream()
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+        return comp.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     public static List<OrderStack<?>> clearNull(List<OrderStack<?>> list) {
         AtomicInteger i = new AtomicInteger(0);
-        return list.stream()
-            .filter(Objects::nonNull)
-            .filter(
-                orderStack -> !(orderStack.getStack() != null && orderStack.getStack() instanceof ItemStack
-                    && ((ItemStack) orderStack.getStack()).stackSize == 0))
-            .peek(orderStack -> orderStack.setIndex(i.getAndIncrement()))
-            .collect(Collectors.toList());
+        return list.stream().filter(Objects::nonNull)
+            .filter(orderStack -> !(orderStack.getStack() != null && orderStack.getStack() instanceof ItemStack
+                && ((ItemStack) orderStack.getStack()).stackSize == 0))
+            .peek(orderStack -> orderStack.setIndex(i.getAndIncrement())).collect(Collectors.toList());
     }
 }

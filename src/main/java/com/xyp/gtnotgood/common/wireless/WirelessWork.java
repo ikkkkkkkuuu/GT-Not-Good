@@ -48,17 +48,12 @@ public final class WirelessWork {
     public BigInteger nextCost() {
         if (finished()) return BigInteger.ZERO;
         BigInteger ticks = BigInteger.valueOf(duration);
-        return totalEU.multiply(BigInteger.valueOf(progress + 1L))
-            .divide(ticks)
-            .subtract(
-                totalEU.multiply(BigInteger.valueOf(progress))
-                    .divide(ticks));
+        return totalEU.multiply(BigInteger.valueOf(progress + 1L)).divide(ticks)
+            .subtract(totalEU.multiply(BigInteger.valueOf(progress)).divide(ticks));
     }
 
     public BigInteger remainingCost() {
-        return totalEU.subtract(
-            totalEU.multiply(BigInteger.valueOf(progress))
-                .divide(BigInteger.valueOf(duration)));
+        return totalEU.subtract(totalEU.multiply(BigInteger.valueOf(progress)).divide(BigInteger.valueOf(duration)));
     }
 
     /** A rejected debit leaves both the progress and the remaining budget unchanged. */
@@ -83,11 +78,8 @@ public final class WirelessWork {
     }
 
     public static WirelessWork load(NBTTagCompound tag) {
-        WirelessWork work = new WirelessWork(
-            UUID.fromString(tag.getString("owner")),
-            tag.getString("recipe"),
-            new BigInteger(tag.getString("eu")),
-            tag.getInteger("duration"),
+        WirelessWork work = new WirelessWork(UUID.fromString(tag.getString("owner")), tag.getString("recipe"),
+            new BigInteger(tag.getString("eu")), tag.getInteger("duration"),
             tag.hasKey("parallels", 8) ? new BigInteger(tag.getString("parallels"))
                 : BigInteger.valueOf(tag.getInteger("parallels")),
             WirelessOutputs.load(tag.hasKey("outputs", 10) ? tag.getCompoundTag("outputs") : tag));

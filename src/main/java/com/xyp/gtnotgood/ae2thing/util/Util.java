@@ -1,7 +1,10 @@
 package com.xyp.gtnotgood.ae2thing.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 import javax.annotation.Nonnull;
@@ -9,6 +12,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -21,6 +25,7 @@ import org.lwjgl.input.Mouse;
 import com.glodblock.github.client.gui.FCGuiTextField;
 import com.xyp.gtnotgood.ae2thing.api.Constants;
 import com.xyp.gtnotgood.ae2thing.common.item.ItemWirelessDualInterfaceTerminal;
+import com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType;
 import com.xyp.gtnotgood.common.compat.FluidDropCompat;
 
 import appeng.api.AEApi;
@@ -30,6 +35,7 @@ import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.ICraftingGrid;
 import appeng.api.networking.crafting.ICraftingJob;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IDisplayRepo;
 import appeng.api.util.DimensionalCoord;
 import appeng.client.gui.AEBaseGui;
@@ -42,6 +48,7 @@ import appeng.integration.modules.NEI;
 import appeng.items.tools.powered.ToolWirelessTerminal;
 import appeng.me.cache.CraftingGridCache;
 import appeng.util.Platform;
+import baubles.api.BaublesApi;
 import codechicken.nei.recipe.StackInfo;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -50,7 +57,7 @@ import lombok.Getter;
 
 public class Util {
 
-    private static int AE_VERSION = -1;
+    private static int aeVersion = -1;
 
     /**
      * Caches the resolved display-repo {@link Field} per concrete GUI class. {@code getDisplayRepo} is called per
@@ -58,42 +65,34 @@ public class Util {
      * superclass chain each time. A sentinel {@link #NO_REPO_FIELD} marks classes that have no repo field so the
      * miss is cached too.
      */
-    private static final java.util.Map<Class<?>, Field> DISPLAY_REPO_FIELD_CACHE = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final Map<Class<?>, Field> DISPLAY_REPO_FIELD_CACHE = new ConcurrentHashMap<>();
     private static final Field NO_REPO_FIELD;
     static {
         Field sentinel = null;
         try {
-            sentinel = Util.class.getDeclaredField("AE_VERSION");
+            sentinel = Util.class.getDeclaredField("aeVersion");
         } catch (NoSuchFieldException ignored) {}
         NO_REPO_FIELD = sentinel;
     }
 
     public static int getAEVersion() {
-        if (AE_VERSION == -1) {
-            Optional<ModContainer> mod = Loader.instance()
-                .getActiveModList()
-                .stream()
-                .filter(
-                    x -> x.getModId()
-                        .equals("appliedenergistics2"))
-                .findFirst();
+        if (aeVersion == -1) {
+            Optional<ModContainer> mod = Loader.instance().getActiveModList().stream()
+                .filter(x -> x.getModId().equals("appliedenergistics2")).findFirst();
             if (mod.isPresent()) {
                 try {
-                    AE_VERSION = Integer.parseInt(
-                        mod.get()
-                            .getVersion()
-                            .split("-")[2]);
+                    aeVersion = Integer.parseInt(mod.get().getVersion().split("-")[2]);
                 } catch (Exception ignored) {
-                    AE_VERSION = 0;
+                    aeVersion = 0;
                 }
             } else {
-                AE_VERSION = 0;
+                aeVersion = 0;
             }
         }
-        return AE_VERSION;
+        return aeVersion;
     }
 
-    public static boolean replan(EntityPlayer player, appeng.container.implementations.ContainerCraftConfirm c){
+    public static boolean replan(EntityPlayer player, ContainerCraftConfirm c){
         ICraftingJob job = Ae2Reflect.getJob(c);
         if(job instanceof CraftingJobV2 jobV2 && jobV2.isDone()){
             c.simulation = true;
@@ -122,7 +121,7 @@ public class Util {
                 // ItemFluidDrop IAEItemStack for fluid crafts, and the IAEStack beginCraftingJob overload does NOT
                 // convertStack (only the IAEItemStack one does), so without this a replan re-runs with the fluid_drop
                 // and the plan collapses back to a single un-expanded drop. Mirrors the CPacketCraftRequest fix.
-                appeng.api.storage.data.IAEStack<?> craftTarget = Platform.convertStack((IAEItemStack) c.getItemToCraft());
+                IAEStack<?> craftTarget = Platform.convertStack((IAEItemStack) c.getItemToCraft());
                 if (cg instanceof CraftingGridCache cgc) {
                     futureJob = cgc.beginCraftingJob(
                         c.getWorld(),
@@ -157,9 +156,9 @@ public class Util {
             player.inventory.setItemStack(stack);
             return;
         }
-        if (slot >= com.xyp.gtnotgood.ae2thing.api.Constants.BAUBLE_SLOT_OFFSET) {
-            net.minecraft.inventory.IInventory baublesInv = baubles.api.BaublesApi.getBaubles(player);
-            int bSlot = slot - com.xyp.gtnotgood.ae2thing.api.Constants.BAUBLE_SLOT_OFFSET;
+        if (slot >= Constants.BAUBLE_SLOT_OFFSET) {
+            IInventory baublesInv = BaublesApi.getBaubles(player);
+            int bSlot = slot - Constants.BAUBLE_SLOT_OFFSET;
             if (baublesInv != null && bSlot >= 0 && bSlot < baublesInv.getSizeInventory()) {
                 baublesInv.setInventorySlotContents(bSlot, stack);
                 // Baubles only serializes its in-memory stackList into player.getEntityData()'s "Baubles.Inventory"
@@ -184,10 +183,9 @@ public class Util {
      * Baubles saves/loads, keeping a worn terminal's in-place NBT edits from being lost. Fails silently if Baubles is
      * absent or its API changes.
      */
-    private static void flushBaublesToEntityData(EntityPlayer player, net.minecraft.inventory.IInventory baublesInv) {
+    private static void flushBaublesToEntityData(EntityPlayer player, IInventory baublesInv) {
         try {
-            java.lang.reflect.Method saveNBT = baublesInv.getClass()
-                .getMethod("saveNBT", NBTTagCompound.class);
+            Method saveNBT = baublesInv.getClass().getMethod("saveNBT", NBTTagCompound.class);
             saveNBT.invoke(baublesInv, player.getEntityData());
         } catch (Throwable ignored) {
             // Baubles not present or API changed; nothing we can do, non-fatal.
@@ -202,9 +200,9 @@ public class Util {
         if (slot == -1) {
             return player.getCurrentEquippedItem();
         }
-        if (slot >= com.xyp.gtnotgood.ae2thing.api.Constants.BAUBLE_SLOT_OFFSET) {
-            net.minecraft.inventory.IInventory baublesInv = baubles.api.BaublesApi.getBaubles(player);
-            int bSlot = slot - com.xyp.gtnotgood.ae2thing.api.Constants.BAUBLE_SLOT_OFFSET;
+        if (slot >= Constants.BAUBLE_SLOT_OFFSET) {
+            IInventory baublesInv = BaublesApi.getBaubles(player);
+            int bSlot = slot - Constants.BAUBLE_SLOT_OFFSET;
             if (baublesInv != null && bSlot >= 0 && bSlot < baublesInv.getSizeInventory()) {
                 return baublesInv.getStackInSlot(bSlot);
             }
@@ -220,8 +218,7 @@ public class Util {
      * Persists the GuiType the player last switched to onto the terminal ItemStack's NBT so reopening the terminal
      * restores that view. See {@link com.xyp.gtnotgood.ae2thing.api.Constants#LAST_GUI_MODE}.
      */
-    public static void setLastGuiMode(EntityPlayer player, int slot,
-        com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType type) {
+    public static void setLastGuiMode(EntityPlayer player, int slot, GuiType type) {
         ItemStack stack = getTerminalInSlot(player, slot);
         if (stack == null || type == null) {
             return;
@@ -229,27 +226,19 @@ public class Util {
         if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
         }
-        stack.getTagCompound()
-            .setByte(com.xyp.gtnotgood.ae2thing.api.Constants.LAST_GUI_MODE, (byte) type.ordinal());
+        stack.getTagCompound().setByte(Constants.LAST_GUI_MODE, (byte) type.ordinal());
     }
 
     /**
      * Reads back the GuiType stored by {@link #setLastGuiMode}, falling back to {@code fallback} when the stack has no
      * stored mode or the stored ordinal is not one of the two allowed terminal views.
      */
-    public static com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType getLastGuiMode(ItemStack stack,
-        com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType fallback) {
-        if (stack == null || !stack.hasTagCompound()
-            || !stack.getTagCompound()
-                .hasKey(com.xyp.gtnotgood.ae2thing.api.Constants.LAST_GUI_MODE)) {
+    public static GuiType getLastGuiMode(ItemStack stack, GuiType fallback) {
+        if (stack == null || !stack.hasTagCompound() || !stack.getTagCompound().hasKey(Constants.LAST_GUI_MODE)) {
             return fallback;
         }
-        com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType type = com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType
-            .getByOrdinal(
-                stack.getTagCompound()
-                    .getByte(com.xyp.gtnotgood.ae2thing.api.Constants.LAST_GUI_MODE));
-        if (type == com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType.WIRELESS_DUAL_INTERFACE_TERMINAL
-            || type == com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType.WIRELESS_CRAFTING_TERMINAL) {
+        GuiType type = GuiType.getByOrdinal(stack.getTagCompound().getByte(Constants.LAST_GUI_MODE));
+        if (type == GuiType.WirelessDualInterfaceTerminal || type == GuiType.WirelessCraftingTerminal) {
             return type;
         }
         return fallback;
@@ -263,13 +252,13 @@ public class Util {
         }
         // Also look in the player's Baubles slots; encode the bauble slot with an offset so the GUI factory can
         // resolve it from the baubles inventory instead of the main inventory.
-        net.minecraft.inventory.IInventory baublesInv = baubles.api.BaublesApi.getBaubles(player);
+        IInventory baublesInv = BaublesApi.getBaubles(player);
         if (baublesInv != null) {
             for (int x = 0; x < baublesInv.getSizeInventory(); x++) {
                 ItemStack item = baublesInv.getStackInSlot(x);
                 if (item == null || item.getItem() == null) continue;
                 if (item.getItem() instanceof ItemWirelessDualInterfaceTerminal) {
-                    return com.xyp.gtnotgood.ae2thing.api.Constants.BAUBLE_SLOT_OFFSET + x;
+                    return Constants.BAUBLE_SLOT_OFFSET + x;
                 }
             }
         }
@@ -318,10 +307,7 @@ public class Util {
     public static IGridHost getWirelessGridHost(ItemStack is) {
         if (is.getItem() instanceof ToolWirelessTerminal) {
             String key = ((ToolWirelessTerminal) is.getItem()).getEncryptionKey(is);
-            return (IGridHost) AEApi.instance()
-                .registries()
-                .locatable()
-                .getLocatableBy(Long.parseLong(key));
+            return (IGridHost) AEApi.instance().registries().locatable().getLocatableBy(Long.parseLong(key));
         }
         return null;
     }
@@ -424,12 +410,8 @@ public class Util {
         }
 
         public static DimensionalCoordSide readFromNBT(final NBTTagCompound data) {
-            return new DimensionalCoordSide(
-                data.getInteger("x"),
-                data.getInteger("y"),
-                data.getInteger("z"),
-                data.getInteger("dim"),
-                ForgeDirection.getOrientation(data.getInteger(Constants.SIDE)),
+            return new DimensionalCoordSide(data.getInteger("x"), data.getInteger("y"), data.getInteger("z"),
+                data.getInteger("dim"), ForgeDirection.getOrientation(data.getInteger(Constants.SIDE)),
                 data.getString(Constants.NAME));
         }
 

@@ -24,8 +24,7 @@ public abstract class ExtremeEntityCrusherSpeedMixin extends KubaTechGTMultiBloc
 
     @Inject(method = "checkProcessing", at = @At("RETURN"))
     private void gtnotgood$modifyMobProcessingDuration(CallbackInfoReturnable<CheckRecipeResult> cir) {
-        if (!cir.getReturnValue()
-            .wasSuccessful() || mMaxProgresstime <= 0) return;
+        if (!cir.getReturnValue().wasSuccessful() || mMaxProgresstime <= 0) return;
         Config.ensureLoaded();
         mMaxProgresstime = Config.getModifiedRecipeDuration(mMaxProgresstime);
     }

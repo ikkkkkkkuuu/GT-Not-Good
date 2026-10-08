@@ -97,8 +97,7 @@ public final class PartThresholdLevelEmitter extends PartBasicState
     private void wake() {
         if (getHost() == null || queued) return;
         try {
-            queued = getProxy().getTick()
-                .alertDevice(getProxy().getNode());
+            queued = getProxy().getTick().alertDevice(getProxy().getNode());
         } catch (GridAccessException ignored) {
             queued = false;
         }
@@ -147,11 +146,8 @@ public final class PartThresholdLevelEmitter extends PartBasicState
             return TickRateModulation.SLEEP;
         }
         try {
-            boolean next = highState(
-                highLatch,
-                StockResources.count(getProxy().getStorage(), config.key(0)),
-                config.amount(0),
-                upper);
+            boolean next = highState(highLatch, StockResources.count(getProxy().getStorage(), config.key(0)),
+                config.amount(0), upper);
             if (next != highLatch) {
                 highLatch = next;
                 getHost().markForSave();
@@ -169,11 +165,8 @@ public final class PartThresholdLevelEmitter extends PartBasicState
         getHost().markForUpdate();
         var tile = getTile();
         Platform.notifyBlocksOfNeighbors(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
-        Platform.notifyBlocksOfNeighbors(
-            tile.getWorldObj(),
-            tile.xCoord + getSide().offsetX,
-            tile.yCoord + getSide().offsetY,
-            tile.zCoord + getSide().offsetZ);
+        Platform.notifyBlocksOfNeighbors(tile.getWorldObj(), tile.xCoord + getSide().offsetX,
+            tile.yCoord + getSide().offsetY, tile.zCoord + getSide().offsetZ);
     }
 
     @Override
@@ -210,23 +203,10 @@ public final class PartThresholdLevelEmitter extends PartBasicState
     @Override
     @SideOnly(Side.CLIENT)
     public void renderStatic(int x, int y, int z, IPartRenderHelper helper, RenderBlocks renderer) {
-        StockModelRenderer.part(
-            output() ? "extendedae:part/threshold_level_emitter_base_on"
-                : "extendedae:part/threshold_level_emitter_base_off",
-            x,
-            y,
-            z,
-            helper,
-            renderer,
-            getColor());
-        StockModelRenderer.part(
-            StockModelRenderer.indicator("level_emitter_status", getClientFlags()),
-            x,
-            y,
-            z,
-            helper,
-            renderer,
-            getColor());
+        StockModelRenderer.part(output() ? "extendedae:part/threshold_level_emitter_base_on"
+            : "extendedae:part/threshold_level_emitter_base_off", x, y, z, helper, renderer, getColor());
+        StockModelRenderer.part(StockModelRenderer.indicator("level_emitter_status", getClientFlags()), x, y, z, helper,
+            renderer, getColor());
     }
 
     @Override

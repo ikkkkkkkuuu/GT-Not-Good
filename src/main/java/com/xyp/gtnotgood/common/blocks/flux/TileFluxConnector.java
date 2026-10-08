@@ -13,6 +13,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
@@ -21,8 +22,11 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.xyp.gtnotgood.client.flux.FluxConnectorScreen;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.enums.GTValues;
 import gregtech.api.interfaces.tileentity.IBasicEnergyContainer;
 import gregtech.api.interfaces.tileentity.IEnergyConnected;
@@ -52,7 +56,7 @@ public abstract class TileFluxConnector extends TileEntity implements IEnergyCon
     private int priority;
     private boolean surgeMode;
     private boolean chunkLoading;
-    private net.minecraftforge.common.ForgeChunkManager.Ticket chunkTicket;
+    private ForgeChunkManager.Ticket chunkTicket;
     private boolean initialized;
     private int cursor;
     private int visualConnections;
@@ -135,14 +139,14 @@ public abstract class TileFluxConnector extends TileEntity implements IEnergyCon
         changed();
     }
 
-    boolean restoreTicket(net.minecraftforge.common.ForgeChunkManager.Ticket ticket) {
+    boolean restoreTicket(ForgeChunkManager.Ticket ticket) {
         if (!chunkLoading || chunkTicket != null) return false;
         chunkTicket = ticket;
         return true;
     }
 
     private void releaseTicket() {
-        if (chunkTicket != null) net.minecraftforge.common.ForgeChunkManager.releaseTicket(chunkTicket);
+        if (chunkTicket != null) ForgeChunkManager.releaseTicket(chunkTicket);
         chunkTicket = null;
     }
 
@@ -221,14 +225,12 @@ public abstract class TileFluxConnector extends TileEntity implements IEnergyCon
         if (worldObj == null) return "";
         TileEntity tile = neighbour(ForgeDirection.VALID_DIRECTIONS[sideIndex]);
         if (!(tile instanceof IEnergyConnected) || tile instanceof TileFluxConnector) return "—";
-        return worldObj.getBlock(tile.xCoord, tile.yCoord, tile.zCoord)
-            .getLocalizedName();
+        return worldObj.getBlock(tile.xCoord, tile.yCoord, tile.zCoord).getLocalizedName();
     }
 
     public String balance() {
         return owner == null || worldObj == null || worldObj.isRemote ? "0"
-            : WirelessNetworkManager.getUserEU(owner)
-                .toString();
+            : WirelessNetworkManager.getUserEU(owner).toString();
     }
 
     public boolean canConfigure(EntityPlayer player) {
@@ -319,9 +321,7 @@ public abstract class TileFluxConnector extends TileEntity implements IEnergyCon
     private void transferToNeighbours() {
         returnBufferToNetwork();
         if (buffer.stored() != 0) return;
-        long available = WirelessNetworkManager.getUserEU(owner)
-            .min(BigInteger.valueOf(currentLimit()))
-            .longValue();
+        long available = WirelessNetworkManager.getUserEU(owner).min(BigInteger.valueOf(currentLimit())).longValue();
         long packets = available / voltage;
         if (packets <= 0) return;
         long reservation = packets * voltage;
@@ -510,15 +510,14 @@ public abstract class TileFluxConnector extends TileEntity implements IEnergyCon
     @Override
     public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
         readFromNBT(packet.func_148857_g());
-        visualConnections = packet.func_148857_g()
-            .getInteger("fluxConnections");
+        visualConnections = packet.func_148857_g().getInteger("fluxConnections");
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
-    @cpw.mods.fml.relauncher.SideOnly(cpw.mods.fml.relauncher.Side.CLIENT)
+    @SideOnly(Side.CLIENT)
     public ModularScreen createScreen(PosGuiData data, ModularPanel panel) {
-        return new com.xyp.gtnotgood.client.flux.FluxConnectorScreen(ModList.GTNotGood.getID(), panel);
+        return new FluxConnectorScreen(ModList.GTNotGood.getID(), panel);
     }
 
     @Override

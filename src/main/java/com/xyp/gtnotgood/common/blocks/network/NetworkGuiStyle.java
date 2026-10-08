@@ -2,11 +2,12 @@ package com.xyp.gtnotgood.common.blocks.network;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
+import com.xyp.gtnotgood.common.gui.modularui.GTNGGuiTextures;
 
 /** XNet-style beveled gray surfaces; original licensed artwork is registered centrally in GTNGGuiTextures. */
 final class NetworkGuiStyle {
 
-    static final IDrawable FRAME = com.xyp.gtnotgood.common.gui.modularui.GTNGGuiTextures.NETWORK_FRAME;
+    static final IDrawable FRAME = GTNGGuiTextures.NETWORK_FRAME;
     static final IDrawable PANEL = surface(0xFF8B8B8B, 0xFFFFFFFF, 0xFF373737);
     static final IDrawable DIVIDER = new Rectangle().color(0xFF686868);
     static final IDrawable COLUMN = new Rectangle().color(0xFFA1B7B7);

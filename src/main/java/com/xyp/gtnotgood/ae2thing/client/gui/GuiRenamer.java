@@ -46,23 +46,18 @@ public class GuiRenamer extends AEBaseGui implements IDropToFillTextField {
     public void initGui() {
         super.initGui();
         if (host instanceof WirelessDualInterfaceTerminalInventory) {
-            icon = ItemAndBlockHolder.ITEM_WIRELESS_DUAL_INTERFACE_TERMINAL.stack();
-            originalGui = GuiType.WIRELESS_DUAL_INTERFACE_TERMINAL;
+            icon = ItemAndBlockHolder.wirelessDualInterfaceTerminal.stack();
+            originalGui = GuiType.WirelessDualInterfaceTerminal;
         }
         if (this.icon != null) {
-            this.buttonList.add(
-                this.originalGuiBtn = new GuiTabButton(
-                    this.guiLeft + 231,
-                    this.guiTop - 4,
-                    this.icon,
-                    this.icon.getDisplayName(),
-                    itemRender));
+            this.buttonList.add(this.originalGuiBtn = new GuiTabButton(this.guiLeft + 231, this.guiTop - 4, this.icon,
+                this.icon.getDisplayName(), itemRender));
             this.originalGuiBtn.setHideEdge(13);
         }
         this.textField.x = this.guiLeft + 12;
         this.textField.y = this.guiTop + 35;
         this.textField.setFocused(true);
-        AE2Thing.proxy.netHandler.sendToServer(new CPacketRenamer(CPacketRenamer.Action.GET_TEXT));
+        AE2Thing.proxy.netHandler.sendToServer(new CPacketRenamer(CPacketRenamer.Action.GetText));
     }
 
     @Override

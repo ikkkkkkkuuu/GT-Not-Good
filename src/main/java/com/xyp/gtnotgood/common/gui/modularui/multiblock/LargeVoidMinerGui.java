@@ -59,9 +59,7 @@ public class LargeVoidMinerGui extends GTNGModernMultiBlockBaseGui<LargeVoidMine
     }
 
     private IWidget createOpenConfigButton(PanelSyncManager syncManager) {
-        ButtonWidget<?> button = new ButtonWidget<>().size(16)
-            .marginBottom(2)
-            .overlay(GuiTextures.GEAR)
+        ButtonWidget<?> button = new ButtonWidget<>().size(16).marginBottom(2).overlay(GuiTextures.GEAR)
             .onMousePressed(mouseButton -> false)
             .syncHandler(syncManager.findSyncHandler(OPEN_CONFIG_SYNC_KEY, InteractionSyncHandler.class))
             // #tr gui.gtnotgood.largeVoidMiner.open_config
@@ -79,8 +77,8 @@ public class LargeVoidMinerGui extends GTNGModernMultiBlockBaseGui<LargeVoidMine
         BooleanSyncValue validSyncer = syncManager.findSyncHandler("gtng.vm.dropMapValid", BooleanSyncValue.class);
         DoubleSyncValue energyMultSyncer = syncManager.findSyncHandler("gtng.vm.energyMult", DoubleSyncValue.class);
         IntSyncValue energyCostSyncer = syncManager.findSyncHandler("gtng.vm.energyCost", IntSyncValue.class);
-        BooleanSyncValue directionalSyncer = syncManager
-            .findSyncHandler("gtng.vm.directionalMode", BooleanSyncValue.class);
+        BooleanSyncValue directionalSyncer = syncManager.findSyncHandler("gtng.vm.directionalMode",
+            BooleanSyncValue.class);
         DoubleSyncValue uuMultSyncer = syncManager.findSyncHandler("gtng.vm.uuMult", DoubleSyncValue.class);
 
         return widget.child(IKey.dynamic(() -> {
@@ -108,53 +106,42 @@ public class LargeVoidMinerGui extends GTNGModernMultiBlockBaseGui<LargeVoidMine
                 + StatCollector.translateToLocal("gui.gtnotgood.largeVoidMiner.dimension_line")
                 + dimPart
                 + EnumChatFormatting.RESET;
-        })
-            .asWidget()
-            .marginBottom(2)
-            .fullWidth())
-            .child(IKey.dynamic(() -> {
-                int cost = energyCostSyncer.getIntValue();
-                double mult = energyMultSyncer.getDoubleValue();
-                // #tr gui.gtnotgood.largeVoidMiner.energy_line
-                // # Energy:
-                // # zh_CN 能耗：
+        }).asWidget().marginBottom(2).fullWidth()).child(IKey.dynamic(() -> {
+            int cost = energyCostSyncer.getIntValue();
+            double mult = energyMultSyncer.getDoubleValue();
+            // #tr gui.gtnotgood.largeVoidMiner.energy_line
+            // # Energy:
+            // # zh_CN 能耗：
+            return EnumChatFormatting.YELLOW
+                + StatCollector.translateToLocal("gui.gtnotgood.largeVoidMiner.energy_line")
+                + EnumChatFormatting.WHITE
+                + NumberFormatUtil.formatNumber(cost)
+                + " EU/t "
+                + EnumChatFormatting.GRAY
+                + "(x"
+                + String.format("%.2f", mult)
+                + ")"
+                + EnumChatFormatting.RESET;
+        }).asWidget().marginBottom(2).fullWidth()).child(IKey.dynamic(() -> {
+            if (directionalSyncer.getValue()) {
+                double mult = uuMultSyncer.getDoubleValue();
+                // #tr gui.gtnotgood.largeVoidMiner.uu_line
+                // # UU-Matter:
+                // # zh_CN UU物质：
                 return EnumChatFormatting.YELLOW
-                    + StatCollector.translateToLocal("gui.gtnotgood.largeVoidMiner.energy_line")
-                    + EnumChatFormatting.WHITE
-                    + NumberFormatUtil.formatNumber(cost)
-                    + " EU/t "
-                    + EnumChatFormatting.GRAY
-                    + "(x"
-                    + String.format("%.2f", mult)
-                    + ")"
+                    + StatCollector.translateToLocal("gui.gtnotgood.largeVoidMiner.uu_line")
+                    + EnumChatFormatting.LIGHT_PURPLE
+                    + NumberFormatUtil.formatNumber(Math.round(mult))
+                    + " L/s"
                     + EnumChatFormatting.RESET;
-            })
-                .asWidget()
-                .marginBottom(2)
-                .fullWidth())
-            .child(IKey.dynamic(() -> {
-                if (directionalSyncer.getValue()) {
-                    double mult = uuMultSyncer.getDoubleValue();
-                    // #tr gui.gtnotgood.largeVoidMiner.uu_line
-                    // # UU-Matter:
-                    // # zh_CN UU物质：
-                    return EnumChatFormatting.YELLOW
-                        + StatCollector.translateToLocal("gui.gtnotgood.largeVoidMiner.uu_line")
-                        + EnumChatFormatting.LIGHT_PURPLE
-                        + NumberFormatUtil.formatNumber(Math.round(mult))
-                        + " L/s"
-                        + EnumChatFormatting.RESET;
-                }
-                // #tr gui.gtnotgood.largeVoidMiner.directional_off
-                // # Directional mode off
-                // # zh_CN 定向模式关闭
-                return EnumChatFormatting.GRAY
-                    + StatCollector.translateToLocal("gui.gtnotgood.largeVoidMiner.directional_off")
-                    + EnumChatFormatting.RESET;
-            })
-                .asWidget()
-                .marginBottom(2)
-                .fullWidth());
+            }
+            // #tr gui.gtnotgood.largeVoidMiner.directional_off
+            // # Directional mode off
+            // # zh_CN 定向模式关闭
+            return EnumChatFormatting.GRAY
+                + StatCollector.translateToLocal("gui.gtnotgood.largeVoidMiner.directional_off")
+                + EnumChatFormatting.RESET;
+        }).asWidget().marginBottom(2).fullWidth());
     }
 
     @Override

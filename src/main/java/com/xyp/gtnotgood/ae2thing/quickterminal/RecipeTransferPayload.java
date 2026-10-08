@@ -112,13 +112,7 @@ public final class RecipeTransferPayload {
             outputs[slot] = IAEStack.fromPacketGeneric(buffer);
         }
         NBTTagCompound layout = ByteBufUtils.readTag(buffer);
-        return new RecipeTransferPayload(
-            crafting,
-            encode,
-            processingGridSize,
-            inverted,
-            inputs,
-            outputs,
+        return new RecipeTransferPayload(crafting, encode, processingGridSize, inverted, inputs, outputs,
             layout == null ? null : layout.getTagList("Grid", 10));
     }
 }

@@ -61,8 +61,8 @@ public final class WirelessEnergyHistory {
     }
 
     private static BigDecimal slope(Sample first, Sample last) {
-        return new BigDecimal(last.energy.subtract(first.energy))
-            .divide(BigDecimal.valueOf(last.tick - first.tick), 6, RoundingMode.HALF_UP);
+        return new BigDecimal(last.energy.subtract(first.energy)).divide(BigDecimal.valueOf(last.tick - first.tick), 6,
+            RoundingMode.HALF_UP);
     }
 
     private static final class Sample {

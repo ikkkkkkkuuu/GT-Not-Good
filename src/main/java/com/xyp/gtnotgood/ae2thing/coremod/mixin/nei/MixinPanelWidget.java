@@ -19,6 +19,7 @@ import com.xyp.gtnotgood.ae2thing.api.adapter.terminal.IGuiCraftAmount;
 import com.xyp.gtnotgood.ae2thing.api.adapter.terminal.ITerminal;
 import com.xyp.gtnotgood.ae2thing.client.event.UpdateAmountTextEvent;
 import com.xyp.gtnotgood.ae2thing.nei.ButtonConstants;
+import com.xyp.gtnotgood.ae2thing.quickterminal.client.GuiQuickEncodingTerminal;
 import com.xyp.gtnotgood.ae2thing.util.Ae2ReflectClient;
 import com.xyp.gtnotgood.ae2thing.util.Util;
 
@@ -63,10 +64,12 @@ public abstract class MixinPanelWidget extends Widget implements IContainerToolt
                 draggedStack = null;
                 cir.setReturnValue(true);
             } else if (gui instanceof AEBaseGui g) {
-                if (!NEIClientUtils.altKey() && !NEIClientUtils.shiftKey()
-                    && !GuiScreen.isCtrlKeyDown()
-                    && g instanceof com.xyp.gtnotgood.ae2thing.quickterminal.client.GuiQuickEncodingTerminal quickTerminal
-                    && quickTerminal.requestFluidCraft(is)) {
+                if (
+                    !NEIClientUtils.altKey() && !NEIClientUtils.shiftKey()
+                        && !GuiScreen.isCtrlKeyDown()
+                        && g instanceof GuiQuickEncodingTerminal quickTerminal
+                        && quickTerminal.requestFluidCraft(is)
+                ) {
                     draggedStack = null;
                     cir.setReturnValue(true);
                     return;
@@ -84,32 +87,26 @@ public abstract class MixinPanelWidget extends Widget implements IContainerToolt
                     // PICKUP_OR_SET_DOWN / PICKUP_SINGLE actions dropped the stack onto the mouse cursor instead.
                     if (NEIClientUtils.shiftKey() || GuiScreen.isCtrlKeyDown()) {
                         action = MonitorableAction.SHIFT_CLICK;
-                    } else if (getConfigValue(ButtonConstants.NEI_CRAFT_ITEM) && repo instanceof ItemRepo itemRepo
-                        && canCraftItem(itemRepo, is)) {
-                            is = is.copy();
-                            if (is.stackSize <= 0) {
-                                is.stackSize = 1;
-                            }
-                            if (c.getTarget() instanceof IGuiItemObject o && o.getItemStack() != null
-                                && o.getItemStack()
-                                    .getItem() != null) {
-                                openCraftAmount(
-                                    o.getItemStack()
-                                        .getItem()
-                                        .getClass(),
-                                    c,
-                                    is);
-                            } else if (c.getTarget() instanceof IPart p) {
-                                ItemStack part = p.getItemStack(PartItemStack.Network);
-                                if (part != null && part.getItem() != null) {
-                                    openCraftAmount(
-                                        part.getItem()
-                                            .getClass(),
-                                        c,
-                                        is);
-                                }
+                    } else if (
+                        getConfigValue(ButtonConstants.NEI_CRAFT_ITEM) && repo instanceof ItemRepo itemRepo
+                            && canCraftItem(itemRepo, is)
+                    ) {
+                        is = is.copy();
+                        if (is.stackSize <= 0) {
+                            is.stackSize = 1;
+                        }
+                        if (
+                            c.getTarget() instanceof IGuiItemObject o && o.getItemStack() != null
+                                && o.getItemStack().getItem() != null
+                        ) {
+                            openCraftAmount(o.getItemStack().getItem().getClass(), c, is);
+                        } else if (c.getTarget() instanceof IPart p) {
+                            ItemStack part = p.getItemStack(PartItemStack.Network);
+                            if (part != null && part.getItem() != null) {
+                                openCraftAmount(part.getItem().getClass(), c, is);
                             }
                         }
+                    }
                     if (action != null) {
                         c.setTargetStack(AEItemStack.create(is));
                         final PacketMonitorableAction p = new PacketMonitorableAction(action, -1);
@@ -138,11 +135,8 @@ public abstract class MixinPanelWidget extends Widget implements IContainerToolt
     }
 
     private void openCraftAmount(Class<? extends Item> o, AEBaseContainer c, ItemStack is) {
-        for (ITerminal terminal : AE2ThingAPI.instance()
-            .terminal()
-            .getTerminalSet()) {
-            if (terminal.getClasses()
-                .contains(o)) {
+        for (ITerminal terminal : AE2ThingAPI.instance().terminal().getTerminalSet()) {
+            if (terminal.getClasses().contains(o)) {
                 c.setTargetStack(AEItemStack.create(is));
                 terminal.openCraftAmount();
                 MinecraftForge.EVENT_BUS.post(new UpdateAmountTextEvent(is.stackSize));

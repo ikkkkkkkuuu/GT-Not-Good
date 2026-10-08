@@ -7,6 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
+import com.xyp.ldlib.gui.fancy.FancyMachineUIWidget;
+import com.xyp.ldlib.gui.fancy.IFancyUIProvider;
+import com.xyp.ldlib.gui.fancy.TabsWidget;
 import com.xyp.ldlib.gui.holder.ModularUIScreen;
 import com.xyp.ldlib.gui.texture.GuiTextureGroup;
 import com.xyp.ldlib.gui.texture.IGuiTexture;
@@ -51,7 +54,7 @@ public final class LibraryDemoScreen extends ModularUIScreen {
         // # Textures
         // # zh_CN 主题材质
         String textures = StatCollector.translateToLocal("gui.ldlibdemo.textures");
-        com.xyp.ldlib.gui.fancy.IFancyUIProvider main = new com.xyp.ldlib.gui.fancy.IFancyUIProvider() {
+        IFancyUIProvider main = new IFancyUIProvider() {
 
             @Override
             public String getTitle() {
@@ -59,12 +62,12 @@ public final class LibraryDemoScreen extends ModularUIScreen {
             }
 
             @Override
-            public UIElement createMainPage(com.xyp.ldlib.gui.fancy.FancyMachineUIWidget window) {
+            public UIElement createMainPage(FancyMachineUIWidget window) {
                 return createPage(0);
             }
 
             @Override
-            public void attachSideTabs(com.xyp.ldlib.gui.fancy.TabsWidget tabs) {
+            public void attachSideTabs(TabsWidget tabs) {
                 tabs.attachSubTab(provider(scroll, 1));
                 tabs.attachSubTab(provider(textures, 2));
                 // #tr gui.ldlibdemo.values
@@ -93,15 +96,15 @@ public final class LibraryDemoScreen extends ModularUIScreen {
                 tabs.attachSubTab(provider(StatCollector.translateToLocal("gui.ldlibdemo.graph"), 8));
             }
         };
-        root.addChild(new com.xyp.ldlib.gui.fancy.FancyMachineUIWidget(main, 310, 226, theme));
+        root.addChild(new FancyMachineUIWidget(main, 310, 226, theme));
         // #tr gui.ldlibdemo.help
         // # Tab: focus / Wheel: scroll / Esc: close
         // # zh_CN Tab 切换焦点 / 滚轮滚动 / Esc 关闭
         root.addChild(new Label(77, 201, 225, 18, StatCollector.translateToLocal("gui.ldlibdemo.help")));
     }
 
-    private com.xyp.ldlib.gui.fancy.IFancyUIProvider provider(String title, int index) {
-        return new com.xyp.ldlib.gui.fancy.IFancyUIProvider() {
+    private IFancyUIProvider provider(String title, int index) {
+        return new IFancyUIProvider() {
 
             @Override
             public String getTitle() {
@@ -109,7 +112,7 @@ public final class LibraryDemoScreen extends ModularUIScreen {
             }
 
             @Override
-            public UIElement createMainPage(com.xyp.ldlib.gui.fancy.FancyMachineUIWidget window) {
+            public UIElement createMainPage(FancyMachineUIWidget window) {
                 return createPage(index);
             }
         };
@@ -129,24 +132,14 @@ public final class LibraryDemoScreen extends ModularUIScreen {
         // # Text / selection / clipboard
         // # zh_CN 文字输入 / 选中 / 复制粘贴
         pages.addChild(new Label(0, 0, 225, 18, StatCollector.translateToLocal("gui.ldlibdemo.edit")));
-        pages.addChild(
-            theme.textField(6, 23, 213, 20)
-                .setText(text)
-                .setOnChange(value -> text = value));
+        pages.addChild(theme.textField(6, 23, 213, 20).setText(text).setOnChange(value -> text = value));
         pages.addChild(new Label(6, 47, 213, 18, () -> text));
         // #tr gui.ldlibdemo.switch
         // # Toggle
         // # zh_CN 开关
         String toggle = StatCollector.translateToLocal("gui.ldlibdemo.switch");
-        pages.addChild(
-            new Toggle(
-                6,
-                72,
-                95,
-                22,
-                theme.text(theme.button, () -> toggle + " -"),
-                theme.text(theme.accent, () -> toggle + " +")).setValue(toggled)
-                    .setOnChange(value -> toggled = value));
+        pages.addChild(new Toggle(6, 72, 95, 22, theme.text(theme.button, () -> toggle + " -"),
+            theme.text(theme.accent, () -> toggle + " +")).setValue(toggled).setOnChange(value -> toggled = value));
         // #tr gui.ldlibdemo.clicks
         // # Clicks
         // # zh_CN 点击次数
@@ -156,10 +149,7 @@ public final class LibraryDemoScreen extends ModularUIScreen {
         // # Digits only (up to 6)
         // # zh_CN 数字校验（最多6位）
         pages.addChild(new Label(6, 102, 213, 18, StatCollector.translateToLocal("gui.ldlibdemo.digits")));
-        pages.addChild(
-            theme.textField(6, 124, 96, 20)
-                .setMaxLength(6)
-                .setValidator(value -> value.matches("[0-9]*")));
+        pages.addChild(theme.textField(6, 124, 96, 20).setMaxLength(6).setValidator(value -> value.matches("[0-9]*")));
         pages.addChild(new UIElement(112, 120, 28, 28).setBackground(theme.slot));
         pages.addChild(
             new UIElement(114, 122, 24, 24).setBackground(new ItemStackTexture(new ItemStack(Items.diamond))));
@@ -185,9 +175,8 @@ public final class LibraryDemoScreen extends ModularUIScreen {
             theme.inputFocused, theme.slot };
         for (int i = 0; i < samples.length; i++) {
             pages.addChild(new UIElement(6, 4 + i * 22, 92, 19).setBackground(samples[i]));
-            pages.addChild(
-                new UIElement(113, 4 + i * 22, 105, 19)
-                    .setBackground(new GuiTextureGroup(samples[i], new TextTexture(() -> "Aa 123", 0xFF202830))));
+            pages.addChild(new UIElement(113, 4 + i * 22, 105, 19)
+                .setBackground(new GuiTextureGroup(samples[i], new TextTexture(() -> "Aa 123", 0xFF202830))));
         }
     }
 }

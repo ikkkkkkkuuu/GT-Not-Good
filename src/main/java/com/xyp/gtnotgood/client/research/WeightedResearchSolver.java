@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.BooleanSupplier;
 
+import com.xyp.gtnotgood.GTNotGood;
+
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.common.lib.research.ResearchManager;
@@ -38,9 +40,7 @@ public final class WeightedResearchSolver {
             return size() > RESULT_CACHE_LIMIT;
         }
     };
-    private static final Map<String, BoardGeometry> GEOMETRY_CACHE = new LinkedHashMap<String, BoardGeometry>(
-        48,
-        0.75F,
+    private static final Map<String, BoardGeometry> GEOMETRY_CACHE = new LinkedHashMap<String, BoardGeometry>(48, 0.75F,
         true) {
 
         @Override
@@ -84,13 +84,10 @@ public final class WeightedResearchSolver {
         } else {
             long deadline = System.currentTimeMillis() + settings.timeoutMs;
             result = solve(problem, settings.mode, deadline, settings.beamWidth);
-            if (!result.success && !cancelled.getAsBoolean() && settings.mode == Config.SolveMode.WEIGHTED) {
+            if (!result.success && !cancelled.getAsBoolean() && settings.mode == Config.SolveMode.Weighted) {
                 long normalDeadline = System.currentTimeMillis()
                     + Math.max(1000, Math.min(3000, settings.timeoutMs / 2));
-                Result normal = solve(
-                    problem,
-                    Config.SolveMode.NORMAL,
-                    normalDeadline,
+                Result normal = solve(problem, Config.SolveMode.Normal, normalDeadline,
                     Math.max(settings.beamWidth, NORMAL_RETRY_BEAM));
                 if (normal.success) result = normal.withFallback(true);
             }
@@ -122,10 +119,12 @@ public final class WeightedResearchSolver {
 
     public static RepairPlan findRepairPlan(ResearchNoteData note, AspectList inventory, Config.SolverSettings settings,
         BooleanSupplier cancelled, Result initialResult, int maxRepairs) {
-        if (note == null || maxRepairs <= 0
-            || initialResult == null
-            || initialResult.success
-            || !"incompatible_corridor".equals(initialResult.failureReason)) return null;
+        if (
+            note == null || maxRepairs <= 0
+                || initialResult == null
+                || initialResult.success
+                || !"incompatible_corridor".equals(initialResult.failureReason)
+        ) return null;
         long deadline = System.nanoTime() + REPAIR_PLAN_TIMEOUT_MS * 1_000_000L;
         BooleanSupplier repairCancelled = () -> cancelled.getAsBoolean() || System.nanoTime() >= deadline;
         List<RepairSearchNode> frontier = Collections.singletonList(
@@ -147,12 +146,8 @@ public final class WeightedResearchSolver {
                     repairCells.add(candidate.repairCell.toString());
                     Result result = solve(repaired, inventory, settings, repairCancelled, false);
                     if (result.success && validateSolution(repaired, result.placements)) {
-                        com.xyp.gtnotgood.GTNotGood.LOG.info(
-                            "Verified research repair plan key={} cells={} placements={} solveMs={}",
-                            note.key,
-                            repairCells,
-                            result.placements.size(),
-                            result.solveTimeMs);
+                        GTNotGood.LOG.info("Verified research repair plan key={} cells={} placements={} solveMs={}",
+                            note.key, repairCells, result.placements.size(), result.solveTimeMs);
                         return new RepairPlan(repairCells, result);
                     }
                     if ("incompatible_corridor".equals(result.failureReason) && repairCells.size() < maxRepairs) {
@@ -175,19 +170,14 @@ public final class WeightedResearchSolver {
         List<String> cells = new ArrayList<>();
         for (Map.Entry<String, ResearchManager.HexEntry> entry : note.hexEntries.entrySet()) {
             ResearchManager.HexEntry value = entry.getValue();
-            cells.add(
-                entry.getKey() + "[type="
-                    + value.type
-                    + ",aspect="
-                    + (value.aspect == null ? "" : value.aspect.getTag())
-                    + "]");
+            cells.add(entry.getKey() + "[type="
+                + value.type
+                + ",aspect="
+                + (value.aspect == null ? "" : value.aspect.getTag())
+                + "]");
         }
         Collections.sort(cells);
-        com.xyp.gtnotgood.GTNotGood.LOG.warn(
-            "Unsolved research note key={} reason={} cells={} aspectGraph={}",
-            note.key,
-            reason,
-            cells,
+        GTNotGood.LOG.warn("Unsolved research note key={} reason={} cells={} aspectGraph={}", note.key, reason, cells,
             graph == null ? "" : graph.description);
     }
 
@@ -236,22 +226,13 @@ public final class WeightedResearchSolver {
             Map<String, Aspect> placements = new TreeMap<>();
             for (Map.Entry<Cell, Aspect> entry : plan.tree.entrySet()) {
                 if (!problem.anchors.containsKey(entry.getKey())) {
-                    placements.put(
-                        entry.getKey()
-                            .toString(),
-                        entry.getValue());
+                    placements.put(entry.getKey().toString(), entry.getValue());
                 }
             }
             if (!validateSolution(problem.note, placements)) continue;
             Analysis analysis = analyzeInventory(placements.values(), problem.inventory);
-            candidates.add(
-                Result.success(
-                    placements,
-                    plan.cost,
-                    analysis.synthesisOperations,
-                    analysis.missingPrimals,
-                    mode,
-                    timedOut));
+            candidates.add(Result.success(placements, plan.cost, analysis.synthesisOperations, analysis.missingPrimals,
+                mode, timedOut));
         }
 
         if (candidates.isEmpty()) return Result.failure(timedOut ? "timeout" : "no_path", timedOut);
@@ -285,8 +266,7 @@ public final class WeightedResearchSolver {
             Result result = labelPhysicalPlans(problem, frontier, deadline);
             if (result != null) return result;
         }
-        return Result.failure(
-            System.currentTimeMillis() >= deadline ? "timeout" : "no_path",
+        return Result.failure(System.currentTimeMillis() >= deadline ? "timeout" : "no_path",
             System.currentTimeMillis() >= deadline);
     }
 
@@ -297,11 +277,9 @@ public final class WeightedResearchSolver {
             Aspect root = problem.anchors.get(plan.root);
             if (root == null || !labelTree(problem, plan.branches, plan.root, null, root, assignments, deadline))
                 continue;
-            Plan labelled = new Plan(
-                assignments,
-                plan.connected,
+            Plan labelled = new Plan(assignments, plan.connected,
                 Math.max(0, assignments.size() - problem.anchors.size()));
-            Result result = resultForPlan(problem, labelled, Config.SolveMode.NORMAL, false);
+            Result result = resultForPlan(problem, labelled, Config.SolveMode.Normal, false);
             if (result != null) return result;
         }
         return null;
@@ -363,25 +341,18 @@ public final class WeightedResearchSolver {
                 int endAspect = problem.anchorAspects[current];
                 if (endAspect >= 0 && !hasAspectWalk(problem.graph, startAspect, endAspect, steps)) {
                     Cell endCell = problem.cellsByIndex[current];
-                    String corridorKey = anchor.getKey()
-                        .toString()
-                        .compareTo(endCell.toString()) <= 0 ? anchor.getKey() + "|" + endCell
-                            : endCell + "|" + anchor.getKey();
+                    String corridorKey = anchor.getKey().toString().compareTo(endCell.toString()) <= 0
+                        ? anchor.getKey() + "|" + endCell
+                        : endCell + "|" + anchor.getKey();
                     if (!seenCorridors.add(corridorKey)) continue;
-                    candidates.put(
-                        anchor.getKey(),
+                    candidates.put(anchor.getKey(),
                         new ForcedCorridorFailure(anchor.getKey(), problem.neighbors[startCell].length));
                     candidates.put(endCell, new ForcedCorridorFailure(endCell, problem.neighbors[current].length));
                     if (log) {
-                        com.xyp.gtnotgood.GTNotGood.LOG.warn(
+                        GTNotGood.LOG.warn(
                             "Research note key={} has incompatible forced corridor {}({}) -> {}({}) steps={}",
-                            problem.note.key,
-                            anchor.getKey(),
-                            anchor.getValue()
-                                .getTag(),
-                            endCell,
-                            problem.graph.aspects[endAspect].getTag(),
-                            steps);
+                            problem.note.key, anchor.getKey(), anchor.getValue().getTag(), endCell,
+                            problem.graph.aspects[endAspect].getTag(), steps);
                     }
                 }
             }
@@ -478,8 +449,10 @@ public final class WeightedResearchSolver {
         for (Cell child : children) {
             Aspect childAnchor = problem.anchors.get(child);
             if (childAnchor != null) {
-                if (!compatible(aspect, childAnchor)
-                    || !labelTree(problem, branches, child, cell, childAnchor, assignments, deadline)) {
+                if (
+                    !compatible(aspect, childAnchor)
+                        || !labelTree(problem, branches, child, cell, childAnchor, assignments, deadline)
+                ) {
                     assignments.clear();
                     assignments.putAll(before);
                     return false;
@@ -491,14 +464,10 @@ public final class WeightedResearchSolver {
             if (aspectId != null) {
                 for (int candidate : problem.graph.compatibleIds[aspectId]) {
                     if (problem.disabledAspects[candidate]) continue;
-                    if (labelTree(
-                        problem,
-                        branches,
-                        child,
-                        cell,
-                        problem.graph.aspects[candidate],
-                        assignments,
-                        deadline)) {
+                    if (
+                        labelTree(problem, branches, child, cell, problem.graph.aspects[candidate], assignments,
+                            deadline)
+                    ) {
                         assigned = true;
                         break;
                     }
@@ -626,26 +595,19 @@ public final class WeightedResearchSolver {
             if (problem.cancelled.getAsBoolean()) return Result.failure("cancelled", false);
             if (System.currentTimeMillis() >= deadline) return Result.failure("timeout", true);
             Map<Cell, Aspect> tree = new LinkedHashMap<>();
-            if (!collectSteinerTree(
-                problem,
-                completeMask,
-                state,
-                aspectCount,
-                parents,
-                parentData,
-                tree,
-                new HashSet<>())) continue;
+            if (
+                !collectSteinerTree(problem, completeMask, state, aspectCount, parents, parentData, tree,
+                    new HashSet<>())
+            ) continue;
             Map<String, Aspect> placements = new TreeMap<>();
             for (Map.Entry<Cell, Aspect> entry : tree.entrySet()) {
-                if (!problem.anchors.containsKey(entry.getKey())) placements.put(
-                    entry.getKey()
-                        .toString(),
-                    entry.getValue());
+                if (!problem.anchors.containsKey(entry.getKey()))
+                    placements.put(entry.getKey().toString(), entry.getValue());
             }
             if (!validateSolution(problem.note, placements)) continue;
             Analysis analysis = analyzeInventory(placements.values(), problem.inventory);
-            return Result
-                .success(placements, candidateCost, analysis.synthesisOperations, analysis.missingPrimals, mode, false);
+            return Result.success(placements, candidateCost, analysis.synthesisOperations, analysis.missingPrimals,
+                mode, false);
         }
         return Result.failure("no_path", false);
     }
@@ -701,15 +663,10 @@ public final class WeightedResearchSolver {
             return collectSteinerTree(problem, leftMask, state, aspectCount, parents, parentData, tree, visited)
                 && collectSteinerTree(problem, mask ^ leftMask, state, aspectCount, parents, parentData, tree, visited);
         }
-        if (parent == SteinerWorkspace.PATH && !collectSteinerTree(
-            problem,
-            mask,
-            parentData[mask][state],
-            aspectCount,
-            parents,
-            parentData,
-            tree,
-            visited)) return false;
+        if (
+            parent == SteinerWorkspace.PATH && !collectSteinerTree(problem, mask, parentData[mask][state], aspectCount,
+                parents, parentData, tree, visited)
+        ) return false;
         if (parent == 0) return false;
 
         int cell = state / aspectCount;
@@ -724,15 +681,13 @@ public final class WeightedResearchSolver {
     private static Result resultForPlan(Problem problem, Plan plan, Config.SolveMode mode, boolean timedOut) {
         Map<String, Aspect> placements = new TreeMap<>();
         for (Map.Entry<Cell, Aspect> entry : plan.tree.entrySet()) {
-            if (!problem.anchors.containsKey(entry.getKey())) placements.put(
-                entry.getKey()
-                    .toString(),
-                entry.getValue());
+            if (!problem.anchors.containsKey(entry.getKey()))
+                placements.put(entry.getKey().toString(), entry.getValue());
         }
         if (!validateSolution(problem.note, placements)) return null;
         Analysis analysis = analyzeInventory(placements.values(), problem.inventory);
-        return Result
-            .success(placements, plan.cost, analysis.synthesisOperations, analysis.missingPrimals, mode, timedOut);
+        return Result.success(placements, plan.cost, analysis.synthesisOperations, analysis.missingPrimals, mode,
+            timedOut);
     }
 
     private static Route findRoute(Problem problem, Plan plan, Cell target, Aspect targetAspect, Config.SolveMode mode,
@@ -818,7 +773,7 @@ public final class WeightedResearchSolver {
     }
 
     private static long edgeCost(Problem problem, int leftId, int rightId, Config.SolveMode mode) {
-        if (mode == Config.SolveMode.NORMAL) return 1;
+        if (mode == Config.SolveMode.Normal) return 1;
         long cost = (long) problem.aspectCosts[leftId] + problem.aspectCosts[rightId];
         if (problem.settings.inventoryAware && problem.inventoryAmounts[rightId] <= 0) {
             cost += Math.max(1, problem.aspectCosts[rightId]);
@@ -865,8 +820,10 @@ public final class WeightedResearchSolver {
         }
         for (Map.Entry<String, Aspect> placement : placements.entrySet()) {
             ResearchManager.HexEntry current = note.hexEntries.get(placement.getKey());
-            if (current == null || placement.getValue() == null
-                || current.aspect != null && current.aspect != placement.getValue()) return false;
+            if (
+                current == null || placement.getValue() == null
+                    || current.aspect != null && current.aspect != placement.getValue()
+            ) return false;
             Cell cell = Cell.parse(placement.getKey());
             board.put(cell, placement.getValue());
             required.add(cell);
@@ -875,8 +832,7 @@ public final class WeightedResearchSolver {
 
         Set<Cell> visited = new HashSet<>();
         ArrayDeque<Cell> queue = new ArrayDeque<>();
-        Cell start = required.iterator()
-            .next();
+        Cell start = required.iterator().next();
         visited.add(start);
         queue.add(start);
         while (!queue.isEmpty()) {
@@ -924,10 +880,7 @@ public final class WeightedResearchSolver {
         Map<Aspect, Integer> required = new HashMap<>();
         for (Aspect aspect : placements) required.put(aspect, required.getOrDefault(aspect, 0) + 1);
         List<Aspect> order = new ArrayList<>(required.keySet());
-        order.sort(
-            Comparator.comparingInt(WeightedResearchSolver::depth)
-                .reversed()
-                .thenComparing(Aspect::getTag));
+        order.sort(Comparator.comparingInt(WeightedResearchSolver::depth).reversed().thenComparing(Aspect::getTag));
 
         Analysis analysis = new Analysis();
         for (Aspect aspect : order) {
@@ -947,8 +900,8 @@ public final class WeightedResearchSolver {
 
         Aspect[] components = aspect.getComponents();
         if (components == null || !stack.add(aspect)) {
-            analysis.missingPrimals
-                .put(aspect.getTag(), analysis.missingPrimals.getOrDefault(aspect.getTag(), 0) + remaining);
+            analysis.missingPrimals.put(aspect.getTag(),
+                analysis.missingPrimals.getOrDefault(aspect.getTag(), 0) + remaining);
             return;
         }
         analysis.synthesisOperations += remaining;
@@ -990,13 +943,10 @@ public final class WeightedResearchSolver {
         aspects.sort(Comparator.comparing(Aspect::getTag));
         StringBuilder signature = new StringBuilder();
         for (Aspect aspect : aspects) {
-            signature.append(aspect.getTag())
-                .append('=');
+            signature.append(aspect.getTag()).append('=');
             Aspect[] components = aspect.getComponents();
             if (components != null) {
-                signature.append(components[0].getTag())
-                    .append('+')
-                    .append(components[1].getTag());
+                signature.append(components[0].getTag()).append('+').append(components[1].getTag());
             }
             signature.append(';');
         }
@@ -1036,24 +986,16 @@ public final class WeightedResearchSolver {
         List<String> definitions = new ArrayList<>();
         for (Aspect aspect : aspectsById) {
             Aspect[] components = aspect.getComponents();
-            definitions.add(
-                aspect.getTag() + "="
-                    + (components == null ? "" : components[0].getTag() + "+" + components[1].getTag()));
+            definitions.add(aspect.getTag() + "="
+                + (components == null ? "" : components[0].getTag() + "+" + components[1].getTag()));
         }
-        compatibilityGraph = new CompatibilityGraph(
-            currentSignature,
-            registrySize,
-            aspectsById,
-            Collections.unmodifiableMap(aspectIndices),
-            compatibleIds,
-            compatible,
-            String.join(";", definitions));
+        compatibilityGraph = new CompatibilityGraph(currentSignature, registrySize, aspectsById,
+            Collections.unmodifiableMap(aspectIndices), compatibleIds, compatible, String.join(";", definitions));
         return compatibilityGraph;
     }
 
     private static BoardGeometry geometry(ResearchNoteData note) {
-        String[] keys = note.hexEntries.keySet()
-            .toArray(new String[0]);
+        String[] keys = note.hexEntries.keySet().toArray(new String[0]);
         Arrays.sort(keys);
         String signature = String.join(";", keys);
         synchronized (GEOMETRY_CACHE) {
@@ -1070,10 +1012,7 @@ public final class WeightedResearchSolver {
             cells[i] = cell;
             cellsByKey.put(keys[i], cell);
         }
-        Arrays.sort(
-            cells,
-            Comparator.comparingInt((Cell cell) -> cell.q)
-                .thenComparingInt(cell -> cell.r));
+        Arrays.sort(cells, Comparator.comparingInt((Cell cell) -> cell.q).thenComparingInt(cell -> cell.r));
         Map<Cell, Integer> indices = new HashMap<>();
         for (int i = 0; i < cells.length; i++) indices.put(cells[i], i);
         int[][] neighbors = new int[cells.length][];
@@ -1087,11 +1026,8 @@ public final class WeightedResearchSolver {
             }
             neighbors[i] = Arrays.copyOf(adjacent, count);
         }
-        BoardGeometry built = new BoardGeometry(
-            cells,
-            Collections.unmodifiableMap(indices),
-            Collections.unmodifiableMap(cellsByKey),
-            neighbors);
+        BoardGeometry built = new BoardGeometry(cells, Collections.unmodifiableMap(indices),
+            Collections.unmodifiableMap(cellsByKey), neighbors);
         synchronized (GEOMETRY_CACHE) {
             BoardGeometry concurrent = GEOMETRY_CACHE.get(signature);
             if (concurrent != null) {
@@ -1183,19 +1119,8 @@ public final class WeightedResearchSolver {
             }
             int[] inventoryAmounts = new int[graph.aspects.length];
             for (int i = 0; i < graph.aspects.length; i++) inventoryAmounts[i] = inventory.getAmount(graph.aspects[i]);
-            return new Problem(
-                note,
-                anchors,
-                inventory,
-                settings,
-                cancelled,
-                metrics,
-                graph,
-                geometry.cells,
-                geometry.indices,
-                geometry.neighbors,
-                anchorAspects,
-                inventoryAmounts);
+            return new Problem(note, anchors, inventory, settings, cancelled, metrics, graph, geometry.cells,
+                geometry.indices, geometry.neighbors, anchorAspects, inventoryAmounts);
         }
 
         String cacheKey() {
@@ -1203,17 +1128,11 @@ public final class WeightedResearchSolver {
             key.append("|board:");
             for (Cell cell : cellsByIndex) {
                 Aspect anchor = anchors.get(cell);
-                key.append(cell)
-                    .append('=')
-                    .append(anchor == null ? "" : anchor.getTag())
-                    .append(';');
+                key.append(cell).append('=').append(anchor == null ? "" : anchor.getTag()).append(';');
             }
             key.append("|inventory:");
             for (int i = 0; i < graph.aspects.length; i++) {
-                key.append(graph.aspects[i].getTag())
-                    .append('=')
-                    .append(inventoryAmounts[i])
-                    .append(';');
+                key.append(graph.aspects[i].getTag()).append('=').append(inventoryAmounts[i]).append(';');
             }
             return key.toString();
         }
@@ -1222,8 +1141,7 @@ public final class WeightedResearchSolver {
     private static final class Plan {
 
         static final Comparator<Plan> ORDER = Comparator.comparingInt((Plan plan) -> -plan.connected.size())
-            .thenComparingLong(plan -> plan.cost)
-            .thenComparingInt(plan -> plan.tree.size())
+            .thenComparingLong(plan -> plan.cost).thenComparingInt(plan -> plan.tree.size())
             .thenComparing(plan -> plan.canonical);
 
         final Map<Cell, Aspect> tree;
@@ -1237,10 +1155,7 @@ public final class WeightedResearchSolver {
             this.cost = cost;
             List<String> values = new ArrayList<>();
             for (Map.Entry<Cell, Aspect> entry : tree.entrySet()) {
-                values.add(
-                    entry.getKey() + "="
-                        + entry.getValue()
-                            .getTag());
+                values.add(entry.getKey() + "=" + entry.getValue().getTag());
             }
             Collections.sort(values);
             this.canonical = String.join(";", values);
@@ -1250,8 +1165,7 @@ public final class WeightedResearchSolver {
     private static final class PhysicalPlan {
 
         static final Comparator<PhysicalPlan> ORDER = Comparator
-            .comparingInt((PhysicalPlan plan) -> -plan.connected.size())
-            .thenComparingInt(plan -> plan.cells.size())
+            .comparingInt((PhysicalPlan plan) -> -plan.connected.size()).thenComparingInt(plan -> plan.cells.size())
             .thenComparing(plan -> plan.canonical);
 
         final Cell root;
@@ -1268,8 +1182,7 @@ public final class WeightedResearchSolver {
             List<String> edges = new ArrayList<>();
             for (Map.Entry<Cell, List<Cell>> entry : branches.entrySet()) {
                 for (Cell child : entry.getValue()) {
-                    String left = entry.getKey()
-                        .toString();
+                    String left = entry.getKey().toString();
                     String right = child.toString();
                     edges.add(left.compareTo(right) < 0 ? left + "-" + right : right + "-" + left);
                 }
@@ -1299,14 +1212,8 @@ public final class WeightedResearchSolver {
             for (int index = 1; index < path.size(); index++) {
                 Cell previous = path.get(index - 1);
                 Cell current = path.get(index);
-                if (!nextBranches.get(previous)
-                    .contains(current))
-                    nextBranches.get(previous)
-                        .add(current);
-                if (!nextBranches.get(current)
-                    .contains(previous))
-                    nextBranches.get(current)
-                        .add(previous);
+                if (!nextBranches.get(previous).contains(current)) nextBranches.get(previous).add(current);
+                if (!nextBranches.get(current).contains(previous)) nextBranches.get(current).add(previous);
             }
             Set<Cell> nextConnected = new LinkedHashSet<>(connected);
             for (Cell cell : path) if (anchors.containsKey(cell)) nextConnected.add(cell);
@@ -1417,8 +1324,7 @@ public final class WeightedResearchSolver {
 
         static Cell parse(String value) {
             int separator = value.indexOf(':');
-            return new Cell(
-                Integer.parseInt(value.substring(0, separator)),
+            return new Cell(Integer.parseInt(value.substring(0, separator)),
                 Integer.parseInt(value.substring(separator + 1)));
         }
 
@@ -1528,10 +1434,8 @@ public final class WeightedResearchSolver {
     public static final class Result {
 
         static final Comparator<Result> ORDER = Comparator.comparingInt((Result result) -> result.missingPrimalCount())
-            .thenComparingLong(result -> result.totalCost)
-            .thenComparingInt(result -> result.placements.size())
-            .thenComparingInt(result -> result.synthesisOperations)
-            .thenComparing(result -> result.canonical());
+            .thenComparingLong(result -> result.totalCost).thenComparingInt(result -> result.placements.size())
+            .thenComparingInt(result -> result.synthesisOperations).thenComparing(result -> result.canonical());
 
         public final boolean success;
         public final Map<String, Aspect> placements;
@@ -1556,26 +1460,8 @@ public final class WeightedResearchSolver {
         private Result(boolean success, Map<String, Aspect> placements, long totalCost, int synthesisOperations,
             Map<String, Integer> missingPrimals, Config.SolveMode mode, boolean timedOut, boolean fallbackUsed,
             String failureReason) {
-            this(
-                success,
-                placements,
-                totalCost,
-                synthesisOperations,
-                missingPrimals,
-                mode,
-                timedOut,
-                fallbackUsed,
-                failureReason,
-                null,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                false,
-                false);
+            this(success, placements, totalCost, synthesisOperations, missingPrimals, mode, timedOut, fallbackUsed,
+                failureReason, null, 0, 0, 0, 0, 0, 0, 0, false, false);
         }
 
         private Result(boolean success, Map<String, Aspect> placements, long totalCost, int synthesisOperations,
@@ -1614,71 +1500,19 @@ public final class WeightedResearchSolver {
         }
 
         static Result failure(String reason, boolean timedOut, String repairCell) {
-            return new Result(
-                false,
-                Collections.emptyMap(),
-                0,
-                0,
-                Collections.emptyMap(),
-                null,
-                timedOut,
-                false,
-                reason,
-                repairCell,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                false,
-                false);
+            return new Result(false, Collections.emptyMap(), 0, 0, Collections.emptyMap(), null, timedOut, false,
+                reason, repairCell, 0, 0, 0, 0, 0, 0, 0, false, false);
         }
 
         Result withFallback(boolean fallback) {
-            return new Result(
-                success,
-                placements,
-                totalCost,
-                synthesisOperations,
-                missingPrimals,
-                mode,
-                timedOut,
-                fallback,
-                failureReason,
-                repairCell,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                false,
-                false);
+            return new Result(success, placements, totalCost, synthesisOperations, missingPrimals, mode, timedOut,
+                fallback, failureReason, repairCell, 0, 0, 0, 0, 0, 0, 0, false, false);
         }
 
         Result withDiagnostics(long elapsedMs, Metrics metrics, boolean cacheHit) {
-            return new Result(
-                success,
-                placements,
-                totalCost,
-                synthesisOperations,
-                missingPrimals,
-                mode,
-                timedOut,
-                fallbackUsed,
-                failureReason,
-                repairCell,
-                elapsedMs,
-                metrics.expandedStates,
-                metrics.routeSearches,
-                metrics.peakStates,
-                metrics.peakQueue,
-                metrics.peakPlans,
-                metrics.estimatedWorkingBytes(),
-                cacheHit,
+            return new Result(success, placements, totalCost, synthesisOperations, missingPrimals, mode, timedOut,
+                fallbackUsed, failureReason, repairCell, elapsedMs, metrics.expandedStates, metrics.routeSearches,
+                metrics.peakStates, metrics.peakQueue, metrics.peakPlans, metrics.estimatedWorkingBytes(), cacheHit,
                 metrics.graphCacheHit);
         }
 
@@ -1691,12 +1525,7 @@ public final class WeightedResearchSolver {
         private String canonical() {
             StringBuilder result = new StringBuilder();
             for (Map.Entry<String, Aspect> entry : placements.entrySet()) {
-                result.append(entry.getKey())
-                    .append('=')
-                    .append(
-                        entry.getValue()
-                            .getTag())
-                    .append(';');
+                result.append(entry.getKey()).append('=').append(entry.getValue().getTag()).append(';');
             }
             return result.toString();
         }

@@ -55,22 +55,18 @@ public class SPacketMEItemInvUpdate extends SPacketMEBaseInvUpdate implements IM
         @Override
         public IMessage onMessage(SPacketMEItemInvUpdate message, MessageContext ctx) {
             final GuiScreen gs = Minecraft.getMinecraft().currentScreen;
-            if (message.ref == Constants.MessageType.UPDATE_PLAYER_CURRENT_ITEM.type) {
+            if (message.ref == Constants.MessageType.UpdatePlayerCurrentItem.type) {
                 if (gs == null) {
                     Minecraft mc = Minecraft.getMinecraft();
                     EntityClientPlayerMP player = mc.thePlayer;
                     if (message.isEmpty() || !(message.list.get(0) instanceof IAEItemStack item)) return null;
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, item.getItemStack());
                 }
-            } else if (message.ref == Constants.MessageType.UPDATE_PINNED_ITEMS.type) {
-                AE2ThingAPI.instance()
-                    .getPinned()
-                    .updatePinnedItems(message.getItemStacks());
-            } else if (message.ref == Constants.MessageType.ADD_PINNED_ITEM.type) {
+            } else if (message.ref == Constants.MessageType.UpdatePinnedItems.type) {
+                AE2ThingAPI.instance().getPinned().updatePinnedItems(message.getItemStacks());
+            } else if (message.ref == Constants.MessageType.AddPinnedItem.type) {
                 if (!message.isEmpty() && message.list.get(0) instanceof IAEItemStack item) {
-                    AE2ThingAPI.instance()
-                        .getPinned()
-                        .add(item);
+                    AE2ThingAPI.instance().getPinned().add(item);
                 }
             }
             return null;

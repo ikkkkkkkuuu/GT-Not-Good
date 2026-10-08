@@ -27,13 +27,12 @@ public abstract class MatrixPatternPersistenceMixin {
     private ICraftingPatternDetails gtng$restoreMatrixPattern(ICraftingPatternItem item, ItemStack stack, World world,
         Operation<ICraftingPatternDetails> original) {
         ICraftingPatternDetails details = original.call(item, stack, world);
-        if (details != null && stack.hasTagCompound()
-            && stack.getTagCompound()
-                .hasKey(DireCraftingPatternDetails.SERIALIZED_MULTIPLIER)) {
+        if (
+            details != null && stack.hasTagCompound()
+                && stack.getTagCompound().hasKey(DireCraftingPatternDetails.SERIALIZED_MULTIPLIER)
+        ) {
             DireCraftingPatternDetails wrapped = new DireCraftingPatternDetails(details);
-            wrapped.setMultiply(
-                stack.getTagCompound()
-                    .getInteger(DireCraftingPatternDetails.SERIALIZED_MULTIPLIER));
+            wrapped.setMultiply(stack.getTagCompound().getInteger(DireCraftingPatternDetails.SERIALIZED_MULTIPLIER));
             return wrapped;
         }
         return details;

@@ -130,16 +130,12 @@ public final class ItemsLoader {
     }
 
     private static void registerWirelessTransceiver() {
-        meWirelessTransceiver = registerItem(
-            new ItemMEWirelessTransceiver(),
-            ItemMEWirelessTransceiver.ITEM_NAME,
+        meWirelessTransceiver = registerItem(new ItemMEWirelessTransceiver(), ItemMEWirelessTransceiver.ITEM_NAME,
             GTNGItemList.MEWirelessTransceiver);
     }
 
     private static void registerWildcardPattern() {
-        wildcardPattern = registerItem(
-            new WildcardPatternItem(),
-            WildcardPatternItem.ITEM_NAME,
+        wildcardPattern = registerItem(new WildcardPatternItem(), WildcardPatternItem.ITEM_NAME,
             GTNGItemList.WildcardPattern);
     }
 

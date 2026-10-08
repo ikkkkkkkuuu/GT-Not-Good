@@ -16,8 +16,8 @@ public final class HeadlessBlockRegistry {
 
     /** Registers air and fluids without a Forge mod container, preserving any existing registry objects. */
     public static void bootstrap() throws ReflectiveOperationException {
-        Method register = Block.blockRegistry.getClass()
-            .getDeclaredMethod("addObjectRaw", int.class, String.class, Object.class);
+        Method register = Block.blockRegistry.getClass().getDeclaredMethod("addObjectRaw", int.class, String.class,
+            Object.class);
         register.setAccessible(true);
         Constructor<BlockAir> air = BlockAir.class.getDeclaredConstructor();
         air.setAccessible(true);

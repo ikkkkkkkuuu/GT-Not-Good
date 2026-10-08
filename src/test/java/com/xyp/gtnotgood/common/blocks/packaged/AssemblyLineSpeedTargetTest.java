@@ -33,9 +33,11 @@ public class AssemblyLineSpeedTargetTest {
         int reads = 0;
         for (var method : node.methods) {
             for (var instruction : method.instructions.toArray()) {
-                if (!(instruction instanceof FieldInsnNode field)
-                    || !field.owner.equals("gregtech/api/util/GTRecipe$RecipeAssemblyLine")
-                    || !field.name.equals("mDuration")) continue;
+                if (
+                    !(instruction instanceof FieldInsnNode field)
+                        || !field.owner.equals("gregtech/api/util/GTRecipe$RecipeAssemblyLine")
+                        || !field.name.equals("mDuration")
+                ) continue;
                 assertEquals("Duration must never be written by the controller", Opcodes.GETFIELD, field.getOpcode());
                 assertEquals("I", field.desc);
                 assertEquals(synthetic, (method.access & Opcodes.ACC_SYNTHETIC) != 0);

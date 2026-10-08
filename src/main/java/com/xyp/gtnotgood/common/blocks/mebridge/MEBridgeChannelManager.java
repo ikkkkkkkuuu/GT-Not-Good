@@ -55,13 +55,13 @@ public final class MEBridgeChannelManager {
     public static MEBridgeChannelChangeResult replaceSenderChannel(String oldName, MEBridgeChannelInfo newInfo,
         TileMEBridgeSender tile) {
         if (newInfo == null || newInfo.name == null || !MEBridgeChannelName.isValid(newInfo.name)) {
-            return MEBridgeChannelChangeResult.INVALID_NAME;
+            return MEBridgeChannelChangeResult.InvalidName;
         }
 
         String newName = newInfo.name;
         MEBridgeChannelInfo existing = newName.isEmpty() ? null : CHANNELS.get(newName);
         if (existing != null && !sameLocation(existing, newInfo)) {
-            return MEBridgeChannelChangeResult.CHANNEL_OCCUPIED;
+            return MEBridgeChannelChangeResult.ChannelOccupied;
         }
 
         if (oldName != null && !oldName.equals(newName)) {
@@ -73,7 +73,7 @@ public final class MEBridgeChannelManager {
             invalidateBrowserSnapshot();
             MEBridgeWorldSavedData.markDirtyIfPresent();
         }
-        return MEBridgeChannelChangeResult.SUCCESS;
+        return MEBridgeChannelChangeResult.Success;
     }
 
     /** 注销频道(发起端被拆除时调用)。只有当前占用该频道名的坐标匹配才移除,避免误删。 */
@@ -103,19 +103,20 @@ public final class MEBridgeChannelManager {
 
     public static List<MEBridgeChannelInfo> snapshotForBrowser() {
         List<MEBridgeChannelInfo> channels = snapshot();
-        channels.sort(
-            Comparator.comparingInt((MEBridgeChannelInfo channel) -> channel.dim)
-                .thenComparing(MEBridgeChannelInfo::isOnline, Comparator.reverseOrder())
-                .thenComparing(channel -> channel.name, String.CASE_INSENSITIVE_ORDER));
+        channels.sort(Comparator.comparingInt((MEBridgeChannelInfo channel) -> channel.dim)
+            .thenComparing(MEBridgeChannelInfo::isOnline, Comparator.reverseOrder())
+            .thenComparing(channel -> channel.name, String.CASE_INSENSITIVE_ORDER));
         return channels;
     }
 
     public static String browserSnapshot(long worldTick) {
         long receiverRevision = MEBridgeReceiverRegistry.getRevision();
-        if (browserSnapshotTick == Long.MIN_VALUE || worldTick < browserSnapshotTick
-            || worldTick - browserSnapshotTick >= BROWSER_SNAPSHOT_INTERVAL
-            || browserSnapshotChannelRevision != channelRevision
-            || browserSnapshotReceiverRevision != receiverRevision) {
+        if (
+            browserSnapshotTick == Long.MIN_VALUE || worldTick < browserSnapshotTick
+                || worldTick - browserSnapshotTick >= BROWSER_SNAPSHOT_INTERVAL
+                || browserSnapshotChannelRevision != channelRevision
+                || browserSnapshotReceiverRevision != receiverRevision
+        ) {
             browserSnapshot = MEBridgeChannelListCodec.encode(snapshotForBrowser());
             browserSnapshotTick = worldTick;
             browserSnapshotChannelRevision = channelRevision;

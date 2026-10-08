@@ -61,28 +61,17 @@ public final class Menu extends ModalLayer {
         for (int i = 0; i < entries.size(); i++) {
             Entry entry = entries.get(i);
             final int row = i;
-            panel.addChild(
-                theme.button(
-                    2,
-                    2 + i * 22,
-                    Math.max(0, panelWidth - 8),
-                    22,
-                    () -> entry.label + (entry.children.isEmpty() ? "" : " >"),
-                    () -> {
-                        if (!entry.children.isEmpty()) {
-                            int nextX = panel.getX() + panel.getWidth();
-                            if (nextX + panelWidth > getWidth()) nextX = panel.getX() - panelWidth;
-                            showPanel(
-                                depth + 1,
-                                nextX,
-                                panel.getY() + 2 + row * 22 - panel.getScroll(),
-                                entry.children);
-                        } else {
-                            close();
-                            entry.action.run();
-                        }
-                    })
-                    .setEnabled(entry.enabled));
+            panel.addChild(theme.button(2, 2 + i * 22, Math.max(0, panelWidth - 8), 22,
+                () -> entry.label + (entry.children.isEmpty() ? "" : " >"), () -> {
+                    if (!entry.children.isEmpty()) {
+                        int nextX = panel.getX() + panel.getWidth();
+                        if (nextX + panelWidth > getWidth()) nextX = panel.getX() - panelWidth;
+                        showPanel(depth + 1, nextX, panel.getY() + 2 + row * 22 - panel.getScroll(), entry.children);
+                    } else {
+                        close();
+                        entry.action.run();
+                    }
+                }).setEnabled(entry.enabled));
         }
     }
 }

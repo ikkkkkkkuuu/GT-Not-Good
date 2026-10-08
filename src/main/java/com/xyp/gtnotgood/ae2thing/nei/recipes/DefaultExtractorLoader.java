@@ -18,11 +18,9 @@ public class DefaultExtractorLoader implements Runnable {
         ThaumcraftRecipeExtractor.register();
         if (Mods.isGt5UnofficialLoaded() || Mods.isLegacyGt5Loaded()) {
             for (RecipeCategory category : RecipeCategory.ALL_RECIPE_CATEGORIES.values()) {
-                FluidRecipe.addRecipeMap(
-                    category.unlocalizedName,
-                    new GT5RecipeExtractor(
-                        category.recipeMap.unlocalizedName.equals("gt.recipe.scanner")
-                            || category.recipeMap.unlocalizedName.equals("gt.recipe.fakeAssemblylineProcess")));
+                FluidRecipe.addRecipeMap(category.unlocalizedName,
+                    new GT5RecipeExtractor(category.recipeMap.unlocalizedName.equals("gt.recipe.scanner")
+                        || category.recipeMap.unlocalizedName.equals("gt.recipe.fakeAssemblylineProcess")));
             }
         }
     }

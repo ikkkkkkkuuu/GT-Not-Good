@@ -36,64 +36,39 @@ public final class WildcardIndexPage extends ParentWidget<WildcardIndexPage> {
             // #tr gui.wildcardpattern.available_count
             // # %s Patterns Available
             // # zh_CN %s 个可用样板
-            IKey.dynamic(
-                () -> IKey.lang("gui.wildcardpattern.available_count", patterns.size())
-                    .get())
-                .asWidget()
-                .pos(2, 2)
-                .size(136, 15));
-        child(
-            WildcardPatternGui.THEME.button()
-                .pos(140, 2)
-                .size(14)
-                .overlay(
-                    UITexture.builder()
-                        .location(ModList.ModIds.GT_NOT_GOOD, "gui/ldlib/modern/close")
-                        .build())
-                .onUpdateListener(button -> button.setEnabled(currentMaterialName() != null))
-                .tooltipBuilder(
-                    tooltip -> tooltip.addLine(
-                        // #tr gui.wildcardpattern.exclude_current
-                        // # Exclude the current material and save
-                        // # zh_CN 排除当前材料并保存到黑名单
-                        IKey.lang("gui.wildcardpattern.exclude_current")))
-                .onMousePressed(mouse -> {
-                    if (mouse != 0) return false;
-                    String materialName = currentMaterialName();
-                    if (materialName != null) excludeMaterial.accept(materialName);
-                    return true;
-                }));
+            IKey.dynamic(() -> IKey.lang("gui.wildcardpattern.available_count", patterns.size()).get()).asWidget()
+                .pos(2, 2).size(136, 15));
+        child(WildcardPatternGui.THEME.button().pos(140, 2).size(14)
+            .overlay(UITexture.builder().location(ModList.ModIds.GT_NOT_GOOD, "gui/ldlib/modern/close").build())
+            .onUpdateListener(button -> button.setEnabled(currentMaterialName() != null))
+            .tooltipBuilder(tooltip -> tooltip.addLine(
+                // #tr gui.wildcardpattern.exclude_current
+                // # Exclude the current material and save
+                // # zh_CN 排除当前材料并保存到黑名单
+                IKey.lang("gui.wildcardpattern.exclude_current")))
+            .onMousePressed(mouse -> {
+                if (mouse != 0) return false;
+                String materialName = currentMaterialName();
+                if (materialName != null) excludeMaterial.accept(materialName);
+                return true;
+            }));
         for (int i = 0; i < 6; i++) {
             final int slot = i;
             child(new WildcardIconWidget(() -> stack(true, slot)).pos(10 + i % 3 * 18, 18 + i / 3 * 18));
             child(new WildcardIconWidget(() -> stack(false, slot)).pos(94 + i % 3 * 18, 18 + i / 3 * 18));
         }
-        child(
-            UITexture.builder()
-                .location(ModList.ModIds.GT_NOT_GOOD, "gui/ldlib/modern/progress_bar_arrow")
-                .imageSize(20, 40)
-                .subAreaXYWH(0, 0, 20, 20)
-                .build()
-                .asWidget()
-                .pos(74, 32)
-                .size(15, 10));
+        child(UITexture.builder().location(ModList.ModIds.GT_NOT_GOOD, "gui/ldlib/modern/progress_bar_arrow")
+            .imageSize(20, 40).subAreaXYWH(0, 0, 20, 20).build().asWidget().pos(74, 32).size(15, 10));
         child(
             // #tr gui.wildcardpattern.preview_search
             // # Search
             // # zh_CN 搜索
-            IKey.lang("gui.wildcardpattern.preview_search")
-                .asWidget()
-                .pos(2, 61)
-                .size(28, 12));
-        child(
-            WildcardPatternGui.THEME.textField()
-                .pos(32, 59)
-                .size(124, 16)
-                .autoUpdateOnChange(true)
-                .value(new StringValue.Dynamic(() -> search, text -> {
-                    search = text == null ? "" : text;
-                    filterPatterns();
-                })));
+            IKey.lang("gui.wildcardpattern.preview_search").asWidget().pos(2, 61).size(28, 12));
+        child(WildcardPatternGui.THEME.textField().pos(32, 59).size(124, 16).autoUpdateOnChange(true)
+            .value(new StringValue.Dynamic(() -> search, text -> {
+                search = text == null ? "" : text;
+                filterPatterns();
+            })));
     }
 
     public void refresh(List<WildcardExpansion.Expanded> snapshot) {
@@ -106,18 +81,16 @@ public final class WildcardIndexPage extends ParentWidget<WildcardIndexPage> {
      * Typing never reruns recipe expansion or changes item data.
      */
     private void filterPatterns() {
-        String query = search.trim()
-            .toLowerCase(Locale.ROOT);
+        String query = search.trim().toLowerCase(Locale.ROOT);
         List<WildcardExpansion.Expanded> matches = new ArrayList<>();
         for (WildcardExpansion.Expanded pattern : allPatterns) {
             String materialName = pattern.materialName;
             Materials material = WildcardMaterials.findByName(materialName);
-            if (query.isEmpty() || materialName.toLowerCase(Locale.ROOT)
-                .contains(query)
-                || (WildcardMaterials.isRealMaterial(material) && material.getLocalizedName()
-                    .toLowerCase(Locale.ROOT)
-                    .contains(query)))
-                matches.add(pattern);
+            if (
+                query.isEmpty() || materialName.toLowerCase(Locale.ROOT).contains(query)
+                    || (WildcardMaterials.isRealMaterial(material)
+                        && material.getLocalizedName().toLowerCase(Locale.ROOT).contains(query))
+            ) matches.add(pattern);
         }
         patterns = matches;
         ticks = 0;

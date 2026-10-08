@@ -22,12 +22,7 @@ public class InventoryHandler implements IGuiHandler {
         if (Platform.isClient()) {
             return;
         }
-        player.openGui(
-            AE2Thing.INSTANCE,
-            (guiType.ordinal() << 3) | face.ordinal(),
-            world,
-            pos.getX(),
-            pos.getY(),
+        player.openGui(AE2Thing.INSTANCE, (guiType.ordinal() << 3) | face.ordinal(), world, pos.getX(), pos.getY(),
             pos.getZ());
     }
 

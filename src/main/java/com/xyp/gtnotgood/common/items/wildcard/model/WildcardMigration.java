@@ -5,6 +5,8 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternEntry;
 import com.xyp.gtnotgood.common.items.wildcard.model.filter.StringFilterComponent;
@@ -71,8 +73,7 @@ public final class WildcardMigration {
     private static List<WildcardPatternEntry> readOldEntries(NBTTagCompound tag, String key) {
         List<WildcardPatternEntry> result = new ArrayList<>();
         if (tag == null || !tag.hasKey(key)) return result;
-        net.minecraft.nbt.NBTTagList list = tag
-            .getTagList(key, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        NBTTagList list = tag.getTagList(key, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++) {
             result.add(WildcardPatternEntry.fromNbt(list.getCompoundTagAt(i)));
         }

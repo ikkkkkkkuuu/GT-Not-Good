@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.rtsbuilding.rtsbuilding.client.input.RtsClientInputEvents1122;
+import com.rtsbuilding.rtsbuilding.client.plugin.RtsPluginInventoryScreenEvents;
 
 /**
  * 为 1.12 大型整合包提供 overlay 输入的原始入口兜底。
@@ -21,8 +22,7 @@ public abstract class GuiScreenOverlayInputMixin {
 
     @Inject(method = "handleMouseInput", at = @At("HEAD"), cancellable = true)
     private void rtsbuilding$routeOverlayMouseInput(CallbackInfo ci) {
-        if (com.rtsbuilding.rtsbuilding.client.plugin.RtsPluginInventoryScreenEvents
-            .routeInventoryMousePressed((GuiScreen) (Object) this)) {
+        if (RtsPluginInventoryScreenEvents.routeInventoryMousePressed((GuiScreen) (Object) this)) {
             ci.cancel();
             return;
         }

@@ -20,6 +20,7 @@ import static gregtech.api.enums.Textures.BlockIcons.OVERLAY_FRONT_ORE_DRILL_GLO
 import static gregtech.api.enums.Textures.BlockIcons.getCasingTextureForId;
 import static gregtech.api.util.GTStructureUtility.buildHatchAdder;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,6 +54,7 @@ import org.jetbrains.annotations.NotNull;
 import com.gtnewhorizon.gtnhlib.util.numberformatting.NumberFormatUtil;
 import com.gtnewhorizon.structurelib.alignment.constructable.ISurvivalConstructable;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
+import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.xyp.gtnotgood.GTNotGood;
@@ -102,9 +104,9 @@ import gregtech.common.tileentities.machines.outputme.MTEHatchOutputBusME;
 public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implements ISurvivalConstructable {
 
     private static final String STRUCTURE_PIECE_MAIN = "main";
-    private static final int HORIZONTAL_OFF_SET = 3;
-    private static final int VERTICAL_OFF_SET = 7;
-    private static final int DEPTH_OFF_SET = 1;
+    private static final int HORIZONTAL_OFFSET = 3;
+    private static final int VERTICAL_OFFSET = 7;
+    private static final int DEPTH_OFFSET = 1;
     private static final int DIMENSION_SLOT_COUNT = 25;
 
     public static final int CYCLE_TICKS = 400;
@@ -169,7 +171,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
 
     private static Boolean pluginLoaded;
     private static Class<?> itemDimDisplayClass;
-    private static java.lang.reflect.Method getDimensionMethod;
+    private static Method getDimensionMethod;
     private static IStructureDefinition<LargeVoidMiner> structureDefinition;
 
     private static final String[][] SHAPE = new String[][] {
@@ -222,52 +224,39 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
     public IStructureDefinition<LargeVoidMiner> getStructureDefinition() {
         if (structureDefinition == null) {
             structureDefinition = StructureDefinition.<LargeVoidMiner>builder()
-                .addShape(STRUCTURE_PIECE_MAIN, transpose(SHAPE))
-                .addElement('A', ofBlock(sBlockCasings2, 13))
+                .addShape(STRUCTURE_PIECE_MAIN, transpose(SHAPE)).addElement('A', ofBlock(sBlockCasings2, 13))
                 .addElement('B', buildSteelCasingElement(1))
                 .addElement('C', onElementPass(t -> ++t.mCountCasing, ofBlock(sBlockCasings2, 0)))
                 .addElement('D', ofBlock(sBlockFrames, Materials.Steel.mMetaItemSubID))
-                .addElement('E', buildSteelCasingElement(2))
-                .build();
+                .addElement('E', buildSteelCasingElement(2)).build();
         }
         return structureDefinition;
     }
 
-    private static com.gtnewhorizon.structurelib.structure.IStructureElement<LargeVoidMiner> buildSteelCasingElement(
-        int hint) {
+    private static IStructureElement<LargeVoidMiner> buildSteelCasingElement(int hint) {
         return ofChain(
             buildHatchAdder(LargeVoidMiner.class)
                 .atLeast(Energy.or(ExoticEnergy), InputBus, InputHatch, OutputBus, Maintenance)
-                .casingIndex(getSteelCasingTextureId())
-                .hint(hint)
-                .build(),
+                .casingIndex(getSteelCasingTextureId()).hint(hint).build(),
             onElementPass(t -> ++t.mCountCasing, ofBlock(sBlockCasings2, 0)));
     }
 
     @Override
     public void construct(ItemStack stackSize, boolean hintsOnly) {
-        buildPiece(STRUCTURE_PIECE_MAIN, stackSize, hintsOnly, HORIZONTAL_OFF_SET, VERTICAL_OFF_SET, DEPTH_OFF_SET);
+        buildPiece(STRUCTURE_PIECE_MAIN, stackSize, hintsOnly, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET);
     }
 
     @Override
     public int survivalConstruct(ItemStack stackSize, int elementBudget, ISurvivalBuildEnvironment env) {
         if (this.mMachine) return -1;
-        return survivalBuildPiece(
-            STRUCTURE_PIECE_MAIN,
-            stackSize,
-            HORIZONTAL_OFF_SET,
-            VERTICAL_OFF_SET,
-            DEPTH_OFF_SET,
-            elementBudget,
-            env,
-            false,
-            true);
+        return survivalBuildPiece(STRUCTURE_PIECE_MAIN, stackSize, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET,
+            elementBudget, env, false, true);
     }
 
     @Override
     public void checkMachine(IGregTechTileEntity aBaseMetaTileEntity, ItemStack aStack, List<StructureError> errors) {
         mCountCasing = 0;
-        if (!checkPiece(STRUCTURE_PIECE_MAIN, HORIZONTAL_OFF_SET, VERTICAL_OFF_SET, DEPTH_OFF_SET, errors)) return;
+        if (!checkPiece(STRUCTURE_PIECE_MAIN, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET, errors)) return;
         checkCasingMin(errors, mCountCasing, 3);
         if (mOutputBusses.isEmpty()) errors.add(StructureErrors.hatchCount(ErrorType.TOO_FEW, OutputBus, 0, 1));
         int energyHatchCount = mEnergyHatches.size() + mExoticEnergyHatches.size();
@@ -317,8 +306,8 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
                 pluginLoaded = false;
             } else {
                 try {
-                    itemDimDisplayClass = Class
-                        .forName(ITEM_DIM_DISPLAY_CLASS, true, LargeVoidMiner.class.getClassLoader());
+                    itemDimDisplayClass = Class.forName(ITEM_DIM_DISPLAY_CLASS, true,
+                        LargeVoidMiner.class.getClassLoader());
                     getDimensionMethod = itemDimDisplayClass.getMethod("getDimension", ItemStack.class);
                     pluginLoaded = true;
                 } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException e) {
@@ -478,11 +467,9 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
             // #tr chat.gtnotgood.largeVoidMiner.directional.off
             // # Directional mode disabled
             // # zh_CN 定向模式已关闭
-            GTUtility.sendChatToPlayer(
-                player,
-                StatCollector.translateToLocal(
-                    mDirectionalMode ? "chat.gtnotgood.largeVoidMiner.directional.on"
-                        : "chat.gtnotgood.largeVoidMiner.directional.off"));
+            GTUtility.sendChatToPlayer(player,
+                StatCollector.translateToLocal(mDirectionalMode ? "chat.gtnotgood.largeVoidMiner.directional.on"
+                    : "chat.gtnotgood.largeVoidMiner.directional.off"));
         }
     }
 
@@ -517,8 +504,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
     public float getFilteredWeightSum() {
         float sum = 0.0f;
         for (PoolDim pd : mPool) {
-            for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap()
-                .entrySet()) {
+            for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap().entrySet()) {
                 if (mFilteredOres.contains(entry.getKey())) sum += entry.getValue();
             }
         }
@@ -528,8 +514,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
     public float getDirectionalWeightSum() {
         float sum = 0.0f;
         for (PoolDim pd : mPool) {
-            for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap()
-                .entrySet()) {
+            for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap().entrySet()) {
                 if (mDirectionalOres.contains(entry.getKey())) sum += entry.getValue();
             }
         }
@@ -539,8 +524,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
     private double getDirectionalLowestWeightSum() {
         List<Float> weights = new ArrayList<>();
         for (PoolDim pd : mPool) {
-            for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap()
-                .entrySet()) {
+            for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap().entrySet()) {
                 if (mDirectionalOres.contains(entry.getKey())) weights.add(entry.getValue());
             }
         }
@@ -597,17 +581,11 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         if (mPool.isEmpty()) return entries;
         Map<GTUtility.ItemId, OreEntryInfo> byId = new LinkedHashMap<>();
         for (PoolDim pd : mPool) {
-            for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap()
-                .entrySet()) {
+            for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap().entrySet()) {
                 OreEntryInfo info = byId.get(entry.getKey());
                 if (info == null) {
-                    info = new OreEntryInfo(
-                        entry.getKey()
-                            .getItemStack(),
-                        entry.getValue(),
-                        new ArrayList<>(),
-                        mFilteredOres.contains(entry.getKey()),
-                        mDirectionalOres.contains(entry.getKey()));
+                    info = new OreEntryInfo(entry.getKey().getItemStack(), entry.getValue(), new ArrayList<>(),
+                        mFilteredOres.contains(entry.getKey()), mDirectionalOres.contains(entry.getKey()));
                     byId.put(entry.getKey(), info);
                 } else {
                     info.weight += entry.getValue();
@@ -761,10 +739,11 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         double totalWeight = 0.0d;
         if (out > 0) {
             for (PoolDim pd : mPool) {
-                for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap()
-                    .entrySet()) {
-                    if (mFilteredOres.contains(entry.getKey())
-                        || (mDirectionalMode && !mDirectionalOres.contains(entry.getKey()))) continue;
+                for (Map.Entry<GTUtility.ItemId, Float> entry : pd.dropMap.getInternalMap().entrySet()) {
+                    if (
+                        mFilteredOres.contains(entry.getKey())
+                            || (mDirectionalMode && !mDirectionalOres.contains(entry.getKey()))
+                    ) continue;
                     eligibleOres.add(entry);
                     totalWeight += entry.getValue();
                 }
@@ -792,8 +771,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
      */
     private GTUtility.ItemId extractNextOre(List<Map.Entry<GTUtility.ItemId, Float>> eligibleOres, double totalWeight) {
         if (totalWeight <= 0.0d) return null;
-        double random = ThreadLocalRandom.current()
-            .nextDouble() * totalWeight;
+        double random = ThreadLocalRandom.current().nextDouble() * totalWeight;
         for (Map.Entry<GTUtility.ItemId, Float> entry : eligibleOres) {
             random -= entry.getValue();
             if (random < 0.0d) return entry.getKey();
@@ -876,16 +854,13 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
                         info.isNatural = true;
                         List<ItemStack> drops;
                         try {
-                            drops = OreManager.getAdapter(info)
-                                .getOreDrops(ThreadLocalRandom.current(), info, false, 0);
+                            drops = OreManager.getAdapter(info).getOreDrops(ThreadLocalRandom.current(), info, false,
+                                0);
                         } finally {
                             info.isNatural = originalNatural;
                         }
                         if (drops == null || drops.isEmpty()) return null;
-                        int extra = Math.max(
-                            0,
-                            ThreadLocalRandom.current()
-                                .nextInt(mFortuneLevel + 2) - 1);
+                        int extra = Math.max(0, ThreadLocalRandom.current().nextInt(mFortuneLevel + 2) - 1);
                         return new MinedDrop(drops.get(0), drops.size() + extra);
                     }
                     GTMockWorld mockWorld = new GTMockWorld();
@@ -961,10 +936,12 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
     @Override
     public void onPostTick(IGregTechTileEntity aBaseMetaTileEntity, long aTick) {
         super.onPostTick(aBaseMetaTileEntity, aTick);
-        if (aBaseMetaTileEntity.isServerSide() && mDirectionalMode
-            && aBaseMetaTileEntity.isAllowedToWork()
-            && mMaxProgresstime > 0
-            && !depleteUUMatterForTick()) {
+        if (
+            aBaseMetaTileEntity.isServerSide() && mDirectionalMode
+                && aBaseMetaTileEntity.isAllowedToWork()
+                && mMaxProgresstime > 0
+                && !depleteUUMatterForTick()
+        ) {
             mMaxProgresstime = 0;
             mProgresstime = 0;
         }
@@ -1110,10 +1087,8 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
             .addInputHatch("0+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
             .addOutputBus("1+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
             .addEnergyHatch("1+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
-            .addMaintenanceHatch(
-                shouldCheckMaintenance() ? "1+" : "0+",
-                StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"),
-                1)
+            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+",
+                StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
             .toolTipFinisher();
         return tt;
     }
@@ -1129,15 +1104,12 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         int colorIndex, boolean aActive, boolean redstoneLevel) {
         int casingId = getSteelCasingTextureId();
         if (side == aFacing) {
-            return new ITexture[] { getCasingTextureForId(casingId), TextureFactory.builder()
-                .addIcon(aActive ? OVERLAY_FRONT_ORE_DRILL_ACTIVE : OVERLAY_FRONT_ORE_DRILL)
-                .extFacing()
-                .build(),
+            return new ITexture[] { getCasingTextureForId(casingId),
+                TextureFactory.builder().addIcon(aActive ? OVERLAY_FRONT_ORE_DRILL_ACTIVE : OVERLAY_FRONT_ORE_DRILL)
+                    .extFacing().build(),
                 TextureFactory.builder()
-                    .addIcon(aActive ? OVERLAY_FRONT_ORE_DRILL_ACTIVE_GLOW : OVERLAY_FRONT_ORE_DRILL_GLOW)
-                    .extFacing()
-                    .glow()
-                    .build() };
+                    .addIcon(aActive ? OVERLAY_FRONT_ORE_DRILL_ACTIVE_GLOW : OVERLAY_FRONT_ORE_DRILL_GLOW).extFacing()
+                    .glow().build() };
         }
         return new ITexture[] { getCasingTextureForId(casingId) };
     }
@@ -1164,18 +1136,16 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         // #tr gui.gtnotgood.largeVoidMiner.dimension
         // # Dimension:
         // # zh_CN 维度：
-        info.add(
-            EnumChatFormatting.YELLOW + StatCollector.translateToLocal("gui.gtnotgood.largeVoidMiner.dimension")
-                + EnumChatFormatting.GREEN
-                + getDimensionDisplayName());
+        info.add(EnumChatFormatting.YELLOW + StatCollector.translateToLocal("gui.gtnotgood.largeVoidMiner.dimension")
+            + EnumChatFormatting.GREEN
+            + getDimensionDisplayName());
         // #tr gui.gtnotgood.largeVoidMiner.energy_cost
         // # Energy:
         // # zh_CN 能耗：
-        info.add(
-            EnumChatFormatting.YELLOW + StatCollector.translateToLocal("gui.gtnotgood.largeVoidMiner.energy_cost")
-                + EnumChatFormatting.WHITE
-                + NumberFormatUtil.formatNumber(getEnergyCostPerTick())
-                + " EU/t");
+        info.add(EnumChatFormatting.YELLOW + StatCollector.translateToLocal("gui.gtnotgood.largeVoidMiner.energy_cost")
+            + EnumChatFormatting.WHITE
+            + NumberFormatUtil.formatNumber(getEnergyCostPerTick())
+            + " EU/t");
         return info.toArray(new String[0]);
     }
 

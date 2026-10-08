@@ -17,15 +17,8 @@ public final class StockIOInterfaceRecipes {
     private StockIOInterfaceRecipes() {}
 
     public static void register() {
-        GameRegistry.addShapelessRecipe(
-            GTNGItemList.StockIOInterface.get(1),
-            AEApi.instance()
-                .definitions()
-                .blocks()
-                .iface()
-                .maybeStack(1)
-                .get(),
-            GTNGItemList.AdvancedIOBus.get(1));
+        GameRegistry.addShapelessRecipe(GTNGItemList.StockIOInterface.get(1),
+            AEApi.instance().definitions().blocks().iface().maybeStack(1).get(), GTNGItemList.AdvancedIOBus.get(1));
         GameRegistry.addRecipe(new Conversion(GTNGItemList.StockIOInterface, GTNGItemList.StockIOInterfacePart));
         GameRegistry.addRecipe(new Conversion(GTNGItemList.StockIOInterfacePart, GTNGItemList.StockIOInterface));
     }
@@ -44,9 +37,7 @@ public final class StockIOInterfaceRecipes {
             for (int slot = 0; slot < inventory.getSizeInventory(); slot++) {
                 ItemStack source = inventory.getStackInSlot(slot);
                 if (source != null && source.hasTagCompound()) {
-                    result.setTagCompound(
-                        (NBTTagCompound) source.getTagCompound()
-                            .copy());
+                    result.setTagCompound((NBTTagCompound) source.getTagCompound().copy());
                     break;
                 }
             }

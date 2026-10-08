@@ -28,11 +28,8 @@ public abstract class BasicMachineMoldGuiMixin {
     @Inject(method = "createCircuitSlot", at = @At("RETURN"), cancellable = true)
     private void gtng$addMoldSlot(PanelSyncManager syncManager, CallbackInfoReturnable<Widget<?>> cir) {
         if (machine instanceof MTEBasicMachine basic && VirtualMachineMolds.supports(basic)) {
-            cir.setReturnValue(
-                Flow.column()
-                    .coverChildren()
-                    .child(SingleblockMoldSelector.create(basic, syncManager))
-                    .child(cir.getReturnValue()));
+            cir.setReturnValue(Flow.column().coverChildren().child(SingleblockMoldSelector.create(basic, syncManager))
+                .child(cir.getReturnValue()));
         }
     }
 

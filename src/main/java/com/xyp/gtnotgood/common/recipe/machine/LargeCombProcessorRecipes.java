@@ -18,14 +18,9 @@ public final class LargeCombProcessorRecipes {
     /** Retains the upstream circuits, bronze plates, configuration, duration and EU/t. */
     public static void loadRecipes() {
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Machine_LV_Assembler.get(1),
-                new Object[] { OrePrefixes.circuit.get(Materials.LV), 8 },
-                GTOreDictUnificator.get(OrePrefixes.plate, Materials.Bronze, 2),
-                GTUtility.getIntegratedCircuit(24))
-            .itemOutputs(GTNGItemList.LargeCombProcessor.get(1))
-            .duration(100)
-            .eut(32)
+            .itemInputs(ItemList.Machine_LV_Assembler.get(1), new Object[] { OrePrefixes.circuit.get(Materials.LV), 8 },
+                GTOreDictUnificator.get(OrePrefixes.plate, Materials.Bronze, 2), GTUtility.getIntegratedCircuit(24))
+            .itemOutputs(GTNGItemList.LargeCombProcessor.get(1)).duration(100).eut(32)
             .addTo(RecipeMaps.assemblerRecipes);
     }
 }

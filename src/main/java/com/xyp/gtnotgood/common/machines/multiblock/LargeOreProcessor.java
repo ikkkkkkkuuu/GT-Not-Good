@@ -110,13 +110,10 @@ public class LargeOreProcessor extends GTNGMultiBlockBase<LargeOreProcessor> imp
     public IStructureDefinition<LargeOreProcessor> getStructureDefinition() {
         return StructureDefinition.<LargeOreProcessor>builder()
             .addShape(STRUCTURE_PIECE_MAIN, transpose(STRUCTURE_SHAPE))
-            .addElement(
-                'A',
+            .addElement('A',
                 ofChain(
-                    buildHatchAdder(LargeOreProcessor.class).casingIndex(getCasingTextureID())
-                        .hint(1)
-                        .atLeast(InputBus, OutputBus, Maintenance)
-                        .build(),
+                    buildHatchAdder(LargeOreProcessor.class).casingIndex(getCasingTextureID()).hint(1)
+                        .atLeast(InputBus, OutputBus, Maintenance).build(),
                     onElementPass(machine -> ++machine.mCountCasing, ofBlock(GregTechAPI.sBlockCasings2, CASING_META))))
             .build();
     }
@@ -146,16 +143,8 @@ public class LargeOreProcessor extends GTNGMultiBlockBase<LargeOreProcessor> imp
     @Override
     public int survivalConstruct(ItemStack stackSize, int elementBudget, ISurvivalBuildEnvironment env) {
         if (this.mMachine) return -1;
-        return survivalBuildPiece(
-            STRUCTURE_PIECE_MAIN,
-            stackSize,
-            HORIZONTAL_OFFSET,
-            VERTICAL_OFFSET,
-            DEPTH_OFFSET,
-            elementBudget,
-            env,
-            false,
-            true);
+        return survivalBuildPiece(STRUCTURE_PIECE_MAIN, stackSize, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET,
+            elementBudget, env, false, true);
     }
 
     /**
@@ -289,18 +278,12 @@ public class LargeOreProcessor extends GTNGMultiBlockBase<LargeOreProcessor> imp
         for (ItemStack input : inputs) {
             if (input == null || input.stackSize <= 0) continue;
 
-            GTRecipe recipe = recipeMap.findRecipeQuery()
-                .items(input)
-                .notUnificated(true)
-                .find();
+            GTRecipe recipe = recipeMap.findRecipeQuery().items(input).notUnificated(true).find();
 
             if (recipe == null) {
                 ItemStack normalized = normalizeOreToStone(input);
                 if (normalized != null) {
-                    recipe = recipeMap.findRecipeQuery()
-                        .items(normalized)
-                        .notUnificated(true)
-                        .find();
+                    recipe = recipeMap.findRecipeQuery().items(normalized).notUnificated(true).find();
                 }
             }
 
@@ -439,9 +422,7 @@ public class LargeOreProcessor extends GTNGMultiBlockBase<LargeOreProcessor> imp
         int casingTextureID = getCasingTextureID();
         if (side == aFacing) {
             return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(casingTextureID), TextureFactory.builder()
-                .addIcon(aActive ? OVERLAY_FRONT_ORE_FACTORY_ACTIVE : OVERLAY_FRONT_ORE_FACTORY)
-                .extFacing()
-                .build() };
+                .addIcon(aActive ? OVERLAY_FRONT_ORE_FACTORY_ACTIVE : OVERLAY_FRONT_ORE_FACTORY).extFacing().build() };
         }
         return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(casingTextureID) };
     }
@@ -491,12 +472,9 @@ public class LargeOreProcessor extends GTNGMultiBlockBase<LargeOreProcessor> imp
             // # Unprocessable items move to the output bus
             // # zh_CN 无法处理的物品会转到输出总线
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeOreProcessor.4"))
-            .beginStructureBlock(3, 2, 2, false)
-            .addCasing("0+", "Any Large Ore Processor Casing", false)
-            .addInputBus("1+", "Any Input Bus", 1)
-            .addOutputBus("1+", "Any Output Bus", 1)
-            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", "Any Maintenance Hatch", 1)
-            .toolTipFinisher();
+            .beginStructureBlock(3, 2, 2, false).addCasing("0+", "Any Large Ore Processor Casing", false)
+            .addInputBus("1+", "Any Input Bus", 1).addOutputBus("1+", "Any Output Bus", 1)
+            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", "Any Maintenance Hatch", 1).toolTipFinisher();
         return tt;
     }
 }

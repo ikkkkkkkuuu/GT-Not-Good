@@ -54,9 +54,7 @@ public final class StockConfig {
         if (slot < 0 || slot >= size()) return;
         if (key != null && !(key.isItem() || key.isFluid())) return;
         if (keys[slot] != null && key != null && keys[slot].isSameType(key)) return;
-        keys[slot] = key == null ? null
-            : key.copy()
-                .setStackSize(1);
+        keys[slot] = key == null ? null : key.copy().setStackSize(1);
         amounts[slot] = key == null ? 0 : Math.max(1, key.getStackSize());
         batches[slot] = 0;
         if (key != null) {
@@ -123,8 +121,7 @@ public final class StockConfig {
             NBTTagCompound row = tag.getCompoundTag("row" + i);
             IAEStack<?> key = Platform.readStackNBT(row, false);
             if (key != null && (key.isItem() || key.isFluid())) {
-                keys[i] = key.copy()
-                    .setStackSize(1);
+                keys[i] = key.copy().setStackSize(1);
                 for (int previous = 0; previous < i; previous++) {
                     if (keys[previous] != null && keys[previous].isSameType(key)) keys[i] = null;
                 }

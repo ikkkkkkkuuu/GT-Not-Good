@@ -64,10 +64,10 @@ public interface Constants {
 
     enum MessageType {
 
-        UPDATE_PLAYER_CURRENT_ITEM(-1),
-        UPDATE_PINNED_ITEMS(-2),
-        ADD_PINNED_ITEM(-3),
-        NOTIFICATION(-4);
+        UpdatePlayerCurrentItem(-1),
+        UpdatePinnedItems(-2),
+        AddPinnedItem(-3),
+        Notification(-4);
 
         public final byte type;
 
@@ -81,15 +81,15 @@ public interface Constants {
     }
 
     enum State {
-        RUNNING,
-        FINISHED,
-        CANCELLED
+        Running,
+        Finished,
+        Cancelled
     }
 
     enum MouseWheel {
 
-        PREVIEW(-1),
-        NEXT(1);
+        Preview(-1),
+        Next(1);
 
         public final int direction;
 

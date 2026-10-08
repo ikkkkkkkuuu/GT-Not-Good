@@ -63,8 +63,8 @@ public final class StructureSearch {
             return;
         }
         if (StructureCompassItem.mode(stack) == 1) refreshLoadedGames(player);
-        Location known = StructureLocations.get(player.worldObj)
-            .nearest(StructureCompassItem.mode(stack), player.posX, player.posZ, RADIUS);
+        Location known = StructureLocations.get(player.worldObj).nearest(StructureCompassItem.mode(stack), player.posX,
+            player.posZ, RADIUS);
         if (known != null) {
             setTarget(player, stack, known, true);
             return;
@@ -78,8 +78,7 @@ public final class StructureSearch {
                 player.addChatMessage(new ChatComponentTranslation("compass.disabled"));
                 return;
             }
-            StructureCompassItem.data(stack)
-                .removeTag("Found");
+            StructureCompassItem.data(stack).removeTag("Found");
             searches.put(player.getUniqueID(), search);
             // #tr compass.searching
             // # Reading the world seed (8192-block radius). Keep holding the compass.
@@ -115,14 +114,15 @@ public final class StructureSearch {
     @SubscribeEvent
     public void tick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        Iterator<Search> iterator = searches.values()
-            .iterator();
+        Iterator<Search> iterator = searches.values().iterator();
         while (iterator.hasNext()) {
             Search search = iterator.next();
-            if (search.player.isDead || search.player.worldObj != search.world
-                || !search.world.playerEntities.contains(search.player)
-                || search.player.getHeldItem() != search.stack
-                || StructureCompassItem.mode(search.stack) != search.kind) {
+            if (
+                search.player.isDead || search.player.worldObj != search.world
+                    || !search.world.playerEntities.contains(search.player)
+                    || search.player.getHeldItem() != search.stack
+                    || StructureCompassItem.mode(search.stack) != search.kind
+            ) {
                 iterator.remove();
                 continue;
             }
@@ -150,16 +150,12 @@ public final class StructureSearch {
 
     @SubscribeEvent
     public void save(ChunkDataEvent.Save event) {
-        if (!event.world.isRemote) scan(
-            event.world,
-            event.getData()
-                .getCompoundTag("Level"));
+        if (!event.world.isRemote) scan(event.world, event.getData().getCompoundTag("Level"));
     }
 
     @SubscribeEvent
     public void unload(WorldEvent.Unload event) {
-        searches.values()
-            .removeIf(search -> search.world == event.world);
+        searches.values().removeIf(search -> search.world == event.world);
     }
 
     private static void scan(World world, NBTTagCompound level) {
@@ -178,21 +174,18 @@ public final class StructureSearch {
             TileEntity tile = (TileEntity) object;
             double dx = tile.xCoord + .5 - player.posX, dz = tile.zCoord + .5 - player.posZ;
             if (dx * dx + dz * dz > 256.0 * 256.0 || !isGameCore(tile)) continue;
-            StructureLocations.get(world)
-                .add(1, tile.xCoord, tile.yCoord, tile.zCoord);
+            StructureLocations.get(world).add(1, tile.xCoord, tile.yCoord, tile.zCoord);
         }
     }
 
     /** Recognizes registered game cores without depending on optional tile class names or loading chunks. */
     private static boolean isGameCore(TileEntity tile) {
-        if (tile.isInvalid() || tile.getWorldObj() == null
-            || !tile.getWorldObj()
-                .getChunkProvider()
-                .chunkExists(tile.xCoord >> 4, tile.zCoord >> 4))
-            return false;
+        if (
+            tile.isInvalid() || tile.getWorldObj() == null
+                || !tile.getWorldObj().getChunkProvider().chunkExists(tile.xCoord >> 4, tile.zCoord >> 4)
+        ) return false;
         GameRegistry.UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(tile.getBlockType());
-        return id != null && ModList.LootGames.getID()
-            .equals(id.modId)
+        return id != null && ModList.LootGames.getID().equals(id.modId)
             && ("LootGamesMasterBlock".equals(id.name) || "gol_master".equals(id.name)
                 || "ms_master".equals(id.name)
                 || "sdk_master".equals(id.name));
@@ -269,8 +262,7 @@ public final class StructureSearch {
             centerZ = MathHelper.floor_double(originZ) >> 4;
             rogue = kind == 0 ? new RoguelikeCandidates(world) : null;
             loot = kind == 1 ? new LootGamesCandidates() : null;
-            File root = world.getSaveHandler()
-                .getWorldDirectory();
+            File root = world.getSaveHandler().getWorldDirectory();
             String dimensionFolder = world.provider.getSaveFolder();
             folder = dimensionFolder == null ? root : new File(root, dimensionFolder);
         }
@@ -294,17 +286,14 @@ public final class StructureSearch {
                     if (level != null) scan(world, level);
                     scanOffset++;
                     if (scanOffset >= width * width) {
-                        Location found = StructureLocations.get(world)
-                            .nearest(kind, candidateX * 16 + 8, candidateZ * 16 + 8, kind == 0 ? 128 : 24);
+                        Location found = StructureLocations.get(world).nearest(kind, candidateX * 16 + 8,
+                            candidateZ * 16 + 8, kind == 0 ? 128 : 24);
                         if (found != null) {
                             setTarget(player, stack, found, true);
                             return true;
                         }
                         if (!populated) {
-                            setTarget(
-                                player,
-                                stack,
-                                new Location(kind, candidateX * 16 + 8, 0, candidateZ * 16 + 8),
+                            setTarget(player, stack, new Location(kind, candidateX * 16 + 8, 0, candidateZ * 16 + 8),
                                 false);
                             return true;
                         }
@@ -335,19 +324,14 @@ public final class StructureSearch {
         }
 
         private NBTTagCompound read(int x, int z) throws IOException {
-            if (world.getChunkProvider()
-                .chunkExists(x, z)) {
-                return snapshot(
-                    world.getChunkProvider()
-                        .provideChunk(x, z));
+            if (world.getChunkProvider().chunkExists(x, z)) {
+                return snapshot(world.getChunkProvider().provideChunk(x, z));
             }
             // RegionFileCache otherwise creates an empty region file even for a read of absent terrain.
             File region = new File(new File(folder, "region"), "r." + (x >> 5) + "." + (z >> 5) + ".mca");
             if (!region.isFile()) return null;
             try (DataInputStream input = RegionFileCache.getChunkInputStream(folder, x, z)) {
-                return input == null ? null
-                    : CompressedStreamTools.read(input)
-                        .getCompoundTag("Level");
+                return input == null ? null : CompressedStreamTools.read(input).getCompoundTag("Level");
             }
         }
     }

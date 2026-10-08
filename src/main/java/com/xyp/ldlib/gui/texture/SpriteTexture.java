@@ -57,9 +57,7 @@ public final class SpriteTexture implements IGuiTexture {
 
     public SpriteTexture copy() {
         return new SpriteTexture(resource, imageWidth, imageHeight, 0)
-            .setSprite(spriteX, spriteY, spriteWidth, spriteHeight)
-            .setBorder(left, top, right, bottom)
-            .setColor(color);
+            .setSprite(spriteX, spriteY, spriteWidth, spriteHeight).setBorder(left, top, right, bottom).setColor(color);
     }
 
     /** Returns source and destination splits for one nine-slice axis; pure math for regression tests. */
@@ -83,17 +81,12 @@ public final class SpriteTexture implements IGuiTexture {
         float[] xs = horizontal[0], us = horizontal[1], ys = vertical[0], vs = vertical[1];
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_CURRENT_BIT | GL11.GL_TEXTURE_BIT);
         try {
-            Minecraft.getMinecraft()
-                .getTextureManager()
-                .bindTexture(resource);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(resource);
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glColor4f(
-                (color >> 16 & 255) / 255f,
-                (color >> 8 & 255) / 255f,
-                (color & 255) / 255f,
+            GL11.glColor4f((color >> 16 & 255) / 255f, (color >> 8 & 255) / 255f, (color & 255) / 255f,
                 (color >>> 24) / 255f);
             Tessellator t = Tessellator.instance;
             t.startDrawingQuads();

@@ -30,8 +30,7 @@ public final class SimpleFilterComponent extends AbstractFilterComponent {
 
     public static SimpleFilterComponent readData(NBTTagCompound data) {
         Materials material = WildcardMaterials.findByName(data.getString(KEY_MATERIAL));
-        return new SimpleFilterComponent(
-            WildcardMaterials.isRealMaterial(material) ? material : null,
+        return new SimpleFilterComponent(WildcardMaterials.isRealMaterial(material) ? material : null,
             readWhitelist(data));
     }
 

@@ -50,10 +50,8 @@ public interface IGuiDrawSlot {
             return true;
         }
         boolean result = true;
-        for (ISlotRender slotRender : SlotRender.instance()
-            .getRenders()) {
-            if (slotRender.get()
-                .test(slot)) {
+        for (ISlotRender slotRender : SlotRender.instance().getRenders()) {
+            if (slotRender.get().test(slot)) {
                 if (!slotRender.drawSlot(slot, stack, this, display)) {
                     result = false;
                     break;
@@ -64,10 +62,8 @@ public interface IGuiDrawSlot {
             baseDraw.run();
         }
 
-        for (ISlotRender slotRender : SlotRender.instance()
-            .getRenders()) {
-            if (slotRender.get()
-                .test(slot)) {
+        for (ISlotRender slotRender : SlotRender.instance().getRenders()) {
+            if (slotRender.get().test(slot)) {
                 slotRender.drawCallback(slot, stack, this, display);
             }
         }
@@ -78,12 +74,8 @@ public interface IGuiDrawSlot {
         Minecraft mc = Minecraft.getMinecraft();
         if (!display) {
             GL11.glTranslatef(0.0f, 0.0f, 200.0f);
-            aeRenderItem.renderItemOverlayIntoGUI(
-                mc.fontRenderer,
-                mc.getTextureManager(),
-                stack.getItemStack(),
-                slot.xDisplayPosition,
-                slot.yDisplayPosition);
+            aeRenderItem.renderItemOverlayIntoGUI(mc.fontRenderer, mc.getTextureManager(), stack.getItemStack(),
+                slot.xDisplayPosition, slot.yDisplayPosition);
             GL11.glTranslatef(0.0f, 0.0f, -200.0f);
         }
     }
@@ -108,9 +100,7 @@ public interface IGuiDrawSlot {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glColor3f(
-            (fluid.getColor() >> 16 & 0xFF) / 255.0F,
-            (fluid.getColor() >> 8 & 0xFF) / 255.0F,
+        GL11.glColor3f((fluid.getColor() >> 16 & 0xFF) / 255.0F, (fluid.getColor() >> 8 & 0xFF) / 255.0F,
             (fluid.getColor() & 0xFF) / 255.0F);
         getAEBaseGui().drawTexturedModelRectFromIcon(posX, posY, fluid.getIcon(), 16, 16);
         GL11.glEnable(GL11.GL_LIGHTING);

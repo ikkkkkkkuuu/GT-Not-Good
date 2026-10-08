@@ -31,8 +31,7 @@ public class WirelessTerminalQuantumBridgeRecipe extends ShapelessRecipes {
 
     public boolean isQuantumBridgeCard(ItemStack is) {
         if (is == null || is.getItem() == null) return false;
-        return CARDS.stream()
-            .anyMatch(x -> Objects.equals(x.getItem(), is.getItem()));
+        return CARDS.stream().anyMatch(x -> Objects.equals(x.getItem(), is.getItem()));
     }
 
     private WirelessTerminalQuantumBridgeRecipe(ItemStack term, ItemStack card) {
@@ -44,26 +43,23 @@ public class WirelessTerminalQuantumBridgeRecipe extends ShapelessRecipes {
         if (terminal == null || terminal.getItem() == null) return;
         CARDS.add(card);
         GameRegistry.addRecipe(new WirelessTerminalQuantumBridgeRecipe(terminal, card));
-        terminalClass.add(
-            terminal.getItem()
-                .getClass());
+        terminalClass.add(terminal.getItem().getClass());
     }
 
     public static void register(ItemStack terminal) {
         ItemStack card;
-        card = ModsItemlist.AE2WCTInfinityBoosterCard.get(1);
+        card = ModsItemlist.InfinityBoosterCard.get(1);
         if (card != null) {
             registerCard(card, terminal);
         }
-        card = ModsItemlist.AE2FluidCraftQuantumBridgeCard.get(1);
+        card = ModsItemlist.QuantumBridgeCard.get(1);
         if (card != null) {
             registerCard(card, terminal);
         }
     }
 
     public static ItemStack getInfinityBoosterCard() {
-        Optional<ItemStack> card = CARDS.stream()
-            .findFirst();
+        Optional<ItemStack> card = CARDS.stream().findFirst();
         return card.orElse(null);
     }
 
@@ -72,9 +68,7 @@ public class WirelessTerminalQuantumBridgeRecipe extends ShapelessRecipes {
         ItemStack term = inv.getStackInSlot(0);
         ItemStack infinityBoosterCard = inv.getStackInSlot(1);
         return term != null && term.getItem() != null
-            && terminalClass.contains(
-                term.getItem()
-                    .getClass())
+            && terminalClass.contains(term.getItem().getClass())
             && !hasInfinityBoosterCard(term)
             && isQuantumBridgeCard(infinityBoosterCard);
     }

@@ -41,16 +41,10 @@ public final class PatternSorterGui {
         this.data = data;
         this.sync = sync;
         ItemStack tool = data.getUsedItemStack();
-        mapName = tool.hasTagCompound() ? tool.getTagCompound()
-            .getString(MAP_TAG) : "";
+        mapName = tool.hasTagCompound() ? tool.getTagCompound().getString(MAP_TAG) : "";
         selectedMap = new StringSyncValue(() -> mapName);
-        entries = new GenericListSyncHandler<>(
-            this::scan,
-            null,
-            PatternSorterGui::readEntry,
-            PatternSorterGui::writeEntry,
-            PatternSorterGui::sameEntry,
-            null);
+        entries = new GenericListSyncHandler<>(this::scan, null, PatternSorterGui::readEntry,
+            PatternSorterGui::writeEntry, PatternSorterGui::sameEntry, null);
         actions = new Actions();
         sync.syncValue("map", selectedMap);
         sync.syncValue("entries", entries);
@@ -60,14 +54,12 @@ public final class PatternSorterGui {
     public ModularPanel build() {
         ModernThemeAdapter theme = new ModernThemeAdapter(
             path -> ModList.GTNotGood.getResourceLocation("textures/gui/ldlib/" + path));
-        return new Panel(this).size(420, 308)
-            .background(theme.panel)
+        return new Panel(this).size(420, 308).background(theme.panel)
             .child(SlotGroupWidget.playerInventory((index, slot) -> {
                 if (index == data.getSlotIndex()) slot = new LockedToolSlot();
                 slot.background(theme.slot);
                 return slot;
-            })
-                .pos(129, 220));
+            }).pos(129, 220));
     }
 
     /** Keeps the tool visible while preventing extraction or replacement on both sides after slot binding. */
@@ -76,8 +68,7 @@ public final class PatternSorterGui {
         @Override
         public void onInit() {
             super.onInit();
-            getSlot().canTake(false)
-                .canPut(false);
+            getSlot().canTake(false).canPut(false);
         }
     }
 
@@ -95,8 +86,7 @@ public final class PatternSorterGui {
     public static List<String> maps() {
         List<String> result = new ArrayList<>();
         for (RecipeMap<?> map : RecipeMap.ALL_RECIPE_MAPS.values()) {
-            if (!map.getAllRecipes()
-                .isEmpty()) result.add(map.unlocalizedName);
+            if (!map.getAllRecipes().isEmpty()) result.add(map.unlocalizedName);
         }
         Collections.sort(result);
         return result;
@@ -130,11 +120,7 @@ public final class PatternSorterGui {
     }
 
     private static PatternSorter.Entry readEntry(PacketBuffer buf) {
-        return new PatternSorter.Entry(
-            buf.readInt(),
-            buf.readInt(),
-            buf.readInt(),
-            buf.readInt(),
+        return new PatternSorter.Entry(buf.readInt(), buf.readInt(), buf.readInt(), buf.readInt(),
             ByteBufUtils.readItemStack(buf));
     }
 
@@ -147,8 +133,7 @@ public final class PatternSorterGui {
     }
 
     private static boolean sameEntry(PatternSorter.Entry a, PatternSorter.Entry b) {
-        return a.slot == b.slot && a.group()
-            .equals(b.group()) && ItemStack.areItemStacksEqual(a.stack, b.stack);
+        return a.slot == b.slot && a.group().equals(b.group()) && ItemStack.areItemStacksEqual(a.stack, b.stack);
     }
 
     /** All inventory writes execute on the server against a freshly checked snapshot and an empty cursor. */
@@ -178,17 +163,12 @@ public final class PatternSorterGui {
             if (id == 0 && maps().contains(value)) {
                 mapName = value;
                 if (!tool.hasTagCompound()) tool.setTagCompound(new NBTTagCompound());
-                tool.getTagCompound()
-                    .setString(MAP_TAG, mapName);
+                tool.getTagCompound().setString(MAP_TAG, mapName);
                 snapshot = null;
                 player.inventory.markDirty();
             } else if (id == 1 && map() != null && player.inventory.getItemStack() == null) {
                 List<PatternSorter.Entry> current = scan();
-                if (!value.isEmpty() && current.stream()
-                    .noneMatch(
-                        entry -> entry.group()
-                            .equals(value)))
-                    return;
+                if (!value.isEmpty() && current.stream().noneMatch(entry -> entry.group().equals(value))) return;
                 if (PatternSorter.reorder(player.inventory.mainInventory, current, value)) {
                     snapshot = null;
                     player.inventory.markDirty();

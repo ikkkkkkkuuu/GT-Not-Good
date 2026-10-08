@@ -140,9 +140,7 @@ public class SuperAdvancedMEInputHatch extends MTEHatchInputME {
         if (free == SLOT_COUNT) return;
         try {
             boolean changed = false;
-            for (IAEFluidStack stack : getProxy().getStorage()
-                .getFluidInventory()
-                .getStorageList()) {
+            for (IAEFluidStack stack : getProxy().getStorage().getFluidInventory().getStorageList()) {
                 if (stack.getStackSize() < minAutoPullAmount || getMatchingSlot(stack.getFluidStack(), false) != null)
                     continue;
                 slots[free] = new Slot(GTUtility.copyAmount(1, stack.getFluidStack()));
@@ -233,12 +231,7 @@ public class SuperAdvancedMEInputHatch extends MTEHatchInputME {
             slot.resetExtracted();
             return;
         }
-        int amount = availableAmount(
-            index,
-            available(
-                getProxy().getStorage()
-                    .getFluidInventory(),
-                slot.config));
+        int amount = availableAmount(index, available(getProxy().getStorage().getFluidInventory(), slot.config));
         slot.extracted = amount == 0 ? null : GTUtility.copyAmount(amount, slot.config);
         slot.extractedAmount = amount;
     }
@@ -248,8 +241,7 @@ public class SuperAdvancedMEInputHatch extends MTEHatchInputME {
         if (side != ForgeDirection.UNKNOWN || !isAllowedToWork()) return EMPTY_FLUID_TANK_INFOS;
         List<FluidTankInfo> tanks = new ObjectArrayList<>();
         try {
-            IMEMonitor<IAEFluidStack> inventory = getProxy().getStorage()
-                .getFluidInventory();
+            IMEMonitor<IAEFluidStack> inventory = getProxy().getStorage().getFluidInventory();
             for (int i = 0; i < SLOT_COUNT; i++) {
                 Slot slot = slots[i];
                 if (slot == null) continue;
@@ -279,10 +271,8 @@ public class SuperAdvancedMEInputHatch extends MTEHatchInputME {
             return result;
         }
         try {
-            IMEMonitor<IAEFluidStack> inventory = getProxy().getStorage()
-                .getFluidInventory();
-            int index = Arrays.asList(slots)
-                .indexOf(slot);
+            IMEMonitor<IAEFluidStack> inventory = getProxy().getStorage().getFluidInventory();
+            int index = Arrays.asList(slots).indexOf(slot);
             int offered = availableAmount(index, available(inventory, fluid));
             int drained = Math.min(amount, offered);
             if (offered == 0) return null;
@@ -312,8 +302,7 @@ public class SuperAdvancedMEInputHatch extends MTEHatchInputME {
         if (!processingRecipe) return CheckRecipeResultRegistry.SUCCESSFUL;
         CheckRecipeResult result = CheckRecipeResultRegistry.SUCCESSFUL;
         try {
-            IMEMonitor<IAEFluidStack> inventory = getProxy().getStorage()
-                .getFluidInventory();
+            IMEMonitor<IAEFluidStack> inventory = getProxy().getStorage().getFluidInventory();
             IEnergyGrid energy = getProxy().getEnergy();
             for (int i = 0; i < SLOT_COUNT; i++) {
                 Slot slot = slots[i];
@@ -436,9 +425,8 @@ public class SuperAdvancedMEInputHatch extends MTEHatchInputME {
     public void onScrewdriverRightClick(ForgeDirection side, EntityPlayer player, float x, float y, float z,
         ItemStack tool) {
         setAutoPullFluidList(!autoPull);
-        player.addChatMessage(
-            new ChatComponentTranslation(
-                "GT5U.machines.stocking_hatch.auto_pull_toggle." + (autoPull ? "enabled" : "disabled")));
+        player.addChatMessage(new ChatComponentTranslation(
+            "GT5U.machines.stocking_hatch.auto_pull_toggle." + (autoPull ? "enabled" : "disabled")));
     }
 
     @Override

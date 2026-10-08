@@ -43,9 +43,11 @@ public abstract class BasicMachineVirtualMoldMixin implements VirtualMoldMachine
     @Override
     public void gtng$setVirtualMold(ItemStack mold) {
         if (mold == null && gtng$virtualMold == null) return;
-        if (mold != null && gtng$virtualMold != null
-            && mold.isItemEqual(gtng$virtualMold)
-            && ItemStack.areItemStackTagsEqual(mold, gtng$virtualMold)) return;
+        if (
+            mold != null && gtng$virtualMold != null
+                && mold.isItemEqual(gtng$virtualMold)
+                && ItemStack.areItemStackTagsEqual(mold, gtng$virtualMold)
+        ) return;
         gtng$virtualMold = VirtualMachineMolds.at(VirtualMachineMolds.indexOf(mold));
     }
 

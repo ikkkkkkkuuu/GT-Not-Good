@@ -22,15 +22,6 @@ import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTRecipeBuilder;
 import gregtech.api.util.GTUtility;
 
-/**
- * GregTech-style item container enum for stacks registered by GT Not Good.
- * <p>
- * Each enum constant acts as a stable reference to an {@link ItemStack} that is assigned during registration. This
- * mirrors GregTech's {@code ItemList} pattern and prevents machines, recipes, creative tabs, and NEI handlers from
- * hard-coding item stacks or meta-tile IDs in multiple places.
- *
- * @see IItemContainer
- */
 public enum GTNGItemList implements IItemContainer {
 
     StructureCompass,
@@ -357,7 +348,7 @@ public enum GTNGItemList implements IItemContainer {
      *
      * @return internal backing stack reference
      */
-    public ItemStack getInternalStack_unsafe() {
+    public ItemStack getInternalStackUnsafe() {
         return mStack;
     }
 
@@ -417,14 +408,10 @@ public enum GTNGItemList implements IItemContainer {
         final String[] tDisplayNameWords = aDisplayName.split("\\W");
         for (String tWord : tDisplayNameWords) {
             if (!tWord.isEmpty()) {
-                tCamelCasedDisplayNameBuilder.append(
-                    tWord.substring(0, 1)
-                        .toUpperCase(Locale.US));
+                tCamelCasedDisplayNameBuilder.append(tWord.substring(0, 1).toUpperCase(Locale.US));
             }
             if (tWord.length() > 1) {
-                tCamelCasedDisplayNameBuilder.append(
-                    tWord.substring(1)
-                        .toLowerCase(Locale.US));
+                tCamelCasedDisplayNameBuilder.append(tWord.substring(1).toLowerCase(Locale.US));
             }
         }
         if (tCamelCasedDisplayNameBuilder.length() == 0) {

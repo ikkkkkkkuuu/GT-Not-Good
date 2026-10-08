@@ -15,6 +15,7 @@ import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngre
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.widget.Widget;
+import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 
 /**
  * 一个类槽位的输入控件：渲染一个物品图标，支持
@@ -41,7 +42,7 @@ public class WildcardDropWidget extends Widget<WildcardDropWidget>
     @Override
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         ItemStack stack = getter == null ? null : getter.get();
-        stack = com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials.toDisplayStack(stack);
+        stack = WildcardMaterials.toDisplayStack(stack);
         if (stack != null && stack.getItem() != null) {
             new ItemDrawable(stack).draw(context, 1, 1, 16, 16, widgetTheme.getTheme());
         }

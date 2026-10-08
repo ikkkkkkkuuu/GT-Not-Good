@@ -59,15 +59,11 @@ public final class TeleportManager {
         double targetZ = arrival[2] + 0.5D;
         player.closeScreen();
         if (player.dimension == dimension) {
-            player.playerNetServerHandler
-                .setPlayerLocation(targetX, targetY, targetZ, player.rotationYaw, player.rotationPitch);
+            player.playerNetServerHandler.setPlayerLocation(targetX, targetY, targetZ, player.rotationYaw,
+                player.rotationPitch);
         } else {
-            MinecraftServer.getServer()
-                .getConfigurationManager()
-                .transferPlayerToDimension(
-                    player,
-                    dimension,
-                    new DirectTeleportTeleporter(targetWorld, targetX, targetY, targetZ));
+            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension(player, dimension,
+                new DirectTeleportTeleporter(targetWorld, targetX, targetY, targetZ));
         }
         return true;
     }
@@ -121,8 +117,7 @@ public final class TeleportManager {
         if (y < 1 || y >= world.getActualHeight() - 1) return false;
         if (!world.isAirBlock(x, y, z) || !world.isAirBlock(x, y + 1, z)) return false;
         Block floor = world.getBlock(x, y - 1, z);
-        return floor != null && floor.getMaterial()
-            .blocksMovement();
+        return floor != null && floor.getMaterial().blocksMovement();
     }
 
     private static final class DirectTeleportTeleporter extends Teleporter {

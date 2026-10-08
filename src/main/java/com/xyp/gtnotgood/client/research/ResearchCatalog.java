@@ -17,20 +17,28 @@ import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchCategoryList;
 import thaumcraft.api.research.ResearchItem;
 import thaumcraft.common.Thaumcraft;
+import thaumcraft.common.config.Config;
 import thaumcraft.common.lib.research.ResearchManager;
 
 public final class ResearchCatalog {
 
     public enum Scope {
-        CURRENT_CATEGORY,
-        ALL_CATEGORIES
+        CurrentCategory,
+        AllCategories
     }
 
     public enum Status {
-        READY,
-        HAS_NOTE,
-        LOCKED,
-        DIRECT
+
+        Ready("tcautores.queue_status.ready"),
+        HasNote("tcautores.queue_status.has_note"),
+        Locked("tcautores.queue_status.locked"),
+        Direct("tcautores.queue_status.direct");
+
+        public final String translationKey;
+
+        Status(String translationKey) {
+            this.translationKey = translationKey;
+        }
     }
 
     public static final class Entry {
@@ -56,9 +64,7 @@ public final class ResearchCatalog {
         String category = currentCategory;
         if (category != null && ResearchCategories.getResearchList(category) != null) return category;
         return ResearchCategories.researchCategories.isEmpty() ? null
-            : ResearchCategories.researchCategories.keySet()
-                .iterator()
-                .next();
+            : ResearchCategories.researchCategories.keySet().iterator().next();
     }
 
     public static List<Entry> entries(EntityPlayer player, Scope scope, String category) {
@@ -68,29 +74,21 @@ public final class ResearchCatalog {
         Set<String> completed = completedList == null ? Collections.emptySet() : new HashSet<>(completedList);
         List<Entry> result = new ArrayList<>();
         for (String categoryKey : ResearchCategories.researchCategories.keySet()) {
-            if (scope == Scope.CURRENT_CATEGORY && !categoryKey.equals(category)) continue;
+            if (scope == Scope.CurrentCategory && !categoryKey.equals(category)) continue;
             ResearchCategoryList researchCategory = ResearchCategories.getResearchList(categoryKey);
             if (researchCategory == null) continue;
             for (ResearchItem research : researchCategory.research.values()) {
                 boolean requisites = ResearchManager.doesPlayerHaveRequisites(username, research.key);
                 boolean hasNote = ResearchManager.getResearchSlot(player, research.key) >= 0;
-                Status status = classify(
-                    research,
-                    completed,
-                    hasNote,
-                    requisites,
-                    thaumcraft.common.config.Config.researchDifficulty);
+                Status status = classify(research, completed, hasNote, requisites, Config.researchDifficulty);
                 if (status != null) result.add(new Entry(research, status));
             }
         }
         Map<String, Integer> depths = new HashMap<>();
         for (Entry entry : result) dependencyDepth(entry.research, depths, new HashSet<>());
-        result.sort(
-            Comparator.comparingInt((Entry entry) -> depths.get(entry.research.key))
-                .thenComparing(entry -> entry.research.category)
-                .thenComparingInt(entry -> entry.research.displayRow)
-                .thenComparingInt(entry -> entry.research.displayColumn)
-                .thenComparing(entry -> entry.research.key));
+        result.sort(Comparator.comparingInt((Entry entry) -> depths.get(entry.research.key))
+            .thenComparing(entry -> entry.research.category).thenComparingInt(entry -> entry.research.displayRow)
+            .thenComparingInt(entry -> entry.research.displayColumn).thenComparing(entry -> entry.research.key));
         return result;
     }
 
@@ -119,7 +117,7 @@ public final class ResearchCatalog {
     public static List<ResearchItem> generatable(EntityPlayer player, Scope scope, String category) {
         List<ResearchItem> result = new ArrayList<>();
         for (Entry entry : entries(player, scope, category)) {
-            if (entry.status == Status.READY) result.add(entry.research);
+            if (entry.status == Status.Ready) result.add(entry.research);
         }
         return result;
     }
@@ -127,9 +125,10 @@ public final class ResearchCatalog {
     public static List<ResearchItem> actionable(EntityPlayer player, Scope scope, String category) {
         List<ResearchItem> result = new ArrayList<>();
         for (Entry entry : entries(player, scope, category)) {
-            if (entry.status == Status.READY || entry.status == Status.HAS_NOTE
-                || entry.status == Status.DIRECT && isDirectResearchAffordable(player, entry.research))
-                result.add(entry.research);
+            if (
+                entry.status == Status.Ready || entry.status == Status.HasNote
+                    || entry.status == Status.Direct && isDirectResearchAffordable(player, entry.research)
+            ) result.add(entry.research);
         }
         return result;
     }
@@ -177,16 +176,18 @@ public final class ResearchCatalog {
 
     static Status classify(ResearchItem research, Set<String> completed, boolean hasNote, boolean requisites,
         int difficulty) {
-        if (research == null || completed.contains(research.key)
-            || research.isVirtual()
-            || research.isStub()
-            || research.isAutoUnlock()) return null;
+        if (
+            research == null || completed.contains(research.key)
+                || research.isVirtual()
+                || research.isStub()
+                || research.isAutoUnlock()
+        ) return null;
         if (!isRevealed(research, completed)) return null;
-        if (!requisites) return Status.LOCKED;
-        if (hasNote) return Status.HAS_NOTE;
-        if (completesDirectly(research, difficulty)) return Status.DIRECT;
+        if (!requisites) return Status.Locked;
+        if (hasNote) return Status.HasNote;
+        if (completesDirectly(research, difficulty)) return Status.Direct;
         if (research.tags == null || research.tags.size() == 0 || research.getResearchPrimaryTag() == null) return null;
-        return Status.READY;
+        return Status.Ready;
     }
 
     static boolean isRevealed(ResearchItem research, Collection<String> completed) {
@@ -204,8 +205,10 @@ public final class ResearchCatalog {
         if (player == null || research == null || research.tags == null) return false;
         String username = player.getCommandSenderName();
         for (Aspect aspect : research.tags.getAspects()) {
-            if (Thaumcraft.proxy.getPlayerKnowledge()
-                .getAspectPoolFor(username, aspect) < research.tags.getAmount(aspect)) return false;
+            if (
+                Thaumcraft.proxy.getPlayerKnowledge().getAspectPoolFor(username, aspect)
+                    < research.tags.getAmount(aspect)
+            ) return false;
         }
         return true;
     }

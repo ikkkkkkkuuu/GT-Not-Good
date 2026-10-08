@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -16,10 +17,13 @@ import net.minecraftforge.fluids.IFluidHandler;
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.xyp.gtnotgood.common.blocks.mebridge.TileMEBridgeBase;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
+import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.ldlib.integration.modularui.PixelFontModularScreen;
 
 import appeng.api.config.Actionable;
 import appeng.api.networking.GridFlags;
@@ -31,6 +35,8 @@ import appeng.me.helpers.AENetworkProxy;
 import appeng.util.Platform;
 import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Thirty-six item and fluid export selections. Fluid access is a live, powered AE transaction, not a tank.
@@ -98,8 +104,7 @@ public class TileMEContainer extends TileMEBridgeBase
     /** Fills real item slots without reserving any fluid. */
     private void refill() throws GridAccessException {
         MachineSource source = new MachineSource(this);
-        var itemInventory = getProxy().getStorage()
-            .getItemInventory();
+        var itemInventory = getProxy().getStorage().getItemInventory();
         flushInputs();
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
             ItemStack filter = itemFilters[slot];
@@ -110,8 +115,8 @@ public class TileMEContainer extends TileMEBridgeBase
                         - (items[slot] == null ? 0 : items[slot].stackSize);
                     if (missing > 0) {
                         request.setStackSize(missing);
-                        IAEItemStack extracted = Platform
-                            .poweredExtraction(getProxy().getEnergy(), itemInventory, request, source);
+                        IAEItemStack extracted = Platform.poweredExtraction(getProxy().getEnergy(), itemInventory,
+                            request, source);
                         if (extracted != null && extracted.getStackSize() > 0) {
                             if (items[slot] == null) items[slot] = extracted.getItemStack();
                             else items[slot].stackSize += (int) extracted.getStackSize();
@@ -131,10 +136,8 @@ public class TileMEContainer extends TileMEBridgeBase
     private void refreshNetworkCounts() throws GridAccessException {
         Arrays.fill(networkItems, 0);
         Arrays.fill(networkFluid, 0);
-        var itemInventory = getProxy().getStorage()
-            .getItemInventory();
-        var fluidInventory = getProxy().getStorage()
-            .getFluidInventory();
+        var itemInventory = getProxy().getStorage().getItemInventory();
+        var fluidInventory = getProxy().getStorage().getFluidInventory();
         var storedItems = itemInventory.getStorageList();
         var storedFluids = fluidInventory.getStorageList();
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
@@ -170,12 +173,8 @@ public class TileMEContainer extends TileMEBridgeBase
      * @throws GridAccessException when the grid becomes unavailable
      */
     protected ItemStack insertNetworkItem(ItemStack offered) throws GridAccessException {
-        IAEItemStack remainder = Platform.poweredInsert(
-            getProxy().getEnergy(),
-            getProxy().getStorage()
-                .getItemInventory(),
-            AEItemStack.create(offered),
-            new MachineSource(this));
+        IAEItemStack remainder = Platform.poweredInsert(getProxy().getEnergy(),
+            getProxy().getStorage().getItemInventory(), AEItemStack.create(offered), new MachineSource(this));
         return remainder == null ? null : remainder.getItemStack();
     }
 
@@ -322,12 +321,8 @@ public class TileMEContainer extends TileMEBridgeBase
     protected int insertNetworkFluid(FluidStack resource, boolean modulate) {
         if (!getProxy().isActive()) return 0;
         try {
-            IAEFluidStack remainder = Platform.poweredInsert(
-                getProxy().getEnergy(),
-                getProxy().getStorage()
-                    .getFluidInventory(),
-                AEFluidStack.create(resource),
-                new MachineSource(this),
+            IAEFluidStack remainder = Platform.poweredInsert(getProxy().getEnergy(),
+                getProxy().getStorage().getFluidInventory(), AEFluidStack.create(resource), new MachineSource(this),
                 modulate ? Actionable.MODULATE : Actionable.SIMULATE);
             return resource.amount - (remainder == null ? 0 : (int) remainder.getStackSize());
         } catch (GridAccessException ignored) {
@@ -381,12 +376,8 @@ public class TileMEContainer extends TileMEBridgeBase
         try {
             var request = AEFluidStack.create(sample);
             request.setStackSize(amount);
-            IAEFluidStack extracted = Platform.poweredExtraction(
-                getProxy().getEnergy(),
-                getProxy().getStorage()
-                    .getFluidInventory(),
-                request,
-                new MachineSource(this),
+            IAEFluidStack extracted = Platform.poweredExtraction(getProxy().getEnergy(),
+                getProxy().getStorage().getFluidInventory(), request, new MachineSource(this),
                 modulate ? Actionable.MODULATE : Actionable.SIMULATE);
             return extracted == null ? null : extracted.getFluidStack();
         } catch (GridAccessException ignored) {
@@ -413,12 +404,12 @@ public class TileMEContainer extends TileMEBridgeBase
     }
 
     @Override
-    public boolean canFill(ForgeDirection from, net.minecraftforge.fluids.Fluid type) {
+    public boolean canFill(ForgeDirection from, Fluid type) {
         return type != null && fill(from, new FluidStack(type, 1), false) > 0;
     }
 
     @Override
-    public boolean canDrain(ForgeDirection from, net.minecraftforge.fluids.Fluid type) {
+    public boolean canDrain(ForgeDirection from, Fluid type) {
         if (!isServerSide() || transferring) return false;
         if (fluid != null && (type == null || fluid.getFluid() == type)) return true;
         for (FluidStack sample : fluidFilters) {
@@ -501,8 +492,9 @@ public class TileMEContainer extends TileMEBridgeBase
         if (fluidFilters[slot] != null) {
             fluidFilters[slot].amount = 1;
             for (int other = 0; other < SLOT_COUNT; other++) {
-                if (other != slot && fluidFilters[other] != null
-                    && fluidFilters[other].isFluidEqual(fluidFilters[slot])) fluidFilters[other] = null;
+                if (
+                    other != slot && fluidFilters[other] != null && fluidFilters[other].isFluidEqual(fluidFilters[slot])
+                ) fluidFilters[other] = null;
             }
         }
     }
@@ -526,10 +518,8 @@ public class TileMEContainer extends TileMEBridgeBase
 
     /** Actual block GUI entry point: applies the library font to layout, drawing and input together. */
     @Override
-    @cpw.mods.fml.relauncher.SideOnly(cpw.mods.fml.relauncher.Side.CLIENT)
-    public com.cleanroommc.modularui.screen.ModularScreen createScreen(PosGuiData data, ModularPanel mainPanel) {
-        return new com.xyp.ldlib.integration.modularui.PixelFontModularScreen(
-            com.xyp.gtnotgood.utils.enums.ModList.ModIds.GT_NOT_GOOD,
-            mainPanel);
+    @SideOnly(Side.CLIENT)
+    public ModularScreen createScreen(PosGuiData data, ModularPanel mainPanel) {
+        return new PixelFontModularScreen(ModList.ModIds.GT_NOT_GOOD, mainPanel);
     }
 }

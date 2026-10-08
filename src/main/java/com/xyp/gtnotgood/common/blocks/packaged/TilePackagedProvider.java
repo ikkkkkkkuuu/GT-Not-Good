@@ -6,10 +6,14 @@ package com.xyp.gtnotgood.common.blocks.packaged;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,15 +21,18 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.xyp.gtnotgood.common.blocks.mebridge.TileMEBridgeBase;
 import com.xyp.gtnotgood.common.items.packaged.ItemPackagedCore;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
+import com.xyp.gtnotgood.utils.enums.ModList;
 
 import appeng.api.implementations.ICraftingPatternItem;
 import appeng.api.networking.GridFlags;
@@ -34,18 +41,22 @@ import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.networking.crafting.ICraftingProviderHelper;
 import appeng.api.networking.events.MENetworkCraftingPatternChange;
 import appeng.api.networking.security.MachineSource;
+import appeng.api.util.IInterfaceViewable;
+import appeng.helpers.ICustomNameObject;
 import appeng.me.GridAccessException;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * 36-pattern wireless provider with real altar lanes and a persistent nine-slot return inventory.
  * Ingredients reside in the target after acceptance; only actual completed outputs are ever imported.
  * A missing chunk pauses a lane rather than deleting its binding or loading the chunk.
  */
-public final class TilePackagedProvider extends TileMEBridgeBase implements IInventory, ICraftingProvider,
-    IGuiHolder<PosGuiData>, appeng.api.util.IInterfaceViewable, appeng.helpers.ICustomNameObject {
+public final class TilePackagedProvider extends TileMEBridgeBase
+    implements IInventory, ICraftingProvider, IGuiHolder<PosGuiData>, IInterfaceViewable, ICustomNameObject {
 
     public static final int PATTERNS = 36;
     public static final int CORE = 45;
@@ -60,15 +71,14 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     boolean autoReturn;
     boolean networkEssentia;
     int essentiaSpeed = 8;
-    private String essentiaIdentity = java.util.UUID.randomUUID()
-        .toString();
-    AltarStatus altarStatus = AltarStatus.IDLE;
+    private String essentiaIdentity = UUID.randomUUID().toString();
+    AltarStatus altarStatus = AltarStatus.Idle;
     String arcaneMissingAspect = "";
     int arcaneMissingUnits;
     int priority;
     boolean terminalVisible = true;
     private boolean patternOptimization;
-    PackagedCraftingLock craftingLock = PackagedCraftingLock.NONE;
+    PackagedCraftingLock craftingLock = PackagedCraftingLock.None;
     private boolean pulseLocked;
     private boolean previousRedstone;
     private ItemStack unlockResult;
@@ -77,11 +87,11 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     private long nextDispatch;
     private int failures;
     /** Fractional converted Vis and extraction reservations survive retries and world saves. Units are 0.01 Vis. */
-    final java.util.Map<String, Long> arcaneVisCredit = new java.util.HashMap<>();
+    final Map<String, Long> arcaneVisCredit = new HashMap<>();
     /** Actual AE essentia reserved for crucible crafts; retained if a storage handler under-delivers. */
-    final java.util.Map<String, Long> crucibleEssentiaCredit = new java.util.HashMap<>();
+    final Map<String, Long> crucibleEssentiaCredit = new HashMap<>();
     /** Successful synchronous dispatches, bounded to one per target per server tick. */
-    private final java.util.Map<PackagedTarget, Long> arcaneDispatchTicks = new java.util.HashMap<>();
+    private final Map<PackagedTarget, Long> arcaneDispatchTicks = new HashMap<>();
     private static final int[] RETRY = { 1, 2, 3, 4, 5, 8, 10, 20, 40 };
 
     @Override
@@ -107,11 +117,13 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     }
 
     public boolean bind(PackagedTarget target) {
-        if (!isServerSide() || target == null
-            || target.dimension != worldObj.provider.dimensionId
-            || target.resolve(worldObj) == null
-            || target.resolve(worldObj) == this
-            || targets.size() >= MAX_TARGETS) return false;
+        if (
+            !isServerSide() || target == null
+                || target.dimension != worldObj.provider.dimensionId
+                || target.resolve(worldObj) == null
+                || target.resolve(worldObj) == this
+                || targets.size() >= MAX_TARGETS
+        ) return false;
         for (PackagedTarget existing : targets) if (existing.sameBlock(target)) return false;
         targets.add(target);
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -157,10 +169,8 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     @Override
     public void onDataPacket(NetworkManager network, S35PacketUpdateTileEntity packet) {
         if (worldObj == null || !worldObj.isRemote) return;
-        customName = packet.func_148857_g()
-            .getString("CustomName");
-        NBTTagList connections = packet.func_148857_g()
-            .getTagList("WirelessConnections", 10);
+        customName = packet.func_148857_g().getString("CustomName");
+        NBTTagList connections = packet.func_148857_g().getTagList("WirelessConnections", 10);
         targets.clear();
         for (int i = 0; i < Math.min(connections.tagCount(), MAX_TARGETS); i++) {
             PackagedTarget target = PackagedTarget.read(connections.getCompoundTagAt(i));
@@ -182,7 +192,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     /** Changes the source only with an idle infusion core; retains the stored setting when swapping cores. */
     public boolean setNetworkEssentia(boolean enabled) {
         if (!isServerSide() || !hasInfusionCore() || !jobs.isEmpty()) return false;
-        if (enabled && !com.xyp.gtnotgood.utils.enums.ModList.ThaumicEnergistics.isModLoaded()) return false;
+        if (enabled && !ModList.ThaumicEnergistics.isModLoaded()) return false;
         networkEssentia = enabled;
         markDirty();
         return true;
@@ -209,9 +219,10 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
         int count = 0;
         for (Job job : jobs) {
             if (!job.target.sameBlock(target)) continue;
-            if (PackagedCoreRegistry.entries()
-                .get(job.core) != adapter || job.pattern == null
-                || !sameItem(job.pattern, pattern)) return false;
+            if (
+                PackagedCoreRegistry.entries().get(job.core) != adapter || job.pattern == null
+                    || !sameItem(job.pattern, pattern)
+            ) return false;
             count++;
         }
         return count < adapter.maxInFlight();
@@ -228,21 +239,21 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     boolean releaseInterrupted(int index) {
         if (!isServerSide() || index < 0 || index >= targets.size()) return false;
         PackagedTarget target = targets.get(index);
-        if (!worldObj.getChunkProvider()
-            .chunkExists(target.x >> 4, target.z >> 4)) return false;
+        if (!worldObj.getChunkProvider().chunkExists(target.x >> 4, target.z >> 4)) return false;
         for (int i = 0; i < jobs.size(); i++) {
             Job job = jobs.get(i);
             if (!job.target.sameBlock(target)) continue;
-            var adapter = PackagedCoreRegistry.entries()
-                .get(job.core);
-            if (adapter == null || jobs.stream()
-                .anyMatch(other -> other.target.sameBlock(target) && !other.core.equals(job.core))) return false;
+            var adapter = PackagedCoreRegistry.entries().get(job.core);
+            if (
+                adapter == null
+                    || jobs.stream().anyMatch(other -> other.target.sameBlock(target) && !other.core.equals(job.core))
+            ) return false;
             if (!adapter.interrupt(this, target.resolve(worldObj), job.expected)) return false;
             jobs.removeIf(other -> other.target.sameBlock(target));
             nextDispatch = 0;
             failures = 0;
             resetCraftingLock();
-            if (jobs.isEmpty()) altarStatus = AltarStatus.IDLE;
+            if (jobs.isEmpty()) altarStatus = AltarStatus.Idle;
             markDirty();
             return true;
         }
@@ -269,17 +280,17 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     public boolean craftingLocked() {
         boolean powered = worldObj != null && worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
         return switch (craftingLock) {
-            case NONE -> false;
-            case HIGH -> powered;
-            case LOW -> !powered;
-            case PULSE -> pulseLocked;
-            case RESULT -> unlockResult != null;
+            case None -> false;
+            case High -> powered;
+            case Low -> !powered;
+            case Pulse -> pulseLocked;
+            case Result -> unlockResult != null;
         };
     }
 
     /** Samples an edge, not a sustained signal; keeping this state in NBT prevents reloads from inventing pulses. */
     void updateCraftingLockPower() {
-        if (craftingLock != PackagedCraftingLock.PULSE) return;
+        if (craftingLock != PackagedCraftingLock.Pulse) return;
         boolean powered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
         if (powered && !previousRedstone && pulseLocked) resetCraftingLock();
         if (powered != previousRedstone && pulseLocked) markDirty();
@@ -293,8 +304,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
         updateCraftingLockPower();
         if (patternsDirty) {
             try {
-                getProxy().getGrid()
-                    .postEvent(new MENetworkCraftingPatternChange(this, getProxy().getNode()));
+                getProxy().getGrid().postEvent(new MENetworkCraftingPatternChange(this, getProxy().getNode()));
                 patternsDirty = false;
             } catch (GridAccessException ignored) {}
         }
@@ -329,8 +339,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
             || craftingLocked()
             || targets.isEmpty()
             || PackagedCoreRegistry.get(inventory[CORE]) == null
-            || jobs.size() >= targets.size() * PackagedCoreRegistry.get(inventory[CORE])
-                .maxInFlight()
+            || jobs.size() >= targets.size() * PackagedCoreRegistry.get(inventory[CORE]).maxInFlight()
             || worldObj.getTotalWorldTime() < nextDispatch;
     }
 
@@ -343,8 +352,10 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
         // Bound work even with 1024 remote targets; successive retries continue from the next lane.
         for (int i = 0; i < Math.min(count, 16); i++) {
             PackagedTarget target = targets.get(Math.floorMod(cursor++, count));
-            if (adapter.returnsImmediately()
-                && arcaneDispatchTicks.getOrDefault(target, Long.MIN_VALUE) == worldObj.getTotalWorldTime()) {
+            if (
+                adapter.returnsImmediately()
+                    && arcaneDispatchTicks.getOrDefault(target, Long.MIN_VALUE) == worldObj.getTotalWorldTime()
+            ) {
                 throttled = true;
                 continue;
             }
@@ -353,19 +364,15 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
             ItemStack expected = adapter.dispatch(this, target, details, table);
             if (expected == null) continue;
             if (adapter.returnsImmediately()) arcaneDispatchTicks.put(target, worldObj.getTotalWorldTime());
-            else jobs.add(
-                new Job(
-                    target,
-                    ((ItemPackagedCore) inventory[CORE].getItem()).adapterId,
-                    expected.copy(),
-                    details.getPattern()));
-            if (!adapter.returnsImmediately()) altarStatus = AltarStatus.RUNNING;
-            else if (altarStatus != AltarStatus.CRUCIBLE_READY) altarStatus = AltarStatus.ARCANE_READY;
-            if (craftingLock == PackagedCraftingLock.PULSE) {
+            else jobs.add(new Job(target, ((ItemPackagedCore) inventory[CORE].getItem()).adapterId, expected.copy(),
+                details.getPattern()));
+            if (!adapter.returnsImmediately()) altarStatus = AltarStatus.Running;
+            else if (altarStatus != AltarStatus.CrucibleReady) altarStatus = AltarStatus.ArcaneReady;
+            if (craftingLock == PackagedCraftingLock.Pulse) {
                 pulseLocked = true;
                 previousRedstone = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
             }
-            if (craftingLock == PackagedCraftingLock.RESULT) unlockResult = expected.copy();
+            if (craftingLock == PackagedCraftingLock.Result) unlockResult = expected.copy();
             failures = 0;
             nextDispatch = 0;
             markDirty();
@@ -388,8 +395,8 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
             for (int pass = 0; pass < 2 && remaining > 0; pass++) {
                 for (int i = 0; i < planned.length && remaining > 0; i++) {
                     if (pass == 0 && sameItem(planned[i], result)) {
-                        int moved = Math
-                            .min(remaining, Math.max(0, Math.min(64, result.getMaxStackSize()) - planned[i].stackSize));
+                        int moved = Math.min(remaining,
+                            Math.max(0, Math.min(64, result.getMaxStackSize()) - planned[i].stackSize));
                         planned[i].stackSize += moved;
                         remaining -= moved;
                     } else if (pass == 1 && planned[i] == null) {
@@ -417,8 +424,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
         for (int check = 0; check < checks && !jobs.isEmpty(); check++) {
             int index = Math.floorMod(collectionCursor--, jobs.size());
             Job job = jobs.get(index);
-            PackagedCoreRegistry.Adapter adapter = PackagedCoreRegistry.entries()
-                .get(job.core);
+            PackagedCoreRegistry.Adapter adapter = PackagedCoreRegistry.entries().get(job.core);
             if (adapter == null) continue;
             var targetTile = job.target.resolve(worldObj);
             IInventory source = adapter.output(targetTile);
@@ -432,7 +438,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
                 }
             }
             if (sourceSlot < 0) {
-                if (adapter.canRelease(targetTile, job.expected)) altarStatus = AltarStatus.INTERRUPTED;
+                if (adapter.canRelease(targetTile, job.expected)) altarStatus = AltarStatus.Interrupted;
                 continue;
             }
             int destination = -1;
@@ -443,7 +449,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
                 }
             }
             if (destination < 0) {
-                altarStatus = AltarStatus.RETURNS_FULL;
+                altarStatus = AltarStatus.ReturnsFull;
                 return;
             }
             // Vanilla/TC inventory calls are synchronous on the server thread. Retain rejected network output locally.
@@ -452,13 +458,13 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
             inventory[destination] = extracted;
             adapter.collected(targetTile);
             source.markDirty();
-            if (source instanceof net.minecraft.tileentity.TileEntity pedestal) {
+            if (source instanceof TileEntity pedestal) {
                 worldObj.markBlockForUpdate(pedestal.xCoord, pedestal.yCoord, pedestal.zCoord);
             }
             jobs.remove(index);
             nextDispatch = 0;
             failures = 0;
-            if (jobs.isEmpty()) altarStatus = AltarStatus.IDLE;
+            if (jobs.isEmpty()) altarStatus = AltarStatus.Idle;
             markDirty();
         }
     }
@@ -467,12 +473,8 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
         try {
             for (int slot = PATTERNS; slot < CORE; slot++) {
                 if (inventory[slot] == null) continue;
-                var left = Platform.poweredInsert(
-                    getProxy().getEnergy(),
-                    getProxy().getStorage()
-                        .getItemInventory(),
-                    AEItemStack.create(inventory[slot]),
-                    new MachineSource(this));
+                var left = Platform.poweredInsert(getProxy().getEnergy(), getProxy().getStorage().getItemInventory(),
+                    AEItemStack.create(inventory[slot]), new MachineSource(this));
                 ItemStack remainder = left == null ? null : left.getItemStack();
                 if (remainder == null || remainder.stackSize != inventory[slot].stackSize) {
                     if (unlockResult != null && sameItem(unlockResult, inventory[slot])) {
@@ -515,11 +517,9 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     }
 
     @Override
-    @cpw.mods.fml.relauncher.SideOnly(cpw.mods.fml.relauncher.Side.CLIENT)
-    public com.cleanroommc.modularui.screen.ModularScreen createScreen(PosGuiData data, ModularPanel panel) {
-        return new com.cleanroommc.modularui.screen.ModularScreen(
-            com.xyp.gtnotgood.utils.enums.ModList.ModIds.GT_NOT_GOOD,
-            panel);
+    @SideOnly(Side.CLIENT)
+    public ModularScreen createScreen(PosGuiData data, ModularPanel panel) {
+        return new ModularScreen(ModList.ModIds.GT_NOT_GOOD, panel);
     }
 
     @Override
@@ -556,8 +556,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
         NBTTagList connections = tag.getTagList("WirelessConnections", 10);
         for (int i = 0; i < Math.min(MAX_TARGETS, connections.tagCount()); i++) {
             PackagedTarget target = PackagedTarget.read(connections.getCompoundTagAt(i));
-            if (target != null && targets.stream()
-                .noneMatch(target::sameBlock)) targets.add(target);
+            if (target != null && targets.stream().noneMatch(target::sameBlock)) targets.add(target);
         }
         jobs.clear();
         NBTTagList savedJobs = tag.getTagList("GTNGJobs", 10);
@@ -566,12 +565,8 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
             PackagedTarget target = PackagedTarget.read(entry);
             ItemStack expected = ItemStack.loadItemStackFromNBT(entry.getCompoundTag("Expected"));
             if (target != null && expected != null && expected.stackSize > 0) {
-                jobs.add(
-                    new Job(
-                        target,
-                        entry.getString("Core"),
-                        expected,
-                        ItemStack.loadItemStackFromNBT(entry.getCompoundTag("Pattern"))));
+                jobs.add(new Job(target, entry.getString("Core"), expected,
+                    ItemStack.loadItemStackFromNBT(entry.getCompoundTag("Pattern"))));
             }
         }
         autoReturn = tag.getBoolean("AutoReturn");
@@ -587,7 +582,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
         pulseLocked = tag.getBoolean("PulseLocked");
         previousRedstone = tag.getBoolean("PreviousRedstone");
         unlockResult = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("UnlockResult"));
-        altarStatus = jobs.isEmpty() ? AltarStatus.IDLE : AltarStatus.RUNNING;
+        altarStatus = jobs.isEmpty() ? AltarStatus.Idle : AltarStatus.Running;
         cursor = 0;
         nextDispatch = 0;
         failures = 0;
@@ -752,7 +747,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     }
 
     @Override
-    public net.minecraft.tileentity.TileEntity getTileEntity() {
+    public TileEntity getTileEntity() {
         return this;
     }
 
@@ -769,7 +764,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase implements IInv
     /** A strict 36-slot view prevents a remote terminal from reaching the return inventory or core. */
     @Override
     public IInventory getPatterns() {
-        return new net.minecraft.inventory.InventoryBasic(getInventoryName(), hasCustomName(), PATTERNS) {
+        return new InventoryBasic(getInventoryName(), hasCustomName(), PATTERNS) {
 
             @Override
             public ItemStack getStackInSlot(int slot) {

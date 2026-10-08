@@ -158,8 +158,8 @@ public final class TextField extends UIElement {
     @Override
     protected void drawBackground(int mx, int my, int px, int py) {
         if (normalTexture == null) super.drawBackground(mx, my, px, py);
-        else(!isInteractive() ? disabledTexture : focused ? focusedTexture : normalTexture)
-            .draw(mx, my, px + x, py + y, width, height);
+        else(!isInteractive() ? disabledTexture : focused ? focusedTexture : normalTexture).draw(mx, my, px + x, py + y,
+            width, height);
     }
 
     @Override

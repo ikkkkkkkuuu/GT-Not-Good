@@ -68,8 +68,7 @@ public interface IPatternTerminalAdapter {
     }
 
     default IPatternTerminalAdapter registerIdentifier(String identifier, IRecipeHandler transferPack) {
-        this.getIdentifiers()
-            .put(identifier, transferPack);
+        this.getIdentifiers().put(identifier, transferPack);
         return this;
     }
 

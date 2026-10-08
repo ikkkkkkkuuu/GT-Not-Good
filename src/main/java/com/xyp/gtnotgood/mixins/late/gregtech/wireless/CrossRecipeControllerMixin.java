@@ -89,10 +89,11 @@ public abstract class CrossRecipeControllerMixin implements WirelessControllerAc
     private void gtng$commitInputs(CallbackInfoReturnable<Boolean> cir) {
         WirelessRecipeAttempt attempt = WirelessRecipeAttempt.current();
         MTEMultiBlockBase machine = (MTEMultiBlockBase) (Object) this;
-        if (attempt != null && attempt.belongsTo(machine)
-            && machine.getCheckRecipeResult()
-                .wasSuccessful()
-            && !attempt.commit()) machine.setCheckRecipeResult(CheckRecipeResultRegistry.INTERNAL_ERROR);
+        if (
+            attempt != null && attempt.belongsTo(machine)
+                && machine.getCheckRecipeResult().wasSuccessful()
+                && !attempt.commit()
+        ) machine.setCheckRecipeResult(CheckRecipeResultRegistry.INTERNAL_ERROR);
     }
 
     @Inject(method = "saveNBTData", at = @At("RETURN"), require = 1)
@@ -120,19 +121,12 @@ public abstract class CrossRecipeControllerMixin implements WirelessControllerAc
         if (gtng$wireless.size() == 0 && WirelessRecipeScheduler.find((MTEMultiBlockBase) (Object) this) == null)
             return;
         tag.setInteger("gtngCrossCount", gtng$wireless.size());
-        tag.setString(
-            "gtngCrossEU",
-            gtng$wireless.displayedEU()
-                .toString());
+        tag.setString("gtngCrossEU", gtng$wireless.displayedEU().toString());
         NBTTagList display = new NBTTagList();
         for (NBTTagCompound row : gtng$wireless.displayedOutputs(3)) display.appendTag(row);
         tag.setTag("gtngCrossOutputs", display);
-        tag.setString(
-            "gtngCrossParallels",
-            gtng$wireless.parallelCount()
-                .toString());
-        tag.setInteger(
-            "gtngCrossStatus",
+        tag.setString("gtngCrossParallels", gtng$wireless.parallelCount().toString());
+        tag.setInteger("gtngCrossStatus",
             WirelessCompatibility.supports((MTEMultiBlockBase) (Object) this, gtng$getProcessingLogic())
                 ? gtng$wireless.status()
                 : 3);
@@ -144,27 +138,19 @@ public abstract class CrossRecipeControllerMixin implements WirelessControllerAc
         NBTTagCompound tag = accessor.getNBTData();
         if (!tag.hasKey("gtngCrossCount")) return;
         if (tag.getInteger("gtngCrossCount") > 0) {
-            int position = lines.indexOf(
-                GTWaila.getMachineProgressString(
-                    tag.getBoolean("isActive"),
-                    tag.getBoolean("isAllowedToWork"),
-                    tag.getInteger("maxProgress"),
-                    tag.getInteger("progress")));
+            int position = lines.indexOf(GTWaila.getMachineProgressString(tag.getBoolean("isActive"),
+                tag.getBoolean("isAllowedToWork"), tag.getInteger("maxProgress"), tag.getInteger("progress")));
             if (position < 0) position = lines.size();
-            lines.add(
-                position++,
-                StatCollector.translateToLocalFormatted(
-                    "gtng.cross_wireless.eu",
-                    WirelessRecipeDisplay.number(new BigInteger(tag.getString("gtngCrossEU")), true)));
+            lines.add(position++, StatCollector.translateToLocalFormatted("gtng.cross_wireless.eu",
+                WirelessRecipeDisplay.number(new BigInteger(tag.getString("gtngCrossEU")), true)));
             NBTTagList outputs = tag.getTagList("gtngCrossOutputs", 10);
             if (outputs.tagCount() > 0) lines.add(position++, StatCollector.translateToLocal("GT5U.waila.producing"));
             for (int i = 0; i < outputs.tagCount(); i++) {
                 NBTTagCompound row = outputs.getCompoundTagAt(i);
                 ItemStack icon = row.hasKey("item") ? ItemStack.loadItemStackFromNBT(row.getCompoundTag("item"))
-                    : GTUtility
-                        .getFluidDisplayStack(FluidStack.loadFluidStackFromNBT(row.getCompoundTag("fluid")), false);
-                lines.add(
-                    position++,
+                    : GTUtility.getFluidDisplayStack(FluidStack.loadFluidStackFromNBT(row.getCompoundTag("fluid")),
+                        false);
+                lines.add(position++,
                     "  " + TTRenderStack.create(icon, true)
                         + EnumChatFormatting.AQUA
                         + WirelessRecipeDisplay.name(row)
@@ -182,9 +168,8 @@ public abstract class CrossRecipeControllerMixin implements WirelessControllerAc
         // #tr gtng.cross_wireless.total_parallel
         // # Total queued parallels: %s
         // # zh_CN 任务总并行数：%s
-        lines.add(
-            StatCollector
-                .translateToLocalFormatted("gtng.cross_wireless.total_parallel", tag.getString("gtngCrossParallels")));
+        lines.add(StatCollector.translateToLocalFormatted("gtng.cross_wireless.total_parallel",
+            tag.getString("gtngCrossParallels")));
         switch (tag.getInteger("gtngCrossStatus")) {
             case 1:
                 // #tr gtng.cross_wireless.power

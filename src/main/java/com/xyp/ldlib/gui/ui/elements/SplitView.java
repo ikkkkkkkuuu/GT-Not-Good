@@ -24,8 +24,7 @@ public final class SplitView extends UIElement {
     public SplitView(int x, int y, int width, int height, boolean vertical, IGuiTexture dividerTexture) {
         super(x, y, width, height);
         this.vertical = vertical;
-        divider = new UIElement(0, 0, 4, 4).setBackground(dividerTexture)
-            .setFocusable(true);
+        divider = new UIElement(0, 0, 4, 4).setBackground(dividerTexture).setFocusable(true);
         divider.addEventListener(UIEvents.MOUSE_DOWN, this::drag);
         divider.addEventListener(UIEvents.MOUSE_MOVE, this::drag);
         divider.addEventListener(UIEvents.KEY_DOWN, e -> {
@@ -74,9 +73,8 @@ public final class SplitView extends UIElement {
 
     private void drag(UIEvent e) {
         if (e.button != 0) return;
-        change(
-            (double) (vertical ? e.y - getScreenY() - 2 : e.x - getScreenX() - 2)
-                / Math.max(1, (vertical ? height : width) - 4));
+        change((double) (vertical ? e.y - getScreenY() - 2 : e.x - getScreenX() - 2)
+            / Math.max(1, (vertical ? height : width) - 4));
         e.preventDefault();
         e.stopPropagation();
     }

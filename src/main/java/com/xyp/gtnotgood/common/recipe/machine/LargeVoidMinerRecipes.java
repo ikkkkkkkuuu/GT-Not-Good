@@ -24,17 +24,12 @@ public final class LargeVoidMinerRecipes {
      */
     public static void loadRecipes() {
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Machine_LV_Miner.get(1L),
+            .itemInputs(ItemList.Machine_LV_Miner.get(1L),
                 GTOreDictUnificator.get(OrePrefixes.frameGt, Materials.Steel, 4),
                 GTOreDictUnificator.get(OrePrefixes.plateTriple, Materials.Steel, 8),
-                new Object[] { OrePrefixes.circuit.get(Materials.LV), 4 },
-                ItemList.Electric_Motor_LV.get(4L),
+                new Object[] { OrePrefixes.circuit.get(Materials.LV), 4 }, ItemList.Electric_Motor_LV.get(4L),
                 ItemList.Electric_Piston_LV.get(4L))
-            .fluidInputs(Materials.SolderingAlloy.getMolten(576))
-            .itemOutputs(GTNGItemList.LargeVoidMiner.get(1))
-            .duration(30 * SECONDS)
-            .eut(TierEU.RECIPE_LV)
-            .addTo(assemblerRecipes);
+            .fluidInputs(Materials.SolderingAlloy.getMolten(576)).itemOutputs(GTNGItemList.LargeVoidMiner.get(1))
+            .duration(30 * SECONDS).eut(TierEU.RECIPE_LV).addTo(assemblerRecipes);
     }
 }

@@ -84,9 +84,7 @@ public class DronePool {
         if (tag.hasKey("unlockedSpecies", 9)) {
             NBTTagList speciesList = tag.getTagList("unlockedSpecies", 10);
             for (int i = 0; i < speciesList.tagCount(); i++) {
-                pool.unlockSpecies(
-                    speciesList.getCompoundTagAt(i)
-                        .getString("uid"));
+                pool.unlockSpecies(speciesList.getCompoundTagAt(i).getString("uid"));
             }
             return pool;
         }
@@ -94,9 +92,7 @@ public class DronePool {
         // Version 1 migration: each species entry held a list of complete drone ItemStacks.
         NBTTagList oldInventory = tag.getTagList("inventory", 10);
         for (int i = 0; i < oldInventory.tagCount(); i++) {
-            pool.unlockSpecies(
-                oldInventory.getCompoundTagAt(i)
-                    .getString("species"));
+            pool.unlockSpecies(oldInventory.getCompoundTagAt(i).getString("species"));
         }
         return pool;
     }

@@ -40,15 +40,7 @@ public final class StockIOGuiFactory extends AbstractUIFactory<StockIOGuiFactory
 
     public void open(EntityPlayer player, PartStockIOInterface part) {
         TileEntity tile = part.getTile();
-        open(
-            player,
-            new Data(
-                player,
-                tile.xCoord,
-                tile.yCoord,
-                tile.zCoord,
-                part.getSide()
-                    .ordinal()));
+        open(player, new Data(player, tile.xCoord, tile.yCoord, tile.zCoord, part.getSide().ordinal()));
     }
 
     public void open(EntityPlayer player, TileStockIOInterface tile) {
@@ -56,8 +48,10 @@ public final class StockIOGuiFactory extends AbstractUIFactory<StockIOGuiFactory
     }
 
     private void open(EntityPlayer player, Data data) {
-        if (player instanceof EntityPlayerMP serverPlayer && !(player instanceof FakePlayer)
-            && canInteractWith(player, data)) GuiManager.open(this, data, serverPlayer);
+        if (
+            player instanceof EntityPlayerMP serverPlayer && !(player instanceof FakePlayer)
+                && canInteractWith(player, data)
+        ) GuiManager.open(this, data, serverPlayer);
     }
 
     @Override
@@ -76,14 +70,15 @@ public final class StockIOGuiFactory extends AbstractUIFactory<StockIOGuiFactory
 
     @Override
     public boolean canInteractWith(EntityPlayer player, Data data) {
-        if (!super.canInteractWith(player, data) || data.getSquaredDistance(player) > 64
-            || data.source == null
-            || data.source != data.resolve()) return false;
+        if (
+            !super.canInteractWith(player, data) || data.getSquaredDistance(player) > 64
+                || data.source == null
+                || data.source != data.resolve()
+        ) return false;
         if (player.worldObj.isRemote) return true;
         var node = ((IActionHost) data.source).getActionableNode();
-        return node == null || node.getGrid()
-            .<ISecurityGrid>getCache(ISecurityGrid.class)
-            .hasPermission(player, SecurityPermissions.BUILD);
+        return node == null || node.getGrid().<ISecurityGrid>getCache(ISecurityGrid.class).hasPermission(player,
+            SecurityPermissions.BUILD);
     }
 
     @Override

@@ -44,8 +44,10 @@ public final class BlockPackagedProvider extends Block {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack stack) {
-        if (!world.isRemote && placer instanceof EntityPlayer player
-            && world.getTileEntity(x, y, z) instanceof TilePackagedProvider tile) {
+        if (
+            !world.isRemote && placer instanceof EntityPlayer player
+                && world.getTileEntity(x, y, z) instanceof TilePackagedProvider tile
+        ) {
             tile.setOwnerName(player.getCommandSenderName());
         }
     }
@@ -53,8 +55,8 @@ public final class BlockPackagedProvider extends Block {
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
         float hitY, float hitZ) {
-        if (player.getHeldItem() != null && player.getHeldItem()
-            .getItem() instanceof ItemWirelessConnector) return false;
+        if (player.getHeldItem() != null && player.getHeldItem().getItem() instanceof ItemWirelessConnector)
+            return false;
         if (world.getTileEntity(x, y, z) instanceof TilePackagedProvider tile && tile.canConfigure(player)) {
             if (!world.isRemote) TileEntityGuiFactory.INSTANCE.open(player, x, y, z);
             return true;

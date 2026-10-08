@@ -53,8 +53,10 @@ public class TextEffectFormat {
             String target = entry.getValue();
             if (target.indexOf(':') < 0) target = ModList.GTNotGood.getID() + ":" + target;
             String alias = entry.getKey();
-            if (target.equals(rendererId) && (shortest.isEmpty() || alias.length() < shortest.length()
-                || alias.length() == shortest.length() && alias.compareTo(shortest) < 0)) shortest = alias;
+            if (
+                target.equals(rendererId) && (shortest.isEmpty() || alias.length() < shortest.length()
+                    || alias.length() == shortest.length() && alias.compareTo(shortest) < 0)
+            ) shortest = alias;
         }
         return shortest;
     }
@@ -74,8 +76,7 @@ public class TextEffectFormat {
 
     private static String hexToken(String hex) {
         StringBuilder result = new StringBuilder("\u00a7x");
-        for (int i = 0; i < hex.length(); i++) result.append('\u00a7')
-            .append(hex.charAt(i));
+        for (int i = 0; i < hex.length(); i++) result.append('\u00a7').append(hex.charAt(i));
         return result.toString();
     }
 
@@ -103,10 +104,8 @@ public class TextEffectFormat {
                     } else return null;
                     continue;
                 }
-                String name = field.substring(0, separator)
-                    .trim();
-                String value = field.substring(separator + 1)
-                    .trim();
+                String name = field.substring(0, separator).trim();
+                String value = field.substring(separator + 1).trim();
                 if ((name.equals("colors") || name.equals("color") || name.equals("c")) && !hasColors) {
                     colors = readColors(value);
                     hasColors = true;
@@ -152,8 +151,10 @@ public class TextEffectFormat {
     }
 
     public static int hexColor(String text, int offset) {
-        if (offset + 14 > text.length() || text.charAt(offset) != '\u00a7'
-            || Character.toLowerCase(text.charAt(offset + 1)) != 'x') return -1;
+        if (
+            offset + 14 > text.length() || text.charAt(offset) != '\u00a7'
+                || Character.toLowerCase(text.charAt(offset + 1)) != 'x'
+        ) return -1;
         int color = 0;
         for (int i = offset + 2; i < offset + 14; i += 2) {
             int digit = Character.digit(text.charAt(i + 1), 16);

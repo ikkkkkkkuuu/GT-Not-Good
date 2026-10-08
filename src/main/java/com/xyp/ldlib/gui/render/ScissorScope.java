@@ -24,24 +24,10 @@ public final class ScissorScope implements AutoCloseable {
         IntBuffer buffer = BufferUtils.createIntBuffer(16);
         GL11.glGetInteger(GL11.GL_SCISSOR_BOX, buffer);
         for (int i = 0; i < 4; i++) previous[i] = buffer.get(i);
-        int[] requested = intersect(
-            x * scale,
-            mc.displayHeight - (y + height) * scale,
-            Math.max(0, width) * scale,
-            Math.max(0, height) * scale,
-            0,
-            0,
-            mc.displayWidth,
-            mc.displayHeight);
-        if (wasEnabled) requested = intersect(
-            requested[0],
-            requested[1],
-            requested[2],
-            requested[3],
-            previous[0],
-            previous[1],
-            previous[2],
-            previous[3]);
+        int[] requested = intersect(x * scale, mc.displayHeight - (y + height) * scale, Math.max(0, width) * scale,
+            Math.max(0, height) * scale, 0, 0, mc.displayWidth, mc.displayHeight);
+        if (wasEnabled) requested = intersect(requested[0], requested[1], requested[2], requested[3], previous[0],
+            previous[1], previous[2], previous[3]);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(requested[0], requested[1], requested[2], requested[3]);
     }

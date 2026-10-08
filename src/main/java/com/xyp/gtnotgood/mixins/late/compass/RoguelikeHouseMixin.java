@@ -30,8 +30,7 @@ public abstract class RoguelikeHouseMixin {
         int x = origin.getX(), z = origin.getZ();
         for (int y = 64; y <= 140; y++) {
             if (world.getBlock(x + 2, y, z + 2) == Blocks.brick_block) {
-                StructureLocations.get(world)
-                    .add(0, x, y, z);
+                StructureLocations.get(world).add(0, x, y, z);
                 return;
             }
         }

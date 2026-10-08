@@ -21,8 +21,6 @@ public final class CommandTreeBootstrap {
 
     /** Registers the login handler after the regular mod initialization phase. */
     public static void init() {
-        FMLCommonHandler.instance()
-            .bus()
-            .register(new PlayerJoinHandler());
+        FMLCommonHandler.instance().bus().register(new PlayerJoinHandler());
     }
 }

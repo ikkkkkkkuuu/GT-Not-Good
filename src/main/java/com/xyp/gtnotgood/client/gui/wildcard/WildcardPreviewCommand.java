@@ -24,9 +24,7 @@ public final class WildcardPreviewCommand extends CommandBase {
     public static void register() {
         WildcardPreviewCommand command = new WildcardPreviewCommand();
         ClientCommandHandler.instance.registerCommand(command);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(command);
+        FMLCommonHandler.instance().bus().register(command);
     }
 
     @Override

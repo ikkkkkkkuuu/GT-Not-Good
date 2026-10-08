@@ -52,8 +52,7 @@ public class AE2ThingNetworkWrapper {
     static <REQ extends IMessage, REPLY extends IMessage> IMessageHandler<? super REQ, ? extends REPLY> instantiate(
         Class<? extends IMessageHandler<? super REQ, ? extends REPLY>> handler) {
         try {
-            return handler.getDeclaredConstructor()
-                .newInstance();
+            return handler.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
@@ -86,24 +85,14 @@ public class AE2ThingNetworkWrapper {
         FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler,
         Class<REQ> requestType) {
         SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.SERVER, requestType);
-        channel.pipeline()
-            .addAfter(
-                type,
-                messageHandler.getClass()
-                    .getName(),
-                handler);
+        channel.pipeline().addAfter(type, messageHandler.getClass().getName(), handler);
     }
 
     private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addClientHandlerAfter(
         FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler,
         Class<REQ> requestType) {
         SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.CLIENT, requestType);
-        channel.pipeline()
-            .addAfter(
-                type,
-                messageHandler.getClass()
-                    .getName(),
-                handler);
+        channel.pipeline().addAfter(type, messageHandler.getClass().getName(), handler);
     }
 
     private <REPLY extends IMessage, REQ extends IMessage> SimpleChannelHandlerWrapper<REQ, REPLY> getHandlerWrapper(
@@ -119,8 +108,7 @@ public class AE2ThingNetworkWrapper {
      * @return A minecraft {@link Packet} suitable for use in minecraft APIs
      */
     public Packet getPacketFrom(IMessage message) {
-        return channels.get(Side.SERVER)
-            .generatePacketFrom(message);
+        return channels.get(Side.SERVER).generatePacketFrom(message);
     }
 
     /**
@@ -129,12 +117,8 @@ public class AE2ThingNetworkWrapper {
      * @param message The message to send
      */
     public void sendToAll(IMessage message) {
-        channels.get(Side.SERVER)
-            .attr(FMLOutboundHandler.FML_MESSAGETARGET)
-            .set(FMLOutboundHandler.OutboundTarget.ALL);
-        channels.get(Side.SERVER)
-            .writeAndFlush(message)
-            .addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -145,15 +129,10 @@ public class AE2ThingNetworkWrapper {
      * @param player  The player to send it to
      */
     public void sendTo(IMessage message, EntityPlayerMP player) {
-        channels.get(Side.SERVER)
-            .attr(FMLOutboundHandler.FML_MESSAGETARGET)
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
             .set(FMLOutboundHandler.OutboundTarget.PLAYER);
-        channels.get(Side.SERVER)
-            .attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
-            .set(player);
-        channels.get(Side.SERVER)
-            .writeAndFlush(message)
-            .addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -164,15 +143,10 @@ public class AE2ThingNetworkWrapper {
      * @param point   The {@link TargetPoint} around which to send
      */
     public void sendToAllAround(IMessage message, TargetPoint point) {
-        channels.get(Side.SERVER)
-            .attr(FMLOutboundHandler.FML_MESSAGETARGET)
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
             .set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
-        channels.get(Side.SERVER)
-            .attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
-            .set(point);
-        channels.get(Side.SERVER)
-            .writeAndFlush(message)
-            .addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -183,15 +157,10 @@ public class AE2ThingNetworkWrapper {
      * @param dimensionId The dimension id to target
      */
     public void sendToDimension(IMessage message, int dimensionId) {
-        channels.get(Side.SERVER)
-            .attr(FMLOutboundHandler.FML_MESSAGETARGET)
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
             .set(FMLOutboundHandler.OutboundTarget.DIMENSION);
-        channels.get(Side.SERVER)
-            .attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
-            .set(dimensionId);
-        channels.get(Side.SERVER)
-            .writeAndFlush(message)
-            .addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -200,11 +169,8 @@ public class AE2ThingNetworkWrapper {
      * @param message The message to send
      */
     public void sendToServer(IMessage message) {
-        channels.get(Side.CLIENT)
-            .attr(FMLOutboundHandler.FML_MESSAGETARGET)
+        channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET)
             .set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-        channels.get(Side.CLIENT)
-            .writeAndFlush(message)
-            .addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        channels.get(Side.CLIENT).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 }

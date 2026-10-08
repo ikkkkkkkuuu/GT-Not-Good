@@ -46,9 +46,7 @@ public class ExtendedControlsClientChecks {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        if (Boolean.getBoolean("gtng.ldlib.qa")) FMLCommonHandler.instance()
-            .bus()
-            .register(this);
+        if (Boolean.getBoolean("gtng.ldlib.qa")) FMLCommonHandler.instance().bus().register(this);
     }
 
     @SubscribeEvent
@@ -69,8 +67,8 @@ public class ExtendedControlsClientChecks {
         Minecraft mc = Minecraft.getMinecraft();
         File output = new File(System.getProperty("gtng.ldlib.qa.output"));
         output.mkdirs();
-        ScreenShotHelper
-            .saveScreenshot(output, NAMES[stage] + ".png", mc.displayWidth, mc.displayHeight, mc.getFramebuffer());
+        ScreenShotHelper.saveScreenshot(output, NAMES[stage] + ".png", mc.displayWidth, mc.displayHeight,
+            mc.getFramebuffer());
         System.out.println("LDLIB_CONTROLS_QA_STAGE " + NAMES[stage]);
         if (++stage == NAMES.length) {
             System.out.println("LDLIB_CONTROLS_QA_PASS");
@@ -124,15 +122,9 @@ public class ExtendedControlsClientChecks {
                 case 3:
                     input.keyTyped('\0', Keyboard.KEY_DOWN, false, false, false);
                     input.keyTyped('\0', Keyboard.KEY_RETURN, false, false, false);
-                    require(
-                        root.getChildren()
-                            .size() == 1,
-                        "search closes after selection");
-                    new Menu(page, theme).openAt(
-                        page.getScreenX() + 20,
-                        page.getScreenY() + 30,
-                        Arrays.asList(
-                            new Menu.Entry("Apply", true, () -> {}),
+                    require(root.getChildren().size() == 1, "search closes after selection");
+                    new Menu(page, theme).openAt(page.getScreenX() + 20, page.getScreenY() + 30,
+                        Arrays.asList(new Menu.Entry("Apply", true, () -> {}),
                             new Menu.Entry("More", new Menu.Entry("Rename", true, () -> {})),
                             new Menu.Entry("Disabled", false, () -> {})));
                     break;
@@ -174,51 +166,33 @@ public class ExtendedControlsClientChecks {
                     root.layout();
                     input.validate();
                     type("zzzz-no-match");
-                    require(
-                        find(root, VirtualScrollerView.class).getItems()
-                            .isEmpty(),
-                        "empty search");
+                    require(find(root, VirtualScrollerView.class).getItems().isEmpty(), "empty search");
                     TextField query = find(root, TextField.class);
                     input.mouseDown(query.getScreenX() + 5, query.getScreenY() + 5, 1);
                     input.mouseUp(query.getScreenX() + 5, query.getScreenY() + 5, 1);
-                    type(
-                        selector.getValue()
-                            .toString());
-                    require(
-                        find(root, VirtualScrollerView.class).getItems()
-                            .size() == 1,
-                        "localized typed search");
+                    type(selector.getValue().toString());
+                    require(find(root, VirtualScrollerView.class).getItems().size() == 1, "localized typed search");
                     break;
                 case 11:
                     input.keyTyped('\0', Keyboard.KEY_RETURN, false, false, false);
-                    require(
-                        root.getChildren()
-                            .size() == 1,
-                        "filtered selection closes popup");
+                    require(root.getChildren().size() == 1, "filtered selection closes popup");
                     Menu nested = new Menu(page, theme);
-                    nested.openAt(
-                        page.getScreenX() + 80,
-                        page.getScreenY() + 35,
+                    nested.openAt(page.getScreenX() + 80, page.getScreenY() + 35,
                         Arrays.asList(new Menu.Entry("More", new Menu.Entry("Run action", true, () -> menuActions++))));
                     root.layout();
                     input.validate();
-                    UIElement parentPanel = nested.getChildren()
-                        .get(0);
+                    UIElement parentPanel = nested.getChildren().get(0);
                     click(parentPanel.getScreenX() + 20, parentPanel.getScreenY() + 10);
-                    require(
-                        nested.getChildren()
-                            .size() == 2,
-                        "submenu opens");
+                    require(nested.getChildren().size() == 2, "submenu opens");
                     break;
                 case 12:
                     Menu openMenu = find(root, Menu.class);
-                    UIElement submenu = openMenu.getChildren()
-                        .get(1);
+                    UIElement submenu = openMenu.getChildren().get(1);
                     click(submenu.getScreenX() + 20, submenu.getScreenY() + 10);
                     require(menuActions == 1 && openMenu.getParent() == null, "submenu action exactly once");
                     boolean[] accepted = { false };
-                    Dialog confirmation = Dialog
-                        .confirm(page, theme, "Confirm", "Apply", "Cancel", result -> accepted[0] = result);
+                    Dialog confirmation = Dialog.confirm(page, theme, "Confirm", "Apply", "Cancel",
+                        result -> accepted[0] = result);
                     root.layout();
                     input.validate();
                     click(confirmation.content.getScreenX() + 25, confirmation.content.getScreenY() + 62);
@@ -249,8 +223,7 @@ public class ExtendedControlsClientChecks {
                 case 14:
                     page(8);
                     GraphView moved = find(page, GraphView.class);
-                    GraphView.Node first = moved.getNodes()
-                        .get(0);
+                    GraphView.Node first = moved.getNodes().get(0);
                     int nx = moved.getScreenX() + 25, ny = moved.getScreenY() + 45;
                     double originalX = first.getX();
                     input.mouseDown(nx, ny, 0);
@@ -264,10 +237,8 @@ public class ExtendedControlsClientChecks {
                     require(moved.getScale() > 0, "fit after pan");
                     break;
                 case 15:
-                    Minecraft.getMinecraft()
-                        .displayGuiScreen(
-                            new LibraryDemoScreen(
-                                path -> ModList.GTNotGood.getResourceLocation("textures/gui/ldlib/" + path)));
+                    Minecraft.getMinecraft().displayGuiScreen(new LibraryDemoScreen(
+                        path -> ModList.GTNotGood.getResourceLocation("textures/gui/ldlib/" + path)));
                     break;
                 default:
                     throw new AssertionError(stage);

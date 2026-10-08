@@ -52,8 +52,7 @@ public final class WirelessRecipeAttempt {
         this.machine = machine;
         this.scheduler = scheduler;
         this.hatch = hatch;
-        this.owner = hatch.getBaseMetaTileEntity()
-            .getOwnerUuid();
+        this.owner = hatch.getBaseMetaTileEntity().getOwnerUuid();
         this.available = available.max(BigInteger.ZERO);
     }
 
@@ -81,9 +80,11 @@ public final class WirelessRecipeAttempt {
     /** Returns null outside this scheduler so every unrelated machine retains its original ProcessingLogic. */
     public static CheckRecipeResult intercept(ProcessingLogic logic) {
         WirelessRecipeAttempt attempt = current();
-        if (attempt == null
-            && ((WirelessProcessingAccess) logic).gtng$getMachine() instanceof MTEMultiBlockBase controller
-            && WirelessRecipeScheduler.find(controller) != null) return CheckRecipeResultRegistry.NO_RECIPE;
+        if (
+            attempt == null
+                && ((WirelessProcessingAccess) logic).gtng$getMachine() instanceof MTEMultiBlockBase controller
+                && WirelessRecipeScheduler.find(controller) != null
+        ) return CheckRecipeResultRegistry.NO_RECIPE;
         if (attempt == null || ((WirelessControllerAccess) attempt.machine).gtng$getProcessingLogic() != logic)
             return null;
         return attempt.process(logic);
@@ -92,17 +93,14 @@ public final class WirelessRecipeAttempt {
     private CheckRecipeResult process(ProcessingLogic logic) {
         if (prepared != null) return CheckRecipeResultRegistry.NO_RECIPE;
         WirelessProcessingAccess access = (WirelessProcessingAccess) logic;
-        logic.setAvailableVoltage(Long.MAX_VALUE)
-            .setAvailableAmperage(1);
+        logic.setAvailableVoltage(Long.MAX_VALUE).setAvailableAmperage(1);
         ItemStack[] originalItems = access.gtng$getItems();
         FluidStack[] originalFluids = access.gtng$getFluids();
         ItemStack[] inputs = access.gtng$prepareCatalyst(originalItems == null ? new ItemStack[0] : originalItems);
         logic.setInputItems(inputs);
         CheckRecipeResult last = CheckRecipeResultRegistry.NO_RECIPE;
         try (Stream<GTRecipe> matches = machine.isRecipeLockingEnabled() && machine.getSingleRecipeCheck() != null
-            ? Stream.of(
-                machine.getSingleRecipeCheck()
-                    .getRecipe())
+            ? Stream.of(machine.getSingleRecipeCheck().getRecipe())
             : access.gtng$matches(access.gtng$recipeMap())) {
             for (GTRecipe recipe : (Iterable<GTRecipe>) matches::iterator) {
                 String key = key(recipe);
@@ -112,10 +110,8 @@ public final class WirelessRecipeAttempt {
                     last = validation;
                     continue;
                 }
-                BigInteger cost = BigInteger.valueOf(recipe.mEUt)
-                    .multiply(BigInteger.valueOf(recipe.mDuration));
-                BigInteger cap = hatch.getParallelLimit()
-                    .signum() == 0 ? null : hatch.getParallelLimit();
+                BigInteger cost = BigInteger.valueOf(recipe.mEUt).multiply(BigInteger.valueOf(recipe.mDuration));
+                BigInteger cap = hatch.getParallelLimit().signum() == 0 ? null : hatch.getParallelLimit();
                 if (cost.signum() > 0) {
                     BigInteger energyLimit = available.divide(cost);
                     cap = cap == null ? energyLimit : cap.min(energyLimit);
@@ -144,48 +140,32 @@ public final class WirelessRecipeAttempt {
                     fluidBefore.put(fluid, fluid.amount);
                     fluids.add(copy);
                 }
-                WirelessOutputs outputs = WirelessOutputs
-                    .forRecipe(recipe, machine.getItemOutputLimit(), machine.getFluidOutputLimit());
-                BigInteger parallels = WirelessInputBatch
-                    .consume(recipe, items.toArray(new ItemStack[0]), fluids.toArray(new FluidStack[0]), cap, outputs);
+                WirelessOutputs outputs = WirelessOutputs.forRecipe(recipe, machine.getItemOutputLimit(),
+                    machine.getFluidOutputLimit());
+                BigInteger parallels = WirelessInputBatch.consume(recipe, items.toArray(new ItemStack[0]),
+                    fluids.toArray(new FluidStack[0]), cap, outputs);
                 if (parallels.signum() <= 0) continue;
                 // Native fields serve legacy hooks; the task owns the exact count.
-                access.gtng$setParallels(
-                    parallels.min(BigInteger.valueOf(Integer.MAX_VALUE))
-                        .intValueExact());
-                logic.overwriteCalculatedEut(0)
-                    .overwriteCalculatedDuration(hatch.getDuration());
+                access.gtng$setParallels(parallels.min(BigInteger.valueOf(Integer.MAX_VALUE)).intValueExact());
+                logic.overwriteCalculatedEut(0).overwriteCalculatedDuration(hatch.getDuration());
                 CheckRecipeResult started = access.gtng$start(recipe);
                 if (!started.wasSuccessful()) {
                     last = started;
                     continue;
                 }
-                prepared = new WirelessWork(
-                    owner,
-                    key,
-                    cost.multiply(parallels),
-                    hatch.getDuration(),
-                    parallels,
+                prepared = new WirelessWork(owner, key, cost.multiply(parallels), hatch.getDuration(), parallels,
                     outputs);
                 if (machine.isRecipeLockingEnabled() && machine.getSingleRecipeCheck() == null) {
                     // A one-craft probe builds the native lock without charging the actual batch twice.
-                    ItemStack[] lockItems = itemBefore.keySet()
-                        .stream()
-                        .map(ItemStack::copy)
-                        .toArray(ItemStack[]::new);
-                    FluidStack[] lockFluids = fluidBefore.keySet()
-                        .stream()
-                        .map(FluidStack::copy)
+                    ItemStack[] lockItems = itemBefore.keySet().stream().map(ItemStack::copy).toArray(ItemStack[]::new);
+                    FluidStack[] lockFluids = fluidBefore.keySet().stream().map(FluidStack::copy)
                         .toArray(FluidStack[]::new);
                     SingleRecipeCheck.Builder builder = SingleRecipeCheck.builder(machine.getRecipeMap())
                         .setBefore(lockItems, lockFluids);
                     recipe.consumeInput(1, lockFluids, lockItems);
-                    recipeLock = builder.setAfter(lockItems, lockFluids)
-                        .setRecipe(recipe)
-                        .build();
+                    recipeLock = builder.setAfter(lockItems, lockFluids).setRecipe(recipe).build();
                 }
-                logic.overwriteOutputItems(new ItemStack[0])
-                    .overwriteOutputFluids(new FluidStack[0]);
+                logic.overwriteOutputItems(new ItemStack[0]).overwriteOutputFluids(new FluidStack[0]);
                 return CheckRecipeResultRegistry.SUCCESSFUL;
             }
         } finally {
@@ -226,9 +206,7 @@ public final class WirelessRecipeAttempt {
             addFluids(tag, "fout", value.mFluidOutputs);
             try {
                 byte[] digest = MessageDigest.getInstance("SHA-256")
-                    .digest(
-                        tag.toString()
-                            .getBytes(StandardCharsets.UTF_8));
+                    .digest(tag.toString().getBytes(StandardCharsets.UTF_8));
                 StringBuilder text = new StringBuilder(64);
                 for (byte b : digest) text.append(String.format("%02x", b & 255));
                 return text.toString();

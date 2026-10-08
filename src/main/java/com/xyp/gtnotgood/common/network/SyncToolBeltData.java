@@ -71,22 +71,21 @@ public class SyncToolBeltData implements IMessage {
 
         @Override
         public IMessage onMessage(SyncToolBeltData message, MessageContext ctx) {
-            Minecraft.getMinecraft()
-                .func_152344_a(new Runnable() {
+            Minecraft.getMinecraft().func_152344_a(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        Entity entity = Minecraft.getMinecraft().theWorld.getEntityByID(message.entityId);
-                        if (entity instanceof EntityLivingBase) {
-                            ToolBeltData data = ToolBeltData.get((EntityLivingBase) entity);
-                            if (data != null) {
-                                for (int i = 0; i < ToolBeltData.SLOT_COUNT; i++) {
-                                    data.setStackInSlotSilent(i, message.items[i]);
-                                }
+                @Override
+                public void run() {
+                    Entity entity = Minecraft.getMinecraft().theWorld.getEntityByID(message.entityId);
+                    if (entity instanceof EntityLivingBase) {
+                        ToolBeltData data = ToolBeltData.get((EntityLivingBase) entity);
+                        if (data != null) {
+                            for (int i = 0; i < ToolBeltData.SLOT_COUNT; i++) {
+                                data.setStackInSlotSilent(i, message.items[i]);
                             }
                         }
                     }
-                });
+                }
+            });
             return null;
         }
     }

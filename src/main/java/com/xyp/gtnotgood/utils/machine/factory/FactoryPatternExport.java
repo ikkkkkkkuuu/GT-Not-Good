@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.utils.machine.factory;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import appeng.api.AEApi;
+import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
@@ -29,9 +32,7 @@ public final class FactoryPatternExport {
             throw new IllegalArgumentException("Empty pattern boundary");
         List<FactoryPreview.Ingredient> all = new ArrayList<>(snapshot.inputs);
         all.addAll(snapshot.outputs);
-        double[] rates = all.stream()
-            .mapToDouble(entry -> entry.rate)
-            .toArray();
+        double[] rates = all.stream().mapToDouble(entry -> entry.rate).toArray();
         long[] counts = batchCounts(snapshot, rates);
         List<IAEStack<?>> inputs = new ArrayList<>(), outputs = new ArrayList<>();
         for (int i = 0; i < all.size(); i++) {
@@ -45,15 +46,8 @@ public final class FactoryPatternExport {
         // Legacy ordinary patterns read item quantities through an int; native ultimate patterns support long counts.
         if (!fluid) for (long count : counts)
             if (count > Integer.MAX_VALUE) throw new ArithmeticException("Ordinary pattern amount overflow");
-        ItemStack pattern = (fluid ? AEApi.instance()
-            .definitions()
-            .items()
-            .encodedUltimatePattern()
-            : AEApi.instance()
-                .definitions()
-                .items()
-                .encodedPattern()).maybeStack(1)
-                    .orNull();
+        ItemStack pattern = (fluid ? AEApi.instance().definitions().items().encodedUltimatePattern()
+            : AEApi.instance().definitions().items().encodedPattern()).maybeStack(1).orNull();
         if (pattern == null) throw new IllegalArgumentException("Pattern item unavailable");
         pattern.setTagCompound(encode(inputs, outputs, fluid));
         return pattern;
@@ -71,10 +65,11 @@ public final class FactoryPatternExport {
         }
         for (int i = 0; i < rates.length; i++) {
             double amount = rates[i] * snapshot.batchTicks;
-            if (!Double.isFinite(amount) || amount < 1
-                || amount > Integer.MAX_VALUE
-                || Math.abs(amount - Math.rint(amount)) > 0.00001)
-                throw new ArithmeticException("Unrepresentable batch amount");
+            if (
+                !Double.isFinite(amount) || amount < 1
+                    || amount > Integer.MAX_VALUE
+                    || Math.abs(amount - Math.rint(amount)) > 0.00001
+            ) throw new ArithmeticException("Unrepresentable batch amount");
             counts[i] = Math.round(amount);
         }
         return counts;
@@ -82,29 +77,25 @@ public final class FactoryPatternExport {
 
     /** Preserves all preview ratios while scaling fractional counts by one common, minimal integer multiplier. */
     static long[] integerCounts(double[] rates) {
-        java.math.BigDecimal[] decimals = new java.math.BigDecimal[rates.length];
-        java.math.BigInteger multiplier = java.math.BigInteger.ONE;
+        BigDecimal[] decimals = new BigDecimal[rates.length];
+        BigInteger multiplier = BigInteger.ONE;
         for (int i = 0; i < rates.length; i++) {
             if (!Double.isFinite(rates[i]) || rates[i] <= 0) throw new IllegalArgumentException("Invalid rate");
-            decimals[i] = java.math.BigDecimal.valueOf(rates[i])
-                .stripTrailingZeros();
-            java.math.BigInteger denominator = java.math.BigInteger.TEN.pow(Math.max(0, decimals[i].scale()));
+            decimals[i] = BigDecimal.valueOf(rates[i]).stripTrailingZeros();
+            BigInteger denominator = BigInteger.TEN.pow(Math.max(0, decimals[i].scale()));
             denominator = denominator.divide(denominator.gcd(decimals[i].unscaledValue()));
-            multiplier = multiplier.divide(multiplier.gcd(denominator))
-                .multiply(denominator);
+            multiplier = multiplier.divide(multiplier.gcd(denominator)).multiply(denominator);
         }
         long[] counts = new long[rates.length];
-        for (int i = 0; i < rates.length; i++) counts[i] = decimals[i].multiply(new java.math.BigDecimal(multiplier))
-            .longValueExact();
+        for (int i = 0; i < rates.length; i++)
+            counts[i] = decimals[i].multiply(new BigDecimal(multiplier)).longValueExact();
         return counts;
     }
 
     /** Both input and output fluids require an ultimate pattern. */
     static boolean hasFluids(List<IAEStack<?>> inputs, List<IAEStack<?>> outputs) {
-        return inputs.stream()
-            .anyMatch(s -> s instanceof appeng.api.storage.data.IAEFluidStack)
-            || outputs.stream()
-                .anyMatch(s -> s instanceof appeng.api.storage.data.IAEFluidStack);
+        return inputs.stream().anyMatch(s -> s instanceof IAEFluidStack)
+            || outputs.stream().anyMatch(s -> s instanceof IAEFluidStack);
     }
 
     /** Ordinary processing patterns use legacy item NBT; ultimate patterns include each native stack type. */

@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.loader;
 
+import com.xyp.gtnotgood.client.nei.TransmutationFrontend;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import gregtech.api.gui.modularui.GTUITextures;
@@ -20,28 +21,18 @@ public final class GTNGRecipeMaps {
         // #tr recipe.gtnotgood.combProcessing
         // # Comb Processing
         // # zh_CN 蜂窝处理
-        .of("recipe.gtnotgood.combProcessing")
-        .maxIO(9, 9, 0, 3)
-        .progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
-        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.LargeCombProcessor.get(1)))
-        .build();
+        .of("recipe.gtnotgood.combProcessing").maxIO(9, 9, 0, 3).progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.LargeCombProcessor.get(1))).build();
 
     /** Item and fluid recovery through the standard GT processing pipeline and NEI. */
     public static final RecipeMap<RecipeMapBackend> TransmutationRecipes = RecipeMapBuilder
         // #tr recipe.gtnotgood.transmutation
         // # Transmutation Disassembly
         // # zh_CN 嬗变拆解
-        .of("recipe.gtnotgood.transmutation")
-        .maxIO(1, 16, 0, 4)
-        .progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
-        .progressBarPos(56, 35)
-        .logoPos(24, 86)
-        .neiRecipeBackgroundSize(170, 110)
-        .frontend(com.xyp.gtnotgood.client.nei.TransmutationFrontend::new)
-        .neiHandlerInfo(
-            builder -> builder.setDisplayStack(GTNGItemList.LargeTransmutationMachine.get(1))
-                .setHeight(174)
-                .setMaxRecipesPerPage(1))
+        .of("recipe.gtnotgood.transmutation").maxIO(1, 16, 0, 4).progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
+        .progressBarPos(56, 35).logoPos(24, 86).neiRecipeBackgroundSize(170, 110).frontend(TransmutationFrontend::new)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.LargeTransmutationMachine.get(1)).setHeight(174)
+            .setMaxRecipesPerPage(1))
         .build();
 
     /**
@@ -54,9 +45,6 @@ public final class GTNGRecipeMaps {
         // #tr recipe.gtnotgood.oreProcessing
         // # Ore Processing
         // # zh_CN 矿石处理
-        .of("recipe.gtnotgood.oreProcessing")
-        .maxIO(1, 9, 0, 0)
-        .progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
-        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.LargeOreProcessor.get(1)))
-        .build();
+        .of("recipe.gtnotgood.oreProcessing").maxIO(1, 9, 0, 0).progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.LargeOreProcessor.get(1))).build();
 }

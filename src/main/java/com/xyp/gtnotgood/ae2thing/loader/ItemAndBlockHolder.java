@@ -6,5 +6,5 @@ public final class ItemAndBlockHolder {
 
     private ItemAndBlockHolder() {}
 
-    public static ItemWirelessDualInterfaceTerminal ITEM_WIRELESS_DUAL_INTERFACE_TERMINAL;
+    public static ItemWirelessDualInterfaceTerminal wirelessDualInterfaceTerminal;
 }

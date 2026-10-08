@@ -1,8 +1,10 @@
 package com.xyp.gtnotgood.common.network;
 
 import com.xyp.gtnotgood.GTNotGood;
+import com.xyp.gtnotgood.commandtree.network.CommandTreePacket;
 import com.xyp.gtnotgood.common.network.mebridge.MessageMEWirelessNodeAction;
 import com.xyp.gtnotgood.common.network.mebridge.MessageMEWirelessVisualization;
+import com.xyp.gtnotgood.common.network.packaged.MessagePackagedConnector;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -20,33 +22,19 @@ public final class NetworkHandler {
      */
     public static void registerAllMessage() {
         int id = 0;
-        registerMessage(
-            MessageMEWirelessNodeAction.class,
-            MessageMEWirelessNodeAction.Handler.class,
-            id++,
+        registerMessage(MessageMEWirelessNodeAction.class, MessageMEWirelessNodeAction.Handler.class, id++,
             Side.SERVER);
-        registerMessage(
-            MessageMEWirelessVisualization.class,
-            MessageMEWirelessVisualization.Handler.class,
-            id++,
+        registerMessage(MessageMEWirelessVisualization.class, MessageMEWirelessVisualization.Handler.class, id++,
             Side.CLIENT);
         registerMessage(SwapItems.class, SwapItems.Handler.class, id++, Side.SERVER);
         registerMessage(SyncToolBeltData.class, SyncToolBeltData.Handler.class, id++, Side.CLIENT);
         // 矿脉挖掘镐网络包
         // Vein Mining Pickaxe packets
-        registerMessage(SyncVeinPickaxeNBT.class, SyncVeinPickaxeNBT.Handler.class, id++, Side.SERVER);
+        registerMessage(UpdateVeinMiningSetting.class, UpdateVeinMiningSetting.Handler.class, id++, Side.SERVER);
         registerMessage(ServerConfigMessage.class, ServerConfigMessage.ServerHandler.class, id, Side.SERVER);
         registerMessage(ServerConfigMessage.class, ServerConfigMessage.ClientHandler.class, id++, Side.CLIENT);
-        registerMessage(
-            com.xyp.gtnotgood.common.network.packaged.MessagePackagedConnector.class,
-            com.xyp.gtnotgood.common.network.packaged.MessagePackagedConnector.Handler.class,
-            id++,
-            Side.SERVER);
-        registerMessage(
-            com.xyp.gtnotgood.commandtree.network.CommandTreePacket.class,
-            com.xyp.gtnotgood.commandtree.network.CommandTreePacket.Handler.class,
-            id++,
-            Side.CLIENT);
+        registerMessage(MessagePackagedConnector.class, MessagePackagedConnector.Handler.class, id++, Side.SERVER);
+        registerMessage(CommandTreePacket.class, CommandTreePacket.Handler.class, id++, Side.CLIENT);
         registerMessage(WirelessMonitorRequest.class, WirelessMonitorRequest.Handler.class, id++, Side.SERVER);
         registerMessage(WirelessMonitorSnapshot.class, WirelessMonitorSnapshot.Handler.class, id, Side.CLIENT);
     }

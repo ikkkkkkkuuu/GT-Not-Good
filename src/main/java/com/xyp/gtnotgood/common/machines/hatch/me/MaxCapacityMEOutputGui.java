@@ -26,21 +26,12 @@ final class MaxCapacityMEOutputGui {
 
     /** Leaves room for both the native controls and the filter row above the player inventory. */
     private static ParentWidget<?> content(ParentWidget<?> nativeControls) {
-        ParentWidget<?> content = new ParentWidget<>().fullWidth()
-            .expanded();
-        content.child(
-            Flow.column()
-                .fullWidth()
-                .height(24)
-                .top(0)
-                .child(nativeControls));
+        ParentWidget<?> content = new ParentWidget<>().fullWidth().expanded();
+        content.child(Flow.column().fullWidth().height(24).top(0).child(nativeControls));
         // #tr gui.gtnotgood.me_output.filters
         // # Filters (empty: accept all)
         // # zh_CN 过滤标记（全空：接收全部）
-        content.child(
-            IKey.lang("gui.gtnotgood.me_output.filters")
-                .asWidget()
-                .pos(0, 28));
+        content.child(IKey.lang("gui.gtnotgood.me_output.filters").asWidget().pos(0, 28));
         return content;
     }
 
@@ -74,9 +65,8 @@ final class MaxCapacityMEOutputGui {
             ParentWidget<?> content = content(super.createContentSection(panel, sync));
             ItemSamples samples = new ItemSamples(bus);
             for (int i = 0; i < MaxCapacityMEOutputFilters.SLOT_COUNT; i++) {
-                content.child(
-                    new PhantomItemSlot().slot(new SampleSlot(samples, i).singletonSlotGroup())
-                        .pos(i * 18, 42));
+                content
+                    .child(new PhantomItemSlot().slot(new SampleSlot(samples, i).singletonSlotGroup()).pos(i * 18, 42));
             }
             return content;
         }
@@ -114,9 +104,7 @@ final class MaxCapacityMEOutputGui {
                 FluidSlotSyncHandler handler = new FluidSlotSyncHandler(new FluidSample(hatch, i)).phantom(true)
                     .controlsAmount(false);
                 sync.syncValue("output_filter_" + i, handler);
-                content.child(
-                    new FluidSlot().syncHandler(handler)
-                        .pos(i * 18, 42));
+                content.child(new FluidSlot().syncHandler(handler).pos(i * 18, 42));
             }
             return content;
         }
@@ -159,11 +147,7 @@ final class MaxCapacityMEOutputGui {
         }
 
         public ItemStack getStackInSlot(int slot) {
-            return bus.getBaseMetaTileEntity()
-                .isServerSide()
-                    ? bus.getFilters()
-                        .getItem(slot)
-                    : client[slot];
+            return bus.getBaseMetaTileEntity().isServerSide() ? bus.getFilters().getItem(slot) : client[slot];
         }
 
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
@@ -175,10 +159,7 @@ final class MaxCapacityMEOutputGui {
         }
 
         public void setStackInSlot(int slot, ItemStack stack) {
-            if (bus.getBaseMetaTileEntity()
-                .isServerSide())
-                bus.getFilters()
-                    .setItem(slot, stack);
+            if (bus.getBaseMetaTileEntity().isServerSide()) bus.getFilters().setItem(slot, stack);
             else {
                 client[slot] = stack == null ? null : stack.copy();
                 if (client[slot] != null) client[slot].stackSize = 1;
@@ -199,11 +180,7 @@ final class MaxCapacityMEOutputGui {
         }
 
         public FluidStack getFluid() {
-            return hatch.getBaseMetaTileEntity()
-                .isServerSide()
-                    ? hatch.getFilters()
-                        .getFluid(slot)
-                    : client;
+            return hatch.getBaseMetaTileEntity().isServerSide() ? hatch.getFilters().getFluid(slot) : client;
         }
 
         public int getFluidAmount() {
@@ -219,10 +196,7 @@ final class MaxCapacityMEOutputGui {
         }
 
         private void sample(FluidStack stack) {
-            if (hatch.getBaseMetaTileEntity()
-                .isServerSide())
-                hatch.getFilters()
-                    .setFluid(slot, stack);
+            if (hatch.getBaseMetaTileEntity().isServerSide()) hatch.getFilters().setFluid(slot, stack);
             else {
                 client = stack == null ? null : stack.copy();
                 if (client != null) client.amount = 1;

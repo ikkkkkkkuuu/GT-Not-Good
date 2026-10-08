@@ -3,6 +3,7 @@ package com.xyp.gtnotgood;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.rtsbuilding.rtsbuilding.RtsbuildingMod;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.loader.QuestLoader;
 import com.xyp.gtnotgood.utils.enums.ModList;
@@ -14,7 +15,10 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppedEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 /**
@@ -76,20 +80,16 @@ public class GTNotGood {
     public static CommonProxy proxy;
 
     @Mod.EventHandler
-    // preInit "Run before anything else. Read your config, create blocks, items, etc., and register them with the
-    // GameRegistry." (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(event);
     }
 
     @Mod.EventHandler
-    // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
-        System.out.println(
-            "[GTNotGood/BQ] betterquesting=" + Loader.isModLoaded("betterquesting")
-                + ", bqapi="
-                + Loader.isModLoaded("bqapi"));
+        System.out.println("[GTNotGood/BQ] betterquesting=" + Loader.isModLoaded("betterquesting")
+            + ", bqapi="
+            + Loader.isModLoaded("bqapi"));
 
         if (Loader.isModLoaded("betterquesting") && Loader.isModLoaded("bqapi")) {
 
@@ -98,7 +98,6 @@ public class GTNotGood {
     }
 
     @Mod.EventHandler
-    // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
     }
@@ -109,33 +108,28 @@ public class GTNotGood {
     }
 
     @Mod.EventHandler
-    // register server commands in this event handler (Remove if not needed)
     public void serverStarting(FMLServerStartingEvent event) {
         proxy.serverStarting(event);
-        if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
-            com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.onServerStarting(event);
+        if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.onServerStarting(event);
     }
 
     /** Starts the embedded RTS persistence scheduler after world creation. */
     @Mod.EventHandler
-    public void serverStarted(cpw.mods.fml.common.event.FMLServerStartedEvent event) {
-        if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
-            com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.onServerStarted(event);
+    public void serverStarted(FMLServerStartedEvent event) {
+        if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.onServerStarted(event);
     }
 
     /** Flushes upstream durable tasks while worlds are still available. */
     @Mod.EventHandler
-    public void serverStopping(cpw.mods.fml.common.event.FMLServerStoppingEvent event) {
-        if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
-            com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.onServerStopping(event);
+    public void serverStopping(FMLServerStoppingEvent event) {
+        if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.onServerStopping(event);
     }
 
     /** Clears connection-scoped RTS state before another integrated or dedicated server starts. */
     @Mod.EventHandler
-    public void serverStopped(cpw.mods.fml.common.event.FMLServerStoppedEvent event) {
+    public void serverStopped(FMLServerStoppedEvent event) {
         WirelessMonitorService.reset();
-        if (com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.isInitialized())
-            com.rtsbuilding.rtsbuilding.RtsbuildingMod.INSTANCE.onServerStopped(event);
+        if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.onServerStopped(event);
     }
 }
 // #tr gui.example.key

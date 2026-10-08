@@ -15,7 +15,7 @@ public abstract class BasicGeneratorStockIOMixin {
 
     @WrapMethod(method = "onPostTick")
     private void gtng$stockIOFuel(IGregTechTileEntity base, long tick, Operation<Void> original) {
-        StockIOGeneratorBridge
-            .onPostTick((MTEBasicGenerator) (Object) this, base, tick, () -> original.call(base, tick));
+        StockIOGeneratorBridge.onPostTick((MTEBasicGenerator) (Object) this, base, tick,
+            () -> original.call(base, tick));
     }
 }

@@ -22,51 +22,31 @@ public final class WirelessMonitorPositionScreen extends GuiScreen {
     @Override
     public void initGui() {
         buttonList.clear();
-        buttonList.add(
-            new GuiButton(
-                0,
-                width / 2 - 102,
-                48,
-                100,
-                20,
-                // #tr gui.gtnotgood.wireless_position.reset
-                // # Reset position
-                // # zh_CN 恢复默认位置
-                StatCollector.translateToLocal("gui.gtnotgood.wireless_position.reset")));
-        buttonList.add(
-            new GuiButton(
-                1,
-                width / 2 + 2,
-                48,
-                100,
-                20,
-                // #tr gui.gtnotgood.wireless_position.done
-                // # Save and close
-                // # zh_CN 保存并退出
-                StatCollector.translateToLocal("gui.gtnotgood.wireless_position.done")));
+        buttonList.add(new GuiButton(0, width / 2 - 102, 48, 100, 20,
+            // #tr gui.gtnotgood.wireless_position.reset
+            // # Reset position
+            // # zh_CN 恢复默认位置
+            StatCollector.translateToLocal("gui.gtnotgood.wireless_position.reset")));
+        buttonList.add(new GuiButton(1, width / 2 + 2, 48, 100, 20,
+            // #tr gui.gtnotgood.wireless_position.done
+            // # Save and close
+            // # zh_CN 保存并退出
+            StatCollector.translateToLocal("gui.gtnotgood.wireless_position.done")));
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawRect(0, 0, width, height, 0x18000000);
-        drawCenteredString(
-            fontRendererObj,
+        drawCenteredString(fontRendererObj,
             // #tr gui.gtnotgood.wireless_position.title
             // # Wireless HUD position
             // # zh_CN 调整无线电网 HUD 位置
-            StatCollector.translateToLocal("gui.gtnotgood.wireless_position.title"),
-            width / 2,
-            12,
-            0xFFFFFF);
-        drawCenteredString(
-            fontRendererObj,
+            StatCollector.translateToLocal("gui.gtnotgood.wireless_position.title"), width / 2, 12, 0xFFFFFF);
+        drawCenteredString(fontRendererObj,
             // #tr gui.gtnotgood.wireless_position.hint
             // # Drag the HUD with left mouse; press the edit key or Esc to save.
             // # zh_CN 左键拖动文字区域；再次按编辑键或 Esc 保存退出。
-            StatCollector.translateToLocal("gui.gtnotgood.wireless_position.hint"),
-            width / 2,
-            29,
-            0xDDDDDD);
+            StatCollector.translateToLocal("gui.gtnotgood.wireless_position.hint"), width / 2, 29, 0xDDDDDD);
         Layout layout = WirelessMonitorHud.INSTANCE.layout(width, height);
         int left = (int) (layout.x - 2 * layout.scale) - 2;
         int top = (int) (layout.y - 2 * layout.scale) - 2;

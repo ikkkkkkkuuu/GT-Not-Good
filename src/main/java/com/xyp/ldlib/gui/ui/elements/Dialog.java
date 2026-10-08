@@ -22,8 +22,7 @@ public final class Dialog extends ModalLayer {
     @Override
     public void layout() {
         super.layout();
-        content.setPosition(
-            Math.max(0, (getWidth() - content.getWidth()) / 2),
+        content.setPosition(Math.max(0, (getWidth() - content.getWidth()) / 2),
             Math.max(0, (getHeight() - content.getHeight()) / 2));
     }
 

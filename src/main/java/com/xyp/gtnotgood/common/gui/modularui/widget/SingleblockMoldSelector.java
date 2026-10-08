@@ -29,8 +29,7 @@ public final class SingleblockMoldSelector {
 
     /** Builds a scrollable catalog selector, sharing the hatch mold list while keeping machine storage independent. */
     public static Widget<?> create(MTEBasicMachine machine, PanelSyncManager syncManager) {
-        IntSyncValue selection = new IntSyncValue(
-            () -> VirtualMachineMolds.indexOf(VirtualMachineMolds.get(machine)),
+        IntSyncValue selection = new IntSyncValue(() -> VirtualMachineMolds.indexOf(VirtualMachineMolds.get(machine)),
             index -> {
                 if (syncManager.isClient() || index < -1 || index >= MoldDataManager.getMoldCount()) return;
                 // Manual selection obeys the same empty/idle boundary as automatic configuration changes.
@@ -41,48 +40,33 @@ public final class SingleblockMoldSelector {
                 }
                 if (machine.getFillableStack() != null && machine.getFillableStack().amount > 0) return;
                 VirtualMachineMolds.set(machine, VirtualMachineMolds.at(index));
-                machine.getBaseMetaTileEntity()
-                    .markInventoryBeenModified();
-                machine.getBaseMetaTileEntity()
-                    .markDirty();
+                machine.getBaseMetaTileEntity().markInventoryBeenModified();
+                machine.getBaseMetaTileEntity().markDirty();
             }).allowC2S();
         syncManager.syncValue("gtngVirtualMold", selection);
         IPanelHandler popup = syncManager.syncedPanel("gtngMoldSelector", true, (mainPanel, player) -> {
-            ModularPanel panel = GTGuis.createPopUpPanel("gtngMoldSelector")
-                .size(176, 212);
+            ModularPanel panel = GTGuis.createPopUpPanel("gtngMoldSelector").size(176, 212);
             // #tr gtng.singleblock.mold.title
             // # Virtual Mold
             // # zh_CN 虚拟模具
-            panel.child(
-                IKey.lang("gtng.singleblock.mold.title")
-                    .asWidget()
-                    .pos(7, 7));
-            panel.child(
-                new SlotLikeButtonWidget(() -> VirtualMachineMolds.at(selection.getIntValue()))
-                    .onMousePressed(button -> {
-                        if (button == 1) selection.setIntValue(-1);
-                        return true;
-                    })
-                    .horizontalCenter()
-                    .top(24));
+            panel.child(IKey.lang("gtng.singleblock.mold.title").asWidget().pos(7, 7));
+            panel.child(new SlotLikeButtonWidget(() -> VirtualMachineMolds.at(selection.getIntValue()))
+                .onMousePressed(button -> {
+                    if (button == 1) selection.setIntValue(-1);
+                    return true;
+                }).horizontalCenter().top(24));
             ItemStack[] choices = MoldDataManager.getMolds();
-            panel.child(
-                new Grid().minColWidth(18)
-                    .gridOfWidthHeight(9, (choices.length + 8) / 9, (x, y, index) -> {
-                        if (index >= choices.length) return null;
-                        return new SlotLikeButtonWidget(choices[index]).size(18)
-                            .background(
-                                new DynamicDrawable(
-                                    () -> selection.getIntValue() == index ? GTGuiTextures.SLOT_ITEM_DARK
-                                        : GTGuiTextures.SLOT_ITEM_STANDARD))
-                            .onMousePressed(button -> {
-                                selection.setIntValue(button == 0 ? index : -1);
-                                return true;
-                            });
-                    })
-                    .size(166, 162)
-                    .scrollable()
-                    .pos(5, 46));
+            panel.child(new Grid().minColWidth(18).gridOfWidthHeight(9, (choices.length + 8) / 9, (x, y, index) -> {
+                if (index >= choices.length) return null;
+                return new SlotLikeButtonWidget(choices[index]).size(18)
+                    .background(
+                        new DynamicDrawable(() -> selection.getIntValue() == index ? GTGuiTextures.SLOT_ITEM_DARK
+                            : GTGuiTextures.SLOT_ITEM_STANDARD))
+                    .onMousePressed(button -> {
+                        selection.setIntValue(button == 0 ? index : -1);
+                        return true;
+                    });
+            }).size(166, 162).scrollable().pos(5, 46));
             return panel;
         });
         return new SlotLikeButtonWidget(() -> VirtualMachineMolds.at(selection.getIntValue())) {
@@ -108,8 +92,7 @@ public final class SingleblockMoldSelector {
                 if (next >= MoldDataManager.getMoldCount()) next = -1;
                 selection.setIntValue(next);
             }
-        }.size(18)
-            .background(GTGuiTextures.SLOT_ITEM_STANDARD, GTGuiTextures.OVERLAY_SLOT_MOLD)
+        }.size(18).background(GTGuiTextures.SLOT_ITEM_STANDARD, GTGuiTextures.OVERLAY_SLOT_MOLD)
             // #tr gtng.singleblock.mold.help
             // # Shift+click: select; scroll: cycle; Shift+right-click: clear
             // # zh_CN Shift+左键选择；滚轮切换；Shift+右键清空

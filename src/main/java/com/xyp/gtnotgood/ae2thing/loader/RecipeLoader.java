@@ -2,7 +2,7 @@ package com.xyp.gtnotgood.ae2thing.loader;
 
 import static com.glodblock.github.loader.ItemAndBlockHolder.WIRELESS_INTERFACE_TERM;
 import static com.glodblock.github.loader.ItemAndBlockHolder.WIRELESS_PATTERN_TERM;
-import static com.xyp.gtnotgood.ae2thing.loader.ItemAndBlockHolder.ITEM_WIRELESS_DUAL_INTERFACE_TERMINAL;
+import static com.xyp.gtnotgood.ae2thing.loader.ItemAndBlockHolder.wirelessDualInterfaceTerminal;
 
 import com.xyp.gtnotgood.ae2thing.loader.recipe.WirelessTerminalEnergyRecipe;
 import com.xyp.gtnotgood.ae2thing.loader.recipe.WirelessTerminalQuantumBridgeRecipe;
@@ -15,11 +15,9 @@ public class RecipeLoader implements Runnable {
 
     @Override
     public void run() {
-        GameRegistry.addShapelessRecipe(
-            ITEM_WIRELESS_DUAL_INTERFACE_TERMINAL.stack(),
-            WIRELESS_INTERFACE_TERM,
+        GameRegistry.addShapelessRecipe(wirelessDualInterfaceTerminal.stack(), WIRELESS_INTERFACE_TERM,
             WIRELESS_PATTERN_TERM.stack());
-        WirelessTerminalQuantumBridgeRecipe.register(ITEM_WIRELESS_DUAL_INTERFACE_TERMINAL.stack());
-        WirelessTerminalEnergyRecipe.register(ITEM_WIRELESS_DUAL_INTERFACE_TERMINAL.stack());
+        WirelessTerminalQuantumBridgeRecipe.register(wirelessDualInterfaceTerminal.stack());
+        WirelessTerminalEnergyRecipe.register(wirelessDualInterfaceTerminal.stack());
     }
 }

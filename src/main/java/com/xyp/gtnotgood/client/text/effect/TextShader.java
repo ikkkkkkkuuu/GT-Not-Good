@@ -46,10 +46,8 @@ public class TextShader implements AutoCloseable {
         int pixel = 0;
         int linked = 0;
         try {
-            vertex = compileStage(
-                GL20.GL_VERTEX_SHADER,
-                source(
-                    new ResourceLocation(ModList.GTNotGood.getResourceLocation(), "shaders/text/text.vert.glsl"),
+            vertex = compileStage(GL20.GL_VERTEX_SHADER,
+                source(new ResourceLocation(ModList.GTNotGood.getResourceLocation(), "shaders/text/text.vert.glsl"),
                     new HashSet<>()));
             pixel = compileStage(GL20.GL_FRAGMENT_SHADER, source(fragment, new HashSet<>()));
             linked = GL20.glCreateProgram();
@@ -83,10 +81,7 @@ public class TextShader implements AutoCloseable {
     }
 
     private static String read(ResourceLocation path) throws IOException {
-        try (InputStream stream = Minecraft.getMinecraft()
-            .getResourceManager()
-            .getResource(path)
-            .getInputStream()) {
+        try (InputStream stream = Minecraft.getMinecraft().getResourceManager().getResource(path).getInputStream()) {
             return new String(ByteStreams.toByteArray(stream), StandardCharsets.UTF_8);
         }
     }
@@ -98,11 +93,7 @@ public class TextShader implements AutoCloseable {
             StringBuffer result = new StringBuffer();
             while (matcher.find()) {
                 String include = matcher.group(1);
-                String directory = path.getResourcePath()
-                    .substring(
-                        0,
-                        path.getResourcePath()
-                            .lastIndexOf('/') + 1);
+                String directory = path.getResourcePath().substring(0, path.getResourcePath().lastIndexOf('/') + 1);
                 ResourceLocation child = include.indexOf(':') >= 0 ? new ResourceLocation(include)
                     : new ResourceLocation(path.getResourceDomain(), directory + include);
                 matcher.appendReplacement(result, Matcher.quoteReplacement(source(child, active)));

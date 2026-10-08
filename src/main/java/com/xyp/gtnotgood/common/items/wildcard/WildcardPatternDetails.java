@@ -1,5 +1,8 @@
 package com.xyp.gtnotgood.common.items.wildcard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -100,7 +103,7 @@ public class WildcardPatternDetails implements ICraftingPatternDetails {
         // 注意：绝不能在结果里保留 null 元素。AE2 的 CraftingGridCache.setPatternsFromCraftingMethods
         // 遍历 getAEOutputs() 时直接 out.copy() 不判空，若数组含 null 会每 tick NPE 刷屏、样板注册失败。
         // 输入的消费方也一律跳过 null，故这里统一跳过 null 并压缩数组。
-        java.util.List<IAEStack<?>> result = new java.util.ArrayList<>(items.length);
+        List<IAEStack<?>> result = new ArrayList<>(items.length);
         for (IAEItemStack ais : items) {
             if (ais == null) {
                 continue;
@@ -170,8 +173,7 @@ public class WildcardPatternDetails implements ICraftingPatternDetails {
             ItemStack pattern = this.getPattern();
             int result = pattern.getItem() != null ? System.identityHashCode(pattern.getItem()) : 0;
             result = 31 * result + pattern.getItemDamage();
-            result = 31 * result + WildcardPatternGenerator.getPatternIdentity(pattern)
-                .hashCode();
+            result = 31 * result + WildcardPatternGenerator.getPatternIdentity(pattern).hashCode();
             this.cachedHashCode = result;
             this.hashCodeComputed = true;
         }

@@ -196,8 +196,7 @@ public final class TileMERequester extends TileMEBridgeBase implements StockHost
 
     @Override
     public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
-        renderActive = packet.func_148857_g()
-            .getBoolean("active");
+        renderActive = packet.func_148857_g().getBoolean("active");
         worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
     }
 
@@ -237,8 +236,7 @@ public final class TileMERequester extends TileMEBridgeBase implements StockHost
                     statuses[row] = pending[row] > 0 ? crafting : ready;
                     continue;
                 }
-                if (!craftingGrid.getCraftingMultiPatterns()
-                    .containsKey(key) && !craftingGrid.canEmitFor(key)) {
+                if (!craftingGrid.getCraftingMultiPatterns().containsKey(key) && !craftingGrid.canEmitFor(key)) {
                     statuses[row] = noPattern;
                     continue;
                 }

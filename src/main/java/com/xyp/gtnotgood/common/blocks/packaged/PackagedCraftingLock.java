@@ -7,23 +7,23 @@ public enum PackagedCraftingLock {
     // #tr gui.packaged.lock.none
     // # Crafting lock: disabled
     // # zh_CN 合成锁定：关闭
-    NONE("gui.packaged.lock.none", 160),
+    None("gui.packaged.lock.none", 160),
     // #tr gui.packaged.lock.pulse
     // # Lock until the next redstone pulse
     // # zh_CN 派单后锁定，等待下一次红石脉冲
-    PULSE("gui.packaged.lock.pulse", 32),
+    Pulse("gui.packaged.lock.pulse", 32),
     // #tr gui.packaged.lock.high
     // # Lock while redstone signal is high
     // # zh_CN 有红石信号时锁定
-    HIGH("gui.packaged.lock.high", 80),
+    High("gui.packaged.lock.high", 80),
     // #tr gui.packaged.lock.low
     // # Lock while redstone signal is low
     // # zh_CN 无红石信号时锁定
-    LOW("gui.packaged.lock.low", 64),
+    Low("gui.packaged.lock.low", 64),
     // #tr gui.packaged.lock.result
     // # Lock until the result returns to the ME network
     // # zh_CN 派单后锁定，等待产物返回 ME 网络
-    RESULT("gui.packaged.lock.result", 112);
+    Result("gui.packaged.lock.result", 112);
 
     public final String key;
     public final int iconX;

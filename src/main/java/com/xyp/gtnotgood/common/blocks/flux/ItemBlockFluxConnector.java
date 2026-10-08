@@ -3,10 +3,12 @@ package com.xyp.gtnotgood.common.blocks.flux;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
 
 /** Explains the port's GT EU direction, automatic owner binding and configurable packet limits. */
 public final class ItemBlockFluxConnector extends ItemBlock {
@@ -17,8 +19,7 @@ public final class ItemBlockFluxConnector extends ItemBlock {
 
     /** Reset legacy portable settings on the server so old and newly crafted stacks can merge. */
     @Override
-    public void onUpdate(ItemStack stack, net.minecraft.world.World world, net.minecraft.entity.Entity entity, int slot,
-        boolean held) {
+    public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean held) {
         super.onUpdate(stack, world, entity, slot, held);
         if (!world.isRemote && world.getTotalWorldTime() % 20 == 0) {
             FluxDropData.normalize(stack, field_150939_a instanceof BlockFluxLogistics);

@@ -27,18 +27,15 @@ public final class ClientCommandTree {
         ICommandSender sender) {
         for (Map.Entry<String, ICommand> entry : commands.entrySet()) {
             String name = entry.getKey();
-            if (name == null || name.isEmpty()
-                || dispatcher.getRoot()
-                    .getChild(name) != null
-                || !entry.getValue()
-                    .canCommandSenderUseCommand(sender)) {
+            if (
+                name == null || name.isEmpty()
+                    || dispatcher.getRoot().getChild(name) != null
+                    || !entry.getValue().canCommandSenderUseCommand(sender)
+            ) {
                 continue;
             }
-            dispatcher.register(
-                LiteralArgumentBuilder.<ISuggestionProvider>literal(name)
-                    .then(
-                        RequiredArgumentBuilder
-                            .<ISuggestionProvider, String>argument("params", StringArgumentType.greedyString())));
+            dispatcher.register(LiteralArgumentBuilder.<ISuggestionProvider>literal(name).then(RequiredArgumentBuilder
+                .<ISuggestionProvider, String>argument("params", StringArgumentType.greedyString())));
         }
     }
 }

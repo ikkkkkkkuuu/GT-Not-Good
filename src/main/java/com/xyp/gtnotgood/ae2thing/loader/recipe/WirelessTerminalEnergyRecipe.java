@@ -36,28 +36,24 @@ public class WirelessTerminalEnergyRecipe extends ShapelessRecipes {
 
     private boolean isEnergyCard(ItemStack is) {
         if (is == null || is.getItem() == null) return false;
-        return CARDS.stream()
-            .anyMatch(x -> Objects.equals(x.getItem(), is.getItem()));
+        return CARDS.stream().anyMatch(x -> Objects.equals(x.getItem(), is.getItem()));
     }
 
     public static void registerCard(ItemStack card, ItemStack terminal) {
         if (terminal == null || terminal.getItem() == null) return;
         CARDS.add(card);
         GameRegistry.addRecipe(new WirelessTerminalEnergyRecipe(terminal, card));
-        terminalClass.add(
-            terminal.getItem()
-                .getClass());
+        terminalClass.add(terminal.getItem().getClass());
     }
 
     public static ItemStack getEnergyCard() {
-        Optional<ItemStack> card = CARDS.stream()
-            .findFirst();
+        Optional<ItemStack> card = CARDS.stream().findFirst();
         return card.orElse(null);
     }
 
     public static void register(ItemStack terminal) {
         ItemStack card;
-        card = ModsItemlist.AE2FluidCraftEnergyCard.get(1);
+        card = ModsItemlist.EnergyCard.get(1);
         if (card != null) {
             registerCard(card, terminal);
         }
@@ -68,9 +64,7 @@ public class WirelessTerminalEnergyRecipe extends ShapelessRecipes {
         ItemStack term = inv.getStackInSlot(0);
         ItemStack card = inv.getStackInSlot(1);
         return term != null && term.getItem() != null
-            && terminalClass.contains(
-                term.getItem()
-                    .getClass())
+            && terminalClass.contains(term.getItem().getClass())
             && !hasEnergyCard(term)
             && isEnergyCard(card);
     }

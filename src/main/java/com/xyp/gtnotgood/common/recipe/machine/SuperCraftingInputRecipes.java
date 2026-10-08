@@ -24,82 +24,50 @@ public final class SuperCraftingInputRecipes {
      */
     public static void loadRecipes() {
         GTRecipeBuilder.builder()
-            .itemInputs(
-                GTNGItemList.SuperMTEHatchCraftingInputME.get(1),
+            .itemInputs(GTNGItemList.SuperMTEHatchCraftingInputME.get(1),
                 new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
-            .circuit(23)
-            .itemOutputs(GTNGItemList.CircuitMEPatternBuffer.get(1))
-            .duration(5 * SECONDS)
-            .eut(32)
+            .circuit(23).itemOutputs(GTNGItemList.CircuitMEPatternBuffer.get(1)).duration(5 * SECONDS).eut(32)
             .addTo(assemblerRecipes);
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Hatch_Input_ME_Advanced.get(1L),
+            .itemInputs(ItemList.Hatch_Input_ME_Advanced.get(1L),
                 new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
-            .itemOutputs(GTNGItemList.SuperAdvancedMEInputHatch.get(1))
-            .duration(5 * SECONDS)
-            .eut(32)
+            .itemOutputs(GTNGItemList.SuperAdvancedMEInputHatch.get(1)).duration(5 * SECONDS).eut(32)
             .addTo(assemblerRecipes);
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Hatch_Input_Bus_ME_Advanced.get(1L),
+            .itemInputs(ItemList.Hatch_Input_Bus_ME_Advanced.get(1L),
                 new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
-            .itemOutputs(GTNGItemList.SuperAdvancedMEInputBus.get(1))
-            .duration(5 * SECONDS)
-            .eut(32)
+            .itemOutputs(GTNGItemList.SuperAdvancedMEInputBus.get(1)).duration(5 * SECONDS).eut(32)
             .addTo(assemblerRecipes);
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Hatch_Input_Bus_LV.get(1L),
-                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
+            .itemInputs(ItemList.Hatch_Input_Bus_LV.get(1L), new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
-            .circuit(22)
-            .itemOutputs(GTNGItemList.SuperMTEHatchCraftingInputBusME.get(1))
-            .duration(5 * SECONDS)
-            .eut(32)
+            .circuit(22).itemOutputs(GTNGItemList.SuperMTEHatchCraftingInputBusME.get(1)).duration(5 * SECONDS).eut(32)
             .addTo(assemblerRecipes);
 
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Hatch_Input_Bus_LV.get(1L),
-                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
+            .itemInputs(ItemList.Hatch_Input_Bus_LV.get(1L), new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
-            .circuit(21)
-            .itemOutputs(GTNGItemList.SuperMTEHatchCraftingInputME.get(1))
-            .duration(5 * SECONDS)
-            .eut(32)
+            .circuit(21).itemOutputs(GTNGItemList.SuperMTEHatchCraftingInputME.get(1)).duration(5 * SECONDS).eut(32)
             .addTo(assemblerRecipes);
 
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Hatch_Input_Bus_LV.get(1L),
-                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
+            .itemInputs(ItemList.Hatch_Input_Bus_LV.get(1L), new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
-            .circuit(23)
-            .itemOutputs(GTNGItemList.SuperMTEHatchCraftingInputSlave.get(1))
-            .duration(5 * SECONDS)
-            .eut(32)
+            .circuit(23).itemOutputs(GTNGItemList.SuperMTEHatchCraftingInputSlave.get(1)).duration(5 * SECONDS).eut(32)
             .addTo(assemblerRecipes);
 
         GTRecipeBuilder.builder()
-            .itemInputs(
-                ItemList.Hatch_Input_Bus_LV.get(1L),
-                new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
+            .itemInputs(ItemList.Hatch_Input_Bus_LV.get(1L), new Object[] { OrePrefixes.circuit.get(Materials.LV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
-            .circuit(24)
-            .itemOutputs(GTNGItemList.CompactSuperMTEHatchCraftingInputME.get(1))
-            .duration(5 * SECONDS)
-            .eut(32)
-            .addTo(assemblerRecipes);
+            .circuit(24).itemOutputs(GTNGItemList.CompactSuperMTEHatchCraftingInputME.get(1)).duration(5 * SECONDS)
+            .eut(32).addTo(assemblerRecipes);
 
-        GameRegistry.addShapelessRecipe(
-            GTNGItemList.CompactSuperMTEHatchCraftingInputME.get(1),
+        GameRegistry.addShapelessRecipe(GTNGItemList.CompactSuperMTEHatchCraftingInputME.get(1),
             GTNGItemList.SuperMTEHatchCraftingInputME.get(1));
-        GameRegistry.addShapelessRecipe(
-            GTNGItemList.SuperMTEHatchCraftingInputME.get(1),
+        GameRegistry.addShapelessRecipe(GTNGItemList.SuperMTEHatchCraftingInputME.get(1),
             GTNGItemList.CompactSuperMTEHatchCraftingInputME.get(1));
     }
 }

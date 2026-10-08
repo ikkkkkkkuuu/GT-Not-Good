@@ -25,6 +25,7 @@ import com.xyp.gtnotgood.client.text.TextMaskCache.Mask;
 import com.xyp.gtnotgood.client.text.compat.AngelicaTextAdapter;
 import com.xyp.gtnotgood.client.text.compat.AngelicaTextAdapter.FontSettings;
 import com.xyp.gtnotgood.client.text.compat.FontBatchBridge;
+import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.gtnotgood.utils.text.effect.EffectTextParser;
 import com.xyp.gtnotgood.utils.text.effect.TextEffectStyle;
 
@@ -32,8 +33,7 @@ import com.xyp.gtnotgood.utils.text.effect.TextEffectStyle;
 public class EffectTextRenderer implements IResourceManagerReloadListener {
 
     public static final EffectTextRenderer INSTANCE = new EffectTextRenderer();
-    private static final Logger LOGGER = LogManager
-        .getLogger(com.xyp.gtnotgood.utils.enums.ModList.GTNotGood.getID() + ".TextEffects");
+    private static final Logger LOGGER = LogManager.getLogger(ModList.GTNotGood.getID() + ".TextEffects");
     private static final long START_TIME = System.nanoTime();
     private static int captureDepth;
     private static int nativeDepth;
@@ -63,27 +63,16 @@ public class EffectTextRenderer implements IResourceManagerReloadListener {
 
     public Layout layout(FontRenderer font, String text) {
         IFontParameters parameters = (IFontParameters) font;
-        LayoutKey key = new LayoutKey(
-            font,
-            text,
-            font.getUnicodeFlag(),
-            font.FONT_HEIGHT,
-            parameters.getGlyphScaleX(),
-            parameters.getGlyphScaleY(),
-            parameters.getGlyphSpacing(),
-            parameters.getWhitespaceScale(),
-            FontRendering.preprocessText("&q&z&v"),
-            FontRendering.hexColorResetsStyles(),
+        LayoutKey key = new LayoutKey(font, text, font.getUnicodeFlag(), font.FONT_HEIGHT, parameters.getGlyphScaleX(),
+            parameters.getGlyphScaleY(), parameters.getGlyphSpacing(), parameters.getWhitespaceScale(),
+            FontRendering.preprocessText("&q&z&v"), FontRendering.hexColorResetsStyles(),
             AngelicaTextAdapter.fontSettings());
         Layout layout = layouts.get(key);
         if (layout == null) {
             layout = EffectTextLayout.create(font, text);
             if (text.length() < 16384) {
                 layouts.put(key, layout);
-                if (layouts.size() > 256) layouts.remove(
-                    layouts.keySet()
-                        .iterator()
-                        .next());
+                if (layouts.size() > 256) layouts.remove(layouts.keySet().iterator().next());
             }
         }
         return layout;
@@ -126,15 +115,7 @@ public class EffectTextRenderer implements IResourceManagerReloadListener {
     private int drawLayout(FontRenderer font, Layout layout, float x, float y, int color, boolean shadow) {
         try (TextRenderState ignored = new TextRenderState()) {
             for (DrawRun run : layout.runs()) {
-                drawRun(
-                    font,
-                    run.text(),
-                    run.style(),
-                    x + run.x(),
-                    y + run.y(),
-                    run.width(),
-                    layout.height(),
-                    color,
+                drawRun(font, run.text(), run.style(), x + run.x(), y + run.y(), run.width(), layout.height(), color,
                     shadow);
             }
         }
@@ -148,11 +129,13 @@ public class EffectTextRenderer implements IResourceManagerReloadListener {
     private void drawRun(FontRenderer font, String text, TextEffectStyle style, float x, float y, float width,
         float height, int color, boolean shadow) {
         TextEffect effect = style == null ? null : TextEffectRegistry.get(style.rendererId());
-        if (effect == null || width <= 0
-            || failed.contains(style.rendererId())
-            || !AngelicaTextAdapter.supportsEffects(font)
-            || !OpenGlHelper.isFramebufferEnabled()
-            || !GLContext.getCapabilities().OpenGL20) {
+        if (
+            effect == null || width <= 0
+                || failed.contains(style.rendererId())
+                || !AngelicaTextAdapter.supportsEffects(font)
+                || !OpenGlHelper.isFramebufferEnabled()
+                || !GLContext.getCapabilities().OpenGL20
+        ) {
             drawPlain(font, text, x, y, fallbackColor(style, effect, color), shadow);
             return;
         }
@@ -178,9 +161,8 @@ public class EffectTextRenderer implements IResourceManagerReloadListener {
 
     private static int fallbackColor(TextEffectStyle style, TextEffect effect, int color) {
         if (style == null) return color;
-        int rgb = !style.colors()
-            .isEmpty() ? style.colors()
-                .get(0) : effect == null ? color & 0xFFFFFF : effect.fallbackColor();
+        int rgb = !style.colors().isEmpty() ? style.colors().get(0)
+            : effect == null ? color & 0xFFFFFF : effect.fallbackColor();
         return color & 0xFF000000 | rgb;
     }
 
@@ -216,17 +198,7 @@ public class EffectTextRenderer implements IResourceManagerReloadListener {
 
         public LayoutKey(FontRenderer font, String text, boolean unicode, int fontHeight, float scaleX, float scaleY,
             float spacing, float whitespace, String preprocessing, boolean hexResetsStyles) {
-            this(
-                font,
-                text,
-                unicode,
-                fontHeight,
-                scaleX,
-                scaleY,
-                spacing,
-                whitespace,
-                preprocessing,
-                hexResetsStyles,
+            this(font, text, unicode, fontHeight, scaleX, scaleY, spacing, whitespace, preprocessing, hexResetsStyles,
                 null);
         }
     }

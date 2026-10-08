@@ -31,14 +31,10 @@ public final class FactoryInputs {
         pattern = raw == null ? null
             : new GTDualInputPattern(
                 raw.inputItems == null ? new ItemStack[0]
-                    : Arrays.stream(raw.inputItems)
-                        .filter(item -> item != null && !sharedRefs.contains(item))
-                        .map(ItemStack::copy)
-                        .toArray(ItemStack[]::new),
+                    : Arrays.stream(raw.inputItems).filter(item -> item != null && !sharedRefs.contains(item))
+                        .map(ItemStack::copy).toArray(ItemStack[]::new),
                 raw.inputFluid == null ? new FluidStack[0]
-                    : Arrays.stream(raw.inputFluid)
-                        .filter(fluid -> fluid != null)
-                        .map(FluidStack::copy)
+                    : Arrays.stream(raw.inputFluid).filter(fluid -> fluid != null).map(FluidStack::copy)
                         .toArray(FluidStack[]::new));
         Set<ItemStack> itemRefs = Collections.newSetFromMap(new IdentityHashMap<>());
         // Pattern jobs debit only their own inventory. Shared slots remain available for installed requirements.

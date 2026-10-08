@@ -102,11 +102,7 @@ public final class StockIOGui {
         // #tr gui.stock_io.title
         // # ME Inventory IO Interface
         // # zh_CN 库存 IO 接口 (ME)
-        panel.child(
-            IKey.lang("gui.stock_io.title")
-                .asWidget()
-                .pos(8, 7)
-                .size(350, 12));
+        panel.child(IKey.lang("gui.stock_io.title").asWidget().pos(8, 7).size(350, 12));
         BooleanSyncValue online = new BooleanSyncValue(logic::isOnline);
         BooleanSyncValue connected = new BooleanSyncValue(logic::isTargetConnected);
         BooleanSyncValue enabled = toggleValue("enabled", logic::isEnabled, logic::setEnabled);
@@ -116,43 +112,32 @@ public final class StockIOGui {
             // #tr gui.stock_io.offline
             // # Offline: check power and channel
             // # zh_CN 离线：检查供电与频道
-            if (!online.getBoolValue()) return IKey.lang("gui.stock_io.offline")
-                .get();
+            if (!online.getBoolValue()) return IKey.lang("gui.stock_io.offline").get();
             // #tr gui.stock_io.no_target
             // # No adjacent inventory
             // # zh_CN 未找到相邻容器
-            if (!connected.getBoolValue()) return IKey.lang("gui.stock_io.no_target")
-                .get();
+            if (!connected.getBoolValue()) return IKey.lang("gui.stock_io.no_target").get();
             // #tr gui.stock_io.running
             // # Running
             // # zh_CN 运行中
-            if (enabled.getBoolValue()) return IKey.lang("gui.stock_io.running")
-                .get();
+            if (enabled.getBoolValue()) return IKey.lang("gui.stock_io.running").get();
             // #tr gui.stock_io.paused
             // # Paused
             // # zh_CN 已暂停
-            return IKey.lang("gui.stock_io.paused")
-                .get();
-        })
-            .color(() -> online.getBoolValue() && connected.getBoolValue() ? 0xFF287034 : 0xFF902E2E)
-            .asWidget()
-            .pos(194, 29)
-            .size(164, 10));
+            return IKey.lang("gui.stock_io.paused").get();
+        }).color(() -> online.getBoolValue() && connected.getBoolValue() ? 0xFF287034 : 0xFF902E2E).asWidget()
+            .pos(194, 29).size(164, 10));
 
         sync.syncValue("selectedItem", selectedItem);
         sync.syncValue("selectedFluid", selectedFluid);
         IPanelHandler settings = sync.syncedPanel("stockSettings", true, (manager, handler) -> settingsPanel(panel));
-        IPanelHandler itemPolicy = sync
-            .syncedPanel("itemPolicy", true, (manager, handler) -> policyPanel(panel, false));
-        IPanelHandler fluidPolicy = sync
-            .syncedPanel("fluidPolicy", true, (manager, handler) -> policyPanel(panel, true));
+        IPanelHandler itemPolicy = sync.syncedPanel("itemPolicy", true,
+            (manager, handler) -> policyPanel(panel, false));
+        IPanelHandler fluidPolicy = sync.syncedPanel("fluidPolicy", true,
+            (manager, handler) -> policyPanel(panel, true));
         PagedWidget.Controller controller = new PagedWidget.Controller();
-        panel.child(
-            new PagedWidget<>().controller(controller)
-                .pos(8, 49)
-                .size(350, 86)
-                .addPage(page(false, itemPolicy, settings))
-                .addPage(page(true, fluidPolicy, settings)));
+        panel.child(new PagedWidget<>().controller(controller).pos(8, 49).size(350, 86)
+            .addPage(page(false, itemPolicy, settings)).addPage(page(true, fluidPolicy, settings)));
         // #tr gui.stock_io.items
         // # Items
         // # zh_CN 物品
@@ -164,11 +149,7 @@ public final class StockIOGui {
         // #tr gui.stock_io.samples_hint
         // # Samples are not consumed. Right-click a sample to configure its quantities.
         // # zh_CN 样本不消耗，右键样本设置保留量与固定量。
-        panel.child(
-            IKey.lang("gui.stock_io.samples_hint")
-                .asWidget()
-                .pos(8, 141)
-                .size(350, 10));
+        panel.child(IKey.lang("gui.stock_io.samples_hint").asWidget().pos(8, 141).size(350, 10));
 
         // #tr gui.stock_io.enabled
         // # Enabled
@@ -208,13 +189,11 @@ public final class StockIOGui {
         // # Return GT item and fluid outputs to ME without extracting its inputs.
         // # zh_CN 回收 GT 机器的物品与流体输出，不抽取输入。
         IKey recycleHelp = IKey.lang("gui.stock_io.recycle_help");
-        panel.child(
-            toggle(toggleValue("recycle", logic::isRecycle, logic::setRecycle), recycleLabel, recycleHelp)
-                .pos(275, 157));
+        panel.child(toggle(toggleValue("recycle", logic::isRecycle, logic::setRecycle), recycleLabel, recycleHelp)
+            .pos(275, 157));
         addTarget(panel);
-        panel.child(
-            SlotGroupWidget.playerInventory((index, slot) -> slot.background(GTGuiTextures.SLOT_ITEM_STANDARD))
-                .pos(102, 200));
+        panel.child(SlotGroupWidget.playerInventory((index, slot) -> slot.background(GTGuiTextures.SLOT_ITEM_STANDARD))
+            .pos(102, 200));
         return panel;
     }
 
@@ -223,47 +202,26 @@ public final class StockIOGui {
         // #tr gui.stock_io.marked
         // # Marked samples (900)
         // # zh_CN 标记样本（900）
-        page.child(
-            IKey.lang("gui.stock_io.marked")
-                .asWidget()
-                .pos(0, 0)
-                .size(gridWidth, 10));
+        page.child(IKey.lang("gui.stock_io.marked").asWidget().pos(0, 0).size(gridWidth, 10));
         // #tr gui.stock_io.available
         // # Available from ME
         // # zh_CN ME 可用量
-        page.child(
-            IKey.lang("gui.stock_io.available")
-                .asWidget()
-                .pos(184, 0)
-                .size(gridWidth, 10));
-        BooleanSyncValue autoPull = toggleValue(
-            fluid ? "autoFluids" : "autoItems",
+        page.child(IKey.lang("gui.stock_io.available").asWidget().pos(184, 0).size(gridWidth, 10));
+        BooleanSyncValue autoPull = toggleValue(fluid ? "autoFluids" : "autoItems",
             fluid ? logic::isAutoPullFluids : logic::isAutoPullItems,
             fluid ? logic::setAutoPullFluids : logic::setAutoPullItems);
         GenericSyncValue<long[][], ?> amounts = amounts(fluid);
         VerticalScrollData scroll = new VerticalScrollData();
         Grid samples = new Grid()
-            .gridOfWidthHeight(
-                columns,
-                rows,
+            .gridOfWidthHeight(columns, rows,
                 (x, y, index) -> fluid ? fluidSlot(index, autoPull, policy) : itemSlot(index, autoPull, policy))
-            .size(gridWidth, gridHeight)
-            .scrollable(scroll)
-            .pos(0, 14);
-        Grid stocks = new Grid()
-            .gridOfWidthHeight(
-                columns,
-                rows,
-                (x, y, index) -> new StockDisplay(
-                    fluid ? null : () -> itemSamples.getStackInSlot(index),
-                    fluid ? fluidSamples[index]::getFluid : null,
-                    () -> amounts.getValue()[0][index],
-                    () -> amounts.getValue()[1][index]))
-            .size(gridWidth, gridHeight)
-            .scrollable(scroll)
-            .pos(184, 14);
-        page.child(samples)
-            .child(stocks);
+            .size(gridWidth, gridHeight).scrollable(scroll).pos(0, 14);
+        Grid stocks = new Grid().gridOfWidthHeight(columns, rows,
+            (x, y, index) -> new StockDisplay(fluid ? null : () -> itemSamples.getStackInSlot(index),
+                fluid ? fluidSamples[index]::getFluid : null, () -> amounts.getValue()[0][index],
+                () -> amounts.getValue()[1][index]))
+            .size(gridWidth, gridHeight).scrollable(scroll).pos(184, 14);
+        page.child(samples).child(stocks);
         // #tr gui.stock_io.autopull
         // # Auto-mark resources from ME. Right-click: refresh and minimum quantities.
         // # zh_CN 自动标记 ME 资源。右键：设置刷新间隔与最小数量。
@@ -278,33 +236,21 @@ public final class StockIOGui {
                 }
                 return super.onMousePressed(button);
             }
-        }.value(autoPull)
-            .size(16)
-            .pos(168, 14)
-            .background(false, GTGuiTextures.BUTTON_STANDARD)
+        }.value(autoPull).size(16).pos(168, 14).background(false, GTGuiTextures.BUTTON_STANDARD)
             .background(true, GTGuiTextures.BUTTON_STANDARD_PRESSED)
             .overlay(true, GTGuiTextures.OVERLAY_BUTTON_AUTOPULL_ME)
-            .overlay(false, GTGuiTextures.OVERLAY_BUTTON_AUTOPULL_ME_DISABLED)
-            .addTooltipLine(autoPullHelp));
-        page.child(
-            GTGuiTextures.PICTURE_ARROW_DOUBLE.asWidget()
-                .size(12)
-                .pos(170, 40));
+            .overlay(false, GTGuiTextures.OVERLAY_BUTTON_AUTOPULL_ME_DISABLED).addTooltipLine(autoPullHelp));
+        page.child(GTGuiTextures.PICTURE_ARROW_DOUBLE.asWidget().size(12).pos(170, 40));
         // #tr gui.stock_io.settings
         // # Auto-mark settings
         // # zh_CN 自动标记设置
         IKey settingsHelp = IKey.lang("gui.stock_io.settings");
-        page.child(
-            new ButtonWidget<>().size(16)
-                .pos(168, 64)
-                .background(GTGuiTextures.BUTTON_STANDARD)
-                .overlay(IKey.str("..."))
-                .addTooltipLine(settingsHelp)
-                .onMousePressed(button -> {
-                    if (button != 0) return false;
-                    settings.openPanel();
-                    return true;
-                }));
+        page.child(new ButtonWidget<>().size(16).pos(168, 64).background(GTGuiTextures.BUTTON_STANDARD)
+            .overlay(IKey.str("...")).addTooltipLine(settingsHelp).onMousePressed(button -> {
+                if (button != 0) return false;
+                settings.openPanel();
+                return true;
+            }));
         return page;
     }
 
@@ -382,8 +328,7 @@ public final class StockIOGui {
                 if (!canEdit() || id == SYNC_VALUE || logic.isAutoPullFluids()) return;
                 super.readOnServer(id, buffer);
             }
-        }.phantom(true)
-            .controlsAmount(false);
+        }.phantom(true).controlsAmount(false);
         return new FluidSlot() {
 
             @Override
@@ -409,14 +354,12 @@ public final class StockIOGui {
                 if (locked.getBoolValue()) tooltip.addLine(IKey.lang("GT5U.machines.stocking_bus.cannot_set_slot"));
                 else tooltip.addLine(IKey.lang("modularui2.fluid.phantom.clear"));
             }
-        }.syncHandler(handler)
-            .background(GTGuiTextures.SLOT_FLUID_STANDARD, GTGuiTextures.OVERLAY_SLOT_ARROW_ME);
+        }.syncHandler(handler).background(GTGuiTextures.SLOT_FLUID_STANDARD, GTGuiTextures.OVERLAY_SLOT_ARROW_ME);
     }
 
     private ModularPanel policyPanel(ModularPanel parent, boolean fluid) {
         IntSyncValue selection = fluid ? selectedFluid : selectedItem;
-        LongSyncValue reserve = new LongSyncValue(
-            () -> logic.getPolicy(fluid, selection.getIntValue()).reserve,
+        LongSyncValue reserve = new LongSyncValue(() -> logic.getPolicy(fluid, selection.getIntValue()).reserve,
             value -> {
                 if (!canEdit()) return;
                 logic.getPolicy(fluid, selection.getIntValue()).reserve = Math.max(0, value);
@@ -427,94 +370,51 @@ public final class StockIOGui {
             logic.getPolicy(fluid, selection.getIntValue()).batch = Math.max(1, value);
             logic.policyChanged();
         }).allowC2S();
-        Flow content = Flow.col()
-            .coverChildren()
-            .childPadding(4)
-            .marginTop(16);
-        content.child(
-            IKey.dynamic(() -> sampleName(fluid, selection.getIntValue()))
-                .asWidget()
-                .maxWidth(204));
+        Flow content = Flow.col().coverChildren().childPadding(4).marginTop(16);
+        content.child(IKey.dynamic(() -> sampleName(fluid, selection.getIntValue())).asWidget().maxWidth(204));
         // #tr gui.stock_io.reserve_quantity
         // # Keep in ME (items / mB)
         // # zh_CN ME 保留量（个 / mB）
-        content.child(
-            IKey.lang("gui.stock_io.reserve_quantity")
-                .asWidget());
-        content.child(
-            new TextFieldWidget().value(reserve)
-                .numbersLong(0, Long.MAX_VALUE)
-                .formatAsInteger(true)
-                .setMaxLength(19)
-                .width(192));
+        content.child(IKey.lang("gui.stock_io.reserve_quantity").asWidget());
+        content.child(new TextFieldWidget().value(reserve).numbersLong(0, Long.MAX_VALUE).formatAsInteger(true)
+            .setMaxLength(19).width(192));
         // #tr gui.stock_io.fixed_quantity
         // # Per check (items / mB)
         // # zh_CN 单次检查可用量（个 / mB）
-        content.child(
-            IKey.lang("gui.stock_io.fixed_quantity")
-                .asWidget());
-        content.child(
-            new TextFieldWidget().value(batch)
-                .numbersInt(1, Integer.MAX_VALUE)
-                .formatAsInteger(true)
-                .setMaxLength(10)
-                .width(192));
+        content.child(IKey.lang("gui.stock_io.fixed_quantity").asWidget());
+        content.child(new TextFieldWidget().value(batch).numbersInt(1, Integer.MAX_VALUE).formatAsInteger(true)
+            .setMaxLength(10).width(192));
         // #tr gui.stock_io.fixed_hint
         // # Waits for the full amount; recipes and fuels debit only actual use.
         // # zh_CN 不足设定量则等待，只扣除配方或燃料的实际消耗。
-        content.child(
-            IKey.lang("gui.stock_io.fixed_hint")
-                .asWidget()
-                .maxWidth(204));
-        return createPopUpPanel(fluid ? "fluidPolicy" : "itemPolicy").size(224, 164)
-            .relative(parent)
-            .center()
-            .padding(8)
-            .child(content);
+        content.child(IKey.lang("gui.stock_io.fixed_hint").asWidget().maxWidth(204));
+        return createPopUpPanel(fluid ? "fluidPolicy" : "itemPolicy").size(224, 164).relative(parent).center()
+            .padding(8).child(content);
     }
 
     private ModularPanel settingsPanel(ModularPanel parent) {
-        IntSyncValue minimumItems = new IntSyncValue(
-            logic::getMinItemAutoPull,
+        IntSyncValue minimumItems = new IntSyncValue(logic::getMinItemAutoPull,
             value -> { if (canEdit()) logic.setMinItemAutoPull(value); }).allowC2S();
-        IntSyncValue minimumFluids = new IntSyncValue(
-            logic::getMinFluidAutoPull,
+        IntSyncValue minimumFluids = new IntSyncValue(logic::getMinFluidAutoPull,
             value -> { if (canEdit()) logic.setMinFluidAutoPull(value); }).allowC2S();
-        IntSyncValue refresh = new IntSyncValue(
-            logic::getRefreshTime,
+        IntSyncValue refresh = new IntSyncValue(logic::getRefreshTime,
             value -> { if (canEdit()) logic.setRefreshTime(value); }).allowC2S();
-        Flow content = Flow.col()
-            .coverChildren()
-            .childPadding(3)
-            .marginTop(16);
-        content.child(
-            IKey.lang("GT5U.machines.stocking_bus.min_stack_size")
-                .asWidget());
+        Flow content = Flow.col().coverChildren().childPadding(3).marginTop(16);
+        content.child(IKey.lang("GT5U.machines.stocking_bus.min_stack_size").asWidget());
         content.child(numberField(minimumItems));
-        content.child(
-            IKey.lang("GT5U.machines.stocking_hatch.min_amount")
-                .asWidget());
+        content.child(IKey.lang("GT5U.machines.stocking_hatch.min_amount").asWidget());
         content.child(numberField(minimumFluids));
-        content.child(
-            IKey.lang("GT5U.machines.stocking_bus.refresh_time")
-                .asWidget());
+        content.child(IKey.lang("GT5U.machines.stocking_bus.refresh_time").asWidget());
         content.child(numberField(refresh));
-        return createPopUpPanel("stockSettings").size(224, 174)
-            .relative(parent)
-            .center()
-            .padding(8)
-            .child(content);
+        return createPopUpPanel("stockSettings").size(224, 174).relative(parent).center().padding(8).child(content);
     }
 
     private void addTarget(ModularPanel panel) {
-        IntSyncValue side = new IntSyncValue(
-            () -> logic.getTargetSide()
-                .ordinal(),
-            value -> {
-                if (canEdit() && logic.canSelectTargetSide()) {
-                    logic.setTargetSide(ForgeDirection.getOrientation(Math.floorMod(value, 6)));
-                }
-            }).allowC2S();
+        IntSyncValue side = new IntSyncValue(() -> logic.getTargetSide().ordinal(), value -> {
+            if (canEdit() && logic.canSelectTargetSide()) {
+                logic.setTargetSide(ForgeDirection.getOrientation(Math.floorMod(value, 6)));
+            }
+        }).allowC2S();
         BooleanSyncValue selectable = new BooleanSyncValue(logic::canSelectTargetSide);
         StringSyncValue target = new StringSyncValue(logic::targetNameKey);
         sync.syncValue("targetSide", side);
@@ -524,32 +424,20 @@ public final class StockIOGui {
         // # Inventory-facing side. Click to cycle.
         // # zh_CN 面向容器的方向，点击切换。
         IKey directionHelp = IKey.lang("gui.stock_io.target_side");
-        panel.child(
-            new ButtonWidget<>().size(84, 18)
-                .pos(8, 179)
-                .background(GTGuiTextures.BUTTON_STANDARD)
-                .overlay(IKey.dynamic(() -> directionName(side.getIntValue())))
-                .setEnabledIf(widget -> selectable.getBoolValue())
-                .addTooltipLine(directionHelp)
-                .onMousePressed(button -> {
-                    if (button != 0) return false;
-                    side.setIntValue((side.getIntValue() + 1) % 6);
-                    return true;
-                }));
+        panel.child(new ButtonWidget<>().size(84, 18).pos(8, 179).background(GTGuiTextures.BUTTON_STANDARD)
+            .overlay(IKey.dynamic(() -> directionName(side.getIntValue())))
+            .setEnabledIf(widget -> selectable.getBoolValue()).addTooltipLine(directionHelp).onMousePressed(button -> {
+                if (button != 0) return false;
+                side.setIntValue((side.getIntValue() + 1) % 6);
+                return true;
+            }));
         // #tr gui.stock_io.target
         // # Target:
         // # zh_CN 目标：
-        panel.child(
-            IKey.dynamic(
-                () -> IKey.lang("gui.stock_io.target")
-                    .get() + " "
-                    + (target.getValue()
-                        .isEmpty() ? ""
-                            : IKey.lang(target.getValue())
-                                .get()))
-                .asWidget()
-                .pos(98, 183)
-                .size(260, 10));
+        panel.child(IKey
+            .dynamic(() -> IKey.lang("gui.stock_io.target").get() + " "
+                + (target.getValue().isEmpty() ? "" : IKey.lang(target.getValue()).get()))
+            .asWidget().pos(98, 183).size(260, 10));
     }
 
     private BooleanSyncValue toggleValue(String name, BooleanSupplier getter, Consumer<Boolean> setter) {
@@ -560,28 +448,18 @@ public final class StockIOGui {
     }
 
     private static ToggleButton toggle(BooleanSyncValue value, IKey caption, IKey help) {
-        return new ToggleButton().value(value)
-            .size(84, 18)
-            .background(false, GTGuiTextures.BUTTON_STANDARD)
-            .background(true, GTGuiTextures.BUTTON_STANDARD_PRESSED)
-            .overlay(caption)
-            .addTooltipLine(help);
+        return new ToggleButton().value(value).size(84, 18).background(false, GTGuiTextures.BUTTON_STANDARD)
+            .background(true, GTGuiTextures.BUTTON_STANDARD_PRESSED).overlay(caption).addTooltipLine(help);
     }
 
     private static PageButton tab(PagedWidget.Controller controller, int index, IKey caption) {
-        return new PageButton(index, controller).size(74, 18)
-            .background(false, GTGuiTextures.BUTTON_STANDARD)
-            .background(true, GTGuiTextures.BUTTON_STANDARD_PRESSED)
-            .overlay(caption);
+        return new PageButton(index, controller).size(74, 18).background(false, GTGuiTextures.BUTTON_STANDARD)
+            .background(true, GTGuiTextures.BUTTON_STANDARD_PRESSED).overlay(caption);
     }
 
     private static TextFieldWidget numberField(IntSyncValue value) {
-        return new TextFieldWidget().value(value)
-            .numbersInt(1, Integer.MAX_VALUE)
-            .formatAsInteger(true)
-            .setMaxLength(10)
-            .setTextAlignment(Alignment.CENTER)
-            .width(192);
+        return new TextFieldWidget().value(value).numbersInt(1, Integer.MAX_VALUE).formatAsInteger(true)
+            .setMaxLength(10).setTextAlignment(Alignment.CENTER).width(192);
     }
 
     private String sampleName(boolean fluid, int index) {
@@ -607,38 +485,32 @@ public final class StockIOGui {
                 // #tr gui.stock_io.down
                 // # Down
                 // # zh_CN 下
-                return IKey.lang("gui.stock_io.down")
-                    .get();
+                return IKey.lang("gui.stock_io.down").get();
             case UP:
                 // #tr gui.stock_io.up
                 // # Up
                 // # zh_CN 上
-                return IKey.lang("gui.stock_io.up")
-                    .get();
+                return IKey.lang("gui.stock_io.up").get();
             case NORTH:
                 // #tr gui.stock_io.north
                 // # North
                 // # zh_CN 北
-                return IKey.lang("gui.stock_io.north")
-                    .get();
+                return IKey.lang("gui.stock_io.north").get();
             case SOUTH:
                 // #tr gui.stock_io.south
                 // # South
                 // # zh_CN 南
-                return IKey.lang("gui.stock_io.south")
-                    .get();
+                return IKey.lang("gui.stock_io.south").get();
             case WEST:
                 // #tr gui.stock_io.west
                 // # West
                 // # zh_CN 西
-                return IKey.lang("gui.stock_io.west")
-                    .get();
+                return IKey.lang("gui.stock_io.west").get();
             case EAST:
                 // #tr gui.stock_io.east
                 // # East
                 // # zh_CN 东
-                return IKey.lang("gui.stock_io.east")
-                    .get();
+                return IKey.lang("gui.stock_io.east").get();
             default:
                 return "";
         }
@@ -647,9 +519,8 @@ public final class StockIOGui {
     /** One read-only, sparse packet per resource type carries exact 64-bit available and network quantities. */
     private GenericSyncValue<long[][], ?> amounts(boolean fluid) {
         GenericSyncValue<long[][], ?> value = GenericSyncValue.builder(long[][].class)
-            .getter(
-                () -> new long[][] { fluid ? logic.offeredFluids : logic.offeredItems,
-                    fluid ? logic.networkFluids : logic.networkItems })
+            .getter(() -> new long[][] { fluid ? logic.offeredFluids : logic.offeredItems,
+                fluid ? logic.networkFluids : logic.networkItems })
             .copy(amounts -> new long[][] { amounts[0].clone(), amounts[1].clone() })
             .equals((first, second) -> Arrays.equals(first[0], second[0]) && Arrays.equals(first[1], second[1]))
             .serializer((buffer, amounts) -> {
@@ -664,8 +535,7 @@ public final class StockIOGui {
                     buffer.writeLong(amounts[0][i]);
                     buffer.writeLong(amounts[1][i]);
                 }
-            })
-            .deserializer(buffer -> {
+            }).deserializer(buffer -> {
                 long[][] amounts = new long[2][StockIOLogic.SLOT_COUNT];
                 int count = buffer.readVarIntFromBuffer();
                 if (count < 0 || count > StockIOLogic.SLOT_COUNT) throw new IOException("Invalid stock IO count");
@@ -676,8 +546,7 @@ public final class StockIOGui {
                     amounts[1][index] = Math.max(0, buffer.readLong());
                 }
                 return amounts;
-            })
-            .build();
+            }).build();
         sync.syncValue(fluid ? "fluidAmounts" : "itemAmounts", value);
         return value;
     }
@@ -696,36 +565,26 @@ public final class StockIOGui {
             this.fluid = fluid;
             this.available = available;
             this.network = network;
-            size(18).background(GTGuiTextures.SLOT_ITEM_DARK)
-                .disableHoverBackground();
-            tooltip().setAutoUpdate(true)
-                .tooltipBuilder(tooltip -> {
-                    if (item != null) {
-                        ItemStack stack = item.get();
-                        if (stack == null) return;
-                        tooltip.addFromItem(stack);
-                    } else {
-                        FluidStack stack = fluid.get();
-                        if (stack == null) return;
-                        tooltip.addFromFluid(stack);
-                    }
-                    String unit = fluid == null ? "" : " mB";
-                    tooltip.addLine(
-                        IKey.str(
-                            IKey.lang("gui.stock_io.available")
-                                .get() + ": "
-                                + available.getAsLong()
-                                + unit));
-                    // #tr gui.stock_io.network_stock
-                    // # Total in ME
-                    // # zh_CN ME 总库存
-                    tooltip.addLine(
-                        IKey.str(
-                            IKey.lang("gui.stock_io.network_stock")
-                                .get() + ": "
-                                + network.getAsLong()
-                                + unit));
-                });
+            size(18).background(GTGuiTextures.SLOT_ITEM_DARK).disableHoverBackground();
+            tooltip().setAutoUpdate(true).tooltipBuilder(tooltip -> {
+                if (item != null) {
+                    ItemStack stack = item.get();
+                    if (stack == null) return;
+                    tooltip.addFromItem(stack);
+                } else {
+                    FluidStack stack = fluid.get();
+                    if (stack == null) return;
+                    tooltip.addFromFluid(stack);
+                }
+                String unit = fluid == null ? "" : " mB";
+                tooltip
+                    .addLine(IKey.str(IKey.lang("gui.stock_io.available").get() + ": " + available.getAsLong() + unit));
+                // #tr gui.stock_io.network_stock
+                // # Total in ME
+                // # zh_CN ME 总库存
+                tooltip.addLine(
+                    IKey.str(IKey.lang("gui.stock_io.network_stock").get() + ": " + network.getAsLong() + unit));
+            });
         }
 
         @Override
@@ -746,11 +605,7 @@ public final class StockIOGui {
             super.drawOverlay(context, theme);
             long quantity = available.getAsLong();
             if (item != null ? item.get() == null : fluid.get() == null) return;
-            IKey.str(compact(quantity))
-                .color(0xFFFFFFFF)
-                .shadow(true)
-                .scale(0.5f)
-                .alignment(Alignment.BottomRight)
+            IKey.str(compact(quantity)).color(0xFFFFFFFF).shadow(true).scale(0.5f).alignment(Alignment.BottomRight)
                 .draw(context, 1, 9, 16, 8, theme.getTheme());
         }
     }

@@ -37,6 +37,7 @@ import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
+import com.xyp.gtnotgood.common.gui.modularui.AssemblerMatrixGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiBlockBase;
 import com.xyp.gtnotgood.utils.DireCraftingPatternDetails;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -91,7 +92,9 @@ import gregtech.api.util.GTStructureUtility;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
 import gregtech.api.util.shutdown.ShutDownReason;
+import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 import gregtech.common.tileentities.machines.RecipeCheckReason;
+import gregtech.common.tileentities.machines.outputme.MTEHatchOutputBusME;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -147,8 +150,10 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         if (item == null) return null;
         if (!item.hasContainerItem(stack)) return null;
         final ItemStack containerItem = item.getContainerItem(stack.copy());
-        if (containerItem != null && containerItem.isItemStackDamageable()
-            && containerItem.getItemDamage() > containerItem.getMaxDamage()) {
+        if (
+            containerItem != null && containerItem.isItemStackDamageable()
+                && containerItem.getItemDamage() > containerItem.getMaxDamage()
+        ) {
             return null;
         }
 
@@ -227,16 +232,12 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         }
         // Queued products can outlive the one-shot recipe check (offline AE or full storage). Retry only while
         // actual work is waiting; never turn a manually disabled controller back on.
-        if (active && timer % 20 == 0
-            && mMaxProgresstime <= 0
-            && !patternState.getOutputs()
-                .isEmpty()) {
+        if (active && timer % 20 == 0 && mMaxProgresstime <= 0 && !patternState.getOutputs().isEmpty()) {
             scheduleRecipeCheck(RecipeCheckReason.IMMEDIATE);
         }
         if (!needsPatternSync || timer % 10 != 0 || !active) return;
         try {
-            getProxy().getGrid()
-                .postEvent(new MENetworkCraftingPatternChange(this, getProxy().getNode()));
+            getProxy().getGrid().postEvent(new MENetworkCraftingPatternChange(this, getProxy().getNode()));
             needsPatternSync = false;
         } catch (GridAccessException ignored) {
             // Keep the pending update while the network is still loading or changing topology.
@@ -411,8 +412,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         storeRoot.setTag("CACHED_OUTPUT_ITEMS", cachedList);
 
         NBTTagList outputList = new NBTTagList();
-        if (!patternState.getOutputs()
-            .isEmpty()) {
+        if (!patternState.getOutputs().isEmpty()) {
             for (IAEItemStack stack : patternState.getOutputs()) {
                 if (stack != null) {
                     NBTTagCompound tag = new NBTTagCompound();
@@ -424,8 +424,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         storeRoot.setTag("OUTPUT_ITEMS", outputList);
 
         NBTTagList inputList = new NBTTagList();
-        if (!patternState.getInputs()
-            .isEmpty()) {
+        if (!patternState.getInputs().isEmpty()) {
             for (IAEItemStack stack : patternState.getInputs()) {
                 if (stack != null) {
                     NBTTagCompound tag = new NBTTagCompound();
@@ -475,8 +474,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
             if (outputList != null && outputList.tagCount() > 0) {
                 for (int i = 0; i < outputList.tagCount(); i++) {
                     IAEItemStack aeStack = AEItemStack.loadItemStackFromNBT(outputList.getCompoundTagAt(i));
-                    if (aeStack != null) patternState.getOutputs()
-                        .add(aeStack);
+                    if (aeStack != null) patternState.getOutputs().add(aeStack);
                 }
             }
 
@@ -484,8 +482,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
             if (inputList != null && inputList.tagCount() > 0) {
                 for (int i = 0; i < inputList.tagCount(); i++) {
                     IAEItemStack aeStack = AEItemStack.loadItemStackFromNBT(inputList.getCompoundTagAt(i));
-                    if (aeStack != null) patternState.getInputs()
-                        .add(aeStack);
+                    if (aeStack != null) patternState.getInputs().add(aeStack);
                 }
             }
 
@@ -513,8 +510,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
             // #tr gtng.AssemblerMatrix.free
             // # No upgrades, EU or AE crafting energy required
             // # zh_CN 无需升级，不消耗EU或AE合成能量
-            .addInfo(StatCollector.translateToLocal("gtng.AssemblerMatrix.free"))
-            .beginStructureBlock(3, 2, 1, false)
+            .addInfo(StatCollector.translateToLocal("gtng.AssemblerMatrix.free")).beginStructureBlock(3, 2, 1, false)
             .toolTipFinisher();
         return tt;
     }
@@ -524,10 +520,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
 
         for (var newStack : this.inventory) {
             if (newStack.getItem() instanceof ICraftingPatternItem ic) {
-                var pattern = ic.getPatternForItem(
-                    newStack,
-                    this.getBaseMetaTileEntity()
-                        .getWorld());
+                var pattern = ic.getPatternForItem(newStack, this.getBaseMetaTileEntity().getWorld());
                 if (pattern == null) continue;
                 if (pattern.isCraftable()) {
                     pattern = new DireCraftingPatternDetails(pattern);
@@ -553,10 +546,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
                     if (!(input.getItem() instanceof ICraftingPatternItem i)) continue;
                     int slot = inventory.getFirstEmptySlot();
                     if (slot == -1) continue;
-                    var p = i.getPatternForItem(
-                        input,
-                        this.getBaseMetaTileEntity()
-                            .getWorld());
+                    var p = i.getPatternForItem(input, this.getBaseMetaTileEntity().getWorld());
                     if (p == null) continue;
                     if (p.isCraftable()) {
                         p = new DireCraftingPatternDetails(p);
@@ -586,39 +576,31 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
             lEUt = 0;
             return CheckRecipeResultRegistry.SUCCESSFUL;
         } else if (isActive() && machineMode == MODE_OPERATING) {
-            if (mMaxSlots > 0 && !patternState.getOutputs()
-                .isEmpty()) {
+            if (mMaxSlots > 0 && !patternState.getOutputs().isEmpty()) {
                 costingEUText = "0";
                 long parallel = mMaxParallelLong;
 
-                int maximum = patternState.getOutputs()
-                    .size();
+                int maximum = patternState.getOutputs().size();
                 usedParallel = 0L;
 
-                if (!patternState.getInputs()
-                    .isEmpty()) {
-                    var grid = getProxy().getNode()
-                        .getGrid();
+                if (!patternState.getInputs().isEmpty()) {
+                    var grid = getProxy().getNode().getGrid();
 
                     IStorageGrid storageGrid = grid.getCache(IStorageGrid.class);
                     var storage = storageGrid.getItemInventory();
-                    final var s = patternState.getInputs()
-                        .size();
+                    final var s = patternState.getInputs().size();
                     for (int i = 0; i < s; i++) {
-                        var in = patternState.getInputs()
-                            .poll();
+                        var in = patternState.getInputs().poll();
                         if (in == null) continue;
                         var leftover = storage.injectItems(in, Actionable.MODULATE, source);
-                        if (leftover != null) patternState.getInputs()
-                            .add(leftover);
+                        if (leftover != null) patternState.getInputs().add(leftover);
                     }
                 }
 
                 List<IAEItemStack> preparedOutputs = new ObjectArrayList<>(maximum);
 
                 IAEItemStack stack;
-                while (parallel > 0 && (stack = patternState.getOutputs()
-                    .poll()) != null) {
+                while (parallel > 0 && (stack = patternState.getOutputs().poll()) != null) {
                     long stackSize = stack.getStackSize();
                     if (stackSize <= parallel) {
                         parallel -= stackSize;
@@ -629,22 +611,18 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
                         long remain = stackSize - parallel;
                         usedParallel += parallel;
                         stack.decStackSize(parallel);
-                        preparedOutputs.add(
-                            stack.copy()
-                                .setStackSize(parallel));
+                        preparedOutputs.add(stack.copy().setStackSize(parallel));
 
                         if (remain > 0) {
                             var remainStack = stack.copy();
                             remainStack.setStackSize(remain);
-                            patternState.getOutputs()
-                                .add(remainStack);
+                            patternState.getOutputs().add(remainStack);
                         }
 
                         parallel = 0;
                     }
 
-                    if (patternState.getOutputs()
-                        .isEmpty() || --maximum == 0) break;
+                    if (patternState.getOutputs().isEmpty() || --maximum == 0) break;
                 }
 
                 if (!preparedOutputs.isEmpty()) {
@@ -668,23 +646,18 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         super.outputAfterRecipe();
         if (patternState.getCachedOutputItems() == null) return;
         for (IAEItemStack stack : patternState.getCachedOutputItems()) {
-            if (stack != null) patternState.getOutputs()
-                .add(stack);
+            if (stack != null) patternState.getOutputs().add(stack);
         }
         patternState.setCachedOutputItems(new IAEItemStack[0]);
         usedParallel = 0;
         if (!getProxy().isActive()) return;
         try {
-            var storage = getProxy().getStorage()
-                .getItemInventory();
-            int count = patternState.getOutputs()
-                .size();
+            var storage = getProxy().getStorage().getItemInventory();
+            int count = patternState.getOutputs().size();
             while (count-- > 0) {
-                IAEItemStack stack = patternState.getOutputs()
-                    .poll();
+                IAEItemStack stack = patternState.getOutputs().poll();
                 IAEItemStack remaining = storage.injectItems(stack, Actionable.MODULATE, source);
-                if (remaining != null) patternState.getOutputs()
-                    .add(remaining);
+                if (remaining != null) patternState.getOutputs().add(remaining);
             }
         } catch (GridAccessException ignored) {
             // Keep queued products until the network returns.
@@ -696,8 +669,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     public void stopMachine(@NotNull ShutDownReason reason) {
         if (patternState.getCachedOutputItems() != null) {
             for (IAEItemStack stack : patternState.getCachedOutputItems()) {
-                if (stack != null) patternState.getOutputs()
-                    .add(stack);
+                if (stack != null) patternState.getOutputs().add(stack);
             }
         }
         patternState.setCachedOutputItems(new IAEItemStack[0]);
@@ -709,34 +681,31 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     @Override
     public String[] getInfoData() {
         List<String> info = new ObjectArrayList<>(super.getInfoData());
-        info.add(
-            IGregTechDeviceInformation.encode("kubatech.infodata.running_mode") + " "
-                + EnumChatFormatting.GOLD
-                + (machineMode == 0 ? IGregTechDeviceInformation.encode("kubatech.infodata.mia.running_mode.input")
-                    : (machineMode == 1 ? IGregTechDeviceInformation.encode("kubatech.infodata.mia.running_mode.output")
-                        : IGregTechDeviceInformation.encode("kubatech.infodata.mia.running_mode.operating.normal"))));
-        info.add(
-            IGregTechDeviceInformation.encode(
-                // #tr gtng.compact.machine.assembler_matrix.info.0
-                // # §7Pattern storage: %s/%s
-                // # zh_CN §7当前样板数量：%s/%s
-                "gtng.compact.machine.assembler_matrix.info.0",
-                "" + EnumChatFormatting.GOLD + inventory.size() + EnumChatFormatting.RESET,
-                (inventory.size() > mMaxSlots ? EnumChatFormatting.DARK_RED.toString()
-                    : EnumChatFormatting.GOLD.toString()) + mMaxSlots + EnumChatFormatting.RESET));
+        info.add(IGregTechDeviceInformation.encode("kubatech.infodata.running_mode") + " "
+            + EnumChatFormatting.GOLD
+            + (machineMode == 0 ? IGregTechDeviceInformation.encode("kubatech.infodata.mia.running_mode.input")
+                : (machineMode == 1 ? IGregTechDeviceInformation.encode("kubatech.infodata.mia.running_mode.output")
+                    : IGregTechDeviceInformation.encode("kubatech.infodata.mia.running_mode.operating.normal"))));
+        info.add(IGregTechDeviceInformation.encode(
+            // #tr gtng.compact.machine.assembler_matrix.info.0
+            // # §7Pattern storage: %s/%s
+            // # zh_CN §7当前样板数量：%s/%s
+            "gtng.compact.machine.assembler_matrix.info.0",
+            "" + EnumChatFormatting.GOLD + inventory.size() + EnumChatFormatting.RESET,
+            (inventory.size() > mMaxSlots ? EnumChatFormatting.DARK_RED.toString() : EnumChatFormatting.GOLD.toString())
+                + mMaxSlots
+                + EnumChatFormatting.RESET));
         info.add(IGregTechDeviceInformation.encode(patternVisibilityKey(showPattern)));
-        info.add(
-            IGregTechDeviceInformation.encode("GT5U.multiblock.recipesDone") + ": "
-                + EnumChatFormatting.GREEN
-                + NumberFormatUtil.formatNumber(recipesDone)
-                + EnumChatFormatting.RESET);
+        info.add(IGregTechDeviceInformation.encode("GT5U.multiblock.recipesDone") + ": "
+            + EnumChatFormatting.GREEN
+            + NumberFormatUtil.formatNumber(recipesDone)
+            + EnumChatFormatting.RESET);
         if (wirelessMode) {
             // #tr gtng.compact.waila.wireless.mode
             // # Wireless Mode
             // # zh_CN 无线模式
-            info.add(
-                EnumChatFormatting.LIGHT_PURPLE
-                    + IGregTechDeviceInformation.encode("gtng.compact.waila.wireless.mode"));
+            info.add(EnumChatFormatting.LIGHT_PURPLE
+                + IGregTechDeviceInformation.encode("gtng.compact.waila.wireless.mode"));
             info.add(
                 // #tr gtng.compact.waila.wireless.current_eu_cost
                 // # Current EU Consumption
@@ -763,10 +732,9 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         boolean showPattern = tag.getBoolean("showPattern");
         currentTip.add(WailaText.getPowerState(isActive, isPowered, false));
         if (tag.getLong("maxParallelLong") > 1) {
-            currentTip.add(
-                StatCollector.translateToLocal("GT5U.multiblock.parallelism") + " (Long): "
-                    + EnumChatFormatting.WHITE
-                    + tag.getLong("maxParallelLong"));
+            currentTip.add(StatCollector.translateToLocal("GT5U.multiblock.parallelism") + " (Long): "
+                + EnumChatFormatting.WHITE
+                + tag.getLong("maxParallelLong"));
         }
         currentTip.add(StatCollector.translateToLocal(patternVisibilityKey(showPattern)));
         if (tag.getBoolean("wirelessMode")) {
@@ -774,9 +742,8 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
                 // #tr gtng.compact.waila.wireless.mode
                 // # Wireless Mode
                 // # zh_CN 无线模式
-                .add(
-                    EnumChatFormatting.LIGHT_PURPLE
-                        + StatCollector.translateToLocal("gtng.compact.waila.wireless.mode"));
+                .add(EnumChatFormatting.LIGHT_PURPLE
+                    + StatCollector.translateToLocal("gtng.compact.waila.wireless.mode"));
             currentTip.add(
                 // #tr gtng.compact.waila.wireless.current_eu_cost
                 // # Current EU Consumption
@@ -823,9 +790,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
                 gridProxy.setIdlePowerUsage(0);
                 updateValidGridProxySides();
                 if (bmte.getWorld() != null) {
-                    gridProxy.setOwner(
-                        bmte.getWorld()
-                            .getPlayerEntityByName(bmte.getOwnerName()));
+                    gridProxy.setOwner(bmte.getWorld().getPlayerEntityByName(bmte.getOwnerName()));
                 }
             }
         }
@@ -861,15 +826,13 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     @MENetworkEventSubscribe
     public void stateChange(final MENetworkChannelsChanged c) {
         needsPatternSync = true;
-        this.getInterfaceDuality()
-            .notifyNeighbors();
+        this.getInterfaceDuality().notifyNeighbors();
     }
 
     @MENetworkEventSubscribe
     public void stateChange(final MENetworkPowerStatusChange c) {
         needsPatternSync = true;
-        this.getInterfaceDuality()
-            .notifyNeighbors();
+        this.getInterfaceDuality().notifyNeighbors();
     }
 
     /**
@@ -877,12 +840,8 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
      */
     @Override
     public void provideCrafting(ICraftingProviderHelper craftingTracker) {
-        if (mMachine && this.getProxy()
-            .isActive()
-            && !patternState.getPatterns()
-                .isEmpty()) {
-            for (var value : patternState.getPatterns()
-                .values()) {
+        if (mMachine && this.getProxy().isActive() && !patternState.getPatterns().isEmpty()) {
+            for (var value : patternState.getPatterns().values()) {
                 craftingTracker.addCraftingOption(this, value);
             }
         }
@@ -918,11 +877,8 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
 
     @Override
     public DimensionalCoord getLocation() {
-        return new DimensionalCoord(
-            getBaseMetaTileEntity().getWorld(),
-            getBaseMetaTileEntity().getXCoord(),
-            getBaseMetaTileEntity().getYCoord(),
-            getBaseMetaTileEntity().getZCoord());
+        return new DimensionalCoord(getBaseMetaTileEntity().getWorld(), getBaseMetaTileEntity().getXCoord(),
+            getBaseMetaTileEntity().getYCoord(), getBaseMetaTileEntity().getZCoord());
     }
 
     @Override
@@ -932,8 +888,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
 
     @Override
     public void saveChanges() {
-        this.getInterfaceDuality()
-            .saveChanges();
+        this.getInterfaceDuality().saveChanges();
     }
 
     /**
@@ -987,14 +942,12 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         if (name.equals("patterns")) {
             return this.inventory;
         }
-        return this.getInterfaceDuality()
-            .getInventoryByName(name);
+        return this.getInterfaceDuality().getInventoryByName(name);
     }
 
     @Override
     public IGridNode getGridNode(ForgeDirection dir) {
-        return this.getProxy()
-            .getNode();
+        return this.getProxy().getNode();
     }
 
     @Override
@@ -1011,8 +964,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
             proxy.setColor(AEColor.values()[Dyes.transformDyeIndex(color)]);
         }
         if (proxy.getNode() != null) {
-            proxy.getNode()
-                .updateState();
+            proxy.getNode().updateState();
         }
     }
 
@@ -1026,20 +978,17 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
 
     @Override
     public ImmutableSet<ICraftingLink> getRequestedJobs() {
-        return this.getInterfaceDuality()
-            .getRequestedJobs();
+        return this.getInterfaceDuality().getRequestedJobs();
     }
 
     @Override
     public IAEStack<?> injectCraftedItems(ICraftingLink link, IAEStack<?> items, Actionable mode) {
-        return this.getInterfaceDuality()
-            .injectCraftedItems(link, items, mode);
+        return this.getInterfaceDuality().injectCraftedItems(link, items, mode);
     }
 
     @Override
     public void jobStateChange(ICraftingLink link) {
-        this.getInterfaceDuality()
-            .jobStateChange(link);
+        this.getInterfaceDuality().jobStateChange(link);
     }
 
     @Override
@@ -1063,8 +1012,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
 
     @Override
     public IConfigManager getConfigManager() {
-        return this.getInterfaceDuality()
-            .getConfigManager();
+        return this.getInterfaceDuality().getConfigManager();
     }
 
     @Override
@@ -1117,7 +1065,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         boolean ignoreEmptiness = false;
 
         for (MTEHatchOutputBus outputBus : mOutputBusses) {
-            if (outputBus instanceof gregtech.common.tileentities.machines.outputme.MTEHatchOutputBusME) {
+            if (outputBus instanceof MTEHatchOutputBusME) {
                 ignoreEmptiness = true;
                 break;
             }
@@ -1176,10 +1124,8 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
             }
             var i = combinationInventory[ordinal];
             if (i == null) {
-                combinationInventory[ordinal] = i = new AppEngInternalInventory(
-                    AssemblerMatrix.this,
-                    eachPatternCasingCapacity,
-                    1);
+                combinationInventory[ordinal] = i = new AppEngInternalInventory(AssemblerMatrix.this,
+                    eachPatternCasingCapacity, 1);
             }
             return i;
         }
@@ -1209,16 +1155,15 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         public ItemStack getStackInSlotOnClosing(int slot) {
             if (slot < 0 || slot >= PATTERN_CAPACITY) return null;
             size = -1;
-            return packItem(
-                getInventory(slot / eachPatternCasingCapacity)
-                    .getStackInSlotOnClosing(slot % eachPatternCasingCapacity));
+            return packItem(getInventory(slot / eachPatternCasingCapacity)
+                .getStackInSlotOnClosing(slot % eachPatternCasingCapacity));
         }
 
         @Override
         public void setInventorySlotContents(int slot, ItemStack stack) {
             size = -1;
-            getInventory(slot / eachPatternCasingCapacity)
-                .setInventorySlotContents(slot % eachPatternCasingCapacity, stack);
+            getInventory(slot / eachPatternCasingCapacity).setInventorySlotContents(slot % eachPatternCasingCapacity,
+                stack);
         }
 
         @Override
@@ -1258,9 +1203,11 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
 
         @Override
         public boolean isItemValidForSlot(int slot, ItemStack stack) {
-            if (slot < 0 || slot >= PATTERN_CAPACITY
-                || stack == null
-                || !(stack.getItem() instanceof ICraftingPatternItem item)) return false;
+            if (
+                slot < 0 || slot >= PATTERN_CAPACITY
+                    || stack == null
+                    || !(stack.getItem() instanceof ICraftingPatternItem item)
+            ) return false;
             var details = item.getPatternForItem(stack, getBaseMetaTileEntity().getWorld());
             return details != null && (details.isCraftable() || details instanceof DireCraftingPatternDetails);
         }
@@ -1409,14 +1356,10 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     public IStructureDefinition<AssemblerMatrix> getStructureDefinition() {
         return StructureDefinition.<AssemblerMatrix>builder()
             .addShape("main", StructureUtility.transpose(new String[][] { { "AAA" }, { "A~A" } }))
-            .addElement(
-                'A',
+            .addElement('A',
                 StructureUtility.ofChain(
-                    GTStructureUtility.buildHatchAdder(AssemblerMatrix.class)
-                        .casingIndex(getCasingTextureID())
-                        .hint(1)
-                        .atLeast(HatchElement.InputBus, HatchElement.OutputBus)
-                        .build(),
+                    GTStructureUtility.buildHatchAdder(AssemblerMatrix.class).casingIndex(getCasingTextureID()).hint(1)
+                        .atLeast(HatchElement.InputBus, HatchElement.OutputBus).build(),
                     StructureUtility.ofBlock(GregTechAPI.sBlockCasings2, 0)))
             .build();
     }
@@ -1458,9 +1401,8 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         boolean active, boolean redstone) {
         return side == facing
             ? new ITexture[] { Textures.BlockIcons.getCasingTextureForId(getCasingTextureID()),
-                TextureFactory.of(
-                    active ? Textures.BlockIcons.OVERLAY_ME_INPUT_HATCH_ACTIVE
-                        : Textures.BlockIcons.OVERLAY_ME_INPUT_HATCH) }
+                TextureFactory.of(active ? Textures.BlockIcons.OVERLAY_ME_INPUT_HATCH_ACTIVE
+                    : Textures.BlockIcons.OVERLAY_ME_INPUT_HATCH) }
             : new ITexture[] { Textures.BlockIcons.getCasingTextureForId(getCasingTextureID()) };
     }
 
@@ -1470,8 +1412,8 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
 
     @Override
     @Nonnull
-    protected gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui<?> getGui() {
-        return new com.xyp.gtnotgood.common.gui.modularui.AssemblerMatrixGui(this);
+    protected MTEMultiBlockBaseGui<?> getGui() {
+        return new AssemblerMatrixGui(this);
     }
 
     /** Returns the localized visibility label shared by controller, GUI and overlay. */

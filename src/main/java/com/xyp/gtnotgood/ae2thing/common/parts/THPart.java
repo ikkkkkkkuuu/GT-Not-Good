@@ -84,13 +84,10 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
         super(is);
 
         if (requireChannel) {
-            this.getProxy()
-                .setFlags(GridFlags.REQUIRE_CHANNEL);
-            this.getProxy()
-                .setIdlePowerUsage(1.0 / 2.0);
+            this.getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
+            this.getProxy().setIdlePowerUsage(1.0 / 2.0);
         } else {
-            this.getProxy()
-                .setIdlePowerUsage(1.0 / 16.0); // lights drain a little
+            this.getProxy().setIdlePowerUsage(1.0 / 16.0); // lights drain a little
         }
         this.cm.registerSetting(Settings.SORT_BY, SortOrder.NAME);
         this.cm.registerSetting(Settings.VIEW_MODE, ViewItems.ALL);
@@ -100,15 +97,13 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
     @MENetworkEventSubscribe
     public final void bootingRender(final MENetworkBootingStatusChange c) {
         if (!this.isLightSource()) {
-            this.getHost()
-                .markForUpdate();
+            this.getHost().markForUpdate();
         }
     }
 
     @MENetworkEventSubscribe
     public final void powerRender(final MENetworkPowerStatusChange c) {
-        this.getHost()
-            .markForUpdate();
+        this.getHost().markForUpdate();
     }
 
     @Override
@@ -120,8 +115,7 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
     @Override
     public void onNeighborChanged() {
         this.opacity = -1;
-        this.getHost()
-            .markForUpdate();
+        this.getHost().markForUpdate();
     }
 
     @Override
@@ -181,21 +175,15 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
         this.clientFlags = this.getSpin() & 3;
 
         try {
-            if (this.getProxy()
-                .getEnergy()
-                .isNetworkPowered()) {
+            if (this.getProxy().getEnergy().isNetworkPowered()) {
                 this.clientFlags = this.getClientFlags() | THPart.POWERED_FLAG;
             }
 
-            if (this.getProxy()
-                .getPath()
-                .isNetworkBooting()) {
+            if (this.getProxy().getPath().isNetworkBooting()) {
                 this.clientFlags = this.getClientFlags() | THPart.BOOTING_FLAG;
             }
 
-            if (this.getProxy()
-                .getNode()
-                .meetsChannelRequirements()) {
+            if (this.getProxy().getNode().meetsChannelRequirements()) {
                 this.clientFlags = this.getClientFlags() | THPart.CHANNEL_FLAG;
             }
         } catch (final GridAccessException ignored) {}
@@ -220,8 +208,10 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
     public boolean onPartActivate0(final EntityPlayer player, final Vec3 pos) {
         final TileEntity te = this.getTile();
 
-        if (!player.isSneaking()
-            && Platform.isWrench(player, player.inventory.getCurrentItem(), te.xCoord, te.yCoord, te.zCoord)) {
+        if (
+            !player.isSneaking()
+                && Platform.isWrench(player, player.inventory.getCurrentItem(), te.xCoord, te.yCoord, te.zCoord)
+        ) {
             if (Platform.isServer()) {
                 if (this.getSpin() > 3) {
                     this.spin = 0;
@@ -234,8 +224,7 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
                     case 3 -> this.spin = 2;
                 }
 
-                this.getHost()
-                    .markForUpdate();
+                this.getHost().markForUpdate();
                 this.saveChanges();
             }
             return true;
@@ -252,8 +241,10 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
             return super.onPartActivate(player, pos);
         }
         if (Platform.isServer()) {
-            if (Util.hasPermission(player, SecurityPermissions.INJECT, (IGridHost) this)
-                || Util.hasPermission(player, SecurityPermissions.EXTRACT, (IGridHost) this)) {
+            if (
+                Util.hasPermission(player, SecurityPermissions.INJECT, (IGridHost) this)
+                    || Util.hasPermission(player, SecurityPermissions.EXTRACT, (IGridHost) this)
+            ) {
                 InventoryHandler.openGui(player, te.getWorldObj(), tePos, Objects.requireNonNull(getSide()), getGui());
             } else {
                 player.addChatComponentMessage(new ChatComponentText("You don't have permission to view."));
@@ -277,11 +268,8 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
     private int blockLight(final int emit) {
         if (this.opacity < 0) {
             final TileEntity te = this.getTile();
-            this.opacity = 255 - te.getWorldObj()
-                .getBlockLightOpacity(
-                    te.xCoord + this.getSide().offsetX,
-                    te.yCoord + this.getSide().offsetY,
-                    te.zCoord + this.getSide().offsetZ);
+            this.opacity = 255 - te.getWorldObj().getBlockLightOpacity(te.xCoord + this.getSide().offsetX,
+                te.yCoord + this.getSide().offsetY, te.zCoord + this.getSide().offsetZ);
         }
         return (int) (emit * (this.opacity / 255.0f));
     }
@@ -290,9 +278,7 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
     public final boolean isPowered() {
         try {
             if (Platform.isServer()) {
-                return this.getProxy()
-                    .getEnergy()
-                    .isNetworkPowered();
+                return this.getProxy().getEnergy().isNetworkPowered();
             } else {
                 return ((this.getClientFlags() & THPart.POWERED_FLAG) == THPart.POWERED_FLAG);
             }
@@ -304,9 +290,7 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
     @Override
     public IMEMonitor<IAEItemStack> getItemInventory() {
         try {
-            return this.getProxy()
-                .getStorage()
-                .getItemInventory();
+            return this.getProxy().getStorage().getItemInventory();
         } catch (final GridAccessException ignored) {}
         return null;
     }
@@ -314,9 +298,7 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
     @Override
     public IMEMonitor<IAEFluidStack> getFluidInventory() {
         try {
-            return this.getProxy()
-                .getStorage()
-                .getFluidInventory();
+            return this.getProxy().getStorage().getFluidInventory();
         } catch (final GridAccessException ignored) {}
         return null;
     }
@@ -332,8 +314,7 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
     @Override
     public void onChangeInventory(final IInventory inv, final int slot, final InvOperation mc,
         final ItemStack removedStack, final ItemStack newStack) {
-        this.getHost()
-            .markForSave();
+        this.getHost().markForSave();
     }
 
     @Override
@@ -362,35 +343,18 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
         final IIcon sideTexture = CableBusTextures.PartMonitorSides.getIcon();
         final IIcon backTexture = CableBusTextures.PartMonitorBack.getIcon();
 
-        rh.setTexture(
-            sideTexture,
-            sideTexture,
-            backTexture,
-            FCPartsTexture.PartTerminalBroad.getIcon(),
-            sideTexture,
+        rh.setTexture(sideTexture, sideTexture, backTexture, FCPartsTexture.PartTerminalBroad.getIcon(), sideTexture,
             sideTexture);
         rh.renderInventoryBox(renderer);
 
         rh.setInvColor(this.getColor().whiteVariant);
-        rh.renderInventoryFace(
-            this.getFrontBright()
-                .getIcon(),
-            ForgeDirection.SOUTH,
-            renderer);
+        rh.renderInventoryFace(this.getFrontBright().getIcon(), ForgeDirection.SOUTH, renderer);
 
         rh.setInvColor(this.getColor().mediumVariant);
-        rh.renderInventoryFace(
-            this.getFrontDark()
-                .getIcon(),
-            ForgeDirection.SOUTH,
-            renderer);
+        rh.renderInventoryFace(this.getFrontDark().getIcon(), ForgeDirection.SOUTH, renderer);
 
         rh.setInvColor(this.getColor().blackVariant);
-        rh.renderInventoryFace(
-            this.getFrontColored()
-                .getIcon(),
-            ForgeDirection.SOUTH,
-            renderer);
+        rh.renderInventoryFace(this.getFrontColored().getIcon(), ForgeDirection.SOUTH, renderer);
 
         rh.setBounds(4, 4, 13, 12, 12, 14);
         rh.renderInventoryBox(renderer);
@@ -405,12 +369,7 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
         final IIcon sideTexture = CableBusTextures.PartMonitorSides.getIcon();
         final IIcon backTexture = CableBusTextures.PartMonitorBack.getIcon();
 
-        rh.setTexture(
-            sideTexture,
-            sideTexture,
-            backTexture,
-            FCPartsTexture.PartTerminalBroad.getIcon(),
-            sideTexture,
+        rh.setTexture(sideTexture, sideTexture, backTexture, FCPartsTexture.PartTerminalBroad.getIcon(), sideTexture,
             sideTexture);
 
         rh.setBounds(2, 2, 14, 14, 14, 16);
@@ -425,47 +384,20 @@ public abstract class THPart extends AEBasePart implements IPowerChannelState, I
             .getSpin();
 
         Tessellator.instance.setColorOpaque_I(this.getColor().whiteVariant);
-        rh.renderFace(
-            x,
-            y,
-            z,
-            this.getFrontBright()
-                .getIcon(),
-            ForgeDirection.SOUTH,
-            renderer);
+        rh.renderFace(x, y, z, this.getFrontBright().getIcon(), ForgeDirection.SOUTH, renderer);
 
         Tessellator.instance.setColorOpaque_I(this.getColor().mediumVariant);
-        rh.renderFace(
-            x,
-            y,
-            z,
-            this.getFrontDark()
-                .getIcon(),
-            ForgeDirection.SOUTH,
-            renderer);
+        rh.renderFace(x, y, z, this.getFrontDark().getIcon(), ForgeDirection.SOUTH, renderer);
 
         Tessellator.instance.setColorOpaque_I(this.getColor().blackVariant);
-        rh.renderFace(
-            x,
-            y,
-            z,
-            this.getFrontColored()
-                .getIcon(),
-            ForgeDirection.SOUTH,
-            renderer);
+        rh.renderFace(x, y, z, this.getFrontColored().getIcon(), ForgeDirection.SOUTH, renderer);
 
         renderer.uvRotateBottom = renderer.uvRotateEast = renderer.uvRotateNorth = renderer.uvRotateSouth = renderer.uvRotateTop = renderer.uvRotateWest = 0;
 
         final IIcon sideStatusTexture = CableBusTextures.PartMonitorSidesStatus.getIcon();
 
-        rh.setTexture(
-            sideStatusTexture,
-            sideStatusTexture,
-            backTexture,
-            this.getItemStack()
-                .getIconIndex(),
-            sideStatusTexture,
-            sideStatusTexture);
+        rh.setTexture(sideStatusTexture, sideStatusTexture, backTexture, this.getItemStack().getIconIndex(),
+            sideStatusTexture, sideStatusTexture);
 
         rh.setBounds(4, 4, 13, 12, 12, 14);
         rh.renderBlock(x, y, z, renderer);

@@ -57,8 +57,7 @@ public final class PatternSorterView extends UIElement {
         mapSelector = new SearchComponent<>(124, 26, 286, 20, theme, PatternSorterView::tr);
         List<String> maps = PatternSorterGui.maps();
         maps.sort(Comparator.comparing(PatternSorterView::tr));
-        mapSelector.setCandidates(maps)
-            .setOnChange(model.actions::chooseMap);
+        mapSelector.setCandidates(maps).setOnChange(model.actions::chooseMap);
         addChild(mapSelector);
         // #tr gui.pattern_sorter.groups
         // # Configuration groups
@@ -68,19 +67,11 @@ public final class PatternSorterView extends UIElement {
         // # Patterns in selected group
         // # zh_CN 当前分组的样板
         addChild(new Label(202, 50, 208, 16, tr("gui.pattern_sorter.preview")));
-        groups = new VirtualScrollerView<>(
-            8,
-            68,
-            186,
-            98,
-            32,
-            (entry, index) -> theme.button(
-                0,
-                0,
-                178,
-                31,
-                () -> (entry.group()
-                    .equals(selected) ? "> " : "") + groupName(entry) + " ×" + counts.getOrDefault(entry.group(), 0),
+        groups = new VirtualScrollerView<>(8, 68, 186, 98, 32,
+            (entry, index) -> theme.button(0, 0, 178, 31,
+                () -> (entry.group().equals(selected) ? "> " : "") + groupName(entry)
+                    + " ×"
+                    + counts.getOrDefault(entry.group(), 0),
                 () -> {
                     selected = entry.group();
                     updatePatterns();
@@ -98,8 +89,8 @@ public final class PatternSorterView extends UIElement {
         // #tr gui.pattern_sorter.front
         // # Bring this group to front
         // # zh_CN 此组排到前面
-        front = theme
-            .button(202, 172, 208, 20, () -> tr("gui.pattern_sorter.front"), () -> model.actions.sort(selected));
+        front = theme.button(202, 172, 208, 20, () -> tr("gui.pattern_sorter.front"),
+            () -> model.actions.sort(selected));
         addChild(front);
         // #tr gui.pattern_sorter.hint
         // # Only pattern slots move. Preview numbers follow inventory order.
@@ -120,8 +111,7 @@ public final class PatternSorterView extends UIElement {
                     name = icon.getDisplayName();
                     break;
                 } else if (output instanceof IAEFluidStack fluid) {
-                    name = fluid.getFluidStack()
-                        .getLocalizedName();
+                    name = fluid.getFluidStack().getLocalizedName();
                     break;
                 }
             }
@@ -134,12 +124,8 @@ public final class PatternSorterView extends UIElement {
     }
 
     private void updatePatterns() {
-        patterns.setItems(
-            snapshot.stream()
-                .filter(
-                    entry -> entry.group()
-                        .equals(selected))
-                .collect(Collectors.toList()));
+        patterns
+            .setItems(snapshot.stream().filter(entry -> entry.group().equals(selected)).collect(Collectors.toList()));
     }
 
     @Override
@@ -159,10 +145,7 @@ public final class PatternSorterView extends UIElement {
                 representatives.putIfAbsent(entry.group(), entry);
             }
             if (!representatives.containsKey(selected)) {
-                selected = representatives.isEmpty() ? ""
-                    : representatives.keySet()
-                        .iterator()
-                        .next();
+                selected = representatives.isEmpty() ? "" : representatives.keySet().iterator().next();
             }
             groups.setItems(new ArrayList<>(representatives.values()));
             updatePatterns();
@@ -207,10 +190,8 @@ public final class PatternSorterView extends UIElement {
         // #tr gui.pattern_sorter.configuration
         // # Circuit %s / %s
         // # zh_CN 电路 %s／%s
-        return StatCollector.translateToLocalFormatted(
-            "gui.pattern_sorter.configuration",
-            entry.circuit < 0 ? none : Integer.toString(entry.circuit),
-            mold == null ? none : mold.getDisplayName());
+        return StatCollector.translateToLocalFormatted("gui.pattern_sorter.configuration",
+            entry.circuit < 0 ? none : Integer.toString(entry.circuit), mold == null ? none : mold.getDisplayName());
     }
 
     private static String tr(String key) {

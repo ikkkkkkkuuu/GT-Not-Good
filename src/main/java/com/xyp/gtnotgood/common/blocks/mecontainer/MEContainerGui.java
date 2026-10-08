@@ -33,6 +33,8 @@ import com.cleanroommc.modularui.widgets.slot.PhantomItemSlot;
 import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.ldlib.integration.modularui.ModernThemeAdapter;
 
+import gregtech.api.modularui2.GTGuiTextures;
+
 /** LDLib-themed item/fluid pages with 36 ghost slots each, live ME amounts and recipe-viewer drag support. */
 final class MEContainerGui {
 
@@ -50,64 +52,36 @@ final class MEContainerGui {
             THEME.panel.draw(context, x + 30, y + 20, w - 30, h - 20, style);
             THEME.panel.draw(context, x + 40, y, w - 50, 22, style);
         };
-        ModularPanel panel = ModularPanel.defaultPanel("me_container", 294, 320)
-            .background(shell)
+        ModularPanel panel = ModularPanel.defaultPanel("me_container", 294, 320).background(shell)
             .disableHoverBackground();
-        panel.child(
-            IKey.lang("tile.me_container.name")
-                .color(0xFF202830)
-                .asWidget()
-                .pos(45, 5)
-                .size(217, 12));
-        panel.child(
-            THEME.button()
-                .pos(265, 4)
-                .size(14)
-                .overlay(
-                    UITexture.builder()
-                        .location(ModList.ModIds.GT_NOT_GOOD, "gui/ldlib/modern/close")
-                        .build())
-                .onMousePressed(mouse -> {
-                    if (mouse != 0) return false;
-                    panel.closeIfOpen();
-                    return true;
-                }));
+        panel.child(IKey.lang("tile.me_container.name").color(0xFF202830).asWidget().pos(45, 5).size(217, 12));
+        panel.child(THEME.button().pos(265, 4).size(14)
+            .overlay(UITexture.builder().location(ModList.ModIds.GT_NOT_GOOD, "gui/ldlib/modern/close").build())
+            .onMousePressed(mouse -> {
+                if (mouse != 0) return false;
+                panel.closeIfOpen();
+                return true;
+            }));
         StringSyncValue state = new StringSyncValue(() -> tile.online ? "1" : "0");
         sync.syncValue("state", state);
         panel.child(IKey.dynamic(() -> {
             // #tr gui.me_container.online
             // # Online
             // # zh_CN 在线
-            if ("1".equals(state.getValue())) return IKey.lang("gui.me_container.online")
-                .get();
+            if ("1".equals(state.getValue())) return IKey.lang("gui.me_container.online").get();
             // #tr gui.me_container.offline
             // # Offline: check power and channel
             // # zh_CN 离线：检查供电与频道
-            return IKey.lang("gui.me_container.offline")
-                .get();
-        })
-            .color(() -> "1".equals(state.getValue()) ? 0xFF28613D : 0xFF903636)
-            .asWidget()
-            .pos(40, 29)
-            .size(244, 12));
+            return IKey.lang("gui.me_container.offline").get();
+        }).color(() -> "1".equals(state.getValue()) ? 0xFF28613D : 0xFF903636).asWidget().pos(40, 29).size(244, 12));
         // #tr gui.me_container.items
         // # Items - 36 ghost slots
         // # zh_CN 物品 — 36 个虚拟槽
-        items.child(
-            IKey.lang("gui.me_container.items")
-                .color(0xFF202830)
-                .asWidget()
-                .pos(0, 0)
-                .size(244, 12));
+        items.child(IKey.lang("gui.me_container.items").color(0xFF202830).asWidget().pos(0, 0).size(244, 12));
         // #tr gui.me_container.fluid
         // # Fluids - 36 ghost slots
         // # zh_CN 流体 — 36 个虚拟槽
-        fluids.child(
-            IKey.lang("gui.me_container.fluid")
-                .color(0xFF202830)
-                .asWidget()
-                .pos(0, 0)
-                .size(244, 12));
+        fluids.child(IKey.lang("gui.me_container.fluid").color(0xFF202830).asWidget().pos(0, 0).size(244, 12));
         addGridHeadings(items);
         addGridHeadings(fluids);
         ItemSample itemSamples = new ItemSample(tile);
@@ -118,30 +92,21 @@ final class MEContainerGui {
             StringSyncValue fluidCount = new StringSyncValue(() -> Long.toString(tile.networkFluid[slot]));
             sync.syncValue("item_count_" + i, itemCount);
             sync.syncValue("fluid_count_" + i, fluidCount);
-            items.child(
-                new PhantomItemSlot().slot(new SampleSlot(itemSamples, i).singletonSlotGroup())
-                    .background(THEME.slot, gregtech.api.modularui2.GTGuiTextures.OVERLAY_SLOT_ARROW_ME)
-                    .tooltip(t -> t.addLine(IKey.dynamic(() -> amountLabel(itemCount.getValue(), false))))
-                    .pos(x, y));
+            items.child(new PhantomItemSlot().slot(new SampleSlot(itemSamples, i).singletonSlotGroup())
+                .background(THEME.slot, GTGuiTextures.OVERLAY_SLOT_ARROW_ME)
+                .tooltip(t -> t.addLine(IKey.dynamic(() -> amountLabel(itemCount.getValue(), false)))).pos(x, y));
             FluidSample sampleTank = new FluidSample(tile, i);
-            FluidSlotSyncHandler fluidSample = new FluidSlotSyncHandler(sampleTank).phantom(true)
-                .controlsAmount(false);
+            FluidSlotSyncHandler fluidSample = new FluidSlotSyncHandler(sampleTank).phantom(true).controlsAmount(false);
             sync.syncValue("fluid_sample_" + i, fluidSample);
             fluids.child(
-                new FluidSlot().syncHandler(fluidSample)
-                    .background(THEME.slot, gregtech.api.modularui2.GTGuiTextures.OVERLAY_SLOT_ARROW_ME)
-                    .tooltip(t -> t.addLine(IKey.dynamic(() -> amountLabel(fluidCount.getValue(), true))))
-                    .pos(x, y));
+                new FluidSlot().syncHandler(fluidSample).background(THEME.slot, GTGuiTextures.OVERLAY_SLOT_ARROW_ME)
+                    .tooltip(t -> t.addLine(IKey.dynamic(() -> amountLabel(fluidCount.getValue(), true)))).pos(x, y));
             items.child(
                 new StockDisplay(() -> itemSamples.getStackInSlot(slot), null, itemCount::getValue).pos(136 + x, y));
             fluids.child(new StockDisplay(null, sampleTank::getFluid, fluidCount::getValue).pos(136 + x, y));
         }
         panel.child(
-            new PagedWidget<>().controller(controller)
-                .pos(40, 44)
-                .size(244, 144)
-                .addPage(items)
-                .addPage(fluids));
+            new PagedWidget<>().controller(controller).pos(40, 44).size(244, 144).addPage(items).addPage(fluids));
         // #tr gui.me_container.tab_items
         // # Items
         // # zh_CN 物品
@@ -153,29 +118,17 @@ final class MEContainerGui {
         // #tr gui.me_container.hint
         // # Drag samples; empty left-click clears. No items consumed.
         // # zh_CN 拖入样本；空手左键清空。样本不消耗。
-        panel.child(
-            IKey.lang("gui.me_container.hint")
-                .color(0xFF4A5060)
-                .asWidget()
-                .pos(40, 191)
-                .size(244, 22));
+        panel.child(IKey.lang("gui.me_container.hint").color(0xFF4A5060).asWidget().pos(40, 191).size(244, 22));
         for (int i = 0; i < 36; i++) {
             int column = i < 9 ? i : (i - 9) % 9;
             int row = i < 9 ? 3 : (i - 9) / 9;
-            panel.child(
-                new ItemSlot().syncHandler("player", i)
-                    .background(THEME.slot)
-                    .pos(81 + column * 18, 219 + row * 18 + (i < 9 ? 4 : 0)));
+            panel.child(new ItemSlot().syncHandler("player", i).background(THEME.slot).pos(81 + column * 18,
+                219 + row * 18 + (i < 9 ? 4 : 0)));
         }
         // #tr gui.me_container.io
         // # All sides: ME input / selected output.
         // # zh_CN 所有面：存入 ME / 抽取已选资源
-        panel.child(
-            IKey.lang("gui.me_container.io")
-                .color(0xFF4A5060)
-                .asWidget()
-                .pos(40, 302)
-                .size(244, 10));
+        panel.child(IKey.lang("gui.me_container.io").color(0xFF4A5060).asWidget().pos(40, 302).size(244, 10));
         return panel;
     }
 
@@ -184,25 +137,12 @@ final class MEContainerGui {
         // #tr gui.me_container.samples
         // # Marked samples
         // # zh_CN 标记样本
-        page.child(
-            IKey.lang("gui.me_container.samples")
-                .color(0xFF4A5060)
-                .asWidget()
-                .pos(0, 16)
-                .size(108, 10));
+        page.child(IKey.lang("gui.me_container.samples").color(0xFF4A5060).asWidget().pos(0, 16).size(108, 10));
         // #tr gui.me_container.stock
         // # ME network stock
         // # zh_CN ME 网络库存
-        page.child(
-            IKey.lang("gui.me_container.stock")
-                .color(0xFF4A5060)
-                .asWidget()
-                .pos(136, 16)
-                .size(108, 10));
-        page.child(
-            gregtech.api.modularui2.GTGuiTextures.PICTURE_ARROW_DOUBLE.asWidget()
-                .pos(114, 76)
-                .size(16));
+        page.child(IKey.lang("gui.me_container.stock").color(0xFF4A5060).asWidget().pos(136, 16).size(108, 10));
+        page.child(GTGuiTextures.PICTURE_ARROW_DOUBLE.asWidget().pos(114, 76).size(16));
     }
 
     /**
@@ -223,19 +163,18 @@ final class MEContainerGui {
             size(18);
             background(THEME.slot);
             disableHoverBackground();
-            tooltip().setAutoUpdate(true)
-                .tooltipBuilder(tooltip -> {
-                    if (item != null) {
-                        ItemStack stack = item.get();
-                        if (stack == null || stack.getItem() == null) return;
-                        tooltip.addFromItem(stack);
-                    } else {
-                        FluidStack stack = fluid.get();
-                        if (stack == null || stack.getFluid() == null) return;
-                        tooltip.addFromFluid(stack);
-                    }
-                    tooltip.addLine(IKey.str(amountLabel(count.get(), fluid != null)));
-                });
+            tooltip().setAutoUpdate(true).tooltipBuilder(tooltip -> {
+                if (item != null) {
+                    ItemStack stack = item.get();
+                    if (stack == null || stack.getItem() == null) return;
+                    tooltip.addFromItem(stack);
+                } else {
+                    FluidStack stack = fluid.get();
+                    if (stack == null || stack.getFluid() == null) return;
+                    tooltip.addFromFluid(stack);
+                }
+                tooltip.addLine(IKey.str(amountLabel(count.get(), fluid != null)));
+            });
         }
 
         @Override
@@ -266,11 +205,7 @@ final class MEContainerGui {
             String quantity = count.get();
             if (quantity == null || "0".equals(quantity)) return;
             if (item != null ? item.get() == null : fluid.get() == null) return;
-            IKey.str(compact(quantity))
-                .color(0xFFFFFFFF)
-                .shadow(true)
-                .scale(0.5f)
-                .alignment(Alignment.BottomRight)
+            IKey.str(compact(quantity)).color(0xFFFFFFFF).shadow(true).scale(0.5f).alignment(Alignment.BottomRight)
                 .draw(context, 1, 9, 16, 8, theme.getTheme());
         }
     }
@@ -279,9 +214,8 @@ final class MEContainerGui {
     private static PageButton tab(PagedWidget.Controller controller, int page, IKey label) {
         IDrawable caption = label.color(0xFF202830);
         IDrawable text = (context, x, y, w, h, style) -> caption.draw(context, x + 2, y + 3, w - 6, h - 6, style);
-        return new PageButton(page, controller).size(32, 26)
-            .background(false, THEME.tab, text)
-            .background(true, THEME.selectedTab, text);
+        return new PageButton(page, controller).size(32, 26).background(false, THEME.tab, text).background(true,
+            THEME.selectedTab, text);
     }
 
     /** Exact synchronized amounts remain available in tooltips despite compact grid labels. */
@@ -289,10 +223,7 @@ final class MEContainerGui {
         // #tr gui.me_container.amount
         // # Available in ME:
         // # zh_CN ME 网络库存：
-        return IKey.lang("gui.me_container.amount")
-            .get() + " "
-            + count
-            + (fluid ? " mB" : "");
+        return IKey.lang("gui.me_container.amount").get() + " " + count + (fluid ? " mB" : "");
     }
 
     /** Compact grid labels; hover text retains the exact 64-bit count. */

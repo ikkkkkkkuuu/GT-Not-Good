@@ -19,6 +19,7 @@ import java.util.Map;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+import java.io.IOException;
 
 /** Ported command-tree ArgumentTypes used by the integrated chat suggestions. */
 public class ArgumentTypes {
@@ -58,7 +59,7 @@ public class ArgumentTypes {
    }
 
    @SuppressWarnings("unchecked")
-   public static <T extends ArgumentType<?>> void serialize(PacketBuffer pBuffer, T pType) throws java.io.IOException {
+   public static <T extends ArgumentType<?>> void serialize(PacketBuffer pBuffer, T pType) throws IOException {
       ArgumentTypes.Entry<T> entry = (ArgumentTypes.Entry<T>)get(pType);
       if (entry == null) {
          writeResourceLocation(pBuffer, new ResourceLocation(""));
@@ -69,17 +70,17 @@ public class ArgumentTypes {
    }
 
    @Nullable
-   public static ArgumentType<?> deserialize(PacketBuffer pBuffer) throws java.io.IOException {
+   public static ArgumentType<?> deserialize(PacketBuffer pBuffer) throws IOException {
       ResourceLocation resourcelocation = readResourceLocation(pBuffer);
       ArgumentTypes.Entry<?> entry = get(resourcelocation);
       return entry == null ? null : entry.serializer.deserializeFromNetwork(pBuffer);
    }
 
-   public static void writeResourceLocation(PacketBuffer buffer, ResourceLocation loc) throws java.io.IOException {
+   public static void writeResourceLocation(PacketBuffer buffer, ResourceLocation loc) throws IOException {
       buffer.writeStringToBuffer(loc.toString());
    }
 
-   public static ResourceLocation readResourceLocation(PacketBuffer buffer) throws java.io.IOException {
+   public static ResourceLocation readResourceLocation(PacketBuffer buffer) throws IOException {
       return new ResourceLocation(buffer.readStringFromBuffer(32767));
    }
 

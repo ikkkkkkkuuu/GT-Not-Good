@@ -4,6 +4,7 @@
 package com.xyp.gtnotgood.common.items.packaged;
 
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -26,7 +27,7 @@ public final class ItemPackagedCore extends Item {
      * @param unlocalizedName item translation name without the item. prefix or .name suffix
      */
     public ItemPackagedCore(String adapterId, String unlocalizedName) {
-        this.adapterId = java.util.Objects.requireNonNull(adapterId);
+        this.adapterId = Objects.requireNonNull(adapterId);
         setUnlocalizedName(unlocalizedName);
         setMaxStackSize(1);
         setCreativeTab(GTNGCreativeTabs.GTNGItem);

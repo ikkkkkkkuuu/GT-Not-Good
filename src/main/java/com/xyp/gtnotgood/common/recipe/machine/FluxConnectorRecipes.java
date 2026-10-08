@@ -22,37 +22,19 @@ public final class FluxConnectorRecipes {
 
     public static void loadRecipes() {
         GTValues.RA.stdBuilder()
-            .itemInputs(
-                GTNGItemList.FluxPlug.get(1),
-                GTNGItemList.MEBridgeReceiver.get(1),
-                ItemList.Conveyor_Module_MV.get(1),
-                ItemList.Electric_Pump_MV.get(1))
-            .circuit(3)
-            .itemOutputs(GTNGItemList.FluxLogisticsPlug.get(1))
-            .duration(200)
-            .eut(TierEU.RECIPE_MV)
+            .itemInputs(GTNGItemList.FluxPlug.get(1), GTNGItemList.MEBridgeReceiver.get(1),
+                ItemList.Conveyor_Module_MV.get(1), ItemList.Electric_Pump_MV.get(1))
+            .circuit(3).itemOutputs(GTNGItemList.FluxLogisticsPlug.get(1)).duration(200).eut(TierEU.RECIPE_MV)
             .addTo(RecipeMaps.assemblerRecipes);
         GTValues.RA.stdBuilder()
-            .itemInputs(
-                ItemList.Hull_MV.get(1),
-                ItemList.Emitter_MV.get(1),
-                new Object[] { OrePrefixes.circuit.get(Materials.MV), 2 },
-                new ItemStack(Items.ender_pearl, 2))
-            .circuit(1)
-            .itemOutputs(GTNGItemList.FluxPlug.get(1))
-            .duration(200)
-            .eut(TierEU.RECIPE_MV)
+            .itemInputs(ItemList.Hull_MV.get(1), ItemList.Emitter_MV.get(1),
+                new Object[] { OrePrefixes.circuit.get(Materials.MV), 2 }, new ItemStack(Items.ender_pearl, 2))
+            .circuit(1).itemOutputs(GTNGItemList.FluxPlug.get(1)).duration(200).eut(TierEU.RECIPE_MV)
             .addTo(RecipeMaps.assemblerRecipes);
         GTValues.RA.stdBuilder()
-            .itemInputs(
-                ItemList.Hull_MV.get(1),
-                ItemList.Sensor_MV.get(1),
-                new Object[] { OrePrefixes.circuit.get(Materials.MV), 2 },
-                new ItemStack(Items.ender_pearl, 2))
-            .circuit(2)
-            .itemOutputs(GTNGItemList.FluxPoint.get(1))
-            .duration(200)
-            .eut(TierEU.RECIPE_MV)
+            .itemInputs(ItemList.Hull_MV.get(1), ItemList.Sensor_MV.get(1),
+                new Object[] { OrePrefixes.circuit.get(Materials.MV), 2 }, new ItemStack(Items.ender_pearl, 2))
+            .circuit(2).itemOutputs(GTNGItemList.FluxPoint.get(1)).duration(200).eut(TierEU.RECIPE_MV)
             .addTo(RecipeMaps.assemblerRecipes);
     }
 }

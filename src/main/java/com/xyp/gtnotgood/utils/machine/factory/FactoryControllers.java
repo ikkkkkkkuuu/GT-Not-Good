@@ -24,7 +24,7 @@ public final class FactoryControllers {
 
     public static String displayName(String map) {
         ItemStack controller = representative(map);
-        return controller == null ? FactoryText.INVALID.text() : controller.getDisplayName();
+        return controller == null ? FactoryText.Invalid.text() : controller.getDisplayName();
     }
 
     public static boolean supports(String map, ItemStack stack) {
@@ -39,8 +39,7 @@ public final class FactoryControllers {
     }
 
     private static boolean matches(RecipeMap<?> map, String required) {
-        return map != null && FactoryRecipeCatalog.controllerKey(map.unlocalizedName)
-            .equals(required);
+        return map != null && FactoryRecipeCatalog.controllerKey(map.unlocalizedName).equals(required);
     }
 
     /** Prefer the named industrial machine; other maps resolve to real registered compatible controllers. */

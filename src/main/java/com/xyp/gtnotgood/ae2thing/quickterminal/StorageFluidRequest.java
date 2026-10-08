@@ -11,8 +11,8 @@ import lombok.Getter;
 /** A fluid selected in the quick terminal's ME storage panel. */
 public final class StorageFluidRequest {
 
-    public static final StreamCodec<StorageFluidRequest> CODEC = StreamCodecs
-        .of(StorageFluidRequest.class.getName(), StorageFluidRequest::write, StorageFluidRequest::read);
+    public static final StreamCodec<StorageFluidRequest> CODEC = StreamCodecs.of(StorageFluidRequest.class.getName(),
+        StorageFluidRequest::write, StorageFluidRequest::read);
 
     private final IAEStack<?> fluid;
 

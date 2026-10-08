@@ -60,10 +60,8 @@ public class AssemblerMatrixPatternState {
             changed = true;
         }
         if (newStack != null && newStack.getItem() instanceof ICraftingPatternItem craftingPatternItem) {
-            ICraftingPatternDetails pattern = craftingPatternItem.getPatternForItem(
-                newStack,
-                machine.getBaseMetaTileEntity()
-                    .getWorld());
+            ICraftingPatternDetails pattern = craftingPatternItem.getPatternForItem(newStack,
+                machine.getBaseMetaTileEntity().getWorld());
             if (pattern != null && pattern.isCraftable()) {
                 pattern = new DireCraftingPatternDetails(pattern);
             }
@@ -103,17 +101,13 @@ public class AssemblerMatrixPatternState {
                         IAEItemStack patternInput = slot < patternInputs.length ? patternInputs[slot] : null;
                         long containerAmount = patternInput == null ? assemblerSize
                             : multiplyStackSize(patternInput.getStackSize(), assemblerSize);
-                        batchInputs.add(
-                            AEItemStack.create(containerItem)
-                                .setStackSize(containerAmount));
+                        batchInputs.add(AEItemStack.create(containerItem).setStackSize(containerAmount));
                     }
                 }
             }
             for (IAEItemStack output : patternDetails.getCondensedOutputs()) {
                 if (output == null) continue;
-                batchOutputs.add(
-                    output.copy()
-                        .setStackSize(multiplyStackSize(output.getStackSize(), assemblerSize)));
+                batchOutputs.add(output.copy().setStackSize(multiplyStackSize(output.getStackSize(), assemblerSize)));
             }
         } catch (ArithmeticException exception) {
             GTNotGood.LOG.error("Assembler Matrix stack overflowed after an accepted AE batch plan", exception);

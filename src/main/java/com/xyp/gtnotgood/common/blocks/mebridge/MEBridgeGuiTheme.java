@@ -2,6 +2,8 @@ package com.xyp.gtnotgood.common.blocks.mebridge;
 
 import java.util.function.Supplier;
 
+import net.minecraft.util.StatCollector;
+
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.Rectangle;
@@ -24,33 +26,23 @@ public final class MEBridgeGuiTheme {
     private MEBridgeGuiTheme() {}
 
     public static ParentWidget<?> section(int x, int y, int width, int height) {
-        ParentWidget<?> section = new ParentWidget<>().pos(x, y)
-            .size(width, height)
+        ParentWidget<?> section = new ParentWidget<>().pos(x, y).size(width, height)
             .background(GTNGGuiTextures.MODERN_PANEL_BORDER);
-        section.child(
-            new ParentWidget<>().pos(2, 2)
-                .size(width - 4, height - 4)
-                .background(new Rectangle().color(PANEL)));
+        section
+            .child(new ParentWidget<>().pos(2, 2).size(width - 4, height - 4).background(new Rectangle().color(PANEL)));
         return section;
     }
 
     static ParentWidget<?> inset(int x, int y, int width, int height) {
-        ParentWidget<?> inset = new ParentWidget<>().pos(x, y)
-            .size(width, height)
+        ParentWidget<?> inset = new ParentWidget<>().pos(x, y).size(width, height)
             .background(new Rectangle().color(0xFF9099B0));
         inset.child(
-            new ParentWidget<>().pos(1, 1)
-                .size(width - 2, height - 2)
-                .background(new Rectangle().color(PANEL_DARK)));
+            new ParentWidget<>().pos(1, 1).size(width - 2, height - 2).background(new Rectangle().color(PANEL_DARK)));
         return inset;
     }
 
     public static IWidget text(IKey key, int x, int y, int width, int color, Alignment alignment) {
-        return key.asWidget()
-            .pos(x, y)
-            .size(width, 12)
-            .color(color)
-            .textAlign(alignment);
+        return key.asWidget().pos(x, y).size(width, 12).color(color).textAlign(alignment);
     }
 
     public static IWidget dynamic(Supplier<String> value, int x, int y, int width, int color, Alignment alignment) {
@@ -62,23 +54,23 @@ public final class MEBridgeGuiTheme {
             // #tr gui.mebridge.dimension.overworld
             // # Overworld
             // # zh_CN 主世界
-            return net.minecraft.util.StatCollector.translateToLocal("gui.mebridge.dimension.overworld");
+            return StatCollector.translateToLocal("gui.mebridge.dimension.overworld");
         }
         if (dimension == -1) {
             // #tr gui.mebridge.dimension.nether
             // # Nether
             // # zh_CN 下界
-            return net.minecraft.util.StatCollector.translateToLocal("gui.mebridge.dimension.nether");
+            return StatCollector.translateToLocal("gui.mebridge.dimension.nether");
         }
         if (dimension == 1) {
             // #tr gui.mebridge.dimension.end
             // # The End
             // # zh_CN 末地
-            return net.minecraft.util.StatCollector.translateToLocal("gui.mebridge.dimension.end");
+            return StatCollector.translateToLocal("gui.mebridge.dimension.end");
         }
         // #tr gui.mebridge.dimension.other
         // # Dimension %s
         // # zh_CN 维度 %s
-        return net.minecraft.util.StatCollector.translateToLocalFormatted("gui.mebridge.dimension.other", dimension);
+        return StatCollector.translateToLocalFormatted("gui.mebridge.dimension.other", dimension);
     }
 }

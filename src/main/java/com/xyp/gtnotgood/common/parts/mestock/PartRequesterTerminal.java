@@ -30,21 +30,10 @@ public final class PartRequesterTerminal extends PartTerminal {
     public void renderStatic(int x, int y, int z, IPartRenderHelper helper, RenderBlocks renderer) {
         StockModelRenderer.part("ae2:part/display_base", x, y, z, helper, renderer, getColor());
         StockModelRenderer.part(
-            isPowered() ? "merequester:part/requester_terminal_on" : "merequester:part/requester_terminal_off",
-            x,
-            y,
-            z,
-            helper,
-            renderer,
-            getColor());
-        StockModelRenderer.part(
-            StockModelRenderer.indicator("display_status", getClientFlags()),
-            x,
-            y,
-            z,
-            helper,
-            renderer,
-            getColor());
+            isPowered() ? "merequester:part/requester_terminal_on" : "merequester:part/requester_terminal_off", x, y, z,
+            helper, renderer, getColor());
+        StockModelRenderer.part(StockModelRenderer.indicator("display_status", getClientFlags()), x, y, z, helper,
+            renderer, getColor());
     }
 
     @Override

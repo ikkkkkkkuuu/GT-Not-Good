@@ -32,7 +32,7 @@ public abstract class AutomaticMachineCircuitMixin implements ICraftingMachine {
     @Override
     public boolean pushPattern(ICraftingPatternDetails patternDetails, InventoryCrafting table,
         ForgeDirection ejectionDirection) {
-        return AutomaticMachineCircuit
-            .push((BaseMetaTileEntity) (Object) this, patternDetails, table, ejectionDirection);
+        return AutomaticMachineCircuit.push((BaseMetaTileEntity) (Object) this, patternDetails, table,
+            ejectionDirection);
     }
 }

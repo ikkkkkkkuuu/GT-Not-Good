@@ -100,10 +100,7 @@ public class StockIORecipeBridgeTest {
         assertEquals(0, localFluid.amount);
         assertEquals(5, snapshot.items[899].stackSize);
         assertEquals(550, snapshot.fluids[899].amount);
-        assertEquals(
-            "variant",
-            local.getTagCompound()
-                .getString("identity"));
+        assertEquals("variant", local.getTagCompound().getString("identity"));
     }
 
     @Test
@@ -115,8 +112,7 @@ public class StockIORecipeBridgeTest {
         stagedItems[0].stackSize = -1;
         assertFalse(items.valid());
         stagedItems[0].stackSize = 3;
-        stagedItems[0].getTagCompound()
-            .setString("identity", "changed");
+        stagedItems[0].getTagCompound().setString("identity", "changed");
         assertFalse(items.valid());
 
         StockIORecipeBridge.LocalInputs fluids = new StockIORecipeBridge.LocalInputs(snapshot());
@@ -130,8 +126,7 @@ public class StockIORecipeBridgeTest {
     private static ItemStack tagged(int amount) {
         ItemStack stack = new ItemStack(item, amount);
         stack.setTagCompound(new NBTTagCompound());
-        stack.getTagCompound()
-            .setString("identity", "variant");
+        stack.getTagCompound().setString("identity", "variant");
         return stack;
     }
 

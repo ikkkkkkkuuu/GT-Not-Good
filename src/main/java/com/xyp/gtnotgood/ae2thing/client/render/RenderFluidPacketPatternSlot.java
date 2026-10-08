@@ -44,8 +44,7 @@ public class RenderFluidPacketPatternSlot implements ISlotRender {
             int key = System.identityHashCode(slot);
             if (renderingSlots.add(key)) {
                 try {
-                    draw.getAEBaseGui()
-                        .func_146977_a(slot);
+                    draw.getAEBaseGui().func_146977_a(slot);
                 } finally {
                     renderingSlots.remove(key);
                 }

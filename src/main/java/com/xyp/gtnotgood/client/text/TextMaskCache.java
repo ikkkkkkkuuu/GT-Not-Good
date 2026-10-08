@@ -34,18 +34,8 @@ public class TextMaskCache {
         IFontParameters parameters = (IFontParameters) font;
         boolean smooth = AngelicaTextAdapter.usesCustomFont(font);
         int resolution = smooth ? CUSTOM_FONT_RESOLUTION : BITMAP_RESOLUTION;
-        Key key = new Key(
-            font,
-            text,
-            width,
-            height,
-            padding,
-            font.getUnicodeFlag(),
-            parameters.getGlyphScaleX(),
-            parameters.getGlyphScaleY(),
-            parameters.getGlyphSpacing(),
-            parameters.getShadowOffset(),
-            smooth,
+        Key key = new Key(font, text, width, height, padding, font.getUnicodeFlag(), parameters.getGlyphScaleX(),
+            parameters.getGlyphScaleY(), parameters.getGlyphSpacing(), parameters.getShadowOffset(), smooth,
             AngelicaTextAdapter.fontSettings());
         Mask present = masks.get(key);
         if (present != null) {
@@ -71,17 +61,14 @@ public class TextMaskCache {
         }
         masks.put(key, mask);
         pixels += mask.pixels();
-        Iterator<Entry<Key, Mask>> iterator = masks.entrySet()
-            .iterator();
+        Iterator<Entry<Key, Mask>> iterator = masks.entrySet().iterator();
         if (masks.size() > MAX_ENTRIES || pixels > MAX_PIXELS) {
             try (TextRenderState ignored = new TextRenderState()) {
                 while (masks.size() > MAX_ENTRIES || pixels > MAX_PIXELS) {
-                    Mask removed = iterator.next()
-                        .getValue();
+                    Mask removed = iterator.next().getValue();
                     iterator.remove();
                     pixels -= removed.pixels();
-                    removed.target()
-                        .deleteFramebuffer();
+                    removed.target().deleteFramebuffer();
                 }
             }
         }
@@ -109,13 +96,8 @@ public class TextMaskCache {
             target.bindFramebuffer(true);
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glLoadIdentity();
-            GL11.glOrtho(
-                0,
-                target.framebufferWidth / (float) resolution,
-                target.framebufferHeight / (float) resolution,
-                0,
-                -100,
-                100);
+            GL11.glOrtho(0, target.framebufferWidth / (float) resolution, target.framebufferHeight / (float) resolution,
+                0, -100, 100);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
             GL11.glTranslatef(padding, padding, 0);
@@ -126,8 +108,8 @@ public class TextMaskCache {
             GL11.glDisable(GL11.GL_CULL_FACE);
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             GL11.glEnable(GL11.GL_BLEND);
-            OpenGlHelper
-                .glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE,
+                GL11.GL_ONE_MINUS_SRC_ALPHA);
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
             EffectTextRenderer.beginCapture();
             try {
@@ -143,15 +125,9 @@ public class TextMaskCache {
     private static void writeGlyphTextureMetrics(FontRenderer font, String text, float width, float height,
         float padding, int resolution) {
         Layout layout = EffectTextLayout.create(font, text);
-        GlyphTextureMetrics[] metrics = new GlyphTextureMetrics[layout.glyphs()
-            .size()];
+        GlyphTextureMetrics[] metrics = new GlyphTextureMetrics[layout.glyphs().size()];
         for (int i = 0; i < metrics.length; i++) {
-            metrics[i] = GlyphTextureMetrics.of(
-                font,
-                layout.glyphs()
-                    .get(i)
-                    .text()
-                    .charAt(0));
+            metrics[i] = GlyphTextureMetrics.of(font, layout.glyphs().get(i).text().charAt(0));
         }
         GL20.glUseProgram(0);
         OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
@@ -169,8 +145,7 @@ public class TextMaskCache {
         for (Glyph glyph : layout.glyphs()) {
             float left = index == 0 ? -padding : cursor - layout.spacing() * 0.5f;
             float right = cursor + glyph.width() + layout.spacing() * 0.5f;
-            if (index == layout.glyphs()
-                .size() - 1) right = width + padding;
+            if (index == layout.glyphs().size() - 1) right = width + padding;
             float center = (cursor + glyph.width() * 0.5f) / Math.max(1, width);
             GL11.glColor3f(metrics[index].vStart(), metrics[index].vSpan(), center);
             GL11.glVertex2f(left, -padding);
@@ -192,8 +167,7 @@ public class TextMaskCache {
     public void clear() {
         if (!masks.isEmpty()) {
             try (TextRenderState ignored = new TextRenderState()) {
-                for (Mask mask : masks.values()) mask.target()
-                    .deleteFramebuffer();
+                for (Mask mask : masks.values()) mask.target().deleteFramebuffer();
             }
         }
         masks.clear();

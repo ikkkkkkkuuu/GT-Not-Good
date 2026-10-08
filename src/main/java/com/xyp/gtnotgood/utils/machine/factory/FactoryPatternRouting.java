@@ -78,11 +78,8 @@ public final class FactoryPatternRouting {
         FactoryPreview.Snapshot preview = FactoryPreview.describe(graph);
         if (preview.inputs.isEmpty()) return;
         try {
-            long[] amounts = FactoryPatternExport.batchCounts(
-                preview,
-                preview.inputs.stream()
-                    .mapToDouble(i -> i.rate)
-                    .toArray());
+            long[] amounts = FactoryPatternExport.batchCounts(preview,
+                preview.inputs.stream().mapToDouble(i -> i.rate).toArray());
             List<ItemStack> items = new ArrayList<>();
             List<FluidStack> fluids = new ArrayList<>();
             for (int i = 0; i < amounts.length; i++) {
@@ -144,8 +141,10 @@ public final class FactoryPatternRouting {
             if (process != null && !process.equals(target.nodes)) ambiguousProcess = true;
             process = target.nodes;
         }
-        if (failure == null && (ambiguousProcess || matches.stream()
-            .noneMatch(target -> target.nodes.containsAll(nodes)))) {
+        if (
+            failure == null
+                && (ambiguousProcess || matches.stream().noneMatch(target -> target.nodes.containsAll(nodes)))
+        ) {
             nodes.clear();
             failure = FactoryText.PatternAmbiguous;
         }
@@ -164,12 +163,8 @@ public final class FactoryPatternRouting {
         if (!collect(actual, types, supplied, sensitive, true) || types.isEmpty()) return false;
         BigInteger numerator = supplied.get(0), denominator = required.get(0);
         if (numerator.signum() <= 0) return false;
-        for (int i = 0; i < types.size(); i++) if (!supplied.get(i)
-            .multiply(denominator)
-            .equals(
-                required.get(i)
-                    .multiply(numerator)))
-            return false;
+        for (int i = 0; i < types.size(); i++)
+            if (!supplied.get(i).multiply(denominator).equals(required.get(i).multiply(numerator))) return false;
         return true;
     }
 
@@ -206,10 +201,7 @@ public final class FactoryPatternRouting {
             if (existingOnly) return false;
             types.add(value);
             amounts.add(BigInteger.valueOf(amount));
-        } else amounts.set(
-            found,
-            amounts.get(found)
-                .add(BigInteger.valueOf(amount)));
+        } else amounts.set(found, amounts.get(found).add(BigInteger.valueOf(amount)));
         return true;
     }
 }

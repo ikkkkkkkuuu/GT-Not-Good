@@ -53,15 +53,21 @@ public abstract class PatternMEOutputMultiblockMixin {
     private void gtnotgood$registerOutputRoles(IGregTechTileEntity tile, int casing,
         CallbackInfoReturnable<Boolean> cir) {
         if (!cir.getReturnValueZ() || tile == null) return;
-        if (!(tile.getMetaTileEntity() instanceof SuperMTEHatchCraftingInputME)
-            && !(tile.getMetaTileEntity() instanceof SuperMTEHatchCraftingInputSlave)) return;
+        if (
+            !(tile.getMetaTileEntity() instanceof SuperMTEHatchCraftingInputME)
+                && !(tile.getMetaTileEntity() instanceof SuperMTEHatchCraftingInputSlave)
+        ) return;
         MetaTileEntity input = (MetaTileEntity) tile.getMetaTileEntity();
-        if (mOutputBusses.stream()
-            .noneMatch(bus -> bus instanceof PatternMEOutputViews.ItemView view && view.input == input)) {
+        if (
+            mOutputBusses.stream()
+                .noneMatch(bus -> bus instanceof PatternMEOutputViews.ItemView view && view.input == input)
+        ) {
             mOutputBusses.add(new PatternMEOutputViews.ItemView(input));
         }
-        if (mOutputHatches.stream()
-            .noneMatch(hatch -> hatch instanceof PatternMEOutputViews.FluidView view && view.input == input)) {
+        if (
+            mOutputHatches.stream()
+                .noneMatch(hatch -> hatch instanceof PatternMEOutputViews.FluidView view && view.input == input)
+        ) {
             mOutputHatches.add(new PatternMEOutputViews.FluidView(input));
         }
     }
@@ -73,8 +79,10 @@ public abstract class PatternMEOutputMultiblockMixin {
         cancellable = true)
     private void gtnotgood$acceptOutputRole(IGregTechTileEntity tile, int casing, CallbackInfoReturnable<Boolean> cir) {
         if (tile == null) return;
-        if (!(tile.getMetaTileEntity() instanceof SuperMTEHatchCraftingInputME)
-            && !(tile.getMetaTileEntity() instanceof SuperMTEHatchCraftingInputSlave)) return;
+        if (
+            !(tile.getMetaTileEntity() instanceof SuperMTEHatchCraftingInputME)
+                && !(tile.getMetaTileEntity() instanceof SuperMTEHatchCraftingInputSlave)
+        ) return;
         if (mDualInputHatches.contains(tile.getMetaTileEntity())) {
             cir.setReturnValue(true);
         } else {

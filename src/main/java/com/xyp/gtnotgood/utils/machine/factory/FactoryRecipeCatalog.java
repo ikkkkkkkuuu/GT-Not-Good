@@ -47,9 +47,7 @@ public final class FactoryRecipeCatalog {
             this.recipe = recipe;
             this.consumableRecipe = recipe.copy();
             this.consumableRecipe.mInputs = Arrays.stream(recipe.mInputs)
-                .filter(stack -> stack != null && stack.stackSize > 0)
-                .map(ItemStack::copy)
-                .toArray(ItemStack[]::new);
+                .filter(stack -> stack != null && stack.stackSize > 0).map(ItemStack::copy).toArray(ItemStack[]::new);
         }
 
         public String title() {
@@ -112,38 +110,43 @@ public final class FactoryRecipeCatalog {
         boolean ignoreHeat = map == RecipeMaps.blastFurnaceRecipes || map == RecipeMaps.plasmaForgeRecipes
             || map == RecipeMaps.vacuumFurnaceRecipes;
         boolean ignoreMachineTier = map == RecipeMaps.chemicalPlantRecipes;
-        if (recipe == null) return FactoryText.IMPORT_UNREGISTERED;
-        if (recipe.mFakeRecipe) return FactoryText.IMPORT_VIRTUAL;
-        if (!recipe.mEnabled || recipe.mHidden) return FactoryText.IMPORT_DISABLED;
-        if (recipe.getClass() != GTRecipe.class) return FactoryText.IMPORT_CUSTOM;
+        if (recipe == null) return FactoryText.ImportUnregistered;
+        if (recipe.mFakeRecipe) return FactoryText.ImportVirtual;
+        if (!recipe.mEnabled || recipe.mHidden) return FactoryText.ImportDisabled;
+        if (recipe.getClass() != GTRecipe.class) return FactoryText.ImportCustom;
         // Heat and chemical-plant casing tiers are waived; negative environment flags remain restricted.
-        if (recipe.mSpecialItems != null
-            || (recipe.mSpecialValue != 0 && !((ignoreHeat || ignoreMachineTier) && recipe.mSpecialValue > 0)))
-            return FactoryText.IMPORT_SPECIAL;
+        if (
+            recipe.mSpecialItems != null
+                || (recipe.mSpecialValue != 0 && !((ignoreHeat || ignoreMachineTier) && recipe.mSpecialValue > 0))
+        ) return FactoryText.ImportSpecial;
         if (recipe.getMetadataStorage() != null) {
-            for (Map.Entry<RecipeMetadataKey<?>, Object> metadata : recipe.getMetadataStorage()
-                .getEntries()) {
-                if (ignoreHeat && metadata.getKey()
-                    .equals(GTRecipeConstants.COIL_HEAT) && metadata.getValue() instanceof Integer heat && heat >= 0)
-                    continue;
-                if (ignoreMachineTier && metadata.getKey()
-                    .equals(GTRecipeConstants.CHEMPLANT_CASING_TIER)
-                    && metadata.getValue() instanceof Integer tier
-                    && tier >= 0) continue;
+            for (Map.Entry<RecipeMetadataKey<?>, Object> metadata : recipe.getMetadataStorage().getEntries()) {
+                if (
+                    ignoreHeat && metadata.getKey().equals(GTRecipeConstants.COIL_HEAT)
+                        && metadata.getValue() instanceof Integer heat
+                        && heat >= 0
+                ) continue;
+                if (
+                    ignoreMachineTier && metadata.getKey().equals(GTRecipeConstants.CHEMPLANT_CASING_TIER)
+                        && metadata.getValue() instanceof Integer tier
+                        && tier >= 0
+                ) continue;
                 if (!inactiveEnvironmentRequirement(metadata.getKey(), metadata.getValue()))
-                    return FactoryText.IMPORT_METADATA;
+                    return FactoryText.ImportMetadata;
             }
         }
-        if (recipe.mEUt <= 0 || recipe.mDuration <= 0) return FactoryText.IMPORT_TIMING;
-        if (recipe.mInputs.length > 16 || recipe.mOutputs.length > 16
-            || recipe.mFluidInputs.length > 16
-            || recipe.mFluidOutputs.length > 16) return FactoryText.IMPORT_SLOTS;
+        if (recipe.mEUt <= 0 || recipe.mDuration <= 0) return FactoryText.ImportTiming;
+        if (
+            recipe.mInputs.length > 16 || recipe.mOutputs.length > 16
+                || recipe.mFluidInputs.length > 16
+                || recipe.mFluidOutputs.length > 16
+        ) return FactoryText.ImportSlots;
         if (recipe.mInputChances != null)
-            for (int chance : recipe.mInputChances) if (chance != 10000) return FactoryText.IMPORT_CHANCES;
+            for (int chance : recipe.mInputChances) if (chance != 10000) return FactoryText.ImportChances;
         if (recipe.mFluidInputChances != null)
-            for (int chance : recipe.mFluidInputChances) if (chance != 10000) return FactoryText.IMPORT_CHANCES;
+            for (int chance : recipe.mFluidInputChances) if (chance != 10000) return FactoryText.ImportChances;
         if (recipe.mFluidOutputChances != null)
-            for (int chance : recipe.mFluidOutputChances) if (chance != 10000) return FactoryText.IMPORT_CHANCES;
+            for (int chance : recipe.mFluidOutputChances) if (chance != 10000) return FactoryText.ImportChances;
         return null;
     }
 
@@ -168,8 +171,7 @@ public final class FactoryRecipeCatalog {
         if (recipe.mSpecialValue != 0) tag.setInteger("special", recipe.mSpecialValue);
         tag.setBoolean("nbt", recipe.isNBTSensitive);
         try {
-            byte[] bytes = MessageDigest.getInstance("SHA-256")
-                .digest(canonical(tag).getBytes(StandardCharsets.UTF_8));
+            byte[] bytes = MessageDigest.getInstance("SHA-256").digest(canonical(tag).getBytes(StandardCharsets.UTF_8));
             StringBuilder result = new StringBuilder();
             for (byte value : bytes) result.append(String.format(Locale.ROOT, "%02x", value & 255));
             return result.toString();
@@ -185,20 +187,16 @@ public final class FactoryRecipeCatalog {
             List<String> keys = new ArrayList<>(compound.func_150296_c());
             Collections.sort(keys);
             StringBuilder result = new StringBuilder("{");
-            for (String key : keys) result.append(key.length())
-                .append(':')
-                .append(key)
-                .append(canonical(compound.getTag(key)));
-            return result.append('}')
-                .toString();
+            for (String key : keys)
+                result.append(key.length()).append(':').append(key).append(canonical(compound.getTag(key)));
+            return result.append('}').toString();
         }
         if (tag instanceof NBTTagList) {
             NBTTagList list = (NBTTagList) tag;
             if (list.func_150303_d() != 10) return list.toString();
             StringBuilder result = new StringBuilder("[");
             for (int i = 0; i < list.tagCount(); i++) result.append(canonical(list.getCompoundTagAt(i)));
-            return result.append(']')
-                .toString();
+            return result.append(']').toString();
         }
         return tag.getId() + ":" + tag.toString();
     }

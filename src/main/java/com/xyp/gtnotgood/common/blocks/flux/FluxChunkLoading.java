@@ -15,15 +15,12 @@ import com.xyp.gtnotgood.GTNotGood;
 public final class FluxChunkLoading implements ForgeChunkManager.LoadingCallback {
 
     public static ForgeChunkManager.Ticket request(TileFluxConnector tile) {
-        ForgeChunkManager.Ticket ticket = ForgeChunkManager
-            .requestTicket(GTNotGood.instance, tile.getWorldObj(), ForgeChunkManager.Type.NORMAL);
+        ForgeChunkManager.Ticket ticket = ForgeChunkManager.requestTicket(GTNotGood.instance, tile.getWorldObj(),
+            ForgeChunkManager.Type.NORMAL);
         if (ticket != null) {
-            ticket.getModData()
-                .setInteger("fluxX", tile.xCoord);
-            ticket.getModData()
-                .setInteger("fluxY", tile.yCoord);
-            ticket.getModData()
-                .setInteger("fluxZ", tile.zCoord);
+            ticket.getModData().setInteger("fluxX", tile.xCoord);
+            ticket.getModData().setInteger("fluxY", tile.yCoord);
+            ticket.getModData().setInteger("fluxZ", tile.zCoord);
             ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(tile.xCoord >> 4, tile.zCoord >> 4));
         }
         return ticket;
@@ -32,15 +29,13 @@ public final class FluxChunkLoading implements ForgeChunkManager.LoadingCallback
     @Override
     public void ticketsLoaded(List<ForgeChunkManager.Ticket> tickets, World world) {
         for (ForgeChunkManager.Ticket ticket : tickets) {
-            int x = ticket.getModData()
-                .getInteger("fluxX");
-            int y = ticket.getModData()
-                .getInteger("fluxY");
-            int z = ticket.getModData()
-                .getInteger("fluxZ");
-            if (ticket.getModData()
-                .hasKey("fluxX") && world.getTileEntity(x, y, z) instanceof TileFluxConnector tile
-                && tile.restoreTicket(ticket)) {
+            int x = ticket.getModData().getInteger("fluxX");
+            int y = ticket.getModData().getInteger("fluxY");
+            int z = ticket.getModData().getInteger("fluxZ");
+            if (
+                ticket.getModData().hasKey("fluxX") && world.getTileEntity(x, y, z) instanceof TileFluxConnector tile
+                    && tile.restoreTicket(ticket)
+            ) {
                 ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(x >> 4, z >> 4));
             } else {
                 ForgeChunkManager.releaseTicket(ticket);

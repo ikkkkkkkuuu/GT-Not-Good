@@ -19,9 +19,7 @@ public class FCBaseItemTerminal implements IItemTerminal {
 
     @Override
     public List<Class<? extends Item>> getClasses() {
-        return Arrays.asList(
-            ItemWirelessLevelTerminal.class,
-            ItemWirelessInterfaceTerminal.class,
+        return Arrays.asList(ItemWirelessLevelTerminal.class, ItemWirelessInterfaceTerminal.class,
             ItemWirelessPatternTerminal.class);
     }
 

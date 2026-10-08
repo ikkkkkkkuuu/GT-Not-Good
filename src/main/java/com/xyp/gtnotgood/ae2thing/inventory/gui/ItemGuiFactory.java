@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -56,7 +57,7 @@ public abstract class ItemGuiFactory<T> implements IGuiFactory {
         if (x == -1) {
             return player.getCurrentEquippedItem();
         } else if (x >= Constants.BAUBLE_SLOT_OFFSET) {
-            net.minecraft.inventory.IInventory baubles = BaublesApi.getBaubles(player);
+            IInventory baubles = BaublesApi.getBaubles(player);
             int slot = x - Constants.BAUBLE_SLOT_OFFSET;
             if (baubles != null && slot >= 0 && slot < baubles.getSizeInventory()) {
                 return baubles.getStackInSlot(slot);

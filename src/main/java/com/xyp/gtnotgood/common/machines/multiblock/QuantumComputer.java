@@ -21,6 +21,7 @@ import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
+import com.xyp.gtnotgood.common.gui.modularui.QuantumComputerGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiBlockBase;
 import com.xyp.gtnotgood.utils.ECraftingCPUCluster;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -59,6 +60,7 @@ import gregtech.api.render.TextureFactory;
 import gregtech.api.structure.error.StructureError;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
+import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 
 /**
@@ -186,8 +188,7 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
             // #tr gtng.QuantumComputer.free
             // # No upgrades, EU or AE crafting energy required
             // # zh_CN 无需升级，不消耗EU或AE合成能量
-            .addInfo(StatCollector.translateToLocal("gtng.QuantumComputer.free"))
-            .beginStructureBlock(3, 2, 1, false)
+            .addInfo(StatCollector.translateToLocal("gtng.QuantumComputer.free")).beginStructureBlock(3, 2, 1, false)
             .toolTipFinisher();
         return tt;
     }
@@ -314,11 +315,8 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
 
     @Override
     public DimensionalCoord getLocation() {
-        return new DimensionalCoord(
-            getBaseMetaTileEntity().getWorld(),
-            getBaseMetaTileEntity().getXCoord(),
-            getBaseMetaTileEntity().getYCoord(),
-            getBaseMetaTileEntity().getZCoord());
+        return new DimensionalCoord(getBaseMetaTileEntity().getWorld(), getBaseMetaTileEntity().getXCoord(),
+            getBaseMetaTileEntity().getYCoord(), getBaseMetaTileEntity().getZCoord());
     }
 
     @Override
@@ -340,9 +338,7 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
                 gridProxy.setFlags(GridFlags.REQUIRE_CHANNEL);
                 gridProxy.setIdlePowerUsage(0);
                 if (bmte.getWorld() != null) {
-                    gridProxy.setOwner(
-                        bmte.getWorld()
-                            .getPlayerEntityByName(bmte.getOwnerName()));
+                    gridProxy.setOwner(bmte.getWorld().getPlayerEntityByName(bmte.getOwnerName()));
                 }
             }
         }
@@ -374,8 +370,7 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
             virtualCPU.setName(parentName);
         }
         for (int index = 0; index < cpus.size(); index++) {
-            cpus.get(index)
-                .setName(parentName.isEmpty() ? "" : parentName + " #" + (index + 1));
+            cpus.get(index).setName(parentName.isEmpty() ? "" : parentName + " #" + (index + 1));
         }
     }
 
@@ -403,8 +398,7 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
     public void postCPUClusterChangeEvent() {
         if (getProxy().getNode() == null) return;
         try {
-            getProxy().getGrid()
-                .postEvent(new MENetworkCraftingCpuChange(getProxy().getNode()));
+            getProxy().getGrid().postEvent(new MENetworkCraftingCpuChange(getProxy().getNode()));
         } catch (GridAccessException ignored) {}
     }
 
@@ -484,21 +478,15 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
         IMEMonitor<IAEItemStack> itemInventory = null;
         try {
             var t = getBaseMetaTileEntity();
-            var te = t.getWorld()
-                .getTileEntity(t.getXCoord(), t.getYCoord() + 1, t.getZCoord());
-            if (te instanceof IGridHost igh) itemInventory = igh.getGridNode(ForgeDirection.UNKNOWN)
-                .getGrid()
-                .<IStorageGrid>getCache(IStorageGrid.class)
-                .getItemInventory();
+            var te = t.getWorld().getTileEntity(t.getXCoord(), t.getYCoord() + 1, t.getZCoord());
+            if (te instanceof IGridHost igh) itemInventory = igh.getGridNode(ForgeDirection.UNKNOWN).getGrid()
+                .<IStorageGrid>getCache(IStorageGrid.class).getItemInventory();
         } catch (Exception ignored) {}
         final var s = new MachineSource(this);
         for (var cpu : cpus) {
             if (itemInventory != null) {
-                IItemList<IAEItemStack> itemList = AEApi.instance()
-                    .storage()
-                    .createItemList();
-                cpu.getInventory()
-                    .getAvailableItems(itemList);
+                IItemList<IAEItemStack> itemList = AEApi.instance().storage().createItemList();
+                cpu.getInventory().getAvailableItems(itemList);
                 for (var stack : itemList) {
                     itemInventory.injectItems(stack, Actionable.MODULATE, s);
                 }
@@ -509,9 +497,7 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
     }
 
     public WorldCoord getWorldCoord() {
-        return new WorldCoord(
-            getBaseMetaTileEntity().getXCoord(),
-            getBaseMetaTileEntity().getYCoord(),
+        return new WorldCoord(getBaseMetaTileEntity().getXCoord(), getBaseMetaTileEntity().getYCoord(),
             getBaseMetaTileEntity().getZCoord());
     }
 
@@ -529,8 +515,7 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
     public IStructureDefinition<QuantumComputer> getStructureDefinition() {
         return StructureDefinition.<QuantumComputer>builder()
             .addShape("main", StructureUtility.transpose(new String[][] { { "AAA" }, { "A~A" } }))
-            .addElement('A', StructureUtility.ofBlock(GregTechAPI.sBlockCasings2, 0))
-            .build();
+            .addElement('A', StructureUtility.ofBlock(GregTechAPI.sBlockCasings2, 0)).build();
     }
 
     @Override
@@ -571,9 +556,8 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
         boolean active, boolean redstone) {
         return side == facing
             ? new ITexture[] { Textures.BlockIcons.getCasingTextureForId(getCasingTextureID()),
-                TextureFactory.of(
-                    active ? Textures.BlockIcons.OVERLAY_ME_INPUT_HATCH_ACTIVE
-                        : Textures.BlockIcons.OVERLAY_ME_INPUT_HATCH) }
+                TextureFactory.of(active ? Textures.BlockIcons.OVERLAY_ME_INPUT_HATCH_ACTIVE
+                    : Textures.BlockIcons.OVERLAY_ME_INPUT_HATCH) }
             : new ITexture[] { Textures.BlockIcons.getCasingTextureForId(getCasingTextureID()) };
     }
 
@@ -583,7 +567,7 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
 
     @Override
     @Nonnull
-    protected gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui<?> getGui() {
-        return new com.xyp.gtnotgood.common.gui.modularui.QuantumComputerGui(this);
+    protected MTEMultiBlockBaseGui<?> getGui() {
+        return new QuantumComputerGui(this);
     }
 }

@@ -29,11 +29,13 @@ public final class ClientResearchTickHandler {
         BatchResearchController.clientTick();
         TargetResearchController.clientTick();
         Watch current = watch;
-        if (current == null || TargetResearchController.isRunning()
-            || ResearchNoteGenerationController.isRunning()
-            || BatchResearchController.isRunning()
-            || AspectSynthesisController.isRunning()
-            || !Config.autoResearch()) return;
+        if (
+            current == null || TargetResearchController.isRunning()
+                || ResearchNoteGenerationController.isRunning()
+                || BatchResearchController.isRunning()
+                || AspectSynthesisController.isRunning()
+                || !Config.autoResearch()
+        ) return;
         if (++current.ticks < 10) return;
         current.ticks = 0;
         if (current.mc.currentScreen != current.gui) return;

@@ -71,9 +71,7 @@ public abstract class MixinGuiCraftConfirm extends AEBaseGui {
     private static void clearList(IItemList<IAEItemStack> list) {
         if (list == null) return;
         try {
-            list.getClass()
-                .getMethod("clear")
-                .invoke(list);
+            list.getClass().getMethod("clear").invoke(list);
         } catch (Throwable t) {
             // Fallback: at least reset the stack sizes so the stale view is cleared before replanning.
             list.resetStatus();
@@ -82,18 +80,11 @@ public abstract class MixinGuiCraftConfirm extends AEBaseGui {
 
     @Inject(method = "initGui", at = @At("TAIL"))
     public void initGui(CallbackInfo ci) {
-        this.buttonList.add(
-            replan = new GuiAeButton(
-                0,
-                start.xPosition,
-                start.yPosition,
-                start.width,
-                start.height,
-                // #tr gtnotgood.gui.button.replan
-                // # Replan
-                // # zh_CN 重新规划合成任务
-                I18n.format(NameConst.GUI_BUTTON_REPLAN),
-                ""));
+        this.buttonList.add(replan = new GuiAeButton(0, start.xPosition, start.yPosition, start.width, start.height,
+            // #tr gtnotgood.gui.button.replan
+            // # Replan
+            // # zh_CN 重新规划合成任务
+            I18n.format(NameConst.GUI_BUTTON_REPLAN), ""));
         this.replan.visible = false;
     }
 

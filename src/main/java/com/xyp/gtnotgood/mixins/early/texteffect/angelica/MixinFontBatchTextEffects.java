@@ -62,15 +62,13 @@ public abstract class MixinFontBatchTextEffects implements FontBatchBridge {
         int end = start + Math.max(0, Math.min(length, source.length() - start));
         if (!EffectTextParser.containsMarkers(source, start, end)) return;
         String text = start == 0 && end == source.length() ? source.toString()
-            : source.subSequence(start, end)
-                .toString();
+            : source.subSequence(start, end).toString();
         boolean previousUnicode = underlying.getUnicodeFlag();
         underlying.setUnicodeFlag(unicode);
         try {
             EffectTextRenderer.INSTANCE.draw(underlying, text, x, y, color, shadow);
-            cir.setReturnValue(
-                x + EffectTextRenderer.INSTANCE.layout(underlying, text)
-                    .width() + (shadow ? ((BatchingFontRenderer) (Object) this).getShadowOffset() : 0));
+            cir.setReturnValue(x + EffectTextRenderer.INSTANCE.layout(underlying, text).width()
+                + (shadow ? ((BatchingFontRenderer) (Object) this).getShadowOffset() : 0));
         } finally {
             underlying.setUnicodeFlag(previousUnicode);
         }

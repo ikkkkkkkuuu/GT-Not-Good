@@ -42,22 +42,16 @@ public class KeybindLoader implements Runnable {
         // #tr gtnotgood.key.open_dual_interface_terminal
         // # Open Dual Interface Terminal
         // # zh_CN 打开二合一接口终端
-        openDualInterfaceTerminal = new KeyBinding(
-            AE2Thing.MODID + ".key.open_dual_interface_terminal",
-            Keyboard.KEY_F,
+        openDualInterfaceTerminal = new KeyBinding(AE2Thing.MODID + ".key.open_dual_interface_terminal", Keyboard.KEY_F,
             "key.categories.gtnotgood");
         ClientRegistry.registerKeyBinding(openDualInterfaceTerminal);
         // #tr gtnotgood.key.send_held_item_to_network
         // # Send Held Item to Network
         // # zh_CN 发送手持物品到网络
-        sendHeldItemToNetwork = new KeyBinding(
-            AE2Thing.MODID + ".key.send_held_item_to_network",
-            Keyboard.KEY_C,
+        sendHeldItemToNetwork = new KeyBinding(AE2Thing.MODID + ".key.send_held_item_to_network", Keyboard.KEY_C,
             "key.categories.gtnotgood");
         ClientRegistry.registerKeyBinding(sendHeldItemToNetwork);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(this);
+        FMLCommonHandler.instance().bus().register(this);
     }
 
     @SubscribeEvent
@@ -71,12 +65,9 @@ public class KeybindLoader implements Runnable {
             if (block != null) {
                 if (Util.findItemStack(p, block) == -1) {
                     boolean single = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-                    AE2Thing.proxy.netHandler.sendToServer(
-                        new CPacketInventoryActionExtend(
-                            InventoryActionExtend.REQUEST_ITEM,
-                            p.inventory.currentItem,
-                            single ? 1 : 0,
-                            AEItemStack.create(block)));
+                    AE2Thing.proxy.netHandler
+                        .sendToServer(new CPacketInventoryActionExtend(InventoryActionExtend.RequestItem,
+                            p.inventory.currentItem, single ? 1 : 0, AEItemStack.create(block)));
                 }
             }
             return;
@@ -86,8 +77,7 @@ public class KeybindLoader implements Runnable {
             return;
         }
         if (openDualInterfaceTerminal.isPressed()) {
-            AE2ThingAPI.instance()
-                .openDualinterfaceTerminal();
+            AE2ThingAPI.instance().openDualinterfaceTerminal();
         }
         if (sendHeldItemToNetwork.isPressed()) {
             // send the currently held stack into the ME network of a wireless terminal in inventory/baubles

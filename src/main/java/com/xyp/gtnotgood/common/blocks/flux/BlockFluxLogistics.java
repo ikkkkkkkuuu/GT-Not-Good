@@ -25,9 +25,7 @@ public final class BlockFluxLogistics extends BlockFluxConnector {
 
     @Override
     public int onBlockPlaced(World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int meta) {
-        return ForgeDirection.getOrientation(side)
-            .getOpposite()
-            .ordinal();
+        return ForgeDirection.getOrientation(side).getOpposite().ordinal();
     }
 
     @Override

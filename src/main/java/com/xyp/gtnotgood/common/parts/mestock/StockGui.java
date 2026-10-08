@@ -74,16 +74,9 @@ final class StockGui {
 
     private static ModularPanel panel(String id, IKey title, int width, int height, IDrawable frame,
         boolean inventory) {
-        var panel = ModularPanel.defaultPanel(id, width, height)
-            .background(frame)
-            .disableHoverBackground();
-        panel.child(
-            title.color(0xff404040)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(8, 6)
-                .size(width - 16, 9));
+        var panel = ModularPanel.defaultPanel(id, width, height).background(frame).disableHoverBackground();
+        panel.child(title.color(0xff404040).asWidget().alignment(Alignment.TopLeft).shadow(false).pos(8, 6)
+            .size(width - 16, 9));
         if (inventory) {
             playerInventory(panel);
         }
@@ -91,155 +84,78 @@ final class StockGui {
     }
 
     private static void playerInventory(ModularPanel panel) {
+        panel.child(IKey.lang("container.inventory").color(0xff404040).asWidget().alignment(Alignment.TopLeft)
+            .shadow(false).left(8).bottom(86).size(162, 9));
         panel.child(
-            IKey.lang("container.inventory")
-                .color(0xff404040)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .left(8)
-                .bottom(86)
-                .size(162, 9));
-        panel.child(
-            SlotGroupWidget.playerInventory((index, slot) -> slot.background(IDrawable.EMPTY))
-                .left(7)
-                .bottom(9));
+            SlotGroupWidget.playerInventory((index, slot) -> slot.background(IDrawable.EMPTY)).left(7).bottom(9));
     }
 
     private static ModularPanel threshold(PartThresholdExportBus bus, StockGuiFactory.Data data,
         PanelSyncManager sync) {
         var panel = panel("threshold_export", IKey.lang(bus.stockTitle()), 176, 253, StockGuiAssets.bus, true);
-        panel.child(
-            StockText.SetAmount.label()
-                .color(0xff404040)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(10, 17)
-                .size(150, 9)
-                .scale(0.6f));
+        panel.child(StockText.SetAmount.label().color(0xff404040).asWidget().alignment(Alignment.TopLeft).shadow(false)
+            .pos(10, 17).size(150, 9).scale(0.6f));
         var slots = new IntSyncValue(bus::stockSlots);
         sync.syncValue("slots", slots);
-        for (int i = 0; i < bus.stockConfig()
-            .size(); i++) {
+        for (int i = 0; i < bus.stockConfig().size(); i++) {
             int row = i;
             var token = new DeviceToken(() -> "local:" + row);
             sync.syncValue("identity", row, token);
-            var sample = sample(
-                sync,
-                row,
-                token,
-                data,
-                () -> bus.stockConfig()
-                    .key(row),
-                () -> row < bus.stockSlots(),
+            var sample = sample(sync, row, token, data, () -> bus.stockConfig().key(row), () -> row < bus.stockSlots(),
                 (mouse, cursor) -> {
                     if (mouse.mouseButton == 2) StockGuiFactory.instance.openAmount(sync.getPlayer(), bus, row);
-                    else if (mouse.shift || cursor == null && mouse.mouseButton == 1) bus.stockConfig()
-                        .setKey(row, null);
-                    else if (cursor != null) bus.stockConfig()
-                        .setKey(row, StockResources.sample(cursor));
+                    else if (mouse.shift || cursor == null && mouse.mouseButton == 1)
+                        bus.stockConfig().setKey(row, null);
+                    else if (cursor != null) bus.stockConfig().setKey(row, StockResources.sample(cursor));
                 });
-            var amount = new LongSyncValue(
-                () -> bus.stockConfig()
-                    .amount(row));
+            var amount = new LongSyncValue(() -> bus.stockConfig().amount(row));
             sync.syncValue("reserve", row, amount);
-            panel.child(
-                new SampleSlot(sample).displayAmount(amount::getLongValue)
-                    .pos(7 + row % 9 * 18, 28 + row / 9 * 18)
-                    .background(row < 18 ? IDrawable.EMPTY : StockGuiAssets.slot)
-                    .setEnabledIf(w -> row < slots.getIntValue())
-                    .tooltip(
-                        t -> t.addLine(StockText.SetAmount.label())
-                            .addLine(IKey.dynamic(() -> StockText.Target.text() + ": " + amount.getLongValue()))));
+            panel.child(new SampleSlot(sample).displayAmount(amount::getLongValue)
+                .pos(7 + row % 9 * 18, 28 + row / 9 * 18).background(row < 18 ? IDrawable.EMPTY : StockGuiAssets.slot)
+                .setEnabledIf(w -> row < slots.getIntValue()).tooltip(t -> t.addLine(StockText.SetAmount.label())
+                    .addLine(IKey.dynamic(() -> StockText.Target.text() + ": " + amount.getLongValue()))));
         }
-        panel.child(
-            StockGuiAssets.upgrades(8)
-                .asWidget()
-                .pos(174, 0)
-                .size(28, 156)
-                .excludeAreaInRecipeViewer());
+        panel.child(StockGuiAssets.upgrades(8).asWidget().pos(174, 0).size(28, 156).excludeAreaInRecipeViewer());
         var upgrades = new InvWrapper(bus.getInventoryByName("upgrades"));
-        for (int i = 0; i < 8; i++) panel.child(
-            new ItemSlot().slot(new ModularSlot(upgrades, i).singletonSlotGroup())
-                .background(IDrawable.EMPTY)
-                .pos(174, 5 + i * 18)
-                .excludeAreaInRecipeViewer());
-        var redstone = new IntSyncValue(
-            () -> bus.getRSMode()
-                .ordinal());
+        for (int i = 0; i < 8; i++) panel.child(new ItemSlot().slot(new ModularSlot(upgrades, i).singletonSlotGroup())
+            .background(IDrawable.EMPTY).pos(174, 5 + i * 18).excludeAreaInRecipeViewer());
+        var redstone = new IntSyncValue(() -> bus.getRSMode().ordinal());
         var hasRedstone = new BooleanSyncValue(() -> bus.getInstalledUpgrades(Upgrades.REDSTONE) > 0);
         var scheduling = new IntSyncValue(
-            () -> ((SchedulingMode) bus.getConfigManager()
-                .getSetting(Settings.SCHEDULING_MODE)).ordinal());
+            () -> ((SchedulingMode) bus.getConfigManager().getSetting(Settings.SCHEDULING_MODE)).ordinal());
         var above = new BooleanSyncValue(bus::above);
         sync.syncValue("redstone", redstone);
         sync.syncValue("hasRedstone", hasRedstone);
         sync.syncValue("scheduling", scheduling);
         sync.syncValue("above", above);
-        panel.child(
-            toolbar(
-                sync,
-                "redstoneMode",
-                data,
-                -18,
-                1,
-                () -> StockGuiAssets.icon(
-                    redstone.getIntValue() == RedstoneMode.HIGH_SIGNAL.ordinal() ? 16
-                        : redstone.getIntValue() == RedstoneMode.LOW_SIGNAL.ordinal() ? 0 : 48,
-                    0),
-                () -> redstoneText(redstone.getIntValue()),
-                mouse -> {
-                    RedstoneMode[] modes = { RedstoneMode.IGNORE, RedstoneMode.HIGH_SIGNAL, RedstoneMode.LOW_SIGNAL };
-                    int old = bus.getRSMode() == modes[1] ? 1 : bus.getRSMode() == modes[2] ? 2 : 0;
-                    bus.getConfigManager()
-                        .putSetting(Settings.REDSTONE_CONTROLLED, modes[(old + 1) % 3]);
-                    bus.stockChanged();
-                }).setEnabledIf(w -> hasRedstone.getBoolValue()));
-        panel.child(
-            toolbarPosition(
-                toolbar(
-                    sync,
-                    "schedule",
-                    data,
-                    -18,
-                    23,
-                    () -> StockGuiAssets.icon(scheduling.getIntValue() * 16, 240),
-                    () -> new String[] { "Default", "Round robin", "Random" }[scheduling.getIntValue()],
-                    mouse -> bus.getConfigManager()
-                        .putSetting(
-                            Settings.SCHEDULING_MODE,
-                            SchedulingMode.values()[(scheduling.getIntValue() + 1) % 3])),
-                hasRedstone,
-                23,
-                1));
-        panel.child(
-            toolbarPosition(
-                toolbar(
-                    sync,
-                    "mode",
-                    data,
-                    -18,
-                    45,
-                    () -> StockGuiAssets.thresholdIcon(above.getBoolValue()),
-                    () -> above.getBoolValue() ? StockText.Above.text() : StockText.Below.text(),
-                    mouse -> bus.setAbove(!bus.above())),
-                hasRedstone,
-                45,
-                23));
+        panel.child(toolbar(sync, "redstoneMode", data, -18, 1,
+            () -> StockGuiAssets.icon(redstone.getIntValue() == RedstoneMode.HIGH_SIGNAL.ordinal() ? 16
+                : redstone.getIntValue() == RedstoneMode.LOW_SIGNAL.ordinal() ? 0 : 48, 0),
+            () -> redstoneText(redstone.getIntValue()), mouse -> {
+                RedstoneMode[] modes = { RedstoneMode.IGNORE, RedstoneMode.HIGH_SIGNAL, RedstoneMode.LOW_SIGNAL };
+                int old = bus.getRSMode() == modes[1] ? 1 : bus.getRSMode() == modes[2] ? 2 : 0;
+                bus.getConfigManager().putSetting(Settings.REDSTONE_CONTROLLED, modes[(old + 1) % 3]);
+                bus.stockChanged();
+            }).setEnabledIf(w -> hasRedstone.getBoolValue()));
+        panel.child(toolbarPosition(
+            toolbar(sync, "schedule", data, -18, 23, () -> StockGuiAssets.icon(scheduling.getIntValue() * 16, 240),
+                () -> new String[] { "Default", "Round robin", "Random" }[scheduling.getIntValue()],
+                mouse -> bus.getConfigManager().putSetting(Settings.SCHEDULING_MODE,
+                    SchedulingMode.values()[(scheduling.getIntValue() + 1) % 3])),
+            hasRedstone, 23, 1));
+        panel.child(toolbarPosition(
+            toolbar(sync, "mode", data, -18, 45, () -> StockGuiAssets.thresholdIcon(above.getBoolValue()),
+                () -> above.getBoolValue() ? StockText.Above.text() : StockText.Below.text(),
+                mouse -> bus.setAbove(!bus.above())),
+            hasRedstone, 45, 23));
         return panel;
     }
 
     static ModularPanel amount(PartThresholdExportBus bus, int row, StockGuiFactory.Data data, PanelSyncManager sync) {
         var fluid = new BooleanSyncValue(
-            () -> bus.stockConfig()
-                .key(row) != null && bus.stockConfig()
-                    .key(row)
-                    .isFluid());
+            () -> bus.stockConfig().key(row) != null && bus.stockConfig().key(row).isFluid());
         sync.syncValue("fluid", fluid);
-        String[] draft = { StockNumbers.format(
-            bus.stockConfig()
-                .amount(row)) };
+        String[] draft = { StockNumbers.format(bus.stockConfig().amount(row)) };
         var value = new StringSyncValue(() -> draft[0], text -> { if (authorized(data, sync)) draft[0] = text; })
             .allowC2S();
         sync.syncValue("amount", value);
@@ -247,10 +163,8 @@ final class StockGui {
         Runnable save = () -> {
             try {
                 long amount = StockNumbers.parse(draft[0]);
-                if (amount == 0) bus.stockConfig()
-                    .setKey(row, null);
-                else bus.stockConfig()
-                    .setAmount(row, amount);
+                if (amount == 0) bus.stockConfig().setKey(row, null);
+                else bus.stockConfig().setAmount(row, amount);
                 StockGuiFactory.instance.open(sync.getPlayer(), bus);
             } catch (ArithmeticException | NumberFormatException ignored) {}
         };
@@ -262,32 +176,13 @@ final class StockGui {
         });
         var entry = field(value);
         ((ConfirmField) entry).fluid = fluid::getBoolValue;
-        panel.child(
-            entry.pos(48, 55)
-                .size(66, 12));
-        ((ConfirmField) entry).confirm = () -> sync
-            .callSyncedAction("saveAmount", buffer -> NetworkUtils.writeStringSafe(buffer, entry.getText()));
-        panel.child(
-            IKey.str("L")
-                .color(0xff545454)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(108, 57)
-                .size(8, 9)
-                .setEnabledIf(w -> fluid.getBoolValue()));
-        panel.child(
-            new ItemSlot().slot(
-                new ModularSlot(
-                    new SampleInventory(
-                        () -> bus.stockConfig()
-                            .key(row),
-                        data),
-                    0).singletonSlotGroup()
-                        .canPut(false)
-                        .canTake(false))
-                .background(IDrawable.EMPTY)
-                .pos(22, 52));
+        panel.child(entry.pos(48, 55).size(66, 12));
+        ((ConfirmField) entry).confirm = () -> sync.callSyncedAction("saveAmount",
+            buffer -> NetworkUtils.writeStringSafe(buffer, entry.getText()));
+        panel.child(IKey.str("L").color(0xff545454).asWidget().alignment(Alignment.TopLeft).shadow(false).pos(108, 57)
+            .size(8, 9).setEnabledIf(w -> fluid.getBoolValue()));
+        panel.child(new ItemSlot().slot(new ModularSlot(new SampleInventory(() -> bus.stockConfig().key(row), data), 0)
+            .singletonSlotGroup().canPut(false).canTake(false)).background(IDrawable.EMPTY).pos(22, 52));
         int[] x = { 20, 48, 82, 120 }, widths = { 22, 28, 32, 38 };
         long[] steps = { 1, 10, 100, 1000 }, stacks = { 1, 16, 32, 64 };
         for (int i = 0; i < 4; i++) for (int direction = 0; direction < 2; direction++) {
@@ -300,20 +195,13 @@ final class StockGui {
                         draft[0] = StockNumbers
                             .format(sign > 0 ? StockResources.add(current, step) : Math.max(0, current - step));
                     } catch (ArithmeticException | NumberFormatException ignored) {}
-                }).pos(x[i], direction == 0 ? 30 : 72)
-                    .size(widths[i], 20));
+                }).pos(x[i], direction == 0 ? 30 : 72).size(widths[i], 20));
         }
-        panel.child(
-            clientButton(() -> ((ConfirmField) entry).confirm.run()).overlay(StockText.Set.label())
-                .pos(120, 51)
-                .size(38, 20));
-        panel.child(
-            button(sync, "back", data, () -> "", mouse -> StockGuiFactory.instance.open(sync.getPlayer(), bus))
-                .pos(152, -5)
-                .size(20, 20)
-                .background(StockGuiAssets.texture("states", 256, 256, 160, 192, 20, 20))
-                .overlay(new ItemDrawable(GTNGItemList.ThresholdExportBus.get(1)))
-                .excludeAreaInRecipeViewer());
+        panel.child(clientButton(() -> ((ConfirmField) entry).confirm.run()).overlay(StockText.Set.label()).pos(120, 51)
+            .size(38, 20));
+        panel.child(button(sync, "back", data, () -> "", mouse -> StockGuiFactory.instance.open(sync.getPlayer(), bus))
+            .pos(152, -5).size(20, 20).background(StockGuiAssets.texture("states", 256, 256, 160, 192, 20, 20))
+            .overlay(new ItemDrawable(GTNGItemList.ThresholdExportBus.get(1))).excludeAreaInRecipeViewer());
         return panel;
     }
 
@@ -322,114 +210,45 @@ final class StockGui {
         var panel = panel("threshold_emitter", IKey.lang(emitter.stockTitle()), 176, 186, StockGuiAssets.emitter, true);
         var token = new DeviceToken(() -> "emitter");
         var fluid = new BooleanSyncValue(
-            () -> emitter.stockConfig()
-                .key(0) != null && emitter.stockConfig()
-                    .key(0)
-                    .isFluid());
+            () -> emitter.stockConfig().key(0) != null && emitter.stockConfig().key(0).isFluid());
         sync.syncValue("identity", token);
         sync.syncValue("fluid", fluid);
-        panel.child(
-            StockText.Upper.label()
-                .color(0xff404040)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(20, 23)
-                .size(100, 9));
-        panel.child(
-            StockText.Lower.label()
-                .color(0xff404040)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(20, 58)
-                .size(100, 9));
+        panel.child(StockText.Upper.label().color(0xff404040).asWidget().alignment(Alignment.TopLeft).shadow(false)
+            .pos(20, 23).size(100, 9));
+        panel.child(StockText.Lower.label().color(0xff404040).asWidget().alignment(Alignment.TopLeft).shadow(false)
+            .pos(20, 58).size(100, 9));
         panel.child(
             quantity(sync, "upper", token, fluid::getBoolValue, emitter::upper, emitter::setUpper, data, () -> true)
-                .pos(20, 34)
-                .size(83, 12));
-        panel.child(
-            quantity(
-                sync,
-                "lower",
-                token,
-                fluid::getBoolValue,
-                () -> emitter.stockConfig()
-                    .amount(0),
-                value -> emitter.stockConfig()
-                    .setAmount(0, value),
-                data,
-                () -> true).pos(20, 69)
-                    .size(83, 12));
-        panel.child(
-            IKey.str("L")
-                .color(0xff545454)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(98, 36)
-                .size(8, 9)
-                .setEnabledIf(w -> fluid.getBoolValue()));
-        panel.child(
-            IKey.str("L")
-                .color(0xff545454)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(98, 71)
-                .size(8, 9)
-                .setEnabledIf(w -> fluid.getBoolValue()));
-        var sample = sample(
-            sync,
-            0,
-            token,
-            data,
-            () -> emitter.stockConfig()
-                .key(0),
-            () -> true,
-            (mouse, cursor) -> {
-                if (mouse.shift || cursor == null && mouse.mouseButton == 1) emitter.stockConfig()
-                    .setKey(0, null);
-                else if (cursor != null) emitter.stockConfig()
-                    .setKey(0, StockResources.sample(cursor));
-            });
-        panel.child(
-            new SampleSlot(sample).background(IDrawable.EMPTY)
-                .pos(136, 46));
+                .pos(20, 34).size(83, 12));
+        panel.child(quantity(sync, "lower", token, fluid::getBoolValue, () -> emitter.stockConfig().amount(0),
+            value -> emitter.stockConfig().setAmount(0, value), data, () -> true).pos(20, 69).size(83, 12));
+        panel.child(IKey.str("L").color(0xff545454).asWidget().alignment(Alignment.TopLeft).shadow(false).pos(98, 36)
+            .size(8, 9).setEnabledIf(w -> fluid.getBoolValue()));
+        panel.child(IKey.str("L").color(0xff545454).asWidget().alignment(Alignment.TopLeft).shadow(false).pos(98, 71)
+            .size(8, 9).setEnabledIf(w -> fluid.getBoolValue()));
+        var sample = sample(sync, 0, token, data, () -> emitter.stockConfig().key(0), () -> true, (mouse, cursor) -> {
+            if (mouse.shift || cursor == null && mouse.mouseButton == 1) emitter.stockConfig().setKey(0, null);
+            else if (cursor != null) emitter.stockConfig().setKey(0, StockResources.sample(cursor));
+        });
+        panel.child(new SampleSlot(sample).background(IDrawable.EMPTY).pos(136, 46));
         var low = new BooleanSyncValue(emitter::lowSignal);
         sync.syncValue("low", low);
         panel.child(
-            toolbar(
-                sync,
-                "signalMode",
-                data,
-                -18,
-                1,
-                () -> StockGuiAssets.icon(low.getBoolValue() ? 208 : 192, 0),
+            toolbar(sync, "signalMode", data, -18, 1, () -> StockGuiAssets.icon(low.getBoolValue() ? 208 : 192, 0),
                 () -> low.getBoolValue() ? StockText.LowSignal.text() : StockText.HighSignal.text(),
                 mouse -> emitter.setLowSignal(!emitter.lowSignal())));
         return panel;
     }
 
     private static ModularPanel requester(TileMERequester tile, StockGuiFactory.Data data, PanelSyncManager sync) {
-        int rows = tile.stockConfig()
-            .size();
+        int rows = tile.stockConfig().size();
         var title = new StringSyncValue(tile::name);
         sync.syncValue("title", title);
-        var panel = panel(
-            "me_requester",
-            IKey.dynamic(
-                () -> title.getValue()
-                    .isEmpty() ? StockText.Requester.text() : title.getValue()),
-            195,
-            120 + rows * 19,
-            StockGuiAssets.requester(false, () -> rows, index -> true),
-            true);
+        var panel = panel("me_requester",
+            IKey.dynamic(() -> title.getValue().isEmpty() ? StockText.Requester.text() : title.getValue()), 195,
+            120 + rows * 19, StockGuiAssets.requester(false, () -> rows, index -> true), true);
         panel.child(
-            StockGuiAssets.texture("big_scroller_disabled", 12, 15, 0, 0, 12, 15)
-                .asWidget()
-                .pos(175, 18)
-                .size(12, 15));
+            StockGuiAssets.texture("big_scroller_disabled", 12, 15, 0, 0, 12, 15).asWidget().pos(175, 18).size(12, 15));
         for (int i = 0; i < rows; i++) {
             int row = i;
             requestRow(panel, data, sync, i, () -> new StockRequesterView.Line(tile, row, ""), () -> true);
@@ -459,14 +278,8 @@ final class StockGui {
         panel.size(195, 215)
             .background(StockGuiAssets.requester(true, rowCount::getIntValue, index -> kinds[index].getIntValue() == 2))
             .disableHoverBackground();
-        panel.child(
-            IKey.lang("item.requester_terminal.name")
-                .color(0xff404040)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(8, 6)
-                .size(94, 9));
+        panel.child(IKey.lang("item.requester_terminal.name").color(0xff404040).asWidget().alignment(Alignment.TopLeft)
+            .shadow(false).pos(8, 6).size(94, 9));
         playerInventory(panel);
         var query = new StringSyncValue(() -> view.query, value -> {
             if (authorized(data, sync)) {
@@ -477,67 +290,37 @@ final class StockGui {
         sync.syncValue("search", query);
         var search = new ConfirmField();
         search.clearWithRightClick = true;
-        panel.child(
-            search.value(query)
-                .autoUpdateOnChange(true)
-                .setMaxLength(64)
-                .background(
-                    (context, x, y, w, h, theme) -> StockGuiAssets.textField(search.isFocused())
-                        .draw(context, x, y, w, h, theme))
-                .padding(2)
-                .setTextAlignment(Alignment.CenterLeft)
-                .setTextColor(0xffffffff)
-                .hintText(StockText.Search.text())
-                .setFocusOnGuiOpen(true)
-                .pos(104, 4)
-                .size(65, 12));
+        panel.child(search.value(query).autoUpdateOnChange(true).setMaxLength(64)
+            .background((context, x, y, w, h, theme) -> StockGuiAssets.textField(search.isFocused()).draw(context, x, y,
+                w, h, theme))
+            .padding(2).setTextAlignment(Alignment.CenterLeft).setTextColor(0xffffffff)
+            .hintText(StockText.Search.text()).setFocusOnGuiOpen(true).pos(104, 4).size(65, 12));
         var maximum = new IntSyncValue(view::maximumScroll);
-        var scroll = new IntSyncValue(
-            () -> view.scroll,
+        var scroll = new IntSyncValue(() -> view.scroll,
             value -> { if (authorized(data, sync)) view.setScroll(value); }).allowC2S();
         sync.syncValue("maximumScroll", maximum);
         sync.syncValue("scroll", scroll);
-        var wheel = new ScrollCapture(scroll, maximum).pos(7, 20)
-            .size(180, 95)
-            .background(IDrawable.EMPTY);
+        var wheel = new ScrollCapture(scroll, maximum).pos(7, 20).size(180, 95).background(IDrawable.EMPTY);
         panel.child(wheel);
         panel.wheel = wheel;
-        var slider = new SliderWidget().value(scroll)
-            .bounds(0, 1)
-            .setAxis(GuiAxis.Y)
-            .stopper(1)
-            .sliderSize(12, 15)
-            .sliderTexture(
-                (context, x, y, w, h, theme) -> StockGuiAssets
-                    .texture(maximum.getIntValue() > 0 ? "big_scroller" : "big_scroller_disabled", 12, 15, 0, 0, 12, 15)
-                    .draw(context, x, y, w, h, theme))
-            .background(IDrawable.EMPTY)
-            .pos(175, 18)
-            .size(12, 96)
+        var slider = new SliderWidget().value(scroll).bounds(0, 1).setAxis(GuiAxis.Y).stopper(1).sliderSize(12, 15)
+            .sliderTexture((context, x, y, w, h, theme) -> StockGuiAssets
+                .texture(maximum.getIntValue() > 0 ? "big_scroller" : "big_scroller_disabled", 12, 15, 0, 0, 12, 15)
+                .draw(context, x, y, w, h, theme))
+            .background(IDrawable.EMPTY).pos(175, 18).size(12, 96)
             .onUpdateListener(widget -> widget.bounds(0, Math.max(1, maximum.getIntValue())));
         panel.child(slider);
         panel.slider = slider;
         panel.child(clientButton(() -> {
             terminalStyle = terminalStyle % 4 + 1;
             var screen = panel.getScreen();
-            screen.onResize(
-                screen.getScreenArea()
-                    .w(),
-                screen.getScreenArea()
-                    .h());
-        }).pos(-18, 1)
-            .size(18, 20)
-            .background(StockGuiAssets.toolbar)
-            .hoverBackground(StockGuiAssets.toolbarHover)
-            .overlay(
-                (context, x, y, w, h, theme) -> StockGuiAssets.icon((terminalStyle - 1) * 16, 208)
-                    .draw(context, x + 1, y + 1, 16, 16, theme))
+            screen.onResize(screen.getScreenArea().w(), screen.getScreenArea().h());
+        }).pos(-18, 1).size(18, 20).background(StockGuiAssets.toolbar).hoverBackground(StockGuiAssets.toolbarHover)
+            .overlay((context, x, y, w, h, theme) -> StockGuiAssets.icon((terminalStyle - 1) * 16, 208).draw(context,
+                x + 1, y + 1, 16, 16, theme))
             .excludeAreaInRecipeViewer()
-            .tooltip(
-                t -> t.addLine(
-                    IKey.dynamic(
-                        () -> new StockText[] { StockText.StyleSmall, StockText.StyleMedium, StockText.StyleTall,
-                            StockText.StyleFull }[terminalStyle - 1].text()))));
+            .tooltip(t -> t.addLine(IKey.dynamic(() -> new StockText[] { StockText.StyleSmall, StockText.StyleMedium,
+                StockText.StyleTall, StockText.StyleFull }[terminalStyle - 1].text()))));
         for (int i = 0; i < maximumTerminalRows; i++) {
             int row = i;
             var header = new StringSyncValue(() -> {
@@ -551,35 +334,16 @@ final class StockGui {
             sync.syncValue("header", i, header);
             sync.syncValue("groupCount", i, groupCount);
             panel.child(IKey.dynamic(() -> {
-                String name = header.getValue()
-                    .isEmpty() ? StockText.Requester.text() : header.getValue();
+                String name = header.getValue().isEmpty() ? StockText.Requester.text() : header.getValue();
                 int count = groupCount.getIntValue();
                 return name + (count > 1 ? " (" + count + ")" : "");
-            })
-                .color(0xff404040)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(10, 26 + i * 19)
-                .size(156, 9)
+            }).color(0xff404040).asWidget().alignment(Alignment.TopLeft).shadow(false).pos(10, 26 + i * 19).size(156, 9)
                 .setEnabledIf(w -> row < rowCount.getIntValue() && kinds[row].getIntValue() == 1));
-            requestRow(
-                panel,
-                data,
-                sync,
-                i,
-                () -> view.line(row),
+            requestRow(panel, data, sync, i, () -> view.line(row),
                 () -> row < rowCount.getIntValue() && kinds[row].getIntValue() == 2);
         }
-        panel.child(
-            StockText.NoRequesters.label()
-                .color(0xff404040)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(10, 26)
-                .size(156, 9)
-                .setEnabledIf(w -> kinds[0].getIntValue() == 0));
+        panel.child(StockText.NoRequesters.label().color(0xff404040).asWidget().alignment(Alignment.TopLeft)
+            .shadow(false).pos(10, 26).size(156, 9).setEnabledIf(w -> kinds[0].getIntValue() == 0));
         return panel;
     }
 
@@ -591,14 +355,10 @@ final class StockGui {
             return line == null ? "" : line.token();
         });
         var enabled = new BooleanSyncValue(
-            () -> valid(reference.get()) && reference.get().tile.stockConfig()
-                .enabled(reference.get().row));
+            () -> valid(reference.get()) && reference.get().tile.stockConfig().enabled(reference.get().row));
         var fluid = new BooleanSyncValue(
-            () -> valid(reference.get()) && reference.get().tile.stockConfig()
-                .key(reference.get().row) != null
-                && reference.get().tile.stockConfig()
-                    .key(reference.get().row)
-                    .isFluid());
+            () -> valid(reference.get()) && reference.get().tile.stockConfig().key(reference.get().row) != null
+                && reference.get().tile.stockConfig().key(reference.get().row).isFluid());
         var state = new IntSyncValue(
             () -> valid(reference.get()) ? reference.get().tile.status(reference.get().row) : TileMERequester.empty);
         var stored = new LongSyncValue(
@@ -613,33 +373,22 @@ final class StockGui {
         sync.syncValue("pending", index, pending);
         BooleanSupplier permitted = () -> valid(reference.get())
             && StockGuiFactory.instance.canEdit(sync.getPlayer(), data, reference.get().tile);
-        var sample = sample(
-            sync,
-            index,
-            token,
-            data,
-            () -> valid(reference.get()) ? reference.get().tile.stockConfig()
-                .key(reference.get().row) : null,
-            permitted,
-            (mouse, cursor) -> {
+        var sample = sample(sync, index, token, data,
+            () -> valid(reference.get()) ? reference.get().tile.stockConfig().key(reference.get().row) : null,
+            permitted, (mouse, cursor) -> {
                 var line = reference.get();
-                if (mouse.shift || cursor == null && mouse.mouseButton == 1) line.tile.stockConfig()
-                    .setKey(line.row, null);
-                else if (cursor != null) line.tile.stockConfig()
-                    .setKey(line.row, StockResources.sample(cursor));
+                if (mouse.shift || cursor == null && mouse.mouseButton == 1)
+                    line.tile.stockConfig().setKey(line.row, null);
+                else if (cursor != null) line.tile.stockConfig().setKey(line.row, StockResources.sample(cursor));
             });
         panel.child(
-            new SampleSlot(sample).background(IDrawable.EMPTY)
-                .pos(26, y)
-                .setEnabledIf(w -> visible.getAsBoolean()));
-        var target = new StringSyncValue(
-            () -> StockNumbers.format(
-                valid(reference.get()) ? reference.get().tile.stockConfig()
-                    .amount(reference.get().row) : 0)).allowC2S();
-        var batch = new StringSyncValue(
-            () -> StockNumbers.format(
-                valid(reference.get()) ? reference.get().tile.stockConfig()
-                    .batch(reference.get().row) : 0)).allowC2S();
+            new SampleSlot(sample).background(IDrawable.EMPTY).pos(26, y).setEnabledIf(w -> visible.getAsBoolean()));
+        var target = new StringSyncValue(() -> StockNumbers
+            .format(valid(reference.get()) ? reference.get().tile.stockConfig().amount(reference.get().row) : 0))
+                .allowC2S();
+        var batch = new StringSyncValue(() -> StockNumbers
+            .format(valid(reference.get()) ? reference.get().tile.stockConfig().batch(reference.get().row) : 0))
+                .allowC2S();
         sync.syncValue("target" + index, target);
         sync.syncValue("batch" + index, batch);
         var targetField = field(target);
@@ -653,8 +402,7 @@ final class StockGui {
             try {
                 long amount = StockNumbers.parse(amountText), batchAmount = StockNumbers.parse(batchText);
                 var line = reference.get();
-                line.tile.stockConfig()
-                    .setAmounts(line.row, amount, batchAmount);
+                line.tile.stockConfig().setAmounts(line.row, amount, batchAmount);
             } catch (ArithmeticException | NumberFormatException ignored) {}
         });
         Runnable submit = () -> sync.callSyncedAction("submit" + index + "Action", buffer -> {
@@ -666,76 +414,38 @@ final class StockGui {
         ((ConfirmField) batchField).confirm = submit;
         token.changeListener(() -> {
             if (!data.getWorld().isRemote) return;
-            if (targetField.isFocused() || batchField.isFocused()) targetField.getContext()
-                .removeFocus();
+            if (targetField.isFocused() || batchField.isFocused()) targetField.getContext().removeFocus();
             targetField.setText(target.getValue());
             batchField.setText(batch.getValue());
         });
-        panel.child(
-            targetField.pos(46, y)
-                .size(52, 12)
-                .setEnabledIf(w -> visible.getAsBoolean())
-                .tooltip(t -> t.addLine(StockText.Target.label())));
-        panel.child(
-            batchField.pos(100, y)
-                .size(52, 12)
-                .setEnabledIf(w -> visible.getAsBoolean())
-                .tooltip(t -> t.addLine(StockText.Batch.label())));
-        panel.child(
-            IKey.str("L")
-                .color(0xff545454)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(90, y + 2)
-                .size(8, 9)
-                .setEnabledIf(w -> visible.getAsBoolean() && fluid.getBoolValue()));
-        panel.child(
-            IKey.str("L")
-                .color(0xff545454)
-                .asWidget()
-                .alignment(Alignment.TopLeft)
-                .shadow(false)
-                .pos(144, y + 2)
-                .size(8, 9)
-                .setEnabledIf(w -> visible.getAsBoolean() && fluid.getBoolValue()));
+        panel.child(targetField.pos(46, y).size(52, 12).setEnabledIf(w -> visible.getAsBoolean())
+            .tooltip(t -> t.addLine(StockText.Target.label())));
+        panel.child(batchField.pos(100, y).size(52, 12).setEnabledIf(w -> visible.getAsBoolean())
+            .tooltip(t -> t.addLine(StockText.Batch.label())));
+        panel.child(IKey.str("L").color(0xff545454).asWidget().alignment(Alignment.TopLeft).shadow(false).pos(90, y + 2)
+            .size(8, 9).setEnabledIf(w -> visible.getAsBoolean() && fluid.getBoolValue()));
+        panel.child(IKey.str("L").color(0xff545454).asWidget().alignment(Alignment.TopLeft).shadow(false)
+            .pos(144, y + 2).size(8, 9).setEnabledIf(w -> visible.getAsBoolean() && fluid.getBoolValue()));
         panel.child(tokenButton(sync, "toggle" + index, token, data, () -> {
             if (permitted.getAsBoolean()) {
                 var line = reference.get();
-                line.tile.stockConfig()
-                    .setEnabled(
-                        line.row,
-                        !line.tile.stockConfig()
-                            .enabled(line.row));
+                line.tile.stockConfig().setEnabled(line.row, !line.tile.stockConfig().enabled(line.row));
             }
-        }).pos(10, y + 2)
-            .size(14, 14)
-            .background(
-                (context, x, py, w, h, theme) -> StockGuiAssets.checkbox(enabled.getBoolValue(), false)
-                    .draw(context, x, py, w, h, theme))
-            .hoverBackground(
-                (context, x, py, w, h, theme) -> StockGuiAssets.checkbox(enabled.getBoolValue(), true)
-                    .draw(context, x, py, w, h, theme))
-            .setEnabledIf(w -> visible.getAsBoolean())
-            .tooltip(t -> t.addLine(StockText.RequesterHint.label())));
-        panel.child(
-            clientButton(submit).pos(154, y)
-                .size(12, 12)
-                .background(StockGuiAssets.submit(false))
-                .hoverBackground(StockGuiAssets.submit(true))
-                .setEnabledIf(w -> visible.getAsBoolean())
-                .tooltip(t -> t.addLine(StockText.Submit.label())));
-        panel.child(
-            ((IDrawable) (context, x, py, w, h, theme) -> new Rectangle()
-                .color(statusColor(state.getIntValue(), enabled.getBoolValue()))
-                .draw(context, x, py, w, h, theme)).asWidget()
-                    .pos(47, y + 15)
-                    .size(118, 2)
-                    .setEnabledIf(w -> visible.getAsBoolean())
-                    .tooltip(
-                        t -> t.addLine(IKey.dynamic(() -> status(state.getIntValue())))
-                            .addLine(IKey.dynamic(() -> StockText.Stored.text() + ": " + stored.getLongValue()))
-                            .addLine(IKey.dynamic(() -> StockText.Pending.text() + ": " + pending.getLongValue()))));
+        }).pos(10, y + 2).size(14, 14)
+            .background((context, x, py, w, h, theme) -> StockGuiAssets.checkbox(enabled.getBoolValue(), false)
+                .draw(context, x, py, w, h, theme))
+            .hoverBackground((context, x, py, w, h, theme) -> StockGuiAssets.checkbox(enabled.getBoolValue(), true)
+                .draw(context, x, py, w, h, theme))
+            .setEnabledIf(w -> visible.getAsBoolean()).tooltip(t -> t.addLine(StockText.RequesterHint.label())));
+        panel.child(clientButton(submit).pos(154, y).size(12, 12).background(StockGuiAssets.submit(false))
+            .hoverBackground(StockGuiAssets.submit(true)).setEnabledIf(w -> visible.getAsBoolean())
+            .tooltip(t -> t.addLine(StockText.Submit.label())));
+        panel.child(((IDrawable) (context, x, py, w, h, theme) -> new Rectangle()
+            .color(statusColor(state.getIntValue(), enabled.getBoolValue())).draw(context, x, py, w, h, theme))
+                .asWidget().pos(47, y + 15).size(118, 2).setEnabledIf(w -> visible.getAsBoolean())
+                .tooltip(t -> t.addLine(IKey.dynamic(() -> status(state.getIntValue())))
+                    .addLine(IKey.dynamic(() -> StockText.Stored.text() + ": " + stored.getLongValue()))
+                    .addLine(IKey.dynamic(() -> StockText.Pending.text() + ": " + pending.getLongValue()))));
     }
 
     private static boolean valid(StockRequesterView.Line line) {
@@ -748,15 +458,10 @@ final class StockGui {
 
     private static TextFieldWidget field(StringSyncValue value) {
         var field = new ConfirmField();
-        return field.value(value)
-            .autoUpdateOnChange(false)
-            .setMaxLength(32)
-            .background(
-                (context, x, y, w, h, theme) -> StockGuiAssets.textField(field.isFocused())
-                    .draw(context, x, y, w, h, theme))
-            .padding(2)
-            .setTextAlignment(Alignment.CenterLeft)
-            .setTextColor(0xffffffff);
+        return field
+            .value(value).autoUpdateOnChange(false).setMaxLength(32).background((context, x, y, w, h,
+                theme) -> StockGuiAssets.textField(field.isFocused()).draw(context, x, y, w, h, theme))
+            .padding(2).setTextAlignment(Alignment.CenterLeft).setTextColor(0xffffffff);
     }
 
     private static TextFieldWidget quantity(PanelSyncManager sync, String id, DeviceToken token, BooleanSupplier fluid,
@@ -770,44 +475,33 @@ final class StockGui {
         sync.syncValue(id, value);
         var field = field(value).autoUpdateOnChange(true);
         ((ConfirmField) field).fluid = fluid;
-        ((ConfirmField) field).confirm = () -> field.getScreen()
-            .close();
+        ((ConfirmField) field).confirm = () -> field.getScreen().close();
         return field;
     }
 
     private static ButtonWidget<?> button(PanelSyncManager sync, String id, StockGuiFactory.Data data,
         Supplier<String> label, Consumer<MouseData> action) {
-        var handler = new InteractionSyncHandler().setOnMousePressed(
-            mouse -> {
-                if (!mouse.isClient() && mouse.mouseButton == 0 && authorized(data, sync)) action.accept(mouse);
-            });
+        var handler = new InteractionSyncHandler().setOnMousePressed(mouse -> {
+            if (!mouse.isClient() && mouse.mouseButton == 0 && authorized(data, sync)) action.accept(mouse);
+        });
         sync.syncValue(id, handler);
-        return new ButtonWidget<>().syncHandler(handler)
-            .overlay(IKey.dynamic(label))
-            .background(StockGuiAssets.button(false))
-            .hoverBackground(StockGuiAssets.button(true));
+        return new ButtonWidget<>().syncHandler(handler).overlay(IKey.dynamic(label))
+            .background(StockGuiAssets.button(false)).hoverBackground(StockGuiAssets.button(true));
     }
 
     private static ButtonWidget<?> clientButton(Runnable action) {
         return new ButtonWidget<>().onMousePressed(mouse -> {
             if (mouse == 0) action.run();
             return true;
-        })
-            .background(StockGuiAssets.button(false))
-            .hoverBackground(StockGuiAssets.button(true));
+        }).background(StockGuiAssets.button(false)).hoverBackground(StockGuiAssets.button(true));
     }
 
     private static ButtonWidget<?> toolbar(PanelSyncManager sync, String id, StockGuiFactory.Data data, int x, int y,
         Supplier<IDrawable> icon, Supplier<String> hint, Consumer<MouseData> action) {
-        return button(sync, id, data, () -> "", action).pos(x, y)
-            .size(18, 20)
-            .background(StockGuiAssets.toolbar)
+        return button(sync, id, data, () -> "", action).pos(x, y).size(18, 20).background(StockGuiAssets.toolbar)
             .hoverBackground(StockGuiAssets.toolbarHover)
-            .overlay(
-                (context, px, py, w, h, theme) -> icon.get()
-                    .draw(context, px + 1, py + 1, 16, 16, theme))
-            .excludeAreaInRecipeViewer()
-            .tooltip(t -> t.addLine(IKey.dynamic(hint)));
+            .overlay((context, px, py, w, h, theme) -> icon.get().draw(context, px + 1, py + 1, 16, 16, theme))
+            .excludeAreaInRecipeViewer().tooltip(t -> t.addLine(IKey.dynamic(hint)));
     }
 
     /** Upstream's left toolbar closes gaps when the redstone-card button is hidden. */
@@ -835,8 +529,7 @@ final class StockGui {
                 sync.callSyncedAction(id + "Action", buffer -> NetworkUtils.writeStringSafe(buffer, token.getValue()));
         });
         sync.syncValue(id, handler);
-        return new ButtonWidget<>().syncHandler(handler)
-            .background(IDrawable.EMPTY);
+        return new ButtonWidget<>().syncHandler(handler).background(IDrawable.EMPTY);
     }
 
     private static String redstoneText(int value) {
@@ -845,9 +538,11 @@ final class StockGui {
     }
 
     private static int statusColor(int state, boolean enabled) {
-        if (!enabled || state == TileMERequester.empty
-            || state == TileMERequester.disabled
-            || state == TileMERequester.offline) return 0xff555555;
+        if (
+            !enabled || state == TileMERequester.empty
+                || state == TileMERequester.disabled
+                || state == TileMERequester.offline
+        ) return 0xff555555;
         return switch (state) {
             case TileMERequester.missingMaterials, TileMERequester.noPattern, TileMERequester.failed -> 0xffff5555;
             case TileMERequester.waitingCPU -> 0xffffaa00;
@@ -863,7 +558,7 @@ final class StockGui {
             case TileMERequester.calculating -> StockText.Calculating.text();
             case TileMERequester.crafting -> StockText.Crafting.text();
             case TileMERequester.missingMaterials -> StockText.Materials.text();
-            case TileMERequester.waitingCPU -> StockText.CPU.text();
+            case TileMERequester.waitingCPU -> StockText.Cpu.text();
             case TileMERequester.offline -> StockText.Offline.text();
             case TileMERequester.disabled -> StockText.Disabled.text();
             case TileMERequester.noPattern -> StockText.Pattern.text();
@@ -907,12 +602,8 @@ final class StockGui {
 
     private static SampleSync sample(PanelSyncManager sync, int index, DeviceToken token, StockGuiFactory.Data data,
         Supplier<IAEStack<?>> key, BooleanSupplier permitted, BiConsumer<MouseData, ItemStack> action) {
-        var handler = new SampleSync(
-            new ModularSlot(new SampleInventory(key, data), 0).singletonSlotGroup(),
-            token,
-            data,
-            permitted,
-            action);
+        var handler = new SampleSync(new ModularSlot(new SampleInventory(key, data), 0).singletonSlotGroup(), token,
+            data, permitted, action);
         sync.syncValue("sample", index, handler);
         return handler;
     }
@@ -1144,8 +835,10 @@ final class StockGui {
 
         @Override
         public Result onKeyPressed(char character, int keyCode) {
-            if (isFocused() && confirm != null
-                && (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER)) {
+            if (
+                isFocused() && confirm != null
+                    && (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER)
+            ) {
                 getContext().removeFocus();
                 confirm.run();
                 return Result.SUCCESS;

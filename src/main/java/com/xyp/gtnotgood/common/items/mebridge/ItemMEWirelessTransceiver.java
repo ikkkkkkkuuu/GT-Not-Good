@@ -17,6 +17,7 @@ import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiFactory;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.xyp.gtnotgood.GTNotGood;
@@ -121,27 +122,27 @@ public final class ItemMEWirelessTransceiver extends Item implements IGuiHolder<
 
     private static String messageKey(MEWirelessLinkManager.BindResult result) {
         switch (result) {
-            case CONNECTED:
+            case Connected:
                 // #tr chat.me_wireless_transceiver.connected
                 // # Wireless link connected to channel %s.
                 // # zh_CN 已无线连接至频道 %s。
                 return "chat.me_wireless_transceiver.connected";
-            case WAITING:
+            case Waiting:
                 // #tr chat.me_wireless_transceiver.waiting
                 // # Link saved for channel %s; waiting for both endpoints to become available.
                 // # zh_CN 已保存频道 %s 的连接，正在等待两端可用。
                 return "chat.me_wireless_transceiver.waiting";
-            case DISCONNECTED:
+            case Disconnected:
                 // #tr chat.me_wireless_transceiver.disconnected
                 // # Wireless link disconnected from channel %s.
                 // # zh_CN 已断开频道 %s 的无线连接。
                 return "chat.me_wireless_transceiver.disconnected";
-            case NO_CHANNEL:
+            case NoChannel:
                 // #tr chat.me_wireless_transceiver.no_channel
                 // # Select a channel before binding an ME node.
                 // # zh_CN 请先选择频道，再绑定 ME 节点。
                 return "chat.me_wireless_transceiver.no_channel";
-            case INVALID_TARGET:
+            case InvalidTarget:
                 // #tr chat.me_wireless_transceiver.invalid_target
                 // # The selected block does not expose a usable ME node.
                 // # zh_CN 目标方块没有可用的 ME 节点。
@@ -161,9 +162,8 @@ public final class ItemMEWirelessTransceiver extends Item implements IGuiHolder<
 
     @Override
     @SideOnly(Side.CLIENT)
-    public com.cleanroommc.modularui.screen.ModularScreen createScreen(PlayerInventoryGuiData data,
-        ModularPanel mainPanel) {
-        return new com.cleanroommc.modularui.screen.ModularScreen(GTNotGood.MODID, mainPanel);
+    public ModularScreen createScreen(PlayerInventoryGuiData data, ModularPanel mainPanel) {
+        return new ModularScreen(GTNotGood.MODID, mainPanel);
     }
 
     @Override
@@ -174,10 +174,8 @@ public final class ItemMEWirelessTransceiver extends Item implements IGuiHolder<
         // #tr tooltip.me_wireless_transceiver.channel
         // # Selected channel: %s
         // # zh_CN 当前频道：%s
-        tooltip.add(
-            EnumChatFormatting.AQUA + StatCollector.translateToLocalFormatted(
-                "tooltip.me_wireless_transceiver.channel",
-                channel.isEmpty() ? "-" : channel));
+        tooltip.add(EnumChatFormatting.AQUA + StatCollector
+            .translateToLocalFormatted("tooltip.me_wireless_transceiver.channel", channel.isEmpty() ? "-" : channel));
         // #tr tooltip.me_wireless_transceiver.open
         // # Right-click air: open channel directory
         // # zh_CN 右键空气：打开频道目录

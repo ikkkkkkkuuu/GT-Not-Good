@@ -20,12 +20,8 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import gregtech.api.enums.OutputBusType;
 import gregtech.api.interfaces.IOutputBus;
 
-/**
- * Miscellaneous utility helpers shared by migrated GT Not Good code.
- */
 @SuppressWarnings("unused")
 public class Utils {
-    // endregion
 
     /**
      * Localize by key and given formats.
@@ -100,21 +96,15 @@ public class Utils {
     }
 
     public static boolean isClientSide() {
-        return FMLCommonHandler.instance()
-            .getSide()
-            .isClient();
+        return FMLCommonHandler.instance().getSide().isClient();
     }
 
     public static boolean isServerSide() {
-        return FMLCommonHandler.instance()
-            .getSide()
-            .isServer();
+        return FMLCommonHandler.instance().getSide().isServer();
     }
 
     public static boolean isClientThreaded() {
-        return FMLCommonHandler.instance()
-            .getEffectiveSide()
-            .isClient();
+        return FMLCommonHandler.instance().getEffectiveSide().isClient();
     }
 
     /**
@@ -125,10 +115,7 @@ public class Utils {
      */
     public static String ensureUUID(NBTTagCompound aNBT) {
         if (!aNBT.hasKey("storeUUID")) {
-            aNBT.setString(
-                "storeUUID",
-                UUID.randomUUID()
-                    .toString());
+            aNBT.setString("storeUUID", UUID.randomUUID().toString());
         }
         return aNBT.getString("storeUUID");
     }

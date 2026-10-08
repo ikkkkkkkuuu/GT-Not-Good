@@ -208,9 +208,7 @@ public final class CrossRecipeWirelessEnergyHatch extends MTEHatchEnergy {
             ParentWidget<?> content = getEmptyContent();
             IntSyncValue duration = new IntSyncValue(machine::getDuration, machine::setDuration).allowC2S();
             IntSyncValue tasks = new IntSyncValue(machine::getTaskLimit, machine::setTaskLimit).allowC2S();
-            StringSyncValue parallels = new StringSyncValue(
-                () -> machine.getParallelLimit()
-                    .toString(),
+            StringSyncValue parallels = new StringSyncValue(() -> machine.getParallelLimit().toString(),
                 machine::setParallelText).allowC2S();
             sync.syncValue("duration", duration);
             sync.syncValue("tasks", tasks);
@@ -218,41 +216,25 @@ public final class CrossRecipeWirelessEnergyHatch extends MTEHatchEnergy {
             // #tr gtng.cross_wireless.duration
             // # Completion time (ticks)
             // # zh_CN 完成时间（tick）
-            content.child(
-                IKey.lang("gtng.cross_wireless.duration")
-                    .asWidget()
-                    .pos(0, 0));
+            content.child(IKey.lang("gtng.cross_wireless.duration").asWidget().pos(0, 0));
             content.child(field(duration, Integer.MAX_VALUE).pos(0, 12));
             // #tr gtng.cross_wireless.tasks
             // # Concurrent recipes
             // # zh_CN 同时运行的配方数
-            content.child(
-                IKey.lang("gtng.cross_wireless.tasks")
-                    .asWidget()
-                    .pos(0, 34));
+            content.child(IKey.lang("gtng.cross_wireless.tasks").asWidget().pos(0, 34));
             content.child(field(tasks, MAX_TASKS).pos(0, 46));
             // #tr gtng.cross_wireless.parallels
             // # Parallel limit (0 = unlimited)
             // # zh_CN 单配方并行上限（0=无限制）
-            content.child(
-                IKey.lang("gtng.cross_wireless.parallels")
-                    .asWidget()
-                    .pos(0, 68));
-            content.child(
-                new TextFieldWidget().value(parallels)
-                    .autoUpdateOnChange(false)
-                    .setMaxLength(128)
-                    .setPattern(Pattern.compile("[0-9]*"))
-                    .background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
-                    .size(156, 18)
-                    .pos(0, 80));
+            content.child(IKey.lang("gtng.cross_wireless.parallels").asWidget().pos(0, 68));
+            content.child(new TextFieldWidget().value(parallels).autoUpdateOnChange(false).setMaxLength(128)
+                .setPattern(Pattern.compile("[0-9]*")).background(GTGuiTextures.BACKGROUND_TEXT_FIELD).size(156, 18)
+                .pos(0, 80));
             return content;
         }
 
         private TextFieldWidget field(IntSyncValue value, int max) {
-            return new TextFieldWidget().value(value)
-                .numbersInt(1, max)
-                .background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
+            return new TextFieldWidget().value(value).numbersInt(1, max).background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
                 .size(140, 18);
         }
     }

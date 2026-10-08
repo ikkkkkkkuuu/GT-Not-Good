@@ -61,17 +61,11 @@ public class VaultPortHatch extends MTEHatch
     public IMEInventoryHandler<IAEFluidStack> fluidHandler;
 
     public VaultPortHatch(int aID, String aName, String aNameRegional) {
-        super(
-            aID,
-            aName,
-            aNameRegional,
-            3,
-            0,
-            new String[] {
-                // #tr Tooltip_VaultPortHatch_00
-                // # All-in-one access for the Vault
-                // # zh_CN 保险库的一站式访问节点
-                StatCollector.translateToLocal("Tooltip_VaultPortHatch_00") });
+        super(aID, aName, aNameRegional, 3, 0, new String[] {
+            // #tr Tooltip_VaultPortHatch_00
+            // # All-in-one access for the Vault
+            // # zh_CN 保险库的一站式访问节点
+            StatCollector.translateToLocal("Tooltip_VaultPortHatch_00") });
     }
 
     public VaultPortHatch(String aName, int aTier, String[] aDescription, ITexture[][][] aTextures) {
@@ -99,19 +93,13 @@ public class VaultPortHatch extends MTEHatch
     @Override
     public ITexture[] getTexturesActive(ITexture aBaseTexture) {
         return new ITexture[] { aBaseTexture, TextureFactory.of(Textures.BlockIcons.OVERLAY_PIPE_IN),
-            TextureFactory.builder()
-                .addIcon(BlockIcons.OVERLAY_FRONT_ITEMVAULTPORTHATCH)
-                .extFacing()
-                .build() };
+            TextureFactory.builder().addIcon(BlockIcons.OverlayFrontItemVaultPortHatch).extFacing().build() };
     }
 
     @Override
     public ITexture[] getTexturesInactive(ITexture aBaseTexture) {
         return new ITexture[] { aBaseTexture, TextureFactory.of(Textures.BlockIcons.OVERLAY_PIPE_IN),
-            TextureFactory.builder()
-                .addIcon(BlockIcons.OVERLAY_FRONT_ITEMVAULTPORTHATCH)
-                .extFacing()
-                .build() };
+            TextureFactory.builder().addIcon(BlockIcons.OverlayFrontItemVaultPortHatch).extFacing().build() };
     }
 
     @Override
@@ -145,8 +133,7 @@ public class VaultPortHatch extends MTEHatch
     public void loadNBTData(NBTTagCompound aNBT) {
         super.loadNBTData(aNBT);
         NBTTagCompound proxyTag = aNBT.getCompoundTag("gridProxy");
-        this.getProxy()
-            .readFromNBT(proxyTag);
+        this.getProxy().readFromNBT(proxyTag);
     }
 
     public void bind(IItemVault controller) {
@@ -201,9 +188,7 @@ public class VaultPortHatch extends MTEHatch
                 var bmte = getBaseMetaTileEntity();
                 updateValidGridProxySides();
                 if (bmte.getWorld() != null) {
-                    gridProxy.setOwner(
-                        bmte.getWorld()
-                            .getPlayerEntityByName(bmte.getOwnerName()));
+                    gridProxy.setOwner(bmte.getWorld().getPlayerEntityByName(bmte.getOwnerName()));
                 }
             }
         }
@@ -278,30 +263,16 @@ public class VaultPortHatch extends MTEHatch
 
     public void postUpdateItem(ItemStack itemStack, long amt) {
         try {
-            getProxy().getStorage()
-                .postAlterationOfStoredItems(
-                    StorageChannel.ITEMS,
-                    Collections.singletonList(
-                        AEItemStack.create(itemStack)
-                            .setStackSize(amt)),
-                    this.machineSource);
-        } catch (GridAccessException e) {
-            // :P
-        }
+            getProxy().getStorage().postAlterationOfStoredItems(StorageChannel.ITEMS,
+                Collections.singletonList(AEItemStack.create(itemStack).setStackSize(amt)), this.machineSource);
+        } catch (GridAccessException e) {}
     }
 
     public void postUpdateFluid(FluidStack fluid, long amt) {
         try {
-            getProxy().getStorage()
-                .postAlterationOfStoredItems(
-                    StorageChannel.FLUIDS,
-                    Collections.singletonList(
-                        AEFluidStack.create(fluid)
-                            .setStackSize(amt)),
-                    this.machineSource);
-        } catch (GridAccessException e) {
-            // :P
-        }
+            getProxy().getStorage().postAlterationOfStoredItems(StorageChannel.FLUIDS,
+                Collections.singletonList(AEFluidStack.create(fluid).setStackSize(amt)), this.machineSource);
+        } catch (GridAccessException e) {}
     }
 
     public class ItemMEInventory implements IMEInventoryHandler<IAEItemStack> {
@@ -316,8 +287,7 @@ public class VaultPortHatch extends MTEHatch
             if (amount == 0) return input;
             if (amount == input.getStackSize()) return null;
             IAEItemStack result = AEItemStack.create(input.getItemStack());
-            return result.copy()
-                .setStackSize(input.getStackSize() - amount);
+            return result.copy().setStackSize(input.getStackSize() - amount);
         }
 
         @Override
@@ -328,8 +298,7 @@ public class VaultPortHatch extends MTEHatch
             if (amount == 0) return null;
             if (amount == request.getStackSize()) return request.copy();
             IAEItemStack result = AEItemStack.create(request.getItemStack());
-            return result.copy()
-                .setStackSize(amount);
+            return result.copy().setStackSize(amount);
         }
 
         @Override
@@ -372,12 +341,7 @@ public class VaultPortHatch extends MTEHatch
         @Override
         public IItemList<IAEItemStack> getAvailableItems(IItemList<IAEItemStack> out, int iteration) {
             if (controller != null && controller.hasItem()) {
-                controller.getStoreItems()
-                    .forEach(item -> {
-                        if (item != null) {
-                            out.add(item.copy());
-                        }
-                    });
+                controller.copyItemsTo(out);
             }
             return out;
         }
@@ -395,8 +359,7 @@ public class VaultPortHatch extends MTEHatch
             if (amount == 0) return input;
             if (amount == input.getStackSize()) return null;
             IAEFluidStack result = AEFluidStack.create(input.getFluidStack());
-            return result.copy()
-                .setStackSize(input.getStackSize() - amount);
+            return result.copy().setStackSize(input.getStackSize() - amount);
         }
 
         @Override
@@ -407,8 +370,7 @@ public class VaultPortHatch extends MTEHatch
             if (amount == 0) return null;
             if (amount == request.getStackSize()) return request.copy();
             IAEFluidStack result = AEFluidStack.create(request.getFluidStack());
-            return result.copy()
-                .setStackSize(amount);
+            return result.copy().setStackSize(amount);
         }
 
         @Override
@@ -451,12 +413,7 @@ public class VaultPortHatch extends MTEHatch
         @Override
         public IItemList<IAEFluidStack> getAvailableItems(IItemList<IAEFluidStack> out, int iteration) {
             if (controller != null && controller.hasFluid()) {
-                controller.getStoreFluids()
-                    .forEach(fluid -> {
-                        if (fluid != null) {
-                            out.add(fluid.copy());
-                        }
-                    });
+                controller.copyFluidsTo(out);
             }
             return out;
         }
@@ -468,12 +425,9 @@ public class VaultPortHatch extends MTEHatch
         try {
             AENetworkProxy proxy = getProxy();
             if (proxy != null && proxy.isActive()) {
-                proxy.getGrid()
-                    .postEvent(new MENetworkCellArrayUpdate());
+                proxy.getGrid().postEvent(new MENetworkCellArrayUpdate());
             }
-        } catch (GridAccessException e) {
-            // :P
-        }
+        } catch (GridAccessException e) {}
     }
 
     @MENetworkEventSubscribe
@@ -481,12 +435,9 @@ public class VaultPortHatch extends MTEHatch
         try {
             AENetworkProxy proxy = getProxy();
             if (proxy != null && proxy.isActive()) {
-                proxy.getGrid()
-                    .postEvent(new MENetworkCellArrayUpdate());
+                proxy.getGrid().postEvent(new MENetworkCellArrayUpdate());
             }
-        } catch (GridAccessException e) {
-            // :P
-        }
+        } catch (GridAccessException e) {}
     }
 
     // ===== IAEPowerStorage: acts as a built-in creative energy cell, so the

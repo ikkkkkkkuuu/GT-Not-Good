@@ -38,8 +38,7 @@ public final class LargeInterfaceGuiFactory extends AbstractUIFactory<LargeInter
     public void open(EntityPlayer player, LargeInterfaceHost host) {
         TileEntity tile = host.getTileEntity();
         if (tile == null || !(player instanceof EntityPlayerMP serverPlayer) || player instanceof FakePlayer) return;
-        int side = host instanceof AEBasePart part ? part.getSide()
-            .ordinal() : -1;
+        int side = host instanceof AEBasePart part ? part.getSide().ordinal() : -1;
         Data data = new Data(player, tile.xCoord, tile.yCoord, tile.zCoord, side);
         if (data.source == host && canInteractWith(player, data)) GuiManager.open(this, data, serverPlayer);
     }
@@ -47,9 +46,8 @@ public final class LargeInterfaceGuiFactory extends AbstractUIFactory<LargeInter
     @Override
     public @Nonnull IGuiHolder<Data> getGuiHolder(Data data) {
         if (data.source == null) {
-            throw new IllegalStateException(
-                "Large ME interface is not loaded at " + data
-                    .getX() + "," + data.getY() + "," + data.getZ() + " (side " + data.side + ")");
+            throw new IllegalStateException("Large ME interface is not loaded at " + data
+                .getX() + "," + data.getY() + "," + data.getZ() + " (side " + data.side + ")");
         }
         return (guiData, sync, settings) -> {
             settings.useTheme(GTGuiThemes.STANDARD.getId());
@@ -65,14 +63,15 @@ public final class LargeInterfaceGuiFactory extends AbstractUIFactory<LargeInter
 
     @Override
     public boolean canInteractWith(EntityPlayer player, Data data) {
-        if (!super.canInteractWith(player, data) || data.getSquaredDistance(player) > 64
-            || data.source == null
-            || data.source != data.resolve()) return false;
+        if (
+            !super.canInteractWith(player, data) || data.getSquaredDistance(player) > 64
+                || data.source == null
+                || data.source != data.resolve()
+        ) return false;
         if (player.worldObj.isRemote) return true;
         var node = data.source.getActionableNode();
-        return node == null || node.getGrid()
-            .<ISecurityGrid>getCache(ISecurityGrid.class)
-            .hasPermission(player, SecurityPermissions.BUILD);
+        return node == null || node.getGrid().<ISecurityGrid>getCache(ISecurityGrid.class).hasPermission(player,
+            SecurityPermissions.BUILD);
     }
 
     @Override

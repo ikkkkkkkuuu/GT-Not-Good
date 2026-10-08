@@ -30,9 +30,11 @@ public final class StockIOGeneratorBridge {
         int itemAmountBefore = inputBefore == null ? 0 : inputBefore.stackSize;
         original.run();
         ItemStack inputAfter = base.getStackInSlot(generator.getInputSlot());
-        if (!burnTick(base, tick) || base.getUniversalEnergyStored() > storedBefore
-            || (fluidBefore != null && fluidBefore.amount < fluidAmountBefore)
-            || (inputBefore != null && (inputAfter == null || inputAfter.stackSize < itemAmountBefore))) return;
+        if (
+            !burnTick(base, tick) || base.getUniversalEnergyStored() > storedBefore
+                || (fluidBefore != null && fluidBefore.amount < fluidAmountBefore)
+                || (inputBefore != null && (inputAfter == null || inputAfter.stackSize < itemAmountBefore))
+        ) return;
         long stored = base.getUniversalEnergyStored();
         boolean fluidBudget = generator.maxEUStore() > stored;
         boolean itemBudget = stored < itemThreshold(generator);
@@ -53,8 +55,10 @@ public final class StockIOGeneratorBridge {
             FluidStack sample = logic.fluidFilters[slot];
             if (sample == null) continue;
             FluidStack probe = sample.copy();
-            if (!generator.isFluidInputAllowed(probe) || generator.getFuelValue(probe) <= 0
-                || generator.consumedFluidPerOperation(probe) <= 0) continue;
+            if (
+                !generator.isFluidInputAllowed(probe) || generator.getFuelValue(probe) <= 0
+                    || generator.consumedFluidPerOperation(probe) <= 0
+            ) continue;
             StockIOSnapshot snapshot = logic.startRecipe(true, slot);
             if (snapshot == null) return false;
             try {
@@ -65,8 +69,8 @@ public final class StockIOGeneratorBridge {
                 long value = generator.getFuelValue(fuel);
                 int consumed = generator.consumedFluidPerOperation(fuel);
                 if (value <= 0 || consumed <= 0) continue;
-                long operations = Math
-                    .min(fuel.amount / consumed, (generator.maxEUStore() - base.getUniversalEnergyStored()) / value);
+                long operations = Math.min(fuel.amount / consumed,
+                    (generator.maxEUStore() - base.getUniversalEnergyStored()) / value);
                 if (operations <= 0) continue;
                 long energy = operations * value;
                 offered.amount -= (int) (operations * consumed);
@@ -88,9 +92,11 @@ public final class StockIOGeneratorBridge {
     private static void tryItems(MTEBasicGenerator generator, IGregTechTileEntity base, StockIOLogic logic) {
         for (int slot = 0; slot < StockIOLogic.SLOT_COUNT; slot++) {
             ItemStack sample = logic.itemFilters[slot];
-            if (sample == null
-                || !generator.allowPutStack(base, generator.getInputSlot(), logic.getTargetFace(), sample.copy())
-                || itemValue(generator, sample.copy()) <= 0) continue;
+            if (
+                sample == null
+                    || !generator.allowPutStack(base, generator.getInputSlot(), logic.getTargetFace(), sample.copy())
+                    || itemValue(generator, sample.copy()) <= 0
+            ) continue;
             StockIOSnapshot snapshot = logic.startRecipe(false, slot);
             if (snapshot == null) return;
             try {
@@ -98,9 +104,10 @@ public final class StockIOGeneratorBridge {
                 if (offered == null || offered.stackSize <= 0) continue;
                 ItemStack fuel = offered.copy();
                 long energy = itemValue(generator, fuel);
-                if (energy <= 0
-                    || !generator.allowPutStack(base, generator.getInputSlot(), logic.getTargetFace(), fuel.copy()))
-                    continue;
+                if (
+                    energy <= 0
+                        || !generator.allowPutStack(base, generator.getInputSlot(), logic.getTargetFace(), fuel.copy())
+                ) continue;
                 ItemStack empty = generator.getEmptyContainer(fuel);
                 if (!canAcceptContainer(generator, base, empty)) continue;
                 offered.stackSize--;
@@ -136,9 +143,11 @@ public final class StockIOGeneratorBridge {
 
     private static boolean commitItem(MTEBasicGenerator generator, IGregTechTileEntity base, long energy,
         ItemStack empty) {
-        if (!liveGenerator(generator, base) || base.getUniversalEnergyStored() >= itemThreshold(generator)
-            || energy > Long.MAX_VALUE - Math.max(0, generator.getEUVar())
-            || !canAcceptContainer(generator, base, empty)) return false;
+        if (
+            !liveGenerator(generator, base) || base.getUniversalEnergyStored() >= itemThreshold(generator)
+                || energy > Long.MAX_VALUE - Math.max(0, generator.getEUVar())
+                || !canAcceptContainer(generator, base, empty)
+        ) return false;
         int output = generator.getOutputSlot();
         ItemStack previous = base.getStackInSlot(output);
         ItemStack saved = previous == null ? null : previous.copy();
@@ -157,8 +166,7 @@ public final class StockIOGeneratorBridge {
 
     private static void finishBurn(MTEBasicGenerator generator, IGregTechTileEntity base) {
         Pollution.addPollution(base, generator.getPollution() / 2);
-        base.setActive(
-            base.isAllowedToWork()
-                && base.getUniversalEnergyStored() >= generator.maxEUOutput() + generator.getMinimumStoredEU());
+        base.setActive(base.isAllowedToWork()
+            && base.getUniversalEnergyStored() >= generator.maxEUOutput() + generator.getMinimumStoredEU());
     }
 }

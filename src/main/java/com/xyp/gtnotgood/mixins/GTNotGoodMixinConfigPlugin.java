@@ -36,13 +36,11 @@ public final class GTNotGoodMixinConfigPlugin implements IMixinConfigPlugin {
         if (mixinClassName.contains(".texteffect.") && TextEffectsCompat.hasUpstreamRenderer()) return false;
         // Check class resources without loading Angelica or its font renderer during early mixin discovery.
         if (mixinClassName.contains(".texteffect.angelica.")) {
-            return FMLLaunchHandler.side()
-                .isClient()
+            return FMLLaunchHandler.side().isClient()
                 && Launch.classLoader.getResource("com/gtnewhorizons/angelica/client/font/BatchingFontRenderer.class")
                     != null;
         }
-        return !mixinClassName.startsWith(CLIENT_RESEARCH_MIXIN_PACKAGE) || FMLLaunchHandler.side()
-            .isClient();
+        return !mixinClassName.startsWith(CLIENT_RESEARCH_MIXIN_PACKAGE) || FMLLaunchHandler.side().isClient();
     }
 
     @Override

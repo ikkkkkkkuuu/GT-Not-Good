@@ -29,8 +29,7 @@ public final class CircuitPatternQuantities {
      * @return operation count, or zero for missing, extra, fractional or inconsistent quantities
      */
     public static <K> long batches(Map<K, Long> recipe, Map<K, Long> pattern) {
-        if (recipe.isEmpty() || !recipe.keySet()
-            .equals(pattern.keySet())) return 0;
+        if (recipe.isEmpty() || !recipe.keySet().equals(pattern.keySet())) return 0;
         return requestedOutputBatches(recipe, pattern);
     }
 

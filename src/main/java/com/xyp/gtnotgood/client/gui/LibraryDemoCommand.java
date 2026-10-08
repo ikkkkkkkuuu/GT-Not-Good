@@ -20,9 +20,7 @@ public final class LibraryDemoCommand extends CommandBase {
     public static void register() {
         LibraryDemoCommand command = new LibraryDemoCommand();
         ClientCommandHandler.instance.registerCommand(command);
-        FMLCommonHandler.instance()
-            .bus()
-            .register(command);
+        FMLCommonHandler.instance().bus().register(command);
     }
 
     @Override

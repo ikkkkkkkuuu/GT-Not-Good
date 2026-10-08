@@ -3,6 +3,7 @@ package com.xyp.gtnotgood.common.blocks.network;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +18,14 @@ import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 
 /** Bounded loaded-chunk topology discovery with chunk-local cache invalidation. */
 public final class NetworkTopology {
 
     private static final Map<World, Map<TileNetworkController, Boolean>> CONTROLLERS = new WeakHashMap<>();
     public final List<Endpoint> endpoints = new ArrayList<>();
-    public final Map<String, Endpoint> byKey = new java.util.HashMap<>();
+    public final Map<String, Endpoint> byKey = new HashMap<>();
     private final Set<Long> watchedChunks = new HashSet<>();
     private boolean incomplete;
     public int nodes;
@@ -52,8 +54,8 @@ public final class NetworkTopology {
 
     /** Keeps weak references so unloaded controllers do not remain in the invalidation index. */
     static void register(TileNetworkController controller) {
-        CONTROLLERS.computeIfAbsent(controller.getWorldObj(), ignored -> new WeakHashMap<>())
-            .put(controller, Boolean.TRUE);
+        CONTROLLERS.computeIfAbsent(controller.getWorldObj(), ignored -> new WeakHashMap<>()).put(controller,
+            Boolean.TRUE);
     }
 
     /** Removes controllers as soon as their tile leaves the loaded world. */
@@ -115,18 +117,20 @@ public final class NetworkTopology {
                 TileEntity target = world.getTileEntity(x, y, z);
                 if (target instanceof TileNetworkNode next && !next.isInvalid()) {
                     if (visited.add(position(next))) queue.addLast(next);
-                } else if (connector && node.faceEnabled(direction.ordinal())
-                    && (target instanceof IInventory || target instanceof IFluidHandler
-                        || target instanceof gregtech.api.interfaces.tileentity.IGregTechTileEntity)) {
-                            Endpoint endpoint = new Endpoint(node, direction);
-                            result.endpoints.add(endpoint);
-                            result.byKey.put(endpoint.key, endpoint);
-                            if (result.endpoints.size() > 1536) {
-                                result.status = 2;
-                                result.incomplete = true;
-                                return result;
-                            }
-                        }
+                } else if (
+                    connector && node.faceEnabled(direction.ordinal())
+                        && (target instanceof IInventory || target instanceof IFluidHandler
+                            || target instanceof IGregTechTileEntity)
+                ) {
+                    Endpoint endpoint = new Endpoint(node, direction);
+                    result.endpoints.add(endpoint);
+                    result.byKey.put(endpoint.key, endpoint);
+                    if (result.endpoints.size() > 1536) {
+                        result.status = 2;
+                        result.incomplete = true;
+                        return result;
+                    }
+                }
             }
         }
         if (result.controllers != 1 && result.status == 0) result.status = 1;
@@ -163,8 +167,7 @@ public final class NetworkTopology {
         }
 
         public int side() {
-            return direction.getOpposite()
-                .ordinal();
+            return direction.getOpposite().ordinal();
         }
     }
 }

@@ -1,6 +1,8 @@
 // Focused regression tests for the embedded official RTS integration.
 gradle.projectsEvaluated {
     gradle.rootProject.tasks.named('compileTestJava').configure {
-        setSource(gradle.rootProject.fileTree('src/test/java/com/xyp/gtnotgood/client/rts') { include 'OfficialRts*.java' })
+        setSource(gradle.rootProject.fileTree('src/test/java') {
+            include 'com/xyp/gtnotgood/client/rts/OfficialRts*.java', 'com/xyp/gtnotgood/utils/HeadlessBlockRegistry.java'
+        })
     }
 }

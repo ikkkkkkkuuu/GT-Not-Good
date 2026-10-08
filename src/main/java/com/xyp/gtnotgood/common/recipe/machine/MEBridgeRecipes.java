@@ -26,42 +26,29 @@ public class MEBridgeRecipes {
     public static void loadRecipes() {
 
         // 基础 ME 接口 —— 体现"接入 ME 网络"主题的核心组件
-        final ItemStack ae2Interface = ModsItemlist.AE2MEInterface.get(1);
+        final ItemStack ae2Interface = ModsItemlist.MEInterface.get(1);
 
         // 发起端网桥 —— LV 阶装配机配方
         GTValues.RA.stdBuilder()
-            .itemInputs(
-                ae2Interface,
-                new Object[] { OrePrefixes.circuit.get(Materials.ULV), 2 },
+            .itemInputs(ae2Interface, new Object[] { OrePrefixes.circuit.get(Materials.ULV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 4),
                 GTOreDictUnificator.get(OrePrefixes.cableGt01, Materials.Copper, 4))
             .fluidInputs(Materials.Redstone.getMolten(288))
-            .itemOutputs(new ItemStack(BlockLoader.blockMEBridgeSender, 4))
-            .eut(RECIPE_LV)
-            .duration(15 * SECONDS)
+            .itemOutputs(new ItemStack(BlockLoader.blockMEBridgeSender, 4)).eut(RECIPE_LV).duration(15 * SECONDS)
             .addTo(RecipeMaps.assemblerRecipes);
 
         // 接收端网桥 —— LV 阶装配机配方
         GTValues.RA.stdBuilder()
-            .itemInputs(
-                ae2Interface,
-                new Object[] { OrePrefixes.circuit.get(Materials.ULV), 2 },
+            .itemInputs(ae2Interface, new Object[] { OrePrefixes.circuit.get(Materials.ULV), 2 },
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Steel, 4),
                 GTOreDictUnificator.get(OrePrefixes.cableGt01, Materials.Copper, 4))
             .fluidInputs(Materials.Glowstone.getMolten(288))
-            .itemOutputs(new ItemStack(BlockLoader.blockMEBridgeReceiver, 4))
-            .eut(RECIPE_LV)
-            .duration(15 * SECONDS)
+            .itemOutputs(new ItemStack(BlockLoader.blockMEBridgeReceiver, 4)).eut(RECIPE_LV).duration(15 * SECONDS)
             .addTo(RecipeMaps.assemblerRecipes);
 
-        GTValues.RA.stdBuilder()
-            .itemInputs(
-                new ItemStack(BlockLoader.blockMEBridgeSender),
-                new ItemStack(BlockLoader.blockMEBridgeReceiver),
-                new Object[] { OrePrefixes.circuit.get(Materials.LV), 1 })
-            .itemOutputs(new ItemStack(ItemsLoader.meWirelessTransceiver))
-            .eut(RECIPE_LV)
-            .duration(10 * SECONDS)
+        GTValues.RA.stdBuilder().itemInputs(new ItemStack(BlockLoader.blockMEBridgeSender),
+            new ItemStack(BlockLoader.blockMEBridgeReceiver), new Object[] { OrePrefixes.circuit.get(Materials.LV), 1 })
+            .itemOutputs(new ItemStack(ItemsLoader.meWirelessTransceiver)).eut(RECIPE_LV).duration(10 * SECONDS)
             .addTo(RecipeMaps.assemblerRecipes);
     }
 }

@@ -1,6 +1,8 @@
 package com.xyp.gtnotgood.common.blocks.mebridge;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,6 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.xyp.gtnotgood.GTNotGood;
@@ -23,6 +26,8 @@ import appeng.api.AEApi;
 import appeng.api.exceptions.FailedConnection;
 import appeng.api.networking.IGridConnection;
 import appeng.api.networking.IGridNode;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileMEBridgeReceiver extends TileMEBridgeBase implements IGuiHolder<PosGuiData> {
 
@@ -94,12 +99,11 @@ public class TileMEBridgeReceiver extends TileMEBridgeBase implements IGuiHolder
         }
 
         if (player.dimension != target.dim) {
-            MinecraftServer.getServer()
-                .getConfigurationManager()
-                .transferPlayerToDimension(player, target.dim, new DirectTeleporter(destination));
+            MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension(player, target.dim,
+                new DirectTeleporter(destination));
         }
-        player.playerNetServerHandler
-            .setPlayerLocation(arrival.x + 0.5D, arrival.y, arrival.z + 0.5D, player.rotationYaw, player.rotationPitch);
+        player.playerNetServerHandler.setPlayerLocation(arrival.x + 0.5D, arrival.y, arrival.z + 0.5D,
+            player.rotationYaw, player.rotationPitch);
         // #tr gui.mebridge.teleport.success
         // # Teleported to channel %s.
         // # zh_CN 已传送至频道 %s。
@@ -109,8 +113,8 @@ public class TileMEBridgeReceiver extends TileMEBridgeBase implements IGuiHolder
     @Override
     protected void onProxyReady() {
         restoreLocalPlayerId(getGridNode(ForgeDirection.UNKNOWN));
-        reconnectCooldown = Math
-            .floorMod(xCoord * 31 + yCoord * 17 + zCoord * 13 + getDimensionId(), RECONNECT_INTERVAL);
+        reconnectCooldown = Math.floorMod(xCoord * 31 + yCoord * 17 + zCoord * 13 + getDimensionId(),
+            RECONNECT_INTERVAL);
     }
 
     @Override
@@ -137,10 +141,8 @@ public class TileMEBridgeReceiver extends TileMEBridgeBase implements IGuiHolder
         if (connection != null) {
             IGridNode first = connection.a();
             IGridNode second = connection.b();
-            boolean isCurrentConnection = senderNode != null && receiverNode.getConnections()
-                .contains(connection)
-                && senderNode.getConnections()
-                    .contains(connection)
+            boolean isCurrentConnection = senderNode != null && receiverNode.getConnections().contains(connection)
+                && senderNode.getConnections().contains(connection)
                 && ((first == receiverNode || second == receiverNode) && (first == senderNode || second == senderNode));
             if (isCurrentConnection) return;
             disconnect();
@@ -167,20 +169,12 @@ public class TileMEBridgeReceiver extends TileMEBridgeBase implements IGuiHolder
         if (!captureLocalPlayerId(receiverNode)) return;
         try {
             receiverNode.setPlayerID(senderNode.getPlayerID());
-            connection = AEApi.instance()
-                .createGridConnection(receiverNode, senderNode);
+            connection = AEApi.instance().createGridConnection(receiverNode, senderNode);
             MEBridgeReceiverRegistry.add(channelName, this);
         } catch (FailedConnection exception) {
             connection = null;
-            GTNotGood.LOG.warn(
-                "[MEBridge] receiver ({},{},{}) failed to connect channel '{}': {}",
-                xCoord,
-                yCoord,
-                zCoord,
-                channelName,
-                exception.getClass()
-                    .getSimpleName() + " - "
-                    + exception.getMessage());
+            GTNotGood.LOG.warn("[MEBridge] receiver ({},{},{}) failed to connect channel '{}': {}", xCoord, yCoord,
+                zCoord, channelName, exception.getClass().getSimpleName() + " - " + exception.getMessage());
         } finally {
             restoreLocalPlayerId(receiverNode);
         }
@@ -204,13 +198,10 @@ public class TileMEBridgeReceiver extends TileMEBridgeBase implements IGuiHolder
         if (receiverNode == null) return false;
         if (localPlayerId >= 0) return true;
 
-        net.minecraft.entity.player.EntityPlayer owner = getOwnerPlayer();
+        EntityPlayer owner = getOwnerPlayer();
         if (owner == null) return false;
 
-        int ownerPlayerId = AEApi.instance()
-            .registries()
-            .players()
-            .getID(owner);
+        int ownerPlayerId = AEApi.instance().registries().players().getID(owner);
         if (ownerPlayerId < 0) return false;
 
         localPlayerId = ownerPlayerId;
@@ -238,12 +229,9 @@ public class TileMEBridgeReceiver extends TileMEBridgeBase implements IGuiHolder
     }
 
     private static boolean isSafeArrival(WorldServer world, int x, int floorY, int z) {
-        net.minecraft.block.material.Material floor = world.getBlock(x, floorY, z)
-            .getMaterial();
-        net.minecraft.block.material.Material feet = world.getBlock(x, floorY + 1, z)
-            .getMaterial();
-        net.minecraft.block.material.Material head = world.getBlock(x, floorY + 2, z)
-            .getMaterial();
+        Material floor = world.getBlock(x, floorY, z).getMaterial();
+        Material feet = world.getBlock(x, floorY + 1, z).getMaterial();
+        Material head = world.getBlock(x, floorY + 2, z).getMaterial();
         return floor.blocksMovement() && !floor.isLiquid()
             && !feet.blocksMovement()
             && !feet.isLiquid()
@@ -295,9 +283,9 @@ public class TileMEBridgeReceiver extends TileMEBridgeBase implements IGuiHolder
     }
 
     @Override
-    @cpw.mods.fml.relauncher.SideOnly(cpw.mods.fml.relauncher.Side.CLIENT)
-    public com.cleanroommc.modularui.screen.ModularScreen createScreen(PosGuiData data, ModularPanel mainPanel) {
-        return new com.cleanroommc.modularui.screen.ModularScreen(GTNotGood.MODID, mainPanel);
+    @SideOnly(Side.CLIENT)
+    public ModularScreen createScreen(PosGuiData data, ModularPanel mainPanel) {
+        return new ModularScreen(GTNotGood.MODID, mainPanel);
     }
 
     @Override

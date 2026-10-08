@@ -61,80 +61,25 @@ public final class CompletionReport {
     }
 
     public static CompletionReport empty(String noteKey, String stateKey, boolean serverConfirmed) {
-        return new CompletionReport(
-            noteKey,
-            stateKey,
-            "",
-            serverConfirmed,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            false,
-            false,
-            false,
-            null,
-            Collections.emptyMap());
+        return new CompletionReport(noteKey, stateKey, "", serverConfirmed, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false,
+            false, false, null, Collections.emptyMap());
     }
 
     static CompletionReport fromResult(String noteKey, String stateKey, String detail, boolean serverConfirmed,
         WeightedResearchSolver.Result result, long executionTimeMs, int placementRounds, int placementPackets,
         int combinationPackets) {
         if (result == null) return empty(noteKey, stateKey, serverConfirmed);
-        return new CompletionReport(
-            noteKey,
-            stateKey,
-            detail,
-            serverConfirmed,
-            result.solveTimeMs,
-            executionTimeMs,
-            result.totalCost,
-            result.placements.size(),
-            result.synthesisOperations,
-            result.expandedStates,
-            result.peakStates,
-            result.peakQueue,
-            result.peakPlans,
-            placementRounds,
-            placementPackets,
-            combinationPackets,
-            result.fallbackUsed,
-            result.resultCacheHit,
-            result.graphCacheHit,
-            null,
+        return new CompletionReport(noteKey, stateKey, detail, serverConfirmed, result.solveTimeMs, executionTimeMs,
+            result.totalCost, result.placements.size(), result.synthesisOperations, result.expandedStates,
+            result.peakStates, result.peakQueue, result.peakPlans, placementRounds, placementPackets,
+            combinationPackets, result.fallbackUsed, result.resultCacheHit, result.graphCacheHit, null,
             Collections.emptyMap());
     }
 
     public CompletionReport withBoard(ResearchNoteData board, Map<String, Aspect> planned) {
-        return new CompletionReport(
-            noteKey,
-            stateKey,
-            detail,
-            serverConfirmed,
-            solveTimeMs,
-            executionTimeMs,
-            totalCost,
-            placements,
-            synthesisOperations,
-            expandedStates,
-            peakStates,
-            peakQueue,
-            peakPlans,
-            placementRounds,
-            placementPackets,
-            combinationPackets,
-            fallbackUsed,
-            resultCacheHit,
-            graphCacheHit,
-            board == null ? null : ResearchNoteSnapshot.copyOf(board),
-            planned);
+        return new CompletionReport(noteKey, stateKey, detail, serverConfirmed, solveTimeMs, executionTimeMs, totalCost,
+            placements, synthesisOperations, expandedStates, peakStates, peakQueue, peakPlans, placementRounds,
+            placementPackets, combinationPackets, fallbackUsed, resultCacheHit, graphCacheHit,
+            board == null ? null : ResearchNoteSnapshot.copyOf(board), planned);
     }
 }

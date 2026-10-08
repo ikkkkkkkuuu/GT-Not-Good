@@ -28,17 +28,10 @@ public final class IronFuelRod extends ItemRadioactiveCellIC {
      * @param depleted custom spent rod returned when this rod expires
      */
     public IronFuelRod(ItemRadioactiveCellIC base, ItemStack depleted) {
-        super(
-            ModList.ModIds.GT_NOT_GOOD + "." + NAME,
-            "Iron Fuel Rod",
-            base.numberOfCells,
+        super(ModList.ModIds.GT_NOT_GOOD + "." + NAME, "Iron Fuel Rod", base.numberOfCells,
             scaledDuration(base.getMaxDamageEx(), Config.FuelRod.durationPercent),
-            base.sEnergy * Config.FuelRod.energyPercent / 100F,
-            base.sRadiation,
-            base.sHeat * Config.FuelRod.heatPercent / 100F,
-            depleted,
-            base.sMox,
-            base.sHeatBonus);
+            base.sEnergy * Config.FuelRod.energyPercent / 100F, base.sRadiation,
+            base.sHeat * Config.FuelRod.heatPercent / 100F, depleted, base.sMox, base.sHeatBonus);
         setCreativeTab(GTNGCreativeTabs.GTNGItem);
     }
 

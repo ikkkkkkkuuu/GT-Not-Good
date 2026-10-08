@@ -82,8 +82,7 @@ public final class Button extends UIElement {
     }
 
     private void activate() {
-        Minecraft.getMinecraft()
-            .getSoundHandler()
+        Minecraft.getMinecraft().getSoundHandler()
             .playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1f));
         callback.run();
     }

@@ -8,9 +8,8 @@ import com.gtnewhorizon.gtnhlib.util.parsing.MathExpressionParser;
 /** Exact native GTNH quantities: items and fluid liters use integral storage amounts without bucket scaling. */
 final class StockNumbers {
 
-    private static final ThreadLocal<MathExpressionParser.Context> expressionContext = ThreadLocal.withInitial(
-        () -> new MathExpressionParser.Context().setEmptyValue(0)
-            .setErrorValue(Double.NaN));
+    private static final ThreadLocal<MathExpressionParser.Context> expressionContext = ThreadLocal
+        .withInitial(() -> new MathExpressionParser.Context().setEmptyValue(0).setErrorValue(Double.NaN));
 
     private StockNumbers() {}
 
@@ -30,7 +29,6 @@ final class StockNumbers {
             value = BigDecimal.valueOf(expression);
         }
         if (value.signum() < 0) throw new NumberFormatException("Negative stock");
-        return value.setScale(0, RoundingMode.UNNECESSARY)
-            .longValueExact();
+        return value.setScale(0, RoundingMode.UNNECESSARY).longValueExact();
     }
 }

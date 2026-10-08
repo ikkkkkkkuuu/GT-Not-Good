@@ -16,6 +16,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.StatCollector;
 
+import com.xyp.gtnotgood.GTNotGood;
+
 import lombok.Getter;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -65,8 +67,8 @@ public final class ResearchSolveController {
             return;
         }
         if (note.complete) {
-            lastReport = CompletionReport.empty(note.key, "tcautores.report_already_complete", true)
-                .withBoard(note, Collections.emptyMap());
+            lastReport = CompletionReport.empty(note.key, "tcautores.report_already_complete", true).withBoard(note,
+                Collections.emptyMap());
             PlayerNotifications.addNotification(StatCollector.translateToLocal("tcautores.note_complete"));
             notifySuccess();
             return;
@@ -90,43 +92,22 @@ public final class ResearchSolveController {
         ResearchNoteData noteSnapshot = ResearchNoteSnapshot.copyOf(note);
         Config.SolverSettings settings = Config.snapshot();
         AspectList inventory = snapshotInventory(helper.availableAspects());
-        lastReport = CompletionReport.empty(note.key, "tcautores.report_calculating", false)
-            .withBoard(note, Collections.emptyMap());
+        lastReport = CompletionReport.empty(note.key, "tcautores.report_calculating", false).withBoard(note,
+            Collections.emptyMap());
         if (notify) PlayerNotifications.addNotification(StatCollector.translateToLocal("tcautores.solving"));
 
         ResearchTaskExecutor.submitReplacing(() -> {
-            WeightedResearchSolver.Result result = WeightedResearchSolver.solve(
-                noteSnapshot,
-                inventory,
-                settings,
-                () -> generation != GENERATION.get() || Thread.currentThread()
-                    .isInterrupted());
+            WeightedResearchSolver.Result result = WeightedResearchSolver.solve(noteSnapshot, inventory, settings,
+                () -> generation != GENERATION.get() || Thread.currentThread().isInterrupted());
             WeightedResearchSolver.RepairPlan repairPlan = !result.success
                 && "incompatible_corridor".equals(result.failureReason)
-                    ? WeightedResearchSolver.findRepairPlan(
-                        noteSnapshot,
-                        inventory,
-                        settings,
-                        () -> generation != GENERATION.get() || Thread.currentThread()
-                            .isInterrupted(),
-                        result,
+                    ? WeightedResearchSolver.findRepairPlan(noteSnapshot, inventory, settings,
+                        () -> generation != GENERATION.get() || Thread.currentThread().isInterrupted(), result,
                         MAX_REPAIRS - repairedCells.size())
                     : null;
-            if (generation != GENERATION.get() || Thread.currentThread()
-                .isInterrupted()) return;
-            runOnClient(
-                mc,
-                () -> handleSolved(
-                    result,
-                    puzzle,
-                    generation,
-                    settings,
-                    automatic,
-                    new LinkedHashSet<>(repairedCells),
-                    repairPlan,
-                    helper,
-                    player,
-                    mc));
+            if (generation != GENERATION.get() || Thread.currentThread().isInterrupted()) return;
+            runOnClient(mc, () -> handleSolved(result, puzzle, generation, settings, automatic,
+                new LinkedHashSet<>(repairedCells), repairPlan, helper, player, mc));
         });
     }
 
@@ -136,8 +117,7 @@ public final class ResearchSolveController {
             player.addChatMessage(new ChatComponentText(StatCollector.translateToLocal("tcautores.no_previous")));
             return;
         }
-        if (!ResearchNoteFingerprint.topology(gui.note)
-            .equals(lastPuzzle)) {
+        if (!ResearchNoteFingerprint.topology(gui.note).equals(lastPuzzle)) {
             player.addChatMessage(new ChatComponentText(StatCollector.translateToLocal("tcautores.note_changed")));
             return;
         }
@@ -194,8 +174,7 @@ public final class ResearchSolveController {
     }
 
     public static boolean isAutomaticSuppressed(ResearchNoteData note) {
-        return note != null && ResearchNoteFingerprint.topology(note)
-            .equals(suppressedAutomaticPuzzle);
+        return note != null && ResearchNoteFingerprint.topology(note).equals(suppressedAutomaticPuzzle);
     }
 
     private static void handleSolved(WeightedResearchSolver.Result result, String puzzle, long generation,
@@ -203,25 +182,21 @@ public final class ResearchSolveController {
         WeightedResearchSolver.RepairPlan repairPlan, GuiResearchTableHelperInterface helper, EntityPlayer player,
         Minecraft mc) {
         GuiResearchTable gui = (GuiResearchTable) helper;
-        if (generation != GENERATION.get() || gui.note == null
-            || !puzzle.equals(ResearchNoteFingerprint.topology(gui.note))) {
+        if (
+            generation != GENERATION.get() || gui.note == null
+                || !puzzle.equals(ResearchNoteFingerprint.topology(gui.note))
+        ) {
             if (puzzle.equals(activePuzzle)) activePuzzle = null;
             if (generation == GENERATION.get()) notifyFailure("tcautores.note_changed");
             return;
         }
         if (!result.success) {
-            if (repairPlan != null && !repairPlan.repairCells.isEmpty()
-                && repairPlan.repairCells.size() <= MAX_REPAIRS - repairedCells.size()) {
-                startRepair(
-                    result,
-                    puzzle,
-                    generation,
-                    automatic,
-                    repairedCells,
-                    repairPlan.repairCells,
-                    helper,
-                    player,
-                    mc);
+            if (
+                repairPlan != null && !repairPlan.repairCells.isEmpty()
+                    && repairPlan.repairCells.size() <= MAX_REPAIRS - repairedCells.size()
+            ) {
+                startRepair(result, puzzle, generation, automatic, repairedCells, repairPlan.repairCells, helper,
+                    player, mc);
                 return;
             }
             activePuzzle = null;
@@ -232,12 +207,8 @@ public final class ResearchSolveController {
                 .withBoard(gui.note, result.placements);
             notifyFailure("tcautores.solve_failed");
             if (automatic) {
-                showExceptionPreview(
-                    gui,
-                    gui.note,
-                    result,
-                    StatCollector.translateToLocal("tcautores.solve_failed") + ": " + failure,
-                    mc);
+                showExceptionPreview(gui, gui.note, result,
+                    StatCollector.translateToLocal("tcautores.solve_failed") + ": " + failure, mc);
                 return;
             }
             player.addChatMessage(
@@ -270,18 +241,8 @@ public final class ResearchSolveController {
             return;
         }
         activePuzzle = puzzle;
-        lastReport = CompletionReport
-            .fromResult(
-                gui.note.key,
-                "tcautores.report_repairing",
-                AspectLocalization.name(entry.aspect),
-                false,
-                result,
-                0,
-                0,
-                0,
-                0)
-            .withBoard(gui.note, result.placements);
+        lastReport = CompletionReport.fromResult(gui.note.key, "tcautores.report_repairing",
+            AspectLocalization.name(entry.aspect), false, result, 0, 0, 0, 0).withBoard(gui.note, result.placements);
         repair = new RepairState(result, puzzle, generation, automatic, repairedCells, repairCells, helper, player, mc);
         PlayerNotifications.addNotification(StatCollector.translateToLocal("tcautores.repairing"));
     }
@@ -293,18 +254,8 @@ public final class ResearchSolveController {
         activePuzzle = null;
         if (automatic) suppressedAutomaticPuzzle = puzzle;
         String failure = StatCollector.translateToLocal(failureKey);
-        lastReport = CompletionReport
-            .fromResult(
-                gui.note == null ? "" : gui.note.key,
-                "tcautores.report_failed",
-                failure,
-                false,
-                result,
-                0,
-                0,
-                0,
-                0)
-            .withBoard(gui.note, result.placements);
+        lastReport = CompletionReport.fromResult(gui.note == null ? "" : gui.note.key, "tcautores.report_failed",
+            failure, false, result, 0, 0, 0, 0).withBoard(gui.note, result.placements);
         player.addChatMessage(new ChatComponentText(failure));
         notifyFailure(failureKey);
         if (automatic) showExceptionPreview(gui, gui.note, result, failure, mc);
@@ -318,25 +269,13 @@ public final class ResearchSolveController {
             activePuzzle = null;
             if (automatic) suppressedAutomaticPuzzle = puzzle;
             lastReport = CompletionReport
-                .fromResult(
-                    gui.note.key,
-                    "tcautores.report_failed",
-                    StatCollector.translateToLocal("tcautores.invalid_solution"),
-                    false,
-                    result,
-                    0,
-                    0,
-                    0,
-                    0)
+                .fromResult(gui.note.key, "tcautores.report_failed",
+                    StatCollector.translateToLocal("tcautores.invalid_solution"), false, result, 0, 0, 0, 0)
                 .withBoard(gui.note, result.placements);
             notifyFailure("tcautores.invalid_solution");
             if (automatic) {
-                showExceptionPreview(
-                    gui,
-                    gui.note,
-                    result,
-                    StatCollector.translateToLocal("tcautores.invalid_solution"),
-                    mc);
+                showExceptionPreview(gui, gui.note, result,
+                    StatCollector.translateToLocal("tcautores.invalid_solution"), mc);
                 return;
             }
             player.addChatMessage(new ChatComponentText(StatCollector.translateToLocal("tcautores.invalid_solution")));
@@ -346,24 +285,12 @@ public final class ResearchSolveController {
             activePuzzle = null;
             if (automatic) suppressedAutomaticPuzzle = puzzle;
             lastReport = CompletionReport
-                .fromResult(
-                    gui.note.key,
-                    "tcautores.report_failed",
-                    StatCollector.translateToLocal("tcautores.insufficient"),
-                    false,
-                    result,
-                    0,
-                    0,
-                    0,
-                    0)
+                .fromResult(gui.note.key, "tcautores.report_failed",
+                    StatCollector.translateToLocal("tcautores.insufficient"), false, result, 0, 0, 0, 0)
                 .withBoard(gui.note, result.placements);
             notifyFailure("tcautores.insufficient");
             if (automatic) {
-                showExceptionPreview(
-                    gui,
-                    gui.note,
-                    result,
-                    StatCollector.translateToLocal("tcautores.insufficient"),
+                showExceptionPreview(gui, gui.note, result, StatCollector.translateToLocal("tcautores.insufficient"),
                     mc);
                 return;
             }
@@ -445,7 +372,7 @@ public final class ResearchSolveController {
                 return;
             }
             if (entry.type == 0 && entry.aspect == null) {
-                com.xyp.gtnotgood.GTNotGood.LOG.info("Server confirmed research repair key={} cell={}", note.key, cell);
+                GTNotGood.LOG.info("Server confirmed research repair key={} cell={}", note.key, cell);
                 repairedCells.add(cell);
                 pendingCells.remove(0);
                 retries = 0;
@@ -476,10 +403,7 @@ public final class ResearchSolveController {
             retries++;
             deadline = tick + ACK_TIMEOUT_TICKS;
             if (retries == 1) {
-                com.xyp.gtnotgood.GTNotGood.LOG.info(
-                    "Applying verified research repair key={} cell={} aspect={}",
-                    note.key,
-                    cell,
+                GTNotGood.LOG.info("Applying verified research repair key={} cell={} aspect={}", note.key, cell,
                     originalAspect.getTag());
             }
             helper.place(hex, null);
@@ -492,17 +416,8 @@ public final class ResearchSolveController {
                     retries = 0;
                     deadline = 0;
                     PlayerNotifications.addNotification(StatCollector.translateToLocal("tcautores.ink_resumed"));
-                    lastReport = CompletionReport
-                        .fromResult(
-                            gui.note.key,
-                            "tcautores.report_repairing",
-                            AspectLocalization.name(originalAspect),
-                            false,
-                            result,
-                            0,
-                            0,
-                            0,
-                            0)
+                    lastReport = CompletionReport.fromResult(gui.note.key, "tcautores.report_repairing",
+                        AspectLocalization.name(originalAspect), false, result, 0, 0, 0, 0)
                         .withBoard(gui.note, result.placements);
                 }
                 return false;
@@ -513,16 +428,8 @@ public final class ResearchSolveController {
                 deadline = 0;
                 notifyInkPause(player);
                 lastReport = CompletionReport
-                    .fromResult(
-                        gui.note.key,
-                        "tcautores.report_waiting_ink",
-                        StatCollector.translateToLocal("tcautores.ink_solution"),
-                        false,
-                        result,
-                        0,
-                        0,
-                        0,
-                        0)
+                    .fromResult(gui.note.key, "tcautores.report_waiting_ink",
+                        StatCollector.translateToLocal("tcautores.ink_solution"), false, result, 0, 0, 0, 0)
                     .withBoard(gui.note, result.placements);
             }
             return true;
@@ -546,9 +453,9 @@ public final class ResearchSolveController {
     private static final class ExecutionState {
 
         private enum Phase {
-            SYNTHESIS,
-            PLACEMENT,
-            COMPLETION
+            Synthesis,
+            Placement,
+            Completion
         }
 
         final String puzzle;
@@ -564,7 +471,7 @@ public final class ResearchSolveController {
         final Map<String, Aspect> placementMap;
         final List<Map.Entry<String, Aspect>> placements;
         final long startedAtMs;
-        Phase phase = Phase.SYNTHESIS;
+        Phase phase = Phase.Synthesis;
         Aspect pendingAspect;
         int pendingAmount;
         int tick;
@@ -596,11 +503,8 @@ public final class ResearchSolveController {
                     required.put(aspect, required.getOrDefault(aspect, 0) + 1);
                 }
             }
-            addUndiscoveredAnchors(
-                required,
-                gui.note,
-                aspect -> Thaumcraft.proxy.getPlayerKnowledge()
-                    .hasDiscoveredAspect(player.getCommandSenderName(), aspect));
+            addUndiscoveredAnchors(required, gui.note, aspect -> Thaumcraft.proxy.getPlayerKnowledge()
+                .hasDiscoveredAspect(player.getCommandSenderName(), aspect));
             publishReport("tcautores.report_running", "", false);
         }
 
@@ -618,8 +522,8 @@ public final class ResearchSolveController {
                 succeed();
                 return;
             }
-            if (phase == Phase.SYNTHESIS) tickSynthesis();
-            else if (phase == Phase.PLACEMENT) tickPlacement();
+            if (phase == Phase.Synthesis) tickSynthesis();
+            else if (phase == Phase.Placement) tickPlacement();
             else if (tick >= deadline) fail("tcautores.completion_unconfirmed");
         }
 
@@ -649,7 +553,7 @@ public final class ResearchSolveController {
                 }
             }
             if (shortage == null) {
-                phase = Phase.PLACEMENT;
+                phase = Phase.Placement;
                 tickPlacement();
                 return;
             }
@@ -690,7 +594,7 @@ public final class ResearchSolveController {
                 return;
             }
             if (batch.missing.isEmpty()) {
-                phase = Phase.COMPLETION;
+                phase = Phase.Completion;
                 deadline = tick + COMPLETE_TIMEOUT_TICKS;
                 return;
             }
@@ -739,9 +643,7 @@ public final class ResearchSolveController {
                 retries = 0;
                 deadline = 0;
                 notifyInkPause(player);
-                publishReport(
-                    "tcautores.report_waiting_ink",
-                    StatCollector.translateToLocal("tcautores.ink_solution"),
+                publishReport("tcautores.report_waiting_ink", StatCollector.translateToLocal("tcautores.ink_solution"),
                     false);
             }
             return true;
@@ -761,26 +663,16 @@ public final class ResearchSolveController {
             activePuzzle = null;
             if (automatic) suppressedAutomaticPuzzle = puzzle;
             publishReport("tcautores.report_failed", reportDetail(key, pendingAspect), false);
-            player.addChatMessage(
-                new ChatComponentText(
-                    StatCollector.translateToLocal(key)
-                        + (pendingAspect == null ? "" : " " + AspectLocalization.name(pendingAspect))));
+            player.addChatMessage(new ChatComponentText(StatCollector.translateToLocal(key)
+                + (pendingAspect == null ? "" : " " + AspectLocalization.name(pendingAspect))));
             notifyFailure(key);
             showExceptionPreview(gui, gui.note, result, reportDetail(key, pendingAspect), mc);
         }
 
         private void publishReport(String stateKey, String detail, boolean serverConfirmed) {
             lastReport = CompletionReport
-                .fromResult(
-                    gui.note == null ? "" : gui.note.key,
-                    stateKey,
-                    detail,
-                    serverConfirmed,
-                    result,
-                    System.currentTimeMillis() - startedAtMs,
-                    placementRounds,
-                    placementPackets,
-                    combinationPackets)
+                .fromResult(gui.note == null ? "" : gui.note.key, stateKey, detail, serverConfirmed, result,
+                    System.currentTimeMillis() - startedAtMs, placementRounds, placementPackets, combinationPackets)
                 .withBoard(gui.note, result.placements);
         }
     }

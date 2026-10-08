@@ -30,6 +30,7 @@ import gregtech.api.render.TextureFactory;
 import gregtech.api.structure.error.ErrorType;
 import gregtech.api.structure.error.StructureError;
 import gregtech.api.structure.error.StructureErrors;
+import gregtech.api.util.GTStructureUtility;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
 
@@ -62,23 +63,15 @@ public final class LargeTransmutationMachine extends GTNGMultiBlockBase<LargeTra
     @Override
     public IStructureDefinition<LargeTransmutationMachine> getStructureDefinition() {
         if (definition == null) {
-            definition = StructureDefinition.<LargeTransmutationMachine>builder()
-                .addShape("main", transpose(SHAPE))
-                .addElement(
-                    'C',
-                    ofChain(
-                        buildHatchAdder(LargeTransmutationMachine.class)
-                            .atLeast(InputBus, OutputBus, OutputHatch, Energy, Maintenance)
-                            .casingIndex(casingTexture())
-                            .hint(1)
-                            .build(),
-                        onElementPass(m -> ++m.casings, ofBlock(GregTechAPI.sBlockCasings2, 0))))
-                .addElement('F', gregtech.api.util.GTStructureUtility.ofFrame(Materials.Titanium))
+            definition = StructureDefinition.<LargeTransmutationMachine>builder().addShape("main", transpose(SHAPE))
+                .addElement('C',
+                    ofChain(buildHatchAdder(LargeTransmutationMachine.class)
+                        .atLeast(InputBus, OutputBus, OutputHatch, Energy, Maintenance).casingIndex(casingTexture())
+                        .hint(1).build(), onElementPass(m -> ++m.casings, ofBlock(GregTechAPI.sBlockCasings2, 0))))
+                .addElement('F', GTStructureUtility.ofFrame(Materials.Titanium))
                 .addElement('P', ofBlock(GregTechAPI.sBlockCasings2, 13))
-                .addElement('G', ofBlock(ItemRegistry.bw_realglas, 0))
-                .addElement('L', ofBlock(Blocks.glowstone, 0))
-                .addElement('-', isAir())
-                .build();
+                .addElement('G', ofBlock(ItemRegistry.bw_realglas, 0)).addElement('L', ofBlock(Blocks.glowstone, 0))
+                .addElement('-', isAir()).build();
         }
         return definition;
     }
@@ -125,12 +118,9 @@ public final class LargeTransmutationMachine extends GTNGMultiBlockBase<LargeTra
         boolean active, boolean redstone) {
         ITexture casing = Textures.BlockIcons.getCasingTextureForId(casingTexture());
         if (side != facing) return new ITexture[] { casing };
-        return new ITexture[] { casing, TextureFactory.builder()
-            .addIcon(
-                active ? Textures.BlockIcons.OVERLAY_FRONT_DISASSEMBLER_ACTIVE
-                    : Textures.BlockIcons.OVERLAY_FRONT_DISASSEMBLER)
-            .extFacing()
-            .build() };
+        return new ITexture[] { casing,
+            TextureFactory.builder().addIcon(active ? Textures.BlockIcons.OVERLAY_FRONT_DISASSEMBLER_ACTIVE
+                : Textures.BlockIcons.OVERLAY_FRONT_DISASSEMBLER).extFacing().build() };
     }
 
     @Override
@@ -162,11 +152,8 @@ public final class LargeTransmutationMachine extends GTNGMultiBlockBase<LargeTra
             // # Solid Steel Machine Casing (hatches may replace casing)
             // # zh_CN 坚实钢机械方块（仓室可替换外壳）
             .addCasing("12+", StatCollector.translateToLocal("gtng.transmutation.tooltip.casing"), false)
-            .addInputBus("1+", "C", 1)
-            .addOutputBus("1+", "C", 1)
-            .addOutputHatch("1+", "C", 1)
-            .addEnergyHatch("1+", "C", 1)
-            .addMaintenanceHatch(shouldCheckMaintenance() ? "1" : "0", "C", 1)
+            .addInputBus("1+", "C", 1).addOutputBus("1+", "C", 1).addOutputHatch("1+", "C", 1)
+            .addEnergyHatch("1+", "C", 1).addMaintenanceHatch(shouldCheckMaintenance() ? "1" : "0", "C", 1)
             .toolTipFinisher();
     }
 }

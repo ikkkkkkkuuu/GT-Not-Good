@@ -80,12 +80,8 @@ public abstract class MixinGuiTextFieldTextEffects {
     private int gtng$drawBeforeCursor(FontRenderer font, String value, int x, int y, int color,
         Operation<Integer> original) {
         EffectTextFieldView view = gtng$view();
-        return original.call(
-            font,
-            view == null ? value : view.slice(lineScrollOffset, lineScrollOffset + value.length()),
-            x,
-            y,
-            color);
+        return original.call(font,
+            view == null ? value : view.slice(lineScrollOffset, lineScrollOffset + value.length()), x, y, color);
     }
 
     @WrapOperation(
@@ -97,12 +93,8 @@ public abstract class MixinGuiTextFieldTextEffects {
     private int gtng$drawAfterCursor(FontRenderer font, String value, int x, int y, int color,
         Operation<Integer> original) {
         EffectTextFieldView view = gtng$view();
-        return original.call(
-            font,
-            view == null ? value : view.slice(cursorPosition, cursorPosition + value.length()),
-            x,
-            y,
-            color);
+        return original.call(font, view == null ? value : view.slice(cursorPosition, cursorPosition + value.length()),
+            x, y, color);
     }
 
     @WrapOperation(

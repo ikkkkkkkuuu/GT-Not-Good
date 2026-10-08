@@ -132,11 +132,8 @@ public class ECraftingCPUCluster extends CraftingCPUCluster {
             return;
         }
 
-        this.remainingOperations = (int) Math.max(
-            0L,
-            Math.min(
-                maxDispatchesPerTick,
-                (long) this.accelerator + 1L - ((long) this.usedOps[0] + this.usedOps[1] + this.usedOps[2])));
+        this.remainingOperations = (int) Math.max(0L, Math.min(maxDispatchesPerTick,
+            (long) this.accelerator + 1L - ((long) this.usedOps[0] + this.usedOps[1] + this.usedOps[2])));
         final int started = this.remainingOperations;
 
         // Shallow copy tasks so we may remove them after visiting
@@ -186,8 +183,7 @@ public class ECraftingCPUCluster extends CraftingCPUCluster {
         if (this.virtualCPUOwner == null) {
             return super.getGrid();
         }
-        IGridNode node = this.virtualCPUOwner.getProxy()
-            .getNode();
+        IGridNode node = this.virtualCPUOwner.getProxy().getNode();
         return node == null ? null : node.getGrid();
     }
 
@@ -204,8 +200,7 @@ public class ECraftingCPUCluster extends CraftingCPUCluster {
         if (this.virtualCPUOwner == null) {
             return super.getWorld();
         }
-        return this.virtualCPUOwner.getBaseMetaTileEntity()
-            .getWorld();
+        return this.virtualCPUOwner.getBaseMetaTileEntity().getWorld();
     }
 
     @Override

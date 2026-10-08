@@ -36,13 +36,8 @@ public class ItemStackRadialMenuItem extends RadialMenuItem {
 
         float x = context.x - 8;
         float y = context.y - 8;
-        itemRenderer.renderItemAndEffectIntoGUI(
-            Minecraft.getMinecraft().fontRenderer,
-            Minecraft.getMinecraft()
-                .getTextureManager(),
-            stack,
-            (int) x,
-            (int) y);
+        itemRenderer.renderItemAndEffectIntoGUI(Minecraft.getMinecraft().fontRenderer,
+            Minecraft.getMinecraft().getTextureManager(), stack, (int) x, (int) y);
 
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
@@ -53,11 +48,9 @@ public class ItemStackRadialMenuItem extends RadialMenuItem {
             String sizeStr = String.valueOf(stack.stackSize);
             GL11.glPushMatrix();
             GL11.glTranslatef(0.0F, 0.0F, 300.0F);
-            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(
-                sizeStr,
+            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(sizeStr,
                 (int) (context.x + 8 - Minecraft.getMinecraft().fontRenderer.getStringWidth(sizeStr)),
-                (int) (context.y + 8),
-                0xFFFFFF);
+                (int) (context.y + 8), 0xFFFFFF);
             GL11.glPopMatrix();
         }
     }
@@ -66,11 +59,8 @@ public class ItemStackRadialMenuItem extends RadialMenuItem {
     public void drawTooltip(DrawingContext context) {
         if (stack != null && stack.getItem() != null) {
             String name = stack.getDisplayName();
-            context.drawingHelper.drawString(
-                Minecraft.getMinecraft().fontRenderer,
-                name,
-                (int) context.x - Minecraft.getMinecraft().fontRenderer.getStringWidth(name) / 2,
-                (int) context.y - 12,
+            context.drawingHelper.drawString(Minecraft.getMinecraft().fontRenderer, name,
+                (int) context.x - Minecraft.getMinecraft().fontRenderer.getStringWidth(name) / 2, (int) context.y - 12,
                 0xFFFFFF);
         }
     }

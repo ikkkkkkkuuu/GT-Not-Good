@@ -22,10 +22,8 @@ public class NEI_TH_Config implements IConfigureNEI {
         NativePatternIngredientCycler.register();
         for (String identifier : FluidRecipe.getSupportRecipes()) {
             if (!API.hasGuiOverlayHandler(GuiQuickEncodingTerminal.class, identifier)) {
-                API.registerGuiOverlayHandler(
-                    GuiQuickEncodingTerminal.class,
-                    QuickTerminalRecipeTransferHandler.INSTANCE,
-                    identifier);
+                API.registerGuiOverlayHandler(GuiQuickEncodingTerminal.class,
+                    QuickTerminalRecipeTransferHandler.INSTANCE, identifier);
             }
         }
         // #tr nei.options.gtnotgood
@@ -149,10 +147,10 @@ public class NEI_TH_Config implements IConfigureNEI {
         // API.addOption(new BaseToggleButton(ButtonConstants.PINNED_BAR_REMOVE));
         // API.addOption(new BaseToggleButton(ButtonConstants.PINNED_BAR_CRAFTING_STATE));
         API.addOption(new BaseToggleButton(ButtonConstants.NEI_CRAFT_ITEM));
-        if (Mods.PROGRAMMABLE_HATCHES.isModLoaded()) {
+        if (Mods.ProgrammableHatches.isModLoaded()) {
             API.addOption(new BaseToggleButton(ButtonConstants.DUAL_INTERFACE_TERMINAL_FILL_CIRCUIT, false));
         }
-        if (Mods.BLOCK_RENDERER.isModLoaded()) {
+        if (Mods.BlockRenderer.isModLoaded()) {
             API.addOption(new BaseToggleButton(ButtonConstants.BLOCK_RENDER));
         }
     }
@@ -162,8 +160,7 @@ public class NEI_TH_Config implements IConfigureNEI {
     }
 
     public static boolean getConfigValue(String identifier, boolean defaultValue) {
-        return tag.getTag(identifier)
-            .getBooleanValue(defaultValue);
+        return tag.getTag(identifier).getBooleanValue(defaultValue);
     }
 
     @Override

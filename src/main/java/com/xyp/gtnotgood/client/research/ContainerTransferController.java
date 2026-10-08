@@ -12,11 +12,11 @@ import thaumcraft.common.lib.research.ResearchNoteData;
 public final class ContainerTransferController {
 
     public enum Status {
-        IDLE,
-        WAITING,
-        ACCEPTED,
-        REJECTED,
-        RESYNCHRONIZED
+        Idle,
+        Waiting,
+        Accepted,
+        Rejected,
+        Resynchronized
     }
 
     static final int SETTLE_TICKS = 1;
@@ -27,7 +27,7 @@ public final class ContainerTransferController {
     private static short transactionId;
     private static ItemStack sourceStack;
     private static String sourceNoteState = "";
-    private static Status status = Status.IDLE;
+    private static Status status = Status.Idle;
     private static int containerSlot = -1;
     private static int mouseButton;
     private static int clickMode;
@@ -61,7 +61,7 @@ public final class ContainerTransferController {
 
     private static boolean beginClick(Minecraft mc, EntityPlayer player, int containerSlot, int mouseButton, int mode,
         boolean retry) {
-        if (status == Status.WAITING || mc == null || player == null || mc.getNetHandler() == null) return false;
+        if (status == Status.Waiting || mc == null || player == null || mc.getNetHandler() == null) return false;
         Container container = player.openContainer;
         if (container == null || containerSlot < 0 || containerSlot >= container.inventorySlots.size()) return false;
         Slot slot = container.getSlot(containerSlot);
@@ -78,15 +78,8 @@ public final class ContainerTransferController {
         ContainerTransferController.mouseButton = mouseButton;
         clickMode = mode;
         attempts = retry ? attempts + 1 : 1;
-        mc.getNetHandler()
-            .addToSendQueue(
-                new C0EPacketClickWindow(
-                    transferWindowId,
-                    containerSlot,
-                    mouseButton,
-                    mode,
-                    result,
-                    transferTransactionId));
+        mc.getNetHandler().addToSendQueue(new C0EPacketClickWindow(transferWindowId, containerSlot, mouseButton, mode,
+            result, transferTransactionId));
         return true;
     }
 
@@ -99,7 +92,7 @@ public final class ContainerTransferController {
     }
 
     public static synchronized boolean canRetry() {
-        return status == Status.RESYNCHRONIZED && attempts < MAX_ATTEMPTS;
+        return status == Status.Resynchronized && attempts < MAX_ATTEMPTS;
     }
 
     /**
@@ -107,7 +100,7 @@ public final class ContainerTransferController {
      * The gate is created when the caller first observes a full server resynchronization.
      */
     public static synchronized boolean retryReady(int currentTick) {
-        if (status != Status.RESYNCHRONIZED) return false;
+        if (status != Status.Resynchronized) return false;
         if (retryNotBeforeTick < 0) retryNotBeforeTick = currentTick + retryDelayTicks();
         return currentTick >= retryNotBeforeTick;
     }
@@ -115,8 +108,7 @@ public final class ContainerTransferController {
     static synchronized boolean sourceStateMatches(EntityPlayer player, int slotIndex) {
         Container container = player == null ? null : player.openContainer;
         if (container == null || slotIndex < 0 || slotIndex >= container.inventorySlots.size()) return false;
-        ItemStack currentStack = container.getSlot(slotIndex)
-            .getStack();
+        ItemStack currentStack = container.getSlot(slotIndex).getStack();
         if (!sameStack(sourceStack, currentStack)) return false;
         if (sourceNoteState.isEmpty()) return true;
         ResearchNoteData sourceNote = ResearchNoteItems.data(currentStack);
@@ -135,7 +127,7 @@ public final class ContainerTransferController {
      * only required when recovering from a rejected click.
      */
     public static synchronized boolean hasServerStateUpdate() {
-        return status == Status.ACCEPTED || (status != Status.IDLE && serverUpdateGeneration > transferStartGeneration);
+        return status == Status.Accepted || (status != Status.Idle && serverUpdateGeneration > transferStartGeneration);
     }
 
     /**
@@ -152,11 +144,11 @@ public final class ContainerTransferController {
 
     public static synchronized void onConfirmation(int confirmedWindowId, short confirmedTransactionId,
         boolean accepted) {
-        if (status != Status.WAITING || windowId != confirmedWindowId || transactionId != confirmedTransactionId)
+        if (status != Status.Waiting || windowId != confirmedWindowId || transactionId != confirmedTransactionId)
             return;
-        status = accepted ? Status.ACCEPTED : Status.REJECTED;
+        status = accepted ? Status.Accepted : Status.Rejected;
         if (!accepted && windowSyncGeneration > transferStartWindowSyncGeneration) {
-            status = Status.RESYNCHRONIZED;
+            status = Status.Resynchronized;
             retryNotBeforeTick = -1;
         }
     }
@@ -169,8 +161,8 @@ public final class ContainerTransferController {
         if (!isTrackedWindow(synchronizedWindowId)) return;
         serverUpdateGeneration++;
         windowSyncGeneration++;
-        if (status == Status.REJECTED) {
-            status = Status.RESYNCHRONIZED;
+        if (status == Status.Rejected) {
+            status = Status.Resynchronized;
             retryNotBeforeTick = -1;
         }
     }
@@ -184,7 +176,7 @@ public final class ContainerTransferController {
         transactionId = 0;
         sourceStack = null;
         sourceNoteState = "";
-        status = Status.IDLE;
+        status = Status.Idle;
         containerSlot = -1;
         mouseButton = 0;
         clickMode = 0;
@@ -207,7 +199,7 @@ public final class ContainerTransferController {
         transferStartWindowSyncGeneration = windowSyncGeneration;
         retryNotBeforeTick = -1;
         stablePostStateTicks = 0;
-        status = Status.WAITING;
+        status = Status.Waiting;
     }
 
     private static int retryDelayTicks() {

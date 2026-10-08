@@ -9,6 +9,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import com.xyp.gtnotgood.common.items.mebridge.ItemMEWirelessTransceiver;
 
+import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -59,22 +60,16 @@ public final class MessageMEWirelessNodeAction implements IMessage {
             WorldServer world = player.getServerForPlayer();
             if (!isValidRequest(player, world, message)) return null;
 
-            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(
-                player,
-                PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK,
-                message.x,
-                message.y,
-                message.z,
-                message.side,
-                world);
-            if (event.isCanceled() || event.useItem == cpw.mods.fml.common.eventhandler.Event.Result.DENY) return null;
+            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(player,
+                PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, message.x, message.y, message.z, message.side, world);
+            if (event.isCanceled() || event.useItem == Event.Result.DENY) return null;
 
             if (message.bind) {
-                ItemMEWirelessTransceiver
-                    .handleBindRequest(player, world, message.x, message.y, message.z, message.side);
+                ItemMEWirelessTransceiver.handleBindRequest(player, world, message.x, message.y, message.z,
+                    message.side);
             } else {
-                ItemMEWirelessTransceiver
-                    .handleInspectRequest(player, world, message.x, message.y, message.z, message.side);
+                ItemMEWirelessTransceiver.handleInspectRequest(player, world, message.x, message.y, message.z,
+                    message.side);
             }
             return null;
         }
@@ -87,14 +82,15 @@ public final class MessageMEWirelessNodeAction implements IMessage {
             if (held == null || !(held.getItem() instanceof ItemMEWirelessTransceiver)) return false;
 
             MinecraftServer server = MinecraftServer.getServer();
-            if (server == null || message.side < 0
-                || message.side > 5
-                || message.y < 0
-                || message.y >= server.getBuildLimit()) {
+            if (
+                server == null || message.side < 0
+                    || message.side > 5
+                    || message.y < 0
+                    || message.y >= server.getBuildLimit()
+            ) {
                 return false;
             }
-            if (!world.getChunkProvider()
-                .chunkExists(message.x >> 4, message.z >> 4)) {
+            if (!world.getChunkProvider().chunkExists(message.x >> 4, message.z >> 4)) {
                 return false;
             }
 

@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.common.machines.hatch.me;
 
+import java.util.Arrays;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -98,8 +100,8 @@ public final class MaxCapacityMEOutputFilters {
 
     /** Loads old machines as unfiltered, ignores invalid indices, and never invokes world callbacks while loading. */
     public void load(NBTTagCompound tag) {
-        java.util.Arrays.fill(items, null);
-        java.util.Arrays.fill(fluids, null);
+        Arrays.fill(items, null);
+        Arrays.fill(fluids, null);
         NBTTagList list = tag.getTagList(NBT_KEY, 10);
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound entry = list.getCompoundTagAt(i);

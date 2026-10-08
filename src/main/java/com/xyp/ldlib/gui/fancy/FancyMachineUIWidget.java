@@ -60,10 +60,12 @@ public final class FancyMachineUIWidget extends UIElement {
         UIElement content = pages.get(page);
         if (content == null) {
             content = Objects.requireNonNull(page.createMainPage(this), "Page content");
-            if (content.getParent() != null || content == this
-                || content == pageContainer
-                || content.getWidth() > getContentWidth()
-                || content.getHeight() > getContentHeight()) {
+            if (
+                content.getParent() != null || content == this
+                    || content == pageContainer
+                    || content.getWidth() > getContentWidth()
+                    || content.getHeight() > getContentHeight()
+            ) {
                 throw new IllegalArgumentException("Page must be detached and fit inside the content area");
             }
             content.setPosition(0, 0);

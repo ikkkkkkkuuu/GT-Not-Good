@@ -18,6 +18,7 @@ import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.xyp.gtnotgood.GTNotGood;
 
 public final class WeightProfileStore {
 
@@ -25,8 +26,7 @@ public final class WeightProfileStore {
     private static final int MAX_PROFILES = 64;
     private static final int MAX_ASPECTS = 512;
     private static final int MAX_JSON_LENGTH = 1024 * 1024;
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting()
-        .create();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Map<String, ProfileRecord> PROFILES = new LinkedHashMap<>();
     private static boolean loaded;
 
@@ -80,8 +80,8 @@ public final class WeightProfileStore {
         ProfileRecord record = GSON.fromJson(json, ProfileRecord.class);
         if (record == null) throw new IllegalArgumentException("Empty profile");
         record.validate();
-        record.name = requestedName == null || requestedName.trim()
-            .isEmpty() ? normalizeName(record.name) : normalizeName(requestedName);
+        record.name = requestedName == null || requestedName.trim().isEmpty() ? normalizeName(record.name)
+            : normalizeName(requestedName);
         String existing = findKey(record.name);
         if (existing == null && PROFILES.size() >= MAX_PROFILES) throw new IllegalStateException("Too many profiles");
         if (existing != null) PROFILES.remove(existing);
@@ -107,14 +107,13 @@ public final class WeightProfileStore {
                 } catch (RuntimeException ignored) {}
             }
         } catch (IOException | RuntimeException exception) {
-            com.xyp.gtnotgood.GTNotGood.LOG.warn("Unable to load weight profiles", exception);
+            GTNotGood.LOG.warn("Unable to load weight profiles", exception);
         }
     }
 
     private static void persist() throws IOException {
         File file = profileFile();
-        Path parent = file.toPath()
-            .getParent();
+        Path parent = file.toPath().getParent();
         Files.createDirectories(parent);
         Path temporary = Files.createTempFile(parent, "TCAutoResearch-weight-profiles", ".tmp");
         ProfileDocument document = new ProfileDocument();
@@ -190,15 +189,14 @@ public final class WeightProfileStore {
                 throw new IllegalArgumentException("Invalid profile data");
             }
             for (Map.Entry<String, Integer> entry : costs.entrySet()) {
-                if (AspectWeights.normalize(entry.getKey())
-                    .isEmpty() || entry.getValue() == null) {
+                if (AspectWeights.normalize(entry.getKey()).isEmpty() || entry.getValue() == null) {
                     throw new IllegalArgumentException("Invalid aspect cost");
                 }
                 entry.setValue(AspectWeights.clamp(entry.getValue()));
             }
             for (String tag : disabled) {
-                if (AspectWeights.normalize(tag)
-                    .isEmpty()) throw new IllegalArgumentException("Invalid disabled aspect");
+                if (AspectWeights.normalize(tag).isEmpty())
+                    throw new IllegalArgumentException("Invalid disabled aspect");
             }
         }
     }

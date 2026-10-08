@@ -37,28 +37,16 @@ final class StockRequesterView {
             String name = tile.name();
             boolean matches = (name.isEmpty() ? StockText.Requester.text() : name).toLowerCase(Locale.ROOT)
                 .contains(search);
-            if (!matches && !search.isEmpty()) for (int row = 0; row < tile.stockConfig()
-                .size(); row++) {
-                    var sample = StockResources.display(
-                        tile.stockConfig()
-                            .key(row));
-                    if (sample != null && sample.getDisplayName()
-                        .toLowerCase(Locale.ROOT)
-                        .contains(search)) matches = true;
-                }
-            if (matches) groups.computeIfAbsent(name, ignored -> new ArrayList<>())
-                .add(tile);
+            if (!matches && !search.isEmpty()) for (int row = 0; row < tile.stockConfig().size(); row++) {
+                var sample = StockResources.display(tile.stockConfig().key(row));
+                if (sample != null && sample.getDisplayName().toLowerCase(Locale.ROOT).contains(search)) matches = true;
+            }
+            if (matches) groups.computeIfAbsent(name, ignored -> new ArrayList<>()).add(tile);
         }
         for (var group : groups.entrySet()) {
-            lines.add(
-                new Line(
-                    null,
-                    -1,
-                    group.getKey(),
-                    group.getValue()
-                        .size()));
-            for (TileMERequester tile : group.getValue()) for (int row = 0; row < tile.stockConfig()
-                .size(); row++) lines.add(new Line(tile, row, ""));
+            lines.add(new Line(null, -1, group.getKey(), group.getValue().size()));
+            for (TileMERequester tile : group.getValue())
+                for (int row = 0; row < tile.stockConfig().size(); row++) lines.add(new Line(tile, row, ""));
         }
         scroll = Math.max(0, Math.min(scroll, maximumScroll()));
     }
@@ -115,9 +103,7 @@ final class StockRequesterView {
                     + ":"
                     + System.identityHashCode(tile)
                     + ":"
-                    + System.identityHashCode(
-                        tile.stockConfig()
-                            .key(row));
+                    + System.identityHashCode(tile.stockConfig().key(row));
         }
     }
 }

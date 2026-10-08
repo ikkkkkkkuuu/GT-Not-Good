@@ -51,19 +51,12 @@ public abstract class CrossRecipeGuiMixin {
             ignored -> {});
         manager.syncValue("gtngWirelessEU", energy);
         GenericListSyncHandler<NBTTagCompound> outputs = new GenericListSyncHandler<>(
-            () -> scheduler.displayedOutputs(128),
-            ignored -> {},
-            PacketBuffer::readNBTTagCompoundFromBuffer,
-            PacketBuffer::writeNBTTagCompoundToBuffer,
-            Objects::equals,
-            value -> (NBTTagCompound) value.copy());
+            () -> scheduler.displayedOutputs(128), ignored -> {}, PacketBuffer::readNBTTagCompoundFromBuffer,
+            PacketBuffer::writeNBTTagCompoundToBuffer, Objects::equals, value -> (NBTTagCompound) value.copy());
         manager.syncValue("gtngWirelessOutputs", outputs);
-        manager.syncValue(
-            "gtngWirelessOutputWidget",
+        manager.syncValue("gtngWirelessOutputWidget",
             new DynamicLinkedSyncHandler<>(outputs).widgetProvider((sync, value) -> {
-                Flow column = Flow.column()
-                    .coverChildrenHeight(0)
-                    .crossAxisAlignment(Alignment.CrossAxis.START);
+                Flow column = Flow.column().coverChildrenHeight(0).crossAxisAlignment(Alignment.CrossAxis.START);
                 for (NBTTagCompound row : value.getValue()) {
                     ItemStack icon;
                     if (row.hasKey("item")) icon = ItemStack.loadItemStackFromNBT(row.getCompoundTag("item"));
@@ -76,33 +69,17 @@ public abstract class CrossRecipeGuiMixin {
                         + " ("
                         + WirelessRecipeDisplay.rate(row, true)
                         + ")";
-                    column.child(
-                        Flow.row()
-                            .fullWidth()
-                            .height(15)
-                            .child(
-                                new ItemDisplayWidget().item(icon)
-                                    .displayAmount(false)
-                                    .disableThemeBackground(true)
-                                    .size(14)
-                                    .marginRight(2))
-                            .child(
-                                Flow.column()
-                                    .coverChildrenHeight(0)
-                                    .crossAxisAlignment(Alignment.CrossAxis.START)
-                                    .child(
-                                        new TextWidget<>(IKey.str(EnumChatFormatting.AQUA + name)).height(8)
-                                            .scale(0.75f))
-                                    .child(
-                                        new TextWidget<>(IKey.str(amount)).height(6)
-                                            .scale(0.6f))
-                                    .tooltip(
-                                        t -> t.addLine(
-                                            name + "\n"
-                                                + WirelessRecipeDisplay.amount(row, false)
-                                                + " ("
-                                                + WirelessRecipeDisplay.rate(row, false)
-                                                + ")"))));
+                    column.child(Flow.row().fullWidth().height(15)
+                        .child(new ItemDisplayWidget().item(icon).displayAmount(false).disableThemeBackground(true)
+                            .size(14).marginRight(2))
+                        .child(Flow.column().coverChildrenHeight(0).crossAxisAlignment(Alignment.CrossAxis.START)
+                            .child(new TextWidget<>(IKey.str(EnumChatFormatting.AQUA + name)).height(8).scale(0.75f))
+                            .child(new TextWidget<>(IKey.str(amount)).height(6).scale(0.6f))
+                            .tooltip(t -> t.addLine(name + "\n"
+                                + WirelessRecipeDisplay.amount(row, false)
+                                + " ("
+                                + WirelessRecipeDisplay.rate(row, false)
+                                + ")"))));
                 }
                 return column;
             }));
@@ -111,32 +88,16 @@ public abstract class CrossRecipeGuiMixin {
     @Inject(method = "createRecipeInfoWidget", at = @At("RETURN"), cancellable = true, require = 1)
     private void gtng$showOutputs(PanelSyncManager manager, CallbackInfoReturnable<IWidget> cir) {
         StringSyncValue energy = manager.findSyncHandler("gtngWirelessEU", StringSyncValue.class);
-        DynamicLinkedSyncHandler<?> outputs = manager
-            .findSyncHandler("gtngWirelessOutputWidget", DynamicLinkedSyncHandler.class);
-        cir.setReturnValue(
-            Flow.column()
-                .fullWidth()
-                .coverChildrenHeight(0)
-                .crossAxisAlignment(Alignment.CrossAxis.START)
-                .child(cir.getReturnValue())
-                .child(IKey.dynamic(() -> {
-                    // #tr gtng.cross_wireless.eu
-                    // # Current consumption: %s EU/t (wireless)
-                    // # zh_CN 当前耗电：%s EU/t（无线电网）
-                    return EnumChatFormatting.WHITE + StatCollector.translateToLocalFormatted(
-                        "gtng.cross_wireless.eu",
-                        EnumChatFormatting.GOLD + energy.getValue() + EnumChatFormatting.WHITE);
-                })
-                    .asWidget()
-                    .scale(0.75f)
-                    .fullWidth()
-                    .marginBottom(2)
-                    .setEnabledIf(
-                        widget -> !energy.getValue()
-                            .isEmpty()))
-                .child(
-                    new DynamicSyncedWidget<>().syncHandler(outputs)
-                        .widthRel(0.85f)
-                        .coverChildrenHeight(0)));
+        DynamicLinkedSyncHandler<?> outputs = manager.findSyncHandler("gtngWirelessOutputWidget",
+            DynamicLinkedSyncHandler.class);
+        cir.setReturnValue(Flow.column().fullWidth().coverChildrenHeight(0)
+            .crossAxisAlignment(Alignment.CrossAxis.START).child(cir.getReturnValue()).child(IKey.dynamic(() -> {
+                // #tr gtng.cross_wireless.eu
+                // # Current consumption: %s EU/t (wireless)
+                // # zh_CN 当前耗电：%s EU/t（无线电网）
+                return EnumChatFormatting.WHITE + StatCollector.translateToLocalFormatted("gtng.cross_wireless.eu",
+                    EnumChatFormatting.GOLD + energy.getValue() + EnumChatFormatting.WHITE);
+            }).asWidget().scale(0.75f).fullWidth().marginBottom(2).setEnabledIf(widget -> !energy.getValue().isEmpty()))
+            .child(new DynamicSyncedWidget<>().syncHandler(outputs).widthRel(0.85f).coverChildrenHeight(0)));
     }
 }

@@ -21,14 +21,9 @@ public final class MEContainerRecipes {
 
     public static void loadRecipes() {
         GTValues.RA.stdBuilder()
-            .itemInputs(
-                ModsItemlist.AE2MEInterface.get(1),
-                new ItemStack(Blocks.chest),
-                new ItemStack(Blocks.glass, 4),
+            .itemInputs(ModsItemlist.MEInterface.get(1), new ItemStack(Blocks.chest), new ItemStack(Blocks.glass, 4),
                 new Object[] { OrePrefixes.circuit.get(Materials.LV), 1 })
-            .itemOutputs(GTNGItemList.MEContainer.get(1))
-            .eut(RECIPE_LV)
-            .duration(15 * SECONDS)
+            .itemOutputs(GTNGItemList.MEContainer.get(1)).eut(RECIPE_LV).duration(15 * SECONDS)
             .addTo(RecipeMaps.assemblerRecipes);
     }
 }
