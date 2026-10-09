@@ -110,9 +110,8 @@ public final class CompactAEClientChecks {
                     computer.checkStructure(true, computer.getBaseMetaTileEntity()),
                     "computer forms from five casings");
                 require(
-                    matrix.getPatterns()
-                        .getSizeInventory() == 144 && matrix.rows() == 2,
-                    "144 slots / 2 initial terminal rows");
+                    matrix.getPatterns().getSizeInventory() == AssemblerMatrix.PATTERN_CAPACITY && matrix.rows() == 2,
+                    AssemblerMatrix.PATTERN_CAPACITY + " slots / 2 initial terminal rows");
                 require(
                     AEApi.instance()
                         .registries()
@@ -148,8 +147,7 @@ public final class CompactAEClientChecks {
                 require(details != null, "valid native crafting pattern");
                 requestedSticks = (int) details.getCondensedOutputs()[0].getStackSize() * 32;
                 System.out.println("COMPACT_AE_QA: requested sticks=" + requestedSticks);
-                matrix.getPatterns()
-                    .setInventorySlotContents(143, encoded);
+                matrix.getPatterns().setInventorySlotContents(AssemblerMatrix.PATTERN_CAPACITY - 1, encoded);
                 matrix.setMachineMode(AssemblerMatrix.MODE_OPERATING);
                 matrix.getBaseMetaTileEntity()
                     .enableWorking();
@@ -217,9 +215,7 @@ public final class CompactAEClientChecks {
                 restored.readFromNBT(saved);
                 world.setTileEntity(0, 10, 0, restored);
                 matrix = (AssemblerMatrix) restored.getMetaTileEntity();
-                require(
-                    matrix.getPatterns()
-                        .getStackInSlot(143) != null,
+                require(matrix.getPatterns().getStackInSlot(AssemblerMatrix.PATTERN_CAPACITY - 1) != null,
                     "last pattern slot survives NBT");
                 matrix.getBaseMetaTileEntity()
                     .enableWorking();

@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
@@ -71,6 +72,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import gregtech.api.GregTechAPI;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
+import gregtech.api.interfaces.IHatchElement;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
@@ -90,17 +92,11 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
 import gregtech.common.GTMockWorld;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
+import gregtech.common.misc.WirelessNetworkManager;
 import gregtech.common.ores.OreInfo;
 import gregtech.common.ores.OreManager;
 import gregtech.common.tileentities.machines.outputme.MTEHatchOutputBusME;
 
-/**
- * Electric Large Void Miner using the old large steam void miner body and Crust Matter Aggregator ore logic.
- * <p>
- * The physical structure remains the 7x9x7 steel drill frame from GT-Not-Cool, but the machine is a normal GregTech
- * electric multiblock: its work cost is EU/t from energy or exotic-energy hatches, and UU-Matter is only drained from
- * fluid input hatches when directional mode is enabled.
- */
 public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implements ISurvivalConstructable {
 
     private static final String STRUCTURE_PIECE_MAIN = "main";
@@ -186,6 +182,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         { "  E E  ", " BBBBB ", "EB   BE", " B C B ", "EB   BE", " BBBBB ", "  E E  " } };
 
     private int mCountCasing;
+    private UUID wirelessOwner;
 
     public String lastDimAbbr = "None";
     public String mLastOreName = "";
@@ -234,11 +231,14 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
     }
 
     private static IStructureElement<LargeVoidMiner> buildSteelCasingElement(int hint) {
-        return ofChain(
-            buildHatchAdder(LargeVoidMiner.class)
-                .atLeast(Energy.or(ExoticEnergy), InputBus, InputHatch, OutputBus, Maintenance)
-                .casingIndex(getSteelCasingTextureId()).hint(hint).build(),
-            onElementPass(t -> ++t.mCountCasing, ofBlock(sBlockCasings2, 0)));
+        Map<IHatchElement<? super LargeVoidMiner>, Integer> hatches = new LinkedHashMap<>();
+        hatches.put(Energy.or(ExoticEnergy), 0);
+        hatches.put(InputBus, 1);
+        hatches.put(InputHatch, 1);
+        hatches.put(OutputBus, 1);
+        hatches.put(Maintenance, 1);
+        return ofChain(buildHatchAdder(LargeVoidMiner.class).atLeast(hatches).casingIndex(getSteelCasingTextureId())
+            .hint(hint).build(), onElementPass(t -> ++t.mCountCasing, ofBlock(sBlockCasings2, 0)));
     }
 
     @Override
@@ -259,9 +259,6 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         if (!checkPiece(STRUCTURE_PIECE_MAIN, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET, errors)) return;
         checkCasingMin(errors, mCountCasing, 3);
         if (mOutputBusses.isEmpty()) errors.add(StructureErrors.hatchCount(ErrorType.TOO_FEW, OutputBus, 0, 1));
-        int energyHatchCount = mEnergyHatches.size() + mExoticEnergyHatches.size();
-        if (energyHatchCount < 1)
-            errors.add(StructureErrors.hatchCount(ErrorType.TOO_FEW, Energy, energyHatchCount, 1));
         if (shouldCheckMaintenance() && mMaintenanceHatches.isEmpty())
             errors.add(StructureErrors.hatchCount(ErrorType.TOO_FEW, Maintenance, 0, 1));
     }
@@ -298,6 +295,16 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
             mCurrentDimId = aBaseMetaTileEntity.getWorld().provider.dimensionId;
         }
         rebuildPool();
+    }
+
+    @Override
+    public boolean drainEnergyInput(long eu) {
+        IGregTechTileEntity base = getBaseMetaTileEntity();
+        if (eu < 0 || base == null || !base.isServerSide()) return false;
+        UUID owner = base.getOwnerUuid();
+        if (owner == null) return false;
+        if (!owner.equals(wirelessOwner)) wirelessOwner = WirelessNetworkManager.processInitialSettings(base);
+        return eu == 0 || WirelessNetworkManager.addEUToGlobalEnergyMap(wirelessOwner, -eu);
     }
 
     private static synchronized boolean isPluginLoaded() {
@@ -607,10 +614,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
     }
 
     public int getVoltageGrade() {
-        int voltageTier = GTUtility.getTier(getMaxInputVoltage());
-        if (voltageTier >= 3) return 2;
-        if (voltageTier >= 2) return 1;
-        return 0;
+        return 2;
     }
 
     public long getEnergyCostPerTick() {
@@ -1064,9 +1068,13 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
             // # zh_CN 从选定维度的维度虚空矿池采矿。
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.0"))
             // #tr tooltip.gtnotgood.largeVoidMiner.1
-            // # Uses EU and normal GT energy hatches; no steam hatches are required.
-            // # zh_CN 使用 EU 和普通 GT 能源仓，不需要蒸汽仓。
+            // # Draws EU from the owner's wireless network; no energy hatch is required.
+            // # zh_CN 直接使用拥有者所属无线电网的 EU，无需能源仓。
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.1"))
+            // #tr tooltip.gtnotgood.largeVoidMiner.wireless_grade
+            // # Fixed HV output grade, independent of energy hatches; existing overclocks still apply.
+            // # zh_CN 固定使用 HV 产量档位，不受能源仓影响，保留现有超频。
+            .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.wireless_grade"))
             // #tr tooltip.gtnotgood.largeVoidMiner.2
             // # The config terminal supports dimensions, filtering, directional mining, fortune, and ore modes.
             // # zh_CN 配置终端支持维度、过滤、定向、时运和矿石模式。
@@ -1086,7 +1094,7 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
             .addInputBus("0+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
             .addInputHatch("0+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
             .addOutputBus("1+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
-            .addEnergyHatch("1+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
+            .addEnergyHatch("0+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
             .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+",
                 StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
             .toolTipFinisher();

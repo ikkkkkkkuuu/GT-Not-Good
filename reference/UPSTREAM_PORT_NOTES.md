@@ -408,7 +408,7 @@ and results are in ignored `build/text-effects-qa/{angelica,gtnl}`.
   and `quamtumComputer/MixinCraftingGridCache` -> `mixins/late/AppliedEnergistics/compact/`;
   `mixins/early/minecraft/MixinInventoryCrafting` -> late compact mixin on AE's MEInventoryCrafting.
 - Adaptations: local GTNG base, registries, GUI textures and Java 8 APIs; ore-processor-style
-  3x2x1 StructureLib shape; fixed 144 pattern slots; fixed singularity CPU and maximum matrix parallel;
+  3x2x1 StructureLib shape; fixed 576 pattern slots; fixed singularity CPU and maximum matrix parallel;
   one-tick matrix cycles; no controller, dispatch or storage-transfer energy cost; overflow,
   interrupted-output and persistence fixes. No upstream raster assets copied.
 - Translation strings adapted from upstream English/Chinese resources into adjacent Java #tr comments.

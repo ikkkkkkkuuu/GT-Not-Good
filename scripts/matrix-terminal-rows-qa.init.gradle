@@ -16,6 +16,7 @@ gradle.projectsEvaluated {
     }
     root.extensions.findByName('spotless')?.java {
         target 'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/AssemblerMatrix.java',
+            'src/main/java/com/xyp/gtnotgood/common/gui/modularui/AssemblerMatrixGui.java',
             'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/LargeInterfaceTerminalRowsMixin.java',
             'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/LargeInterfaceTerminalEntryMixin.java',
             'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',

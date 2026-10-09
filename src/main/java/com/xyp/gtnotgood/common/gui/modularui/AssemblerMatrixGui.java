@@ -95,9 +95,9 @@ public class AssemblerMatrixGui extends GTNGModernMultiBlockBaseGui<AssemblerMat
         return super.createTerminalTextWidget(syncManager, parent).child(IKey
             .dynamic(() -> StatCollector.translateToLocalFormatted(
                 // #tr gtng.compact.matrix.pattern_usage
-                // # Patterns: %s/144
-                // # zh_CN 样板：%s/144
-                "gtng.compact.matrix.pattern_usage", usedSyncer.getIntValue()))
+                // # Patterns: %s/%s
+                // # zh_CN 样板：%s/%s
+                "gtng.compact.matrix.pattern_usage", usedSyncer.getIntValue(), AssemblerMatrix.PATTERN_CAPACITY))
             .asWidget().color(Color.WHITE.main).fullWidth()).child(createPatternOutputsWidget(syncManager));
     }
 

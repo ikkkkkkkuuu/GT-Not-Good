@@ -43,12 +43,12 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.3.9          | [![1.3.9](https://img.shields.io/badge/release-1.3.9-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.9) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.3.10         | [![1.3.10](https://img.shields.io/badge/release-1.3.10-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.10) |         ✔️         |
 
-最新版本：[1.3.9 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.9)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.9/gtnotgood-1.3.9.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.9/gtnotgood-1.3.9-sources.jar)。
+最新版本：[1.3.10 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.10)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.10/gtnotgood-1.3.10.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.10/gtnotgood-1.3.10-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.3.9。
+1.3.4 因启动错误已撤回，请更新到 1.3.10。
 
 ### 大型矿石处理机
 
@@ -156,7 +156,7 @@ NEI → GTNotGood 新增“优先使用本模组接口自动命名”，默认�
 
 ### 装配矩阵接口终端
 
-默认显示 2 行，按最后一个非空样板槽自动展开，取走末尾样板后自动收缩，无需重开终端。沿用超级样板输入总成的整行末格扩展规则，最多 16 行，保留全部 144 个真实样板槽。
+默认显示 2 行，按最后一个非空样板槽自动展开，取走末尾样板后自动收缩，无需重开终端。沿用超级样板输入总成的整行末格扩展规则，最多 64 行，保留全部 576 个真实样板槽。
 
 ### 🔌 库存 IO 接口 (ME)
 

@@ -101,10 +101,7 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 
 /**
- * Compact AE molecular assembler with exactly 144 pattern slots, fixed maximum batch throughput and one-tick
- * cycles. Input/output modes transfer encoded patterns through GregTech buses; operating mode exposes them to
- * the AE network. Accepted batches, container returns and products survive interruption and NBT reload.
- * No upgrades, maintenance or controller/crafting energy are required.
+ * Accepted batches, container returns and products survive interruption and NBT reload.
  *
  * @see AssemblerMatrixPatternState
  */
@@ -120,7 +117,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     public static final EnumSet<ForgeDirection> allDirection = EnumSet.complementOf(EnumSet.of(ForgeDirection.UNKNOWN));
     public static final EnumSet<ForgeDirection> emptyDirection = EnumSet.noneOf(ForgeDirection.class);
 
-    public static final int PATTERN_CAPACITY = 144;
+    public static final int PATTERN_CAPACITY = 576;
     public final int mMaxSlots = PATTERN_CAPACITY;
     public final long mMaxParallelLong = Long.MAX_VALUE;
     public boolean wirelessMode;
@@ -504,9 +501,9 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
         // # zh_CN 装配矩阵
         tt.addMachineType(StatCollector.translateToLocal("gtng.AssemblerMatrix.name"))
             // #tr gtng.AssemblerMatrix.maximum
-            // # Maximum parallel, 1 tick crafts, 144 pattern slots
-            // # zh_CN 最高并行、1 tick合成、144个样板槽位
-            .addInfo(StatCollector.translateToLocal("gtng.AssemblerMatrix.maximum"))
+            // # Maximum parallel, 1 tick crafts, %s pattern slots
+            // # zh_CN 最高并行、1 tick合成、%s个样板槽位
+            .addInfo(StatCollector.translateToLocalFormatted("gtng.AssemblerMatrix.maximum", PATTERN_CAPACITY))
             // #tr gtng.AssemblerMatrix.free
             // # No upgrades, EU or AE crafting energy required
             // # zh_CN 无需升级，不消耗EU或AE合成能量
