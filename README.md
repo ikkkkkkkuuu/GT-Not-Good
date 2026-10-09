@@ -43,12 +43,12 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.3.10         | [![1.3.10](https://img.shields.io/badge/release-1.3.10-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.10) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.4.0          | [![1.4.0](https://img.shields.io/badge/release-1.4.0-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.0) |         ✔️         |
 
-最新版本：[1.3.10 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.3.10)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.10/gtnotgood-1.3.10.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.3.10/gtnotgood-1.3.10-sources.jar)。
+最新版本：[1.4.0 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.0)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.0/gtnotgood-1.4.0.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.0/gtnotgood-1.4.0-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.3.10。
+1.3.4 因启动错误已撤回，请更新到 1.4.0。
 
 ### 大型矿石处理机
 
