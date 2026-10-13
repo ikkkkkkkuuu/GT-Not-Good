@@ -1,15 +1,11 @@
 package com.xyp.gtnotgood.ae2thing.network;
 
-import static com.xyp.gtnotgood.ae2thing.api.Constants.DISPLAY_ONLY;
-
 import java.io.IOException;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 import com.xyp.gtnotgood.ae2thing.inventory.InventoryHandler;
@@ -17,13 +13,14 @@ import com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType;
 import com.xyp.gtnotgood.ae2thing.inventory.item.WirelessTerminal;
 import com.xyp.gtnotgood.ae2thing.util.BlockPos;
 import com.xyp.gtnotgood.ae2thing.util.Util;
-import com.xyp.gtnotgood.common.compat.FluidDropCompat;
 
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IAEStack;
 import appeng.container.AEBaseContainer;
 import appeng.container.ContainerOpenContext;
 import appeng.container.implementations.ContainerCraftAmount;
 import appeng.helpers.InventoryAction;
+import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -111,25 +108,13 @@ public class CPacketInventoryAction implements IMessage {
                             itemSlot = Util.findDualInterfaceTerminal(sender);
                         }
                         if (te != null || itemSlot != -2) {
-                            if (message.stack == null){
-                                if (baseContainer.getTargetStack() instanceof IAEItemStack ais) {
-                                    message.stack = ais;
-                                }
+                            IAEStack<?> craftTarget = message.stack == null
+                                ? baseContainer.getTargetStack() : message.stack;
+                            if (craftTarget instanceof IAEItemStack item) {
+                                craftTarget = Platform.convertStack(item);
                             }
-                            // [液滴分类] 必须留液滴：AUTO_CRAFT 分支,把流体伪装成液滴物设为合成目标(setTargetStack)下单,CraftingJobV2 只认 IAEItemStack
-                            if(message.stack != null && FluidDropCompat.isFluidDrop(message.stack.getItem())){
-                                ItemStack is = message.stack.getItemStack().copy();
-                                NBTTagCompound data = is.getTagCompound();
-                                // A fluid_drop built from a craftable fluid may have no NBT tag; guard against NPE.
-                                if (data == null) {
-                                    data = new NBTTagCompound();
-                                }
-                                data.removeTag(DISPLAY_ONLY);
-                                is.setTagCompound(data);
-                                baseContainer.setTargetStack(AEItemStack.create(is));
-                            }else{
-                                baseContainer.setTargetStack(message.stack);
-                            }
+                            if (craftTarget == null) return null;
+                            baseContainer.setTargetStack(craftTarget);
                             if(te != null){
                                 InventoryHandler.openGui(
                                     sender,

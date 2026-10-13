@@ -183,7 +183,8 @@ public final class CrucibleClientChecks {
         require(dispatch() == null, "locked research rejected");
         input.setInventorySlotContents(7, new ItemStack(Items.brick));
         details = savedDetails;
-        for (int i = 36; i < 45; i++) provider.setInventorySlotContents(i, new ItemStack(Items.brick, 64));
+        for (int i = TilePackagedProvider.PATTERNS; i < TilePackagedProvider.CORE; i++)
+            provider.setInventorySlotContents(i, new ItemStack(Items.brick, 64));
         require(dispatch() == null && amount(Aspect.AIR) == 1000 && crucible.tank.getFluidAmount() == 49,
             "full returns leaves resources untouched");
         clearReturns();
@@ -232,7 +233,9 @@ public final class CrucibleClientChecks {
         require(thaumiumDetails instanceof UltimatePatternHelper, "native ultimate pattern decoded");
         require(adapter.dispatch(provider, provider.targets.get(0), thaumiumDetails, nativeInput) != null,
             "ultimate iron to thaumium: " + provider.altarStatus);
-        require(amount(Aspect.MAGIC) == 0 && TilePackagedProvider.sameItem(provider.getStackInSlot(36), thaumium),
+        require(
+            amount(Aspect.MAGIC) == 0
+                && TilePackagedProvider.sameItem(provider.getStackInSlot(TilePackagedProvider.PATTERNS), thaumium),
             "thaumium output and four magic essentia debited");
         clearReturns();
         nativeInput.setInventorySlotContents(0, AEItemStack.create(new ItemStack(Items.brick)));
@@ -244,7 +247,8 @@ public final class CrucibleClientChecks {
     }
 
     private void clearReturns() {
-        for (int i = 36; i < 45; i++) provider.setInventorySlotContents(i, null);
+        for (int i = TilePackagedProvider.PATTERNS; i < TilePackagedProvider.CORE; i++)
+            provider.setInventorySlotContents(i, null);
     }
 
     private void put(Aspect aspect, long count) {

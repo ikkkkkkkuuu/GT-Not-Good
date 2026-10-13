@@ -134,16 +134,10 @@ public class CPacketCraftRequest implements IMessage {
                     Future<ICraftingJob> futureJob = null;
                     try {
                         final ICraftingGrid cg = g.getCache(ICraftingGrid.class);
-                        // Convert the craft target so fluids resolve correctly. A fluid craft target arrives here as
-                        // an ItemFluidDrop IAEItemStack, but the crafting calculation (CraftingJobV2 -> availablePatterns)
-                        // keys craftable outputs by their native stack: for fluids that is an IAEFluidStack, not the
-                        // fluid_drop. The 6-arg CraftingGridCache.beginCraftingJob does NOT call convertStack (only the
-                        // IAEItemStack overload does), so without this the fluid_drop never matches any pattern and the
-                        // target is treated as a raw leaf ingredient (shown as a lone drop, not expanded). Platform
-                        // .convertStack turns the fluid_drop into its IAEFluidStack; item targets pass through unchanged.
-                        // This mirrors what AE2FC's own TileLevelMaintainer does before requesting a fluid craft.
-                        IAEStack<?> craftTarget =
-                            Platform.convertStack((IAEItemStack) cca.getItemToCraft());
+                        IAEStack<?> craftTarget = cca.getItemToCraft();
+                        if (craftTarget instanceof IAEItemStack item) {
+                            craftTarget = Platform.convertStack(item);
+                        }
                         if (cg instanceof CraftingGridCache cgc) {
                             futureJob = cgc.beginCraftingJob(
                                 cca.getWorld(),

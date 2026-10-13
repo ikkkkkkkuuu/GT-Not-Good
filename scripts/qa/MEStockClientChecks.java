@@ -1,7 +1,5 @@
 package com.xyp.gtnotgood.common.parts.mestock;
 
-import com.xyp.gtnotgood.common.blocks.mestock.TileMERequester;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -43,12 +41,14 @@ import org.lwjgl.opengl.GL11;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.GuiContainerWrapper;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.glodblock.github.loader.ItemAndBlockHolder;
 import com.xyp.gtnotgood.common.blocks.mebridge.TileMEBridgeBase;
+import com.xyp.gtnotgood.common.blocks.mestock.TileMERequester;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
@@ -80,7 +80,10 @@ import cpw.mods.fml.common.registry.GameRegistry;
 public final class MEStockClientChecks {
 
     private boolean started, finished, resumed;
+    private boolean amountChecks;
     private int ticks, stage, frames;
+    private volatile int amountTicks;
+    private int renderedAmountTick;
     private volatile int screen;
     private volatile boolean captured;
     private boolean texturesReloaded;
@@ -108,12 +111,11 @@ public final class MEStockClientChecks {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        amountChecks = Boolean.getBoolean("gtng.meStock.amounts");
         save = System.getProperty("gtng.meStock.resume", "");
         resumed = !save.isEmpty();
         if (resumed && !save.matches("me-stock-qa-[0-9]+")) throw new IllegalArgumentException("Not a QA world");
-        FMLCommonHandler.instance()
-            .bus()
-            .register(this);
+        FMLCommonHandler.instance().bus().register(this);
     }
 
     @SubscribeEvent
@@ -122,12 +124,11 @@ public final class MEStockClientChecks {
         Minecraft mc = Minecraft.getMinecraft();
         mc.gameSettings.pauseOnLostFocus = false;
         mc.gameSettings.guiScale = 2;
+        if (amountChecks && screen >= 12 && !captured) amountTicks++;
         if (!started && mc.theWorld == null && mc.currentScreen != null) {
             started = true;
             if (!resumed) save = "me-stock-qa-" + System.currentTimeMillis();
-            mc.launchIntegratedServer(
-                save,
-                "ME stock QA",
+            mc.launchIntegratedServer(save, "ME stock QA",
                 resumed ? null : new WorldSettings(62L, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT));
         }
     }
@@ -135,8 +136,7 @@ public final class MEStockClientChecks {
     @SubscribeEvent
     public void server(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || finished) return;
-        var server = FMLCommonHandler.instance()
-            .getMinecraftServerInstance();
+        var server = FMLCommonHandler.instance().getMinecraftServerInstance();
         if (server == null || server.getConfigurationManager().playerEntityList.isEmpty()) return;
         EntityPlayerMP player = (EntityPlayerMP) server.getConfigurationManager().playerEntityList.get(0);
         try {
@@ -149,17 +149,14 @@ public final class MEStockClientChecks {
 
     private void step(EntityPlayerMP player) throws Exception {
         ticks++;
-        if (ticks > 1200) throw new AssertionError(
+        if (ticks > (amountChecks ? 3000 : 1200)) throw new AssertionError(
             "Timed out at stage " + stage + ", requester status=" + (requester == null ? -1 : requester.status(0)));
         World world = player.worldObj;
         if (resumed && ticks == 1) player.playerNetServerHandler.setPlayerLocation(4.5, 9, 6.5, 180, 10);
         if (ticks == 1) {
-            require(
-                StockNumbers.format(2500)
-                    .equals("2500") && StockNumbers.parse("2500") == 2500,
+            require(StockNumbers.format(2500).equals("2500") && StockNumbers.parse("2500") == 2500,
                 "GTNH fluid quantities use native liters without bucket scaling");
-            require(
-                StockNumbers.parse(Long.toString(Long.MAX_VALUE)) == Long.MAX_VALUE,
+            require(StockNumbers.parse(Long.toString(Long.MAX_VALUE)) == Long.MAX_VALUE,
                 "quantity parser preserves exact long values");
             boolean rejectedFraction = false;
             try {
@@ -178,33 +175,21 @@ public final class MEStockClientChecks {
             target = (TestTarget) world.getTileEntity(4, 8, 5);
             player.playerNetServerHandler.setPlayerLocation(6.5, 8, 6.5, 135, 20);
         }
-        if (ticks < 120 || !bus.getProxy()
-            .isActive()
-            || !requester.getProxy()
-                .isActive())
+        if (ticks < 120 || !bus.getProxy().isActive() || !requester.getProxy().isActive()) return;
+        if (cache == null) cache = bus.getProxy().getGrid().getCache(StockGridCache.class);
+        if (amountChecks) {
+            stepAmounts(player);
             return;
-        if (cache == null) cache = bus.getProxy()
-            .getGrid()
-            .getCache(StockGridCache.class);
+        }
         if (resumed) {
             if (stage == 0) {
-                require(
-                    bus.stockConfig()
-                        .amount(0) == 100
-                        && bus.stockConfig()
-                            .amount(1) == 5000,
+                require(bus.stockConfig().amount(0) == 100 && bus.stockConfig().amount(1) == 5000,
                     "threshold settings survive restart");
-                require(
-                    emitter.stockConfig()
-                        .amount(0) == 20 && emitter.upper() == 80,
+                require(emitter.stockConfig().amount(0) == 20 && emitter.upper() == 80,
                     "emitter thresholds survive restart");
-                require(
-                    requester.stockConfig()
-                        .amount(0) == 8 && requester.name()
-                            .equals("电路备货测试"),
+                require(requester.stockConfig().amount(0) == 8 && requester.name().equals("电路备货测试"),
                     "requester settings survive restart");
-                require(
-                    target.itemCount() == 156 && target.tank.getFluidAmount() == 7000,
+                require(target.itemCount() == 156 && target.tank.getFluidAmount() == 7000,
                     "item/fluid transfers persist");
                 stage = 200;
                 screen = 5;
@@ -212,144 +197,86 @@ public final class MEStockClientChecks {
                 frames = 0;
                 StockGuiFactory.instance.openAmount(player, bus, 1);
             } else if (stage == 200 && captured) {
-                require(
-                    bus.stockConfig()
-                        .amount(1) == Long.MAX_VALUE,
+                require(bus.stockConfig().amount(1) == Long.MAX_VALUE,
                     "selected fluid row accepts long quantity from GUI");
-                require(
-                    bus.stockConfig()
-                        .amount(0) == 100,
-                    "selected-row editing preserves the other reserve");
-                bus.stockConfig()
-                    .setAmount(1, 5000);
+                require(bus.stockConfig().amount(0) == 100, "selected-row editing preserves the other reserve");
+                bus.stockConfig().setAmount(1, 5000);
                 captured = false;
                 frames = 0;
                 screen = 6;
                 stage = 201;
                 StockGuiFactory.instance.open(player, terminal);
             } else if (stage == 201 && captured) {
-                require(
-                    requester.stockConfig()
-                        .amount(0) == 9
-                        && requester.stockConfig()
-                            .batch(0) == 2,
+                require(requester.stockConfig().amount(0) == 9 && requester.stockConfig().batch(0) == 2,
                     "terminal submits both inline request fields together");
-                require(
-                    requester.stockConfig()
-                        .amount(1) == 2500
-                        && requester.stockConfig()
-                            .batch(1) == 0,
+                require(requester.stockConfig().amount(1) == 2500 && requester.stockConfig().batch(1) == 0,
                     "same-tick search rejects submission for the previous row identity");
-                requester.stockConfig()
-                    .setAmounts(0, 8, 0);
-                StockGuiFactory.Data remote = new StockGuiFactory.Data(
-                    player,
-                    4,
-                    8,
-                    4,
-                    ForgeDirection.DOWN.ordinal(),
+                requester.stockConfig().setAmounts(0, 8, 0);
+                StockGuiFactory.Data remote = new StockGuiFactory.Data(player, 4, 8, 4, ForgeDirection.DOWN.ordinal(),
                     new int[] { 0, 5, 9, 4 });
                 require(StockGuiFactory.instance.canInteractWith(player, remote), "same-grid terminal access is valid");
                 player.setPosition(30, 8, 30);
                 require(!StockGuiFactory.instance.canInteractWith(player, remote), "terminal distance is rechecked");
                 player.setPosition(6.5, 8, 6.5);
                 world.setBlockToAir(5, 9, 4);
-                require(
-                    !StockGuiFactory.instance.canInteractWith(player, remote),
+                require(!StockGuiFactory.instance.canInteractWith(player, remote),
                     "removed remote requester invalidates existing access");
-                world.setBlock(
-                    5,
-                    9,
-                    4,
-                    Block.getBlockFromItem(
-                        GTNGItemList.MERequester.get(1)
-                            .getItem()));
-                require(
-                    !StockGuiFactory.instance.canInteractWith(player, remote),
+                world.setBlock(5, 9, 4, Block.getBlockFromItem(GTNGItemList.MERequester.get(1).getItem()));
+                require(!StockGuiFactory.instance.canInteractWith(player, remote),
                     "replacement at the same coordinate cannot reuse existing access");
                 finish("PASS");
             }
             return;
         }
-        var storage = bus.getProxy()
-            .getStorage();
+        var storage = bus.getProxy().getStorage();
         var source = new MachineSource(bus);
         var iron = AEItemStack.create(new ItemStack(Items.iron_ingot));
         var water = AEFluidStack.create(new FluidStack(FluidRegistry.WATER, 1));
         var ironBlock = AEItemStack.create(new ItemStack(Blocks.gold_block));
-        if (ticks % 100 == 0) System.out.println(
-            "ME_STOCK_QA progress stage=" + stage
-                + " status="
-                + requester.status(0)
-                + " fluidStatus="
-                + requester.status(1)
-                + " plans="
-                + cache.plansStarted
-                + " calculating="
-                + cache.planningCount()
-                + " gold="
-                + StockResources.count(storage, ironBlock)
-                + " iron="
-                + StockResources.count(storage, iron)
-                + " water="
-                + StockResources.count(storage, water)
-                + " tank="
-                + target.tank.getFluidAmount());
+        if (
+            ticks % 100 == 0
+        ) System.out.println("ME_STOCK_QA progress stage=" + stage
+            + " status="
+            + requester.status(0)
+            + " fluidStatus="
+            + requester.status(1)
+            + " plans="
+            + cache.plansStarted
+            + " calculating="
+            + cache.planningCount()
+            + " gold="
+            + StockResources.count(storage, ironBlock)
+            + " iron="
+            + StockResources.count(storage, iron)
+            + " water="
+            + StockResources.count(storage, water)
+            + " tank="
+            + target.tank.getFluidAmount());
         if (stage == 0) {
-            require(
-                PartThresholdExportBus.exportLimit(true, Long.MAX_VALUE, Long.MAX_VALUE - 5) == 5,
+            require(PartThresholdExportBus.exportLimit(true, Long.MAX_VALUE, Long.MAX_VALUE - 5) == 5,
                 "large reserve subtraction");
-            require(
-                PartThresholdExportBus.exportLimit(false, 100, 100) == 100,
+            require(PartThresholdExportBus.exportLimit(false, 100, 100) == 100,
                 "below-mode boundary includes equality");
-            require(
-                StockResources.missing(Long.MAX_VALUE, 10, Long.MAX_VALUE) == 0,
+            require(StockResources.missing(Long.MAX_VALUE, 10, Long.MAX_VALUE) == 0,
                 "in-flight addition cannot overflow");
-            bus.stockConfig()
-                .setKey(0, iron);
-            bus.stockConfig()
-                .setAmount(0, 100);
-            bus.stockConfig()
-                .setKey(1, water);
-            bus.stockConfig()
-                .setAmount(1, 5000);
-            bus.getInventoryByName("upgrades")
-                .setInventorySlotContents(
-                    0,
-                    AEApi.instance()
-                        .definitions()
-                        .materials()
-                        .cardSuperluminalSpeed()
-                        .maybeStack(1)
-                        .get());
-            emitter.stockConfig()
-                .setKey(0, ironBlock);
-            emitter.stockConfig()
-                .setAmount(0, 20);
+            bus.stockConfig().setKey(0, iron);
+            bus.stockConfig().setAmount(0, 100);
+            bus.stockConfig().setKey(1, water);
+            bus.stockConfig().setAmount(1, 5000);
+            bus.getInventoryByName("upgrades").setInventorySlotContents(0,
+                AEApi.instance().definitions().materials().cardSuperluminalSpeed().maybeStack(1).get());
+            emitter.stockConfig().setKey(0, ironBlock);
+            emitter.stockConfig().setAmount(0, 20);
             emitter.setUpper(80);
-            requester.stockConfig()
-                .setKey(0, ironBlock);
-            requester.stockConfig()
-                .setAmount(0, 8);
-            secondRequester.stockConfig()
-                .setKey(0, ironBlock);
-            secondRequester.stockConfig()
-                .setAmount(0, 8);
+            requester.stockConfig().setKey(0, ironBlock);
+            requester.stockConfig().setAmount(0, 8);
+            secondRequester.stockConfig().setKey(0, ironBlock);
+            secondRequester.stockConfig().setAmount(0, 8);
             requester.setName("电路备货测试");
-            storage.getItemInventory()
-                .injectItems(
-                    iron.copy()
-                        .setStackSize(256),
-                    Actionable.MODULATE,
-                    source);
-            storage.getFluidInventory()
-                .injectItems(
-                    water.copy()
-                        .setStackSize(12000),
-                    Actionable.MODULATE,
-                    source);
-            storage.getItemInventory()
-                .injectItems(AEItemStack.create(new ItemStack(Items.gold_ingot, 256)), Actionable.MODULATE, source);
+            storage.getItemInventory().injectItems(iron.copy().setStackSize(256), Actionable.MODULATE, source);
+            storage.getFluidInventory().injectItems(water.copy().setStackSize(12000), Actionable.MODULATE, source);
+            storage.getItemInventory().injectItems(AEItemStack.create(new ItemStack(Items.gold_ingot, 256)),
+                Actionable.MODULATE, source);
             stage = 1;
         } else
             if (stage == 1 && StockResources.count(storage, ironBlock) == 8 && target.tank.getFluidAmount() == 7000) {
@@ -357,41 +284,20 @@ public final class MEStockClientChecks {
                 require(StockResources.count(storage, water) == 5000, "threshold preserves network fluid reserve");
                 require(target.itemCount() == 156, "surplus item delivery conserves quantity");
                 require(emitter.output(), "below lower threshold emits");
-                require(
-                    cache.plansStarted == 1,
+                require(cache.plansStarted == 1,
                     "two requesters share calculation reservations and do not double-order");
                 plansAtComplete = cache.plansStarted;
-                storage.getItemInventory()
-                    .injectItems(
-                        ironBlock.copy()
-                            .setStackSize(92),
-                        Actionable.MODULATE,
-                        source);
+                storage.getItemInventory().injectItems(ironBlock.copy().setStackSize(92), Actionable.MODULATE, source);
                 stage = 2;
             } else if (stage == 2 && !emitter.output()) {
-                storage.getItemInventory()
-                    .extractItems(
-                        ironBlock.copy()
-                            .setStackSize(50),
-                        Actionable.MODULATE,
-                        source);
+                storage.getItemInventory().extractItems(ironBlock.copy().setStackSize(50), Actionable.MODULATE, source);
                 stage = 3;
             } else if (stage == 3 && ticks % 20 == 0) {
                 require(!emitter.output(), "falling inventory holds off between limits");
-                storage.getItemInventory()
-                    .extractItems(
-                        ironBlock.copy()
-                            .setStackSize(40),
-                        Actionable.MODULATE,
-                        source);
+                storage.getItemInventory().extractItems(ironBlock.copy().setStackSize(40), Actionable.MODULATE, source);
                 stage = 4;
             } else if (stage == 4 && emitter.output()) {
-                storage.getItemInventory()
-                    .injectItems(
-                        ironBlock.copy()
-                            .setStackSize(40),
-                        Actionable.MODULATE,
-                        source);
+                storage.getItemInventory().injectItems(ironBlock.copy().setStackSize(40), Actionable.MODULATE, source);
                 stage = 5;
             } else if (stage == 5 && ticks % 20 == 0) {
                 require(emitter.output(), "rising inventory holds on between limits");
@@ -400,87 +306,68 @@ public final class MEStockClientChecks {
                 requester.writeSettings(tag);
                 TileMERequester copy = new TileMERequester();
                 copy.readSettings(tag);
-                require(
-                    copy.stockConfig()
-                        .amount(0) == 8
-                        && copy.stockConfig()
-                            .batch(0) == 0,
+                require(copy.stockConfig().amount(0) == 8 && copy.stockConfig().batch(0) == 0,
                     "long targets and auto batches serialize");
                 largeQueue(world);
                 // Move iron blocks above upper then disable requester; capture a stable state for restart.
-                storage.getItemInventory()
-                    .injectItems(
-                        ironBlock.copy()
-                            .setStackSize(50),
-                        Actionable.MODULATE,
-                        source);
-                requester.stockConfig()
-                    .setEnabled(0, false);
-                secondRequester.stockConfig()
-                    .setEnabled(0, false);
-                requester.stockConfig()
-                    .setKey(1, AEFluidStack.create(new FluidStack(FluidRegistry.LAVA, 1)));
-                requester.stockConfig()
-                    .setAmount(1, 2500);
+                storage.getItemInventory().injectItems(ironBlock.copy().setStackSize(50), Actionable.MODULATE, source);
+                requester.stockConfig().setEnabled(0, false);
+                secondRequester.stockConfig().setEnabled(0, false);
+                requester.stockConfig().setKey(1, AEFluidStack.create(new FluidStack(FluidRegistry.LAVA, 1)));
+                requester.stockConfig().setAmount(1, 2500);
                 stage = 50;
-            } else if (stage == 50
-                && StockResources.count(storage, AEFluidStack.create(new FluidStack(FluidRegistry.LAVA, 1))) >= 2500) {
-                    TestProvider provider = (TestProvider) world.getTileEntity(5, 9, 5);
-                    require(
-                        provider.nativeFluidInputs == 3000,
-                        "fluid requester supplies native Ultimate-pattern inputs");
-                    require(
-                        cache.plansStarted == plansAtComplete + 1,
-                        "fluid requester submits exactly one stock order");
-                    require(
-                        StockResources.count(storage, water) == 2000,
-                        "fluid processing consumes exactly three native batches");
-                    requester.stockConfig()
-                        .setEnabled(1, false);
-                    dormantLookups = bus.stockLookups;
-                    emitterEvaluations = emitter.evaluations;
-                    screen = 1;
-                    captured = false;
-                    frames = 0;
-                    StockGuiFactory.instance.open(player, bus);
-                    stage = 6;
-                } else if (stage >= 6 && stage <= 9 && captured) {
-                    captured = false;
-                    frames = 0;
-                    if (stage == 6) {
-                        screen = 2;
-                        StockGuiFactory.instance.open(player, emitter);
-                    }
-                    if (stage == 7) {
-                        screen = 3;
-                        StockGuiFactory.instance.open(player, requester);
-                    }
-                    if (stage == 8) {
-                        screen = 4;
-                        StockGuiFactory.instance.open(player, terminal);
-                    }
-                    if (stage == 9) {
-                        screen = 0;
-                        require(bus.stockLookups - dormantLookups < 12, "idle threshold bus sleeps");
-                        require(emitter.evaluations - emitterEvaluations < 6, "idle emitter sleeps");
-                        require(
-                            cache.planningCount() <= 2 && cache.cpuScans < ticks / 20 + 3,
-                            "shared CPU and calculation budgets");
-                        Files.write(new File("resume.txt").toPath(), save.getBytes(StandardCharsets.UTF_8));
-                        System.out.println(
-                            "ME_STOCK_QA METRICS ticks=" + ticks
-                                + " cpuScans="
-                                + cache.cpuScans
-                                + " visits="
-                                + cache.deviceVisits
-                                + " plans="
-                                + cache.plansStarted);
-                        player.closeScreen();
-                        screen = 10;
-                        frames = 0;
-                    }
-                    stage++;
+            } else if (
+                stage == 50
+                    && StockResources.count(storage, AEFluidStack.create(new FluidStack(FluidRegistry.LAVA, 1))) >= 2500
+            ) {
+                TestProvider provider = (TestProvider) world.getTileEntity(5, 9, 5);
+                require(provider.nativeFluidInputs == 3000, "fluid requester supplies native Ultimate-pattern inputs");
+                require(cache.plansStarted == plansAtComplete + 1, "fluid requester submits exactly one stock order");
+                require(StockResources.count(storage, water) == 2000,
+                    "fluid processing consumes exactly three native batches");
+                requester.stockConfig().setEnabled(1, false);
+                dormantLookups = bus.stockLookups;
+                emitterEvaluations = emitter.evaluations;
+                screen = 1;
+                captured = false;
+                frames = 0;
+                StockGuiFactory.instance.open(player, bus);
+                stage = 6;
+            } else if (stage >= 6 && stage <= 9 && captured) {
+                captured = false;
+                frames = 0;
+                if (stage == 6) {
+                    screen = 2;
+                    StockGuiFactory.instance.open(player, emitter);
                 }
+                if (stage == 7) {
+                    screen = 3;
+                    StockGuiFactory.instance.open(player, requester);
+                }
+                if (stage == 8) {
+                    screen = 4;
+                    StockGuiFactory.instance.open(player, terminal);
+                }
+                if (stage == 9) {
+                    screen = 0;
+                    require(bus.stockLookups - dormantLookups < 12, "idle threshold bus sleeps");
+                    require(emitter.evaluations - emitterEvaluations < 6, "idle emitter sleeps");
+                    require(cache.planningCount() <= 2 && cache.cpuScans < ticks / 20 + 3,
+                        "shared CPU and calculation budgets");
+                    Files.write(new File("resume.txt").toPath(), save.getBytes(StandardCharsets.UTF_8));
+                    System.out.println("ME_STOCK_QA METRICS ticks=" + ticks
+                        + " cpuScans="
+                        + cache.cpuScans
+                        + " visits="
+                        + cache.deviceVisits
+                        + " plans="
+                        + cache.plansStarted);
+                    player.closeScreen();
+                    screen = 10;
+                    frames = 0;
+                }
+                stage++;
+            }
         if (stage == 10 && captured) {
             textureShowcase(world, player);
             player.closeScreen();
@@ -498,143 +385,144 @@ public final class MEStockClientChecks {
         }
     }
 
+    private void stepAmounts(EntityPlayerMP player) {
+        if (stage == 0) {
+            requester.setName("数量编辑测试");
+            secondRequester.setName("备用请求器");
+            for (TileMERequester tile : new TileMERequester[] { requester, secondRequester }) {
+                tile.stockConfig().setKey(0, AEItemStack.create(new ItemStack(Blocks.gold_block)));
+                tile.stockConfig().setKey(1, AEFluidStack.create(new FluidStack(FluidRegistry.WATER, 1)));
+                tile.stockConfig().setEnabled(0, false);
+                tile.stockConfig().setEnabled(1, false);
+            }
+            requester.stockConfig().setAmounts(0, 144, 0);
+            requester.stockConfig().setAmounts(1, 2500, 0);
+            secondRequester.stockConfig().setAmounts(0, 720, 48);
+            secondRequester.stockConfig().setAmounts(1, 4000, 1000);
+            amountStage(300);
+            StockGuiFactory.instance.open(player, requester);
+            return;
+        }
+        if (!captured) return;
+        switch (stage) {
+            case 300 -> {
+                requireAmounts(requester, 0, 144, 0, "requester item drafts are not saved on blur");
+                amountStage(301);
+            }
+            case 301 -> {
+                requireAmounts(requester, 0, 288, 16, "requester Enter submits both item amounts");
+                amountStage(302);
+                StockGuiFactory.instance.open(player, requester);
+            }
+            case 302 -> {
+                requireAmounts(requester, 1, 2500, 0, "requester fluid drafts are not saved on blur");
+                amountStage(303);
+            }
+            case 303 -> {
+                requireAmounts(requester, 1, 4000, 1000, "requester checkmark submits native fluid liters");
+                amountStage(304);
+                StockGuiFactory.instance.open(player, requester);
+            }
+            case 304 -> {
+                amountStage(305);
+                StockGuiFactory.instance.open(player, terminal);
+            }
+            case 305 -> {
+                requireAmounts(requester, 0, 288, 16, "terminal item drafts are not saved on blur");
+                amountStage(306);
+            }
+            case 306 -> {
+                requireAmounts(requester, 0, 576, 32, "terminal Enter submits both item amounts");
+                amountStage(307);
+                StockGuiFactory.instance.open(player, terminal);
+            }
+            case 307 -> {
+                requireAmounts(requester, 0, 576, 32, "terminal second item drafts wait for confirmation");
+                amountStage(308);
+            }
+            case 308 -> {
+                requireAmounts(requester, 0, 720, 48, "terminal checkmark submits both item amounts");
+                amountStage(309);
+            }
+            case 309 -> {
+                requireAmounts(requester, 0, 720, 48, "terminal search does not submit former row drafts");
+                requireAmounts(secondRequester, 0, 720, 48, "terminal replacement row retains authoritative amounts");
+                amountStage(310);
+                StockGuiFactory.instance.open(player, terminal);
+            }
+            case 310 -> {
+                requireAmounts(requester, 1, 4000, 1000, "terminal fluid drafts are not saved on blur");
+                amountStage(311);
+            }
+            case 311 -> {
+                requireAmounts(requester, 1, 5000, 1500, "terminal checkmark submits native fluid liters");
+                amountStage(312);
+                StockGuiFactory.instance.open(player, terminal);
+            }
+            case 312 -> finish("PASS");
+            default -> throw new AssertionError("Unknown amount stage " + stage);
+        }
+    }
+
+    private void amountStage(int next) {
+        stage = next;
+        frames = 0;
+        amountTicks = 0;
+        renderedAmountTick = 0;
+        captured = false;
+        screen = next - 288;
+    }
+
+    private static void requireAmounts(TileMERequester tile, int row, long target, long batch, String message) {
+        require(tile.stockConfig().amount(row) == target && tile.stockConfig().batch(row) == batch, message);
+    }
+
     private void textureShowcase(World world, EntityPlayerMP player) {
-        var definitions = AEApi.instance()
-            .definitions();
+        var definitions = AEApi.instance().definitions();
         for (int x = 9; x <= 23; x++) for (int z = 2; z <= 11; z++) world.setBlock(x, 7, z, Blocks.stone);
         GTNGItemList[] parts = { GTNGItemList.ThresholdExportBus, GTNGItemList.ThresholdLevelEmitter,
             GTNGItemList.MERequesterTerminal };
         int[] positions = { 11, 14, 20 };
         for (int i = 0; i < parts.length; i++) {
             int x = positions[i];
-            world.setBlock(
-                x,
-                8,
-                5,
-                definitions.blocks()
-                    .multiPart()
-                    .maybeBlock()
-                    .get());
+            world.setBlock(x, 8, 5, definitions.blocks().multiPart().maybeBlock().get());
             IPartHost host = (IPartHost) world.getTileEntity(x, 8, 5);
-            host.addPart(
-                definitions.parts()
-                    .cableGlass()
-                    .stack(AEColor.Transparent, 1),
-                ForgeDirection.UNKNOWN,
+            host.addPart(definitions.parts().cableGlass().stack(AEColor.Transparent, 1), ForgeDirection.UNKNOWN,
                 player);
             host.addPart(parts[i].get(1), ForgeDirection.SOUTH, player);
-            world.setBlock(
-                x,
-                8,
-                4,
-                definitions.blocks()
-                    .energyCellCreative()
-                    .maybeBlock()
-                    .get());
+            world.setBlock(x, 8, 4, definitions.blocks().energyCellCreative().maybeBlock().get());
         }
         world.setBlock(17, 8, 5, Block.getBlockFromItem(GTNGItemList.MERequester.getItem()), 3, 3);
-        world.setBlock(
-            17,
-            8,
-            4,
-            definitions.blocks()
-                .energyCellCreative()
-                .maybeBlock()
-                .get());
+        world.setBlock(17, 8, 4, definitions.blocks().energyCellCreative().maybeBlock().get());
     }
 
     private void setup(World world, EntityPlayerMP player) {
-        var d = AEApi.instance()
-            .definitions();
-        world.setBlock(
-            4,
-            8,
-            4,
-            d.blocks()
-                .multiPart()
-                .maybeBlock()
-                .get());
+        var d = AEApi.instance().definitions();
+        world.setBlock(4, 8, 4, d.blocks().multiPart().maybeBlock().get());
         IPartHost host = (IPartHost) world.getTileEntity(4, 8, 4);
-        host.addPart(
-            d.parts()
-                .cableGlass()
-                .stack(AEColor.Transparent, 1),
-            ForgeDirection.UNKNOWN,
-            player);
+        host.addPart(d.parts().cableGlass().stack(AEColor.Transparent, 1), ForgeDirection.UNKNOWN, player);
         host.addPart(GTNGItemList.ThresholdExportBus.get(1), ForgeDirection.SOUTH, player);
         host.addPart(GTNGItemList.ThresholdLevelEmitter.get(1), ForgeDirection.EAST, player);
         host.addPart(GTNGItemList.MERequesterTerminal.get(1), ForgeDirection.DOWN, player);
-        world.setBlock(
-            4,
-            8,
-            3,
-            d.blocks()
-                .energyCellCreative()
-                .maybeBlock()
-                .get());
-        world.setBlock(
-            3,
-            8,
-            3,
-            d.blocks()
-                .controller()
-                .maybeBlock()
-                .get());
-        world.setBlock(
-            3,
-            8,
-            4,
-            d.blocks()
-                .drive()
-                .maybeBlock()
-                .get());
-        world.setBlock(
-            2,
-            8,
-            4,
-            d.blocks()
-                .craftingStorage64k()
-                .maybeBlock()
-                .get());
-        world.setBlock(
-            4,
-            9,
-            4,
-            Block.getBlockFromItem(
-                GTNGItemList.MERequester.get(1)
-                    .getItem()));
+        world.setBlock(4, 8, 3, d.blocks().energyCellCreative().maybeBlock().get());
+        world.setBlock(3, 8, 3, d.blocks().controller().maybeBlock().get());
+        world.setBlock(3, 8, 4, d.blocks().drive().maybeBlock().get());
+        world.setBlock(2, 8, 4, d.blocks().craftingStorage64k().maybeBlock().get());
+        world.setBlock(4, 9, 4, Block.getBlockFromItem(GTNGItemList.MERequester.get(1).getItem()));
         ((TileMERequester) world.getTileEntity(4, 9, 4)).setOwnerName(player.getCommandSenderName());
-        world.setBlock(
-            5,
-            9,
-            4,
-            Block.getBlockFromItem(
-                GTNGItemList.MERequester.get(1)
-                    .getItem()));
+        world.setBlock(5, 9, 4, Block.getBlockFromItem(GTNGItemList.MERequester.get(1).getItem()));
         ((TileMERequester) world.getTileEntity(5, 9, 4)).setOwnerName(player.getCommandSenderName());
         world.setBlock(4, 8, 5, targetBlock);
         world.setBlock(5, 9, 5, providerBlock);
         ((TestProvider) world.getTileEntity(5, 9, 5)).setOwnerName(player.getCommandSenderName());
         TileDrive drive = (TileDrive) world.getTileEntity(3, 8, 4);
-        drive.getInternalInventory()
-            .setInventorySlotContents(
-                0,
-                d.items()
-                    .cell64k()
-                    .maybeStack(1)
-                    .get());
-        drive.getInternalInventory()
-            .setInventorySlotContents(1, new ItemStack(ItemAndBlockHolder.CELL16384KM));
+        drive.getInternalInventory().setInventorySlotContents(0, d.items().cell64k().maybeStack(1).get());
+        drive.getInternalInventory().setInventorySlotContents(1, new ItemStack(ItemAndBlockHolder.CELL16384KM));
         for (int x = 1; x < 9; x++) for (int z = 1; z < 9; z++) world.setBlock(x, 7, z, Blocks.stone);
     }
 
     private static ItemStack pattern() {
-        ItemStack result = AEApi.instance()
-            .definitions()
-            .items()
-            .encodedUltimatePattern()
-            .maybeStack(1)
-            .get();
+        ItemStack result = AEApi.instance().definitions().items().encodedUltimatePattern().maybeStack(1).get();
         NBTTagCompound tag = new NBTTagCompound();
         NBTTagList in = new NBTTagList(), out = new NBTTagList();
         NBTTagCompound input = new NBTTagCompound();
@@ -652,12 +540,7 @@ public final class MEStockClientChecks {
     }
 
     private static ItemStack fluidPattern() {
-        ItemStack pattern = AEApi.instance()
-            .definitions()
-            .items()
-            .encodedUltimatePattern()
-            .maybeStack(1)
-            .get();
+        ItemStack pattern = AEApi.instance().definitions().items().encodedUltimatePattern().maybeStack(1).get();
         NBTTagCompound tag = new NBTTagCompound();
         NBTTagList inputs = new NBTTagList(), outputs = new NBTTagList();
         NBTTagCompound input = new NBTTagCompound(), output = new NBTTagCompound();
@@ -674,9 +557,7 @@ public final class MEStockClientChecks {
     }
 
     private void largeQueue(World world) {
-        StockGridCache scale = new StockGridCache(
-            bus.getActionableNode()
-                .getGrid());
+        StockGridCache scale = new StockGridCache(bus.getActionableNode().getGrid());
         TileMERequester[] machines = new TileMERequester[1024];
         for (int i = 0; i < machines.length; i++) {
             machines[i] = new TileMERequester();
@@ -692,25 +573,26 @@ public final class MEStockClientChecks {
         }
         require(scale.deviceVisits == 1024, "all large-queue devices receive service fairly");
         for (TileMERequester tile : machines) scale.removeNode(null, tile);
-        require(
-            scale.queueSize() == 0 && scale.listing()
-                .isEmpty(),
-            "network removal clears queue and directory");
+        require(scale.queueSize() == 0 && scale.listing().isEmpty(), "network removal clears queue and directory");
         System.out
             .println("ME_STOCK_QA SCALE 1024 logical devices; 20480 notifications; visits/tick <= 8; no world scan");
     }
 
     @SubscribeEvent
     public void render(TickEvent.RenderTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || screen == 0 || captured || finished || ++frames < 40) return;
+        if (event.phase != TickEvent.Phase.END || screen == 0 || captured || finished) return;
         try {
             Minecraft mc = Minecraft.getMinecraft();
+            if (amountChecks) {
+                renderAmounts(mc);
+                return;
+            }
+            if (++frames < 40) return;
             if (screen == 10) {
                 if (!(mc.currentScreen instanceof TextureProbeGui)) {
                     for (GTNGItemList part : new GTNGItemList[] { GTNGItemList.ThresholdExportBus,
                         GTNGItemList.ThresholdLevelEmitter, GTNGItemList.MERequesterTerminal })
-                        require(
-                            MinecraftForgeClient.getItemRenderer(part.get(1), ItemRenderType.INVENTORY) != null,
+                        require(MinecraftForgeClient.getItemRenderer(part.get(1), ItemRenderType.INVENTORY) != null,
                             "registered 3D part item renderer: " + part);
                     mc.displayGuiScreen(new TextureProbeGui());
                     frames = 0;
@@ -731,33 +613,23 @@ public final class MEStockClientChecks {
                 if (frames < 120) return;
             } else if (frames == 40) require(mc.currentScreen instanceof GuiContainerWrapper, "GUI opens " + screen);
             if (screen == 5) {
-                var sync = ((GuiContainerWrapper) mc.currentScreen).getScreen()
-                    .getSyncManager()
-                    .getMainPSM();
+                var sync = ((GuiContainerWrapper) mc.currentScreen).getScreen().getSyncManager().getMainPSM();
                 if (frames == 40) {
-                    ScreenShotHelper.saveScreenshot(
-                        mc.mcDataDir,
-                        "me-stock-7.png",
-                        mc.displayWidth,
-                        mc.displayHeight,
+                    ScreenShotHelper.saveScreenshot(mc.mcDataDir, "me-stock-7.png", mc.displayWidth, mc.displayHeight,
                         mc.getFramebuffer());
-                    for (var widget : ((GuiContainerWrapper) mc.currentScreen).getScreen()
-                        .getMainPanel()
-                        .getChildren())
-                        if (widget instanceof ButtonWidget<?>button
-                            && button.getSyncHandler() == sync.findSyncHandlerNullable("step00", 0))
-                            button.onMousePressed(0);
+                    for (var widget : ((GuiContainerWrapper) mc.currentScreen).getScreen().getMainPanel().getChildren())
+                        if (
+                            widget instanceof ButtonWidget<?>button
+                                && button.getSyncHandler() == sync.findSyncHandlerNullable("step00", 0)
+                        ) button.onMousePressed(0);
                 }
-                if (frames == 60) require(
-                    ((StringSyncValue) sync.findSyncHandlerNullable("amount", 0)).getValue()
-                        .equals("5001"),
-                    "fluid plus-one button adds one native liter");
+                if (frames == 60)
+                    require(((StringSyncValue) sync.findSyncHandlerNullable("amount", 0)).getValue().equals("5001"),
+                        "fluid plus-one button adds one native liter");
                 if (frames == 80) editField(mc, "amount", StockNumbers.format(Long.MAX_VALUE), true);
                 if (frames < 120) return;
             } else if (screen == 6) {
-                var sync = ((GuiContainerWrapper) mc.currentScreen).getScreen()
-                    .getSyncManager()
-                    .getMainPSM();
+                var sync = ((GuiContainerWrapper) mc.currentScreen).getScreen().getSyncManager().getMainPSM();
                 if (frames == 40) ((StringSyncValue) sync.findSyncHandlerNullable("search", 0)).setValue("电路");
                 if (frames == 80) {
                     editField(mc, "batch1", "2", false);
@@ -774,41 +646,211 @@ public final class MEStockClientChecks {
                 }
                 if (frames == 140) ((StringSyncValue) sync.findSyncHandlerNullable("search", 0)).setValue("没有这个请求器");
                 if (frames == 180) {
-                    require(
-                        ((IntSyncValue) sync.findSyncHandlerNullable("kind", 0)).getIntValue() == 0,
+                    require(((IntSyncValue) sync.findSyncHandlerNullable("kind", 0)).getIntValue() == 0,
                         "terminal search hides nonmatching groups");
-                    for (var widget : ((GuiContainerWrapper) mc.currentScreen).getScreen()
-                        .getMainPanel()
-                        .getChildren())
-                        if (widget instanceof TextFieldWidget field
-                            && field.getStringValue() == sync.findSyncHandlerNullable("search", 0))
-                            field.onMousePressed(1);
+                    for (var widget : ((GuiContainerWrapper) mc.currentScreen).getScreen().getMainPanel().getChildren())
+                        if (
+                            widget instanceof TextFieldWidget field
+                                && field.getStringValue() == sync.findSyncHandlerNullable("search", 0)
+                        ) field.onMousePressed(1);
                 }
                 if (frames == 220) {
-                    require(
-                        ((StringSyncValue) sync.findSyncHandlerNullable("search", 0)).getValue()
-                            .isEmpty(),
+                    require(((StringSyncValue) sync.findSyncHandlerNullable("search", 0)).getValue().isEmpty(),
                         "right-click clears terminal search");
-                    require(
-                        ((IntSyncValue) sync.findSyncHandlerNullable("rows", 0)).getIntValue() == 9,
+                    require(((IntSyncValue) sync.findSyncHandlerNullable("rows", 0)).getIntValue() == 9,
                         "adaptive terminal rows survive initial server synchronization");
-                    require(
-                        ((IntSyncValue) sync.findSyncHandlerNullable("kind", 6)).getIntValue() == 1,
+                    require(((IntSyncValue) sync.findSyncHandlerNullable("kind", 6)).getIntValue() == 1,
                         "resized list renders the second requester group");
                 }
                 if (frames < 240) return;
             }
-            ScreenShotHelper.saveScreenshot(
-                mc.mcDataDir,
-                "me-stock-" + screen + ".png",
-                mc.displayWidth,
-                mc.displayHeight,
-                mc.getFramebuffer());
+            ScreenShotHelper.saveScreenshot(mc.mcDataDir, "me-stock-" + screen + ".png", mc.displayWidth,
+                mc.displayHeight, mc.getFramebuffer());
             captured = true;
         } catch (Throwable error) {
             error.printStackTrace();
             finish("FAIL GUI: " + error);
         }
+    }
+
+    private void renderAmounts(Minecraft mc) {
+        if (amountTicks == renderedAmountTick) return;
+        renderedAmountTick = amountTicks;
+        if (++frames < 20) return;
+        if (frames == 20) require(mc.currentScreen instanceof GuiContainerWrapper, "amount GUI opens " + screen);
+        int completeAt = 70;
+        switch (screen) {
+            case 12 -> {
+                if (frames == 20) {
+                    requireDraft(mc, 0, "144", "0", "initial requester item amounts");
+                    requireDraft(mc, 1, "2500", "0", "initial requester fluid amounts");
+                    requireFluidRow(mc, 1);
+                    typeField(mc, "target0", "288");
+                }
+                if (frames == 30) typeField(mc, "batch0", "16");
+                if (frames == 40) blurFields(mc);
+                if (frames == 70) requireDraft(mc, 0, "288", "16", "requester keeps both item drafts after blur");
+            }
+            case 13 -> {
+                if (frames == 20) enterField(mc, "target0");
+                if (frames == 50) requireDraft(mc, 0, "288", "16", "requester Enter retains confirmed item amounts");
+                completeAt = 50;
+            }
+            case 14 -> {
+                if (frames == 20) {
+                    requireDraft(mc, 0, "288", "16", "requester item amounts survive reopening");
+                    typeField(mc, "target1", "4000");
+                }
+                if (frames == 30) typeField(mc, "batch1", "1000");
+                if (frames == 40) blurFields(mc);
+                if (frames == 70) requireDraft(mc, 1, "4000", "1000", "requester keeps both fluid drafts after blur");
+            }
+            case 15 -> {
+                if (frames == 20) clickAmountSubmit(mc, 1);
+                if (frames == 50) requireDraft(mc, 1, "4000", "1000", "requester checkmark retains confirmed liters");
+                completeAt = 50;
+            }
+            case 16 -> {
+                if (frames == 20) {
+                    requireDraft(mc, 0, "288", "16", "requester retains item amounts after fluid confirmation");
+                    requireDraft(mc, 1, "4000", "1000", "requester fluid liters survive reopening");
+                    requireFluidRow(mc, 1);
+                }
+                completeAt = 30;
+            }
+            case 17 -> {
+                if (frames == 20) typeField(mc, "search", "数量");
+                if (frames == 40) {
+                    requireDraft(mc, 1, "288", "16", "terminal initially shows requester item amounts");
+                    requireDraft(mc, 2, "4000", "1000", "terminal initially shows requester fluid liters");
+                    requireFluidRow(mc, 2);
+                    typeField(mc, "target1", "576");
+                }
+                if (frames == 50) typeField(mc, "batch1", "32");
+                if (frames == 60) blurFields(mc);
+                if (frames == 90) requireDraft(mc, 1, "576", "32", "terminal keeps both item drafts after blur");
+                completeAt = 90;
+            }
+            case 18 -> {
+                if (frames == 20) enterField(mc, "batch1");
+                if (frames == 50) requireDraft(mc, 1, "576", "32", "terminal Enter retains confirmed item amounts");
+                completeAt = 50;
+            }
+            case 19 -> {
+                if (frames == 20) typeField(mc, "search", "数量");
+                if (frames == 40) {
+                    requireDraft(mc, 1, "576", "32", "terminal item amounts survive reopening");
+                    typeField(mc, "target1", "720");
+                }
+                if (frames == 50) typeField(mc, "batch1", "48");
+                if (frames == 60) blurFields(mc);
+                if (frames == 90) requireDraft(mc, 1, "720", "48", "terminal keeps second item drafts after blur");
+                completeAt = 90;
+            }
+            case 20 -> {
+                if (frames == 20) clickAmountSubmit(mc, 1);
+                if (frames == 50) requireDraft(mc, 1, "720", "48", "terminal checkmark retains item amounts");
+                completeAt = 50;
+            }
+            case 21 -> {
+                if (frames == 20) typeField(mc, "target1", "999");
+                if (frames == 30) typeField(mc, "batch1", "666");
+                if (frames == 40) blurFields(mc);
+                if (frames == 70) {
+                    requireDraft(mc, 1, "999", "666", "terminal keeps drafts before changing row identity");
+                    typeField(mc, "search", "备用");
+                }
+                if (frames == 100) {
+                    requireDraft(mc, 1, "720", "48", "same-amount replacement row discards previous drafts");
+                    requireDraft(mc, 2, "4000", "1000", "replacement row preserves native fluid amounts");
+                }
+                completeAt = 100;
+            }
+            case 22 -> {
+                if (frames == 20) typeField(mc, "search", "数量");
+                if (frames == 40) {
+                    requireDraft(mc, 1, "720", "48", "terminal checkmark item amounts survive reopening");
+                    typeField(mc, "target2", "5000");
+                }
+                if (frames == 50) typeField(mc, "batch2", "1500");
+                if (frames == 60) blurFields(mc);
+                if (frames == 90) requireDraft(mc, 2, "5000", "1500", "terminal keeps both fluid drafts after blur");
+                completeAt = 90;
+            }
+            case 23 -> {
+                if (frames == 20) clickAmountSubmit(mc, 2);
+                if (frames == 50) requireDraft(mc, 2, "5000", "1500", "terminal checkmark retains native liters");
+                completeAt = 50;
+            }
+            case 24 -> {
+                if (frames == 20) typeField(mc, "search", "数量");
+                if (frames == 50) {
+                    requireDraft(mc, 1, "720", "48", "terminal final item amounts survive reopening");
+                    requireDraft(mc, 2, "5000", "1500", "terminal final fluid liters survive reopening");
+                    requireFluidRow(mc, 2);
+                }
+                completeAt = 50;
+            }
+            default -> throw new AssertionError("Unknown amount screen " + screen);
+        }
+        if (frames < completeAt) return;
+        ScreenShotHelper.saveScreenshot(mc.mcDataDir, "me-stock-amounts-" + screen + ".png", mc.displayWidth,
+            mc.displayHeight, mc.getFramebuffer());
+        captured = true;
+    }
+
+    private static TextFieldWidget amountField(Minecraft mc, String id) {
+        var gui = ((GuiContainerWrapper) mc.currentScreen).getScreen();
+        var value = gui.getSyncManager().getMainPSM().findSyncHandlerNullable(id, 0);
+        for (var widget : gui.getMainPanel().getChildren())
+            if (widget instanceof TextFieldWidget field && field.getStringValue() == value) return field;
+        throw new AssertionError("Missing amount field " + id);
+    }
+
+    private static void typeField(Minecraft mc, String id, String text) {
+        var field = amountField(mc, id);
+        field.getContext().focus(field);
+        require(field.isFocused(), "keyboard focuses " + id);
+        int length = field.getText().length();
+        field.onKeyPressed('\0', Keyboard.KEY_HOME);
+        for (int i = 0; i < length; i++) field.onKeyPressed('\0', Keyboard.KEY_DELETE);
+        for (char character : text.toCharArray()) field.onKeyPressed(character, Keyboard.KEY_NONE);
+        require(field.getText().equals(text), "keyboard edits " + id + " to " + text + "; actual=" + field.getText());
+    }
+
+    private static void blurFields(Minecraft mc) {
+        ((GuiContainerWrapper) mc.currentScreen).getScreen().getContext().removeFocus();
+    }
+
+    private static void enterField(Minecraft mc, String id) {
+        var field = amountField(mc, id);
+        field.getContext().focus(field);
+        field.onKeyPressed('\r', Keyboard.KEY_RETURN);
+    }
+
+    private static void clickAmountSubmit(Minecraft mc, int row) {
+        var panel = ((GuiContainerWrapper) mc.currentScreen).getScreen().getMainPanel();
+        for (var widget : panel.getChildren()) {
+            if (
+                widget instanceof ButtonWidget<?>button && button.getArea().x() == panel.getArea().x() + 154
+                    && button.getArea().y() == panel.getArea().y() + 20 + row * 19
+            ) {
+                button.onMousePressed(0);
+                return;
+            }
+        }
+        throw new AssertionError("Missing amount checkmark " + row);
+    }
+
+    private static void requireDraft(Minecraft mc, int row, String target, String batch, String message) {
+        require(amountField(mc, "target" + row).getText().equals(target)
+            && amountField(mc, "batch" + row).getText().equals(batch), message);
+    }
+
+    private static void requireFluidRow(Minecraft mc, int row) {
+        var sync = ((GuiContainerWrapper) mc.currentScreen).getScreen().getSyncManager().getMainPSM();
+        require(((BooleanSyncValue) sync.findSyncHandlerNullable("fluid", row)).getBoolValue(),
+            "fluid row uses native liter fields " + row);
     }
 
     private static final class TextureProbeGui extends GuiScreen {
@@ -845,18 +887,13 @@ public final class MEStockClientChecks {
 
     private static void editField(Minecraft mc, String id, String text, boolean submit) {
         var gui = ((GuiContainerWrapper) mc.currentScreen).getScreen();
-        var value = gui.getSyncManager()
-            .getMainPSM()
-            .findSyncHandlerNullable(id, 0);
-        for (var widget : gui.getMainPanel()
-            .getChildren()) {
+        var value = gui.getSyncManager().getMainPSM().findSyncHandlerNullable(id, 0);
+        for (var widget : gui.getMainPanel().getChildren()) {
             if (widget instanceof TextFieldWidget field && field.getStringValue() == value) {
-                gui.getContext()
-                    .focus(field);
+                gui.getContext().focus(field);
                 field.setText(text);
                 if (submit) field.onKeyPressed('\r', Keyboard.KEY_RETURN);
-                else gui.getContext()
-                    .removeFocus();
+                else gui.getContext().removeFocus();
                 return;
             }
         }
@@ -875,8 +912,7 @@ public final class MEStockClientChecks {
         } catch (Exception error) {
             error.printStackTrace();
         }
-        Minecraft.getMinecraft()
-            .shutdown();
+        Minecraft.getMinecraft().shutdown();
     }
 
     public static final class TargetBlock extends BlockContainer {
@@ -916,23 +952,16 @@ public final class MEStockClientChecks {
 
         @Override
         protected ItemStack getVisualRepresentation() {
-            return AEApi.instance()
-                .definitions()
-                .blocks()
-                .iface()
-                .maybeStack(1)
-                .get();
+            return AEApi.instance().definitions().blocks().iface().maybeStack(1).get();
         }
 
         @Override
         public void provideCrafting(ICraftingProviderHelper helper) {
             ItemStack pattern = fluidPattern();
-            helper.addCraftingOption(
-                this,
+            helper.addCraftingOption(this,
                 ((ICraftingPatternItem) pattern.getItem()).getPatternForItem(pattern, worldObj));
             ItemStack itemPattern = pattern();
-            helper.addCraftingOption(
-                this,
+            helper.addCraftingOption(this,
                 ((ICraftingPatternItem) itemPattern.getItem()).getPatternForItem(itemPattern, worldObj));
         }
 
@@ -943,8 +972,7 @@ public final class MEStockClientChecks {
             for (int slot = 0; slot < table.getSizeInventory(); slot++) {
                 IAEStack<?> stack = ((MEInventoryCrafting) table).getAEStackInSlot(slot);
                 if (stack == null) continue;
-                require(
-                    stack.isFluid() == details.getCondensedAEOutputs()[0].isFluid(),
+                require(stack.isFluid() == details.getCondensedAEOutputs()[0].isFluid(),
                     "processing input retains its native resource type");
                 amount += stack.getStackSize();
             }
@@ -971,22 +999,15 @@ public final class MEStockClientChecks {
             if (!isServerSide() || !isBusy() || --waitingTicks > 0) return;
             try {
                 if (outputAmount > 0) {
-                    var remainder = getProxy().getStorage()
-                        .getFluidInventory()
-                        .injectItems(
-                            AEFluidStack.create(new FluidStack(FluidRegistry.LAVA, (int) outputAmount)),
-                            Actionable.MODULATE,
-                            new MachineSource(this));
+                    var remainder = getProxy().getStorage().getFluidInventory().injectItems(
+                        AEFluidStack.create(new FluidStack(FluidRegistry.LAVA, (int) outputAmount)),
+                        Actionable.MODULATE, new MachineSource(this));
                     outputAmount = remainder == null ? 0 : remainder.getStackSize();
                 }
                 if (itemOutput > 0) {
-                    var remainder = getProxy().getStorage()
-                        .getItemInventory()
-                        .injectItems(
-                            AEItemStack.create(new ItemStack(Blocks.gold_block))
-                                .setStackSize(itemOutput),
-                            Actionable.MODULATE,
-                            new MachineSource(this));
+                    var remainder = getProxy().getStorage().getItemInventory().injectItems(
+                        AEItemStack.create(new ItemStack(Blocks.gold_block)).setStackSize(itemOutput),
+                        Actionable.MODULATE, new MachineSource(this));
                     itemOutput = remainder == null ? 0 : remainder.getStackSize();
                 }
             } catch (Exception error) {
@@ -1065,8 +1086,8 @@ public final class MEStockClientChecks {
         }
 
         public FluidStack drain(ForgeDirection side, FluidStack fluid, boolean mutate) {
-            return tank.getFluid() != null && tank.getFluid()
-                .isFluidEqual(fluid) ? tank.drain(fluid.amount, mutate) : null;
+            return tank.getFluid() != null && tank.getFluid().isFluidEqual(fluid) ? tank.drain(fluid.amount, mutate)
+                : null;
         }
 
         public FluidStack drain(ForgeDirection side, int count, boolean mutate) {

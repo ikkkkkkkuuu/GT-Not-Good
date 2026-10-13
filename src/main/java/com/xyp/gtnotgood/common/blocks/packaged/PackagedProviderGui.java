@@ -25,9 +25,11 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -39,11 +41,19 @@ import appeng.api.implementations.ICraftingPatternItem;
 /**
  * LGPL-3.0: layout adapted from AE2LTPP PackagedPatternProviderScreen/menu/style and AE2 UpgradesPanel.
  * Original authors and exact revisions are recorded in META-INF/ae2lt-port and reference/UPSTREAM_PORT_NOTES.md.
- * The 176x245 source crop, 9x4 grid and external core slot are preserved without scaling the atlas.
+ * Original atlas pixels are retained with extra width for the pattern scrollbar.
  */
 public final class PackagedProviderGui {
 
-    private static final UITexture FRAME = texture("ex_pattern_provider", 256, 256, 0, 0, 176, 245);
+    private static final UITexture FRAME_LEFT = texture("ex_pattern_provider", 256, 256, 0, 0, 169, 245);
+    private static final UITexture FRAME_FILL = texture("ex_pattern_provider", 256, 256, 169, 0, 1, 245);
+    private static final UITexture FRAME_RIGHT = texture("ex_pattern_provider", 256, 256, 169, 0, 7, 245);
+    private static final IDrawable FRAME = (context, x, y, w, h, theme) -> {
+        FRAME_LEFT.draw(context, x, y, 169, 245, theme);
+        FRAME_FILL.draw(context, x + 169, y, 14, 245, theme);
+        FRAME_RIGHT.draw(context, x + 183, y, 7, 245, theme);
+    };
+    private static final UITexture PATTERN_SLOT = texture("ex_pattern_provider", 256, 256, 7, 41, 18, 18);
     private static final UITexture CORE_FRAME = texture("extra_panels", 128, 128, 0, 0, 28, 30);
     private static final UITexture BUTTON = texture("states", 256, 256, 176, 128, 18, 20);
     private static final UITexture HOVER = texture("states", 256, 256, 212, 128, 18, 20);
@@ -102,7 +112,7 @@ public final class PackagedProviderGui {
         var priorityPanel = sync.syncedPanel("priority_panel", true,
             (manager, handler) -> priorityPanel(tile, manager));
         InvWrapper inventory = new InvWrapper(tile);
-        ModularPanel panel = ModularPanel.defaultPanel("wireless_packaged_provider", 176, 245).background(FRAME)
+        ModularPanel panel = ModularPanel.defaultPanel("wireless_packaged_provider", 190, 245).background(FRAME)
             .disableHoverBackground();
         panel.child(IKey.lang("tile.wireless_packaged_pattern_provider.name").color(0xff404040).asWidget().pos(8, 6)
             .size(160, 9));
@@ -115,21 +125,30 @@ public final class PackagedProviderGui {
         // # zh_CN 回收物品栏
         panel.child(IKey.lang("gui.packaged.returns").color(0xff404040).asWidget().pos(8, 116));
         panel.child(IKey.lang("container.inventory").color(0xff404040).asWidget().pos(8, 150));
-        for (int slot = 0; slot < TilePackagedProvider.PATTERNS; slot++) {
-            panel.child(new ItemSlot().slot(new ModularSlot(inventory, slot) {
+        VerticalScrollData patternScroll = new VerticalScrollData(false, 12);
+        patternScroll.texture(texture("big_scroller", 12, 15, 0, 0, 12, 15));
+        patternScroll.setScrollSpeed(18);
+        panel.child(IKey.dynamic(() -> (patternScroll.getScroll() / 18 + 1) + "-"
+            + Math.min(TilePackagedProvider.PATTERN_ROWS, (patternScroll.getScroll() + 71) / 18 + 1)
+            + " / "
+            + TilePackagedProvider.PATTERN_ROWS).color(0xff404040).asWidget().pos(104, 31));
+        panel.child(new Grid().name("pattern_grid").minColWidth(18)
+            .gridOfWidthHeight(TilePackagedProvider.PATTERN_COLUMNS, TilePackagedProvider.PATTERN_ROWS,
+                (x, y, slot) -> new ItemSlot().slot(new ModularSlot(inventory, slot) {
 
-                @Override
-                public int getItemStackLimit(@Nonnull ItemStack stack) {
-                    return 1;
-                }
-            }.slotGroup("patterns").filter(stack -> stack != null && stack.getItem() instanceof ICraftingPatternItem))
-                .background(IDrawable.EMPTY).pos(7 + slot % 9 * 18, 41 + slot / 9 * 18));
-        }
-        for (int slot = 36; slot < 45; slot++) {
+                    @Override
+                    public int getItemStackLimit(@Nonnull ItemStack stack) {
+                        return 1;
+                    }
+                }.slotGroup("patterns")
+                    .filter(stack -> stack != null && stack.getItem() instanceof ICraftingPatternItem))
+                    .background(PATTERN_SLOT))
+            .pos(7, 41).size(174, 72).scrollable(patternScroll).showScrollShadows(false));
+        for (int slot = TilePackagedProvider.PATTERNS; slot < TilePackagedProvider.CORE; slot++) {
             panel.child(new ItemSlot().slot(new ModularSlot(inventory, slot).slotGroup("returns").canPut(false))
-                .background(IDrawable.EMPTY).pos(7 + (slot - 36) * 18, 126));
+                .background(IDrawable.EMPTY).pos(7 + (slot - TilePackagedProvider.PATTERNS) * 18, 126));
         }
-        panel.child(CORE_FRAME.asWidget().pos(172, 72).size(28, 30).excludeAreaInRecipeViewer());
+        panel.child(CORE_FRAME.asWidget().pos(186, 72).size(28, 30).excludeAreaInRecipeViewer());
         panel.child(new ItemSlot().slot(new ModularSlot(inventory, TilePackagedProvider.CORE) {
 
             @Override
@@ -144,7 +163,7 @@ public final class PackagedProviderGui {
         }.slotGroup("core").canDragInto(false).filter(stack -> stack.getItem() instanceof ItemPackagedCore))
             .background(IDrawable.EMPTY)
             // The original atlas slot begins at U=0; its five-pixel padding is vertical only.
-            .pos(172, 77)
+            .pos(186, 77)
             // #tr gui.packaged.core_slot
             // # Packaged Core (locked while jobs are active)
             // # zh_CN 封包核心（有任务时锁定）
@@ -244,7 +263,7 @@ public final class PackagedProviderGui {
                 tile.setPatternOptimization(!tile.allowsPatternOptimization());
             }
         }).name("pattern_optimization"));
-        panel.child(toolbar(152, -5, texture("states", 256, 256, 144, 64, 16, 16), () -> {
+        panel.child(toolbar(166, -5, texture("states", 256, 256, 144, 64, 16, 16), () -> {
             // #tr gui.packaged.priority
             // # Priority: %s
             // # zh_CN 优先级：%s

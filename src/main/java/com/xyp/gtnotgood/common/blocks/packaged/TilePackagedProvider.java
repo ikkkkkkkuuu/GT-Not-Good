@@ -51,22 +51,24 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 /**
- * 36-pattern wireless provider with real altar lanes and a persistent nine-slot return inventory.
  * Ingredients reside in the target after acceptance; only actual completed outputs are ever imported.
  * A missing chunk pauses a lane rather than deleting its binding or loading the chunk.
  */
 public final class TilePackagedProvider extends TileMEBridgeBase
     implements IInventory, ICraftingProvider, IGuiHolder<PosGuiData>, IInterfaceViewable, ICustomNameObject {
 
-    public static final int PATTERNS = 36;
-    public static final int CORE = 45;
+    public static final int PATTERN_ROWS = 80;
+    public static final int PATTERN_COLUMNS = 9;
+    public static final int PATTERNS = PATTERN_ROWS * PATTERN_COLUMNS;
+    public static final int CORE = PATTERNS + 9;
     public static final int MAX_TARGETS = 1024;
-    private final ItemStack[] inventory = new ItemStack[46];
+    private final ItemStack[] inventory = new ItemStack[CORE + 1];
     final List<PackagedTarget> targets = new ArrayList<>();
     private final List<PackagedTarget> visibleTargets = Collections.unmodifiableList(targets);
     private final List<Job> jobs = new ArrayList<>();
     private final List<ICraftingPatternDetails> patterns = new ArrayList<>();
     private boolean patternsDirty = true;
+    private int terminalRows = -1;
     private String customName = "";
     boolean autoReturn;
     boolean networkEssentia;
@@ -547,9 +549,11 @@ public final class TilePackagedProvider extends TileMEBridgeBase
         }
         Arrays.fill(inventory, null);
         NBTTagList items = tag.getTagList("Inventory", 10);
+        int savedPatterns = tag.hasKey("PatternSlots") ? tag.getInteger("PatternSlots") : 36;
         for (int i = 0; i < items.tagCount(); i++) {
             NBTTagCompound item = items.getCompoundTagAt(i);
             int slot = item.getInteger("Slot");
+            if (slot >= savedPatterns && slot <= savedPatterns + 9) slot += PATTERNS - savedPatterns;
             if (slot >= 0 && slot < inventory.length) inventory[slot] = ItemStack.loadItemStackFromNBT(item);
         }
         targets.clear();
@@ -587,6 +591,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
         nextDispatch = 0;
         failures = 0;
         patternsDirty = true;
+        terminalRows = -1;
         getProxy().setIdlePowerUsage(10 + targets.size());
     }
 
@@ -609,6 +614,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
             items.appendTag(item);
         }
         tag.setTag("Inventory", items);
+        tag.setInteger("PatternSlots", PATTERNS);
         NBTTagList connections = new NBTTagList();
         for (PackagedTarget target : targets) connections.appendTag(target.write());
         tag.setTag("WirelessConnections", connections);
@@ -651,6 +657,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
         if (inventory[slot] == null || count <= 0) return null;
         ItemStack taken = inventory[slot].splitStack(Math.min(count, inventory[slot].stackSize));
         if (inventory[slot].stackSize <= 0) inventory[slot] = null;
+        if (slot < PATTERNS) terminalRows = -1;
         if (slot < PATTERNS || slot == CORE) patternsDirty = true;
         markDirty();
         return taken;
@@ -660,6 +667,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     public ItemStack getStackInSlotOnClosing(int slot) {
         ItemStack taken = inventory[slot];
         inventory[slot] = null;
+        if (slot < PATTERNS) terminalRows = -1;
         if (slot < PATTERNS || slot == CORE) patternsDirty = true;
         markDirty();
         return taken;
@@ -668,6 +676,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
         inventory[slot] = stack;
+        if (slot < PATTERNS) terminalRows = -1;
         if (slot < PATTERNS || slot == CORE) patternsDirty = true;
         markDirty();
     }
@@ -728,12 +737,18 @@ public final class TilePackagedProvider extends TileMEBridgeBase
 
     @Override
     public int rows() {
-        return 4;
+        if (terminalRows < 0) {
+            int lastPattern = PATTERNS - 1;
+            while (lastPattern >= 0 && inventory[lastPattern] == null) lastPattern--;
+            // Match the super pattern assembly: two rows initially, expand at each filled row boundary.
+            terminalRows = Math.min(PATTERN_ROWS, (lastPattern + 1) / PATTERN_COLUMNS + 2);
+        }
+        return terminalRows;
     }
 
     @Override
     public int rowSize() {
-        return 9;
+        return PATTERN_COLUMNS;
     }
 
     @Override
@@ -761,7 +776,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
         return getVisualRepresentation();
     }
 
-    /** A strict 36-slot view prevents a remote terminal from reaching the return inventory or core. */
+    /** Remote terminals cannot reach the return inventory or core. */
     @Override
     public IInventory getPatterns() {
         return new InventoryBasic(getInventoryName(), hasCustomName(), PATTERNS) {
@@ -799,6 +814,7 @@ public final class TilePackagedProvider extends TileMEBridgeBase
             @Override
             public void markDirty() {
                 patternsDirty = true;
+                terminalRows = -1;
                 TilePackagedProvider.this.markDirty();
             }
         };

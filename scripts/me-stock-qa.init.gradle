@@ -13,6 +13,12 @@ gradle.projectsEvaluated {
             'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
             'scripts/qa/MEStockClientChecks.java'
     }
+    def mainSnapshot = root.layout.buildDirectory.dir('me-stock-qa/main')
+    def copyMain = root.tasks.register('snapshotMEStockMain', Sync) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        into mainSnapshot
+    }
     def snapshot = root.tasks.register('snapshotMEStockQA', Sync) {
         dependsOn root.tasks.named('testClasses')
         from root.sourceSets.test.output
@@ -20,11 +26,14 @@ gradle.projectsEvaluated {
         into root.layout.buildDirectory.dir('me-stock-qa/classes')
     }
     root.tasks.named('runClient').configure {
-        dependsOn snapshot
-        classpath += root.files(root.layout.buildDirectory.dir('me-stock-qa/classes'))
+        dependsOn copyMain, snapshot
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainSnapshot, root.layout.buildDirectory.dir('me-stock-qa/classes'))
         workingDir root.file('run/me-stock-qa')
         systemProperty 'gtng.factory.qa', 'true'
         systemProperty 'gtng.meStock.resume', root.findProperty('meStockResume') ?: ''
+        systemProperty 'gtng.meStock.amounts', root.findProperty('meStockAmounts') ?: 'false'
         args '--width', '1100', '--height', '800'
         notCompatibleWithConfigurationCache('isolated stock-control QA')
         doFirst {

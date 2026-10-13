@@ -31,6 +31,8 @@ import com.xyp.gtnotgood.client.text.effect.BuiltinTextEffects;
 import com.xyp.gtnotgood.client.text.preview.TextEffectPreviewCommand;
 import com.xyp.gtnotgood.client.wireless.WirelessMonitorHud;
 import com.xyp.gtnotgood.client.wireless.WirelessMonitorPreferences;
+import com.xyp.gtnotgood.client.wirelessfrequency.WirelessCardInput;
+import com.xyp.gtnotgood.client.wirelessfrequency.WirelessWorldHighlight;
 import com.xyp.gtnotgood.common.blocks.flux.BlockFluxConnector;
 import com.xyp.gtnotgood.common.blocks.mestock.BlockMERequester;
 import com.xyp.gtnotgood.common.blocks.network.BlockNetwork;
@@ -106,6 +108,7 @@ public class ClientProxy extends CommonProxy {
         registerPreviewCommands();
         registerBlockRenderers();
         KeyBindManager.registerAllKeyBinds();
+        WirelessCardInput.register();
         BlockIcons.initialize();
         registerClientEvents();
     }
@@ -173,6 +176,7 @@ public class ClientProxy extends CommonProxy {
         FMLCommonHandler.instance().bus().register(clientUtils);
         MinecraftForge.EVENT_BUS.register(new MEWirelessNodeRenderer());
         MinecraftForge.EVENT_BUS.register(new WirelessConnectorRenderer());
+        MinecraftForge.EVENT_BUS.register(WirelessWorldHighlight.INSTANCE);
         MinecraftForge.EVENT_BUS.register(new FactoryRecipeImport());
         MinecraftForge.EVENT_BUS.register(WirelessMonitorHud.INSTANCE);
         FMLCommonHandler.instance().bus().register(WirelessMonitorHud.INSTANCE);

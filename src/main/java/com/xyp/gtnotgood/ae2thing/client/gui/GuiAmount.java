@@ -233,10 +233,7 @@ public abstract class GuiAmount extends AEBaseGui implements IGuiDrawSlot, IGuiC
     public void receiveSlotStacks(StorageName invName, Int2ObjectMap<IAEStack<?>> slotStacks) {
         if (this.craftingSlot != null) {
             IAEStack<?> display = slotStacks.get(0);
-            // The server keeps the craft target as an ItemFluidDrop IAEItemStack (needed for the actual
-            // crafting job). Rendering that item stack draws a blank item icon, so for DISPLAY ONLY convert
-            // it back to its IAEFluidStack, which draws the proper fluid texture + amount.
-            // [液滴分类] 可迁原生：仅为显示把液滴还原成流体渲染,不参与合成计算(合成目标仍由服务端保留液滴)
+            // Legacy fluid drops need native fluid rendering as well.
             if (display instanceof IAEItemStack ais && FluidDropCompat.isFluidDrop(ais.getItem())) {
                 IAEFluidStack fluid = FluidDropCompat.getAeFluidStack(ais);
                 if (fluid != null) {

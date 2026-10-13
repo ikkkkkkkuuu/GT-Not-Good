@@ -12,7 +12,8 @@
     "tcautores.GuiResearchTableMixin",
     "tcautores.NetHandlerPlayClientMixin",
     "early.rts.ForgeHooksRemoteContainerMixin",
-    "early.rts.ChestMenuMixin"
+    "early.rts.ChestMenuMixin",
+    "early.wirelessfrequency.MixinWirelessTileData"
   ],
   "client": [
     "early.texteffect.MixinFontRendererTextEffects",

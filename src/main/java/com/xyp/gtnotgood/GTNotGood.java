@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.rtsbuilding.rtsbuilding.RtsbuildingMod;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
+import com.xyp.gtnotgood.common.wirelessfrequency.WirelessChannelManager;
 import com.xyp.gtnotgood.loader.QuestLoader;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
@@ -129,6 +130,7 @@ public class GTNotGood {
     @Mod.EventHandler
     public void serverStopped(FMLServerStoppedEvent event) {
         WirelessMonitorService.reset();
+        WirelessChannelManager.clear();
         if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.onServerStopped(event);
     }
 }

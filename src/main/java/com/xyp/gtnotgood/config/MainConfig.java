@@ -19,6 +19,8 @@ public class MainConfig {
     // FOG
     public static boolean fogUpdate = true;
 
+    public static int wirelessFrequencyMaxEntrances = 4096;
+
     // 黑洞压缩机
     public static boolean blackHoleCompressorStabilityLock = true;
 
@@ -37,6 +39,7 @@ public class MainConfig {
     private static final String CATEGORY_PURIFIED_COM = "黑洞压缩机";
     private static final String CATEGORY_PURIFIED_FOG = "诸神之锻炉";
     private static final String CATEGORY_PURIFIED_EOH = "鸿蒙之眼";
+    private static final String CATEGORY_WIRELESS_FREQUENCY = "无线频率卡";
 
     public static synchronized void ensureLoaded() {
         if (!configLoaded) {
@@ -56,6 +59,10 @@ public class MainConfig {
         configuration.addCustomCategoryComment(CATEGORY_PURIFIED_FOG, "调整诸神之锻炉升级的材料和解锁条件。");
         configuration.addCustomCategoryComment(CATEGORY_PURIFIED_COM, "控制黑洞压缩机是否锁定稳定性。");
         configuration.addCustomCategoryComment(CATEGORY_PURIFIED_WATER, "调整各等级净化水机器的处理规则；仍需搭建正确的多方块结构。");
+        configuration.addCustomCategoryComment(CATEGORY_WIRELESS_FREQUENCY, "调整无线频率卡的连接限制。");
+
+        wirelessFrequencyMaxEntrances = configuration.getInt("MaxEntrancesPerFrequency", CATEGORY_WIRELESS_FREQUENCY,
+            wirelessFrequencyMaxEntrances, 1, Integer.MAX_VALUE, "每个频率允许的运行入口上限；降低此值只会阻止新入口。");
 
         gasInput = configuration.getBoolean("GasInPut", CATEGORY_PURIFIED_EOH, gasInput,
             "鸿蒙之眼配方流体输入控制，控制是否需要输入流体才会工作，开启后鸿蒙不需要流体输入即可工作");

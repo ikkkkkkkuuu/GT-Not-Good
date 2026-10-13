@@ -218,6 +218,7 @@ public enum GTNGItemList implements IItemContainer {
     MERequester,
     MERequesterTerminal,
     MEWirelessTransceiver,
+    WirelessFrequencyCard,
     WildcardPattern,
     PatternSorter,
     IronFuelRod,

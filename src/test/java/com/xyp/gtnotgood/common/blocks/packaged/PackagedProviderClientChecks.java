@@ -29,6 +29,8 @@ import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.SliderWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.xyp.gtnotgood.common.items.packaged.ItemWirelessConnector;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -171,6 +173,8 @@ public final class PackagedProviderClientChecks {
                 tag.setTag("out", outs);
                 pattern.setTagCompound(tag);
                 provider.setInventorySlotContents(0, pattern);
+                checkExpandedInventory(pattern);
+                provider.setInventorySlotContents(TilePackagedProvider.PATTERNS - 1, pattern.copy());
                 for (var expected : new ItemStack[] { GTNGItemList.BasicPackagedCore.get(1),
                     GTNGItemList.WirelessPackagedPatternProvider.get(1), GTNGItemList.ItemWirelessConnector.get(1),
                     GTNGItemList.ThaumcraftInfusionCore.get(1) }) {
@@ -217,8 +221,10 @@ public final class PackagedProviderClientChecks {
                 require(adapter.dispatch(provider, provider.targets.get(0), details, input) == null
                     && center.getStackInSlot(0).getItem() == Items.stick, "occupied pedestal preserved");
                 center.setInventorySlotContents(0, null);
-                require(provider.getPatterns().getSizeInventory() == 36
-                    && provider.getPatterns().getStackInSlot(45) == null, "terminal cannot access core or returns");
+                require(
+                    provider.getPatterns().getSizeInventory() == 720
+                        && provider.getPatterns().getStackInSlot(TilePackagedProvider.CORE) == null,
+                    "terminal cannot access core or returns");
                 provider.setCraftingLock(PackagedCraftingLock.Low);
                 require(provider.craftingLocked() && !provider.pushPattern(details, input), "low redstone lock");
                 provider.setCraftingLock(PackagedCraftingLock.High);
@@ -242,7 +248,8 @@ public final class PackagedProviderClientChecks {
                 require(!restored.allowsPatternOptimization(), "legacy provider defaults to optimization disabled");
                 provider.setPatternOptimization(false);
                 require(restored.queuedJobs() == 1 && restored.targets.size() == 1, "job and target NBT roundtrip");
-                require(restored.getStackInSlot(0) != null && restored.getStackInSlot(45) != null,
+                require(
+                    restored.getStackInSlot(0) != null && restored.getStackInSlot(TilePackagedProvider.CORE) != null,
                     "inventory roundtrip");
                 require(provider.removeTarget(0) == false, "active target cannot be removed");
                 require(!provider.releaseInterrupted(0), "active altar recovery refused");
@@ -280,9 +287,15 @@ public final class PackagedProviderClientChecks {
                 jar.markDirty();
                 world.markBlockForUpdate(6, 8, 2);
             }
-            if (tick > 100 && !awaitingStorage && provider.queuedJobs() == 0 && provider.getStackInSlot(36) != null) {
-                require(provider.getStackInSlot(36).getItem() == Items.diamond
-                    && provider.getStackInSlot(36).stackSize == 1, "real TC output returned exactly once");
+            if (
+                tick > 100 && !awaitingStorage
+                    && provider.queuedJobs() == 0
+                    && provider.getStackInSlot(TilePackagedProvider.PATTERNS) != null
+            ) {
+                require(
+                    provider.getStackInSlot(TilePackagedProvider.PATTERNS).getItem() == Items.diamond
+                        && provider.getStackInSlot(TilePackagedProvider.PATTERNS).stackSize == 1,
+                    "real TC output returned exactly once");
                 require(((TilePedestal) world.getTileEntity(4, 8, 0)).getStackInSlot(0) == null,
                     "altar output removed");
                 require(reloadChecked && ((TileJarFillable) world.getTileEntity(6, 8, 2)).amount <= 56,
@@ -309,7 +322,7 @@ public final class PackagedProviderClientChecks {
                     AEApi.instance().definitions().items().cell1k().maybeStack(1).get());
                 awaitingStorage = true;
             }
-            if (awaitingStorage && provider.getStackInSlot(36) == null) {
+            if (awaitingStorage && provider.getStackInSlot(TilePackagedProvider.PATTERNS) == null) {
                 require(!provider.craftingLocked(), "result lock clears only after actual ME insertion");
                 var stored = provider.getProxy().getStorage().getItemInventory().getStorageList()
                     .findPrecise(AEItemStack.create(new ItemStack(Items.diamond)));
@@ -343,6 +356,21 @@ public final class PackagedProviderClientChecks {
             System.out.println("PACKAGED_QA: screenshot saved");
         }
         var screen = ModularScreen.getCurrent();
+        if (frames == 125 && screen != null) {
+            for (var widget : screen.getMainPanel().getChildren()) {
+                if (!(widget instanceof Grid grid) || !"pattern_grid".equals(grid.getName())) continue;
+                require(grid.getChildren().size() == 720, "GUI contains all 80 pattern rows");
+                var area = grid.getScrollArea();
+                area.getScrollY().scrollTo(area, Integer.MAX_VALUE);
+                require(area.getScrollY().getScroll() == 76 * 18, "scroll reaches the last four rows");
+                ItemSlot last = (ItemSlot) grid.getChildren().get(719);
+                require(last.getSlot().getStack() != null, "last row pattern synchronizes after world restart");
+            }
+        }
+        if (frames == 135) {
+            ScreenShotHelper.saveScreenshot(new File("."), "packaged-provider-last-row-qa.png", mc.displayWidth,
+                mc.displayHeight, mc.getFramebuffer());
+        }
         if (frames == 140 && screen != null) click(screen, "targets");
         if (frames == 160) {
             var targetPanel = screen.getPanelManager().getOpenPanel("packaged_targets");
@@ -415,6 +443,44 @@ public final class PackagedProviderClientChecks {
             }
             mc.shutdown();
         }
+    }
+
+    private static void checkExpandedInventory(ItemStack pattern) {
+        NBTTagCompound legacy = new NBTTagCompound();
+        NBTTagList items = new NBTTagList();
+        for (int slot = 0; slot < 46; slot++) {
+            ItemStack stack = slot < 36 ? pattern.copy()
+                : slot == 45 ? GTNGItemList.ThaumcraftInfusionCore.get(1) : new ItemStack(Items.stick, slot - 35);
+            NBTTagCompound entry = stack.writeToNBT(new NBTTagCompound());
+            entry.setInteger("Slot", slot);
+            items.appendTag(entry);
+        }
+        legacy.setTag("Inventory", items);
+        TilePackagedProvider restored = new TilePackagedProvider();
+        restored.readFromNBT(legacy);
+        require(restored.rows() == 6 && restored.rowSize() == 9,
+            "terminal expands for legacy patterns while retaining spare rows");
+        for (int slot = 0; slot < 36; slot++) {
+            require(TilePackagedProvider.sameItem(restored.getStackInSlot(slot), pattern), "legacy pattern " + slot);
+        }
+        for (int slot = 0; slot < 9; slot++) {
+            ItemStack stack = restored.getStackInSlot(TilePackagedProvider.PATTERNS + slot);
+            require(stack != null && stack.getItem() == Items.stick && stack.stackSize == slot + 1,
+                "legacy return slot " + slot);
+        }
+        require(
+            restored.getStackInSlot(TilePackagedProvider.CORE).getItem()
+                == GTNGItemList.ThaumcraftInfusionCore.getItem() && restored.getStackInSlot(36) == null,
+            "legacy core migrated without occupying expanded patterns");
+        restored.getPatterns().setInventorySlotContents(719, pattern.copy());
+        NBTTagCompound saved = new NBTTagCompound();
+        restored.writeToNBT(saved);
+        restored.readFromNBT(saved);
+        require(
+            TilePackagedProvider.sameItem(restored.getStackInSlot(719), pattern)
+                && restored.getStackInSlot(TilePackagedProvider.PATTERNS).getItem() == Items.stick
+                && restored.getStackInSlot(TilePackagedProvider.CORE) != null,
+            "expanded inventory roundtrip preserves last pattern, returns and core");
     }
 
     private static void click(ModularScreen screen, String name) {

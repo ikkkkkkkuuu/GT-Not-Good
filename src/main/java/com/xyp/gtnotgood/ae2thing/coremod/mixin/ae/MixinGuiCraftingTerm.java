@@ -2,7 +2,6 @@ package com.xyp.gtnotgood.ae2thing.coremod.mixin.ae;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 
@@ -12,10 +11,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.xyp.gtnotgood.ae2thing.AE2Thing;
-import com.xyp.gtnotgood.ae2thing.client.gui.widget.CompactItemTabButton;
+import com.xyp.gtnotgood.ae2thing.client.gui.widget.CompactTerminalSwitchButton;
 import com.xyp.gtnotgood.ae2thing.common.item.ItemWirelessDualInterfaceTerminal;
 import com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType;
 import com.xyp.gtnotgood.ae2thing.network.CPacketSwitchGuis;
+import com.xyp.gtnotgood.ae2thing.quickterminal.client.QuickTerminalButtonTextures;
 
 import appeng.api.config.ActionItems;
 import appeng.api.config.Settings;
@@ -35,7 +35,7 @@ import appeng.helpers.WirelessTerminalGuiObject;
 @Mixin(GuiCraftingTerm.class)
 public abstract class MixinGuiCraftingTerm extends AEBaseGui {
 
-    private CompactItemTabButton switchBackButton = null;
+    private CompactTerminalSwitchButton switchBackButton = null;
 
     public MixinGuiCraftingTerm(Container container) {
         super(container);
@@ -52,6 +52,7 @@ public abstract class MixinGuiCraftingTerm extends AEBaseGui {
     @Inject(method = "initGui", at = @At("TAIL"))
     public void gtnotgood$addSwitchBackButton(CallbackInfo ci) {
         if (!openedFromDualInterfaceTerminal()) return;
+        QuickTerminalButtonTextures.refresh();
         // Append both controls to AE2's existing left-side column. Deriving the
         // next position from the live buttons keeps the layout valid for every
         // terminal height and terminal-style setting.
@@ -76,8 +77,8 @@ public abstract class MixinGuiCraftingTerm extends AEBaseGui {
         // #tr gtnotgood.tooltip.switch_to_dual_interface_terminal
         // # Switch to Dual Interface Terminal
         // # zh_CN 切换到二合一接口终端
-        this.switchBackButton = new CompactItemTabButton(new ItemStack(Blocks.crafting_table),
-            I18n.format("gtnotgood.tooltip.switch_to_dual_interface_terminal"), AEBaseGui.aeRenderItem);
+        this.switchBackButton = new CompactTerminalSwitchButton(
+            I18n.format("gtnotgood.tooltip.switch_to_dual_interface_terminal"));
         this.switchBackButton.xPosition = x;
         this.switchBackButton.yPosition = y;
         this.buttonList.add(this.switchBackButton);

@@ -30,6 +30,9 @@ import com.xyp.gtnotgood.common.recipe.gtnotgood.TransmutationRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.EasyWirelessRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
+import com.xyp.gtnotgood.common.wirelessfrequency.WirelessAutoConnect;
+import com.xyp.gtnotgood.common.wirelessfrequency.WirelessChannelManager;
+import com.xyp.gtnotgood.common.wirelessfrequency.WirelessWorldListener;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.config.MainConfig;
 import com.xyp.gtnotgood.config.ServerConfigService;
@@ -81,6 +84,10 @@ public class CommonProxy {
         MEWirelessLinkEventHandler wirelessLinkHandler = new MEWirelessLinkEventHandler();
         MinecraftForge.EVENT_BUS.register(wirelessLinkHandler);
         FMLCommonHandler.instance().bus().register(wirelessLinkHandler);
+        MinecraftForge.EVENT_BUS.register(WirelessChannelManager.INSTANCE);
+        FMLCommonHandler.instance().bus().register(WirelessChannelManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(WirelessAutoConnect.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(new WirelessWorldListener());
 
         GTNotGood.LOG.info(Config.greeting);
         GTNotGood.LOG.info("Loaded " + GTNotGood.NAME + " at version " + Tags.VERSION);

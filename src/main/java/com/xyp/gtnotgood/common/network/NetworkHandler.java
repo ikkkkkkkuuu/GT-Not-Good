@@ -5,6 +5,10 @@ import com.xyp.gtnotgood.commandtree.network.CommandTreePacket;
 import com.xyp.gtnotgood.common.network.mebridge.MessageMEWirelessNodeAction;
 import com.xyp.gtnotgood.common.network.mebridge.MessageMEWirelessVisualization;
 import com.xyp.gtnotgood.common.network.packaged.MessagePackagedConnector;
+import com.xyp.gtnotgood.common.network.wirelessfrequency.OpenWirelessCardPacket;
+import com.xyp.gtnotgood.common.network.wirelessfrequency.ToggleWirelessCardPacket;
+import com.xyp.gtnotgood.common.network.wirelessfrequency.WirelessHighlightPacket;
+import com.xyp.gtnotgood.common.network.wirelessfrequency.WirelessVisualisationPacket;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -36,7 +40,11 @@ public final class NetworkHandler {
         registerMessage(MessagePackagedConnector.class, MessagePackagedConnector.Handler.class, id++, Side.SERVER);
         registerMessage(CommandTreePacket.class, CommandTreePacket.Handler.class, id++, Side.CLIENT);
         registerMessage(WirelessMonitorRequest.class, WirelessMonitorRequest.Handler.class, id++, Side.SERVER);
-        registerMessage(WirelessMonitorSnapshot.class, WirelessMonitorSnapshot.Handler.class, id, Side.CLIENT);
+        registerMessage(WirelessMonitorSnapshot.class, WirelessMonitorSnapshot.Handler.class, id++, Side.CLIENT);
+        registerMessage(OpenWirelessCardPacket.class, OpenWirelessCardPacket.Handler.class, id++, Side.SERVER);
+        registerMessage(ToggleWirelessCardPacket.class, ToggleWirelessCardPacket.Handler.class, id++, Side.SERVER);
+        registerMessage(WirelessHighlightPacket.class, WirelessHighlightPacket.Handler.class, id++, Side.CLIENT);
+        registerMessage(WirelessVisualisationPacket.class, WirelessVisualisationPacket.Handler.class, id, Side.CLIENT);
     }
 
     private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<REQ> messageClass,

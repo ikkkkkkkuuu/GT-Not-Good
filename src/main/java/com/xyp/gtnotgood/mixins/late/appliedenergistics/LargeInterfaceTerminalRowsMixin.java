@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceHost;
+import com.xyp.gtnotgood.common.blocks.packaged.TilePackagedProvider;
 import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
 
 import appeng.api.util.IInterfaceViewable;
@@ -54,7 +55,10 @@ public abstract class LargeInterfaceTerminalRowsMixin {
         Map<IInterfaceViewable, Integer> snapshots = largeinterface$rowSnapshots();
         snapshots.clear();
         for (IInterfaceViewable machine : tracked.keySet()) {
-            if (machine instanceof LargeInterfaceHost || machine instanceof AssemblerMatrix) {
+            if (
+                machine instanceof LargeInterfaceHost || machine instanceof AssemblerMatrix
+                    || machine instanceof TilePackagedProvider
+            ) {
                 snapshots.put(machine, machine.rows());
             }
         }

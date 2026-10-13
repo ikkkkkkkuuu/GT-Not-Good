@@ -1,0 +1,26 @@
+[
+  {
+    "project": "Modernity-GTNH-UI",
+    "repository": "https://github.com/ModernityGTNH/Modernity-GTNH-UI",
+    "commit": "87fee0aac305ca8f1736278266ad87d94deff3b4",
+    "source": "assets/appliedenergistics2/textures/guis/states.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/quick_terminal/states.png",
+    "license": "CC-BY-NC-SA-4.0",
+    "licenseText": "src/main/resources/META-INF/ldlib-port/Modernity-LICENSE.txt",
+    "modified": false,
+    "sha256": "4fb85eee1c5c86da35b33c4e7d343e3dcd4d5f977aeb01d2a705ca13aa0e3876",
+    "imageSize": [256, 256]
+  },
+  {
+    "project": "Modernity-GTNH-Dark-UI",
+    "repository": "https://github.com/ModernityGTNH/Modernity-GTNH-Dark-UI",
+    "commit": "0322e00ef22e10628ed875154d6d604cc572d08a",
+    "source": "assets/appliedenergistics2/textures/guis/states.png",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/quick_terminal/states_dark.png",
+    "license": "CC-BY-NC-SA-4.0",
+    "licenseText": "src/main/resources/META-INF/ldlib-port/Modernity-LICENSE.txt",
+    "modified": false,
+    "sha256": "8602baf1f970ce1b99a5015ffff3786b1d2370fc96c16982319b0324d4432118",
+    "imageSize": [256, 256]
+  }
+]

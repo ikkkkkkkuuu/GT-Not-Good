@@ -37,13 +37,14 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.GuiFCImgButton;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.util.Util;
 import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.ae2thing.AE2Thing;
-import com.xyp.gtnotgood.ae2thing.client.gui.widget.CompactItemTabButton;
+import com.xyp.gtnotgood.ae2thing.client.gui.widget.CompactTerminalSwitchButton;
 import com.xyp.gtnotgood.ae2thing.coremod.mixin.ae.AccessorGuiScrollbar;
 import com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType;
 import com.xyp.gtnotgood.ae2thing.nei.QuickTerminalRecipeTransferHandler;
@@ -83,7 +84,6 @@ import appeng.client.gui.widgets.GuiTabButton;
 import appeng.client.gui.widgets.MEGuiTextField;
 import appeng.client.gui.widgets.TypeToggleButton;
 import appeng.client.me.ItemRepo;
-import appeng.client.texture.ExtraBlockTextures;
 import appeng.container.AEBaseContainer;
 import appeng.container.slot.AppEngSlot;
 import appeng.container.slot.SlotPatternTerm;
@@ -179,7 +179,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     private GuiImgButton pinStateButton;
     private ModeButton craftingModeButton;
     private ModeButton processing4ModeButton;
-    private CompactItemTabButton switchToCraftingButton;
+    private CompactTerminalSwitchButton switchToCraftingButton;
     private GuiTabButton craftingStatusButton;
     private RightEncodingButton encodeButton;
     private boolean initializedOnce;
@@ -211,6 +211,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     @Override
     public void initGui() {
         super.initGui();
+        QuickTerminalButtonTextures.refresh();
 
         int oldLeft = guiLeft;
         int oldTop = guiTop;
@@ -258,18 +259,18 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         // #tr gtnotgood.tooltip.switch_to_crafting_terminal
         // # Switch to Wireless Crafting Terminal
         // # zh_CN 切换到无线合成终端
-        switchToCraftingButton = new CompactItemTabButton(new ItemStack(Blocks.crafting_table),
-            StatCollector.translateToLocal("gtnotgood.tooltip.switch_to_crafting_terminal"), itemRender);
+        switchToCraftingButton = new CompactTerminalSwitchButton(
+            StatCollector.translateToLocal("gtnotgood.tooltip.switch_to_crafting_terminal"));
         buttonList.add(switchToCraftingButton);
 
         craftingStatusButton = new GuiTabButton(0, 0, 2 + 11 * 16, GuiText.CraftingStatus.getLocal(), itemRender);
         craftingStatusButton.setHideEdge(13);
         buttonList.add(craftingStatusButton);
 
-        combineEnabledButton = createFluidCraftingButton("FORCE_COMBINE", "DO_COMBINE");
-        combineDisabledButton = createFluidCraftingButton("NOT_COMBINE", "DONT_COMBINE");
-        prioritizeEnabledButton = createFluidCraftingButton("FORCE_PRIO", "DO_PRIO");
-        prioritizeDisabledButton = createFluidCraftingButton("NOT_PRIO", "DONT_PRIO");
+        combineEnabledButton = createFluidCraftingButton("FORCE_COMBINE", "DO_COMBINE", 1);
+        combineDisabledButton = createFluidCraftingButton("NOT_COMBINE", "DONT_COMBINE", 0);
+        prioritizeEnabledButton = createFluidCraftingButton("FORCE_PRIO", "DO_PRIO", 2);
+        prioritizeDisabledButton = createFluidCraftingButton("NOT_PRIO", "DONT_PRIO", 3);
         buttonList.add(combineEnabledButton);
         buttonList.add(combineDisabledButton);
         buttonList.add(prioritizeEnabledButton);
@@ -373,8 +374,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         return new ModeButton(new ItemStack(icon), StatCollector.translateToLocal(translationKey), itemRender);
     }
 
-    private static GuiFCImgButton createFluidCraftingButton(String icon, String tooltip) {
-        GuiFCImgButton button = new GuiFCImgButton(0, 0, icon, tooltip);
+    private static GuiFCImgButton createFluidCraftingButton(String setting, String value, int iconIndex) {
+        GuiFCImgButton button = new ModernFluidCraftingButton(setting, value, iconIndex);
         button.setHalfSize(true);
         return button;
     }
@@ -1591,6 +1592,49 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         }
     }
 
+    private static final class ModernFluidCraftingButton extends GuiFCImgButton {
+
+        private static final int ICON_UV_SIZE = Math.round(16F * 16F / 3F);
+        private static final float ICON_SCALE = 3F / 32F;
+
+        private final int iconIndex;
+
+        private ModernFluidCraftingButton(String setting, String value, int iconIndex) {
+            super(0, 0, setting, value);
+            this.iconIndex = iconIndex;
+        }
+
+        @Override
+        public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
+            if (!visible) return;
+            width = getWidth();
+            height = getHeight();
+            field_146123_n = mouseX >= xPosition && mouseY >= yPosition
+                && mouseX < xPosition + width
+                && mouseY < yPosition + height;
+            GL11.glColor4f(enabled ? 1F : 0.5F, enabled ? 1F : 0.5F, enabled ? 1F : 0.5F, 1F);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+            GL11.glPushMatrix();
+            GL11.glTranslatef(xPosition, yPosition, 0F);
+            GL11.glScalef(0.5F, 0.5F, 0.5F);
+            minecraft.renderEngine.bindTexture(QuickTerminalButtonTextures.states());
+            drawTexturedModalRect(0, 0, 240, 240, 16, 16);
+            GL11.glPopMatrix();
+
+            GL11.glPushMatrix();
+            GL11.glTranslatef(xPosition, yPosition, 0F);
+            GL11.glScalef(ICON_SCALE, ICON_SCALE, ICON_SCALE);
+            minecraft.renderEngine.bindTexture(FluidCraft.resource("textures/gui/states0.png"));
+            drawTexturedModalRect(0, 0, iconIndex % 3 * ICON_UV_SIZE, iconIndex / 3 * ICON_UV_SIZE, ICON_UV_SIZE,
+                ICON_UV_SIZE);
+            GL11.glPopMatrix();
+            mouseDragged(minecraft, mouseX, mouseY);
+            GL11.glColor4f(1F, 1F, 1F, 1F);
+        }
+    }
+
     private final class KeepNonConsumablesButton extends GuiImgButton {
 
         private KeepNonConsumablesButton() {
@@ -1650,7 +1694,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                 } else {
                     ScreenColor.setDimmedGuiColor();
                 }
-                minecraft.renderEngine.bindTexture(ExtraBlockTextures.GuiTexture("guis/states.png"));
+                minecraft.renderEngine.bindTexture(QuickTerminalButtonTextures.states());
                 GL11.glEnable(GL11.GL_BLEND);
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -1717,7 +1761,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                     && mouseX < xPosition + width
                     && mouseY < yPosition + height;
                 ScreenColor.setGuiColor();
-                minecraft.renderEngine.bindTexture(ExtraBlockTextures.GuiTexture("guis/states.png"));
+                minecraft.renderEngine.bindTexture(QuickTerminalButtonTextures.states());
                 if (selected) {
                     drawTexturedModalRect(xPosition, yPosition, 208, 0, 25, 22);
                 } else {

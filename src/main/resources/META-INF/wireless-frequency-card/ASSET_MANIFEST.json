@@ -1,0 +1,14 @@
+[
+  {
+    "project": "AE2 Lightning Tech Reborn",
+    "upstreamCommit": "2d8369e1e8b952300ec7ee73837e75cb61c7fc8d",
+    "upstreamSource": "src/main/resources/assets/ae2lt/textures/item/overloaded_frequency_card.png",
+    "intermediateProject": "GT-Not-Leisure PR 627",
+    "intermediateCommit": "651396c75d108e6ff5399a44c56c12214ad27d3d",
+    "intermediateSource": "src/main/resources/assets/sciencenotleisure/textures/items/wireless_frequency_card.png",
+    "destination": "src/main/resources/assets/gtnotgood/textures/items/wireless_frequency_card.png",
+    "license": "CC-BY-NC-SA-3.0",
+    "modified": false,
+    "sha256": "5d991180c5b7d2e989c5e8de1d8b5eacfff5c0e0d4443b02b479240bb2426a88"
+  }
+]

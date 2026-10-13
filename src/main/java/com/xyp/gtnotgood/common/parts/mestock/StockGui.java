@@ -293,7 +293,7 @@ final class StockGui {
         panel.child(search.value(query).autoUpdateOnChange(true).setMaxLength(64)
             .background((context, x, y, w, h, theme) -> StockGuiAssets.textField(search.isFocused()).draw(context, x, y,
                 w, h, theme))
-            .padding(2).setTextAlignment(Alignment.CenterLeft).setTextColor(0xffffffff)
+            .padding(2, 1).setTextAlignment(Alignment.CenterLeft).setTextColor(0xffffffff)
             .hintText(StockText.Search.text()).setFocusOnGuiOpen(true).pos(104, 4).size(65, 12));
         var maximum = new IntSyncValue(view::maximumScroll);
         var scroll = new IntSyncValue(() -> view.scroll,
@@ -383,12 +383,10 @@ final class StockGui {
             });
         panel.child(
             new SampleSlot(sample).background(IDrawable.EMPTY).pos(26, y).setEnabledIf(w -> visible.getAsBoolean()));
-        var target = new StringSyncValue(() -> StockNumbers
-            .format(valid(reference.get()) ? reference.get().tile.stockConfig().amount(reference.get().row) : 0))
-                .allowC2S();
-        var batch = new StringSyncValue(() -> StockNumbers
-            .format(valid(reference.get()) ? reference.get().tile.stockConfig().batch(reference.get().row) : 0))
-                .allowC2S();
+        var target = new DraftString(() -> StockNumbers
+            .format(valid(reference.get()) ? reference.get().tile.stockConfig().amount(reference.get().row) : 0));
+        var batch = new DraftString(() -> StockNumbers
+            .format(valid(reference.get()) ? reference.get().tile.stockConfig().batch(reference.get().row) : 0));
         sync.syncValue("target" + index, target);
         sync.syncValue("batch" + index, batch);
         var targetField = field(target);
@@ -415,8 +413,8 @@ final class StockGui {
         token.changeListener(() -> {
             if (!data.getWorld().isRemote) return;
             if (targetField.isFocused() || batchField.isFocused()) targetField.getContext().removeFocus();
-            targetField.setText(target.getValue());
-            batchField.setText(batch.getValue());
+            target.resetDraft();
+            batch.resetDraft();
         });
         panel.child(targetField.pos(46, y).size(52, 12).setEnabledIf(w -> visible.getAsBoolean())
             .tooltip(t -> t.addLine(StockText.Target.label())));
@@ -461,7 +459,7 @@ final class StockGui {
         return field
             .value(value).autoUpdateOnChange(false).setMaxLength(32).background((context, x, y, w, h,
                 theme) -> StockGuiAssets.textField(field.isFocused()).draw(context, x, y, w, h, theme))
-            .padding(2).setTextAlignment(Alignment.CenterLeft).setTextColor(0xffffffff);
+            .padding(2, 1).setTextAlignment(Alignment.CenterLeft).setTextColor(0xffffffff);
     }
 
     private static TextFieldWidget quantity(PanelSyncManager sync, String id, DeviceToken token, BooleanSupplier fluid,
@@ -565,6 +563,32 @@ final class StockGui {
             case TileMERequester.failed -> StockText.Failed.text();
             default -> "—";
         };
+    }
+
+    /** Keep edits local until submission and discard them when the terminal row changes. */
+    private static final class DraftString extends StringSyncValue {
+
+        private String syncedText;
+
+        DraftString(Supplier<String> getter) {
+            super(getter);
+            syncedText = getValue();
+        }
+
+        @Override
+        public void setStringValue(String text, boolean setSource, boolean sync) {
+            super.setStringValue(text, setSource, sync && !getSyncManager().isClient());
+        }
+
+        @Override
+        public void readOnClient(int id, PacketBuffer buffer) throws IOException {
+            super.readOnClient(id, buffer);
+            if (id == SYNC_VALUE) syncedText = getValue();
+        }
+
+        void resetDraft() {
+            setValue(syncedText, false, false);
+        }
     }
 
     /** Quantity packets include the displayed device identity, rejecting edits after scrolling/searching. */

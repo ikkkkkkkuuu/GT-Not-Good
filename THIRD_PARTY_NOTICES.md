@@ -1,5 +1,14 @@
 # Third-Party Notices
 
+## Wireless Frequency Card
+
+The card logic and network manager GUI are adapted from GT-Not-Leisure PR 627,
+commit `651396c75d108e6ff5399a44c56c12214ad27d3d`, under LGPL-3.0.
+The unchanged item texture originates in AE2 Lightning Tech Reborn commit
+`2d8369e1e8b952300ec7ee73837e75cb61c7fc8d` and retains CC BY-NC-SA 3.0.
+Source mapping, asset hash, attribution and license links are bundled in
+`META-INF/wireless-frequency-card/`.
+
 ## GT5-Unofficial iron fuel rod textures
 
 The active and depleted iron fuel rod textures are color variants of GT5-Unofficial's
@@ -76,7 +85,15 @@ ModernityGTNH/Modernity-GTNH-UI contributors, commit `87fee0aac305ca8f1736278266
 These assets are separately licensed under CC BY-NC-SA 4.0 (attribution, noncommercial,
 share-alike). The license and exact file mappings are bundled in `META-INF/ldlib-port/`.
 Runtime stretching, atlas selection and tinting adapt the assets to the GUI library.
+The unchanged `states.png` atlas for the wireless dual interface terminal is from the
+same commit and keeps the same license. Its mapping is in `META-INF/quick-terminal-port/`.
 Upstream: https://github.com/ModernityGTNH/Modernity-GTNH-UI/tree/87fee0aac305ca8f1736278266ad87d94deff3b4
+
+The terminal's unchanged dark `states_dark.png` atlas is from
+ModernityGTNH/Modernity-GTNH-Dark-UI commit `0322e00ef22e10628ed875154d6d604cc572d08a`.
+It retains CC BY-NC-SA 4.0, is outside the project's MIT grant, and is mapped in
+`META-INF/quick-terminal-port/`. The full license is `META-INF/ldlib-port/Modernity-LICENSE.txt`.
+Upstream: https://github.com/ModernityGTNH/Modernity-GTNH-Dark-UI/tree/0322e00ef22e10628ed875154d6d604cc572d08a
 
 ## Applied Energistics 2 GUI theme
 

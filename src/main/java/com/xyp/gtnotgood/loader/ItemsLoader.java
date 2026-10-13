@@ -22,6 +22,7 @@ import com.xyp.gtnotgood.common.items.patternsorter.PatternSorterItem;
 import com.xyp.gtnotgood.common.items.stockio.ItemStockIOInterface;
 import com.xyp.gtnotgood.common.items.veinmining.VeinMiningPickaxe;
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternItem;
+import com.xyp.gtnotgood.common.items.wirelessfrequency.WirelessFrequencyCard;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
@@ -36,6 +37,7 @@ import gregtech.api.items.ItemRadioactiveCellIC;
 public final class ItemsLoader {
 
     public static ItemMEWirelessTransceiver meWirelessTransceiver;
+    public static WirelessFrequencyCard wirelessFrequencyCard;
     public static WildcardPatternItem wildcardPattern;
     public static VeinMiningPickaxe veinMiningPickaxe;
 
@@ -53,6 +55,7 @@ public final class ItemsLoader {
         registerPackagedItems();
         registerMechanicalUserUpgrades();
         registerWirelessTransceiver();
+        registerWirelessFrequencyCard();
         registerWildcardPattern();
         registerFuelRods();
         registerTools();
@@ -132,6 +135,11 @@ public final class ItemsLoader {
     private static void registerWirelessTransceiver() {
         meWirelessTransceiver = registerItem(new ItemMEWirelessTransceiver(), ItemMEWirelessTransceiver.ITEM_NAME,
             GTNGItemList.MEWirelessTransceiver);
+    }
+
+    private static void registerWirelessFrequencyCard() {
+        wirelessFrequencyCard = registerItem(new WirelessFrequencyCard(), "wireless_frequency_card",
+            GTNGItemList.WirelessFrequencyCard);
     }
 
     private static void registerWildcardPattern() {

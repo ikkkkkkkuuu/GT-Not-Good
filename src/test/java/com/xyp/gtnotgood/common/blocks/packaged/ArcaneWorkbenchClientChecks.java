@@ -328,7 +328,8 @@ public final class ArcaneWorkbenchClientChecks {
         put(Aspect.AIR, 100);
         require(dispatch() == null && amount(Aspect.AIR) == 100, "second aspect shortage leaves first untouched");
         put(Aspect.FIRE, 100);
-        for (int i = 36; i < 45; i++) provider.setInventorySlotContents(i, new ItemStack(Items.stick, 64));
+        for (int i = TilePackagedProvider.PATTERNS; i < TilePackagedProvider.CORE; i++)
+            provider.setInventorySlotContents(i, new ItemStack(Items.stick, 64));
         require(dispatch() == null && amount(Aspect.AIR) == 100 && amount(Aspect.FIRE) == 100,
             "full output buffer no debit");
         clearReturns();
@@ -380,7 +381,7 @@ public final class ArcaneWorkbenchClientChecks {
         require(adapter.dispatch(provider, provider.targets.get(0), bucketDetails, bucketInput) != null,
             "container recipe");
         boolean returnedBucket = false;
-        for (int i = 36; i < 45; i++) {
+        for (int i = TilePackagedProvider.PATTERNS; i < TilePackagedProvider.CORE; i++) {
             ItemStack returned = provider.getStackInSlot(i);
             returnedBucket |= returned != null && returned.getItem() == Items.bucket && returned.stackSize == 1;
         }
@@ -398,7 +399,8 @@ public final class ArcaneWorkbenchClientChecks {
     }
 
     private void clearReturns() {
-        for (int i = 36; i < 45; i++) provider.setInventorySlotContents(i, null);
+        for (int i = TilePackagedProvider.PATTERNS; i < TilePackagedProvider.CORE; i++)
+            provider.setInventorySlotContents(i, null);
     }
 
     private void put(Aspect aspect, long count) {

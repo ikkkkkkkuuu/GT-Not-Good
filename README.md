@@ -43,12 +43,24 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.4.0          | [![1.4.0](https://img.shields.io/badge/release-1.4.0-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.0) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.5.0          | [![1.5.0](https://img.shields.io/badge/release-1.5.0-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.0) |         ✔️         |
 
-最新版本：[1.4.0 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.0)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.0/gtnotgood-1.4.0.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.0/gtnotgood-1.4.0-sources.jar)。
+最新版本：[1.5.0 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.0)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.0/gtnotgood-1.5.0.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.0/gtnotgood-1.5.0-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.4.0。
+1.3.4 因启动错误已撤回，请更新到 1.5.0。
+
+### 无线频率卡
+
+支持放入饰品栏，潜行右键 ME 控制器添加发射源；每张卡可保存最多 64 个发射源。
+点击网络管理界面左上角的发射源进入列表，可选择、重命名或删除发射源；每个源独立保存自动连接开关。
+切换源只改变当前管理的网络和后续自动连接目标，删除源只移除卡内记录，已有无线连接保留。
+机器按类型和控制器分组，各自的 ME 输入总成、输入仓、输出总线和输出仓显示在所属控制器的子面板中。
+支持搜索、状态筛选、坐标复制、高亮和网络可视化。
+工作台无序合成：高级卡、内存卡、无线接收器、工程处理器各一个。
+
+无线封包样板供应器现有 **720 个样板槽（80 行 × 9 格）**，主界面滚动浏览；接口终端从 2 行开始，随样板位置自动扩行、收缩。
+旧存档保留原有样板、回收物品和核心。详见 [封包供应器说明](docs/packaged-provider.md)。
 
 ### 大型矿石处理机
 

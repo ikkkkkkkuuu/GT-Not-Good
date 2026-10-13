@@ -810,3 +810,87 @@ in `META-INF/ae2lt-port/CODE_PORT_NOTES.md` covers all relocated port sources.
 - Reference extraction, project metadata and version metadata stay under ignored
   `build/reference/ae2-dark-mode-1.0.6`, outside compilation and packaged resources.
   The current asset manifest records each copied file and its crop adaptations.
+
+## Wireless dual interface terminal buttons — 2026-10-12
+
+- Visual source: ModernityGTNH/Modernity-GTNH-UI, commit
+  `87fee0aac305ca8f1736278266ad87d94deff3b4`,
+  `assets/appliedenergistics2/textures/guis/states.png`.
+  https://github.com/ModernityGTNH/Modernity-GTNH-UI/tree/87fee0aac305ca8f1736278266ad87d94deff3b4
+- The unmodified 256x256 atlas is packaged at
+  `assets/gtnotgood/textures/gui/quick_terminal/states.png` for terminal-specific
+  button rendering. Its SHA-256 is
+  `4fb85eee1c5c86da35b33c4e7d343e3dcd4d5f977aeb01d2a705ca13aa0e3876`.
+- Modernity's CC BY-NC-SA 4.0 terms apply. The existing license text is
+  `META-INF/ldlib-port/Modernity-LICENSE.txt`; this asset's source, destination
+  and hash are recorded in `META-INF/quick-terminal-port/ASSET_MANIFEST.json`.
+  The ignored reference download remains outside compilation and packaging.
+- Dark visual source: ModernityGTNH/Modernity-GTNH-Dark-UI, commit
+  `0322e00ef22e10628ed875154d6d604cc572d08a`, the same
+  `assets/appliedenergistics2/textures/guis/states.png` path.
+  https://github.com/ModernityGTNH/Modernity-GTNH-Dark-UI/tree/0322e00ef22e10628ed875154d6d604cc572d08a
+- The unmodified 256x256 dark atlas is packaged as
+  `assets/gtnotgood/textures/gui/quick_terminal/states_dark.png`; source and
+  destination SHA-256 are both
+  `8602baf1f970ce1b99a5015ffff3786b1d2370fc96c16982319b0324d4432118`.
+  Modernity-GTNH-Dark-UI's CC BY-NC-SA 4.0 applies, with full text at
+  `META-INF/ldlib-port/Modernity-LICENSE.txt`. The ignored dark reference stays
+  outside compilation and packaging, and the asset manifest records its mapping.
+
+## Wireless Frequency Card — 2026-10-12
+
+- Java source: GT-Not-Leisure PR 627, commit
+  `651396c75d108e6ff5399a44c56c12214ad27d3d`, LGPL-3.0.
+  The adapted item, manager GUI, network packets and wireless backend are placed
+  under GTNG `common.items.wirelessfrequency`, `client.wirelessfrequency`,
+  `common.network.wirelessfrequency` and `common.wirelessfrequency` respectively.
+  AE2 and GregTech adapters are under `mixins.early.wirelessfrequency`,
+  `mixins.late.appliedenergistics.wireless` and `mixins.late.gregtech.wireless`.
+  The ME Interface name adapter limits the upstream custom-name bypass to target
+  metadata collection.
+  Changes include package names, GTNG registration, generated translation keys,
+  SimpleNetworkWrapper packet routing and GTNH integration.
+- GT 5.09.54.183 ownership adaptation (2026-10-13): structure checks record the
+  controller's registered input/output hatches, buses and dual-input hatches.
+  Presentation keeps these associations for incomplete machines as well as
+  formed ones; structure-version changes still invalidate removed associations.
+  Shared hatches and physical AE clusters spanning controllers remain separate.
+  With type folding enabled, same-type controllers share a controller list;
+  each controller opens its own ME devices without flattening their ownership.
+  Machine children show their actual ME device names and icons; single-node
+  children have no additional entrance-detail layer.
+- GTNG multi-source extension: each card saves up to 64 source bindings and an
+  automatic-placement preference per source. The upper-left source line opens
+  a source selector. The legacy active binding remains readable; selecting a
+  source changes the manager and future placement target without moving links.
+  Source changes are validated by the server against the saved list, owner,
+  current snapshot revision and ME build permission when the source is loaded.
+  Source aliases are stored per card and shown alongside coordinates. The source
+  selector reuses the rename dialog; renaming preserves network selection and
+  automatic-placement settings, including for unloaded sources.
+  Source rows also expose deletion of the saved binding without disconnecting
+  existing links; removing the active source selects a remaining source or
+  leaves the card unbound when the list becomes empty.
+- Item art: AE2 Lightning Tech Reborn `overloaded_frequency_card.png`, commit
+  `2d8369e1e8b952300ec7ee73837e75cb61c7fc8d`, redistributed by GTNL
+  unchanged as `wireless_frequency_card.png`, CC BY-NC-SA 3.0. GTNG copies the
+  same bytes unchanged to `assets/gtnotgood/textures/items/wireless_frequency_card.png`.
+  Source, destination, modification flag and SHA-256 are in
+  `META-INF/wireless-frequency-card/ASSET_MANIFEST.json`.
+- GTNL's GUI references `appliedenergistics2:textures/guis/wireless_network_manager.png`.
+  GTNH AE2 `rv3-beta-1080-GTNH` already supplies this asset; it is not copied.
+  The ignored reference checkout is excluded from compilation and packaging.
+
+## Packaged provider pattern capacity — 2026-10-13
+
+User-requested extension: 80 rows of nine patterns, with four visible rows and wheel/scrollbar navigation.
+Inspected pinned AE2LTPP `1d3f183ecf258aff0001567d742ed30d6038d77b` screen JSON and LGPL-3.0 license,
+and AE2LT `1d4589b6bd50672051f78d766505530beacfebc0` separate CC-BY-NC-SA-3.0 asset grant.
+Destination: `common/blocks/packaged/PackagedProviderGui.java`; existing provider atlas pixels are cropped
+at runtime to widen the frame by 14 pixels and render scrolling slots. Core panel and priority tab move
+14 pixels right. Existing `big_scroller.png` is reused; no PNG was changed or newly copied.
+Sources, destinations, licenses and unchanged hashes remain in `META-INF/ae2lt-port/ASSET_MANIFEST.json`.
+Tile storage retains 720 slots; versioned inventory loading migrates legacy return/core slots.
+The terminal initially exposes two rows and grows/shrinks using the super pattern assembly rules.
+Cached row counts and existing native terminal resize guards keep server inventories and client recipe caches aligned.
+Reference checkouts remain outside build inputs.

@@ -25,9 +25,21 @@ gradle.projectsEvaluated {
         classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
         classpath += root.files(mainSnapshot, testSnapshot)
         systemProperty 'gtng.packaged.qa', 'true'
+        systemProperty 'gtng.factory.qa', 'true'
         systemProperty 'gtng.packaged.qa.resume', resumeSave
         args '--width', '1100', '--height', '740'
-        doFirst { java.nio.file.Files.deleteIfExists(resultFile.toPath()) }
+        notCompatibleWithConfigurationCache('Opt-in runtime QA closures retain the project')
+        doFirst {
+            java.nio.file.Files.deleteIfExists(resultFile.toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(root.file('build/packaged-qa-window-helper.log'))
+                    .start()
+            }
+        }
         doLast {
             def expected = resumeSave ? 'PASS' : 'SAVED'
             if (!resultFile.exists() || resultFile.text.trim() != expected) {

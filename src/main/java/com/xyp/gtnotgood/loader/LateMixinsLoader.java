@@ -76,6 +76,8 @@ public class LateMixinsLoader implements ILateMixinLoader {
             addAll(list, "bloodmagic.MixinPackagedBloodAltar");
         }
         if (loadedMods.contains(ModList.GregTech.getID())) {
+            addAll(list, "gregtech.wireless.MixinWirelessControllerVersion",
+                "gregtech.wireless.MixinWirelessHatchOwner");
             addAll(list, "gregtech.wireless.WirelessProcessingAccess", "gregtech.wireless.CrossRecipeProcessingMixin",
                 "gregtech.wireless.CrossRecipeControllerMixin", "gregtech.wireless.CrossRecipeVoltageMixin");
             addAll(list, "gregtech.wireless.CrossRecipeGuiMixin");
@@ -108,6 +110,12 @@ public class LateMixinsLoader implements ILateMixinLoader {
         }
 
         if (loadedMods.contains(ModList.AE2.getID())) {
+            addAll(list, "appliedenergistics.wireless.AccessorTileController",
+                "appliedenergistics.wireless.MixinWirelessGridNode",
+                "appliedenergistics.wireless.MixinWirelessInterfaceName",
+                "appliedenergistics.wireless.MixinWirelessPartPlacement",
+                "appliedenergistics.wireless.MixinWirelessPathGridCache",
+                "appliedenergistics.wireless.MixinWirelessPathingCalculation");
             addAll(list, "appliedenergistics.LargeInterfaceTerminalRowsMixin");
             if (loadedMods.contains(ModList.AE2FluidCraft.getID())) {
                 addAll(list, "appliedenergistics.LargeInterfaceDualityMixin",
@@ -117,7 +125,12 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 addAll(list, "appliedenergistics.LargeInterfaceTerminalEntryMixin",
                     "appliedenergistics.InvTweaksOrderCacheMixin", "appliedenergistics.ItemRepoSortNameCacheMixin",
                     "appliedenergistics.ItemSortersNameCacheMixin", "appliedenergistics.InterfaceEntryViewportAccessor",
-                    "appliedenergistics.InterfaceTerminalViewportMixin");
+                    "appliedenergistics.InterfaceTerminalViewportMixin",
+                    "appliedenergistics.QuickTerminalButtonTextureMixin",
+                    "appliedenergistics.QuickTerminalTabButtonTextureMixin",
+                    "appliedenergistics.QuickTerminalTypeButtonTextureMixin");
+                addAll(list, "appliedenergistics.wireless.MixinWirelessVisualiserRender",
+                    "appliedenergistics.wireless.MixinWirelessVisualiserTool");
             }
             addAll(list, "appliedenergistics.DualityInterfaceMixin", "appliedenergistics.ItemEncodedPatternMixin",
                 "appliedenergistics.MTEHatchCraftingInputMEMixin",

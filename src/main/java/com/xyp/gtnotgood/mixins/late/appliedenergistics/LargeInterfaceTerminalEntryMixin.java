@@ -14,7 +14,7 @@ import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import appeng.tile.inventory.AppEngInternalInventory;
 
-/** Keeps native terminal recipe caches aligned with changing interface and matrix rows. */
+/** Keeps native terminal recipe caches aligned with changing provider rows. */
 @Mixin(targets = "appeng.client.gui.implementations.GuiInterfaceTerminal$InterfaceTerminalEntry", remap = false)
 public abstract class LargeInterfaceTerminalEntryMixin {
 
@@ -51,7 +51,9 @@ public abstract class LargeInterfaceTerminalEntryMixin {
         ItemStack block = GTNGItemList.LargeInterface.getInternalStackUnsafe();
         ItemStack part = GTNGItemList.LargeInterfacePart.getInternalStackUnsafe();
         ItemStack matrix = GTNGItemList.AssemblerMatrix.getInternalStackUnsafe();
+        ItemStack packaged = GTNGItemList.WirelessPackagedPatternProvider.getInternalStackUnsafe();
         return (block != null && selfRep.isItemEqual(block)) || (part != null && selfRep.isItemEqual(part))
-            || (matrix != null && selfRep.isItemEqual(matrix));
+            || (matrix != null && selfRep.isItemEqual(matrix))
+            || (packaged != null && selfRep.isItemEqual(packaged));
     }
 }

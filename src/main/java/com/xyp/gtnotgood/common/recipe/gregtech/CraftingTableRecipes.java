@@ -32,6 +32,13 @@ public class CraftingTableRecipes {
         // spotless:off
 
         var ae = AEApi.instance().definitions();
+        GameRegistry.addShapelessRecipe(
+            GTNGItemList.WirelessFrequencyCard.get(1),
+            ae.materials().advCard().maybeStack(1).get(),
+            ae.items().memoryCard().maybeStack(1).get(),
+            ae.materials().wireless().maybeStack(1).get(),
+            ae.materials().engProcessor().maybeStack(1).get());
+
         GameRegistry.addShapedRecipe(
             GTNGItemList.QuantumComputer.get(1),
             "IRI", "CMC", "IRI",

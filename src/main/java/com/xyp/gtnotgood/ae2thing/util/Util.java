@@ -117,11 +117,10 @@ public class Util {
             Future<ICraftingJob> futureJob = null;
             try {
                 final ICraftingGrid cg = g.getCache(ICraftingGrid.class);
-                // Convert the target so fluids resolve to their native IAEFluidStack. getItemToCraft() returns an
-                // ItemFluidDrop IAEItemStack for fluid crafts, and the IAEStack beginCraftingJob overload does NOT
-                // convertStack (only the IAEItemStack one does), so without this a replan re-runs with the fluid_drop
-                // and the plan collapses back to a single un-expanded drop. Mirrors the CPacketCraftRequest fix.
-                IAEStack<?> craftTarget = Platform.convertStack((IAEItemStack) c.getItemToCraft());
+                IAEStack<?> craftTarget = c.getItemToCraft();
+                if (craftTarget instanceof IAEItemStack item) {
+                    craftTarget = Platform.convertStack(item);
+                }
                 if (cg instanceof CraftingGridCache cgc) {
                     futureJob = cgc.beginCraftingJob(
                         c.getWorld(),

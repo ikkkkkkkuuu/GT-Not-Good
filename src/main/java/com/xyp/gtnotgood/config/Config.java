@@ -42,6 +42,7 @@ public class Config {
     public static boolean useEdgeWindowIcon = false;
     /** Hides this client's Windows taskbar button after its window opens. */
     public static boolean hideWindowsTaskbarButton = false;
+    public static String quickTerminalButtonTheme = "dark";
     public static boolean enableAlwaysDisplayRecipeOwner = true;
     public static boolean enableAlwaysDisplayWailaAverageNS = true;
     public static boolean enableAlwaysDisplayNEIOriginalVoltage = true;
@@ -159,6 +160,8 @@ public class Config {
             .setRequiresMcRestart(true).getBoolean(false);
         hideWindowsTaskbarButton = configuration.get(CATEGORY_CLIENT, "hideWindowsTaskbarButton", false,
             "开启后在 Windows 上隐藏本客户端的任务栏按钮；游戏窗口仍可正常使用。默认关闭，可在游戏内设置中即时切换。").getBoolean(false);
+        quickTerminalButtonTheme = configuration.getString("quickTerminalButtonTheme", CATEGORY_CLIENT,
+            quickTerminalButtonTheme, "无线二合一接口终端按钮主题：dark 深色、light 浅色、auto 跟随 AE2 资源包。");
         configuration.addCustomCategoryComment(CATEGORY_CUT_CORNERS, "配方提速配置");
         configuration.addCustomCategoryComment(CATEGORY_CROPSNH, "CropsNH 作物配置");
         configuration.addCustomCategoryComment(CATEGORY_FORESTRY, "Forestry 蜜蜂杂交配置");

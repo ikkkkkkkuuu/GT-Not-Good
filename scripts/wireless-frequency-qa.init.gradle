@@ -1,0 +1,49 @@
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar'))
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/WirelessFrequencyClientChecks.java'))
+    }
+    def snapshot = root.tasks.register('snapshotWirelessFrequencyQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/WirelessFrequencyClientChecks*.class'
+        into root.layout.buildDirectory.dir('wireless-frequency-qa/classes')
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        dependsOn snapshot
+        classpath += root.files(root.layout.buildDirectory.dir('wireless-frequency-qa/classes'))
+        workingDir root.file('run/wireless-frequency-check')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.wirelessFrequency.qa', 'true'
+        systemProperty 'gtng.wirelessFrequency.world', root.findProperty('wirelessFrequencyWorld') ?: ''
+        systemProperty 'gtng.wirelessFrequency.multiSource', root.findProperty('wirelessFrequencyMultiSource') ?: 'false'
+        systemProperty 'gtng.wirelessFrequency.output', root.file('build/wireless-frequency-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Focused wireless frequency client check')
+        doFirst {
+            root.file('build/wireless-frequency-qa').mkdirs()
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/wireless-frequency-qa/result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(root.file('build/wireless-frequency-qa/window-helper.log'))
+                    .start()
+            }
+        }
+        doLast {
+            def result = root.file('build/wireless-frequency-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Wireless frequency client check failed')
+        }
+    }
+}
