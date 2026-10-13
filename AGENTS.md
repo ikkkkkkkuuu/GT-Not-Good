@@ -1,5 +1,7 @@
 # Project Memory
 
+- Release versions increment the last component by one regardless of feature size: 1.4.0 → 1.4.1, then 1.4.9 → 1.5.0. Carry to the next component only when the last component reaches 10.
+
 - As part of every “提交并更新” release workflow, update README release and version-specific download links to point to the new release and its matching assets, including any displayed version text. Include these README changes in the release commit and verify the links after the release is published.
 
 - After feature updates or fixes, the user's phrase “提交并更新” authorizes the full release workflow: format the code, run the required checks, commit and push changes, create the next appropriate version tag following the repository's version convention, and push the tag. Complete this workflow without asking for repeated confirmation. Create or update the corresponding GitHub Release and write concrete Chinese release notes describing that version's features and fixes in its body; a compare link alone is insufficient. If CI creates the release, wait for it and ensure the release body contains these notes.
