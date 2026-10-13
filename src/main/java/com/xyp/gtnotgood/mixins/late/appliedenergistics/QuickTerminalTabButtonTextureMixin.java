@@ -22,6 +22,7 @@ public abstract class QuickTerminalTabButtonTextureMixin {
             target = "Lnet/minecraft/client/renderer/texture/TextureManager;bindTexture(Lnet/minecraft/util/ResourceLocation;)V",
             remap = true),
         index = 0,
+        remap = true,
         require = 1)
     private ResourceLocation gtnotgood$useModernTabButton(ResourceLocation original) {
         return Minecraft.getMinecraft().currentScreen instanceof GuiQuickEncodingTerminal

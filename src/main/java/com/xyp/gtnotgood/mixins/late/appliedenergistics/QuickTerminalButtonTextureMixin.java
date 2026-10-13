@@ -22,6 +22,7 @@ public abstract class QuickTerminalButtonTextureMixin {
             target = "Lnet/minecraft/client/renderer/texture/TextureManager;bindTexture(Lnet/minecraft/util/ResourceLocation;)V",
             remap = true),
         index = 0,
+        remap = true,
         require = 1)
     private ResourceLocation gtnotgood$useModernTerminalButtons(ResourceLocation original) {
         return Minecraft.getMinecraft().currentScreen instanceof GuiQuickEncodingTerminal
