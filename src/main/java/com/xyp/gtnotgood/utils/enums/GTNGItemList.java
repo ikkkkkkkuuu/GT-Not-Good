@@ -31,6 +31,10 @@ public enum GTNGItemList implements IItemContainer {
     LargeTransmutationMachine,
     EssentiaDisassembler,
     UniversalFluidPump,
+    SteamChemicalReactor,
+    SteamCentrifuge,
+    SteamElectrolyzer,
+    SteamCropManager,
 
     RtsControlCore,
     RemoteControlCore,

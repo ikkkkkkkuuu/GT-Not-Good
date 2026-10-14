@@ -152,10 +152,10 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "accessor.EyeOfHarmonyAccessor", "gregtech.ModifySomeConfigs", "gregtech.CleanroomRequirementMixin",
                 "gregtech.GTMetaTools", "gregtech.MixinMTEBasicMachineFacing", "gregtech.BasicMachineVirtualMoldMixin",
                 "gregtech.BasicMachineMoldGuiMixin", "gregtech.MixinMTEBrickedBlastFurnace",
-                "cutcorners.RecipeSpeedMixin", "cutcorners.ScannerSpeedMixin", "cutcorners.AssemblyLineSpeedMixin",
-                "cutcorners.PurificationPlantSpeedMixin", "cutcorners.ExtremeEntityCrusherSpeedMixin",
-                "cutcorners.ThermalBoilerSpeedMixin", "cutcorners.FurnaceBackendMixin",
-                "cutcorners.BasicMachineOutputMixin");
+                "cutcorners.RecipeSpeedMixin", "cutcorners.SteamFurnaceSpeedMixin", "cutcorners.ScannerSpeedMixin",
+                "cutcorners.AssemblyLineSpeedMixin", "cutcorners.PurificationPlantSpeedMixin",
+                "cutcorners.ExtremeEntityCrusherSpeedMixin", "cutcorners.ThermalBoilerSpeedMixin",
+                "cutcorners.FurnaceBackendMixin", "cutcorners.BasicMachineOutputMixin");
         }
         if (loadedMods.contains(ModList.EnderIO.getID())) {
             addAll(list, "enderio.MixinNetworkedInventory", "enderio.MixinNetworkedInventory",

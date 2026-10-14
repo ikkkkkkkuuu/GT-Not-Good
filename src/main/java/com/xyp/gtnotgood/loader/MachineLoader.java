@@ -5,6 +5,10 @@ import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.addItemTooltip
 import net.minecraft.util.StatCollector;
 
 import com.xyp.gtnotgood.common.machines.basic.EssentiaDisassembler;
+import com.xyp.gtnotgood.common.machines.basic.SteamCentrifuge;
+import com.xyp.gtnotgood.common.machines.basic.SteamChemicalReactor;
+import com.xyp.gtnotgood.common.machines.basic.SteamCropManager;
+import com.xyp.gtnotgood.common.machines.basic.SteamElectrolyzer;
 import com.xyp.gtnotgood.common.machines.basic.SteamTurbine;
 import com.xyp.gtnotgood.common.machines.basic.UniversalFluidPump;
 import com.xyp.gtnotgood.common.machines.hatch.CrossRecipeWirelessEnergyHatch;
@@ -184,6 +188,34 @@ public class MachineLoader {
     }
 
     public static void registerbasicMachine() {
+        // #tr gtng.steamchemicalreactor.name
+        // # Bronze Steam Chemical Reactor
+        // # zh_CN 蒸汽化学反应釜
+        GTNGItemList.SteamChemicalReactor.set(new SteamChemicalReactor(GTNGMachineID.SteamChemicalReactor.id,
+            "SteamChemicalReactor", StatCollector.translateToLocal("gtng.steamchemicalreactor.name")));
+        addItemTooltip(GTNGItemList.SteamChemicalReactor.get(1), AnimatedText.GT_NOT_GOOD);
+
+        // #tr gtng.steamcentrifuge.name
+        // # Bronze Steam Centrifuge
+        // # zh_CN 蒸汽离心机
+        GTNGItemList.SteamCentrifuge.set(new SteamCentrifuge(GTNGMachineID.SteamCentrifuge.id, "SteamCentrifuge",
+            StatCollector.translateToLocal("gtng.steamcentrifuge.name")));
+        addItemTooltip(GTNGItemList.SteamCentrifuge.get(1), AnimatedText.GT_NOT_GOOD);
+
+        // #tr gtng.steamelectrolyzer.name
+        // # Bronze Steam Electrolyzer
+        // # zh_CN 蒸汽电解机
+        GTNGItemList.SteamElectrolyzer.set(new SteamElectrolyzer(GTNGMachineID.SteamElectrolyzer.id,
+            "SteamElectrolyzer", StatCollector.translateToLocal("gtng.steamelectrolyzer.name")));
+        addItemTooltip(GTNGItemList.SteamElectrolyzer.get(1), AnimatedText.GT_NOT_GOOD);
+
+        // #tr gtng.steamcropmanager.name
+        // # Steam Crop Manager
+        // # zh_CN 蒸汽作物管理器
+        GTNGItemList.SteamCropManager.set(new SteamCropManager(GTNGMachineID.SteamCropManager.id, "SteamCropManager",
+            StatCollector.translateToLocal("gtng.steamcropmanager.name")));
+        addItemTooltip(GTNGItemList.SteamCropManager.get(1), AnimatedText.GT_NOT_GOOD);
+
         // #tr gtng.pump.name
         // # High-Speed Universal Fluid Pump (LV)
         // # zh_CN 高速通用流体泵 (LV)

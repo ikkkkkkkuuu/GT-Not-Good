@@ -1,0 +1,70 @@
+// Isolated CropsNH checks and native GUI capture; excluded from release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr.parentFile.mkdirs()
+        def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+        connection.connectTimeout = 30000
+        connection.readTimeout = 30000
+        def pending = new File(efr.parentFile, efr.name + '.pending')
+        connection.inputStream.withCloseable { input -> pending.withOutputStream { it << input } }
+        java.nio.file.Files.move(pending.toPath(), efr.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/SteamCropManagerClientChecks.java'))
+    }
+    def qaClasses = root.tasks.register('isolateSteamCropManagerQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/SteamCropManagerClientChecks*.class'
+        into root.layout.buildDirectory.dir('steam-crop-manager-qa/classes')
+    }
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/common/machines/basic/SteamCropManager.java',
+                'src/main/java/com/xyp/gtnotgood/common/machines/basic/SteamCropManagerGui.java',
+                'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
+                'src/main/java/com/xyp/gtnotgood/common/recipe/gregtech/CraftingTableRecipes.java',
+                'scripts/qa/SteamCropManagerClientChecks.java'
+        }
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir('steam-crop-manager-qa/classes'))
+        if (root.hasProperty('steamCropManagerNoAngelica')) {
+            classpath = classpath.filter { !it.name.toLowerCase().contains('angelica') }
+        }
+        workingDir root.file('run/steam-crop-manager-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.steamcropmanager.qa', 'true'
+        systemProperty 'gtng.steamcropmanager.qa.output', root.file('build/steam-crop-manager-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in steam crop manager client checks')
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/steam-crop-manager-qa').mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/steam-crop-manager-qa/result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(root.file('build/steam-crop-manager-qa/window-helper.log'))
+                    .start()
+            }
+        }
+        doLast {
+            def result = root.file('build/steam-crop-manager-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('Steam crop manager QA failed; inspect STEAM_CROP_MANAGER_QA in the client log.')
+            }
+        }
+    }
+}

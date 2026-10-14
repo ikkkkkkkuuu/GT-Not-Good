@@ -41,7 +41,11 @@ public enum GTNGMachineID {
     SteamTurbineIV(BasicMachine, 8),
     SteamTurbineLuV(BasicMachine, 9),
     EssentiaDisassembler(BasicMachine, 10),
-    UniversalFluidPump(BasicMachine, 11);
+    UniversalFluidPump(BasicMachine, 11),
+    SteamChemicalReactor(BasicMachine, 12),
+    SteamCentrifuge(BasicMachine, 13),
+    SteamElectrolyzer(BasicMachine, 14),
+    SteamCropManager(BasicMachine, 15);
 
     public final int id;
     private static final int META_INCREMENT = 1;

@@ -31,6 +31,46 @@ public class CraftingTableRecipes {
 
         // spotless:off
 
+        GTModHandler.addCraftingRecipe(
+            GTNGItemList.SteamChemicalReactor.get(1),
+            new Object[] { "PRP", "GHG", "XXX",
+                'P', OrePrefixes.plate.get(Materials.Bronze),
+                'R', OrePrefixes.rotor.get(Materials.Bronze),
+                'G', new ItemStack(Blocks.glass, 1),
+                'H', ItemList.Hull_Bronze.get(1),
+                'X', OrePrefixes.pipeSmall.get(Materials.Bronze)
+            });
+
+        GTModHandler.addCraftingRecipe(
+            GTNGItemList.SteamCentrifuge.get(1),
+            new Object[] { "PPP", "RHR", "XXX",
+                'P', OrePrefixes.plate.get(Materials.Bronze),
+                'R', OrePrefixes.rotor.get(Materials.Bronze),
+                'H', ItemList.Hull_Bronze.get(1),
+                'X', OrePrefixes.pipeSmall.get(Materials.Bronze)
+            });
+
+        GTModHandler.addCraftingRecipe(
+            GTNGItemList.SteamElectrolyzer.get(1),
+            new Object[] { "PWP", "GHG", "XXX",
+                'P', OrePrefixes.plate.get(Materials.Bronze),
+                'W', OrePrefixes.wireGt02.get(Materials.Copper),
+                'G', new ItemStack(Blocks.glass, 1),
+                'H', ItemList.Hull_Bronze.get(1),
+                'X', OrePrefixes.pipeSmall.get(Materials.Bronze)
+            });
+
+        GTModHandler.addCraftingRecipe(
+            GTNGItemList.SteamCropManager.get(1),
+            new Object[] { "CSC", "RHR", "XPX",
+                'C', OrePrefixes.plate.get(Materials.Bronze),
+                'S', new ItemStack(Items.iron_hoe),
+                'R', OrePrefixes.rotor.get(Materials.Bronze),
+                'H', ItemList.Hull_Bronze.get(1),
+                'X', OrePrefixes.pipeSmall.get(Materials.Bronze),
+                'P', new ItemStack(Items.bucket)
+            });
+
         var ae = AEApi.instance().definitions();
         GameRegistry.addShapelessRecipe(
             GTNGItemList.WirelessFrequencyCard.get(1),

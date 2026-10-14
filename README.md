@@ -43,12 +43,30 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.4.2          | [![1.4.2](https://img.shields.io/badge/release-1.4.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.2) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.4.3          | [![1.4.3](https://img.shields.io/badge/release-1.4.3-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.3) |         ✔️         |
 
-最新版本：[1.4.2 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.2)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.2/gtnotgood-1.4.2.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.2/gtnotgood-1.4.2-sources.jar)。
+最新版本：[1.4.3 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.3)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.3/gtnotgood-1.4.3.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.3/gtnotgood-1.4.3-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.4.2。
+1.3.4 因启动错误已撤回，请更新到 1.4.3。
+
+### 青铜蒸汽机器
+
+新增蒸汽化学反应釜、蒸汽离心机和蒸汽电解机，分别使用大型化学反应釜、无单元离心及无单元电解配方池，无需流体单元。
+三台机器均提供物品输入/输出各 6 槽、流体输入/输出各 6 槽，每个流体槽 16,000 L，另有独立的 32,000 L 蒸汽缓存。
+支持至 32 EU/t 的配方，耗时为配方的两倍，每 EU 消耗 2 L 蒸汽；产物堵塞时暂停，存档保留流体与加工进度。
+物品、流体自动输出可独立开关，默认输出面为下方；Shift 点击输出按钮切换输出面，自动跳过机器正面和排气面。
+合成使用青铜机器外壳、青铜板与小型流体管道，以及转子、玻璃或双股铜线，无需电机、电泵或电子电路。
+
+青铜、钢蒸汽熔炉现已遵循全局配方提速设置，支持固定耗时和倍率模式；关闭加速时保留原版耗时。
+
+### 蒸汽作物管理器
+
+管理机器周围 7×7×5 范围内已加载的 CropsNH 作物，每 2.5 秒检查一次。
+支持收割、浇水、施肥与施加除草剂四项独立开关，默认仅开启收割。
+每次收割消耗 8 L 蒸汽，辅助操作各消耗 2 L；蒸汽、水、除草剂与肥料独立储存。
+提供 15 个产物槽，无额外收获加成；满仓暂停收割，未放入产物槽的收获与设置可保存恢复。
+青铜阶段工作台合成使用青铜机器外壳、青铜板、青铜转子、小型流体管道、铁锄与桶。
 
 ### 无线频率卡
 
