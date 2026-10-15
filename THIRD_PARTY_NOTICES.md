@@ -118,3 +118,29 @@ GUI styling are adapted from XNet. Networking, Minecraft 1.7.10 rendering and Mo
 implemented for this addon.
 XNet is distributed under the MIT License. The original license is included in
 `src/main/resources/META-INF/licenses/XNet-MIT.txt`.
+
+## CropsNH Industrial Farm
+
+`LargeIndustrialFarm.java` adapts the structure, validation and farming calculations
+from GTNewHorizons/CropsNH `2.0.129`, commit
+`47debb72b230382c91aa256b92d715062c3a318e`. The adapted controller retains
+LGPL-3.0-or-later and is outside this project's general MIT grant. It adds shared
+12-fold seed capacity, compatible acceleration and overclock modules, perfect
+overclocking, tier-scaled module bonuses, automatic grouping of up to 36 seed
+types with associated soil, and resource use based on planted seeds. Two
+environment cards apply to all crops. The GUI inherits CropsNH's native four
+slots, layout, controls and textures, adding only seed-type selection. A local
+inventory bridge exposes the selected seed and soil plus the global cards.
+No upstream GUI source or visual assets are copied. Source mapping, changes
+and full LGPL/GPL texts are bundled under
+`META-INF/industrial-farm/`.
+
+## GT5-Unofficial ME output assembly textures
+
+The inactive and active ME output assembly overlays combine GT5-Unofficial's
+native ME output bus and fluid hatch textures from `5.09.54.183`, commit
+`f8453bce28793713d314f6dcfa5ac551d700efd6`. The native orange item center is surrounded
+by a blue fluid ring and orange outer rim, with the original gray metal spacing.
+These derived textures retain LGPL-3.0-or-later outside this project's MIT grant.
+Source mappings, hashes, pixel modifications and full LGPL/GPL texts are bundled
+under `META-INF/me-output-assembly/`.

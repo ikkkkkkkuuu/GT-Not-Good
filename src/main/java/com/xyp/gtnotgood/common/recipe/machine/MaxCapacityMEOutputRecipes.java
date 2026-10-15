@@ -30,5 +30,10 @@ public final class MaxCapacityMEOutputRecipes {
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Aluminium, 2))
             .itemOutputs(GTNGItemList.MaxCapacityMEOutputHatch.get(1)).duration(5 * SECONDS).eut(RECIPE_LV)
             .addTo(assemblerRecipes);
+
+        GTRecipeBuilder.builder()
+            .itemInputs(GTNGItemList.MaxCapacityMEOutputBus.get(1), GTNGItemList.MaxCapacityMEOutputHatch.get(1))
+            .itemOutputs(GTNGItemList.MEOutputAssembly.get(1)).duration(5 * SECONDS).eut(RECIPE_LV)
+            .addTo(assemblerRecipes);
     }
 }

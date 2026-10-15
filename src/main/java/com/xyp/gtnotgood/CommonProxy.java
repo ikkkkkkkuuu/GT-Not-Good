@@ -94,6 +94,7 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent event) {
+        MachineLoader.registerCropsNHMachines();
         if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.init(event);
         GuiManager.registerFactory(AdvancedIOGuiFactory.INSTANCE);
         GuiManager.registerFactory(StockIOGuiFactory.INSTANCE);

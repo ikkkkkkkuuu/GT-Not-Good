@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.common.machines.hatch.me;
 
+import java.util.function.BooleanSupplier;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -36,7 +38,7 @@ final class MaxCapacityMEOutputGui {
     }
 
     /** Native item bus GUI with an additional whitelist row. */
-    static final class Items extends MTEHatchOutputBusMEGui {
+    static class Items extends MTEHatchOutputBusMEGui {
 
         private final MaxCapacityMEOutputBus bus;
 
@@ -67,6 +69,38 @@ final class MaxCapacityMEOutputGui {
             for (int i = 0; i < MaxCapacityMEOutputFilters.SLOT_COUNT; i++) {
                 content
                     .child(new PhantomItemSlot().slot(new SampleSlot(samples, i).singletonSlotGroup()).pos(i * 18, 42));
+            }
+            return content;
+        }
+    }
+
+    static final class Assembly extends Items {
+
+        private final MEOutputAssembly assembly;
+
+        Assembly(MEOutputAssembly assembly) {
+            super(assembly);
+            this.assembly = assembly;
+        }
+
+        @Override
+        protected int getBasePanelHeight() {
+            return 234;
+        }
+
+        @Override
+        protected ParentWidget<?> createContentSection(ModularPanel panel, PanelSyncManager sync) {
+            ParentWidget<?> content = super.createContentSection(panel, sync);
+            // #tr gui.gtnotgood.me_output.fluid_filters
+            // # Fluid filters (empty: accept all)
+            // # zh_CN 流体过滤标记（全空：接收全部）
+            content.child(IKey.lang("gui.gtnotgood.me_output.fluid_filters").asWidget().pos(0, 66));
+            for (int i = 0; i < MaxCapacityMEOutputFilters.SLOT_COUNT; i++) {
+                FluidSlotSyncHandler handler = new FluidSlotSyncHandler(
+                    new FluidSample(assembly.getFilters(), () -> assembly.getBaseMetaTileEntity().isServerSide(), i))
+                        .phantom(true).controlsAmount(false);
+                sync.syncValue("assembly_fluid_filter_" + i, handler);
+                content.child(new FluidSlot().syncHandler(handler).pos(i * 18, 80));
             }
             return content;
         }
@@ -170,17 +204,23 @@ final class MaxCapacityMEOutputGui {
     /** A sample tank used only by MUI's phantom synchronization, never connected to real fluid storage. */
     private static final class FluidSample implements IFluidTank {
 
-        private final MaxCapacityMEOutputHatch hatch;
+        private final MaxCapacityMEOutputFilters filters;
+        private final BooleanSupplier server;
         private final int slot;
         private FluidStack client;
 
         FluidSample(MaxCapacityMEOutputHatch hatch, int slot) {
-            this.hatch = hatch;
+            this(hatch.getFilters(), () -> hatch.getBaseMetaTileEntity().isServerSide(), slot);
+        }
+
+        FluidSample(MaxCapacityMEOutputFilters filters, BooleanSupplier server, int slot) {
+            this.filters = filters;
+            this.server = server;
             this.slot = slot;
         }
 
         public FluidStack getFluid() {
-            return hatch.getBaseMetaTileEntity().isServerSide() ? hatch.getFilters().getFluid(slot) : client;
+            return server.getAsBoolean() ? filters.getFluid(slot) : client;
         }
 
         public int getFluidAmount() {
@@ -196,7 +236,7 @@ final class MaxCapacityMEOutputGui {
         }
 
         private void sample(FluidStack stack) {
-            if (hatch.getBaseMetaTileEntity().isServerSide()) hatch.getFilters().setFluid(slot, stack);
+            if (server.getAsBoolean()) filters.setFluid(slot, stack);
             else {
                 client = stack == null ? null : stack.copy();
                 if (client != null) client.amount = 1;

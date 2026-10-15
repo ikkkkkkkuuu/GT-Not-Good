@@ -1,0 +1,53 @@
+{
+  "upstream": {
+    "project": "GTNewHorizons/GT5-Unofficial",
+    "authors": "GT5-Unofficial contributors",
+    "tag": "5.09.54.183",
+    "commit": "f8453bce28793713d314f6dcfa5ac551d700efd6",
+    "repository": "https://github.com/GTNewHorizons/GT5-Unofficial",
+    "sourceArtifact": "com.github.GTNewHorizons:GT5-Unofficial:5.09.54.183:sources",
+    "sourceArtifactSha1": "b0f3eb42604cfc3ad88d56c50d0dbfa375d89419",
+    "license": "LGPL-3.0-or-later",
+    "licenseSource": "https://github.com/GTNewHorizons/GT5-Unofficial/blob/f8453bce28793713d314f6dcfa5ac551d700efd6/LICENSE.txt",
+    "licenseFiles": ["LICENSE-LGPL-3.0.txt", "LICENSE-GPL-3.0.txt"]
+  },
+  "assets": [
+    {
+      "sources": [
+        {
+          "path": "assets/gregtech/textures/blocks/iconsets/OVERLAY_ME_HATCH.png",
+          "sha256": "fcc12427415fe5961f9c1adc50b5e29183912fc8fb01ac9db6f11f370a244073"
+        },
+        {
+          "path": "assets/gregtech/textures/blocks/iconsets/OVERLAY_ME_FLUID_HATCH.png",
+          "sha256": "0d27657737c8a54ee50d1828b431442f6ee0af60dbe3042a769ced763a85a3ca"
+        },
+        {
+          "path": "assets/gregtech/textures/blocks/iconsets/OVERLAY_ME_HATCH_ACTIVE.png",
+          "sha256": "1ae62705885b86cda031489d50121ab087a7859e9958e0c2af46d580b2bb733a"
+        }
+      ],
+      "destination": "assets/gtnotgood/textures/blocks/iconsets/OVERLAY_ME_OUTPUT_ASSEMBLY.png",
+      "sha256": "88471eefdc8942c13b8d8092ab0b55e523d55afba4601ce19721d3c0aeec8fea",
+      "modified": true,
+      "changes": "Keep the original orange 2x2 item center at x=7..8,y=7..8. Surround it with a one-pixel blue fluid ring on the perimeter of x=5..10,y=5..10. Use the original active bus orange outer rim on the perimeter of x=2..13,y=2..13. Preserve native gray metal spacing and alpha between these concentric features."
+    },
+    {
+      "sources": [
+        {
+          "path": "assets/gregtech/textures/blocks/iconsets/OVERLAY_ME_HATCH_ACTIVE.png",
+          "sha256": "1ae62705885b86cda031489d50121ab087a7859e9958e0c2af46d580b2bb733a"
+        },
+        {
+          "path": "assets/gregtech/textures/blocks/iconsets/OVERLAY_ME_FLUID_HATCH_ACTIVE.png",
+          "sha256": "b0e22e5dd1a4eca807c2591c03b3164cab91e077d88fca9383b7dd303fe4413f"
+        }
+      ],
+      "destination": "assets/gtnotgood/textures/blocks/iconsets/OVERLAY_ME_OUTPUT_ASSEMBLY_ACTIVE.png",
+      "sha256": "88471eefdc8942c13b8d8092ab0b55e523d55afba4601ce19721d3c0aeec8fea",
+      "modified": true,
+      "changes": "Use the same concentric native geometry: orange 2x2 item center, blue ring on the 5..10 inner-panel perimeter and orange outer rim on the 2..13 perimeter, with gray metal spacing and original alpha. The upstream active and inactive orange/blue RGB values are identical, so both composite states have the same pixels."
+    }
+  ],
+  "referencePackaging": "Extracted references and preview images stay under ignored build/me-output-reference and are excluded from compilation and resource packaging."
+}

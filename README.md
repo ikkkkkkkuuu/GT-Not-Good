@@ -43,12 +43,29 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.4.4          | [![1.4.4](https://img.shields.io/badge/release-1.4.4-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.4) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.4.5          | [![1.4.5](https://img.shields.io/badge/release-1.4.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.5) |         ✔️         |
 
-最新版本：[1.4.4 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.4)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.4/gtnotgood-1.4.4.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.4/gtnotgood-1.4.4-sources.jar)。
+最新版本：[1.4.5 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.5)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.5/gtnotgood-1.4.5.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.5/gtnotgood-1.4.5-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.4.4。
+1.3.4 因启动错误已撤回，请更新到 1.4.5。
+
+### ME 输出总成
+
+一个舱室同时承担物品输出总线与流体输出仓，接入 GT 通用多方块结构识别、计数及生存建造。
+物品和流体各有独立的 `Long.MAX_VALUE` 缓存，共用一个 ME 频道；各提供 9 格虚拟筛选，空筛选接收全部，设置后仅接收并优先分配匹配产物。
+筛选精确匹配物品、流体与 NBT，标记不消耗样品。拆下时清空两种缓存和筛选，可与新合成的总成堆叠；普通存档读写保留缓存。
+外观采用原版橙色物品中心、蓝色流体环与橙色外框。
+组装机配方：最大容量 ME 输出总线与最大容量 ME 输出仓各一个，LV，5 秒。
+
+### 大型工业农场
+
+原版 CropsNH 工业农场控制器可通过工作台无序合成升级。
+固定 5×4×14 最大结构，包含 12 个种植段、36 个同级苗床和 12 个升级槽，支持最多 36 种种子共享同阶原版 12 倍种子容量。
+所有作物共用两张环境卡；界面保留种子、底土和两张环境卡四个槽位，增加作物切换，输入模式自动归集种子并配对底土。
+升级模块等级独立于苗床，每高于自身最低等级一级效力增加 25%；普通与超频生长加速模块可叠加，支持完美超频。
+可使用普通能源仓或至多一个多安能源仓，两者不可混用，不接受激光能源仓；玻璃不限制能源仓等级。
+水肥按实际种植种子数及超频吞吐结算，支持大数量种子、底土和产物存档，保留连续生长、小数收获进度及旧数据迁移。
 
 ### 集成化工厂
 

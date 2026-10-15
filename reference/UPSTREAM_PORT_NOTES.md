@@ -924,3 +924,63 @@ Reference checkouts remain outside build inputs.
   grant. Packaged provenance and full LGPL/GPL texts are under
   `META-INF/chemical-recipes-port/`; no visual assets are copied. The ignored
   reference checkout never participates in compilation or resource packaging.
+
+## Large Industrial Farm — 2026-10-15
+
+- Source: GTNewHorizons/CropsNH `2.0.129`, commit
+  `47debb72b230382c91aa256b92d715062c3a318e`, confirmed by the upstream tag API.
+  https://github.com/GTNewHorizons/CropsNH/tree/47debb72b230382c91aa256b92d715062c3a318e
+  The pinned `LICENSE.txt` and README were inspected before adaptation; GTNH
+  modifications are LGPL-3.0-or-later, with original Agricraft MIT attribution.
+- Source file:
+  `src/main/java/com/gtnewhorizon/cropsnh/tileentity/multi/MTEIndustrialFarm.java`,
+  SHA-256 `9a3c90241c6b0252b03d0008aab8783f2bd4a0508ce24e07f6d67ba39f4fc795`.
+  Destination:
+  `src/main/java/com/xyp/gtnotgood/common/machines/multiblock/LargeIndustrialFarm.java`.
+- The controller uses CropsNH crop and environment APIs and runtime textures.
+  Adapted structure, validation and farming calculations fix the maximum dimensions
+  at 5 x 4 x 14, accept upgrades independently of seed-bed tier, support multi-amp
+  energy by default and use fixed borosilicate glass without an energy-tier limit.
+  Capacity is 12 times the native seed-bed capacity, shared by up to 36 seed types
+  grouped automatically with their associated soil. Two environment cards apply
+  globally to all crops; there are no physical crop partitions.
+  Growth and overclock modules coexist; perfect overclocks multiply power and
+  throughput by four. Higher module tiers strengthen their respective effects,
+  and water/fertilizer consumption scales with the planted seed count and
+  overclock throughput.
+- Local additions:
+  `src/main/java/com/xyp/gtnotgood/common/machines/crop/IndustrialFarmInventory.java`,
+  `src/main/java/com/xyp/gtnotgood/common/machines/crop/SelectedCropInventory.java`
+  and `src/main/java/com/xyp/gtnotgood/common/gui/modularui/multiblock/LargeIndustrialFarmGui.java`.
+  `SelectedCropInventory` provides the native four-slot view: the selected seed,
+  its associated soil and the two global environment cards. The GUI inherits
+  `MTEIndustrialFarmGui` with its original panel size, layout, four slots,
+  controls and textures, adding only previous/next seed-type selection and a
+  counter. No scrolling list or side panel is added. No upstream GUI source,
+  textures or other visual assets are copied into these additions.
+- The adapted controller retains LGPL-3.0-or-later outside the project's general
+  MIT grant. Provenance and unchanged pinned LGPL text, plus the incorporated GPL
+  terms, are packaged under `META-INF/industrial-farm/`. Dependency source archives
+  remain outside compilation and resource packaging.
+
+## ME output assembly overlays — 2026-10-15
+
+- Source: GTNewHorizons/GT5-Unofficial `5.09.54.183`, commit
+  `f8453bce28793713d314f6dcfa5ac551d700efd6`, the resolved development dependency.
+  https://github.com/GTNewHorizons/GT5-Unofficial/tree/f8453bce28793713d314f6dcfa5ac551d700efd6
+  The pinned README and `LICENSE.txt` were inspected before adapting the assets.
+  Their LGPL-3.0-or-later license is retained outside the project's general MIT grant.
+- Sources: `assets/gregtech/textures/blocks/iconsets/OVERLAY_ME_HATCH.png`,
+  `OVERLAY_ME_FLUID_HATCH.png` and their `_ACTIVE` variants. The source artifact is
+  `GT5-Unofficial-5.09.54.183-sources.jar`, SHA-1
+  `b0f3eb42604cfc3ad88d56c50d0dbfa375d89419`.
+- Destinations: `assets/gtnotgood/textures/blocks/iconsets/OVERLAY_ME_OUTPUT_ASSEMBLY.png`
+  and `OVERLAY_ME_OUTPUT_ASSEMBLY_ACTIVE.png`. Both stay native 16x16 RGBA, preserving
+  the original orange 2x2 item center at 7..8. A blue fluid ring occupies the 5..10
+  inner-panel perimeter, and the native orange outer rim occupies the 2..13 perimeter,
+  with original gray metal spacing between them. Active and inactive use the same
+  source orange/blue RGB values, so the two concentric composites match pixel for pixel.
+- Complete source/destination hashes and precise pixel changes are in
+  `META-INF/me-output-assembly/ASSET_MANIFEST.json`; full LGPL/GPL terms and attribution
+  are packaged beside it. Extracted references and previews stay in ignored
+  `build/me-output-reference`, outside compilation and packaged resources.

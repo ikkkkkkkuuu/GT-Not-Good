@@ -30,6 +30,8 @@ public enum GTNGMachineID {
     SuperAdvancedMEInputBus(Machine, 22),
     CircuitMEPatternBuffer(Machine, 23),
     IntegratedChemicalPlant(Machine, 24),
+    LargeIndustrialFarm(Machine, 25),
+    MEOutputAssembly(Machine, 26),
 
     DieselGeneratorLV(BasicMachine, 0),
     DieselGeneratorMV(BasicMachine, 1),

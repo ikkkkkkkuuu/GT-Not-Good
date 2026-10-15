@@ -1,0 +1,75 @@
+// Opt-in 36-crop farm, resource transaction, migration and GUI checks; excluded from release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr.parentFile.mkdirs()
+        def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+        connection.connectTimeout = 30000
+        connection.readTimeout = 30000
+        def pending = new File(efr.parentFile, efr.name + '.pending')
+        connection.inputStream.withCloseable { input -> pending.withOutputStream { it << input } }
+        java.nio.file.Files.move(pending.toPath(), efr.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/LargeIndustrialFarmClientChecks.java'))
+    }
+    def qaClasses = root.tasks.register('isolateLargeIndustrialFarmQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/LargeIndustrialFarmClientChecks*.class'
+        into root.layout.buildDirectory.dir('industrial-farm-qa/classes')
+    }
+    root.spotless.java {
+        target 'scripts/qa/LargeIndustrialFarmClientChecks.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/LargeIndustrialFarm.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/crop/IndustrialFarmInventory.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/crop/SelectedCropInventory.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/crop/IndustrialFarmFluids.java',
+            'src/main/java/com/xyp/gtnotgood/common/gui/modularui/multiblock/LargeIndustrialFarmGui.java',
+            'src/test/java/com/xyp/gtnotgood/common/machines/crop/IndustrialFarmFluidsTest.java'
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir('industrial-farm-qa/classes'))
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        if (root.hasProperty('industrialFarmNoAngelica')) {
+            classpath = classpath.filter { !it.name.toLowerCase().contains('angelica') }
+        }
+        workingDir root.file('run/industrial-farm-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.industrialFarm.qa', 'true'
+        systemProperty 'gtng.industrialFarm.output', root.file('build/industrial-farm-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in industrial farm client checks')
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/industrial-farm-qa').mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/industrial-farm-qa/result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(root.file('build/industrial-farm-qa/window-helper.log'))
+                    .start()
+            }
+        }
+        doLast {
+            def result = root.file('build/industrial-farm-qa/result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) {
+                throw new GradleException('Industrial farm QA failed; inspect INDUSTRIAL_FARM_QA in the client log.')
+            }
+        }
+    }
+}

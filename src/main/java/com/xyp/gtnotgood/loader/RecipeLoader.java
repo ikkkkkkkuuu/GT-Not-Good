@@ -24,6 +24,7 @@ import com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipe
 import com.xyp.gtnotgood.common.recipe.machine.LargeBeeBreederRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCombProcessorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCropBreederRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.LargeIndustrialFarmRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeTransmutationMachineRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeVoidMinerRecipes;
@@ -49,6 +50,7 @@ public class RecipeLoader {
 
     /** Waits for external fluid and dimension-display registrations. */
     public static void loadPostInitRecipes() {
+        LargeIndustrialFarmRecipes.loadRecipes();
         MixerRecipes.loadRecipes();
         FuelRefiningRecipes.loadRecipes();
         WoodDistillationRecipes.loadRecipes();

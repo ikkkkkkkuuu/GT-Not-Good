@@ -18,6 +18,7 @@ import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputSlave;
 import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
 import com.xyp.gtnotgood.common.machines.hatch.me.MEDataAccessHatch;
+import com.xyp.gtnotgood.common.machines.hatch.me.MEOutputAssembly;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputBus;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.SuperAdvancedMEInputBus;
@@ -28,6 +29,7 @@ import com.xyp.gtnotgood.common.machines.multiblock.IntegratedProductionFactory;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeBeeBreeder;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeCombProcessor;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeCropBreeder;
+import com.xyp.gtnotgood.common.machines.multiblock.LargeIndustrialFarm;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeOreProcessor;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeTransmutationMachine;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidMiner;
@@ -40,6 +42,12 @@ import com.xyp.gtnotgood.utils.machine.factory.FactoryText;
 import com.xyp.gtnotgood.utils.text.AnimatedText;
 
 public class MachineLoader {
+
+    /** CropsNH initializes the parent farm's structure blocks during its preInit. */
+    public static void registerCropsNHMachines() {
+        GTNGItemList.LargeIndustrialFarm.set(new LargeIndustrialFarm(GTNGMachineID.LargeIndustrialFarm.id));
+        addItemTooltip(GTNGItemList.LargeIndustrialFarm.get(1), AnimatedText.GT_NOT_GOOD);
+    }
 
     public static void registerMachines() {
         // #tr gtng.chemical.name
@@ -140,6 +148,13 @@ public class MachineLoader {
         GTNGItemList.MaxCapacityMEOutputHatch
             .set(new MaxCapacityMEOutputHatch(GTNGMachineID.MaxCapacityMEOutputHatch.id, "MaxCapacityMEOutputHatch",
                 StatCollector.translateToLocal("NameMaxCapacityMEOutputHatch")));
+
+        // #tr NameMEOutputAssembly
+        // # ME Output Assembly
+        // # zh_CN ME输出总成
+        GTNGItemList.MEOutputAssembly.set(new MEOutputAssembly(GTNGMachineID.MEOutputAssembly.id, "MEOutputAssembly",
+            StatCollector.translateToLocal("NameMEOutputAssembly")));
+        addItemTooltip(GTNGItemList.MEOutputAssembly.get(1), AnimatedText.GT_NOT_GOOD);
 
         // #tr NameMEDataAccessHatch
         // # Data Access Hatch (ME, IV)
