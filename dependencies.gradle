@@ -54,6 +54,8 @@ dependencies {
     // MUI2 uses the pack's FastUtil at runtime; headless GUI lifecycle tests need it explicitly.
     testRuntimeOnly("it.unimi.dsi:fastutil:8.5.18")
     testImplementation("junit:junit:4.13.2")
+    shadowImplementation("org.luaj:luaj-jse:3.0.1")
+    testImplementation("org.luaj:luaj-jse:3.0.1")
     // Exercise the real synthetic aspect item without loading a Forge client.
     testRuntimeOnly(elytraModpackVersion.gtnhdev("AspectRecipeIndex") as String) { transitive = false }
     // Angelica's RFB plugin uses these before GTNHLib's shaded stubs are visible on Java 17.

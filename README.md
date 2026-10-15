@@ -43,12 +43,20 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.4.6          | [![1.4.6](https://img.shields.io/badge/release-1.4.6-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.6) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.4.7          | [![1.4.7](https://img.shields.io/badge/release-1.4.7-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.7) |         ✔️         |
 
-最新版本：[1.4.6 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.6)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.6/gtnotgood-1.4.6.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.6/gtnotgood-1.4.6-sources.jar)。
+最新版本：[1.4.7 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.7)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.7/gtnotgood-1.4.7.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.7/gtnotgood-1.4.7-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.4.6。
+1.3.4 因启动错误已撤回，请更新到 1.4.7。
+
+### R 键快捷轮盘
+
+移植 [GTNH-Radial-Menu](https://github.com/Navatusein/GTNH-Radial-Menu) 的半透明轮盘、描边、高亮、展开动画与编辑器，支持多级菜单、外圈展开和多份配置。
+原有 10 槽工具腰带作为内置子菜单，保留工具的名称、耐久、附魔及完整 NBT；选择空槽可放入手持工具，物品仍由服务端保存。
+默认按住 **R** 打开，悬停展开外圈，松开执行；**Shift＋左键**编辑普通槽位，右键返回。腰带内容随实际库存更新，不能在编辑器中删除或改写。
+普通槽位可配置按键、命令、配置切换、操作链和 Lua 脚本；模组配置中的“快捷轮盘”可调整外观与交互。
+详见 [验证记录](docs/testing/radial-menu.md)。
 
 ### 大型工业蜂箱
 
@@ -77,7 +85,8 @@ ME 满仓或断网时保留未输出源质并暂停消耗新物品；完全拒�
 ### 大型工业农场
 
 原版 CropsNH 工业农场控制器可通过工作台无序合成升级。
-固定 5×4×14 最大结构，包含 12 个种植段、36 个同级苗床和 12 个升级槽，支持最多 36 种种子共享同阶原版 12 倍种子容量。
+固定 5×4×14 最大结构，包含 12 个种植段、36 个同级苗床和 12 个升级槽，支持最多 36 种种子，每种独享同阶原版 12 倍种子容量。
+相同种子归入同一页，满页不会阻止其他种类继续存入；超限页暂停本页生产，不影响其他正常页面，水肥仅按实际参与生产的种子结算。
 所有作物共用两张环境卡；界面保留种子、底土和两张环境卡四个槽位，增加作物切换，输入模式自动归集种子并配对底土。
 升级模块等级独立于苗床，每高于自身最低等级一级效力增加 25%；普通与超频生长加速模块可叠加，支持完美超频。
 可使用普通能源仓或至多一个多安能源仓，两者不可混用，不接受激光能源仓；玻璃不限制能源仓等级。

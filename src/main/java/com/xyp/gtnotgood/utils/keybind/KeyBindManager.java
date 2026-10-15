@@ -27,18 +27,18 @@ public final class KeyBindManager {
      */
     public static void registerAllKeyBinds() {
         // #tr key.toolbelt.open
-        // # Open Tool Belt Menu
-        // # zh_CN 打开工具腰带菜单
+        // # Open Radial Menu
+        // # zh_CN 打开快捷轮盘
         openToolMenuKeybind = new KeyBinding("key.toolbelt.open", Keyboard.KEY_R, CATEGORY);
 
         // #tr key.toolbelt.cycle.left
-        // # Cycle Left
-        // # zh_CN 左切换
+        // # Previous Radial Profile
+        // # zh_CN 上一个轮盘配置
         cycleToolMenuLeft = new KeyBinding("key.toolbelt.cycle.left", Keyboard.KEY_NONE, CATEGORY);
 
         // #tr key.toolbelt.cycle.right
-        // # Cycle Right
-        // # zh_CN 右切换
+        // # Next Radial Profile
+        // # zh_CN 下一个轮盘配置
         cycleToolMenuRight = new KeyBinding("key.toolbelt.cycle.right", Keyboard.KEY_NONE, CATEGORY);
 
         // #tr key.gtnotgood.wireless_monitor.toggle

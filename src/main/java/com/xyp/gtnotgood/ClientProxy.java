@@ -23,6 +23,7 @@ import com.xyp.gtnotgood.client.nei.FactoryRecipeImport;
 import com.xyp.gtnotgood.client.network.NetworkBlockRenderer;
 import com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer;
 import com.xyp.gtnotgood.client.packaged.WirelessConnectorRenderer;
+import com.xyp.gtnotgood.client.radialmenu.RadialMenuMod;
 import com.xyp.gtnotgood.client.research.ClientResearchTickHandler;
 import com.xyp.gtnotgood.client.research.GuiHandler;
 import com.xyp.gtnotgood.client.text.EffectTextRenderer;
@@ -42,7 +43,6 @@ import com.xyp.gtnotgood.common.network.WirelessMonitorSnapshot;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.gtnotgood.utils.event.SubscribeEventClientUtils;
-import com.xyp.gtnotgood.utils.event.ToolBeltClientEvents;
 import com.xyp.gtnotgood.utils.keybind.KeyBindManager;
 import com.xyp.gtnotgood.utils.text.TextEffectsCompat;
 
@@ -92,6 +92,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
+        RadialMenuMod.preInit();
         com.xyp.gtnotgood.client.research.Config.synchronizeConfiguration();
         FMLCommonHandler.instance().bus().register(new ClientResearchTickHandler());
     }
@@ -108,6 +109,7 @@ public class ClientProxy extends CommonProxy {
         registerPreviewCommands();
         registerBlockRenderers();
         KeyBindManager.registerAllKeyBinds();
+        RadialMenuMod.init();
         WirelessCardInput.register();
         BlockIcons.initialize();
         registerClientEvents();
@@ -169,8 +171,6 @@ public class ClientProxy extends CommonProxy {
 
     /** Registers one shared client utility listener on both Forge and FML event buses. */
     private void registerClientEvents() {
-        FMLCommonHandler.instance().bus().register(new ToolBeltClientEvents());
-
         SubscribeEventClientUtils clientUtils = new SubscribeEventClientUtils();
         MinecraftForge.EVENT_BUS.register(clientUtils);
         FMLCommonHandler.instance().bus().register(clientUtils);

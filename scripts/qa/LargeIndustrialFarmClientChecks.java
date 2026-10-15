@@ -72,6 +72,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import gregtech.api.GregTechAPI;
 import gregtech.api.enums.ItemList;
+import gregtech.api.enums.VoidingMode;
 import gregtech.api.enums.VoltageIndex;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
@@ -220,7 +221,9 @@ public final class LargeIndustrialFarmClientChecks {
         beds(VoltageIndex.MV);
         valid("MV beds accept UV or higher multi-amp energy without an overclock upgrade");
         require(machine.expectedOCs == 0 && machine.seedCapacity == 12 * BlockSeedBed.getCapacity(VoltageIndex.MV),
-            "twelve slices provide twelve times native MV capacity");
+            "every seed type receives twelve times native MV capacity");
+        require(machine.seedCapacity == 2700 && machine.getTotalSeedCapacity() == 97200,
+            "MV provides 2700 independent seeds per type and 97200 seeds across thirty-six types");
         require(machine.getCropInventory().getSlots() == 74,
             "thirty-six logical seed and soil pairs share two environment slots");
         upgrade(0, CropsNHBlocks.blockEnvironmentalEnhancementUnit, VoltageIndex.MV);
@@ -278,7 +281,9 @@ public final class LargeIndustrialFarmClientChecks {
         beds(VoltageIndex.UXV);
         valid("uniform UXV seed beds remain accepted at the same fixed size");
         require(machine.seedCapacity == 12 * BlockSeedBed.getCapacity(VoltageIndex.UXV),
-            "twelve times UXV seed capacity");
+            "twelve times UXV seed capacity for each seed type");
+        require(machine.seedCapacity == 41772 && machine.getTotalSeedCapacity() == 1503792,
+            "UXV provides 41772 independent seeds per type");
         beds(VoltageIndex.MV);
         valid("restore MV farm without upgrades");
     }
@@ -347,9 +352,14 @@ public final class LargeIndustrialFarmClientChecks {
     }
 
     private void successfulCycle() {
+        successfulCycle(-1);
+    }
+
+    private void successfulCycle(int excludedCrop) {
         machine.hasFertilizer = true;
         IFDropTable expected = new IFDropTable(machine.outputTracker.save());
         for (int crop = 0; crop < 36; crop++) {
+            if (crop == excludedCrop) continue;
             ItemStack seeds = machine.getCropSeed(crop);
             if (seeds == null) continue;
             machine.getDropsPerCycle(CropsNHUtils.getSeedData(seeds, false, true)).addTo(expected, seeds.stackSize);
@@ -361,7 +371,7 @@ public final class LargeIndustrialFarmClientChecks {
             && machine.lEUt == -machine.expectedEUt, "production cycle, duration and EU usage: " + result.getID());
         require(
             drops.length > 0 && sameItems(drops, machine.mOutputItems) && sameDrops(expected, machine.outputTracker),
-            "aggregated crop yield and fractional drop tracking for every occupied crop");
+            "aggregated crop yield and fractional drop tracking for every eligible crop");
     }
 
     private void verifyInventoryLimits() {
@@ -370,19 +380,37 @@ public final class LargeIndustrialFarmClientChecks {
         require(machine.canEditCrops(), "stopped controller permits crop editing");
         ItemStack remainder = machine.getCropInventory().insertItem(0, oversized, true);
         require(remainder != null && remainder.stackSize == 9 && machine.getUsedSeedCount() == 0,
-            "manual insertion simulation respects total capacity without changing inventory");
+            "manual insertion simulation respects one seed type's capacity without changing inventory");
         remainder = machine.getCropInventory().insertItem(0, oversized, false);
         require(remainder != null && remainder.stackSize == 9 && machine.getUsedSeedCount() == machine.seedCapacity,
             "manual insertion accepts the full expanded capacity and returns the excess");
         ItemStack other = seed(CropsNHCrops.Potato, 4);
         remainder = machine.getCropInventory().insertItem(2, other, false);
-        require(remainder != null && remainder.stackSize == 4 && machine.getCropSeed(1) == null,
-            "a second crop cannot bypass the shared capacity");
+        require(
+            remainder == null && machine.getCropSeed(1).stackSize == 4
+                && machine.getUsedSeedCount() == machine.seedCapacity + 4,
+            "a full first seed type does not block manual insertion of a second type");
+        remainder = machine.getCropInventory().insertItem(2, seed(CropsNHCrops.Potato, machine.seedCapacity + 9),
+            false);
+        require(
+            remainder != null && remainder.stackSize == 13 && machine.getCropSeed(1).stackSize == machine.seedCapacity,
+            "the second seed type independently fills its own capacity and returns excess seeds");
+        remainder = machine.getCropInventory().insertItem(4, seed(CropsNHCrops.Carrot, 1), false);
+        require(remainder != null && remainder.stackSize == 1 && machine.getCropSeed(2) == null,
+            "duplicate seeds cannot create another page to bypass their per-type capacity");
+        machine.setCropSeed(1, null);
         machine.setMachineMode(MTEIndustrialFarm.MODE_INPUT);
-        machine.mInputBusses.get(0).mInventory[0] = other.copy();
-        machine.checkProcessing();
-        require(machine.mInputBusses.get(0).mInventory[0].stackSize == 4
-            && machine.getUsedSeedCount() == machine.seedCapacity, "input mode also obeys the global seed limit");
+        machine.mInputBusses.get(0).mInventory[0] = seed(CropsNHCrops.Potato, machine.seedCapacity + 7);
+        require(
+            machine.checkProcessing().wasSuccessful() && machine.getCropSeed(1).stackSize == machine.seedCapacity
+                && machine.getUsedSeedCount() == 2 * machine.seedCapacity
+                && machine.mInputBusses.get(0).mInventory[0].stackSize == 7,
+            "input mode fills a second type independently while the first type is full");
+        machine.mInputBusses.get(0).mInventory[0] = seed(CropsNHCrops.Carrot, 3);
+        require(
+            !machine.checkProcessing().wasSuccessful() && machine.getCropSeed(0).stackSize == machine.seedCapacity
+                && machine.mInputBusses.get(0).mInventory[0].stackSize == 3,
+            "input mode leaves excess seeds of an individually full type unconsumed");
         machine.mInputBusses.get(0).mInventory[0] = null;
         machine.mMaxProgresstime = 5;
         require(!machine.canEditCrops() && machine.getCropInventory().extractItem(0, 1, false) == null,
@@ -579,7 +607,55 @@ public final class LargeIndustrialFarmClientChecks {
             machine.mInputHatches.get(0).mFluid.amount == 10000000
                 - ceiling(machine.getWaterRequirement(72), HydrationRegistry.instance.getPotency(FluidRegistry.WATER)),
             "all thirty-six crop types participate in the same correctly charged production cycle");
+        require(machine.seedCapacity == 2700, "full-capacity production fixture uses MV seed beds");
+        for (int crop = 0; crop < 36; crop++) {
+            ItemStack full = machine.getCropSeed(crop).copy();
+            full.stackSize = machine.seedCapacity;
+            machine.setCropSeed(crop, full);
+        }
+        require(machine.getUsedSeedCount() == 97200 && machine.getUsedSeedCount() == machine.getTotalSeedCapacity(),
+            "all thirty-six independent MV pages hold 2700 seeds each");
+        VoidingMode originalMode = machine.getVoidingMode();
+        machine.setVoidingMode(machine.getAllowedVoidingModes().stream().filter(mode -> !mode.protectItem).findFirst()
+            .orElseThrow(() -> new AssertionError("Missing item voiding mode for bulk production fixture")));
+        try {
+            machine.outputTracker.clear();
+            supplies();
+            successfulCycle();
+            verifyResourceCharge(97200, "full thirty-six-page production charges water and fertilizer for 97200 seeds");
+            ItemStack overflowing = machine.getCropSeed(35).copy();
+            overflowing.stackSize++;
+            machine.setCropSeed(35, overflowing);
+            machine.outputTracker.clear();
+            supplies();
+            successfulCycle(35);
+            require(
+                machine.getCropSeed(35).stackSize == machine.seedCapacity + 1
+                    && !machine.getCropStatus(35).equals(machine.getCropStatus(0)),
+                "an overflowing page stays intact and does not stop the other thirty-five pages");
+            verifyResourceCharge(94500, "an overflowing page contributes no output or fluid charge");
+            overflowing.stackSize--;
+            machine.setCropSeed(35, overflowing);
+        } finally {
+            machine.setVoidingMode(originalMode);
+        }
+        for (int crop = 0; crop < 36; crop++) {
+            ItemStack original = machine.getCropSeed(crop).copy();
+            original.stackSize = 1 + crop % 3;
+            machine.setCropSeed(crop, original);
+        }
+        report.append("36 independent MV pages produced from 97200 seeds; page overflow stayed isolated.\n");
         report.append("36 crop types: ").append(String.join(", ", planted)).append('\n');
+    }
+
+    private void verifyResourceCharge(int seedCount, String message) {
+        require(machine.mInputHatches.get(0).mFluid.amount
+            == 10000000 - ceiling(machine.getWaterRequirement(seedCount),
+                HydrationRegistry.instance.getPotency(FluidRegistry.WATER))
+            && machine.mInputHatches.get(1).mFluid.amount
+                == 10000000 - ceiling(machine.getFertilizerRequirement(seedCount),
+                    FertilizerRegistry.instance.getPotency(CropsNHFluids.fertilizer)),
+            message);
     }
 
     private List<ICropCard> simpleCrops() throws Exception {
@@ -665,7 +741,9 @@ public final class LargeIndustrialFarmClientChecks {
         upgrade(0, CropsNHBlocks.blockEnvironmentalEnhancementUnit, VoltageIndex.MV);
         upgrade(1, CropsNHBlocks.blockEnvironmentalEnhancementUnit, VoltageIndex.MV);
         valid("thirty-six crop types share two environmental cards");
-        machine.setCropSeed(0, seed(CropsNHCrops.Carrot, 300));
+        ItemStack largeSeed = machine.getCropSeed(0).copy();
+        largeSeed.stackSize = 300;
+        machine.setCropSeed(0, largeSeed);
         for (int crop = 0; crop < 36; crop++)
             machine.setCropSoil(crop, new ItemStack(Blocks.dirt, crop == 0 ? 300 : crop + 1));
         machine.setCropEnvironment(0, 0, CropsNHItemList.environmentalModule_HOT.get(1));
@@ -846,9 +924,6 @@ public final class LargeIndustrialFarmClientChecks {
     private void verifyGuiTransfer(EntityPlayerMP player) {
         NBTTagCompound saved = machine.getCropInventory().serializeNBT();
         ItemStack previous = player.inventory.getStackInSlot(9);
-        int otherSeeds = machine.getUsedSeedCount() - machine.getCropSeed(0).stackSize;
-        machine.setCropSeed(0, seed(CropsNHCrops.Carrot, machine.seedCapacity - otherSeeds - 2));
-        player.inventory.setInventorySlotContents(9, seed(CropsNHCrops.Carrot, 64));
         Slot source = null;
         for (Object entry : player.openContainer.inventorySlots) {
             Slot slot = (Slot) entry;
@@ -858,21 +933,28 @@ public final class LargeIndustrialFarmClientChecks {
             }
         }
         require(source != null, "server GUI exposes player inventory slots");
-        player.openContainer.transferStackInSlot(player, source.slotNumber);
-        require(
-            machine.getUsedSeedCount() == machine.seedCapacity && player.inventory.getStackInSlot(9) != null
-                && player.inventory.getStackInSlot(9).stackSize == 62,
-            "real GUI shift-click fills only the two globally available seed spaces; used=" + machine.getUsedSeedCount()
-                + "/"
-                + machine.seedCapacity
-                + ", remainder="
-                + (player.inventory.getStackInSlot(9) == null ? 0 : player.inventory.getStackInSlot(9).stackSize)
-                + ", editable="
-                + machine.canEditCrops());
+        for (int crop = 0; crop < 2; crop++) {
+            machine.setSelectedCrop(crop);
+            int otherSeeds = machine.getUsedSeedCount() - machine.getCropSeed(crop).stackSize;
+            ItemStack nearFull = machine.getCropSeed(crop).copy();
+            nearFull.stackSize = machine.seedCapacity - 2;
+            machine.setCropSeed(crop, nearFull);
+            ItemStack offered = nearFull.copy();
+            offered.stackSize = 64;
+            player.inventory.setInventorySlotContents(9, offered);
+            player.openContainer.transferStackInSlot(player, source.slotNumber);
+            require(
+                machine.getCropSeed(crop).stackSize == machine.seedCapacity
+                    && machine.getUsedSeedCount() == otherSeeds + machine.seedCapacity
+                    && player.inventory.getStackInSlot(9) != null
+                    && player.inventory.getStackInSlot(9).stackSize == 62,
+                "real GUI shift-click independently fills the last two spaces of seed page " + crop);
+        }
         machine.getCropInventory().deserializeNBT(saved);
+        machine.setSelectedCrop(0);
         player.inventory.setInventorySlotContents(9, previous);
         player.openContainer.detectAndSendChanges();
-        report.append("Real server GUI shift-click obeys the shared capacity.\n");
+        report.append("Real server GUI shift-click obeys each selected page's independent capacity.\n");
     }
 
     private void verifyLargeDropCollection() throws Exception {

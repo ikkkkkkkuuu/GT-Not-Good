@@ -68,10 +68,7 @@ public final class SelectedCropInventory extends MTEIndustrialFarmItemStackHandl
         if (isClient()) {
             validateSlotIndex(slot);
             if (slot >= 2) return 1;
-            if (slot == 1) return Math.max(0, farm.seedCapacity);
-            ItemStack seed = super.getStackInSlot(slot);
-            long free = Math.max(0L, (long) farm.seedCapacity - farm.getUsedSeedCount());
-            return (int) Math.min(Integer.MAX_VALUE, (seed == null ? 0L : seed.stackSize) + free);
+            return Math.max(0, farm.seedCapacity);
         }
         return farm.getCropInventory().getSlotLimit(storageSlot(slot));
     }

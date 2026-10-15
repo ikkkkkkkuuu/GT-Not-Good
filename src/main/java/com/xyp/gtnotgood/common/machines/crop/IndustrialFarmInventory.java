@@ -62,10 +62,7 @@ public final class IndustrialFarmInventory extends ItemStackHandler {
     public int getSlotLimit(int slot) {
         validateSlotIndex(slot);
         if (slot >= ENVIRONMENT_START) return 1;
-        if (slot % SLOTS_PER_CROP == 1) return Math.max(0, farm.seedCapacity);
-        ItemStack seed = getStackInSlot(slot);
-        long free = Math.max(0L, (long) farm.seedCapacity - farm.getUsedSeedCount());
-        return (int) Math.min(Integer.MAX_VALUE, (seed == null ? 0L : seed.stackSize) + free);
+        return Math.max(0, farm.seedCapacity);
     }
 
     @Override

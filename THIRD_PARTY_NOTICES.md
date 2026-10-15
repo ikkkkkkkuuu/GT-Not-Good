@@ -124,8 +124,8 @@ XNet is distributed under the MIT License. The original license is included in
 `LargeIndustrialFarm.java` adapts the structure, validation and farming calculations
 from GTNewHorizons/CropsNH `2.0.129`, commit
 `47debb72b230382c91aa256b92d715062c3a318e`. The adapted controller retains
-LGPL-3.0-or-later and is outside this project's general MIT grant. It adds shared
-12-fold seed capacity, compatible acceleration and overclock modules, perfect
+LGPL-3.0-or-later and is outside this project's general MIT grant. It adds independent
+12-fold capacity per seed type, compatible acceleration and overclock modules, perfect
 overclocking, tier-scaled module bonuses, automatic grouping of up to 36 seed
 types with associated soil, and resource use based on planted seeds. Two
 environment cards apply to all crops. The GUI inherits CropsNH's native four
@@ -134,6 +134,16 @@ inventory bridge exposes the selected seed and soil plus the global cards.
 No upstream GUI source or visual assets are copied. Source mapping, changes
 and full LGPL/GPL texts are bundled under
 `META-INF/industrial-farm/`.
+
+## GTNH Radial Menu
+
+The radial menu, nested rings, profile editor and scripting support adapt
+Navatusein/GTNH-Radial-Menu commit `6fc34b6904cf66b7aa818025542bb61a550a9312`,
+copyright 2026 Navatusein, under the MIT License. The bundled Phosphor icons are
+copyright 2020-2021 Phosphor Icons, also under MIT. LuaJ 3.0.1 is bundled and
+relocated under its MIT terms. Original notices, LuaJ copyright lines, source
+mappings, asset hashes and adaptation records are included in
+`META-INF/radial-menu-port/`.
 
 ## GT5-Unofficial ME output assembly textures
 

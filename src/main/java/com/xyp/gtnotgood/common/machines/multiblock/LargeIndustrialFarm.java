@@ -230,6 +230,10 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         clientUsedSeedCount = Math.max(0, count);
     }
 
+    public long getTotalSeedCapacity() {
+        return (long) Math.max(0, seedCapacity) * IndustrialFarmInventory.CROP_COUNT;
+    }
+
     public int getOccupiedCropCount() {
         int count = 0;
         for (int crop = 0; crop < IndustrialFarmInventory.CROP_COUNT; crop++)
@@ -247,6 +251,13 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         ItemStack soil = getCropSoil(crop);
         if (CropsNHUtils.isStackValid(soil) && !matchesSoil(seed, soil)) return false;
         if (getBaseMetaTileEntity() != null && getBaseMetaTileEntity().isClientSide()) return true;
+        for (int other = 0; other < IndustrialFarmInventory.CROP_COUNT; other++) {
+            ItemStack otherSeed = getCropSeed(other);
+            if (
+                other != crop && CropsNHUtils.isStackValid(otherSeed)
+                    && GTUtility.areStacksEqual(otherSeed, stack, false)
+            ) return false;
+        }
         int previousCrop = activeCrop;
         boolean previousFertilizer = hasFertilizer;
         try {
@@ -591,7 +602,6 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
 
     private CheckRecipeResult inputSeeds() {
         if (seedCapacity <= 0) return CheckRecipeResultRegistry.NONE;
-        if (getUsedSeedCount() >= seedCapacity) return CHECK_RECIPE_RESULT_SEEDS_FULL;
         List<ItemStack> inputs = getStoredInputs();
         boolean inserted = false;
         CheckRecipeResult failure = CheckRecipeResultRegistry.NO_RECIPE;
@@ -616,7 +626,12 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
             }
             ItemStack existing = getCropSeed(crop);
             int existingCount = CropsNHUtils.isStackValid(existing) ? existing.stackSize : 0;
-            int amount = countMatching(inputs, candidate, seedCapacity - getUsedSeedCount());
+            if (existingCount >= seedCapacity) {
+                failure = CHECK_RECIPE_RESULT_SEEDS_FULL;
+                cropStatusKeys[crop] = capacityStatus();
+                continue;
+            }
+            int amount = countMatching(inputs, candidate, seedCapacity - existingCount);
             ItemStack soil = getCropSoil(crop);
             ItemStack soilTemplate = soil;
             if (needsSoil(seed)) {
@@ -709,7 +724,6 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
 
     private CheckRecipeResult farmCrops() {
         if (upgradeTier < BlockSeedBed.MIN_TIER || seedCapacity <= 0) return CheckRecipeResultRegistry.NO_RECIPE;
-        if (getUsedSeedCount() > seedCapacity) return CHECK_RECIPE_RESULT_SEED_OVERFLOW;
         boolean previousFertilizer = hasFertilizer;
         boolean completed = false;
         try {
@@ -785,6 +799,10 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
     }
 
     private CheckRecipeResult validateCrop(ISeedData seed) {
+        if (seed.getStack().stackSize > seedCapacity) {
+            cropStatusKeys[activeCrop] = capacityStatus();
+            return CHECK_RECIPE_RESULT_SEED_OVERFLOW;
+        }
         if (seed.getCrop().getMinSeedBedTier() > upgradeTier) {
             cropStatusKeys[activeCrop] = bedTierStatus();
             return CHECK_RECIPE_RESULT_SEED_BED_TIER_TOO_LOW;
@@ -892,6 +910,13 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         return "gtng.industrial_farm.plot.ready";
     }
 
+    private static String capacityStatus() {
+        // #tr gtng.industrial_farm.plot.capacity
+        // # Page capacity reached
+        // # zh_CN 本页容量已满
+        return "gtng.industrial_farm.plot.capacity";
+    }
+
     private static String bedTierStatus() {
         // #tr gtng.industrial_farm.plot.bed_tier
         // # Bed tier
@@ -959,10 +984,14 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
     public String[] getInfoData() {
         List<String> lines = new ArrayList<>();
         // #tr gtng.industrial_farm.scanner.capacity
-        // # Shared seeds: %s / %s
-        // # zh_CN 共享种子容量：%s / %s
+        // # Total seeds: %s / %s
+        // # zh_CN 种子总量：%s / %s
         lines.add(StatCollector.translateToLocalFormatted("gtng.industrial_farm.scanner.capacity", getUsedSeedCount(),
-            seedCapacity));
+            getTotalSeedCapacity()));
+        // #tr gtng.industrial_farm.scanner.page_capacity
+        // # Independent capacity per seed type: %s
+        // # zh_CN 每种种子独立容量：%s
+        lines.add(StatCollector.translateToLocalFormatted("gtng.industrial_farm.scanner.page_capacity", seedCapacity));
         // #tr gtng.industrial_farm.scanner.plots
         // # Seed types: %s / 36
         // # zh_CN 种子种类：%s / 36
@@ -998,8 +1027,8 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         // # zh_CN 固定最大结构：12 个种植段、36 个苗床、12 个升级槽位
         tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.fixed_size"));
         // #tr gtng.industrial_farm.capacity
-        // # Up to 36 seed types share 12 times the original seed capacity at the same tier.
-        // # zh_CN 最多同时种植 36 种种子，共享同阶原版 12 倍种子容量
+        // # Up to 36 seed types, each with 12 times the original capacity at the same tier.
+        // # zh_CN 最多同时种植 36 种种子，每种独享同阶原版 12 倍容量
         tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.capacity"));
         // #tr gtng.industrial_farm.plot_inventory
         // # Input mode groups seeds and pairs sub-soil automatically; all crops share two environment cards.

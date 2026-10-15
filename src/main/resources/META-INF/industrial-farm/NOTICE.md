@@ -22,7 +22,7 @@ https://github.com/GTNewHorizons/CropsNH/blob/47debb72b230382c91aa256b92d715062c
 Changes: a separate controller with fixed maximum dimensions (5 x 4 x 14),
 upgrade modules independent of seed-bed tier, default multi-amp energy support,
 and fixed borosilicate glass without a glass-based energy-tier limit.
-The controller also provides 12-fold shared seed capacity, coexistence of growth
+The controller also provides independent 12-fold capacity per seed type, coexistence of growth
 and overclock modules, perfect overclocks with fourfold power and throughput,
 tier-scaled module effects, automatic grouping of up to 36 seed types with
 associated soil, and water/fertilizer use based on planted seed count and

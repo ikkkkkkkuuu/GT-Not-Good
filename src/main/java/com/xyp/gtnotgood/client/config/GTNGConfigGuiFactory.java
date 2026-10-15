@@ -14,6 +14,7 @@ import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 
+import com.xyp.gtnotgood.client.radialmenu.client.gui.RadialSettingsEntry;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.config.MainConfig;
 import com.xyp.gtnotgood.utils.enums.ModList;
@@ -107,6 +108,11 @@ public class GTNGConfigGuiFactory implements IModGuiFactory {
         @SuppressWarnings("rawtypes")
         private static List<IConfigElement> createElements() {
             List<IConfigElement> elements = new ArrayList<>();
+            // #tr gui.gtnotgood.radial_settings
+            // # Radial Menu
+            // # zh_CN 快捷轮盘
+            elements
+                .add(new DummyCategoryElement("radial", "gui.gtnotgood.radial_settings", RadialSettingsEntry.class));
             if (Minecraft.getMinecraft().theWorld != null) {
                 // #tr gui.gtnotgood.server_settings
                 // # Server settings (administrator)
