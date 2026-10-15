@@ -205,6 +205,7 @@ public enum GTNGItemList implements IItemContainer {
     AssemblerMatrix,
     LargeVoidMiner,
     LargeBeeBreeder,
+    LargeIndustrialApiary,
     LargeCropBreeder,
     LargeIndustrialFarm,
     IntegratedProductionFactory,

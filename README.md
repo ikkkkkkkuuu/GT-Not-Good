@@ -43,12 +43,28 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.4.5          | [![1.4.5](https://img.shields.io/badge/release-1.4.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.5) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.4.6          | [![1.4.6](https://img.shields.io/badge/release-1.4.6-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.6) |         ✔️         |
 
-最新版本：[1.4.5 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.5)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.5/gtnotgood-1.4.5.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.5/gtnotgood-1.4.5-sources.jar)。
+最新版本：[1.4.6 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.6)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.6/gtnotgood-1.4.6.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.6/gtnotgood-1.4.6-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.4.5。
+1.3.4 因启动错误已撤回，请更新到 1.4.6。
+
+### 大型工业蜂箱
+
+保留原版 15×17×15 结构，玻璃固定为普通硼玻璃方块；取消 LuV 能源仓门槛，玻璃不限制能源仓等级。
+普通模式每只已存蜂后基础消耗 32 EU/t，容量为 `floor(总输入 EU/t ÷ 32) × 8`；全部蜂后必须同时满足容量与供电要求才能生产。
+任一花位放置任意已注册花源即可，无需匹配蜂后基因；保留原版 5 秒结算、64 倍时间加速及蜂王浆最多三倍产出。
+分蜂模式保留一只蜂后、100 蜂王浆、60 秒和 8190 EU/t 基础消耗，支持普通超频，输出保留基因的劣等公主蜂副本。
+控制器在 MV 组装机合成，120 EU/t、30 秒。蜂后完整基因与小数产出进度均可存档。
+详见 [验证记录](docs/testing/industrial-apiary.md)。
+
+### 高级源质分解机改进
+
+新增原生 ModularUI2 界面，显示机器与网络状态、待输出源质或输入物品的源质预览。
+ME 满仓或断网时保留未输出源质并暂停消耗新物品；完全拒收时逐步延长重试间隔，减少重复存档标记与网络调用。
+源质查询增加短期缓存，按物品、附加值与 NBT 变化刷新；保留全局配方提速设置及连续加工行为。
+详见 [验证记录](docs/testing/essentia-disassembler.md)。
 
 ### ME 输出总成
 

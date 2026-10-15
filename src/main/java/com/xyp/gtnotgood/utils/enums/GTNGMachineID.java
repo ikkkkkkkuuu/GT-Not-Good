@@ -32,6 +32,7 @@ public enum GTNGMachineID {
     IntegratedChemicalPlant(Machine, 24),
     LargeIndustrialFarm(Machine, 25),
     MEOutputAssembly(Machine, 26),
+    LargeIndustrialApiary(Machine, 27),
 
     DieselGeneratorLV(BasicMachine, 0),
     DieselGeneratorMV(BasicMachine, 1),

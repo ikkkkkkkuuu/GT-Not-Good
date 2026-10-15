@@ -24,6 +24,7 @@ import com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipe
 import com.xyp.gtnotgood.common.recipe.machine.LargeBeeBreederRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCombProcessorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCropBreederRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.LargeIndustrialApiaryRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeIndustrialFarmRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeTransmutationMachineRecipes;
@@ -62,6 +63,7 @@ public class RecipeLoader {
             ItemList.Electric_Pump_LV.get(1));
         if (ModList.Forestry.isModLoaded()) {
             WorkingApiaryRegistration.registerRecipe();
+            LargeIndustrialApiaryRecipes.loadRecipes();
         }
         GameRegistry.addShapelessRecipe(GTNGItemList.StructureCompass.get(1), Items.compass, Items.map, Items.brick);
         if (ModList.ThaumicEnergistics.isModLoaded() && ModList.Thaumcraft.isModLoaded()) {

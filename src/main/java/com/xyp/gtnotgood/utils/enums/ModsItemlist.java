@@ -115,6 +115,9 @@ public enum ModsItemlist {
     // 无尽箱子
     InfinityChest(Mods.AvaritiaAddons.ID, "InfinityChest", 0),
 
+    // 硼硅酸盐方块
+    BorosilicateGlass(Mods.BartWorks.ID, "BW_TieredGlass", 0),
+
     // 松树树叶
     PineLeaves(Mods.BiomesOPlenty.ID, "colorizedLeaves2", 1),
     // 松树树苗
@@ -522,6 +525,8 @@ public enum ModsItemlist {
     AlvearySwarmer(Mods.Forestry.ID, "alveary", 2),
     // 蜂箱组稳定器
     AlvearyStabilizer(Mods.Forestry.ID, "alveary", 6),
+    // 蜂箱
+    Apiary(Mods.Forestry.ID, "apiculture", 0),
     // 蜂蜡
     Beeswax(Mods.Forestry.ID, "beeswax", 0),
     // 农场齿轮箱

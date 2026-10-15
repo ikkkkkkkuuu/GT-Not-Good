@@ -29,6 +29,7 @@ import com.xyp.gtnotgood.common.machines.multiblock.IntegratedProductionFactory;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeBeeBreeder;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeCombProcessor;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeCropBreeder;
+import com.xyp.gtnotgood.common.machines.multiblock.LargeIndustrialApiary;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeIndustrialFarm;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeOreProcessor;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeTransmutationMachine;
@@ -128,6 +129,15 @@ public class MachineLoader {
         GTNGItemList.LargeBeeBreeder.set(new LargeBeeBreeder(GTNGMachineID.LargeBeeBreeder.id, "LargeBeeBreeder",
             StatCollector.translateToLocal("NameLargeBeeBreeder")));
         addItemTooltip(GTNGItemList.LargeBeeBreeder.get(1), AnimatedText.GT_NOT_GOOD);
+
+        if (ModList.Forestry.isModLoaded()) {
+            // #tr gtng.apiary.name
+            // # Large Industrial Apiary
+            // # zh_CN 大型工业蜂箱
+            GTNGItemList.LargeIndustrialApiary.set(new LargeIndustrialApiary(GTNGMachineID.LargeIndustrialApiary.id,
+                "LargeIndustrialApiary", StatCollector.translateToLocal("gtng.apiary.name")));
+            addItemTooltip(GTNGItemList.LargeIndustrialApiary.get(1), AnimatedText.GT_NOT_GOOD);
+        }
 
         // #tr NameLargeCropBreeder
         // # Large Crop Breeder

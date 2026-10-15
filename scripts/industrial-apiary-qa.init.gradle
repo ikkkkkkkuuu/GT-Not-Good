@@ -1,0 +1,60 @@
+// Isolated structure, Forestry production, persistence and GUI checks.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/LargeIndustrialApiaryClientChecks.java'))
+    }
+    def qaClasses = root.tasks.register('isolateIndustrialApiaryQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/LargeIndustrialApiaryClientChecks*.class'
+        into root.layout.buildDirectory.dir('industrial-apiary-qa/classes')
+    }
+    root.spotless.java {
+        target 'scripts/qa/LargeIndustrialApiaryClientChecks.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/LargeIndustrialApiary.java',
+            'src/main/java/com/xyp/gtnotgood/common/gui/modularui/multiblock/LargeIndustrialApiaryGui.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/LargeIndustrialApiaryRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
+            'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/ModsItemlist.java'
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir('industrial-apiary-qa/classes'))
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir root.file('run/industrial-apiary-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.industrialApiary.qa', 'true'
+        systemProperty 'gtng.industrialApiary.output', root.file('build/industrial-apiary-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('Isolated industrial apiary client checks')
+        args '--width', '1100', '--height', '740'
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/industrial-apiary-qa').mkdirs()
+            java.nio.file.Files.deleteIfExists(root.file('build/industrial-apiary-qa/result.txt').toPath())
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(root.file('build/industrial-apiary-qa/window-helper.log')).start()
+        }
+        doLast {
+            def result = root.file('build/industrial-apiary-qa/result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) throw new GradleException('Industrial apiary QA failed')
+        }
+    }
+}

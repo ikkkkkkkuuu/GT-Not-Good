@@ -984,3 +984,34 @@ Reference checkouts remain outside build inputs.
   `META-INF/me-output-assembly/ASSET_MANIFEST.json`; full LGPL/GPL terms and attribution
   are packaged beside it. Extracted references and previews stay in ignored
   `build/me-output-reference`, outside compilation and packaged resources.
+
+## Large Industrial Apiary — 2026-10-15
+
+- Source: GTNewHorizons/GT5-Unofficial `5.09.54.183`, commit
+  `f8453bce28793713d314f6dcfa5ac551d700efd6`, confirmed through the upstream tag API.
+  https://github.com/GTNewHorizons/GT5-Unofficial/tree/f8453bce28793713d314f6dcfa5ac551d700efd6
+  The pinned README, `LICENSE.txt`, controller and base-class headers were inspected
+  before adaptation. The controller/base explicitly retain kuba6000's 2022-2024
+  LGPL-3.0-or-later notice; the GUI has no separate header and uses the repository's
+  LGPL-3.0-or-later grant. The adapted controller and GUI are outside the project's
+  general MIT grant.
+- Sources under `src/main/java/`:
+  `kubatech/tileentity/gregtech/multiblock/MTEMegaIndustrialApiary.java` and
+  `kubatech/gui/modularui2/MTEMegaIndustrialApiaryGui.java`, with
+  `kubatech/api/implementations/KubaTechGTMultiBlockBase.java` as an additional
+  source for its fractional voltage-tier formula. Destinations:
+  `com/xyp/gtnotgood/common/machines/multiblock/LargeIndustrialApiary.java` and
+  `com/xyp/gtnotgood/common/gui/modularui/multiblock/LargeIndustrialApiaryGui.java`.
+- Adaptations use local registration, translations and the GTNG electric multiblock
+  base while preserving the upstream 15 x 17 x 15 structure, queen storage,
+  production, swarming and royal-jelly bonus. Energy hatches no longer require LuV;
+  glass is fixed to standard Borosilicate Glass Blocks (`bartworks:BW_TieredGlass`,
+  metadata 0; `ItemRegistry.bw_realglas`) without restricting energy tier.
+  Flower checks do not depend on queen genes.
+  Each stored queen uses LV power and capacity is eight times the LV-based value.
+  The local controller recipe uses MV assembler power and MV-or-earlier materials.
+- Icons and textures are referenced from the installed dependency at runtime;
+  no visual assets are copied. Full source hashes, attribution, adaptation details
+  and LGPL/GPL texts are packaged under `META-INF/industrial-apiary/`.
+  Extracted dependency references remain in ignored `build/tmp/apiary-study`,
+  outside compilation and resource packaging.

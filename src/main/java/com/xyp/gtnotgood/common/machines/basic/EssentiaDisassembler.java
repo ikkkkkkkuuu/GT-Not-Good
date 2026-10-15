@@ -7,6 +7,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
@@ -25,6 +29,7 @@ import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.implementations.MTEBasicMachine;
+import gregtech.api.modularui2.GTGuiTextures;
 import gregtech.api.recipe.BasicUIProperties;
 import gregtech.api.render.TextureFactory;
 import thaumcraft.api.aspects.Aspect;
@@ -33,17 +38,32 @@ import thaumcraft.common.lib.crafting.ThaumcraftCraftingManager;
 import thaumicenergistics.common.storage.AEEssentiaStack;
 import thaumicenergistics.common.storage.AEEssentiaStackType;
 
-/**
- * HV GregTech single-block machine with native EU processing and direct ME essentia output.
- * The consumed item's yield remains in a persistent batch until processing and all ME insertions finish.
- * GT's base tile owns the AE proxy's unload/invalidation lifecycle.
- */
+/** Consumed inputs remain in a persistent batch until processing and ME insertion finish. */
 public final class EssentiaDisassembler extends MTEBasicMachine {
+
+    private static final int MAX_OUTPUT_RETRY_DELAY = 20;
+    private static final int ESSENTIA_CACHE_DURATION = 20;
 
     private AENetworkProxy proxy;
     private AspectList batch = new AspectList();
     private boolean finished;
     private boolean transferring;
+    private long nextOutputAttemptTick;
+    private int outputRetryDelay = 1;
+    private ItemStack cachedInput;
+    private AspectList cachedEssentia = new AspectList();
+    private long essentiaCacheExpiresAt;
+    private ItemStack blockedInput;
+
+    enum DisplayState {
+        Idle,
+        Processing,
+        NoPower,
+        NetworkUnavailable,
+        WaitingOutput,
+        Disabled,
+        NoEssentia
+    }
 
     public EssentiaDisassembler(int id, String name, String localizedName) {
         super(id, name, localizedName, 3, 1, description(), 1, 0);
@@ -84,7 +104,17 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
     protected BasicUIProperties getUIProperties() {
         return super.getUIProperties().toBuilder()
             .progressBarTexture(GTUITextures.fallbackableProgressbar("extract", GTUITextures.PROGRESSBAR_EXTRACT))
-            .build();
+            .progressBarTextureMUI2(GTGuiTextures.PROGRESSBAR_EXTRACT).build();
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData data, PanelSyncManager syncManager, UISettings uiSettings) {
+        return new EssentiaDisassemblerGui(this, getUIProperties()).build(data, syncManager, uiSettings);
+    }
+
+    @Override
+    protected boolean useMui2() {
+        return true;
     }
 
     @Override
@@ -139,6 +169,47 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
         return clean;
     }
 
+    private AspectList getCachedEssentia(ItemStack input) {
+        if (input == null || input.stackSize <= 0) return new AspectList();
+        long tick = getBaseMetaTileEntity().getTimer();
+        if (!isSameInput(cachedInput, input) || tick >= essentiaCacheExpiresAt) {
+            cachedInput = input.copy();
+            cachedInput.stackSize = 1;
+            cachedEssentia = getEssentia(cachedInput);
+            // Refresh even unchanged stacks so runtime aspect registrations cannot leave a permanent stale result.
+            essentiaCacheExpiresAt = tick + ESSENTIA_CACHE_DURATION;
+        }
+        return cachedEssentia.copy();
+    }
+
+    private static boolean isSameInput(ItemStack first, ItemStack second) {
+        return first != null && second != null
+            && first.getItem() == second.getItem()
+            && first.getItemDamage() == second.getItemDamage()
+            && ItemStack.areItemStackTagsEqual(first, second);
+    }
+
+    AspectList getDisplayedEssentia() {
+        return batch.size() > 0 ? batch.copy() : getCachedEssentia(getInputAt(0));
+    }
+
+    DisplayState getDisplayState() {
+        var tile = getBaseMetaTileEntity();
+        if (batch.size() > 0) {
+            if (!finished) {
+                return mProgresstime < 0 || tile.getStoredEU() < mEUt ? DisplayState.NoPower : DisplayState.Processing;
+            }
+            return getProxy().isActive() ? DisplayState.WaitingOutput : DisplayState.NetworkUnavailable;
+        }
+        if (!tile.isAllowedToWork()) return DisplayState.Disabled;
+        ItemStack input = getInputAt(0);
+        if (input == null || input.stackSize <= 0) return DisplayState.Idle;
+        if (getCachedEssentia(input).size() == 0) return DisplayState.NoEssentia;
+        if (!getProxy().isActive()) return DisplayState.NetworkUnavailable;
+        if (isSameInput(blockedInput, input)) return DisplayState.WaitingOutput;
+        return hasEnoughEnergyToCheckRecipe() ? DisplayState.Idle : DisplayState.NoPower;
+    }
+
     @SuppressWarnings("unchecked")
     private IMEMonitor<AEEssentiaStack> monitor() throws GridAccessException {
         return (IMEMonitor<AEEssentiaStack>) getProxy().getStorage()
@@ -149,7 +220,8 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
     @Override
     public int checkRecipe() {
         if (batch.size() > 0 || !getProxy().isActive()) return DID_NOT_FIND_RECIPE;
-        AspectList output = getEssentia(getInputAt(0));
+        blockedInput = null;
+        AspectList output = getCachedEssentia(getInputAt(0));
         if (output.size() == 0) return DID_NOT_FIND_RECIPE;
         try {
             var inventory = monitor();
@@ -157,7 +229,10 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
             for (Aspect aspect : output.getAspects()) {
                 var rest = inventory.injectItems(new AEEssentiaStack(aspect, output.getAmount(aspect)),
                     Actionable.SIMULATE, source);
-                if (rest != null && rest.getStackSize() > 0) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS;
+                if (rest != null && rest.getStackSize() > 0) {
+                    blockedInput = getInputAt(0).copy();
+                    return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS;
+                }
             }
             batch = output;
             finished = false;
@@ -167,18 +242,20 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
             markDirty();
             return FOUND_AND_SUCCESSFULLY_USED_RECIPE;
         } catch (GridAccessException ignored) {
+            blockedInput = getInputAt(0).copy();
             return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS;
         }
     }
 
     @Override
     protected boolean allowPutStackValidated(IGregTechTileEntity tile, int slot, ForgeDirection side, ItemStack stack) {
-        return super.allowPutStackValidated(tile, slot, side, stack) && getEssentia(stack).size() > 0;
+        return super.allowPutStackValidated(tile, slot, side, stack) && getCachedEssentia(stack).size() > 0;
     }
 
     @Override
     public void endProcess() {
         finished = true;
+        resetOutputRetry();
         markDirty();
         flushBatch();
     }
@@ -189,7 +266,7 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
         if (tile.isServerSide()) {
             flushBatch();
             if (mMaxProgresstime <= 0 && batch.size() == 0 && tick % 20 == 0 && getInputAt(0) != null) {
-                tile.setInventorySlotContents(getInputSlot(), getInputAt(0));
+                tile.markInventoryBeenModified();
             }
         }
         super.onPostTick(tile, tick);
@@ -198,7 +275,10 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
     /** Debits only actual accepted essentia and blocks reentrant storage callbacks. */
     private void flushBatch() {
         if (!finished || batch.size() == 0 || transferring || !getProxy().isActive()) return;
+        long tick = getBaseMetaTileEntity().getTimer();
+        if (tick < nextOutputAttemptTick) return;
         transferring = true;
+        boolean changed = false;
         try {
             var inventory = monitor();
             var source = new MachineSource((IActionHost) getBaseMetaTileEntity());
@@ -206,23 +286,33 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
                 int amount = batch.getAmount(aspect);
                 var rest = inventory.injectItems(new AEEssentiaStack(aspect, amount), Actionable.MODULATE, source);
                 int remaining = rest == null ? 0 : (int) Math.min(amount, Math.max(0, rest.getStackSize()));
+                if (remaining == amount) continue;
                 batch.remove(aspect);
                 if (remaining > 0) batch.add(aspect, remaining);
-                markDirty();
+                changed = true;
             }
         } catch (GridAccessException ignored) {
             // Retain the batch until the network is accessible again.
         } finally {
             transferring = false;
+            if (changed) markDirty();
+            if (batch.size() == 0) resetOutputRetry();
+            else if (changed) {
+                outputRetryDelay = 1;
+                nextOutputAttemptTick = tick + 1;
+            } else {
+                nextOutputAttemptTick = tick + outputRetryDelay;
+                outputRetryDelay = Math.min(MAX_OUTPUT_RETRY_DELAY, outputRetryDelay * 2);
+            }
         }
     }
 
-    /**
-     * Dynamic TC yields do not pass RecipeMapBackend.compileRecipe. Like the dynamic furnace backend,
-     * apply the same central policy as RecipeSpeedMixin exactly once to the original duration.
-     *
-     * @return configured duration in ticks, at least one
-     */
+    private void resetOutputRetry() {
+        nextOutputAttemptTick = 0;
+        outputRetryDelay = 1;
+    }
+
+    /** Applies global speed settings once to each dynamic recipe. */
     public static int processingDuration() {
         Config.ensureLoaded();
         return Config.getModifiedRecipeDuration(20);
@@ -252,6 +342,11 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
     @Override
     public void loadNBTData(NBTTagCompound tag) {
         super.loadNBTData(tag);
+        resetOutputRetry();
+        cachedInput = null;
+        cachedEssentia = new AspectList();
+        essentiaCacheExpiresAt = 0;
+        blockedInput = null;
         NBTTagCompound contents = tag.getCompoundTag("EssentiaBatch");
         batch = new AspectList();
         batch.readFromNBT(contents);
