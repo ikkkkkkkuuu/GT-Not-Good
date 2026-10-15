@@ -36,6 +36,7 @@ public enum GTNGItemList implements IItemContainer {
     SteamElectrolyzer,
     SteamCropManager,
     SteamAssembler,
+    SeedConverter,
 
     RtsControlCore,
     RemoteControlCore,

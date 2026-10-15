@@ -50,7 +50,8 @@ public enum GTNGMachineID {
     SteamCentrifuge(BasicMachine, 13),
     SteamElectrolyzer(BasicMachine, 14),
     SteamCropManager(BasicMachine, 15),
-    SteamAssembler(BasicMachine, 16);
+    SteamAssembler(BasicMachine, 16),
+    SeedConverter(BasicMachine, 17);
 
     public final int id;
     private static final int META_INCREMENT = 1;

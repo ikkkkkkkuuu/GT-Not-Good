@@ -70,7 +70,6 @@ import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.LargeIndustrialApiaryGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiBlockBase;
-import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 
 import cpw.mods.fml.relauncher.Side;
@@ -383,7 +382,7 @@ public class LargeIndustrialApiary extends GTNGMultiBlockBase<LargeIndustrialApi
         tt.addMaintenanceHatch("1+", StatCollector.translateToLocal("gt.mbtt.structure.any_casing"), 1);
         tt.addInputBus("0+", StatCollector.translateToLocal("gt.mbtt.structure.any_casing"), 1);
         tt.addOutputBus("1+", StatCollector.translateToLocal("gt.mbtt.structure.any_casing"), 1);
-        tt.toolTipFinisher(ModList.GTNotGood.getDisplayName());
+        tt.toolTipFinisher();
         return tt;
     }
 

@@ -2,6 +2,7 @@ package com.xyp.gtnotgood.loader;
 
 import com.xyp.gtnotgood.client.nei.ChemicalPlantFrontend;
 import com.xyp.gtnotgood.client.nei.TransmutationFrontend;
+import com.xyp.gtnotgood.common.recipe.SeedConversionBackend;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import gregtech.api.gui.modularui.GTUITextures;
@@ -17,6 +18,14 @@ import gregtech.nei.formatter.HeatingCoilSpecialValueFormatter;
  * handlers all reference the same object instead of constructing duplicate maps.
  */
 public final class GTNGRecipeMaps {
+
+    public static final RecipeMap<SeedConversionBackend> SeedConversionRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.seedConversion
+        // # Seed Conversion
+        // # zh_CN 种子转化
+        .of("recipe.gtnotgood.seedConversion", SeedConversionBackend::new).maxIO(1, 1, 0, 0)
+        .progressBar(GTUITextures.PROGRESSBAR_ARROW)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.SeedConverter.get(1))).build();
 
     public static final RecipeMap<RecipeMapBackend> FuelRefiningRecipes = RecipeMapBuilder
         // #tr recipe.gtnotgood.fuel_refining

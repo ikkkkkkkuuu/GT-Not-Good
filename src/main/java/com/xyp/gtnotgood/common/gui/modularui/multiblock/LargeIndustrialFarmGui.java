@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.common.gui.modularui.multiblock;
 
+import static com.gtnewhorizon.cropsnh.tileentity.multi.MTEIndustrialFarm.SLOT_SUB_SOIL;
 import static gregtech.api.metatileentity.BaseTileEntity.TOOLTIP_DELAY;
 import static net.minecraft.util.StatCollector.translateToLocal;
 import static net.minecraft.util.StatCollector.translateToLocalFormatted;
@@ -49,6 +50,14 @@ public final class LargeIndustrialFarmGui extends MTEIndustrialFarmGui {
 
     @Override
     protected Flow createLeftPanelGapRow(ModularPanel panel, PanelSyncManager sync) {
+        Flow row = super.createLeftPanelGapRow(panel, sync);
+        for (int index = row.getChildren().size() - 1; index >= 0; index--) {
+            IWidget child = row.getChildren().get(index);
+            if (
+                child instanceof ItemSlot slot && slot.getSlot().getItemHandler() == farm.ifStackHandler
+                    && slot.getSlot().getSlotIndex() == SLOT_SUB_SOIL
+            ) row.remove(index);
+        }
         IntSyncValue selected = sync.findSyncHandler("selectedCrop", IntSyncValue.class);
         ButtonWidget<?> previous = new ButtonWidget<>().size(12, 18).overlay(IKey.str("<")).syncHandler("previousCrop")
             // #tr gui.gtnotgood.industrial_farm.previous_crop
@@ -70,7 +79,7 @@ public final class LargeIndustrialFarmGui extends MTEIndustrialFarmGui {
             // # zh_CN 下一种种子（停机后切换）
             .tooltipBuilder(t -> t.addLine(translateToLocal("gui.gtnotgood.industrial_farm.next_crop")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
-        return super.createLeftPanelGapRow(panel, sync).child(previous).child(counter).child(next);
+        return row.child(previous).child(counter).child(next);
     }
 
     @Override

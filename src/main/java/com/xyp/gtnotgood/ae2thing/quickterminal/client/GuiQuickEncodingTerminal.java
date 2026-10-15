@@ -39,14 +39,12 @@ import org.lwjgl.opengl.GL11;
 
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.GuiFCImgButton;
-import com.glodblock.github.common.item.ItemFluidDrop;
-import com.glodblock.github.common.item.ItemFluidPacket;
-import com.glodblock.github.util.Util;
 import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.ae2thing.AE2Thing;
 import com.xyp.gtnotgood.ae2thing.client.gui.widget.CompactTerminalSwitchButton;
 import com.xyp.gtnotgood.ae2thing.coremod.mixin.ae.AccessorGuiScrollbar;
 import com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType;
+import com.xyp.gtnotgood.ae2thing.nei.NeiCraftingFluid;
 import com.xyp.gtnotgood.ae2thing.nei.QuickTerminalRecipeTransferHandler;
 import com.xyp.gtnotgood.ae2thing.network.CPacketSwitchGuis;
 import com.xyp.gtnotgood.ae2thing.network.CPacketTeleportToInterface;
@@ -100,7 +98,7 @@ import appeng.core.sync.packets.PacketMonitorableAction;
 import appeng.core.sync.packets.PacketSwitchGuis;
 import appeng.helpers.MonitorableAction;
 import appeng.util.Platform;
-import gregtech.common.items.ItemFluidDisplay;
+import appeng.util.item.AEFluidStack;
 
 /**
  * AE2Things-style single page: ME inventory on the left, the native interface
@@ -740,13 +738,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     /** Starts a native fluid craft from an NEI synthetic fluid display item. */
     public boolean requestFluidCraft(ItemStack stack) {
-        if (
-            stack == null || !(stack.getItem() instanceof ItemFluidDisplay || stack.getItem() instanceof ItemFluidDrop
-                || stack.getItem() instanceof ItemFluidPacket)
-        ) {
-            return false;
-        }
-        IAEStack<?> fluid = Util.getAEFluidFromItem(stack);
+        IAEStack<?> fluid = AEFluidStack.create(NeiCraftingFluid.getFluid(stack));
         if (fluid == null || !fluid.isFluid()) return false;
         patternContainer.requestCraftFluid(new StorageFluidRequest(fluid));
         return true;

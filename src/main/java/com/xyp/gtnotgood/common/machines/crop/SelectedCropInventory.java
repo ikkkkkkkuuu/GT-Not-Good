@@ -26,12 +26,19 @@ public final class SelectedCropInventory extends MTEIndustrialFarmItemStackHandl
 
     @Override
     public ItemStack getStackInSlot(int slot) {
+        validateSlotIndex(slot);
+        if (slot == 1) return null;
         if (isClient()) return super.getStackInSlot(slot);
         return farm.getCropInventory().getStackInSlot(storageSlot(slot));
     }
 
     @Override
     public void setStackInSlot(int slot, ItemStack stack) {
+        validateSlotIndex(slot);
+        if (slot == 1) {
+            if (stack != null) throw new UnsupportedOperationException("The industrial farm has no sub-soil slot");
+            return;
+        }
         if (isClient()) {
             super.setStackInSlot(slot, stack);
             return;
@@ -41,8 +48,9 @@ public final class SelectedCropInventory extends MTEIndustrialFarmItemStackHandl
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        validateSlotIndex(slot);
+        if (slot == 1) return stack;
         if (isClient()) {
-            validateSlotIndex(slot);
             if (stack == null || stack.stackSize <= 0 || !isItemValid(slot, stack)) return stack;
             return super.insertItem(slot, stack, simulate);
         }
@@ -51,8 +59,9 @@ public final class SelectedCropInventory extends MTEIndustrialFarmItemStackHandl
 
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        validateSlotIndex(slot);
+        if (slot == 1) return null;
         if (isClient()) {
-            validateSlotIndex(slot);
             return amount <= 0 ? null : super.extractItem(slot, amount, simulate);
         }
         return farm.getCropInventory().extractItem(storageSlot(slot), amount, simulate);
@@ -60,13 +69,16 @@ public final class SelectedCropInventory extends MTEIndustrialFarmItemStackHandl
 
     @Override
     public boolean isItemValid(int slot, ItemStack stack) {
+        validateSlotIndex(slot);
+        if (slot == 1) return false;
         return farm.getCropInventory().isItemValid(storageSlot(slot), stack);
     }
 
     @Override
     public int getSlotLimit(int slot) {
+        validateSlotIndex(slot);
+        if (slot == 1) return 0;
         if (isClient()) {
-            validateSlotIndex(slot);
             if (slot >= 2) return 1;
             return Math.max(0, farm.seedCapacity);
         }
@@ -75,6 +87,7 @@ public final class SelectedCropInventory extends MTEIndustrialFarmItemStackHandl
 
     @Override
     protected int getStackLimit(int slot, ItemStack stack) {
+        if (slot == 1) return 0;
         if (isClient()) return stack == null ? 0 : getSlotLimit(slot);
         return farm.getCropInventory().getStackLimit(storageSlot(slot), stack);
     }

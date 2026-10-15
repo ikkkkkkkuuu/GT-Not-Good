@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -167,18 +166,8 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         cropInventory.setStackInSlot(IndustrialFarmInventory.slot(crop, SLOT_SEED), stack);
     }
 
-    public ItemStack getCropSoil(int crop) {
-        if (isSelectedClientCrop(crop)) return ifStackHandler.getStackInSlot(SLOT_SUB_SOIL);
-        return cropInventory.getStackInSlot(IndustrialFarmInventory.slot(crop, SLOT_SUB_SOIL));
-    }
-
-    public void setCropSoil(int crop, ItemStack stack) {
-        cropInventory.setStackInSlot(IndustrialFarmInventory.slot(crop, SLOT_SUB_SOIL), stack);
-    }
-
     public ItemStack getCropEnvironment(int crop, int index) {
-        if (getBaseMetaTileEntity() != null && getBaseMetaTileEntity().isClientSide())
-            return ifStackHandler.getStackInSlot(SLOT_ENV_CARD_START + index);
+        if (isSelectedClientCrop(crop)) return ifStackHandler.getStackInSlot(SLOT_ENV_CARD_START + index);
         return cropInventory.getStackInSlot(IndustrialFarmInventory.slot(crop, SLOT_ENV_CARD_START + index));
     }
 
@@ -202,13 +191,11 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
 
     @Override
     public ItemStack getSubSoilStack() {
-        return getCropSoil(currentCrop());
+        return null;
     }
 
     @Override
-    public void setSubSoilStack(ItemStack stack) {
-        setCropSoil(currentCrop(), stack);
-    }
+    public void setSubSoilStack(ItemStack stack) {}
 
     @Override
     public ItemStack getEnvironmentalModuleStack(int index) {
@@ -248,8 +235,6 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
     public boolean isCropSeedValid(int crop, ItemStack stack) {
         ISeedData seed = CropsNHUtils.getSeedData(stack, false, true);
         if (seed == null || seed.getCrop().getMinSeedBedTier() > upgradeTier) return false;
-        ItemStack soil = getCropSoil(crop);
-        if (CropsNHUtils.isStackValid(soil) && !matchesSoil(seed, soil)) return false;
         if (getBaseMetaTileEntity() != null && getBaseMetaTileEntity().isClientSide()) return true;
         for (int other = 0; other < IndustrialFarmInventory.CROP_COUNT; other++) {
             ItemStack otherSeed = getCropSeed(other);
@@ -270,12 +255,6 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         }
     }
 
-    public boolean isCropSoilValid(int crop, ItemStack stack) {
-        if (!CropsNHUtils.isStackValid(stack) || Block.getBlockFromItem(stack.getItem()) == Blocks.air) return false;
-        ISeedData seed = CropsNHUtils.getSeedData(getCropSeed(crop), false, true);
-        return seed == null || needsSoil(seed) && matchesSoil(seed, stack);
-    }
-
     public boolean isCropEnvironmentValid(int crop, int index, ItemStack stack) {
         return index >= 0 && index < environmentalEnhancementUnitCount
             && index < 2
@@ -287,11 +266,8 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
     @Override
     public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
-        if (cropStatusKeys != null && slot >= 0 && slot < cropInventory.getSlots()) {
-            if (slot >= IndustrialFarmInventory.CROP_COUNT * IndustrialFarmInventory.SLOTS_PER_CROP)
-                Arrays.fill(cropStatusKeys, null);
-            else cropStatusKeys[slot / IndustrialFarmInventory.SLOTS_PER_CROP] = null;
-        }
+        if (cropStatusKeys != null && slot >= 0 && slot < cropInventory.getSlots())
+            cropStatusKeys[slot / IndustrialFarmInventory.SLOTS_PER_CROP] = null;
         if (getBaseMetaTileEntity() != null) getBaseMetaTileEntity().markDirty();
     }
 
@@ -315,6 +291,7 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         SelectedCropInventory selected = (SelectedCropInventory) ifStackHandler;
         selected.clearLegacy();
         super.loadNBTData(tag);
+        syncSelectedCrop(tag.getInteger("industrialFarmSelectedCrop"));
         migrationReturns.clear();
         NBTTagList returns = tag.getTagList("industrialFarmReturns", 10);
         for (int index = 0; index < returns.tagCount(); index++) {
@@ -327,33 +304,58 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         cropInventory.deserializeNBT(new NBTTagCompound());
         if (tag.hasKey(NBT_CROPS, 10)) {
             NBTTagCompound stored = tag.getCompoundTag(NBT_CROPS);
-            if (stored.getInteger("Size") == IndustrialFarmInventory.CROP_COUNT * 4) migrateLegacyCrops(stored);
+            if (stored.getInteger("Size") == IndustrialFarmInventory.CROP_COUNT * 4) migrateLegacyCrops(stored, 4);
+            else if (stored.getInteger("Size") == IndustrialFarmInventory.CROP_COUNT * 2 + 2)
+                migrateLegacyCrops(stored, 2);
+            else if (stored.getInteger("Size") == IndustrialFarmInventory.CROP_COUNT + 2)
+                migrateSharedEnvironment(stored);
             else cropInventory.deserializeNBT(stored);
         } else {
             for (int slot = 0; slot < ifStackHandler.getSlots(); slot++) {
                 ItemStack stack = selected.getLegacyStack(slot);
-                cropInventory.setStackInSlot(IndustrialFarmInventory.slot(0, slot),
-                    stack == null ? null : stack.copy());
+                if (!CropsNHUtils.isStackValid(stack)) continue;
+                if (slot == SLOT_SUB_SOIL) migrationReturns.add(stack.copy());
+                else cropInventory.setStackInSlot(IndustrialFarmInventory.slot(0, slot), stack.copy());
             }
         }
         selected.clearLegacy();
         outputCursor = Math.floorMod(tag.getInteger("industrialFarmOutputCursor"), IndustrialFarmInventory.CROP_COUNT);
-        syncSelectedCrop(tag.getInteger("industrialFarmSelectedCrop"));
         activeCrop = -1;
         Arrays.fill(cropStatusKeys, null);
     }
 
-    private void migrateLegacyCrops(NBTTagCompound stored) {
-        ItemStackHandler legacy = new ItemStackHandler(IndustrialFarmInventory.CROP_COUNT * 4);
+    private void migrateLegacyCrops(NBTTagCompound stored, int slotsPerCrop) {
+        ItemStackHandler legacy = new ItemStackHandler(stored.getInteger("Size"));
         legacy.deserializeNBT(stored);
         for (int crop = 0; crop < IndustrialFarmInventory.CROP_COUNT; crop++) {
-            for (int kind = 0; kind < 4; kind++) {
-                ItemStack stack = legacy.getStackInSlot(crop * 4 + kind);
+            for (int kind = 0; kind < slotsPerCrop; kind++) {
+                ItemStack stack = legacy.getStackInSlot(crop * slotsPerCrop + kind);
                 if (!CropsNHUtils.isStackValid(stack)) continue;
+                if (kind == SLOT_SUB_SOIL) {
+                    migrationReturns.add(stack);
+                    continue;
+                }
                 int slot = IndustrialFarmInventory.slot(crop, kind);
                 if (cropInventory.getStackInSlot(slot) == null) cropInventory.setStackInSlot(slot, stack);
                 else migrationReturns.add(stack);
             }
+        }
+        if (slotsPerCrop == 2) {
+            for (int index = 0; index < 2; index++) {
+                ItemStack stack = legacy.getStackInSlot(IndustrialFarmInventory.CROP_COUNT * 2 + index);
+                setCropEnvironment(selectedCrop, index, stack);
+            }
+        }
+    }
+
+    private void migrateSharedEnvironment(NBTTagCompound stored) {
+        ItemStackHandler legacy = new ItemStackHandler(IndustrialFarmInventory.CROP_COUNT + 2);
+        legacy.deserializeNBT(stored);
+        for (int crop = 0; crop < IndustrialFarmInventory.CROP_COUNT; crop++) {
+            setCropSeed(crop, legacy.getStackInSlot(crop));
+        }
+        for (int index = 0; index < 2; index++) {
+            setCropEnvironment(selectedCrop, index, legacy.getStackInSlot(IndustrialFarmInventory.CROP_COUNT + index));
         }
     }
 
@@ -608,7 +610,7 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         for (ItemStack candidate : inputs) {
             ISeedData seed = CropsNHUtils.getSeedData(candidate, false, true);
             if (seed == null || !CropsNHUtils.isStackValid(candidate)) continue;
-            int crop = findInputCrop(candidate, seed);
+            int crop = findInputCrop(candidate);
             if (crop < 0) {
                 failure = CHECK_RECIPE_RESULT_SEEDS_FULL;
                 continue;
@@ -632,37 +634,6 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
                 continue;
             }
             int amount = countMatching(inputs, candidate, seedCapacity - existingCount);
-            ItemStack soil = getCropSoil(crop);
-            ItemStack soilTemplate = soil;
-            if (needsSoil(seed)) {
-                if (!CropsNHUtils.isStackValid(soilTemplate)) {
-                    soilTemplate = null;
-                    for (ItemStack input : inputs) {
-                        if (CropsNHUtils.isStackValid(input) && matchesSoil(seed, input)) {
-                            soilTemplate = input;
-                            break;
-                        }
-                    }
-                }
-                if (!CropsNHUtils.isStackValid(soilTemplate) || !matchesSoil(seed, soilTemplate)) {
-                    failure = CHECK_RECIPE_RESULT_SUB_SOIL_NOT_FOUND;
-                    cropStatusKeys[crop] = soilStatus();
-                    continue;
-                }
-                int soilCount = CropsNHUtils.isStackValid(soil) ? soil.stackSize : 0;
-                amount = Math.min(amount,
-                    Math.max(0, soilCount + countMatching(inputs, soilTemplate, seedCapacity) - existingCount));
-                if (amount <= 0) {
-                    failure = CHECK_RECIPE_RESULT_SUB_SOIL_NOT_FOUND;
-                    cropStatusKeys[crop] = soilStatus();
-                    continue;
-                }
-                int needed = Math.max(0, existingCount + amount - soilCount);
-                ItemStack newSoil = soilTemplate.copy();
-                newSoil.stackSize = soilCount + needed;
-                consumeMatching(inputs, soilTemplate, needed);
-                setCropSoil(crop, newSoil);
-            }
             if (amount <= 0) continue;
             ItemStack newSeed = candidate.copy();
             newSeed.stackSize = existingCount + amount;
@@ -677,16 +648,16 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         return CheckRecipeResultRegistry.SUCCESSFUL;
     }
 
-    private int findInputCrop(ItemStack seedStack, ISeedData seed) {
+    private int findInputCrop(ItemStack seedStack) {
         int empty = -1;
         for (int crop = 0; crop < IndustrialFarmInventory.CROP_COUNT; crop++) {
             ItemStack existing = getCropSeed(crop);
             if (CropsNHUtils.isStackValid(existing)) {
                 if (GTUtility.areStacksEqual(existing, seedStack, false)) return crop;
-            } else if (empty < 0) {
-                ItemStack soil = getCropSoil(crop);
-                if (!CropsNHUtils.isStackValid(soil) || matchesSoil(seed, soil)) empty = crop;
-            }
+            } else if (empty < 0) empty = crop;
+        }
+        for (int crop = 0; crop < IndustrialFarmInventory.CROP_COUNT; crop++) {
+            if (!CropsNHUtils.isStackValid(getCropSeed(crop)) && isCropSeedValid(crop, seedStack)) return crop;
         }
         return empty;
     }
@@ -709,17 +680,6 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
             input.stackSize -= consumed;
             amount -= consumed;
         }
-    }
-
-    private static boolean needsSoil(ISeedData seed) {
-        return seed.getCrop().getGrowthRequirements().stream().anyMatch(SubSoilRequirement.class::isInstance);
-    }
-
-    private static boolean matchesSoil(ISeedData seed, ItemStack soil) {
-        for (IGrowthRequirement requirement : seed.getCrop().getGrowthRequirements()) {
-            if (requirement instanceof SubSoilRequirement subSoil && !subSoil.isValidSubSoil(soil)) return false;
-        }
-        return true;
     }
 
     private CheckRecipeResult farmCrops() {
@@ -807,18 +767,13 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
             cropStatusKeys[activeCrop] = bedTierStatus();
             return CHECK_RECIPE_RESULT_SEED_BED_TIER_TOO_LOW;
         }
-        ItemStack soil = getSubSoilStack();
-        if (needsSoil(seed) && (!CropsNHUtils.isStackValid(soil) || soil.stackSize < seed.getStack().stackSize)) {
-            cropStatusKeys[activeCrop] = soilStatus();
-            return CHECK_RECIPE_RESULT_SUB_SOIL_MISMATCH_FARM;
-        }
-        ItemStack[] catalysts = CropsNHUtils.isStackValid(soil) ? new ItemStack[] { soil } : new ItemStack[0];
         for (IGrowthRequirement requirement : seed.getCrop().getGrowthRequirements()) {
             if (
-                requirement instanceof IMachineGrowthRequirement machineRequirement
-                    && !machineRequirement.canGrow(seed, getBaseMetaTileEntity(), catalysts)
+                !(requirement instanceof SubSoilRequirement)
+                    && requirement instanceof IMachineGrowthRequirement machineRequirement
+                    && !machineRequirement.canGrow(seed, getBaseMetaTileEntity(), new ItemStack[0])
             ) {
-                cropStatusKeys[activeCrop] = requirement instanceof SubSoilRequirement ? soilStatus() : growthStatus();
+                cropStatusKeys[activeCrop] = growthStatus();
                 return CHECK_RECIPE_RESULT_CANNOT_GROW;
             }
         }
@@ -850,10 +805,16 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
 
     private CheckRecipeResult outputSeeds() {
         if (!migrationReturns.isEmpty()) {
-            ItemStack returned = migrationReturns.get(0);
-            if (new ItemEjectionHelper(getOutputBusses(), true, true).ejectItems(Arrays.asList(returned), 1) <= 0)
-                return CheckRecipeResultRegistry.ITEM_OUTPUT_FULL;
-            mOutputItems = new ItemStack[] { migrationReturns.remove(0) };
+            ItemStack source = migrationReturns.get(0);
+            ItemStack returned = source.copy();
+            returned.stackSize = 1;
+            int amount = new ItemEjectionHelper(getOutputBusses(), true).ejectItems(Arrays.asList(returned),
+                source.stackSize);
+            if (amount <= 0) return CheckRecipeResultRegistry.ITEM_OUTPUT_FULL;
+            returned.stackSize = amount;
+            source.stackSize -= amount;
+            if (source.stackSize <= 0) migrationReturns.remove(0);
+            mOutputItems = new ItemStack[] { returned };
             startCycle(5, 0);
             return CheckRecipeResultRegistry.SUCCESSFUL;
         }
@@ -861,8 +822,7 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         try {
             for (int checked = 0; checked < IndustrialFarmInventory.CROP_COUNT; checked++) {
                 activeCrop = (outputCursor + checked) % IndustrialFarmInventory.CROP_COUNT;
-                if (!CropsNHUtils.isStackValid(getSeedStack()) && !CropsNHUtils.isStackValid(getSubSoilStack()))
-                    continue;
+                if (!CropsNHUtils.isStackValid(getSeedStack())) continue;
                 outputTracker = new IFDropTable();
                 CheckRecipeResult result = super.checkProcessing();
                 if (result.wasSuccessful()) {
@@ -922,13 +882,6 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         // # Bed tier
         // # zh_CN 苗床等级不足
         return "gtng.industrial_farm.plot.bed_tier";
-    }
-
-    private static String soilStatus() {
-        // #tr gtng.industrial_farm.plot.soil
-        // # Sub-soil
-        // # zh_CN 底土不足或不符
-        return "gtng.industrial_farm.plot.soil";
     }
 
     private static String growthStatus() {
@@ -1031,8 +984,8 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
         // # zh_CN 最多同时种植 36 种种子，每种独享同阶原版 12 倍容量
         tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.capacity"));
         // #tr gtng.industrial_farm.plot_inventory
-        // # Input mode groups seeds and pairs sub-soil automatically; all crops share two environment cards.
-        // # zh_CN 输入模式自动归集种子并配对底土；所有作物共用两张环境卡
+        // # Seeds are grouped automatically without sub-soil; each seed type has two independent environment cards.
+        // # zh_CN 种子自动归集，无需底土；每种种子独立保存两张环境卡
         tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.plot_inventory"));
         // #tr gtng.industrial_farm.roof
         // # Replace the 12 roof wooden frames with upgrades as needed.

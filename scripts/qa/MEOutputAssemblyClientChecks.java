@@ -1,8 +1,11 @@
 package com.xyp.gtnotgood.common.machines.hatch.me;
 
+import static com.gtnewhorizon.gtnhlib.util.numberformatting.NumberFormatUtil.formatNumber;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -18,7 +21,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ScreenShotHelper;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
@@ -60,6 +65,7 @@ import gregtech.api.util.FluidEjectionHelper;
 import gregtech.api.util.GTStructureUtility;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemEjectionHelper;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 
 @Mod(
     modid = "meoutputassemblyqa",
@@ -84,6 +90,9 @@ public final class MEOutputAssemblyClientChecks {
     private TileDrive drive;
     private long itemAmount;
     private long fluidAmount;
+    private volatile NBTTagCompound wailaData;
+    private volatile NBTTagCompound emptyFluidWailaData;
+    private volatile NBTTagCompound manyFluidWailaData;
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
@@ -138,6 +147,7 @@ public final class MEOutputAssemblyClientChecks {
                 verifyDrops(player);
                 verifyNativeRegistration(player);
                 verify(player);
+                verifyWailaServer(player);
                 assembly.onRightclick(assembly.getBaseMetaTileEntity(), player);
                 screenshot = 1;
                 stage = 1;
@@ -428,6 +438,120 @@ public final class MEOutputAssemblyClientChecks {
         assembly.getFilters().setFluid(8, lava);
     }
 
+    private void verifyWailaServer(EntityPlayerMP player) {
+        BaseMetaTileEntity tile = (BaseMetaTileEntity) assembly.getBaseMetaTileEntity();
+        NBTTagCompound nativeItems = new NBTTagCompound();
+        assembly.getProvider().getWailaNBTData(player, tile, nativeItems, tile.getWorld(), tile.xCoord, tile.yCoord,
+            tile.zCoord);
+        NBTTagCompound data = wailaData(player, assembly);
+        require(
+            data.getLong("cacheCapacity") == Long.MAX_VALUE
+                && data.getCompoundTag("assemblyFluidCache").getLong("cacheCapacity") == Long.MAX_VALUE,
+            "Waila synchronizes independent long item and fluid capacities");
+        require(
+            nativeItems.getTag("stacks").equals(data.getTag("stacks"))
+                && nativeItems.getInteger("stackCount") == data.getInteger("stackCount"),
+            "adding fluid Waila data preserves the native item cache payload");
+        require(data.getTagList("stacks", 10).getCompoundTagAt(0).getLong("Amount") == itemAmount,
+            "Waila item quantity remains a long above Integer.MAX_VALUE");
+        require(data.getCompoundTag("assemblyFluidCache").getTagList("stacks", 10).getCompoundTagAt(0).getLong("Amount")
+            == fluidAmount, "Waila fluid quantity remains a long above Integer.MAX_VALUE");
+        List<String> info = Arrays.asList(assembly.getInfoData());
+        require(hasCacheEntry(info, new ItemStack(Items.iron_ingot).getDisplayName(), itemAmount),
+            "scanner retains the native cached item name and long quantity");
+        require(hasCacheEntry(info, new FluidStack(FluidRegistry.WATER, 1).getLocalizedName(), fluidAmount),
+            "scanner includes the cached fluid name and long quantity");
+        wailaData = data;
+        MEOutputAssembly empty = (MEOutputAssembly) place(player.worldObj, player, 16,
+            GTNGItemList.MEOutputAssembly.get(1)).getMetaTileEntity();
+        require(empty.storePartial(new ItemStack(Items.gold_ingot, 12), false), "empty-fluid Waila fixture has items");
+        emptyFluidWailaData = wailaData(player, empty);
+        require(
+            emptyFluidWailaData.getInteger("stackCount") == 1
+                && emptyFluidWailaData.getCompoundTag("assemblyFluidCache").getInteger("stackCount") == 0,
+            "empty fluid cache does not replace the nonempty item cache");
+        MEOutputAssembly many = (MEOutputAssembly) place(player.worldObj, player, 18,
+            GTNGItemList.MEOutputAssembly.get(1)).getMetaTileEntity();
+        int count = 0;
+        for (var fluid : FluidRegistry.getRegisteredFluids().values()) {
+            many.getFluidOutput().getProvider().addToCache(AEFluidStack.create(new FluidStack(fluid, ++count)));
+            if (count == 12) break;
+        }
+        require(count == 12, "many-fluid Waila fixture contains twelve registered fluid types");
+        manyFluidWailaData = wailaData(player, many);
+        NBTTagCompound manyFluids = manyFluidWailaData.getCompoundTag("assemblyFluidCache");
+        require(manyFluids.getInteger("stackCount") == 12 && manyFluids.getTagList("stacks", 10).tagCount() == 10,
+            "fluid Waila payload retains the native ten-entry limit and total count");
+    }
+
+    private static NBTTagCompound wailaData(EntityPlayerMP player, MEOutputAssembly target) {
+        BaseMetaTileEntity tile = (BaseMetaTileEntity) target.getBaseMetaTileEntity();
+        NBTTagCompound tag = new NBTTagCompound();
+        target.getWailaNBTData(player, tile, tag, tile.getWorld(), tile.xCoord, tile.yCoord, tile.zCoord);
+        return tag;
+    }
+
+    private List<String> verifyWailaClient() throws Exception {
+        Minecraft mc = Minecraft.getMinecraft();
+        TileEntity tile = mc.theWorld.getTileEntity(0, 10, 0);
+        require(tile instanceof BaseMetaTileEntity, "client receives the assembly base tile");
+        MEOutputAssembly clientAssembly = (MEOutputAssembly) ((BaseMetaTileEntity) tile).getMetaTileEntity();
+        require(clientAssembly.getFluidOutput().getProvider().getCachedAmount() == 0,
+            "client fluid cache stays empty before reading server Waila data");
+        List<String> lines = wailaLines(clientAssembly, tile, wailaData);
+        require(hasCacheEntry(lines, new ItemStack(Items.iron_ingot).getDisplayName(), itemAmount),
+            "client Waila displays the existing cached item from server data");
+        require(hasCacheEntry(lines, new FluidStack(FluidRegistry.WATER, 1).getLocalizedName(), fluidAmount),
+            "client Waila displays the server fluid name and full long quantity with an empty local cache");
+        require(lines
+            .contains(StatCollector.translateToLocalFormatted("GT5U.waila.hatch.outputme.item_cache_capacity",
+                formatNumber(Long.MAX_VALUE)))
+            && lines.contains(StatCollector.translateToLocalFormatted("GT5U.waila.hatch.outputme.fluid_cache_capacity",
+                formatNumber(Long.MAX_VALUE))),
+            "client Waila displays both independent long cache capacities");
+        List<String> empty = wailaLines(clientAssembly, tile, emptyFluidWailaData);
+        require(
+            empty.contains(StatCollector.translateToLocal("GT5U.waila.hatch.outputme.fluid_cache_empty"))
+                && hasCacheEntry(empty, new ItemStack(Items.gold_ingot).getDisplayName(), 12),
+            "client Waila displays an empty fluid cache alongside nonempty item entries");
+        List<String> many = wailaLines(clientAssembly, tile, manyFluidWailaData);
+        require(
+            many.contains(
+                StatCollector.translateToLocalFormatted("GT5U.waila.hatch.outputme.fluid_cache_detail.more", 2)),
+            "client Waila reports fluid entries beyond the native ten-entry limit");
+        NBTTagCompound legacy = (NBTTagCompound) wailaData.copy();
+        legacy.removeTag("assemblyFluidCache");
+        require(hasCacheEntry(wailaLines(clientAssembly, tile, legacy),
+            new ItemStack(Items.iron_ingot).getDisplayName(), itemAmount),
+            "legacy Waila data without the fluid key still displays native items");
+        Files.write(new File(output(), "assembly-waila.txt").toPath(), lines, StandardCharsets.UTF_8);
+        return lines;
+    }
+
+    private static List<String> wailaLines(MEOutputAssembly target, TileEntity tile, NBTTagCompound data) {
+        ItemStack stack = GTNGItemList.MEOutputAssembly.get(1);
+        IWailaDataAccessor accessor = (IWailaDataAccessor) Proxy.newProxyInstance(
+            IWailaDataAccessor.class.getClassLoader(), new Class<?>[] { IWailaDataAccessor.class },
+            (proxy, method, args) -> switch (method.getName()) {
+            case "getNBTData" -> data;
+            case "getTileEntity" -> tile;
+            case "getWorld" -> tile.getWorldObj();
+            case "getPlayer" -> Minecraft.getMinecraft().thePlayer;
+            case "getStack" -> stack;
+            case "getSide" -> ForgeDirection.NORTH;
+            default -> throw new AssertionError("Unexpected Waila accessor method: " + method.getName());
+            });
+        List<String> lines = new ArrayList<>();
+        target.getWailaBody(stack, lines, accessor, null);
+        require(target.hasWailaAdvancedBody(stack, accessor, null), "assembly exposes native advanced Waila details");
+        target.getWailaAdvancedBody(stack, lines, accessor, null);
+        return lines;
+    }
+
+    private static boolean hasCacheEntry(List<String> lines, String name, long amount) {
+        return lines.stream().anyMatch(line -> line.contains(name + ": ") && line.contains(formatNumber(amount)));
+    }
+
     private static void requireCapacities(MEOutputAssembly target, String message) {
         require(target.getProvider().getCacheCapacity() == Long.MAX_VALUE
             && target.getFluidOutput().getProvider().getCacheCapacity() == Long.MAX_VALUE, message);
@@ -506,9 +630,15 @@ public final class MEOutputAssemblyClientChecks {
                 mc.displayGuiScreen(new ModelProbeGui());
                 frames = 0;
                 screenshot = 3;
-            } else if (frames >= 40) {
+            } else if (screenshot == 3 && frames >= 40) {
                 require(mc.currentScreen instanceof ModelProbeGui, "native inventory model preview is rendered");
                 saveScreenshot("assembly-inventory.png");
+                mc.displayGuiScreen(new WailaProbeGui(verifyWailaClient()));
+                frames = 0;
+                screenshot = 4;
+            } else if (screenshot == 4 && frames >= 40) {
+                require(mc.currentScreen instanceof WailaProbeGui, "both native Waila cache sections are rendered");
+                saveScreenshot("assembly-waila.png");
                 frames = 0;
                 visualsDone = true;
                 screenshot = 0;
@@ -553,6 +683,27 @@ public final class MEOutputAssemblyClientChecks {
                 GL11.glPopMatrix();
                 drawCenteredString(fontRendererObj, names[i], x + 32, y + 80, 0xFFFFFF);
             }
+        }
+    }
+
+    private static final class WailaProbeGui extends GuiScreen {
+
+        private final List<String> lines;
+
+        private WailaProbeGui(List<String> lines) {
+            this.lines = lines;
+        }
+
+        @Override
+        public boolean doesGuiPauseGame() {
+            return false;
+        }
+
+        @Override
+        public void drawScreen(int mouseX, int mouseY, float partialTick) {
+            drawRect(0, 0, width, height, 0xFF303238);
+            drawCenteredString(fontRendererObj, "ME 输出总成 · Waila 服务端同步缓存", width / 2, 32, 0xFFFFFF);
+            drawHoveringText(lines, width / 2 - 160, height / 2 - 30, fontRendererObj);
         }
     }
 

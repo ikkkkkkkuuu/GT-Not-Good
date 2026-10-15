@@ -100,6 +100,7 @@ public final class LargeIndustrialFarmClientChecks {
     private boolean started;
     private volatile boolean finished, checked, openRequested, opened, selectLastRequested, selectedLast;
     private volatile ItemStack expectedGuiSeed;
+    private volatile ItemStack expectedGuiFirstEnvironment, expectedGuiSecondEnvironment;
     private final StringBuilder report = new StringBuilder();
 
     @Mod.EventHandler
@@ -151,6 +152,8 @@ public final class LargeIndustrialFarmClientChecks {
                 machine.setSelectedCrop(0);
                 machine.mOutputItems = new ItemStack[0];
                 expectedGuiSeed = machine.getCropSeed(0).copy();
+                expectedGuiFirstEnvironment = machine.getCropEnvironment(0, 0).copy();
+                expectedGuiSecondEnvironment = machine.getCropEnvironment(0, 1).copy();
                 machine.onRightclick(base, player);
                 verifyGuiTransfer(player);
                 opened = true;
@@ -158,6 +161,8 @@ public final class LargeIndustrialFarmClientChecks {
             if (opened && selectLastRequested && !selectedLast) {
                 machine.setSelectedCrop(35);
                 expectedGuiSeed = machine.getCropSeed(35).copy();
+                expectedGuiFirstEnvironment = machine.getCropEnvironment(35, 0).copy();
+                expectedGuiSecondEnvironment = machine.getCropEnvironment(35, 1).copy();
                 player.openContainer.detectAndSendChanges();
                 selectedLast = true;
             }
@@ -224,8 +229,8 @@ public final class LargeIndustrialFarmClientChecks {
             "every seed type receives twelve times native MV capacity");
         require(machine.seedCapacity == 2700 && machine.getTotalSeedCapacity() == 97200,
             "MV provides 2700 independent seeds per type and 97200 seeds across thirty-six types");
-        require(machine.getCropInventory().getSlots() == 74,
-            "thirty-six logical seed and soil pairs share two environment slots");
+        require(machine.getCropInventory().getSlots() == 108,
+            "each of thirty-six seed types has two independent environment slots without soil storage");
         upgrade(0, CropsNHBlocks.blockEnvironmentalEnhancementUnit, VoltageIndex.MV);
         upgrade(1, CropsNHBlocks.blockEnvironmentalEnhancementUnit, VoltageIndex.UXV);
         upgrade(2, CropsNHBlocks.blockFertilizerUnit, VoltageIndex.IV);
@@ -346,7 +351,8 @@ public final class LargeIndustrialFarmClientChecks {
         require(machine.checkProcessing().wasSuccessful() && !machine.hasFertilizer && fertilizer.mFluid.amount == 1,
             "partial optional fertilizer remains unconsumed without a fertilizer unit");
         require(machine.getUsedSeedCount() == 26, "farming preserves planted seed counts in every crop");
-        verifyMixedSoils();
+        verifySoilFreeFarming();
+        verifyIndependentEnvironments();
         verifyThirtySixCrops();
         report.append("Inventory limits, tier bonuses, perfect overclocks, actual resource use and 36 crops passed.\n");
     }
@@ -357,20 +363,24 @@ public final class LargeIndustrialFarmClientChecks {
 
     private void successfulCycle(int excludedCrop) {
         machine.hasFertilizer = true;
+        machine.mMaxProgresstime = 0;
+        int selectedCrop = machine.getSelectedCrop();
         IFDropTable expected = new IFDropTable(machine.outputTracker.save());
         for (int crop = 0; crop < 36; crop++) {
             if (crop == excludedCrop) continue;
             ItemStack seeds = machine.getCropSeed(crop);
             if (seeds == null) continue;
+            machine.setSelectedCrop(crop);
             machine.getDropsPerCycle(CropsNHUtils.getSeedData(seeds, false, true)).addTo(expected, seeds.stackSize);
         }
+        machine.setSelectedCrop(selectedCrop);
         ItemStack[] drops = expected.getDrops(false);
         CheckRecipeResult result = machine.checkProcessing();
         require(result.wasSuccessful() && machine.hasFertilizer
             && machine.mMaxProgresstime == MTEIndustrialFarm.CYCLE_DURATION
             && machine.lEUt == -machine.expectedEUt, "production cycle, duration and EU usage: " + result.getID());
         require(
-            drops.length > 0 && sameItems(drops, machine.mOutputItems) && sameDrops(expected, machine.outputTracker),
+            !expected.isEmpty() && sameItems(drops, machine.mOutputItems) && sameDrops(expected, machine.outputTracker),
             "aggregated crop yield and fractional drop tracking for every eligible crop");
     }
 
@@ -385,17 +395,17 @@ public final class LargeIndustrialFarmClientChecks {
         require(remainder != null && remainder.stackSize == 9 && machine.getUsedSeedCount() == machine.seedCapacity,
             "manual insertion accepts the full expanded capacity and returns the excess");
         ItemStack other = seed(CropsNHCrops.Potato, 4);
-        remainder = machine.getCropInventory().insertItem(2, other, false);
+        remainder = machine.getCropInventory().insertItem(3, other, false);
         require(
             remainder == null && machine.getCropSeed(1).stackSize == 4
                 && machine.getUsedSeedCount() == machine.seedCapacity + 4,
             "a full first seed type does not block manual insertion of a second type");
-        remainder = machine.getCropInventory().insertItem(2, seed(CropsNHCrops.Potato, machine.seedCapacity + 9),
+        remainder = machine.getCropInventory().insertItem(3, seed(CropsNHCrops.Potato, machine.seedCapacity + 9),
             false);
         require(
             remainder != null && remainder.stackSize == 13 && machine.getCropSeed(1).stackSize == machine.seedCapacity,
             "the second seed type independently fills its own capacity and returns excess seeds");
-        remainder = machine.getCropInventory().insertItem(4, seed(CropsNHCrops.Carrot, 1), false);
+        remainder = machine.getCropInventory().insertItem(6, seed(CropsNHCrops.Carrot, 1), false);
         require(remainder != null && remainder.stackSize == 1 && machine.getCropSeed(2) == null,
             "duplicate seeds cannot create another page to bypass their per-type capacity");
         machine.setCropSeed(1, null);
@@ -509,63 +519,116 @@ public final class LargeIndustrialFarmClientChecks {
         for (int slot = 0; slot < saved.length; slot++) output.mInventory[slot] = saved[slot];
     }
 
-    private void verifyMixedSoils() throws Exception {
+    private void verifySoilFreeFarming() throws Exception {
         clearCrops();
-        machine.setCropSeed(0, seed(CropsNHCrops.Carrot, 2));
         ICropCard soilCrop = null;
-        ItemStack soil = null;
         for (Field field : CropsNHCrops.class.getFields()) {
             if (field.getType() != ICropCard.class) continue;
             ICropCard card = (ICropCard) field.get(null);
             if (card == null || card.getMinSeedBedTier() > machine.upgradeTier) continue;
             ISeedData data = CropsNHUtils.getSeedData(seed(card, 2), false, true);
-            if (machine.getGrowthSpeedUnscaled(data) <= 0) continue;
+            if (machine.getGrowthSpeedUnscaled(data) <= 0 || !requirementsMet(data, null)) continue;
             boolean needsSoil = card.getGrowthRequirements().stream().anyMatch(SubSoilRequirement.class::isInstance);
             if (!needsSoil) continue;
-            for (ItemStack candidate : card.getSubSoilsForNEI(false)) {
-                if (candidate == null || !requirementsMet(data, candidate)) continue;
-                soilCrop = card;
-                soil = candidate.copy();
-                soil.stackSize = 2;
-                break;
-            }
-            if (soil != null) break;
+            soilCrop = card;
+            break;
         }
         require(soilCrop != null, "registered sub-soil crop fixture");
-        machine.setCropSeed(1, seed(soilCrop, 2));
-        machine.setCropSoil(1, soil.copy());
-        machine.setCropSeed(2, seed(soilCrop, 2));
-        machine.setCropSoil(2, new ItemStack(Blocks.bedrock, 2));
-        require(!requirementsMet(CropsNHUtils.getSeedData(machine.getCropSeed(2), false, true), machine.getCropSoil(2)),
-            "invalid sub-soil fixture");
-        machine.outputTracker.clear();
-        machine.hasFertilizer = true;
-        IFDropTable expected = new IFDropTable();
-        machine.getDropsPerCycle(CropsNHUtils.getSeedData(machine.getCropSeed(0), false, true)).addTo(expected, 2);
-        machine.getDropsPerCycle(CropsNHUtils.getSeedData(machine.getCropSeed(1), false, true)).addTo(expected, 2);
-        ItemStack[] drops = expected.getDrops(false);
+        machine.setMachineMode(MTEIndustrialFarm.MODE_INPUT);
+        machine.mInputBusses.get(0).mInventory[0] = seed(soilCrop, 32);
+        machine.mInputBusses.get(0).mInventory[1] = new ItemStack(Blocks.dirt, 16);
+        require(
+            machine.checkProcessing().wasSuccessful() && machine.getCropSeed(0).stackSize == 32
+                && machine.getSubSoilStack() == null
+                && itemCount(machine.mInputBusses.get(0).mInventory, new ItemStack(Blocks.dirt)) == 16,
+            "a crop with native soil requirements accepts input without consuming unrelated soil blocks");
         supplies();
         machine.setMachineMode(MTEIndustrialFarm.MODE_FARM);
-        require(
-            machine.checkProcessing().wasSuccessful() && sameItems(drops, machine.mOutputItems)
-                && sameDrops(expected, machine.outputTracker),
-            "invalid sub-soil in one crop does not block valid crops");
-        require(
-            machine.mInputHatches.get(0).mFluid.amount == 10000000
-                - ceiling(machine.getWaterRequirement(4), HydrationRegistry.instance.getPotency(FluidRegistry.WATER)),
-            "invalid crops do not consume water or contribute yield");
-        require(!machine.getCropStatus(1).equals(machine.getCropStatus(2)),
-            "per-crop status identifies the invalid sub-soil");
+        successfulCycle();
+        verifyResourceCharge(32, "soil-free farming charges only the actual seed count");
+        machine.mMaxProgresstime = 0;
+        ItemStack extracted = machine.getCropInventory().extractItem(0, 1, false);
+        require(extracted != null && extracted.stackSize == 1 && machine.getCropSeed(0).stackSize == 31,
+            "native soil requirements do not prevent manual seed extraction");
+        require(machine.getCropInventory().insertItem(0, extracted, false) == null
+            && machine.getCropSeed(0).stackSize == 32, "manually extracted seeds can be reinserted without soil");
+        ItemStack rejected = machine.ifStackHandler.insertItem(1, new ItemStack(Blocks.stone, 16), false);
+        require(rejected != null && rejected.stackSize == 16 && machine.ifStackHandler.getStackInSlot(1) == null,
+            "the removed soil bridge slot rejects insertion without consuming items");
+        boolean unsupported = false;
+        try {
+            machine.ifStackHandler.setStackInSlot(1, new ItemStack(Blocks.stone));
+        } catch (UnsupportedOperationException expected) {
+            unsupported = true;
+        }
+        require(unsupported, "direct writes cannot populate the removed soil bridge slot");
         machine.setMachineMode(MTEIndustrialFarm.MODE_OUTPUT);
         int occupied = machine.getOccupiedCropCount();
-        require(machine.checkProcessing().wasSuccessful() && machine.getOccupiedCropCount() == occupied - 1
-            && machine.mMaxProgresstime == 5, "output mode ejects one crop per five-tick transaction");
         require(
-            machine.checkProcessing().wasSuccessful() && machine.getCropSeed(1) == null
-                && machine.getCropSoil(1) == null
-                && sameItems(new ItemStack[] { seed(soilCrop, 2), soil }, machine.mOutputItems),
-            "output mode safely ejects each crop together with its paired sub-soil");
+            machine.checkProcessing().wasSuccessful() && machine.getOccupiedCropCount() == occupied - 1
+                && machine.mMaxProgresstime == 5
+                && sameItems(new ItemStack[] { seed(soilCrop, 32) }, machine.mOutputItems),
+            "output mode safely ejects only seeds from one crop per five-tick transaction");
+        require(itemCount(machine.mInputBusses.get(0).mInventory, new ItemStack(Blocks.dirt)) == 16,
+            "unrelated soil input remains untouched through farming and seed output");
+        report.append("Native soil-requiring crop grows and supports input, extraction and output without soil.\n");
         clearCrops();
+    }
+
+    private void verifyIndependentEnvironments() {
+        clearCrops();
+        upgrade(0, CropsNHBlocks.blockEnvironmentalEnhancementUnit, VoltageIndex.MV);
+        upgrade(1, CropsNHBlocks.blockEnvironmentalEnhancementUnit, VoltageIndex.MV);
+        valid("two environmental enhancement units unlock two cards for every seed type");
+        machine.setCropSeed(0, seed(CropsNHCrops.Carrot, 32));
+        machine.setCropSeed(1, seed(CropsNHCrops.Potato, 32));
+        machine.setCropEnvironment(0, 0, CropsNHItemList.environmentalModule_HOT.get(1));
+        machine.setCropEnvironment(0, 1, CropsNHItemList.environmentalModule_FOREST.get(1));
+        machine.setCropEnvironment(1, 0, CropsNHItemList.environmentalModule_WET.get(1));
+        machine.setCropEnvironment(1, 1, CropsNHItemList.environmentalModule_LUSH.get(1));
+        ItemStack extracted = machine.getCropInventory().extractItem(1, 1, false);
+        require(
+            sameStack(CropsNHItemList.environmentalModule_HOT.get(1), extracted)
+                && machine.getCropEnvironment(0, 0) == null
+                && sameStack(CropsNHItemList.environmentalModule_FOREST.get(1), machine.getCropEnvironment(0, 1))
+                && sameStack(CropsNHItemList.environmentalModule_WET.get(1), machine.getCropEnvironment(1, 0)),
+            "manual environment extraction changes only the selected seed type");
+        require(machine.getCropInventory().insertItem(1, extracted, false) == null,
+            "environment cards reinsert into their own seed page");
+        ISeedData carrot = CropsNHUtils.getSeedData(seed(CropsNHCrops.Carrot, 1), false, true);
+        machine.hasFertilizer = true;
+        machine.setSelectedCrop(0);
+        int hotNutrients = machine.getNutrientScore(carrot);
+        machine.setSelectedCrop(1);
+        int wetNutrients = machine.getNutrientScore(carrot);
+        require(hotNutrients > wetNutrients, "HOT and WET cards affect the same crop only in their own page context");
+        machine.setCropEnvironment(0, 0, CropsNHItemList.environmentalModule_COLD.get(1));
+        require(machine.getNutrientScore(carrot) == wetNutrients,
+            "editing another page's environment cards cannot change this page's nutrients");
+        machine.setSelectedCrop(0);
+        require(machine.getNutrientScore(carrot) < hotNutrients,
+            "the edited page immediately uses its own replacement environment card");
+        machine.setCropEnvironment(0, 0, CropsNHItemList.environmentalModule_HOT.get(1));
+        machine.setSelectedCrop(1);
+        extracted = machine.ifStackHandler.extractItem(2, 1, false);
+        require(
+            sameStack(CropsNHItemList.environmentalModule_WET.get(1), extracted)
+                && machine.getCropEnvironment(1, 0) == null
+                && sameStack(CropsNHItemList.environmentalModule_HOT.get(1), machine.getCropEnvironment(0, 0)),
+            "the native environment slot edits only the current seed page");
+        require(machine.ifStackHandler.insertItem(2, extracted, false) == null,
+            "the native environment slot restores the current page's card");
+        machine.setMachineMode(MTEIndustrialFarm.MODE_FARM);
+        supplies();
+        successfulCycle();
+        verifyResourceCharge(64, "two distinct environment configurations farm together with correct resource charges");
+        clearCrops();
+        machine.setSelectedCrop(0);
+        frame(0);
+        frame(1);
+        valid("restore the unupgraded farm after independent environment checks");
+        report
+            .append("Each seed type's two environment cards independently affect nutrients, editing and production.\n");
     }
 
     private void verifyThirtySixCrops() throws Exception {
@@ -681,6 +744,7 @@ public final class LargeIndustrialFarmClientChecks {
     private boolean requirementsMet(ISeedData seed, ItemStack soil) {
         ItemStack[] catalysts = soil == null ? new ItemStack[0] : new ItemStack[] { soil };
         for (IGrowthRequirement requirement : seed.getCrop().getGrowthRequirements()) {
+            if (requirement instanceof SubSoilRequirement) continue;
             if (
                 requirement instanceof IMachineGrowthRequirement machineRequirement
                     && !machineRequirement.canGrow(seed, base, catalysts)
@@ -740,19 +804,22 @@ public final class LargeIndustrialFarmClientChecks {
         beds(VoltageIndex.UXV);
         upgrade(0, CropsNHBlocks.blockEnvironmentalEnhancementUnit, VoltageIndex.MV);
         upgrade(1, CropsNHBlocks.blockEnvironmentalEnhancementUnit, VoltageIndex.MV);
-        valid("thirty-six crop types share two environmental cards");
+        valid("every seed type has two independent environmental cards");
         ItemStack largeSeed = machine.getCropSeed(0).copy();
         largeSeed.stackSize = 300;
         machine.setCropSeed(0, largeSeed);
-        for (int crop = 0; crop < 36; crop++)
-            machine.setCropSoil(crop, new ItemStack(Blocks.dirt, crop == 0 ? 300 : crop + 1));
-        machine.setCropEnvironment(0, 0, CropsNHItemList.environmentalModule_HOT.get(1));
-        machine.setCropEnvironment(0, 1, CropsNHItemList.environmentalModule_FOREST.get(1));
-        for (int crop = 0; crop < 36; crop++) require(
-            GTUtility.areStacksEqual(machine.getCropEnvironment(crop, 0), machine.getCropEnvironment(0, 0))
-                && GTUtility.areStacksEqual(machine.getCropEnvironment(crop, 1), machine.getCropEnvironment(0, 1)),
-            "environment cards are shared by crop " + crop);
+        Set<String> environmentPairs = new HashSet<>();
+        for (int crop = 0; crop < 36; crop++) {
+            ItemStack first = fixtureEnvironment(crop, 0);
+            ItemStack second = fixtureEnvironment(crop, 1);
+            machine.setCropEnvironment(crop, 0, first);
+            machine.setCropEnvironment(crop, 1, second);
+            environmentPairs.add(first.getItemDamage() + ":" + second.getItemDamage());
+        }
+        require(environmentPairs.size() == 36, "all thirty-six seed pages retain distinct environment card pairs");
         NBTTagCompound crops = machine.getCropInventory().serializeNBT();
+        require(crops.getTagList("Items", 10).tagCount() == 108,
+            "all 108 seed and environment slots contain independent data");
         NBTTagCompound tracker = new NBTTagCompound();
         tracker.setTag("drops", machine.outputTracker.save());
         machine.mMaxProgresstime = 0;
@@ -761,7 +828,6 @@ public final class LargeIndustrialFarmClientChecks {
         base.writeToNBT(tag);
         int outputCrop = tag.getInteger("industrialFarmOutputCursor");
         ItemStack seed = machine.getCropSeed(outputCrop).copy();
-        ItemStack soil = machine.getCropSoil(outputCrop).copy();
         world.removeTileEntity(0, 12, 0);
         base = new BaseMetaTileEntity();
         base.setWorldObj(world);
@@ -769,10 +835,10 @@ public final class LargeIndustrialFarmClientChecks {
         world.setTileEntity(0, 12, 0, base);
         machine = (LargeIndustrialFarm) base.getMetaTileEntity();
         world.markBlockForUpdate(0, 12, 0);
-        require(crops.equals(machine.getCropInventory().serializeNBT()), "real tile NBT preserves all 74 crop slots");
+        require(crops.equals(machine.getCropInventory().serializeNBT()), "real tile NBT preserves all 108 crop slots");
         require(machine.getSelectedCrop() == 35, "real tile NBT preserves the selected crop");
-        require(machine.getCropSeed(0).stackSize == 300 && machine.getCropSoil(0).stackSize == 300,
-            "real tile NBT preserves large seed and soil counts");
+        require(machine.getCropSeed(0).stackSize == 300 && machine.getSubSoilStack() == null,
+            "real tile NBT preserves large seed counts without soil storage");
         require(machine.hasFertilizer && machine.getMachineMode() == MTEIndustrialFarm.MODE_FARM,
             "real tile NBT preserves fertilizer state and farming mode");
         require(sameDrops(new IFDropTable(tracker, "drops"), machine.outputTracker),
@@ -789,15 +855,24 @@ public final class LargeIndustrialFarmClientChecks {
         int occupied = machine.getOccupiedCropCount();
         require(
             machine.checkProcessing().wasSuccessful() && machine.getCropSeed(outputCrop) == null
-                && machine.getCropSoil(outputCrop) == null
                 && machine.getOccupiedCropCount() == occupied - 1
-                && sameItems(new ItemStack[] { seed, soil }, machine.mOutputItems),
-            "output mode preserves its saved cursor and safely ejects one paired crop");
+                && sameItems(new ItemStack[] { seed }, machine.mOutputItems),
+            "output mode preserves its saved cursor and safely ejects one seed type");
         machine.setCropSeed(outputCrop, seed);
-        machine.setCropSoil(outputCrop, soil);
         machine.mMaxProgresstime = 0;
         machine.setMachineMode(MTEIndustrialFarm.MODE_FARM);
-        report.append("74-slot tile persistence, shared environment cards, large counts and paired output passed.\n");
+        report.append("108-slot persistence, per-page environment cards, large seed counts and seed output passed.\n");
+    }
+
+    private static ItemStack fixtureEnvironment(int crop, int index) {
+        if (crop == 0) return index == 0 ? CropsNHItemList.environmentalModule_HOT.get(1)
+            : CropsNHItemList.environmentalModule_FOREST.get(1);
+        if (crop == 1) return index == 0 ? CropsNHItemList.environmentalModule_WET.get(1)
+            : CropsNHItemList.environmentalModule_LUSH.get(1);
+        List<CropsNHItemList> cards = Arrays.stream(CropsNHItemList.values()).filter(
+            card -> card.name().startsWith("environmentalModule_") && card != CropsNHItemList.environmentalModule_base)
+            .collect(Collectors.toList());
+        return cards.get(index == 0 ? crop % cards.size() : 1 + crop / cards.size()).get(1);
     }
 
     private void verifyLegacyMigration(World world, NBTTagCompound current) {
@@ -811,88 +886,163 @@ public final class LargeIndustrialFarmClientChecks {
         legacy.saveNBTData(previous);
         machine.loadNBTData(previous);
         require(
-            machine.getCropSeed(0).stackSize == 175 && machine.getCropSoil(0).stackSize == 175
+            machine.getCropSeed(0).stackSize == 175 && machine.getSubSoilStack() == null
                 && machine.getCropEnvironment(0, 0) != null
                 && machine.getCropEnvironment(0, 1) != null
                 && machine.getOccupiedCropCount() == 1,
-            "legacy mIFInventory migrates the first seed and soil pair plus shared environment cards");
+            "native four-slot migration preserves seeds and the first page's cards without soil");
         for (int crop = 1; crop < 36; crop++)
-            require(machine.getCropSeed(crop) == null && machine.getCropSoil(crop) == null,
-                "legacy migration clears stale crop " + crop);
-        verifyLegacyCropMigration(previous);
+            require(machine.getCropSeed(crop) == null, "native migration clears stale seed type " + crop);
+        verifySingleEnvironmentOwner(0);
+        verifyQueuedReturns(new ItemStack[] { new ItemStack(Blocks.dirt, 175) }, 175);
+        verifyLegacyCropMigration(previous, 2);
+        verifyLegacyCropMigration(previous, 4);
+        verifyLegacySharedEnvironmentMigration(previous);
         machine.loadNBTData(current);
+        report.append(
+            "Legacy 4/38/74/144-slot saves preserve seeds, assign cards without duplication and return every soil.\n");
     }
 
-    private void verifyLegacyCropMigration(NBTTagCompound legacy) {
-        ItemStackHandler oldStorage = new ItemStackHandler(144);
+    private void verifyLegacyCropMigration(NBTTagCompound legacy, int stride) {
+        ItemStackHandler oldStorage = new ItemStackHandler(stride == 2 ? 74 : 144);
         oldStorage.setStackInSlot(0, seed(CropsNHCrops.Carrot, 175));
-        oldStorage.setStackInSlot(1, new ItemStack(Blocks.dirt, 175));
-        oldStorage.setStackInSlot(140, seed(CropsNHCrops.Potato, 42));
-        oldStorage.setStackInSlot(141, new ItemStack(Blocks.stone, 42));
+        oldStorage.setStackInSlot(35 * stride, seed(CropsNHCrops.Potato, 42));
+        List<ItemStack> expectedReturns = new ArrayList<>();
         for (int crop = 0; crop < 36; crop++) {
-            oldStorage.setStackInSlot(crop * 4 + 2, crop == 0 ? CropsNHItemList.environmentalModule_HOT.get(1)
-                : CropsNHItemList.environmentalModule_WET.get(1));
-            oldStorage.setStackInSlot(crop * 4 + 3, crop == 0 ? CropsNHItemList.environmentalModule_FOREST.get(1)
-                : CropsNHItemList.environmentalModule_LUSH.get(1));
+            ItemStack soil = new ItemStack(crop == 35 ? Blocks.stone : Blocks.dirt,
+                crop == 0 ? 2100 : crop == 35 ? 261 : crop + 1);
+            oldStorage.setStackInSlot(crop * stride + 1, soil);
+            expectedReturns.add(soil.copy());
+            if (stride == 4) {
+                ItemStack first = fixtureEnvironment(crop, 0);
+                ItemStack second = fixtureEnvironment(crop, 1);
+                oldStorage.setStackInSlot(crop * stride + 2, first);
+                oldStorage.setStackInSlot(crop * stride + 3, second);
+            }
+        }
+        if (stride == 2) {
+            oldStorage.setStackInSlot(72, CropsNHItemList.environmentalModule_HOT.get(1));
+            oldStorage.setStackInSlot(73, CropsNHItemList.environmentalModule_FOREST.get(1));
         }
         NBTTagCompound previous = (NBTTagCompound) legacy.copy();
         previous.setTag("industrialFarmPlots", oldStorage.serializeNBT());
+        previous.setInteger("industrialFarmSelectedCrop", 35);
         machine.loadNBTData(previous);
         require(
-            machine.getCropInventory().getSlots() == 74 && machine.getCropSeed(0).stackSize == 175
-                && machine.getCropSoil(0).stackSize == 175
+            machine.getCropInventory().getSlots() == 108 && machine.getCropSeed(0).stackSize == 175
                 && machine.getCropSeed(35).stackSize == 42
-                && machine.getCropSoil(35).stackSize == 42
-                && machine.getUsedSeedCount() == 217,
-            "old 144-slot storage migrates every seed and soil pair into compact logical crop storage");
-        require(
-            sameStack(CropsNHItemList.environmentalModule_HOT.get(1), machine.getCropEnvironment(0, 0))
-                && sameStack(CropsNHItemList.environmentalModule_FOREST.get(1), machine.getCropEnvironment(35, 1)),
-            "old crop environment cards supply the two shared environment slots");
+                && machine.getUsedSeedCount() == 217
+                && machine.getSubSoilStack() == null,
+            "legacy seed and soil storage migrates into 108 slots without retaining soil");
+        if (stride == 4) {
+            for (int crop = 0; crop < 36; crop++) require(
+                sameStack(fixtureEnvironment(crop, 0), machine.getCropEnvironment(crop, 0))
+                    && sameStack(fixtureEnvironment(crop, 1), machine.getCropEnvironment(crop, 1)),
+                "old 144-slot storage preserves both cards for seed page " + crop);
+        } else verifySingleEnvironmentOwner(35);
+        verifyQueuedReturns(expectedReturns.toArray(new ItemStack[0]), 217);
+    }
+
+    private void verifyLegacySharedEnvironmentMigration(NBTTagCompound legacy) {
+        ItemStackHandler oldStorage = new ItemStackHandler(38);
+        oldStorage.setStackInSlot(0, seed(CropsNHCrops.Carrot, 175));
+        oldStorage.setStackInSlot(35, seed(CropsNHCrops.Potato, 42));
+        oldStorage.setStackInSlot(36, CropsNHItemList.environmentalModule_HOT.get(1));
+        oldStorage.setStackInSlot(37, CropsNHItemList.environmentalModule_FOREST.get(1));
+        for (int selected : new int[] { 35, 0 }) {
+            NBTTagCompound previous = (NBTTagCompound) legacy.copy();
+            previous.setTag("industrialFarmPlots", oldStorage.serializeNBT());
+            if (selected == 35) previous.setInteger("industrialFarmSelectedCrop", selected);
+            else previous.removeTag("industrialFarmSelectedCrop");
+            machine.loadNBTData(previous);
+            require(machine.getSelectedCrop() == selected && machine.getUsedSeedCount() == 217,
+                "old shared-card storage preserves its selection and all seeds");
+            verifySingleEnvironmentOwner(selected);
+            NBTTagCompound migrated = new NBTTagCompound();
+            machine.saveNBTData(migrated);
+            require(queuedReturns(migrated).length == 0,
+                "shared-card migration neither duplicates nor returns active cards");
+            machine.loadNBTData(migrated);
+            verifySingleEnvironmentOwner(selected);
+        }
+    }
+
+    private void verifySingleEnvironmentOwner(int owner) {
+        for (int crop = 0; crop < 36; crop++) {
+            ItemStack first = machine.getCropEnvironment(crop, 0);
+            ItemStack second = machine.getCropEnvironment(crop, 1);
+            if (
+                crop == owner
+            ) require(
+                sameStack(CropsNHItemList.environmentalModule_HOT.get(1), first)
+                    && sameStack(CropsNHItemList.environmentalModule_FOREST.get(1), second),
+                "legacy shared cards belong to the saved selected seed page");
+            else require(first == null && second == null,
+                "legacy shared cards are not duplicated into seed page " + crop);
+        }
+    }
+
+    private void verifyQueuedReturns(ItemStack[] expected, int plantedSeeds) {
         NBTTagCompound migrated = new NBTTagCompound();
         machine.saveNBTData(migrated);
-        require(migrated.getTagList("industrialFarmReturns", 10).tagCount() == 70,
-            "all seventy extra environment cards remain queued for safe return");
+        require(sameItemTotals(expected, queuedReturns(migrated)),
+            "every removed soil and extra card is queued for return");
         machine.loadNBTData(migrated);
         NBTTagCompound reloaded = new NBTTagCompound();
         machine.saveNBTData(reloaded);
         require(migrated.getTag("industrialFarmReturns").equals(reloaded.getTag("industrialFarmReturns")),
-            "queued environment card returns survive save and reload without duplication");
+            "queued legacy returns survive save and reload without duplication");
         machine.mMaxProgresstime = 0;
         machine.setMachineMode(MTEIndustrialFarm.MODE_OUTPUT);
         var output = machine.mOutputBusses.get(0);
         ItemStack[] savedOutput = output.mInventory.clone();
         Arrays.fill(output.mInventory, new ItemStack(Items.diamond, 64));
         require(machine.checkProcessing() == CheckRecipeResultRegistry.ITEM_OUTPUT_FULL,
-            "a full output bus safely blocks migrated environment card returns");
+            "a full output bus safely blocks migrated soil and card returns");
         NBTTagCompound blocked = new NBTTagCompound();
         machine.saveNBTData(blocked);
-        require(blocked.getTagList("industrialFarmReturns", 10).tagCount() == 70 && machine.getUsedSeedCount() == 217,
-            "blocked environment card returns preserve the entire queue and planted crops");
+        require(sameItemTotals(expected, queuedReturns(blocked)) && machine.getUsedSeedCount() == plantedSeeds,
+            "blocked legacy returns preserve every queued item and planted seed");
         System.arraycopy(savedOutput, 0, output.mInventory, 0, savedOutput.length);
-        int wetCards = 0;
-        int lushCards = 0;
-        for (int cycle = 0; cycle < 70; cycle++) {
+        List<ItemStack> returned = new ArrayList<>();
+        int cycles = 0;
+        while (blocked.getTagList("industrialFarmReturns", 10).tagCount() > 0) {
+            require(++cycles <= 512, "legacy return queue drains in bounded cycles");
             machine.mMaxProgresstime = 0;
             require(
                 machine.checkProcessing().wasSuccessful() && machine.mMaxProgresstime == 5
                     && machine.mOutputItems.length == 1
-                    && machine.getUsedSeedCount() == 217,
-                "output mode returns one queued card per five-tick cycle before planted crops");
-            wetCards += itemCount(machine.mOutputItems, CropsNHItemList.environmentalModule_WET.get(1));
-            lushCards += itemCount(machine.mOutputItems, CropsNHItemList.environmentalModule_LUSH.get(1));
+                    && machine.getUsedSeedCount() == plantedSeeds,
+                "output mode safely returns queued items before planted seeds");
+            returned.add(machine.mOutputItems[0].copy());
+            blocked = new NBTTagCompound();
+            machine.saveNBTData(blocked);
         }
-        require(wetCards == 35 && lushCards == 35, "all seventy migrated environment cards return exactly once");
-        NBTTagCompound returned = new NBTTagCompound();
-        machine.saveNBTData(returned);
-        require(returned.getTagList("industrialFarmReturns", 10).tagCount() == 0,
-            "returned environment cards leave no duplicate queued copies");
-        report.append(
-            "Old 144-slot migration preserves 36 crop pairs, two shared and seventy returned environment cards.\n");
+        require(sameItemTotals(expected, returned.toArray(new ItemStack[0])),
+            "all migrated soil and extra environment cards return exactly once, including partial stacks");
+    }
+
+    private static ItemStack[] queuedReturns(NBTTagCompound tag) {
+        List<ItemStack> stacks = new ArrayList<>();
+        var list = tag.getTagList("industrialFarmReturns", 10);
+        for (int index = 0; index < list.tagCount(); index++) {
+            NBTTagCompound item = list.getCompoundTagAt(index);
+            ItemStack stack = ItemStack.loadItemStackFromNBT(item);
+            require(stack != null, "queued legacy item can be decoded");
+            stack.stackSize = item.getInteger("Count");
+            stacks.add(stack);
+        }
+        return stacks.toArray(new ItemStack[0]);
+    }
+
+    private static boolean sameItemTotals(ItemStack[] expected, ItemStack[] actual) {
+        return Arrays.stream(expected).mapToInt(stack -> stack.stackSize).sum()
+            == Arrays.stream(actual).mapToInt(stack -> stack.stackSize).sum()
+            && Arrays.stream(expected).allMatch(stack -> itemCount(expected, stack) == itemCount(actual, stack));
     }
 
     private static int itemCount(ItemStack[] stacks, ItemStack template) {
-        return Arrays.stream(stacks).filter(stack -> GTUtility.areStacksEqual(stack, template))
+        return Arrays.stream(stacks).filter(stack -> stack != null && GTUtility.areStacksEqual(stack, template))
             .mapToInt(stack -> stack.stackSize).sum();
     }
 
@@ -901,19 +1051,20 @@ public final class LargeIndustrialFarmClientChecks {
         gui.setAccessible(true);
         require(gui.invoke(machine) instanceof MTEIndustrialFarmGui,
             "controller retains the native industrial farm GUI factory and layout");
-        require(machine.ifStackHandler.getSlots() == 4, "native GUI bridge retains its four visible inventory slots");
+        require(machine.ifStackHandler.getSlots() == 4,
+            "native GUI bridge retains compatible indices with hidden soil");
         for (int crop = 0; crop < 36; crop++) {
             machine.setSelectedCrop(crop);
             require(
                 machine.getSelectedCrop() == crop
                     && sameStack(machine.getCropSeed(crop), machine.ifStackHandler.getStackInSlot(0))
-                    && sameStack(machine.getCropSoil(crop), machine.ifStackHandler.getStackInSlot(1))
-                    && sameStack(machine.getCropEnvironment(0, 0), machine.ifStackHandler.getStackInSlot(2))
-                    && sameStack(machine.getCropEnvironment(0, 1), machine.ifStackHandler.getStackInSlot(3)),
-                "native four-slot view selects crop " + crop + " and preserves shared environment cards");
+                    && machine.ifStackHandler.getStackInSlot(1) == null
+                    && sameStack(machine.getCropEnvironment(crop, 0), machine.ifStackHandler.getStackInSlot(2))
+                    && sameStack(machine.getCropEnvironment(crop, 1), machine.ifStackHandler.getStackInSlot(3)),
+                "native seed and environment view selects crop " + crop + " without a soil slot");
         }
         machine.setSelectedCrop(0);
-        report.append("Native four-slot GUI selection exposes all 36 crop types with shared environment cards.\n");
+        report.append("Native GUI selection exposes all 36 seed types and their own environment cards without soil.\n");
     }
 
     private static boolean sameStack(ItemStack expected, ItemStack actual) {
@@ -986,8 +1137,12 @@ public final class LargeIndustrialFarmClientChecks {
         LargeIndustrialFarm isolated = (LargeIndustrialFarm) isolatedBase.getMetaTileEntity();
         ItemStack seeds = seed(CropsNHCrops.Carrot, 513);
         ItemStack stone = new ItemStack(Blocks.stone, 261);
-        isolated.setCropSeed(35, seeds);
-        isolated.setCropSoil(35, stone);
+        ItemStackHandler legacy = new ItemStackHandler(74);
+        legacy.setStackInSlot(70, seeds);
+        legacy.setStackInSlot(71, stone);
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setTag("industrialFarmPlots", legacy.serializeNBT());
+        isolated.loadNBTData(tag);
         AxisAlignedBB bounds = AxisAlignedBB.getBoundingBox(126, 10, -2, 131, 15, 3);
         List<EntityItem> existing = new ArrayList<>(world.getEntitiesWithinAABB(EntityItem.class, bounds));
         isolated.onBlockDestroyed();
@@ -999,10 +1154,10 @@ public final class LargeIndustrialFarmClientChecks {
             ItemStack stack = entity.getEntityItem();
             require(stack != null && stack.stackSize > 0 && stack.stackSize <= stack.getMaxStackSize(),
                 "destroyed controller emits only native-size entity stacks");
-            NBTTagCompound tag = new NBTTagCompound();
-            entity.writeToNBT(tag);
+            NBTTagCompound entityTag = new NBTTagCompound();
+            entity.writeToNBT(entityTag);
             EntityItem restored = new EntityItem(world);
-            restored.readFromNBT(tag);
+            restored.readFromNBT(entityTag);
             require(
                 GTUtility.areStacksEqual(stack, restored.getEntityItem())
                     && stack.stackSize == restored.getEntityItem().stackSize,
@@ -1011,10 +1166,15 @@ public final class LargeIndustrialFarmClientChecks {
             else if (GTUtility.areStacksEqual(stack, stone)) stoneCount += stack.stackSize;
             else require(false, "unexpected item dropped by isolated controller");
         }
-        require(seedCount == 513 && stoneCount == 261, "controller destruction preserves all seeds and sub-soil");
+        require(seedCount == 513 && stoneCount == 261,
+            "controller destruction preserves all seeds and queued legacy soil");
         for (int slot = 0; slot < isolated.getCropInventory().getSlots(); slot++)
             require(isolated.getCropInventory().getStackInSlot(slot) == null,
                 "controller destruction empties crop slot " + slot);
+        NBTTagCompound destroyed = new NBTTagCompound();
+        isolated.saveNBTData(destroyed);
+        require(queuedReturns(destroyed).length == 0,
+            "controller destruction clears already dropped legacy soil returns");
         report.append("Controller destruction splits 513 seeds and 261 soil into safe persistent entity stacks.\n");
     }
 
@@ -1163,15 +1323,21 @@ public final class LargeIndustrialFarmClientChecks {
             require(slot.getStack() != null, "client sync supplies crop slot " + slot.getSlotIndex());
             if (slot.getSlotIndex() == 0)
                 require(sameStack(expectedGuiSeed, slot.getStack()), "native GUI seed slot displays the selected crop");
+            if (slot.getSlotIndex() == 2) require(sameStack(expectedGuiFirstEnvironment, slot.getStack()),
+                "native GUI displays this page's first environment card");
+            if (slot.getSlotIndex() == 3) require(sameStack(expectedGuiSecondEnvironment, slot.getStack()),
+                "native GUI displays this page's second environment card");
         }
-        require(slots.size() == 4 && slots.contains(3), "the GUI retains exactly four synchronized native farm slots");
+        require(slots.size() == 3 && slots.contains(0) && slots.contains(2) && slots.contains(3) && !slots.contains(1),
+            "the native GUI displays only the seed and two environment slots");
         require(playerSlots == 36 && mc.thePlayer.openContainer.inventorySlots.size() == playerSlots + slots.size() + 1,
-            "native GUI retains 36 player slots, four farm slots and one controller slot");
+            "native GUI has 36 player slots, three farm slots and one controller slot");
         BaseMetaTileEntity clientBase = (BaseMetaTileEntity) mc.theWorld.getTileEntity(0, 12, 0);
         LargeIndustrialFarm clientFarm = (LargeIndustrialFarm) clientBase.getMetaTileEntity();
         require(clientFarm.getUsedSeedCount() == machine.getUsedSeedCount(),
-            "native GUI synchronizes the global seed count independently of the four visible slots");
-        report.append("Native GUI synchronizes the selected seed, soil and two shared environment cards.\n");
+            "native GUI synchronizes the global seed count independently of the three visible slots");
+        report.append(
+            "Native GUI synchronizes the selected seed and its two independent environment cards without soil.\n");
     }
 
     private static void capture(String name) {

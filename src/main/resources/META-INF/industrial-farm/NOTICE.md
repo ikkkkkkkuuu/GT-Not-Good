@@ -24,18 +24,24 @@ upgrade modules independent of seed-bed tier, default multi-amp energy support,
 and fixed borosilicate glass without a glass-based energy-tier limit.
 The controller also provides independent 12-fold capacity per seed type, coexistence of growth
 and overclock modules, perfect overclocks with fourfold power and throughput,
-tier-scaled module effects, automatic grouping of up to 36 seed types with
-associated soil, and water/fertilizer use based on planted seed count and
-overclock throughput. Two global environment cards apply to every crop.
+tier-scaled module effects, automatic grouping of up to 36 seed types, and
+water/fertilizer use based on planted seed count and overclock throughput.
+Crops require no soil. Storage contains 108 slots: each of the 36 seed types has
+one seed slot and two independent environment-card slots. Every crop uses only
+its own cards. Migration from older 38/74-slot shared-card layouts keeps the two
+cards on the saved selected type and leaves other types' card slots empty.
+Migration from the original 144-slot layout retains all per-type cards.
+Previously stored soil is preserved for safe return during migration.
 
 The local inventory in
 `com/xyp/gtnotgood/common/machines/crop/IndustrialFarmInventory.java` and bridge in
 `com/xyp/gtnotgood/common/machines/crop/SelectedCropInventory.java` expose the
-selected seed, its associated soil and the two global environment cards through
-the native four-slot view. The GUI in
+selected seed and its two environment cards through the native slot
+indices. The GUI in
 `com/xyp/gtnotgood/common/gui/modularui/multiblock/LargeIndustrialFarmGui.java`
 inherits CropsNH's `MTEIndustrialFarmGui`, retaining the original panel size,
-layout, four slots, controls and textures. Only previous/next seed-type selection
+layout, controls and textures. Only the native soil widget is removed, leaving
+three visible slots without a placeholder. Previous/next seed-type selection
 and a counter are added. CropsNH crop APIs, environment cards and icons are used
 from the installed dependency at runtime.
 No upstream GUI source, textures or other visual assets are copied into these

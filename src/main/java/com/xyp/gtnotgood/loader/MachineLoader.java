@@ -5,6 +5,7 @@ import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.addItemTooltip
 import net.minecraft.util.StatCollector;
 
 import com.xyp.gtnotgood.common.machines.basic.EssentiaDisassembler;
+import com.xyp.gtnotgood.common.machines.basic.SeedConverter;
 import com.xyp.gtnotgood.common.machines.basic.SteamAssembler;
 import com.xyp.gtnotgood.common.machines.basic.SteamCentrifuge;
 import com.xyp.gtnotgood.common.machines.basic.SteamChemicalReactor;
@@ -256,6 +257,13 @@ public class MachineLoader {
         GTNGItemList.SteamAssembler.set(new SteamAssembler(GTNGMachineID.SteamAssembler.id, "SteamAssembler",
             StatCollector.translateToLocal("gtng.steamassembler.name")));
         addItemTooltip(GTNGItemList.SteamAssembler.get(1), AnimatedText.GT_NOT_GOOD);
+
+        // #tr gtng.seedconverter.name
+        // # Seed Converter (LV)
+        // # zh_CN 种子转化机 (LV)
+        GTNGItemList.SeedConverter.set(new SeedConverter(GTNGMachineID.SeedConverter.id, "SeedConverter",
+            StatCollector.translateToLocal("gtng.seedconverter.name")));
+        addItemTooltip(GTNGItemList.SeedConverter.get(1), AnimatedText.GT_NOT_GOOD);
 
         // #tr gtng.pump.name
         // # High-Speed Universal Fluid Pump (LV)

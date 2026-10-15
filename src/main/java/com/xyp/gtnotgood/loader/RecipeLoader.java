@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import com.xyp.gtnotgood.common.blocks.beekeeping.WorkingApiaryRegistration;
 import com.xyp.gtnotgood.common.recipe.gregtech.AssemblerRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
+import com.xyp.gtnotgood.common.recipe.gregtech.CentrifugeRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.CraftingTableRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FuelRodRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
@@ -35,6 +36,7 @@ import com.xyp.gtnotgood.common.recipe.machine.MEDataAccessRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MaxCapacityMEOutputRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MechanicalUserRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.NetworkRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.SeedConverterRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SingularityDataHubRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.StockIOInterfaceRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SuperCraftingInputRecipes;
@@ -51,6 +53,7 @@ public class RecipeLoader {
 
     /** Waits for external fluid and dimension-display registrations. */
     public static void loadPostInitRecipes() {
+        CentrifugeRecipes.loadRecipes();
         LargeIndustrialFarmRecipes.loadRecipes();
         MixerRecipes.loadRecipes();
         FuelRefiningRecipes.loadRecipes();
@@ -88,6 +91,7 @@ public class RecipeLoader {
         FuelRodRecipes.loadRecipes();
         SingularityDataHubRecipes.loadRecipes();
         CraftingTableRecipes.loadRecipes();
+        SeedConverterRecipes.loadRecipes();
         OreProcessingRecipes.loadOreProcessingRecipes();
         MEBridgeRecipes.loadRecipes();
         MEContainerRecipes.loadRecipes();

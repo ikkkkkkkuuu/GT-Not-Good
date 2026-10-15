@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidStack;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,13 +15,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.glodblock.github.common.item.ItemFluidDrop;
-import com.glodblock.github.common.item.ItemFluidPacket;
 import com.xyp.gtnotgood.ae2thing.api.AE2ThingAPI;
 import com.xyp.gtnotgood.ae2thing.api.adapter.terminal.IGuiCraftAmount;
 import com.xyp.gtnotgood.ae2thing.api.adapter.terminal.ITerminal;
 import com.xyp.gtnotgood.ae2thing.client.event.UpdateAmountTextEvent;
 import com.xyp.gtnotgood.ae2thing.nei.ButtonConstants;
+import com.xyp.gtnotgood.ae2thing.nei.NeiCraftingFluid;
 import com.xyp.gtnotgood.ae2thing.quickterminal.client.GuiQuickEncodingTerminal;
 import com.xyp.gtnotgood.ae2thing.util.Ae2ReflectClient;
 import com.xyp.gtnotgood.ae2thing.util.Util;
@@ -38,12 +38,12 @@ import appeng.core.sync.network.NetworkHandler;
 import appeng.core.sync.packets.PacketMonitorableAction;
 import appeng.helpers.MonitorableAction;
 import appeng.util.Platform;
+import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
 import codechicken.nei.NEIClientUtils;
 import codechicken.nei.PanelWidget;
 import codechicken.nei.Widget;
 import codechicken.nei.guihook.IContainerTooltipHandler;
-import gregtech.common.items.ItemFluidDisplay;
 
 @Mixin(PanelWidget.class)
 public abstract class MixinPanelWidget extends Widget implements IContainerTooltipHandler {
@@ -120,15 +120,8 @@ public abstract class MixinPanelWidget extends Widget implements IContainerToolt
     }
 
     private IAEStack<?> getCraftTarget(ItemStack stack) {
-        if (
-            stack.getItem() instanceof ItemFluidDisplay || stack.getItem() instanceof ItemFluidDrop
-                || stack.getItem() instanceof ItemFluidPacket
-        ) {
-            ItemStack display = stack.copy();
-            display.stackSize = 1;
-            return com.glodblock.github.util.Util.getAEFluidFromItem(display);
-        }
-        return AEItemStack.create(stack);
+        FluidStack fluid = NeiCraftingFluid.getFluid(stack);
+        return fluid == null ? AEItemStack.create(stack) : AEFluidStack.create(fluid);
     }
 
     private boolean canCraft(ItemRepo repo, IAEStack<?> target) {

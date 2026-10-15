@@ -127,10 +127,13 @@ from GTNewHorizons/CropsNH `2.0.129`, commit
 LGPL-3.0-or-later and is outside this project's general MIT grant. It adds independent
 12-fold capacity per seed type, compatible acceleration and overclock modules, perfect
 overclocking, tier-scaled module bonuses, automatic grouping of up to 36 seed
-types with associated soil, and resource use based on planted seeds. Two
-environment cards apply to all crops. The GUI inherits CropsNH's native four
-slots, layout, controls and textures, adding only seed-type selection. A local
-inventory bridge exposes the selected seed and soil plus the global cards.
+types, and resource use based on planted seeds. Crops require no soil. Storage
+contains 108 slots: each seed type has its own seed slot and two independent
+environment-card slots. Older shared cards stay with the saved selected type
+during migration; per-type cards are retained and old soil is returned safely.
+The GUI inherits CropsNH's native layout, controls and textures, removes only
+the soil slot, and adds seed-type selection. A local inventory bridge exposes
+the selected seed and its two environment cards through three visible slots.
 No upstream GUI source or visual assets are copied. Source mapping, changes
 and full LGPL/GPL texts are bundled under
 `META-INF/industrial-farm/`.

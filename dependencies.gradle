@@ -40,6 +40,11 @@ def elytraModpackVersion = project.extensions.getByName("elytraModpackVersion")
 
 dependencies {
     compileOnly(elytraModpackVersion.gtnhdev("Railcraft") as String) { transitive = false }
+    // NEI's fluid handler reflects GregTech tool interfaces during headless tests.
+    testRuntimeOnly(elytraModpackVersion.gtnhdev("Railcraft") as String) { transitive = false }
+    testRuntimeOnly(elytraModpackVersion.gtnhdev("BuildCraft") as String) { transitive = false }
+    testRuntimeOnly(elytraModpackVersion.gtnhdev("EnderIO") as String) { transitive = false }
+    testRuntimeOnly(elytraModpackVersion.gtnhdev("ProjectRed") as String) { transitive = false }
     compileOnly(elytraModpackVersion.gtnhdev("Roguelike-Dungeons") as String) { transitive = false }
     compileOnly(elytraModpackVersion.gtnhdev("LootGames") as String) { transitive = false }
     runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("Roguelike-Dungeons") as String) { transitive = false }

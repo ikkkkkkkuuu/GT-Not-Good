@@ -973,9 +973,13 @@ Reference checkouts remain outside build inputs.
   Adapted structure, validation and farming calculations fix the maximum dimensions
   at 5 x 4 x 14, accept upgrades independently of seed-bed tier, support multi-amp
   energy by default and use fixed borosilicate glass without an energy-tier limit.
-  Up to 36 seed types are grouped automatically with their associated soil.
-  Each type independently holds 12 times the native seed-bed capacity. Two environment cards apply
-  globally to all crops; there are no physical crop partitions.
+  Up to 36 seed types are grouped automatically without soil requirements.
+  Each type independently holds 12 times the native seed-bed capacity and uses
+  its own two environment cards. Storage contains 108 slots: 36 sets of one seed
+  slot and two independent environment-card slots. Migration from the older
+  38/74-slot shared-card layouts retains the two cards on the saved selected
+  type, leaving the other types' card slots empty. Migration from the original
+  144-slot layout retains every type's own cards. Stored soil is returned safely.
   Growth and overclock modules coexist; perfect overclocks multiply power and
   throughput by four. Higher module tiers strengthen their respective effects,
   and water/fertilizer consumption scales with the planted seed count and
@@ -984,11 +988,12 @@ Reference checkouts remain outside build inputs.
   `src/main/java/com/xyp/gtnotgood/common/machines/crop/IndustrialFarmInventory.java`,
   `src/main/java/com/xyp/gtnotgood/common/machines/crop/SelectedCropInventory.java`
   and `src/main/java/com/xyp/gtnotgood/common/gui/modularui/multiblock/LargeIndustrialFarmGui.java`.
-  `SelectedCropInventory` provides the native four-slot view: the selected seed,
-  its associated soil and the two global environment cards. The GUI inherits
-  `MTEIndustrialFarmGui` with its original panel size, layout, four slots,
-  controls and textures, adding only previous/next seed-type selection and a
-  counter. No scrolling list or side panel is added. No upstream GUI source,
+  `SelectedCropInventory` adapts the selected seed and its two environment cards
+  to the native slot indices. The GUI inherits `MTEIndustrialFarmGui` with its
+  original panel size, layout, controls and textures, removes only the soil
+  widget from the native row, and adds previous/next seed-type selection and a
+  counter. Three slots remain visible, without a soil placeholder. No scrolling
+  list or side panel is added. No upstream GUI source,
   textures or other visual assets are copied into these additions.
 - The adapted controller retains LGPL-3.0-or-later outside the project's general
   MIT grant. Provenance and unchanged pinned LGPL text, plus the incorporated GPL

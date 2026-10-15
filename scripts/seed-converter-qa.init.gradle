@@ -1,0 +1,75 @@
+// Isolated integrated-world checks; excluded from release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr.parentFile.mkdirs()
+        def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+        connection.connectTimeout = 30000
+        connection.readTimeout = 30000
+        def pending = new File(efr.parentFile, efr.name + '.pending')
+        connection.inputStream.withCloseable { input -> pending.withOutputStream { it << input } }
+        java.nio.file.Files.move(pending.toPath(), efr.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def qaClasses = root.layout.buildDirectory.dir('seed-converter-qa/classes')
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(qaClasses)
+        setSource(root.files('scripts/qa/SeedConverterClientChecks.java'))
+    }
+    root.spotless.java {
+        target root.file('scripts/qa/SeedConverterClientChecks.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/CommonProxy.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/loader/GTNGRecipeMaps.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/common/machines/basic/SeedConverter.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/common/recipe/SeedConversionBackend.java'),
+            root.file('src/main/java/com/xyp/gtnotgood/common/recipe/machine/SeedConverterRecipes.java')
+    }
+    def mainJar = root.tasks.register('jarSeedConverterQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'seed-converter-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('seed-converter-qa/runtime')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn mainJar, root.tasks.named('testClasses')
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainJar.flatMap { it.archiveFile }, qaClasses)
+        if (root.hasProperty('seedConverterNoAngelica')) {
+            classpath = classpath.filter { !it.name.toLowerCase().contains('angelica') }
+        }
+        workingDir root.file('run/seed-converter-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.seedconverter.qa', 'true'
+        systemProperty 'gtng.seedconverter.qa.output', root.file('build/seed-converter-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in seed converter client checks')
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/seed-converter-qa').mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/seed-converter-qa/result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(root.file('build/seed-converter-qa/window-helper.log'))
+                    .start()
+            }
+        }
+        doLast {
+            def result = root.file('build/seed-converter-qa/result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) {
+                throw new GradleException('Seed converter QA failed; inspect SEED_CONVERTER_QA in the client log.')
+            }
+        }
+    }
+}

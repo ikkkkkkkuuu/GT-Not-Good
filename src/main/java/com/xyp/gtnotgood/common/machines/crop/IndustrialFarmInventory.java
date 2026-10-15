@@ -9,10 +9,9 @@ import com.xyp.gtnotgood.common.machines.multiblock.LargeIndustrialFarm;
 public final class IndustrialFarmInventory extends ItemStackHandler {
 
     public static final int CROP_COUNT = 36;
-    public static final int SLOTS_PER_CROP = 2;
+    public static final int SLOTS_PER_CROP = 3;
 
-    private static final int ENVIRONMENT_START = CROP_COUNT * SLOTS_PER_CROP;
-    private static final int INVENTORY_SIZE = ENVIRONMENT_START + 2;
+    private static final int INVENTORY_SIZE = CROP_COUNT * SLOTS_PER_CROP;
 
     private final LargeIndustrialFarm farm;
 
@@ -22,10 +21,10 @@ public final class IndustrialFarmInventory extends ItemStackHandler {
     }
 
     public static int slot(int crop, int kind) {
-        if (crop < 0 || crop >= CROP_COUNT || kind < 0 || kind >= 4) {
+        if (crop < 0 || crop >= CROP_COUNT || kind < 0 || kind >= 4 || kind == 1) {
             throw new IndexOutOfBoundsException("Invalid industrial farm crop or slot kind");
         }
-        return kind < SLOTS_PER_CROP ? crop * SLOTS_PER_CROP + kind : ENVIRONMENT_START + kind - 2;
+        return crop * SLOTS_PER_CROP + (kind == 0 ? 0 : kind - 1);
     }
 
     @Override
@@ -39,13 +38,6 @@ public final class IndustrialFarmInventory extends ItemStackHandler {
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         validateSlotIndex(slot);
         if (amount <= 0 || !farm.canEditCrops()) return null;
-        if (slot < ENVIRONMENT_START) {
-            int crop = slot / SLOTS_PER_CROP;
-            int kind = slot % SLOTS_PER_CROP;
-            if (kind == 0 && farm.getCropSoil(crop) != null || kind == 1 && farm.getCropSeed(crop) != null) {
-                return null;
-            }
-        }
         return super.extractItem(slot, amount, simulate);
     }
 
@@ -53,16 +45,15 @@ public final class IndustrialFarmInventory extends ItemStackHandler {
     public boolean isItemValid(int slot, ItemStack stack) {
         validateSlotIndex(slot);
         if (stack == null || stack.stackSize <= 0 || !farm.canEditCrops()) return false;
-        if (slot >= ENVIRONMENT_START) return farm.isCropEnvironmentValid(0, slot - ENVIRONMENT_START, stack);
         int crop = slot / SLOTS_PER_CROP;
-        return slot % SLOTS_PER_CROP == 0 ? farm.isCropSeedValid(crop, stack) : farm.isCropSoilValid(crop, stack);
+        int kind = slot % SLOTS_PER_CROP;
+        return kind == 0 ? farm.isCropSeedValid(crop, stack) : farm.isCropEnvironmentValid(crop, kind - 1, stack);
     }
 
     @Override
     public int getSlotLimit(int slot) {
         validateSlotIndex(slot);
-        if (slot >= ENVIRONMENT_START) return 1;
-        return Math.max(0, farm.seedCapacity);
+        return slot % SLOTS_PER_CROP == 0 ? Math.max(0, farm.seedCapacity) : 1;
     }
 
     @Override

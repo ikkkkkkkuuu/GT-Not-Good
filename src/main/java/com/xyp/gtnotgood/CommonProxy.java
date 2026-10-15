@@ -29,6 +29,7 @@ import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.TransmutationRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.EasyWirelessRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.SeedConverterRecipes;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessAutoConnect;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessChannelManager;
@@ -118,6 +119,7 @@ public class CommonProxy {
     }
 
     public void complete(FMLLoadCompleteEvent event) {
+        SeedConverterRecipes.loadConversionRecipes();
         LargeInterfaceRecipes.registerUpgrades();
         AE2Thing.onLoadComplete(event);
         OreProcessingRecipes.loadExternalOreRecipes();

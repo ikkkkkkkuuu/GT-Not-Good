@@ -1,11 +1,21 @@
 package com.xyp.gtnotgood.common.machines.hatch.me;
 
+import static com.gtnewhorizon.gtnhlib.util.numberformatting.NumberFormatUtil.formatNumber;
+import static com.gtnewhorizon.gtnhlib.util.numberformatting.NumberFormatUtil.getFluidUnit;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -17,15 +27,21 @@ import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import appeng.api.storage.StorageChannel;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.interfaces.IIconContainer;
 import gregtech.api.interfaces.ITexture;
+import gregtech.api.interfaces.tileentity.IGregTechDeviceInformation;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.render.TextureFactory;
 import gregtech.client.iconContainers.blocks.GTCustomBlockIconContainer;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 
 public class MEOutputAssembly extends MaxCapacityMEOutputBus {
 
+    private static final String WAILA_FLUID_CACHE = "assemblyFluidCache";
     private static final IIconContainer OVERLAY = GTCustomBlockIconContainer
         .create(ModList.GTNotGood.getResourceLocation(), "iconsets/OVERLAY_ME_OUTPUT_ASSEMBLY");
     private static final IIconContainer OVERLAY_ACTIVE = GTCustomBlockIconContainer
@@ -125,6 +141,68 @@ public class MEOutputAssembly extends MaxCapacityMEOutputBus {
     public void loadNBTData(NBTTagCompound tag) {
         super.loadNBTData(tag);
         getFluidOutput().load(tag);
+    }
+
+    @Override
+    public void getWailaNBTData(EntityPlayerMP player, TileEntity tile, NBTTagCompound tag, World world, int x, int y,
+        int z) {
+        super.getWailaNBTData(player, tile, tag, world, x, y, z);
+        NBTTagCompound fluids = new NBTTagCompound();
+        getFluidOutput().getProvider().getWailaNBTData(player, tile, fluids, world, x, y, z);
+        tag.setTag(WAILA_FLUID_CACHE, fluids);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getWailaBody(ItemStack stack, List<String> tips, IWailaDataAccessor accessor,
+        IWailaConfigHandler config) {
+        super.getWailaBody(stack, tips, accessor, config);
+        NBTTagCompound tag = accessor.getNBTData();
+        if (tag.hasKey(WAILA_FLUID_CACHE)) {
+            tips.add(StatCollector.translateToLocalFormatted("GT5U.waila.hatch.outputme.fluid_cache_capacity",
+                formatNumber(tag.getCompoundTag(WAILA_FLUID_CACHE).getLong("cacheCapacity"))));
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getWailaAdvancedBody(ItemStack stack, List<String> tips, IWailaDataAccessor accessor,
+        IWailaConfigHandler config) {
+        super.getWailaAdvancedBody(stack, tips, accessor, config);
+        NBTTagCompound tag = accessor.getNBTData();
+        if (!tag.hasKey(WAILA_FLUID_CACHE)) return;
+        NBTTagCompound fluids = tag.getCompoundTag(WAILA_FLUID_CACHE);
+        int count = fluids.getInteger("stackCount");
+        if (count == 0) {
+            tips.add(StatCollector.translateToLocal("GT5U.waila.hatch.outputme.fluid_cache_empty"));
+            return;
+        }
+        tips.add(StatCollector.translateToLocalFormatted("GT5U.waila.hatch.outputme.fluid_cache_detail", count,
+            count > 1 ? "s" : ""));
+        NBTTagList cached = fluids.getTagList("stacks", 10);
+        for (int i = 0; i < cached.tagCount(); i++) {
+            NBTTagCompound entry = cached.getCompoundTagAt(i);
+            FluidStack fluid = FluidStack.loadFluidStackFromNBT(entry);
+            if (fluid != null) {
+                tips.add(String.format("%s: %s%s %s%s", fluid.getLocalizedName(), EnumChatFormatting.GOLD,
+                    formatNumber(entry.getLong("Amount")), getFluidUnit(), EnumChatFormatting.RESET));
+            }
+        }
+        if (count > cached.tagCount()) {
+            tips.add(StatCollector.translateToLocalFormatted("GT5U.waila.hatch.outputme.fluid_cache_detail.more",
+                count - cached.tagCount()));
+        }
+    }
+
+    @Override
+    public String[] getInfoData() {
+        List<String> info = new ArrayList<>(Arrays.asList(super.getInfoData()));
+        List<String> fluids = new ArrayList<>(Arrays.asList(getFluidOutput().getProvider().getInfoData(
+            getAEDiagnostics(), "GT5U.infodata.hatch.output_me", fluid -> fluid.getFluidStack().getLocalizedName())));
+        fluids.set(1, IGregTechDeviceInformation.encode("GT5U.waila.hatch.outputme.fluid_cache_capacity",
+            formatNumber(getFluidOutput().getProvider().getCacheCapacity())));
+        info.addAll(fluids.subList(1, fluids.size()));
+        return info.toArray(new String[0]);
     }
 
     @Override
