@@ -1,0 +1,52 @@
+// Isolated structure, processing and GUI checks without GTNL on the runtime classpath.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/ChemicalPlantClientChecks.java'))
+    }
+    def qaClasses = root.tasks.register('isolateChemicalPlantQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/ChemicalPlantClientChecks*.class'
+        into root.layout.buildDirectory.dir('chemical-plant-qa/classes')
+    }
+    root.spotless.java {
+        target 'scripts/qa/ChemicalPlantClientChecks.java'
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir('chemical-plant-qa/classes'))
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir root.file('run/chemical-plant-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.chemicalPlant.qa', 'true'
+        systemProperty 'gtng.chemicalPlant.output', root.file('build/chemical-plant-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('Isolated chemical plant client checks')
+        args '--width', '1100', '--height', '740'
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/chemical-plant-qa').mkdirs()
+            java.nio.file.Files.deleteIfExists(root.file('build/chemical-plant-qa/result.txt').toPath())
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(root.file('build/chemical-plant-qa/window-helper.log')).start()
+        }
+        doLast {
+            def result = root.file('build/chemical-plant-qa/result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) throw new GradleException('Chemical plant QA failed')
+        }
+    }
+}

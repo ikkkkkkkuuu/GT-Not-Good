@@ -67,8 +67,9 @@ final class SteamProcessingMachineGui extends MTEBasicMachineBronzeGui {
     private ParentWidget<?> createFluidSlots(boolean output) {
         FluidStackTank[] tanks = output ? processingMachine.getFluidOutputTanks()
             : processingMachine.getFluidInputTanks();
-        ParentWidget<?> slots = new ParentWidget<>().size(3 * SLOT_SIZE, 2 * SLOT_SIZE);
-        for (int i = 0; i < tanks.length; i++) {
+        int count = Math.min(tanks.length, output ? properties.maxFluidOutputs : properties.maxFluidInputs);
+        ParentWidget<?> slots = new ParentWidget<>().size(3 * SLOT_SIZE, (count + 2) / 3 * SLOT_SIZE);
+        for (int i = 0; i < count; i++) {
             FluidSlotSyncHandler handler = new FluidSlotSyncHandler(tanks[i]) {
 
                 @Override
@@ -85,8 +86,9 @@ final class SteamProcessingMachineGui extends MTEBasicMachineBronzeGui {
 
     @Override
     protected Flow createBottomLeftCornerFlow(ModularPanel panel, PanelSyncManager syncManager) {
-        return super.createBottomLeftCornerFlow(panel, syncManager).child(createAutoOutputButton(true, syncManager))
-            .child(createAutoOutputButton(false, syncManager));
+        return super.createBottomLeftCornerFlow(panel, syncManager)
+            .childIf(properties.maxFluidOutputs > 0, () -> createAutoOutputButton(true, syncManager))
+            .childIf(properties.maxItemOutputs > 0, () -> createAutoOutputButton(false, syncManager));
     }
 
     private ToggleButton createAutoOutputButton(boolean fluid, PanelSyncManager syncManager) {

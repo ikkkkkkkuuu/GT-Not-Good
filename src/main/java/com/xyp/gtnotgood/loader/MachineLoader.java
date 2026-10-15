@@ -5,6 +5,7 @@ import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.addItemTooltip
 import net.minecraft.util.StatCollector;
 
 import com.xyp.gtnotgood.common.machines.basic.EssentiaDisassembler;
+import com.xyp.gtnotgood.common.machines.basic.SteamAssembler;
 import com.xyp.gtnotgood.common.machines.basic.SteamCentrifuge;
 import com.xyp.gtnotgood.common.machines.basic.SteamChemicalReactor;
 import com.xyp.gtnotgood.common.machines.basic.SteamCropManager;
@@ -22,6 +23,7 @@ import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.SuperAdvancedMEInputBus;
 import com.xyp.gtnotgood.common.machines.hatch.me.SuperAdvancedMEInputHatch;
 import com.xyp.gtnotgood.common.machines.multiblock.AssemblerMatrix;
+import com.xyp.gtnotgood.common.machines.multiblock.IntegratedChemicalPlant;
 import com.xyp.gtnotgood.common.machines.multiblock.IntegratedProductionFactory;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeBeeBreeder;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeCombProcessor;
@@ -40,6 +42,13 @@ import com.xyp.gtnotgood.utils.text.AnimatedText;
 public class MachineLoader {
 
     public static void registerMachines() {
+        // #tr gtng.chemical.name
+        // # Integrated Chemical Plant
+        // # zh_CN 集成化工厂
+        GTNGItemList.IntegratedChemicalPlant.set(new IntegratedChemicalPlant(GTNGMachineID.IntegratedChemicalPlant.id,
+            "IntegratedChemicalPlant", StatCollector.translateToLocal("gtng.chemical.name")));
+        addItemTooltip(GTNGItemList.IntegratedChemicalPlant.get(1), AnimatedText.GT_NOT_GOOD);
+
         // #tr NameCircuitMEPatternBuffer
         // # Circuit Pattern Buffer (ME)
         // # zh_CN 电路样板总成 (ME)
@@ -215,6 +224,13 @@ public class MachineLoader {
         GTNGItemList.SteamCropManager.set(new SteamCropManager(GTNGMachineID.SteamCropManager.id, "SteamCropManager",
             StatCollector.translateToLocal("gtng.steamcropmanager.name")));
         addItemTooltip(GTNGItemList.SteamCropManager.get(1), AnimatedText.GT_NOT_GOOD);
+
+        // #tr gtng.steamassembler.name
+        // # Bronze Steam Assembler
+        // # zh_CN 蒸汽组装机
+        GTNGItemList.SteamAssembler.set(new SteamAssembler(GTNGMachineID.SteamAssembler.id, "SteamAssembler",
+            StatCollector.translateToLocal("gtng.steamassembler.name")));
+        addItemTooltip(GTNGItemList.SteamAssembler.get(1), AnimatedText.GT_NOT_GOOD);
 
         // #tr gtng.pump.name
         // # High-Speed Universal Fluid Pump (LV)

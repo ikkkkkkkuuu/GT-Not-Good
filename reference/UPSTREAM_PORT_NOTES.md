@@ -894,3 +894,33 @@ Tile storage retains 720 slots; versioned inventory loading migrates legacy retu
 The terminal initially exposes two rows and grows/shrinks using the super pattern assembly rules.
 Cached row counts and existing native terminal resize guards keep server inventories and client recipe caches aligned.
 Reference checkouts remain outside build inputs.
+
+## Integrated chemical recipes — 2026-10-15
+
+- Source: ABKQPO/GT-Not-Leisure, commit
+  `651396c75d108e6ff5399a44c56c12214ad27d3d`.
+  https://github.com/ABKQPO/GT-Not-Leisure/tree/651396c75d108e6ff5399a44c56c12214ad27d3d
+  Upstream `LICENSE.txt` was inspected before adaptation and grants LGPL-3.0.
+- Recipe sources under `com/science/gtnl/common/recipe/gtnl/`:
+  `FuelRefiningComplexRecipes.java`, `WoodDistillationRecipes.java` and
+  `PetrochemicalPlantRecipes.java`. Their SHA-256 hashes are respectively
+  `819fba4db90f4dbb59027cc07079fa02831eb8ee1e8ebd5fe1a5cc75e272e342`,
+  `6b6906728e0d8b32fd937da2626d4c2db6166e6944653e9ec0839ac0fe677a2e` and
+  `697b646139ed6456830e0ad37dcd19e18e22d3b68d0647cf4ded24686f9a2bcf`.
+  Destinations under `com/xyp/gtnotgood/common/recipe/gtnotgood/`:
+  `FuelRefiningRecipes.java`, `WoodDistillationRecipes.java` and
+  `PetrochemicalRecipes.java`.
+- Metadata source: `com/science/gtnl/utils/recipes/metadata/FuelRefiningMetadata.java`,
+  SHA-256 `4aa57b54ab6673f51278b3231dd2ec490c37f44fee70aca10d13c4f3cf8cef8b`.
+  Destination: `com/xyp/gtnotgood/common/recipe/metadata/FuelRefiningTier.java`.
+- Adaptations replace GTNL package names, recipe maps, registration and custom
+  builder with local registration and native GTNH `GTRecipeBuilder`. Fuel recipes
+  retain all 25 entries, including their `COIL_HEAT` values and refining tiers
+  0 through 4. The wood pool contains its one recipe; the petrochemical pool
+  contains 11 recipes, omitting the Barnarda C sap recipe because its fluid is
+  supplied by GTNL. No replacement fluid is registered. The three recipe pools
+  are registered independently of GTNL.
+- The adapted sources remain LGPL-3.0 and are outside the project's general MIT
+  grant. Packaged provenance and full LGPL/GPL texts are under
+  `META-INF/chemical-recipes-port/`; no visual assets are copied. The ignored
+  reference checkout never participates in compilation or resource packaging.

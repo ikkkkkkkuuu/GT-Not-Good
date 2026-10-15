@@ -25,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -75,6 +76,7 @@ import gregtech.api.enums.Textures;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.RecipeMaps;
+import gregtech.api.util.GTItemTransfer;
 import gregtech.api.util.GTModHandler;
 import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTRecipe;
@@ -92,11 +94,14 @@ public final class SteamChemicalClientChecks {
         Items.leather, Items.bone };
     private static final Item[] outputItems = { Items.gold_nugget, Items.glowstone_dust, Items.redstone, Items.quartz,
         Items.flint, Items.apple };
+    private static final Item[] assemblerItems = { Items.paper, Items.blaze_powder, Items.sugar, Items.feather,
+        Items.leather, Items.bone, Items.slime_ball, Items.ender_pearl, Items.baked_potato };
 
     private boolean started;
     private volatile boolean finished, opened, worldRequested, worldPositioned, autoOnChecked, autoOffChecked;
     private volatile int buttonRequest;
-    private int ticks, stage, frames, visualStage, outputReadyTick, buttonStartTick;
+    private int ticks, stage, frames, visualStage, outputReadyTick, buttonStartTick, assemblerFrames,
+        assemblerVisualStage;
     private BaseMetaTileEntity base, nativeBase;
     private SteamProcessingMachine machine, nativeMachine;
     private GTRecipe nativeRecipe;
@@ -107,6 +112,13 @@ public final class SteamChemicalClientChecks {
     private OutputContainer outputContainer;
     private ForgeDirection originalOutputSide;
     private boolean originalFullFluidOutput;
+    private BaseMetaTileEntity assemblerBase, assemblerNativeBase;
+    private SteamProcessingMachine assemblerMachine, assemblerNativeMachine;
+    private GTRecipe assemblerNativeRecipe;
+    private boolean assemblerFixtureCompleted, assemblerNativeCompleted;
+    private volatile boolean assemblerGuiRequested, assemblerOpened, assemblerAutoChecked, assemblerAutoOffChecked;
+    private volatile int assemblerButtonRequest;
+    private OutputContainer assemblerOutputContainer;
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
@@ -147,6 +159,10 @@ public final class SteamChemicalClientChecks {
                 for (int i = 0; i < extraMachines.length; i++) {
                     extraMachines[i] = (SteamProcessingMachine) extraBases[i].getMetaTileEntity();
                 }
+                assemblerBase = place(world, player, 16, GTNGMachineID.SteamAssembler.id);
+                assemblerNativeBase = place(world, player, 19, GTNGMachineID.SteamAssembler.id);
+                assemblerMachine = (SteamProcessingMachine) assemblerBase.getMetaTileEntity();
+                assemblerNativeMachine = (SteamProcessingMachine) assemblerNativeBase.getMetaTileEntity();
                 player.playerNetServerHandler.setPlayerLocation(4.5, 11, 2, 0, 15);
                 player.capabilities.isFlying = true;
             }
@@ -156,6 +172,7 @@ public final class SteamChemicalClientChecks {
                 verifyCrafting(world);
                 addFixture(false, 32);
                 addFixture(true, 128);
+                prepareAssembler();
                 verifyFluidRouting();
                 verifyRejectedRecipes();
                 verifyIdlePersistence(world);
@@ -182,6 +199,24 @@ public final class SteamChemicalClientChecks {
                 stage = 1;
             }
             if (ticks == 90) verifyPendingPersistence(world);
+            if (ticks == 50) reloadAssembler(world, true);
+            if (ticks > 50 && !assemblerFixtureCompleted && assemblerMachine.mMaxProgresstime == 0) {
+                require(count(assemblerBase, assemblerMachine.getOutputSlot(), 1, new ItemStack(Items.diamond)) == 2,
+                    "nine-input assembler fixture completes through real ticks with exact output");
+                require(
+                    sameFluid(assemblerMachine.getFluidInputTanks()[0].getFluid(), water(250))
+                        && assemblerBase.getStoredSteam() == 16000 - 32 * 40,
+                    "assembler consumes one reaction fluid and exactly 40 ticks of steam");
+                reloadAssembler(world, false);
+                assemblerFixtureCompleted = true;
+                world.setBlock(16, 9, 4, Blocks.chest, 0, 3);
+                assemblerOutputContainer = new OutputContainer();
+                world.setTileEntity(16, 9, 4, assemblerOutputContainer);
+            }
+            if (ticks > 50 && !assemblerNativeCompleted && assemblerNativeMachine.mMaxProgresstime == 0) {
+                verifyNativeOutputs(assemblerNativeBase, assemblerNativeMachine, assemblerNativeRecipe);
+                assemblerNativeCompleted = true;
+            }
             if (stage == 1 && ticks > 90 && machine.mMaxProgresstime == 0) {
                 verifyFixtureOutputs();
                 for (Item item : inputItems) require(countInput(item) == 1, "exact one-batch item consumption " + item);
@@ -214,6 +249,8 @@ public final class SteamChemicalClientChecks {
                 stage == 2 && nativeMachine.mMaxProgresstime == 0
                     && extraCompleted[0]
                     && extraCompleted[1]
+                    && assemblerFixtureCompleted
+                    && assemblerNativeCompleted
                     && ticks - outputReadyTick >= 40
             ) {
                 verifyNativeOutputs();
@@ -260,6 +297,40 @@ public final class SteamChemicalClientChecks {
                 player.playerNetServerHandler.setPlayerLocation(4.5, 10, 1.5, 0, 25);
                 worldPositioned = true;
                 stage = 4;
+            }
+            if (stage == 3 && assemblerGuiRequested && !assemblerOpened) {
+                player.closeScreen();
+                player.capabilities.isFlying = true;
+                player.sendPlayerAbilities();
+                player.playerNetServerHandler.setPlayerLocation(16.5, 10, 1.5, 0, 25);
+                assemblerMachine.onRightclick(assemblerBase, player);
+                assemblerOpened = true;
+            }
+            if (
+                assemblerOpened && assemblerButtonRequest == 1
+                    && assemblerMachine.mItemTransfer
+                    && count(assemblerBase, assemblerMachine.getOutputSlot(), 1, new ItemStack(Items.diamond)) == 0
+                    && !assemblerAutoChecked
+            ) {
+                int delivered = 0;
+                for (int slot = 0; slot < assemblerOutputContainer.getSizeInventory(); slot++) {
+                    ItemStack stack = assemblerOutputContainer.getStackInSlot(slot);
+                    if (stack != null && stack.getItem() == Items.diamond) delivered += stack.stackSize;
+                }
+                require(delivered == 2,
+                    "assembler item output button sends its exact produced items to the neighboring chest");
+                assemblerAutoChecked = true;
+            }
+            if (
+                assemblerOpened && assemblerButtonRequest == 2
+                    && !assemblerMachine.mItemTransfer
+                    && !assemblerAutoOffChecked
+            ) {
+                require(!assemblerMachine.mFluidTransfer,
+                    "assembler with no fluid outputs keeps fluid transfer disabled");
+                assemblerBase.setInventorySlotContents(assemblerMachine.getOutputSlot(),
+                    new ItemStack(Items.diamond, 2));
+                assemblerAutoOffChecked = true;
             }
         } catch (Throwable failure) {
             fail(failure);
@@ -454,6 +525,11 @@ public final class SteamChemicalClientChecks {
     }
 
     private static GTRecipe findNativeRecipe(RecipeMap<?> map, boolean chemical) {
+        return findNativeRecipe(map, chemical, 6, 6, 6, 6);
+    }
+
+    private static GTRecipe findNativeRecipe(RecipeMap<?> map, boolean chemical, int itemInputs, int itemOutputs,
+        int fluidInputs, int fluidOutputs) {
         List<GTRecipe> recipes = new ArrayList<>(map.getAllRecipes());
         recipes.sort(Comparator.comparingInt(recipe -> recipe.mDuration));
         for (GTRecipe recipe : recipes) {
@@ -466,13 +542,15 @@ public final class SteamChemicalClientChecks {
                     || (long) recipe.mDuration * 2 * recipe.mEUt > 14000
                     || recipe.mSpecialValue != 0
                     || recipe.mSpecialItems != null
-                    || recipe.mInputs.length > 6
-                    || recipe.mOutputs.length > 6
+                    || recipe.mInputs.length > itemInputs
+                    || map == RecipeMaps.assemblerRecipes && recipe.mInputs.length == 0
+                    || map == RecipeMaps.assemblerRecipes && itemOutputs(recipe).isEmpty()
+                    || recipe.mOutputs.length > itemOutputs
                     || chemical && recipe.mFluidInputs.length < 2
-                    || recipe.mFluidInputs.length > 6
+                    || recipe.mFluidInputs.length > fluidInputs
                     || chemical && recipe.mFluidOutputs.length == 0
                     || recipe.mFluidInputs.length + recipe.mFluidOutputs.length == 0
-                    || recipe.mFluidOutputs.length > 6
+                    || recipe.mFluidOutputs.length > fluidOutputs
             ) continue;
             boolean usable = true;
             for (int i = 0; i < recipe.mInputs.length; i++) usable &= recipe.getInputChance(i) == 10000;
@@ -492,7 +570,9 @@ public final class SteamChemicalClientChecks {
                 + Arrays.toString(recipe.mInputs)
                 + " + "
                 + Arrays.toString(recipe.mFluidInputs)
-                + " -> "
+                + " -> items "
+                + itemOutputs(recipe)
+                + "; fluids "
                 + Arrays.toString(recipe.mFluidOutputs));
             return recipe;
         }
@@ -505,9 +585,7 @@ public final class SteamChemicalClientChecks {
 
     private static void seedNativeRecipe(BaseMetaTileEntity tile, SteamProcessingMachine processingMachine,
         GTRecipe recipe) {
-        for (int i = 0; i < recipe.mInputs.length; i++) {
-            tile.setInventorySlotContents(processingMachine.getInputSlot() + i, recipe.mInputs[i].copy());
-        }
+        autoInsert(tile, processingMachine, recipe.mInputs, ForgeDirection.UP);
         for (FluidStack fluid : recipe.mFluidInputs)
             require(tile.fill(ForgeDirection.UP, fluid.copy(), true) == fluid.amount,
                 "native fluid input arrives through the pipe API");
@@ -524,12 +602,23 @@ public final class SteamChemicalClientChecks {
 
     private static void verifyNativeOutputs(BaseMetaTileEntity tile, SteamProcessingMachine processingMachine,
         GTRecipe recipe) {
-        for (ItemStack output : recipe.mOutputs) {
+        List<ItemStack> outputs = itemOutputs(recipe);
+        if (processingMachine.getRecipeMap() == RecipeMaps.assemblerRecipes) {
+            require(!outputs.isEmpty(), "native assembler recipe declares a concrete item output");
+            int produced = 0;
+            for (int i = 0; i < processingMachine.mOutputItems.length; i++) {
+                ItemStack stack = tile.getStackInSlot(processingMachine.getOutputSlot() + i);
+                if (stack != null) produced += stack.stackSize;
+            }
+            int expected = outputs.stream().mapToInt(output -> output.stackSize).sum();
+            require(expected > 0 && produced == expected,
+                "native assembler produces exactly " + expected + " physical items");
+        }
+        for (ItemStack output : outputs) {
             int expected = 0;
-            for (ItemStack other : recipe.mOutputs)
-                if (GTUtility.areStacksEqual(output, other)) expected += other.stackSize;
-            require(count(tile, processingMachine.getOutputSlot(), 6, output) == expected,
-                "native recipe exact item output " + output.getDisplayName());
+            for (ItemStack other : outputs) if (GTUtility.areStacksEqual(output, other)) expected += other.stackSize;
+            require(count(tile, processingMachine.getOutputSlot(), processingMachine.mOutputItems.length, output)
+                == expected, "native recipe exact item output " + output.getDisplayName());
         }
         for (FluidStack output : recipe.mFluidOutputs) {
             int expected = 0;
@@ -539,6 +628,15 @@ public final class SteamChemicalClientChecks {
         }
         require(tile.getStoredEU() == 0 && tile.getStoredSteam() < 16000,
             "native recipe finishes with steam only: " + processingMachine.getRecipeMap().unlocalizedName);
+    }
+
+    private static List<ItemStack> itemOutputs(GTRecipe recipe) {
+        List<ItemStack> outputs = new ArrayList<>();
+        for (int i = 0; i < recipe.mOutputs.length; i++) {
+            ItemStack output = recipe.getOutput(i);
+            if (output != null && output.stackSize > 0) outputs.add(output);
+        }
+        return outputs;
     }
 
     private void verifyAdditionalMachines() {
@@ -570,6 +668,155 @@ public final class SteamChemicalClientChecks {
             for (FluidStackTank tank : processingMachine.getFluidInputTanks()) setTank(tank, null);
             Arrays.fill(processingMachine.mOutputItems, null);
             processingMachine.mProgresstime = processingMachine.mMaxProgresstime = processingMachine.mEUt = 0;
+        }
+    }
+
+    private void prepareAssembler() {
+        verifyAssemblerCrafting(assemblerBase.getWorld());
+        require(
+            assemblerMachine.getRecipeMap() == RecipeMaps.assemblerRecipes
+                && GTNGItemList.SteamAssembler.get(1).getItemDamage() == assemblerBase.getMetaTileID(),
+            "registered bronze assembler uses the native assembler recipe pool");
+        require(
+            assemblerMachine.mInputSlotCount == 9 && assemblerMachine.mOutputItems.length == 1
+                && assemblerMachine.getFluidInputTanks().length == 1
+                && assemblerMachine.getFluidOutputTanks().length == 0
+                && assemblerMachine.getTankInfo(ForgeDirection.UP).length == 2,
+            "assembler exposes nine item inputs, one output and one reaction fluid input");
+        assemblerNativeRecipe = findNativeRecipe(RecipeMaps.assemblerRecipes, false, 9, 1, 1, 0);
+        require(
+            assemblerBase.fill(ForgeDirection.UP, water(17000), false) == 16000
+                && assemblerMachine.getFluidInputTanks()[0].getFluid() == null,
+            "assembler simulated fluid fill sees exactly one empty sixteen-thousand-liter tank");
+        require(assemblerBase.fill(ForgeDirection.UP, water(17000), true) == 16000,
+            "assembler actual fluid fill cannot spill into hidden input tanks");
+        FluidStack secondFluid = RecipeMaps.assemblerRecipes.getAllRecipes().stream()
+            .flatMap(recipe -> Arrays.stream(recipe.mFluidInputs))
+            .filter(fluid -> !fluid.isFluidEqual(water(1)) && !GTModHandler.isAnySteam(fluid)).findFirst()
+            .orElseThrow(() -> new AssertionError("Missing native assembler fluid for isolation check")).copy();
+        secondFluid.amount = 1;
+        require(
+            assemblerBase.fill(ForgeDirection.UP, secondFluid, false) == 0
+                && assemblerBase.fill(ForgeDirection.UP, secondFluid, true) == 0
+                && sameFluid(assemblerMachine.getFluidInputTanks()[0].getFluid(), water(16000)),
+            "a second valid assembler fluid cannot enter a hidden input slot");
+        setTank(assemblerMachine.getFluidInputTanks()[0], null);
+        GTRecipe mv = new GTRecipe(false, new ItemStack[] { new ItemStack(Items.nether_star) },
+            new ItemStack[] { new ItemStack(Items.emerald) }, null, null, null, null, null,
+            new FluidStack[] { water(1) }, new FluidStack[0], 20, 128, 0);
+        require(RecipeMaps.assemblerRecipes.addRecipe(mv) != null, "MV assembler rejection fixture is registered");
+        mv.mDuration = 20;
+        autoInsert(assemblerNativeBase, assemblerNativeMachine, new ItemStack[] { new ItemStack(Items.nether_star) },
+            ForgeDirection.UP);
+        require(assemblerNativeBase.fill(ForgeDirection.UP, water(1), true) == 1,
+            "MV fixture fluid reaches the assembler");
+        require(
+            assemblerNativeMachine.checkRecipe() != 2
+                && count(assemblerNativeBase, assemblerNativeMachine.getInputSlot(), 9,
+                    new ItemStack(Items.nether_star)) == 1
+                && sameFluid(assemblerNativeMachine.getFluidInputTanks()[0].getFluid(), water(1)),
+            "assembler rejects MV recipes before consuming automated item or fluid inputs");
+        for (int i = 0; i < assemblerNativeMachine.mInputSlotCount; i++) {
+            assemblerNativeBase.setInventorySlotContents(assemblerNativeMachine.getInputSlot() + i, null);
+        }
+        setTank(assemblerNativeMachine.getFluidInputTanks()[0], null);
+        for (ForgeDirection side : new ForgeDirection[] { ForgeDirection.UP, ForgeDirection.UNKNOWN }) {
+            for (int i = 0; i < assemblerMachine.mInputSlotCount; i++) {
+                int slot = assemblerMachine.getInputSlot() + i;
+                require(
+                    assemblerBase.isItemValidForSlot(slot, new ItemStack(Items.paper))
+                        && Arrays.stream(assemblerBase.getAccessibleSlotsFromSide(side.ordinal()))
+                            .anyMatch(index -> index == slot)
+                        && assemblerBase.canInsertItem(slot, new ItemStack(Items.paper), side.ordinal()),
+                    "assembler automation can access physical input slot " + i + " from " + side);
+            }
+            require(
+                !assemblerBase.canInsertItem(assemblerMachine.getOutputSlot(), new ItemStack(Items.paper),
+                    side.ordinal())
+                    && !assemblerBase.canInsertItem(assemblerMachine.getCircuitSlot(), new ItemStack(Items.paper),
+                        side.ordinal()),
+                "assembler automation cannot insert into output or phantom circuit from " + side);
+        }
+        ItemStack probe = assemblerNativeRecipe.mInputs[0].copy();
+        probe.stackSize = 1;
+        autoInsert(assemblerNativeBase, assemblerNativeMachine, new ItemStack[] { probe }, ForgeDirection.UNKNOWN);
+        for (int i = 0; i < assemblerNativeMachine.mInputSlotCount; i++) {
+            assemblerNativeBase.setInventorySlotContents(assemblerNativeMachine.getInputSlot() + i, null);
+        }
+        ItemStack[] inputs = Arrays.stream(assemblerItems).map(item -> new ItemStack(item, 1))
+            .toArray(ItemStack[]::new);
+        GTRecipe fixture = new GTRecipe(false, inputs, new ItemStack[] { new ItemStack(Items.diamond, 2) }, null, null,
+            null, null, null, new FluidStack[] { water(250) }, new FluidStack[0], 20, 32, 0);
+        require(RecipeMaps.assemblerRecipes.addRecipe(fixture) != null, "nine-input assembler fixture is registered");
+        fixture.mDuration = 20;
+        autoInsert(assemblerBase, assemblerMachine,
+            Arrays.stream(assemblerItems).map(item -> new ItemStack(item, 2)).toArray(ItemStack[]::new),
+            ForgeDirection.UP);
+        require(assemblerBase.fill(ForgeDirection.UP, water(500), true) == 500,
+            "assembler reaction fluid arrives through the real pipe API");
+        assemblerBase.fill(ForgeDirection.UP, Materials.Steam.getGas(32000), true);
+        require(
+            assemblerMachine.checkRecipe() == 2 && assemblerMachine.mEUt == 32
+                && assemblerMachine.mMaxProgresstime == 40
+                && assemblerBase.getStoredEU() == 0,
+            "nine distinct automated inputs start a forty-tick steam assembly without EU");
+        seedNativeRecipe(assemblerNativeBase, assemblerNativeMachine, assemblerNativeRecipe);
+    }
+
+    private void reloadAssembler(World world, boolean running) {
+        int progress = assemblerMachine.mProgresstime;
+        long steam = assemblerBase.getStoredSteam();
+        if (running) require(progress > 0 && progress < 40, "assembler is processing before its NBT round trip");
+        NBTTagCompound tag = new NBTTagCompound();
+        assemblerBase.writeToNBT(tag);
+        world.removeTileEntity(16, 10, 4);
+        assemblerBase = new BaseMetaTileEntity();
+        assemblerBase.setWorldObj(world);
+        assemblerBase.readFromNBT(tag);
+        world.setTileEntity(16, 10, 4, assemblerBase);
+        assemblerMachine = (SteamProcessingMachine) assemblerBase.getMetaTileEntity();
+        world.markBlockForUpdate(16, 10, 4);
+        require(
+            assemblerMachine.mProgresstime == progress && assemblerBase.getStoredSteam() == steam
+                && assemblerMachine.getFluidInputTanks().length == 1
+                && assemblerMachine.getFluidOutputTanks().length == 0
+                && sameFluid(assemblerMachine.getFluidInputTanks()[0].getFluid(), water(250)),
+            "assembler NBT retains progress, steam and its single active fluid tank");
+        for (Item item : assemblerItems)
+            require(count(assemblerBase, assemblerMachine.getInputSlot(), 9, new ItemStack(item)) == 1,
+                "assembler NBT retains each remaining physical input " + item);
+        if (running) require(assemblerMachine.mOutputItems[0] != null && assemblerMachine.mOutputItems[0].stackSize == 2
+            && assemblerMachine.mMaxProgresstime == 40, "assembler NBT retains its pending item output");
+        else require(
+            count(assemblerBase, assemblerMachine.getOutputSlot(), 1, new ItemStack(Items.diamond)) == 2
+                && assemblerMachine.mMaxProgresstime == 0,
+            "completed assembler NBT preserves output without restarting assembly");
+    }
+
+    private static void autoInsert(BaseMetaTileEntity tile, SteamProcessingMachine processingMachine,
+        ItemStack[] inputs, ForgeDirection side) {
+        if (inputs.length == 0) return;
+        InventoryBasic feeder = new InventoryBasic("Steam QA feeder", false, inputs.length);
+        int expected = 0;
+        for (int i = 0; i < inputs.length; i++) {
+            ItemStack supplied = inputs[i].copy();
+            supplied.stackSize = Math.max(1, supplied.stackSize);
+            expected += supplied.stackSize;
+            feeder.setInventorySlotContents(i, supplied);
+        }
+        GTItemTransfer transfer = new GTItemTransfer();
+        transfer.source(feeder, ForgeDirection.UNKNOWN);
+        transfer.sink(tile, side);
+        transfer.setStacksToTransfer(inputs.length);
+        require(transfer.transfer() == expected,
+            "native GT item sink receives every supplied ingredient from " + side
+                + ": "
+                + processingMachine.getRecipeMap().unlocalizedName);
+        require(tile.getStackInSlot(processingMachine.getCircuitSlot()) == null,
+            "native automated input leaves the phantom circuit untouched");
+        for (int i = 0; i < processingMachine.mOutputItems.length; i++) {
+            require(tile.getStackInSlot(processingMachine.getOutputSlot() + i) == null,
+                "native automated input leaves item output slot untouched " + i);
         }
     }
 
@@ -618,6 +865,25 @@ public final class SteamChemicalClientChecks {
         ItemStack output = CraftingManager.getInstance().findMatchingRecipe(grid, world);
         require(GTUtility.areStacksEqual(output, GTNGItemList.SteamChemicalReactor.get(1)) && output.stackSize == 1,
             "registered bronze crafting grid produces the machine");
+    }
+
+    private static void verifyAssemblerCrafting(World world) {
+        InventoryCrafting grid = new InventoryCrafting(new Container() {
+
+            @Override
+            public boolean canInteractWith(EntityPlayer player) {
+                return true;
+            }
+        }, 3, 3);
+        ItemStack plate = GTOreDictUnificator.get(OrePrefixes.plate, Materials.Bronze, 1);
+        ItemStack gear = GTOreDictUnificator.get(OrePrefixes.gearGt, Materials.Bronze, 1);
+        ItemStack pipe = GTOreDictUnificator.get(OrePrefixes.pipeSmall, Materials.Bronze, 1);
+        ItemStack[] ingredients = { plate, gear, plate, new ItemStack(Blocks.piston), ItemList.Hull_Bronze.get(1),
+            new ItemStack(Blocks.piston), pipe, pipe, pipe };
+        for (int i = 0; i < ingredients.length; i++) grid.setInventorySlotContents(i, ingredients[i].copy());
+        ItemStack output = CraftingManager.getInstance().findMatchingRecipe(grid, world);
+        require(GTUtility.areStacksEqual(output, GTNGItemList.SteamAssembler.get(1)) && output.stackSize == 1,
+            "registered bronze crafting grid produces the steam assembler");
     }
 
     private int countInput(Item item) {
@@ -682,13 +948,17 @@ public final class SteamChemicalClientChecks {
                     mc.displayHeight, mc.getFramebuffer());
                 Files.write(new File(outputDir(), "result.txt").toPath(), "PASS".getBytes(StandardCharsets.UTF_8));
                 System.out.println(
-                    "STEAM_CHEMICAL_QA: PASS native cell-free chemistry, six item I/O, multi-fluid I/O, NBT and GUI");
+                    "STEAM_CHEMICAL_QA: PASS four steam machines, native automation, nine-input assembler, NBT and GUI");
                 finished = true;
                 mc.shutdown();
                 return;
             }
             if (!(mc.currentScreen instanceof GuiContainerWrapper)) return;
             ModularPanel panel = ((GuiContainerWrapper) mc.currentScreen).getScreen().getMainPanel();
+            if (visualStage == 4) {
+                renderAssembler(panel, mc);
+                return;
+            }
             ToggleButton fluidButton = findButton(panel, "auto_fluid_output");
             ToggleButton itemButton = findButton(panel, "auto_item_output");
             if (visualStage == 1) {
@@ -711,8 +981,8 @@ public final class SteamChemicalClientChecks {
                     mc.displayHeight, mc.getFramebuffer());
                 verifyTextures(panel, mc);
                 mc.thePlayer.closeScreen();
-                worldRequested = true;
-                visualStage = 3;
+                assemblerGuiRequested = true;
+                visualStage = 4;
                 frames = 0;
                 return;
             }
@@ -763,6 +1033,75 @@ public final class SteamChemicalClientChecks {
         }
     }
 
+    private void renderAssembler(ModularPanel panel, Minecraft mc) throws Exception {
+        if (!assemblerOpened || collect(panel, FluidSlot.class).size() != 1) return;
+        ToggleButton itemButton = findButton(panel, "auto_item_output");
+        if (assemblerVisualStage == 0) {
+            if (++assemblerFrames < 60) return;
+            List<ItemSlot> slots = collect(panel, ItemSlot.class);
+            int physical = 0;
+            Set<Integer> indices = new HashSet<>();
+            for (ItemSlot slot : slots) {
+                int index = slot.getSlot().getSlotIndex();
+                if (
+                    !ModularSlot.isPlayerSlot(slot.getSlot()) && index >= assemblerMachine.getInputSlot()
+                        && index <= assemblerMachine.getOutputSlot()
+                ) {
+                    physical++;
+                    indices.add(index);
+                }
+            }
+            require(physical == 10 && indices.size() == 10,
+                "assembler GUI exposes exactly nine physical inputs and one output");
+            require(sameFluid(collect(panel, FluidSlot.class).get(0).getFluidStack(), water(250)),
+                "assembler GUI exposes exactly its single reaction fluid input");
+            require(
+                collect(panel, ToggleButton.class).stream()
+                    .filter(button -> "auto_item_output".equals(button.getName())
+                        || "auto_fluid_output".equals(button.getName()))
+                    .count() == 1
+                    && collect(panel, ToggleButton.class).stream()
+                        .noneMatch(button -> "auto_fluid_output".equals(button.getName())),
+                "assembler GUI has one useful item output button and no fluid output button");
+            require(collect(panel, SteamGaugeWidget.class).size() == 1, "assembler GUI retains the native steam gauge");
+            for (String texture : new String[] { "OVERLAY_FRONT", "OVERLAY_FRONT_ACTIVE",
+                "OVERLAY_FRONT_ACTIVE_GLOW" }) {
+                IIcon icon = Textures.BlockIcons
+                    .customOptional(ModList.GregTech.getResourceLocation(), "basicmachines/assembler/" + texture)
+                    .getIcon();
+                require(
+                    icon != null && !icon.getIconName().equals("missingno")
+                        && !icon.getIconName().toLowerCase().contains("invisible"),
+                    "assembler front texture exists: " + texture);
+            }
+            itemButton.onMousePressed(0);
+            assemblerButtonRequest = 1;
+            assemblerVisualStage = 1;
+            assemblerFrames = 0;
+            return;
+        }
+        if (assemblerVisualStage == 1) {
+            if (!assemblerAutoChecked || ++assemblerFrames < 20) return;
+            require(itemButton.isValueSelected(),
+                "assembler automatic output button enables through native C2S synchronization");
+            itemButton.onMousePressed(0);
+            assemblerButtonRequest = 2;
+            assemblerVisualStage = 2;
+            assemblerFrames = 0;
+            return;
+        }
+        if (!assemblerAutoOffChecked || ++assemblerFrames < 30) return;
+        require(!itemButton.isValueSelected(),
+            "assembler automatic output button disables through native C2S synchronization");
+        ScreenShotHelper.saveScreenshot(outputDir(), "steam-assembler.png", mc.displayWidth, mc.displayHeight,
+            mc.getFramebuffer());
+        verifyTextures(panel, mc, "steam-assembler.png");
+        mc.thePlayer.closeScreen();
+        worldRequested = true;
+        visualStage = 3;
+        frames = 0;
+    }
+
     private static ToggleButton findButton(IWidget root, String name) {
         for (ToggleButton button : collect(root, ToggleButton.class)) if (name.equals(button.getName())) return button;
         throw new AssertionError("Missing automatic output button: " + name);
@@ -782,7 +1121,11 @@ public final class SteamChemicalClientChecks {
     }
 
     private static void verifyTextures(ModularPanel panel, Minecraft mc) throws Exception {
-        BufferedImage screenshot = ImageIO.read(new File(outputDir(), "screenshots/steam-chemical-reactor.png"));
+        verifyTextures(panel, mc, "steam-chemical-reactor.png");
+    }
+
+    private static void verifyTextures(ModularPanel panel, Minecraft mc, String name) throws Exception {
+        BufferedImage screenshot = ImageIO.read(new File(outputDir(), "screenshots/" + name));
         require(screenshot != null, "native GUI screenshot saved");
         int scale = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
         var area = panel.getArea();

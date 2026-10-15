@@ -34,6 +34,7 @@ gradle.projectsEvaluated {
                 'src/main/java/com/xyp/gtnotgood/common/machines/basic/SteamProcessingMachineGui.java',
                 'src/main/java/com/xyp/gtnotgood/common/machines/basic/SteamCentrifuge.java',
                 'src/main/java/com/xyp/gtnotgood/common/machines/basic/SteamElectrolyzer.java',
+                'src/main/java/com/xyp/gtnotgood/common/machines/basic/SteamAssembler.java',
                 'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
                 'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
                 'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',

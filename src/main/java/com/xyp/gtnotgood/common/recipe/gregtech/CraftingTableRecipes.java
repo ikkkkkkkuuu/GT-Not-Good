@@ -61,6 +61,16 @@ public class CraftingTableRecipes {
             });
 
         GTModHandler.addCraftingRecipe(
+            GTNGItemList.SteamAssembler.get(1),
+            new Object[] { "PGP", "RHR", "XXX",
+                'P', OrePrefixes.plate.get(Materials.Bronze),
+                'G', OrePrefixes.gearGt.get(Materials.Bronze),
+                'R', new ItemStack(Blocks.piston),
+                'H', ItemList.Hull_Bronze.get(1),
+                'X', OrePrefixes.pipeSmall.get(Materials.Bronze)
+            });
+
+        GTModHandler.addCraftingRecipe(
             GTNGItemList.SteamCropManager.get(1),
             new Object[] { "CSC", "RHR", "XPX",
                 'C', OrePrefixes.plate.get(Materials.Bronze),

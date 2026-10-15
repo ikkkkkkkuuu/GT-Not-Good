@@ -11,11 +11,15 @@ import com.xyp.gtnotgood.common.recipe.gregtech.FuelRodRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.MixerRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.AdvancedIORecipes;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.FuelRefiningRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.PackagedRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.PatternSorterRecipes;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.PetrochemicalRecipes;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.WoodDistillationRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.CrossRecipeWirelessEnergyHatchRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.IntegratedChemicalPlantRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeBeeBreederRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCombProcessorRecipes;
@@ -43,9 +47,12 @@ import thaumcraft.common.config.ConfigBlocks;
 
 public class RecipeLoader {
 
-    /** Registers recipes whose dimension display blocks are created during another mod's initialization. */
+    /** Waits for external fluid and dimension-display registrations. */
     public static void loadPostInitRecipes() {
         MixerRecipes.loadRecipes();
+        FuelRefiningRecipes.loadRecipes();
+        WoodDistillationRecipes.loadRecipes();
+        PetrochemicalRecipes.loadRecipes();
     }
 
     public static void loadRecipes() {
@@ -62,6 +69,7 @@ public class RecipeLoader {
                 new ItemStack(ConfigBlocks.blockStoneDevice, 1, 0));
         }
         LargeTransmutationMachineRecipes.loadRecipes();
+        IntegratedChemicalPlantRecipes.loadRecipes();
         AdvancedIORecipes.register();
         StockIOInterfaceRecipes.register();
         LargeInterfaceRecipes.register();

@@ -51,11 +51,21 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
     private boolean processFinished;
 
     protected SteamProcessingMachine(int id, String name, String localizedName, String description) {
-        super(id, name, localizedName, description, 6, 6, false);
+        this(id, name, localizedName, description, 6, 6);
+    }
+
+    protected SteamProcessingMachine(int id, String name, String localizedName, String description, int inputSlots,
+        int outputSlots) {
+        super(id, name, localizedName, description, inputSlots, outputSlots, false);
     }
 
     protected SteamProcessingMachine(String name, String[] description, ITexture[][][] textures) {
-        super(name, description, textures, 6, 6, false);
+        this(name, description, textures, 6, 6);
+    }
+
+    protected SteamProcessingMachine(String name, String[] description, ITexture[][][] textures, int inputSlots,
+        int outputSlots) {
+        super(name, description, textures, inputSlots, outputSlots, false);
     }
 
     protected abstract String getMachineOverlay();
@@ -69,10 +79,10 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
         String[] baseDescription = super.getDescription();
         String[] description = Arrays.copyOf(baseDescription, baseDescription.length + 3);
         // #tr tooltip.steam_processing_machine.capacity
-        // # Six fluid inputs and outputs, 16,000 L each; separate steam buffer: 32,000 L
-        // # zh_CN 流体输入/输出各 6 槽，每槽 16,000 L；独立蒸汽缓存 32,000 L
-        description[baseDescription.length] = StatCollector
-            .translateToLocal("tooltip.steam_processing_machine.capacity");
+        // # Fluid inputs: %s; outputs: %s; 16,000 L each; separate steam buffer: 32,000 L
+        // # zh_CN 流体输入 %s 槽，输出 %s 槽；每槽 16,000 L；独立蒸汽缓存 32,000 L
+        description[baseDescription.length] = StatCollector.translateToLocalFormatted(
+            "tooltip.steam_processing_machine.capacity", getFluidInputSlotCount(), getFluidOutputSlotCount());
         // #tr tooltip.steam_processing_machine.power
         // # Recipes up to 32 EU/t; double duration; 2 L steam per EU
         // # zh_CN 支持至 32 EU/t 的配方；耗时翻倍；每 EU 消耗 2 L 蒸汽
@@ -100,8 +110,9 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
     public int checkRecipe(boolean skipOC) {
         if (hasPendingFluidOutputs()) return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS;
         ItemStack[] inputs = getAllInputs();
-        GTRecipe recipe = getRecipeMap().findRecipeQuery().items(inputs).fluids(fluidInputs)
-            .specialSlot(getSpecialSlot()).voltage(TierEU.LV).cachedRecipe(mLastRecipe).find();
+        FluidStack[] fluids = Arrays.copyOf(fluidInputs, getFluidInputSlotCount());
+        GTRecipe recipe = getRecipeMap().findRecipeQuery().items(inputs).fluids(fluids).specialSlot(getSpecialSlot())
+            .voltage(TierEU.LV).cachedRecipe(mLastRecipe).find();
         if (recipe == null) return DID_NOT_FIND_RECIPE;
         IGregTechTileEntity tile = getBaseMetaTileEntity();
         if (recipe.getMetadataOrDefault(EXPLODE, false)) {
@@ -137,7 +148,7 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
                 return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS;
             }
         }
-        if (!recipe.isRecipeInputEqual(true, fluidInputs, inputs)) {
+        if (!recipe.isRecipeInputEqual(true, fluids, inputs)) {
             mMaxProgresstime = 0;
             mEUt = 0;
             return FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS;
@@ -162,14 +173,15 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
     protected boolean canOutput(GTRecipe recipe) {
         if (
             recipe == null || recipe.mOutputs.length > mOutputItems.length
-                || recipe.mFluidOutputs.length > fluidOutputs.length
+                || recipe.mFluidOutputs.length > getFluidOutputSlotCount()
                 || !canOutput(recipe.mOutputs)
         ) return false;
-        if (recipe.mNeedsEmptyOutput && (!isOutputEmpty() || firstFluid(fluidOutputs) != null)) return false;
+        if (recipe.mNeedsEmptyOutput && (!isOutputEmpty() || getDrainableStack() != null)) return false;
         FluidStack[] simulatedOutputs = Arrays.stream(fluidOutputs).map(fluid -> fluid == null ? null : fluid.copy())
             .toArray(FluidStack[]::new);
         for (FluidStack output : recipe.mFluidOutputs) {
-            if (output != null && fillTanks(simulatedOutputs, output, true) != output.amount) return false;
+            if (output != null && fillTanks(simulatedOutputs, getFluidOutputSlotCount(), output, true) != output.amount)
+                return false;
         }
         return true;
     }
@@ -215,11 +227,12 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
     }
 
     private void outputFluids(IGregTechTileEntity tile, ForgeDirection side) {
-        if (firstFluid(fluidOutputs) == null) return;
+        if (getDrainableStack() == null) return;
         IFluidHandler target = tile.getITankContainerAtSide(side);
         if (target == null) return;
         int remaining = Config.recipeSpeedFullFluidOutput ? Integer.MAX_VALUE : 1000;
-        for (FluidStack output : fluidOutputs) {
+        for (int i = 0; i < getFluidOutputSlotCount(); i++) {
+            FluidStack output = fluidOutputs[i];
             if (output == null || remaining <= 0) continue;
             FluidStack requested = output.copy();
             requested.amount = Math.min(output.amount, remaining);
@@ -275,7 +288,7 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
         for (int i = 0; i < pendingFluidOutputs.length; i++) {
             FluidStack pending = pendingFluidOutputs[i];
             if (pending == null) continue;
-            int filled = fillTanks(fluidOutputs, pending, true);
+            int filled = fillTanks(fluidOutputs, getFluidOutputSlotCount(), pending, true);
             if (filled <= 0) continue;
             pending.amount -= filled;
             if (pending.amount <= 0) pendingFluidOutputs[i] = null;
@@ -290,11 +303,19 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
     }
 
     public FluidStackTank[] getFluidInputTanks() {
-        return fluidInputTanks;
+        return Arrays.copyOf(fluidInputTanks, getFluidInputSlotCount());
     }
 
     public FluidStackTank[] getFluidOutputTanks() {
-        return fluidOutputTanks;
+        return Arrays.copyOf(fluidOutputTanks, getFluidOutputSlotCount());
+    }
+
+    protected int getFluidInputSlotCount() {
+        return Math.min(FLUID_SLOT_COUNT, getRecipeMap().getFrontend().getUIProperties().maxFluidInputs);
+    }
+
+    protected int getFluidOutputSlotCount() {
+        return Math.min(FLUID_SLOT_COUNT, getRecipeMap().getFrontend().getUIProperties().maxFluidOutputs);
     }
 
     @Override
@@ -339,7 +360,10 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
 
     @Override
     public FluidStack getDrainableStack() {
-        return firstFluid(fluidOutputs);
+        for (int i = 0; i < getFluidOutputSlotCount(); i++) {
+            if (fluidOutputs[i] != null && fluidOutputs[i].amount > 0) return fluidOutputs[i];
+        }
+        return null;
     }
 
     @Override
@@ -370,15 +394,15 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
     @Override
     public int fill(FluidStack fluid, boolean doFill) {
         if (fluid == null || fluid.amount <= 0 || !isFluidInputAllowed(fluid)) return 0;
-        int filled = fillTanks(fluidInputs, fluid, doFill);
+        int filled = fillTanks(fluidInputs, getFluidInputSlotCount(), fluid, doFill);
         if (doFill && filled > 0) markStateChanged();
         return filled;
     }
 
-    private int fillTanks(FluidStack[] tanks, FluidStack fluid, boolean doFill) {
+    private int fillTanks(FluidStack[] tanks, int tankCount, FluidStack fluid, boolean doFill) {
         int remaining = fluid.amount;
         for (int pass = 0; pass < 2 && remaining > 0; pass++) {
-            for (int i = 0; i < tanks.length && remaining > 0; i++) {
+            for (int i = 0; i < tankCount && remaining > 0; i++) {
                 FluidStack stored = tanks[i];
                 boolean empty = stored == null || stored.amount <= 0;
                 if (pass == 0 ? empty || !stored.isFluidEqual(fluid) : !empty) continue;
@@ -398,7 +422,7 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
 
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
-        FluidStack fluid = firstFluid(fluidOutputs);
+        FluidStack fluid = getDrainableStack();
         return drainMatchingFluid(fluid, maxDrain, doDrain);
     }
 
@@ -415,7 +439,7 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
     private FluidStack drainMatchingFluid(FluidStack requested, int amount, boolean doDrain) {
         if (requested == null || amount <= 0) return null;
         int remaining = amount;
-        for (int i = 0; i < fluidOutputs.length && remaining > 0; i++) {
+        for (int i = 0; i < getFluidOutputSlotCount() && remaining > 0; i++) {
             FluidStack fluid = fluidOutputs[i];
             if (fluid == null || !fluid.isFluidEqual(requested)) continue;
             int drained = Math.min(remaining, fluid.amount);
@@ -443,11 +467,15 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection side) {
-        FluidTankInfo[] tanks = new FluidTankInfo[1 + fluidInputs.length + fluidOutputs.length];
+        int inputs = getFluidInputSlotCount();
+        int outputs = getFluidOutputSlotCount();
+        FluidTankInfo[] tanks = new FluidTankInfo[1 + inputs + outputs];
         tanks[0] = super.getTankInfo(side)[0];
-        for (int i = 0; i < fluidInputs.length; i++) {
+        for (int i = 0; i < inputs; i++) {
             tanks[1 + i] = new FluidTankInfo(fluidInputs[i], getCapacity());
-            tanks[1 + fluidInputs.length + i] = new FluidTankInfo(fluidOutputs[i], getCapacity());
+        }
+        for (int i = 0; i < outputs; i++) {
+            tanks[1 + inputs + i] = new FluidTankInfo(fluidOutputs[i], getCapacity());
         }
         return tanks;
     }
@@ -494,7 +522,8 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
 
     @Override
     protected BasicUIProperties getUIProperties() {
-        return super.getUIProperties().toBuilder().maxFluidInputs(FLUID_SLOT_COUNT).maxFluidOutputs(FLUID_SLOT_COUNT)
+        return super.getUIProperties().toBuilder().maxFluidInputs(getFluidInputSlotCount())
+            .maxFluidOutputs(getFluidOutputSlotCount())
             .slotOverlaysSteamMUI2((index, isFluid, isOutput, isSpecial) -> isSpecial ? SteamTexture.NONE
                 : isOutput ? GTGuiTextures.OVERLAY_SLOT_OUT_STEAM : GTGuiTextures.OVERLAY_SLOT_IN_STEAM)
             .progressBarTextureSteamMUI2(GTGuiTextures.PROGRESSBAR_ARROW_STEAM).build();

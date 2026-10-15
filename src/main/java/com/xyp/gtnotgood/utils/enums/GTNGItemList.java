@@ -35,6 +35,7 @@ public enum GTNGItemList implements IItemContainer {
     SteamCentrifuge,
     SteamElectrolyzer,
     SteamCropManager,
+    SteamAssembler,
 
     RtsControlCore,
     RemoteControlCore,
@@ -206,6 +207,7 @@ public enum GTNGItemList implements IItemContainer {
     LargeBeeBreeder,
     LargeCropBreeder,
     IntegratedProductionFactory,
+    IntegratedChemicalPlant,
     MaxCapacityMEOutputBus,
     MaxCapacityMEOutputHatch,
     MEDataAccessHatch,

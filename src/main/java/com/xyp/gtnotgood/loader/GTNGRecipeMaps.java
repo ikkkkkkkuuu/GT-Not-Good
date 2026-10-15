@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.loader;
 
+import com.xyp.gtnotgood.client.nei.ChemicalPlantFrontend;
 import com.xyp.gtnotgood.client.nei.TransmutationFrontend;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
@@ -7,6 +8,7 @@ import gregtech.api.gui.modularui.GTUITextures;
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.RecipeMapBackend;
 import gregtech.api.recipe.RecipeMapBuilder;
+import gregtech.nei.formatter.HeatingCoilSpecialValueFormatter;
 
 /**
  * Defines custom GregTech recipe maps owned by GT Not Good.
@@ -15,6 +17,36 @@ import gregtech.api.recipe.RecipeMapBuilder;
  * handlers all reference the same object instead of constructing duplicate maps.
  */
 public final class GTNGRecipeMaps {
+
+    public static final RecipeMap<RecipeMapBackend> FuelRefiningRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.fuel_refining
+        // # Integrated Fuel Refining
+        // # zh_CN 集成燃料精炼
+        .of("recipe.gtnotgood.fuel_refining").maxIO(3, 0, 8, 1).progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
+        .progressBarPos(68, 35).logoPos(68, 86).neiRecipeBackgroundSize(170, 110).frontend(ChemicalPlantFrontend::new)
+        .neiSpecialInfoFormatter(HeatingCoilSpecialValueFormatter.INSTANCE).neiHandlerInfo(builder -> builder
+            .setDisplayStack(GTNGItemList.IntegratedChemicalPlant.get(1)).setHeight(210).setMaxRecipesPerPage(1))
+        .build();
+
+    public static final RecipeMap<RecipeMapBackend> WoodDistillationRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.wood_distillation
+        // # Integrated Wood Distillation
+        // # zh_CN 集成木化
+        .of("recipe.gtnotgood.wood_distillation").maxIO(1, 1, 1, 16)
+        .progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE).progressBarPos(68, 35).logoPos(68, 86)
+        .neiRecipeBackgroundSize(170, 110).frontend(ChemicalPlantFrontend::new).neiHandlerInfo(builder -> builder
+            .setDisplayStack(GTNGItemList.IntegratedChemicalPlant.get(1)).setHeight(174).setMaxRecipesPerPage(1))
+        .build();
+
+    public static final RecipeMap<RecipeMapBackend> PetrochemicalRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.petrochemical
+        // # Integrated Petrochemical Processing
+        // # zh_CN 集成石化
+        .of("recipe.gtnotgood.petrochemical").maxIO(1, 0, 2, 12).progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
+        .progressBarPos(68, 35).logoPos(68, 86).neiRecipeBackgroundSize(170, 110).frontend(ChemicalPlantFrontend::new)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.IntegratedChemicalPlant.get(1)).setHeight(174)
+            .setMaxRecipesPerPage(1))
+        .build();
 
     /** Comb conversions imported from completed GregTech recipe registries. */
     public static final RecipeMap<RecipeMapBackend> CombProcessingRecipes = RecipeMapBuilder

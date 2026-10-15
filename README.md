@@ -43,20 +43,30 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.4.3          | [![1.4.3](https://img.shields.io/badge/release-1.4.3-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.3) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.4.4          | [![1.4.4](https://img.shields.io/badge/release-1.4.4-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.4) |         ✔️         |
 
-最新版本：[1.4.3 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.3)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.3/gtnotgood-1.4.3.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.3/gtnotgood-1.4.3-sources.jar)。
+最新版本：[1.4.4 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.4)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.4/gtnotgood-1.4.4.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.4/gtnotgood-1.4.4-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.4.3。
+1.3.4 因启动错误已撤回，请更新到 1.4.4。
+
+### 集成化工厂
+
+5×5×5 电力多方块，支持燃料精炼、木化、石化三种模式，GUI或普通螺丝刀右键切换，潜行使用螺丝刀切换配方锁定。
+独立提供25条燃料配方、1条木化配方和11条石化配方，无需GTNL，不新增流体；跳过依赖GTNL树液的特殊石化配方。
+使用化学惰性机械方块、24个加热线圈、30块强化玻璃和16个不锈钢框架；外壳可换仓室，至少保留32个外壳。
+燃料模式保留配方的温度与精炼等级要求。中央核心默认使用化学惰性外壳（0级），可升级为燃料精炼厂线圈I–IV（1–4级）。
+支持无损超频、最多16并行，产量以NEI配方为准。控制器在EV组装机合成。
 
 ### 青铜蒸汽机器
 
 新增蒸汽化学反应釜、蒸汽离心机和蒸汽电解机，分别使用大型化学反应釜、无单元离心及无单元电解配方池，无需流体单元。
-三台机器均提供物品输入/输出各 6 槽、流体输入/输出各 6 槽，每个流体槽 16,000 L，另有独立的 32,000 L 蒸汽缓存。
-支持至 32 EU/t 的配方，耗时为配方的两倍，每 EU 消耗 2 L 蒸汽；产物堵塞时暂停，存档保留流体与加工进度。
+上述三台机器均提供物品输入/输出各 6 槽、流体输入/输出各 6 槽，每个流体槽 16,000 L，另有独立的 32,000 L 蒸汽缓存。
+蒸汽组装机沿用 GregTech 组装机配方池，提供 9 个物品输入槽、1 个物品输出槽和 1 个流体输入槽，不设流体输出槽。
+四台机器均支持至 32 EU/t 的配方，耗时为配方的两倍，每 EU 消耗 2 L 蒸汽；产物堵塞时暂停，存档保留流体与加工进度。
 物品、流体自动输出可独立开关，默认输出面为下方；Shift 点击输出按钮切换输出面，自动跳过机器正面和排气面。
-合成使用青铜机器外壳、青铜板与小型流体管道，以及转子、玻璃或双股铜线，无需电机、电泵或电子电路。
+组装机仅显示物品自动输出按钮。
+合成使用青铜机器外壳、青铜板与小型流体管道，以及转子、齿轮、活塞、玻璃或双股铜线，无需电机、电泵或电子电路。
 
 青铜、钢蒸汽熔炉现已遵循全局配方提速设置，支持固定耗时和倍率模式；关闭加速时保留原版耗时。
 

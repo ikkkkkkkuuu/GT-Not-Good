@@ -29,6 +29,7 @@ public enum GTNGMachineID {
     SuperAdvancedMEInputHatch(Machine, 21),
     SuperAdvancedMEInputBus(Machine, 22),
     CircuitMEPatternBuffer(Machine, 23),
+    IntegratedChemicalPlant(Machine, 24),
 
     DieselGeneratorLV(BasicMachine, 0),
     DieselGeneratorMV(BasicMachine, 1),
@@ -45,7 +46,8 @@ public enum GTNGMachineID {
     SteamChemicalReactor(BasicMachine, 12),
     SteamCentrifuge(BasicMachine, 13),
     SteamElectrolyzer(BasicMachine, 14),
-    SteamCropManager(BasicMachine, 15);
+    SteamCropManager(BasicMachine, 15),
+    SteamAssembler(BasicMachine, 16);
 
     public final int id;
     private static final int META_INCREMENT = 1;
