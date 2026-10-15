@@ -1,5 +1,7 @@
 package com.xyp.gtnotgood.common.items.toolbelt;
 
+import java.util.Arrays;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -16,19 +18,19 @@ import com.xyp.gtnotgood.common.network.SyncToolBeltData;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import lombok.Getter;
 
-/**
- * 工具腰带数据 - 存储在玩家身上，固定10个槽位，无需物品
- * Tool belt data - stored on player, fixed 10 slots, no item needed
- */
 public class ToolBeltData implements IExtendedEntityProperties {
 
     public static final String PROP_NAME = "ToolBeltData";
-    public static final int SLOT_COUNT = 10;
+    public static final int DEFAULT_SLOT_COUNT = 10;
+    public static final int MIN_SLOT_COUNT = 2;
+    public static final int MAX_SLOT_COUNT = 24;
+    public static final int SLOT_COUNT = DEFAULT_SLOT_COUNT;
     private static final String NBT_ITEMS = "Items";
+    private static final String NBT_SLOT_COUNT = "SlotCount";
 
     @Getter
-    private final EntityLivingBase owner;
-    private final ItemStack[] items = new ItemStack[SLOT_COUNT];
+    private EntityLivingBase owner;
+    private ItemStack[] items = new ItemStack[DEFAULT_SLOT_COUNT];
 
     public ToolBeltData(EntityLivingBase owner) {
         this.owner = owner;
@@ -44,65 +46,76 @@ public class ToolBeltData implements IExtendedEntityProperties {
     }
 
     public int getSlotCount() {
-        return SLOT_COUNT;
+        return items.length;
+    }
+
+    public boolean resize(int count) {
+        if (owner.worldObj.isRemote || count < MIN_SLOT_COUNT || count > MAX_SLOT_COUNT) return false;
+        if (count == items.length) return true;
+        for (int slot = count; slot < items.length; slot++) {
+            if (items[slot] != null && items[slot].stackSize > 0) return false;
+        }
+        items = Arrays.copyOf(items, count);
+        onContentsChanged();
+        return true;
     }
 
     public ItemStack getStackInSlot(int slot) {
-        if (slot < 0 || slot >= SLOT_COUNT) return null;
+        if (slot < 0 || slot >= items.length) return null;
         return items[slot];
     }
 
     public void setStackInSlot(int slot, ItemStack stack) {
-        if (slot < 0 || slot >= SLOT_COUNT) return;
-        items[slot] = stack;
+        if (slot < 0 || slot >= items.length) return;
+        setStackInSlotSilent(slot, stack);
         onContentsChanged();
     }
 
-    /**
-     * 无声设置槽位（不触发同步，用于客户端接收服务器同步数据）
-     */
     public void setStackInSlotSilent(int slot, ItemStack stack) {
-        if (slot < 0 || slot >= SLOT_COUNT) return;
-        items[slot] = stack;
+        if (slot < 0 || slot >= items.length) return;
+        items[slot] = stack == null || stack.stackSize <= 0 ? null : stack;
     }
 
-    /**
-     * 尝试将物品插入腰带，优先合并已有堆叠，其次放入空槽
-     * Try to insert a stack into the belt, merge first, then empty slot
-     *
-     * @return remaining stack (null if fully inserted)
-     */
+    public void applySnapshot(ItemStack[] snapshot) {
+        if (snapshot.length < MIN_SLOT_COUNT || snapshot.length > MAX_SLOT_COUNT) return;
+        items = new ItemStack[snapshot.length];
+        for (int slot = 0; slot < snapshot.length; slot++) {
+            ItemStack stack = snapshot[slot];
+            setStackInSlotSilent(slot, stack == null ? null : stack.copy());
+        }
+    }
+
+    /** Returns the uninserted remainder without changing the caller's stack. */
     public ItemStack tryInsert(ItemStack stack) {
         if (stack == null || stack.stackSize <= 0) return null;
+        if (owner.worldObj.isRemote || !ConfigData.isItemStackAllowed(stack)) return stack;
+        ItemStack remaining = stack.copy();
+        boolean changed = false;
 
-        // Try to merge with existing stacks
-        for (int i = 0; i < SLOT_COUNT; i++) {
-            ItemStack existing = items[i];
-            if (existing != null && existing.isItemEqual(stack) && ItemStack.areItemStackTagsEqual(existing, stack)) {
-                int max = existing.getMaxStackSize();
-                int total = existing.stackSize + stack.stackSize;
-                if (total <= max) {
-                    existing.stackSize = total;
-                    onContentsChanged();
-                    return null;
-                } else {
-                    existing.stackSize = max;
-                    stack.stackSize = total - max;
-                }
-            }
+        for (ItemStack existing : items) {
+            if (remaining.stackSize <= 0) break;
+            if (
+                existing == null || !existing.isItemEqual(remaining)
+                    || !ItemStack.areItemStackTagsEqual(existing, remaining)
+            ) continue;
+            int amount = Math.min(remaining.stackSize, Math.max(0, existing.getMaxStackSize() - existing.stackSize));
+            if (amount <= 0) continue;
+            existing.stackSize += amount;
+            remaining.stackSize -= amount;
+            changed = true;
         }
 
-        // Try to find an empty slot
-        for (int i = 0; i < SLOT_COUNT; i++) {
-            if (items[i] == null) {
-                items[i] = stack.copy();
-                onContentsChanged();
-                return null;
-            }
+        for (int slot = 0; slot < items.length && remaining.stackSize > 0; slot++) {
+            if (items[slot] != null) continue;
+            int amount = Math.min(remaining.stackSize, remaining.getMaxStackSize());
+            if (amount <= 0) break;
+            items[slot] = remaining.copy();
+            items[slot].stackSize = amount;
+            remaining.stackSize -= amount;
+            changed = true;
         }
-
-        // Belt is full
-        return stack;
+        if (changed) onContentsChanged();
+        return remaining.stackSize > 0 ? remaining : null;
     }
 
     public void onContentsChanged() {
@@ -126,8 +139,9 @@ public class ToolBeltData implements IExtendedEntityProperties {
     @Override
     public void saveNBTData(NBTTagCompound compound) {
         NBTTagCompound data = new NBTTagCompound();
+        data.setInteger(NBT_SLOT_COUNT, items.length);
         NBTTagList list = new NBTTagList();
-        for (int i = 0; i < SLOT_COUNT; i++) {
+        for (int i = 0; i < items.length; i++) {
             if (items[i] != null) {
                 NBTTagCompound slotTag = new NBTTagCompound();
                 slotTag.setByte("Slot", (byte) i);
@@ -144,18 +158,25 @@ public class ToolBeltData implements IExtendedEntityProperties {
     @Override
     public void loadNBTData(NBTTagCompound compound) {
         NBTTagCompound data = compound.getCompoundTag(PROP_NAME);
-        if (data.hasKey(NBT_ITEMS)) {
-            NBTTagList list = data.getTagList(NBT_ITEMS, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < list.tagCount(); i++) {
-                NBTTagCompound slotTag = list.getCompoundTagAt(i);
-                int slot = slotTag.getByte("Slot") & 255;
-                if (slot >= 0 && slot < SLOT_COUNT) {
-                    items[slot] = ItemStack.loadItemStackFromNBT(slotTag);
-                }
-            }
+        int count = data.hasKey(NBT_SLOT_COUNT, Constants.NBT.TAG_ANY_NUMERIC)
+            ? Math.max(MIN_SLOT_COUNT, Math.min(MAX_SLOT_COUNT, data.getInteger(NBT_SLOT_COUNT)))
+            : DEFAULT_SLOT_COUNT;
+        NBTTagList list = data.getTagList(NBT_ITEMS, Constants.NBT.TAG_COMPOUND);
+        ItemStack[] restored = new ItemStack[MAX_SLOT_COUNT];
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTTagCompound slotTag = list.getCompoundTagAt(i);
+            int slot = slotTag.getByte("Slot") & 255;
+            if (slot >= MAX_SLOT_COUNT) continue;
+            ItemStack stack = ItemStack.loadItemStackFromNBT(slotTag);
+            if (stack == null || stack.stackSize <= 0) continue;
+            restored[slot] = stack;
+            count = Math.max(count, slot + 1);
         }
+        items = Arrays.copyOf(restored, count);
     }
 
     @Override
-    public void init(Entity entity, World world) {}
+    public void init(Entity entity, World world) {
+        if (entity instanceof EntityLivingBase) owner = (EntityLivingBase) entity;
+    }
 }

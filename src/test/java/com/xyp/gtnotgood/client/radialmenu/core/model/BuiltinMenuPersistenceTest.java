@@ -71,6 +71,40 @@ public class BuiltinMenuPersistenceTest {
         assertTrue(belt.children.isEmpty());
     }
 
+    @Test
+    public void editedBuiltinEntryPersistsPresentationWithoutPersistingInventory() {
+        Profile profile = profile();
+        MenuNode belt = profile.root.childAt(0);
+        MenuNode liveTool = tool("server-only-enchanted-tool");
+        belt.liveChildren = Collections.singletonList(liveTool);
+
+        MenuNode edited = belt.copy();
+        edited.title = "随身物品";
+        edited.icon = IconSpec.item("minecraft:chest", 0);
+        edited.layout = SlotLayout.fixed(16);
+        edited.layout.opening = SlotLayout.Opening.Replace;
+        profile.root.setChildAt(0, edited);
+        profile.normalize();
+        assertSame(edited, profile.root.childAt(0));
+        assertSame(liveTool, edited.childAt(0));
+        edited.setChildAt(0, tool("editor-replacement"));
+        assertSame(liveTool, edited.childAt(0));
+
+        String json = ConfigCodec.writeProfile(profile);
+        assertFalse(json.contains("server-only-enchanted-tool"));
+        assertFalse(json.contains("server-only-item"));
+        assertFalse(json.contains("liveChildren"));
+        MenuNode loaded = ConfigCodec.readProfile(json).root.childAt(0);
+        assertEquals("toolbelt", loaded.builtIn);
+        assertEquals("随身物品", loaded.title);
+        assertEquals(IconSpec.Kind.Item, loaded.icon.kind);
+        assertEquals("minecraft:chest", loaded.icon.id);
+        assertEquals(16, loaded.slotCount());
+        assertEquals(SlotLayout.Opening.Replace, loaded.layout.opening);
+        assertTrue(loaded.children.isEmpty());
+        assertNull(loaded.liveChildren);
+    }
+
     private static Profile profile() {
         Profile profile = Profile.empty("builtin-persistence");
         MenuNode belt = MenuNode.category("Tool Belt", IconSpec.sprite("wrench", null), SlotLayout.fixed(10));

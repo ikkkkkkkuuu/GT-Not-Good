@@ -40,7 +40,8 @@ public class RadialMenuScreen extends GuiScreen {
 
     public RadialMenuScreen(EntityPlayer player) {
         this.player = player;
-        this.inventorySize = ToolBeltData.SLOT_COUNT;
+        ToolBeltData data = ToolBeltData.get(player);
+        this.inventorySize = data == null ? ToolBeltData.DEFAULT_SLOT_COUNT : data.getSlotCount();
 
         this.menu = new GenericRadialMenu(Minecraft.getMinecraft(), new IRadialMenuHost() {
 

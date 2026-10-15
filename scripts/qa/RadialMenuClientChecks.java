@@ -6,21 +6,26 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.util.ScreenShotHelper;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 
 import org.lwjgl.input.Keyboard;
 
+import com.mojang.authlib.GameProfile;
 import com.xyp.gtnotgood.client.radialmenu.client.gui.GuiRadialWheel;
 import com.xyp.gtnotgood.client.radialmenu.client.gui.WheelRing;
 import com.xyp.gtnotgood.client.radialmenu.client.gui.editor.GuiSlotEditor;
@@ -29,15 +34,19 @@ import com.xyp.gtnotgood.client.radialmenu.client.profile.ProfileManager;
 import com.xyp.gtnotgood.client.radialmenu.client.profile.ProfileStorage;
 import com.xyp.gtnotgood.client.radialmenu.client.toolbelt.ToolBeltMenu;
 import com.xyp.gtnotgood.client.radialmenu.config.RadialMenuConfig;
+import com.xyp.gtnotgood.client.radialmenu.core.action.ActionField;
 import com.xyp.gtnotgood.client.radialmenu.core.action.ActionSpec;
+import com.xyp.gtnotgood.client.radialmenu.core.action.ActionTypes;
 import com.xyp.gtnotgood.client.radialmenu.core.model.IconSpec;
 import com.xyp.gtnotgood.client.radialmenu.core.model.MenuNode;
 import com.xyp.gtnotgood.client.radialmenu.core.model.SlotLayout;
 import com.xyp.gtnotgood.common.items.toolbelt.ToolBeltData;
 import com.xyp.gtnotgood.common.network.SwapItems;
+import com.xyp.gtnotgood.common.network.SyncToolBeltData;
 import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.gtnotgood.utils.keybind.KeyBindManager;
 
+import cpw.mods.fml.client.config.GuiSlider;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -45,6 +54,9 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 @Mod(
     modid = "radialmenuqa",
@@ -55,6 +67,9 @@ public final class RadialMenuClientChecks {
 
     private static final String PROBE_BINDING = "key.radialmenuqa.probe";
     private static final String SAVED_TITLE = "已保存：单次按键";
+    private static final String BELT_TITLE = "已保存：随身物品";
+    private static final int EXPANDED_SLOTS = 16;
+    private static final int LAST_SLOT = EXPANDED_SLOTS - 1;
 
     private final KeyBinding probe = new KeyBinding(PROBE_BINDING, 0, "Radial Menu QA");
     private boolean started;
@@ -64,12 +79,27 @@ public final class RadialMenuClientChecks {
     private volatile boolean packetVerified;
     private volatile boolean insertRequested;
     private volatile boolean insertVerified;
+    private volatile boolean resizeRequested;
+    private volatile boolean resizeVerified;
+    private volatile boolean stackPreparationRequested;
+    private volatile boolean stackPrepared;
+    private volatile boolean stackStored;
+    private volatile boolean stackRetrieved;
+    private volatile boolean tailStored;
+    private volatile boolean shrinkRejected;
+    private volatile boolean tailCleared;
+    private volatile boolean shrinkVerified;
+    private volatile boolean respawnRequested;
+    private volatile boolean respawnVerified;
     private volatile int stage;
     private int serverTicks;
     private int startupTicks;
     private int frames;
     private int keyWaitTicks;
     private int probePresses;
+    private int shrinkWaitTicks;
+    private int respawnWaitTicks;
+    private EntityPlayer preRespawnPlayer;
     private GuiRadialWheel wheel;
     private GuiSlotEditor editor;
     private MenuNode testRoot;
@@ -130,7 +160,68 @@ public final class RadialMenuClientChecks {
                 insertRequested = true;
                 select(beltMenu, 0);
                 stage = 7;
-            } else if (stage == 7 && insertVerified) {
+            } else if (stage == 7 && insertVerified && mc.thePlayer.getHeldItem() == null) {
+                stackPreparationRequested = true;
+                stage = 9;
+            } else if (stage == 8 && resizeVerified && clientSlotCount() == EXPANDED_SLOTS) {
+                ProfileManager.load();
+                openBelt();
+                verifyBeltPresentation(beltMenu);
+                require(beltMenu.slotCount() == EXPANDED_SLOTS,
+                    "saving the editor slot count resizes the real server belt and synchronizes sixteen slots");
+                stage = 2;
+                frames = 0;
+            } else if (
+                stage == 9 && stackPrepared
+                    && ItemStack.areItemStacksEqual(stackFixture(64, "first"), mc.thePlayer.getHeldItem())
+            ) {
+                openBelt();
+                select(beltMenu, LAST_SLOT);
+                stage = 10;
+            } else if (
+                stage == 10 && stackStored
+                    && clientStackMatches(LAST_SLOT, stackFixture(64, "first"))
+                    && mc.thePlayer.getHeldItem() == null
+            ) {
+                openBelt();
+                stage = 17;
+                frames = 0;
+            } else if (
+                stage == 11 && stackRetrieved
+                    && clientStackMatches(LAST_SLOT, null)
+                    && ItemStack.areItemStacksEqual(stackFixture(64, "first"), mc.thePlayer.getHeldItem())
+            ) {
+                openBelt();
+                select(beltMenu, LAST_SLOT);
+                stage = 12;
+            } else if (
+                stage == 12 && tailStored
+                    && clientStackMatches(LAST_SLOT, stackFixture(64, "first"))
+                    && mc.thePlayer.getHeldItem() == null
+            ) {
+                ToolBeltMenu.requestResize(beltMenu, ToolBeltData.DEFAULT_SLOT_COUNT);
+                stage = 13;
+            } else if (stage == 13 && shrinkRejected) {
+                require(clientSlotCount() == EXPANDED_SLOTS && clientStackMatches(LAST_SLOT, stackFixture(64, "first")),
+                    "a rejected shrink retains the client slot count and occupied tail");
+                openBelt();
+                select(beltMenu, LAST_SLOT);
+                stage = 14;
+            } else if (
+                stage == 14 && tailCleared
+                    && clientStackMatches(LAST_SLOT, null)
+                    && ItemStack.areItemStacksEqual(stackFixture(64, "first"), mc.thePlayer.getHeldItem())
+            ) {
+                ToolBeltMenu.requestResize(beltMenu, ToolBeltData.DEFAULT_SLOT_COUNT);
+                stage = 15;
+            } else if (stage == 15 && shrinkVerified && clientSlotCount() == ToolBeltData.DEFAULT_SLOT_COUNT) {
+                beltMenu.layoutOrDefault().slots = EXPANDED_SLOTS;
+                ProfileManager.saveActive();
+                ProfileManager.load();
+                openBelt();
+                verifyBeltPresentation(beltMenu);
+                require(beltMenu.slotCount() == ToolBeltData.DEFAULT_SLOT_COUNT,
+                    "reloading a profile with sixteen saved slots cannot undo the server's accepted shrink");
                 prepareNavigation();
                 stage = 4;
                 frames = 0;
@@ -139,6 +230,21 @@ public final class RadialMenuClientChecks {
                 require(!probe.getIsKeyPressed() && probe.getKeyCode() == 0,
                     "TAP releases the key and restores an unbound binding");
                 require(!probe.isPressed(), "no queued duplicate press remains");
+                preRespawnPlayer = mc.thePlayer;
+                stage = 18;
+                respawnRequested = true;
+            } else if (
+                stage == 18 && respawnVerified
+                    && mc.thePlayer != null
+                    && mc.thePlayer != preRespawnPlayer
+                    && ++respawnWaitTicks >= 20
+            ) {
+                ToolBeltData data = ToolBeltData.get(mc.thePlayer);
+                require(
+                    data != null && data.getOwner() == mc.thePlayer
+                        && data.getSlotCount() == EXPANDED_SLOTS
+                        && ItemStack.areItemStacksEqual(stackFixture(64, "respawn"), data.getStackInSlot(LAST_SLOT)),
+                    "after a real S07 respawn the new client player receives sixteen slots and complete tail-stack NBT");
                 finish("PASS");
             }
         } catch (Throwable failure) {
@@ -175,12 +281,88 @@ public final class RadialMenuClientChecks {
                     "selecting an empty built-in slot puts the held tool back through the real packet path");
                 insertVerified = true;
             }
+            ToolBeltData data = ToolBeltData.get(player);
+            if (resizeRequested && !resizeVerified && data.getSlotCount() == EXPANDED_SLOTS) {
+                require(data.getStackInSlot(LAST_SLOT) == null,
+                    "the editor resize packet expands the server belt without inventing items");
+                resizeVerified = true;
+            }
+            if (stackPreparationRequested && !stackPrepared) {
+                player.inventory.setInventorySlotContents(0, stackFixture(64, "first"));
+                syncInventory(player);
+                stackPrepared = true;
+            }
+            if (
+                stage == 10 && !stackStored
+                    && player.getHeldItem() == null
+                    && ItemStack.areItemStacksEqual(stackFixture(64, "first"), data.getStackInSlot(LAST_SLOT))
+            ) {
+                require(true, "the real wheel packet stores an entire stack in the sixteenth server slot");
+                NBTTagCompound saved = new NBTTagCompound();
+                data.saveNBTData(saved);
+                ToolBeltData loaded = new ToolBeltData(player);
+                loaded.loadNBTData(saved);
+                require(
+                    loaded.getSlotCount() == EXPANDED_SLOTS
+                        && ItemStack.areItemStacksEqual(stackFixture(64, "first"), loaded.getStackInSlot(LAST_SLOT)),
+                    "NBT reload preserves sixteen slots and the complete sixteenth stack");
+                stackStored = true;
+            }
+            if (
+                stage == 11 && !stackRetrieved
+                    && data.getStackInSlot(LAST_SLOT) == null
+                    && ItemStack.areItemStacksEqual(stackFixture(64, "first"), player.getHeldItem())
+            ) {
+                require(true, "the real wheel packet retrieves the entire sixteenth stack without changing NBT");
+                stackRetrieved = true;
+            }
+            if (
+                stage == 12 && player.getHeldItem() == null
+                    && ItemStack.areItemStacksEqual(stackFixture(64, "first"), data.getStackInSlot(LAST_SLOT))
+            ) {
+                tailStored = true;
+            }
+            if (stage == 13 && !shrinkRejected && ++shrinkWaitTicks >= 8) {
+                require(
+                    data.getSlotCount() == EXPANDED_SLOTS
+                        && ItemStack.areItemStacksEqual(stackFixture(64, "first"), data.getStackInSlot(LAST_SLOT)),
+                    "the resize packet refuses to discard an occupied trailing slot");
+                data.syncToSelf();
+                shrinkRejected = true;
+            }
+            if (
+                stage == 14 && data.getStackInSlot(LAST_SLOT) == null
+                    && ItemStack.areItemStacksEqual(stackFixture(64, "first"), player.getHeldItem())
+            ) {
+                tailCleared = true;
+            }
+            if (stage == 15 && !shrinkVerified && data.getSlotCount() == ToolBeltData.DEFAULT_SLOT_COUNT) {
+                require(ItemStack.areItemStacksEqual(stackFixture(64, "first"), player.getHeldItem()),
+                    "shrinking after retrieval preserves the held stack");
+                shrinkVerified = true;
+            }
+            if (respawnRequested && !respawnVerified) {
+                require(data.resize(EXPANDED_SLOTS), "the connected player has sixteen slots before respawning");
+                // A pre-respawn item sync must not mask the respawn event's synchronization.
+                data.setStackInSlotSilent(LAST_SLOT, stackFixture(64, "respawn"));
+                EntityPlayerMP replacement = server.getConfigurationManager().respawnPlayer(player, 0, true);
+                replacement.playerNetServerHandler.playerEntity = replacement;
+                ToolBeltData restored = ToolBeltData.get(replacement);
+                require(
+                    replacement != player && restored != null
+                        && restored.getOwner() == replacement
+                        && restored.getSlotCount() == EXPANDED_SLOTS
+                        && ItemStack.areItemStacksEqual(stackFixture(64, "respawn"),
+                            restored.getStackInSlot(LAST_SLOT)),
+                    "real server respawning rebinds the owner and retains all sixteen slots and tail-stack NBT");
+                respawnVerified = true;
+            }
         } catch (Throwable failure) {
             fail(failure);
         }
     }
 
-    private static void checkServer(EntityPlayerMP player) {
+    private static void checkServer(EntityPlayerMP player) throws Exception {
         ToolBeltData data = ToolBeltData.get(player);
         require(data != null && data.getSlotCount() == 10, "the server owns a ten-slot player tool belt");
         player.inventory.currentItem = 0;
@@ -205,12 +387,14 @@ public final class RadialMenuClientChecks {
         require(ItemStack.areItemStacksEqual(fixture(0), player.getHeldItem()) && data.getStackInSlot(0) == null,
             "empty-hand retrieval clears its belt slot");
         SwapItems.swapItem(-1, player);
-        player.inventory.setInventorySlotContents(0, new ItemStack(Items.apple));
+        ItemStack apples = new ItemStack(Items.apple, 64);
+        player.inventory.setInventorySlotContents(0, apples.copy());
         SwapItems.swapItem(0, player);
         require(
-            player.getHeldItem().getItem() == Items.apple
-                && ItemStack.areItemStacksEqual(fixture(0), data.getStackInSlot(0)),
-            "disallowed held items cannot replace tools");
+            ItemStack.areItemStacksEqual(fixture(0), player.getHeldItem())
+                && ItemStack.areItemStacksEqual(apples, data.getStackInSlot(0)),
+            "ordinary stackable items can exchange with tools");
+        SwapItems.swapItem(0, player);
         player.inventory.setInventorySlotContents(0, null);
         SwapItems.swapItem(10, player);
         require(player.getHeldItem() == null, "an out-of-range slot leaves the inventory unchanged");
@@ -222,6 +406,182 @@ public final class RadialMenuClientChecks {
             require(ItemStack.areItemStacksEqual(fixture(i), loaded.getStackInSlot(i)),
                 "NBT reload preserves tool " + i + ", damage, enchantments and custom tags");
         }
+        NBTTagCompound legacy = (NBTTagCompound) saved.copy();
+        legacy.getCompoundTag(ToolBeltData.PROP_NAME).removeTag("SlotCount");
+        ToolBeltData migrated = new ToolBeltData(player);
+        migrated.loadNBTData(legacy);
+        require(migrated.getSlotCount() == ToolBeltData.DEFAULT_SLOT_COUNT,
+            "a legacy save without SlotCount migrates to ten slots");
+        for (int i = 0; i < ToolBeltData.DEFAULT_SLOT_COUNT; i++) {
+            require(ItemStack.areItemStacksEqual(fixture(i), migrated.getStackInSlot(i)),
+                "legacy migration preserves tool and NBT in slot " + i);
+        }
+        checkDynamicStorage(player, data);
+        checkSyncPackets(player);
+        checkPlayerClone(player);
+    }
+
+    private static void checkPlayerClone(EntityPlayerMP loggedInPlayer) {
+        WorldServer world = (WorldServer) loggedInPlayer.worldObj;
+        GameProfile profile = new GameProfile(UUID.randomUUID(), "RadialCloneQA");
+        EntityPlayerMP original = new EntityPlayerMP(loggedInPlayer.mcServer, world, profile,
+            new ItemInWorldManager(world));
+        EntityPlayerMP replacement = new EntityPlayerMP(loggedInPlayer.mcServer, world, profile,
+            new ItemInWorldManager(world));
+        original.setPosition(loggedInPlayer.posX + 1024, loggedInPlayer.posY, loggedInPlayer.posZ);
+        replacement.setPosition(loggedInPlayer.posX + 2048, loggedInPlayer.posY, loggedInPlayer.posZ);
+        ToolBeltData originalData = ToolBeltData.get(original);
+        require(originalData != null && originalData.getOwner() == original,
+            "an independent player fixture owns its registered tool belt before cloning");
+        ItemStack[] snapshot = new ItemStack[EXPANDED_SLOTS];
+        snapshot[LAST_SLOT] = stackFixture(64, "clone");
+        originalData.applySnapshot(snapshot);
+
+        replacement.clonePlayer(original, true);
+
+        ToolBeltData cloned = ToolBeltData.get(replacement);
+        require(cloned == originalData && cloned.getOwner() == replacement,
+            "Forge full player cloning reuses extended properties and rebinds the belt owner to the new player");
+        require(
+            cloned.getSlotCount() == EXPANDED_SLOTS
+                && ItemStack.areItemStacksEqual(snapshot[LAST_SLOT], cloned.getStackInSlot(LAST_SLOT)),
+            "Forge full player cloning preserves sixteen slots and the complete trailing stack NBT");
+        ToolBeltData active = ToolBeltData.get(loggedInPlayer);
+        require(
+            active != cloned && active.getOwner() == loggedInPlayer
+                && active.getSlotCount() == ToolBeltData.DEFAULT_SLOT_COUNT,
+            "independent clone fixtures leave the logged-in QA player's belt and owner unchanged");
+    }
+
+    private static void checkSyncPackets(EntityPlayerMP player) throws Exception {
+        ItemStack[] expanded = new ItemStack[EXPANDED_SLOTS];
+        expanded[0] = fixture(0);
+        expanded[LAST_SLOT] = stackFixture(64, "first");
+        ToolBeltData source = new ToolBeltData(player);
+        source.applySnapshot(expanded);
+        ByteBuf buffer = Unpooled.buffer();
+        try {
+            new SyncToolBeltData(player, source).toBytes(buffer);
+            require(buffer.readInt() == player.getEntityId() && buffer.readInt() == 2,
+                "the sync packet retains the legacy entity ID and nonempty-item count prefix");
+            require(
+                buffer.readInt() == 0 && ItemStack.areItemStacksEqual(expanded[0], ByteBufUtils.readItemStack(buffer))
+                    && buffer.readInt() == LAST_SLOT
+                    && ItemStack.areItemStacksEqual(expanded[LAST_SLOT], ByteBufUtils.readItemStack(buffer)),
+                "legacy slot-item entries precede capacity and preserve the sixteenth stack's quantity and NBT");
+            require(buffer.readableBytes() == 4 && buffer.readInt() == EXPANDED_SLOTS && !buffer.isReadable(),
+                "the only new sync field is the trailing capacity");
+            buffer.readerIndex(0);
+            SyncToolBeltData decoded = new SyncToolBeltData();
+            decoded.fromBytes(buffer);
+            require(snapshotMatches(decoded, player, expanded) && !buffer.isReadable(),
+                "a sixteen-slot sync packet round-trips all items, empty slots and NBT");
+
+            ItemStack[] legacy = new ItemStack[ToolBeltData.DEFAULT_SLOT_COUNT];
+            legacy[9] = fixture(9);
+            buffer.clear();
+            buffer.writeInt(player.getEntityId());
+            buffer.writeInt(1);
+            buffer.writeInt(9);
+            ByteBufUtils.writeItemStack(buffer, legacy[9]);
+            decoded.fromBytes(buffer);
+            require(snapshotMatches(decoded, player, legacy) && !buffer.isReadable(),
+                "a legacy sync packet without trailing capacity restores ten slots and clears old tail items");
+
+            buffer.clear();
+            buffer.writeInt(player.getEntityId());
+            buffer.writeInt(0);
+            decoded.fromBytes(buffer);
+            require(snapshotMatches(decoded, player, new ItemStack[ToolBeltData.DEFAULT_SLOT_COUNT])
+                && !buffer.isReadable(), "an empty legacy sync packet defaults to ten empty slots");
+        } finally {
+            buffer.release();
+        }
+    }
+
+    private static boolean snapshotMatches(SyncToolBeltData packet, EntityPlayerMP player, ItemStack[] expected)
+        throws Exception {
+        if (field(packet, "entityId").getInt(packet) != player.getEntityId()) return false;
+        ItemStack[] actual = (ItemStack[]) field(packet, "items").get(packet);
+        if (actual.length != expected.length) return false;
+        for (int slot = 0; slot < expected.length; slot++) {
+            if (!ItemStack.areItemStacksEqual(expected[slot], actual[slot])) return false;
+        }
+        return true;
+    }
+
+    private static void checkDynamicStorage(EntityPlayerMP player, ToolBeltData data) {
+        NBTTagCompound legacy = new NBTTagCompound();
+        data.saveNBTData(legacy);
+        legacy.getCompoundTag(ToolBeltData.PROP_NAME).removeTag("SlotCount");
+        require(
+            !data.resize(ToolBeltData.MIN_SLOT_COUNT - 1) && !data.resize(ToolBeltData.MAX_SLOT_COUNT + 1)
+                && data.getSlotCount() == ToolBeltData.DEFAULT_SLOT_COUNT,
+            "server resize rejects counts outside two through twenty-four");
+        int firstTail = ToolBeltData.DEFAULT_SLOT_COUNT;
+        int secondTail = firstTail + 1;
+        require(data.resize(secondTail + 1), "two temporary tail slots are available for automatic insertion");
+        data.setStackInSlot(secondTail, stackFixture(61, "first"));
+        player.inventory.setInventorySlotContents(0, stackFixture(10, "first"));
+        SwapItems.swapItem(-1, player);
+        require(
+            player.getHeldItem() == null
+                && ItemStack.areItemStacksEqual(stackFixture(64, "first"), data.getStackInSlot(secondTail))
+                && ItemStack.areItemStacksEqual(stackFixture(7, "first"), data.getStackInSlot(firstTail)),
+            "automatic insertion fills a matching later stack before using an earlier empty slot");
+        data.setStackInSlot(firstTail, null);
+        data.setStackInSlot(secondTail, null);
+        require(data.resize(ToolBeltData.MAX_SLOT_COUNT) && data.resize(EXPANDED_SLOTS),
+            "server storage expands to its maximum and shrinks empty trailing slots");
+        data.setStackInSlot(LAST_SLOT, stackFixture(61, "first"));
+        player.inventory.setInventorySlotContents(0, stackFixture(10, "first"));
+        SwapItems.swapItem(LAST_SLOT, player);
+        require(
+            ItemStack.areItemStacksEqual(stackFixture(64, "first"), data.getStackInSlot(LAST_SLOT))
+                && ItemStack.areItemStacksEqual(stackFixture(7, "first"), player.getHeldItem()),
+            "selecting a matching stack merges to sixty-four and leaves seven items in hand");
+
+        player.inventory.setInventorySlotContents(0, stackFixture(11, "second"));
+        SwapItems.swapItem(LAST_SLOT, player);
+        require(
+            ItemStack.areItemStacksEqual(stackFixture(11, "second"), data.getStackInSlot(LAST_SLOT))
+                && ItemStack.areItemStacksEqual(stackFixture(64, "first"), player.getHeldItem()),
+            "equal item IDs with different NBT exchange without merging");
+
+        ItemStack sticks = new ItemStack(Items.stick, 32);
+        player.inventory.setInventorySlotContents(0, sticks.copy());
+        SwapItems.swapItem(LAST_SLOT, player);
+        require(
+            ItemStack.areItemStacksEqual(sticks, data.getStackInSlot(LAST_SLOT))
+                && ItemStack.areItemStacksEqual(stackFixture(11, "second"), player.getHeldItem()),
+            "different item types exchange their complete stacks");
+        NBTTagCompound understated = new NBTTagCompound();
+        data.saveNBTData(understated);
+        understated.getCompoundTag(ToolBeltData.PROP_NAME).setInteger("SlotCount", ToolBeltData.DEFAULT_SLOT_COUNT);
+        ToolBeltData loaded = new ToolBeltData(player);
+        loaded.loadNBTData(understated);
+        require(
+            loaded.getSlotCount() == EXPANDED_SLOTS
+                && ItemStack.areItemStacksEqual(sticks, loaded.getStackInSlot(LAST_SLOT)),
+            "NBT loading restores the occupied sixteenth slot despite an understated SlotCount");
+        loaded.loadNBTData(legacy);
+        require(loaded.getSlotCount() == ToolBeltData.DEFAULT_SLOT_COUNT && loaded.getStackInSlot(LAST_SLOT) == null,
+            "loading a legacy ten-slot save into the same expanded data object clears its old tail");
+        for (int slot = 0; slot < ToolBeltData.DEFAULT_SLOT_COUNT; slot++) {
+            require(ItemStack.areItemStacksEqual(fixture(slot), loaded.getStackInSlot(slot)),
+                "reusing the data object preserves legacy fixture " + slot);
+        }
+        require(
+            !data.resize(ToolBeltData.DEFAULT_SLOT_COUNT) && data.getSlotCount() == EXPANDED_SLOTS
+                && ItemStack.areItemStacksEqual(sticks, data.getStackInSlot(LAST_SLOT)),
+            "server storage refuses a shrink that would discard the occupied sixteenth slot");
+        data.setStackInSlot(LAST_SLOT, null);
+        require(data.resize(ToolBeltData.DEFAULT_SLOT_COUNT), "clearing the trailing slot permits shrinking to ten");
+        for (int slot = 0; slot < ToolBeltData.DEFAULT_SLOT_COUNT; slot++) {
+            require(ItemStack.areItemStacksEqual(fixture(slot), data.getStackInSlot(slot)),
+                "dynamic storage checks leave original fixture " + slot + " unchanged");
+        }
+        player.inventory.setInventorySlotContents(0, null);
     }
 
     private static ItemStack fixture(int index) {
@@ -235,11 +595,20 @@ public final class RadialMenuClientChecks {
         return stack;
     }
 
+    private static ItemStack stackFixture(int count, String variant) {
+        ItemStack stack = new ItemStack(Items.apple, count);
+        stack.setStackDisplayName("验证物品堆叠 " + variant);
+        NBTTagCompound marker = new NBTTagCompound();
+        marker.setString("payload", "整组物品 NBT " + variant);
+        stack.getTagCompound().setTag("radialMenuQa", marker);
+        return stack;
+    }
+
     private static boolean clientInventoryReady() {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.thePlayer == null || mc.thePlayer.getHeldItem() != null) return false;
         ToolBeltData data = ToolBeltData.get(mc.thePlayer);
-        if (data == null) return false;
+        if (data == null || data.getSlotCount() != ToolBeltData.DEFAULT_SLOT_COUNT) return false;
         for (int i = 0; i < 10; i++) {
             if (!ItemStack.areItemStacksEqual(fixture(i), data.getStackInSlot(i))) return false;
         }
@@ -248,8 +617,10 @@ public final class RadialMenuClientChecks {
 
     @SubscribeEvent
     public void render(TickEvent.RenderTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || finished || stage == 0 || stage == 3 || stage == 6 || stage == 7)
-            return;
+        if (
+            event.phase != TickEvent.Phase.END || finished
+                || stage != 1 && stage != 2 && stage != 4 && stage != 5 && stage != 16 && stage != 17
+        ) return;
         if (++frames < 40) return;
         try {
             Minecraft mc = Minecraft.getMinecraft();
@@ -260,13 +631,39 @@ public final class RadialMenuClientChecks {
                 field(wheel, "pointerRing").setInt(wheel, 0);
                 field(wheel, "pointerSlot").setInt(wheel, beltSlot);
                 call(wheel, "openEditor");
-                require(mc.currentScreen == wheel, "the built-in tool-belt entry cannot be edited");
-                select(beltSlot);
-                stage = 2;
+                require(mc.currentScreen instanceof GuiSlotEditor,
+                    "the built-in tool-belt entry opens the real slot editor");
+                editor = (GuiSlotEditor) mc.currentScreen;
+                require(field(editor, "titleField").get(editor) != null,
+                    "the belt entry exposes editable presentation controls");
+                editor.onIconPicked(IconSpec.item("minecraft:chest", 0));
+                ((GuiTextField) field(editor, "titleField").get(editor)).setText(BELT_TITLE);
+                ((ActionSpec) field(editor, "spec").get(editor)).set(ActionTypes.PARAM_OPENING, "replace");
+                setSlotCount(editor, EXPANDED_SLOTS);
+                call(editor, "captureInputs");
+                stage = 16;
+            } else if (stage == 16) {
+                screenshot("belt-entry-editor.png");
+                resizeRequested = true;
+                call(editor, "save");
+                stage = 8;
+            } else if (stage == 17) {
+                require(
+                    ItemStack.areItemStacksEqual(stackFixture(64, "first"),
+                        IconRenderer.resolveItem(beltMenu.childAt(LAST_SLOT).icon)),
+                    "the sixteenth rendered icon retains the full stack and custom NBT from server synchronization");
+                screenshot("tool-belt-sixteen.png");
+                select(beltMenu, LAST_SLOT);
+                stage = 11;
             } else if (stage == 2) {
-                require(beltMenu.childrenOrEmpty().size() == 10, "built-in submenu exposes the ten real slots");
+                require(beltMenu.childrenOrEmpty().size() == EXPANDED_SLOTS,
+                    "built-in submenu exposes all sixteen server slots");
                 screenshot("tool-belt.png");
                 int first = verifyBeltIcons(beltMenu);
+                field(wheel, "pointerRing").setInt(wheel, 0);
+                field(wheel, "pointerSlot").setInt(wheel, first);
+                call(wheel, "openEditor");
+                require(mc.currentScreen == wheel, "live inventory children cannot be rewritten as custom actions");
                 ProfileManager.saveActive();
                 String saved = new String(
                     Files.readAllBytes(ProfileStorage.profileFile(ProfileManager.activeName()).toPath()),
@@ -346,6 +743,55 @@ public final class RadialMenuClientChecks {
             new ActionSpec("keybind").set("binding", PROBE_BINDING).set("mode", "tap"));
     }
 
+    private void openBelt() throws Exception {
+        wheel = new GuiRadialWheel();
+        Minecraft.getMinecraft().displayGuiScreen(wheel);
+        int slot = findBelt(currentMenu());
+        require(slot >= 0, "the configured belt entry remains available");
+        beltMenu = currentMenu().childAt(slot);
+        ToolBeltMenu.refresh(beltMenu);
+        select(slot);
+    }
+
+    private static void verifyBeltPresentation(MenuNode belt) {
+        require(
+            BELT_TITLE.equals(belt.title) && belt.icon != null
+                && "minecraft:chest".equals(belt.icon.id)
+                && belt.layoutOrDefault().opening == SlotLayout.Opening.Replace,
+            "the belt entry title, icon and opening mode survive editor save and profile reload");
+    }
+
+    private static void setSlotCount(GuiSlotEditor target, int count) throws Exception {
+        List<?> fields = (List<?>) field(target, "editableFields").get(target);
+        List<?> sliders = (List<?>) field(target, "fieldSliders").get(target);
+        for (int i = 0; i < fields.size(); i++) {
+            if (ActionTypes.PARAM_SLOT_COUNT.equals(((ActionField) fields.get(i)).key)) {
+                GuiSlider slider = (GuiSlider) sliders.get(i);
+                require(slider != null, "the real belt editor exposes a slot-count slider");
+                slider.setValue(count);
+                slider.updateSlider();
+                return;
+            }
+        }
+        throw new AssertionError("Missing slot-count editor control");
+    }
+
+    private static int clientSlotCount() {
+        ToolBeltData data = ToolBeltData.get(Minecraft.getMinecraft().thePlayer);
+        return data == null ? 0 : data.getSlotCount();
+    }
+
+    private static boolean clientStackMatches(int slot, ItemStack expected) {
+        ToolBeltData data = ToolBeltData.get(Minecraft.getMinecraft().thePlayer);
+        return data != null && ItemStack.areItemStacksEqual(expected, data.getStackInSlot(slot));
+    }
+
+    private static void syncInventory(EntityPlayerMP player) {
+        player.inventory.markDirty();
+        player.inventoryContainer.detectAndSendChanges();
+        ToolBeltData.get(player).syncToSelf();
+    }
+
     private int findBelt(MenuNode root) {
         for (int slot = 0; slot < root.slotCount(); slot++) {
             MenuNode child = root.childAt(slot);
@@ -410,9 +856,14 @@ public final class RadialMenuClientChecks {
     }
 
     private static Field field(Object target, String name) throws Exception {
-        Field field = target.getClass().getDeclaredField(name);
-        field.setAccessible(true);
-        return field;
+        for (Class<?> type = target.getClass(); type != null; type = type.getSuperclass()) {
+            try {
+                Field field = type.getDeclaredField(name);
+                field.setAccessible(true);
+                return field;
+            } catch (NoSuchFieldException ignored) {}
+        }
+        throw new NoSuchFieldException(name);
     }
 
     private static void screenshot(String name) {

@@ -43,19 +43,21 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.4.7          | [![1.4.7](https://img.shields.io/badge/release-1.4.7-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.7) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.4.8          | [![1.4.8](https://img.shields.io/badge/release-1.4.8-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.8) |         ✔️         |
 
-最新版本：[1.4.7 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.7)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.7/gtnotgood-1.4.7.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.7/gtnotgood-1.4.7-sources.jar)。
+最新版本：[1.4.8 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.8)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.8/gtnotgood-1.4.8.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.8/gtnotgood-1.4.8-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.4.7。
+1.3.4 因启动错误已撤回，请更新到 1.4.8。
 
 ### R 键快捷轮盘
 
 移植 [GTNH-Radial-Menu](https://github.com/Navatusein/GTNH-Radial-Menu) 的半透明轮盘、描边、高亮、展开动画与编辑器，支持多级菜单、外圈展开和多份配置。
-原有 10 槽工具腰带作为内置子菜单，保留工具的名称、耐久、附魔及完整 NBT；选择空槽可放入手持工具，物品仍由服务端保存。
-默认按住 **R** 打开，悬停展开外圈，松开执行；**Shift＋左键**编辑普通槽位，右键返回。腰带内容随实际库存更新，不能在编辑器中删除或改写。
+工具腰带作为内置子菜单，默认 10 槽，可在编辑器中调整为 2～24 槽，并修改入口名称、图标和展开方式；所有轮盘配置共用玩家的实际腰带库存。
+支持工具与可堆叠物品，保留名称、耐久、附魔及完整 NBT。空槽可放入手持物品，同种同 NBT 物品优先合并，超出堆叠上限的部分留在手中；不同物品直接交换。
+默认按住 **R** 打开，悬停展开外圈，松开执行；**Shift＋左键**编辑入口，右键返回。缩减容量前需清空被移除的槽位，物品与容量由服务端保存；实时库存槽不作为普通菜单动作改写。
 普通槽位可配置按键、命令、配置切换、操作链和 Lua 脚本；模组配置中的“快捷轮盘”可调整外观与交互。
+轮盘配置保存在游戏实例目录的 `GT-Not-Good/RadialMenu/`，原地更新时保留此目录即可继续使用；换实例时复制整个目录。腰带物品与容量另存于玩家存档，多人游戏由服务器保存。
 详见 [验证记录](docs/testing/radial-menu.md)。
 
 ### 大型工业蜂箱

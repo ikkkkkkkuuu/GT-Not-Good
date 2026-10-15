@@ -53,6 +53,7 @@ public final class ProfileManager {
         }
         active = loaded;
         ToolBeltMenu.attach(active.root);
+        ToolBeltMenu.onInventorySynced();
         if (!name.equals(settings.activeProfile)) {
             settings.activeProfile = name;
             ProfileStorage.saveSettings(settings);

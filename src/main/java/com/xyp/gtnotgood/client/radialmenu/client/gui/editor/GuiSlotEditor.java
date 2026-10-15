@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.client.radialmenu.client.gui.editor;
 
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.client.gui.GuiButton;
@@ -13,6 +14,8 @@ import com.xyp.gtnotgood.client.radialmenu.client.gui.ui.Ui;
 import com.xyp.gtnotgood.client.radialmenu.client.gui.ui.UiCheckbox;
 import com.xyp.gtnotgood.client.radialmenu.client.icon.IconRenderer;
 import com.xyp.gtnotgood.client.radialmenu.client.profile.ProfileManager;
+import com.xyp.gtnotgood.client.radialmenu.client.toolbelt.ToolBeltMenu;
+import com.xyp.gtnotgood.client.radialmenu.core.action.ActionField;
 import com.xyp.gtnotgood.client.radialmenu.core.action.ActionType;
 import com.xyp.gtnotgood.client.radialmenu.core.action.ActionTypes;
 import com.xyp.gtnotgood.client.radialmenu.core.model.IconSpec;
@@ -26,6 +29,7 @@ public class GuiSlotEditor extends GuiActionEditor implements GuiIconPicker.Call
 
     private final MenuNode parent;
     private final boolean readOnly;
+    private final boolean toolBelt;
 
     /** Position in the parent's child list, not the sector it is drawn in. */
     private final int childIndex;
@@ -48,7 +52,8 @@ public class GuiSlotEditor extends GuiActionEditor implements GuiIconPicker.Call
         this.childIndex = childIndex;
 
         MenuNode existing = parent.childAtIndex(childIndex);
-        this.readOnly = parent.isBuiltIn() || existing != null && existing.isBuiltIn();
+        this.toolBelt = ToolBeltMenu.isMenu(existing);
+        this.readOnly = parent.isBuiltIn() || existing != null && existing.isBuiltIn() && !toolBelt;
         this.draft = existing != null ? existing.copy()
             : MenuNode.leaf(
                 // #tr radialmenu.editor.newEntry
@@ -97,7 +102,18 @@ public class GuiSlotEditor extends GuiActionEditor implements GuiIconPicker.Call
 
     @Override
     protected List<ActionType> offeredTypes() {
-        return ActionTypes.all();
+        return toolBelt ? Collections.singletonList(ActionTypes.get(ActionTypes.SUBMENU)) : ActionTypes.all();
+    }
+
+    @Override
+    protected List<ActionField> offeredFields(ActionType type) {
+        return toolBelt ? SubmenuFields.fields(draft) : super.offeredFields(type);
+    }
+
+    @Override
+    protected String fieldTooltip(ActionField field) {
+        return toolBelt && ActionTypes.PARAM_SLOT_COUNT.equals(field.key) ? EditorRestrictions.resizeTip()
+            : super.fieldTooltip(field);
     }
 
     @Override
@@ -146,7 +162,7 @@ public class GuiSlotEditor extends GuiActionEditor implements GuiIconPicker.Call
 
         y = buildActionSection(y, left, controlLeft, controlWidth);
 
-        if (draft.isCategory() && ActionTypes.SUBMENU.equals(selectedType)) {
+        if (!toolBelt && draft.isCategory() && ActionTypes.SUBMENU.equals(selectedType)) {
             y += Ui.GAP;
             this.buttonList.add(new GuiButton(ID_ENTRIES, controlLeft, y, controlWidth, Ui.ROW,
                 // #tr radialmenu.editor.entries
@@ -164,7 +180,10 @@ public class GuiSlotEditor extends GuiActionEditor implements GuiIconPicker.Call
         // #tr radialmenu.editor.delete
         // # Delete
         // # zh_CN 删除
-        addBottomBar("radialmenu.editor.save", "radialmenu.editor.delete", "gui.cancel");
+        addBottomBar("radialmenu.editor.save", toolBelt ? null : "radialmenu.editor.delete", "gui.cancel");
+        if (toolBelt) {
+            tooltip(ID_PRIMARY, EditorRestrictions.resizeTip());
+        }
     }
 
     @Override
@@ -181,7 +200,7 @@ public class GuiSlotEditor extends GuiActionEditor implements GuiIconPicker.Call
                 onCancel();
                 return;
             case ID_DANGER:
-                apply(null);
+                if (!toolBelt) apply(null);
                 return;
             case ID_ICON:
                 captureInputs();
@@ -246,6 +265,8 @@ public class GuiSlotEditor extends GuiActionEditor implements GuiIconPicker.Call
     private MenuNode write() {
         captureInputs();
 
+        if (toolBelt) selectedType = ActionTypes.SUBMENU;
+
         draft.action = spec;
         draft.action.type = selectedType;
 
@@ -281,10 +302,12 @@ public class GuiSlotEditor extends GuiActionEditor implements GuiIconPicker.Call
 
     /** Puts a node in this slot and saves the profile. Null is how an entry is deleted. */
     private void store(MenuNode node) {
-        if (readOnly) {
+        if (readOnly || toolBelt && node == null) {
             return;
         }
+        int requestedSlots = toolBelt ? node.layoutOrDefault().slots : 0;
         parent.setChildAt(childIndex, node);
+        if (toolBelt) ToolBeltMenu.requestResize(node, requestedSlots);
         ProfileManager.active().normalize();
         ProfileManager.saveActive();
         IconRenderer.clearCache();

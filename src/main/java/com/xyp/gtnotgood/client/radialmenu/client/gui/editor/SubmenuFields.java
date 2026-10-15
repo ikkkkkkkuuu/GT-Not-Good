@@ -1,7 +1,10 @@
 package com.xyp.gtnotgood.client.radialmenu.client.gui.editor;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.xyp.gtnotgood.client.radialmenu.client.toolbelt.ToolBeltMenu;
+import com.xyp.gtnotgood.client.radialmenu.core.action.ActionField;
 import com.xyp.gtnotgood.client.radialmenu.core.action.ActionSpec;
 import com.xyp.gtnotgood.client.radialmenu.core.action.ActionTypes;
 import com.xyp.gtnotgood.client.radialmenu.core.model.MenuNode;
@@ -19,7 +22,7 @@ final class SubmenuFields {
         ActionSpec spec = new ActionSpec(ActionTypes.SUBMENU);
         SlotLayout.Opening opening = layout.opening == null ? SlotLayout.Opening.Replace : layout.opening;
         spec.set(ActionTypes.PARAM_OPENING, opening.name().toLowerCase());
-        spec.set(ActionTypes.PARAM_SLOT_MODE, layout.mode.name().toLowerCase());
+        spec.set(ActionTypes.PARAM_SLOT_MODE, ToolBeltMenu.isMenu(node) ? "fixed" : layout.mode.name().toLowerCase());
         spec.set(ActionTypes.PARAM_SLOT_COUNT, Integer.toString(layout.slots));
         spec.set(ActionTypes.PARAM_RING_COLOR, orBlank(style == null ? null : style.ringColor));
         spec.set(ActionTypes.PARAM_HIGHLIGHT_COLOR, orBlank(style == null ? null : style.highlightColor));
@@ -27,6 +30,16 @@ final class SubmenuFields {
         spec.set(ActionTypes.PARAM_HIGHLIGHT_BORDER_COLOR, orBlank(style == null ? null : style.highlightBorderColor));
         spec.set(ActionTypes.PARAM_BACKGROUND_COLOR, orBlank(style == null ? null : style.backgroundColor));
         return spec;
+    }
+
+    static List<ActionField> fields(MenuNode node) {
+        List<ActionField> fields = ActionTypes.get(ActionTypes.SUBMENU).fields;
+        if (!ToolBeltMenu.isMenu(node)) {
+            return fields;
+        }
+        List<ActionField> editable = new ArrayList<>(fields);
+        editable.removeIf(field -> ActionTypes.PARAM_SLOT_MODE.equals(field.key));
+        return editable;
     }
 
     private static String orBlank(String value) {
@@ -55,6 +68,8 @@ final class SubmenuFields {
         }
         // The spec was only ever a view onto the node; a category carries no action.
         node.action = null;
-        node.ensureSlotCapacity();
+        if (!ToolBeltMenu.isMenu(node)) {
+            node.ensureSlotCapacity();
+        }
     }
 }

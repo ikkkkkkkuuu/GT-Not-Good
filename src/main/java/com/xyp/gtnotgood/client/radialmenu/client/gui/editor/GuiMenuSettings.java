@@ -18,19 +18,21 @@ import com.xyp.gtnotgood.client.radialmenu.client.gui.ui.UiIconButton;
 import com.xyp.gtnotgood.client.radialmenu.client.gui.ui.UiScreen;
 import com.xyp.gtnotgood.client.radialmenu.client.icon.IconRenderer;
 import com.xyp.gtnotgood.client.radialmenu.client.profile.ProfileManager;
+import com.xyp.gtnotgood.client.radialmenu.client.toolbelt.ToolBeltMenu;
 import com.xyp.gtnotgood.client.radialmenu.config.ColorConfig;
 import com.xyp.gtnotgood.client.radialmenu.core.action.ActionField;
 import com.xyp.gtnotgood.client.radialmenu.core.action.ActionSpec;
-import com.xyp.gtnotgood.client.radialmenu.core.action.ActionType;
 import com.xyp.gtnotgood.client.radialmenu.core.action.ActionTypes;
+import com.xyp.gtnotgood.client.radialmenu.core.model.IconSpec;
 import com.xyp.gtnotgood.client.radialmenu.core.model.MenuNode;
 import com.xyp.gtnotgood.client.radialmenu.core.model.SlotLayout;
 import com.xyp.gtnotgood.client.radialmenu.core.model.StyleResolver;
 
 import cpw.mods.fml.client.config.GuiSlider;
 
-public class GuiMenuSettings extends UiScreen {
+public class GuiMenuSettings extends UiScreen implements GuiIconPicker.Callback {
 
+    private static final int ID_ICON = 1;
     private static final int ID_FIELD_BASE = 40;
     private static final int ID_CLEAR_BASE = 100;
     private static final int ID_UP_BASE = 200;
@@ -44,6 +46,8 @@ public class GuiMenuSettings extends UiScreen {
     private static final int GROUP_GAP = 6;
 
     private final MenuNode menu;
+    private final boolean toolBelt;
+    private final boolean readOnly;
 
     private final ActionSpec draft;
 
@@ -51,6 +55,8 @@ public class GuiMenuSettings extends UiScreen {
 
     /** Survives control rebuilds, which recreate the field. */
     private String titleText;
+    private IconSpec icon;
+    private int iconRowTop;
 
     private final List<ActionField> fields = new ArrayList<>();
 
@@ -79,8 +85,11 @@ public class GuiMenuSettings extends UiScreen {
 
     public GuiMenuSettings(MenuNode menu) {
         this.menu = menu;
+        this.toolBelt = ToolBeltMenu.isMenu(menu);
+        this.readOnly = menu.isBuiltIn() && !toolBelt;
         this.draft = SubmenuFields.toSpec(menu);
         this.titleText = menu.title == null ? "" : menu.title;
+        this.icon = menu.icon == null ? null : menu.icon.copy();
         this.workingChildren = new ArrayList<>(menu.childrenOrEmpty());
     }
 
@@ -104,7 +113,7 @@ public class GuiMenuSettings extends UiScreen {
 
     @Override
     protected void buildControls() {
-        if (menu.isBuiltIn()) {
+        if (readOnly) {
             setContentHeight(Ui.STEP);
             addBottomBar("gui.done", null, null);
             return;
@@ -129,16 +138,28 @@ public class GuiMenuSettings extends UiScreen {
         titleField.setCursorPositionZero();
         y += Ui.STEP;
 
-        ActionType type = ActionTypes.get(ActionTypes.SUBMENU);
-        for (int fieldIndex = 0; fieldIndex < type.fields.size(); fieldIndex++) {
-            ActionField field = type.fields.get(fieldIndex);
+        if (toolBelt) {
+            iconRowTop = y;
+            String iconLabel = icon == null || icon.id == null ? I18n.format("radialmenu.editor.pickIcon")
+                : Ui.fit(icon.id, controlWidth - Ui.ROW - 16);
+            this.buttonList.add(new GuiButton(ID_ICON, controlLeft + Ui.ROW + Ui.GAP, y, controlWidth - Ui.ROW - Ui.GAP,
+                Ui.ROW, iconLabel));
+            tooltip(ID_ICON, describe("radialmenu.editor.icon.tip"));
+            y += Ui.STEP;
+        }
+
+        List<ActionField> available = SubmenuFields.fields(menu);
+        for (int fieldIndex = 0; fieldIndex < available.size(); fieldIndex++) {
+            ActionField field = available.get(fieldIndex);
             if (!FieldControls.isRelevant(field, draft)) {
                 continue;
             }
-            ActionField nextField = fieldIndex + 1 < type.fields.size() ? type.fields.get(fieldIndex + 1) : null;
+            ActionField nextField = fieldIndex + 1 < available.size() ? available.get(fieldIndex + 1) : null;
             int index = fields.size();
             fields.add(field);
-            tooltip(ID_FIELD_BASE + index, describe(field.tooltipKey()));
+            tooltip(ID_FIELD_BASE + index,
+                toolBelt && ActionTypes.PARAM_SLOT_COUNT.equals(field.key) ? EditorRestrictions.resizeTip()
+                    : describe(field.tooltipKey()));
 
             String current = draft.getString(field.key, field.defaultValue);
             sliders.add(null);
@@ -215,9 +236,9 @@ public class GuiMenuSettings extends UiScreen {
                 UiIconButton.Icon.Up);
             GuiButton down = new UiIconButton(ID_DOWN_BASE + i, contentRight() - ARROW, y, ARROW, Ui.ROW,
                 UiIconButton.Icon.Down);
-            copy.enabled = !child.isBuiltIn();
-            delete.enabled = !child.isBuiltIn();
-            move.enabled = !child.isBuiltIn();
+            copy.enabled = !toolBelt && !child.isBuiltIn();
+            delete.enabled = !toolBelt && !child.isBuiltIn();
+            move.enabled = !toolBelt && !child.isBuiltIn();
             up.enabled = canMove(i, -1);
             down.enabled = canMove(i, 1);
             this.buttonList.add(move);
@@ -237,10 +258,14 @@ public class GuiMenuSettings extends UiScreen {
             // # Remove this entry from the wheel. Nothing is written until you save.
             // # zh_CN 从转盘中移除此条目。保存前不会写入修改。
             tooltip(ID_DELETE_BASE + i, describe("radialmenu.menu.remove.tip"));
-            if (child.isBuiltIn()) {
+            if (toolBelt || child.isBuiltIn()) {
                 tooltip(ID_COPY_BASE + i, EditorRestrictions.builtInTip());
                 tooltip(ID_DELETE_BASE + i, EditorRestrictions.builtInTip());
                 tooltip(ID_MOVE_BASE + i, EditorRestrictions.builtInTip());
+                if (toolBelt) {
+                    tooltip(ID_UP_BASE + i, EditorRestrictions.builtInTip());
+                    tooltip(ID_DOWN_BASE + i, EditorRestrictions.builtInTip());
+                }
             }
 
             rowPositions.add(new int[] { left, y });
@@ -255,6 +280,7 @@ public class GuiMenuSettings extends UiScreen {
 
         setContentHeight(y - scrolledTop() + Ui.PAD);
         addBottomBar("radialmenu.editor.save", null, "gui.cancel");
+        if (toolBelt) tooltip(ID_PRIMARY, EditorRestrictions.resizeTip());
     }
 
     private int rowButtonsLeft() {
@@ -263,6 +289,7 @@ public class GuiMenuSettings extends UiScreen {
 
     /** Whether a move would change anything, so a button that cannot act is visibly disabled. */
     private boolean canMove(int index, int direction) {
+        if (toolBelt) return false;
         List<MenuNode> probe = new ArrayList<>(workingChildren);
         return MenuNode.moveInList(probe, index, direction, isFixedLayout());
     }
@@ -296,7 +323,7 @@ public class GuiMenuSettings extends UiScreen {
 
     @Override
     protected void actionPerformed(GuiButton button) {
-        if (menu.isBuiltIn()) {
+        if (readOnly) {
             onCancel();
             return;
         }
@@ -306,6 +333,11 @@ public class GuiMenuSettings extends UiScreen {
         }
         if (button.id == ID_SECONDARY) {
             onCancel();
+            return;
+        }
+        if (button.id == ID_ICON && toolBelt) {
+            capture();
+            GuiStack.push(new GuiIconPicker(this, icon == null ? null : icon.color));
             return;
         }
 
@@ -318,14 +350,14 @@ public class GuiMenuSettings extends UiScreen {
         }
 
         int upIndex = button.id - ID_UP_BASE;
-        if (upIndex >= 0 && upIndex < workingChildren.size()) {
+        if (!toolBelt && upIndex >= 0 && upIndex < workingChildren.size()) {
             capture();
             MenuNode.moveInList(workingChildren, upIndex, -1, isFixedLayout());
             requestRebuild();
             return;
         }
         int downIndex = button.id - ID_DOWN_BASE;
-        if (downIndex >= 0 && downIndex < workingChildren.size()) {
+        if (!toolBelt && downIndex >= 0 && downIndex < workingChildren.size()) {
             capture();
             MenuNode.moveInList(workingChildren, downIndex, 1, isFixedLayout());
             requestRebuild();
@@ -333,21 +365,21 @@ public class GuiMenuSettings extends UiScreen {
         }
 
         int copyIndex = button.id - ID_COPY_BASE;
-        if (copyIndex >= 0 && copyIndex < workingChildren.size()) {
+        if (!toolBelt && copyIndex >= 0 && copyIndex < workingChildren.size()) {
             capture();
             duplicate(copyIndex);
             requestRebuild();
             return;
         }
         int deleteIndex = button.id - ID_DELETE_BASE;
-        if (deleteIndex >= 0 && deleteIndex < workingChildren.size()) {
+        if (!toolBelt && deleteIndex >= 0 && deleteIndex < workingChildren.size()) {
             capture();
             remove(deleteIndex);
             requestRebuild();
             return;
         }
         int moveIndex = button.id - ID_MOVE_BASE;
-        if (moveIndex >= 0 && moveIndex < workingChildren.size()) {
+        if (!toolBelt && moveIndex >= 0 && moveIndex < workingChildren.size()) {
             capture();
             askWhereToMove(moveIndex);
             return;
@@ -473,7 +505,7 @@ public class GuiMenuSettings extends UiScreen {
     }
 
     private void save() {
-        if (menu.isBuiltIn()) {
+        if (readOnly) {
             return;
         }
         capture();
@@ -481,7 +513,11 @@ public class GuiMenuSettings extends UiScreen {
         String title = titleText.trim();
         menu.title = title.isEmpty() ? null : title;
 
-        menu.children = new ArrayList<>(workingChildren);
+        if (toolBelt) {
+            menu.icon = icon;
+        } else {
+            menu.children = new ArrayList<>(workingChildren);
+        }
 
         for (MenuNode[] move : pendingMoves) {
             MenuNode node = move[0];
@@ -494,10 +530,21 @@ public class GuiMenuSettings extends UiScreen {
         // afterwards - a category carries no action at any depth.
         menu.action = draft;
         SubmenuFields.applyToNode(menu);
+        if (toolBelt) {
+            int requestedSlots = menu.layout.slots;
+            ToolBeltMenu.requestResize(menu, requestedSlots);
+        }
 
         ProfileManager.active().normalize();
         ProfileManager.saveActive();
+        IconRenderer.clearCache();
         GuiStack.closeAll();
+    }
+
+    @Override
+    public void onIconPicked(IconSpec icon) {
+        this.icon = icon;
+        requestRebuild();
     }
 
     @Override
@@ -512,7 +559,7 @@ public class GuiMenuSettings extends UiScreen {
 
     @Override
     protected void drawContent(int mouseX, int mouseY, float partialTicks) {
-        if (menu.isBuiltIn()) {
+        if (readOnly) {
             this.fontRendererObj.drawString(EditorRestrictions.builtInTip(), contentLeft(), contentTop(), Ui.TEXT);
             return;
         }
@@ -535,6 +582,13 @@ public class GuiMenuSettings extends UiScreen {
             titleField.drawTextBox();
         }
         y += Ui.STEP;
+
+        if (toolBelt && isVisibleRow(iconRowTop)) {
+            Ui.rowLabel(I18n.format("radialmenu.editor.icon"), left, iconRowTop);
+            int iconLeft = left + Ui.LABEL_WIDTH + Ui.GAP;
+            Ui.frame(iconLeft, iconRowTop, iconLeft + Ui.ROW, iconRowTop + Ui.ROW, 0xFF101010, Ui.PANEL_BORDER);
+            if (icon != null) IconRenderer.draw(icon, iconLeft + 2, iconRowTop + 2);
+        }
 
         for (int i = 0; i < fields.size() && i < fieldRowTops.size(); i++) {
             int rowTop = fieldRowTops.get(i).intValue();
@@ -577,7 +631,9 @@ public class GuiMenuSettings extends UiScreen {
                 // identical-looking rows gives no clue what is moving.
                 Gui.drawRect(position[0], position[1], contentRight(), position[1] + Ui.ROW, Ui.ROW_SELECTED);
             }
-            UiDragReorder.drawGrip(position[0], position[1], Ui.ROW, drag.isDragging() && drag.grabbedRow() == i);
+            if (!toolBelt) {
+                UiDragReorder.drawGrip(position[0], position[1], Ui.ROW, drag.isDragging() && drag.grabbedRow() == i);
+            }
 
             IconRenderer.draw(child.icon, iconLeft, position[1] + 2);
 
@@ -660,7 +716,7 @@ public class GuiMenuSettings extends UiScreen {
     }
 
     private void moveRow(int from, int to) {
-        if (from < 0 || to < 0 || from == to || from >= rowIndices.size() || to >= rowIndices.size()) {
+        if (toolBelt || from < 0 || to < 0 || from == to || from >= rowIndices.size() || to >= rowIndices.size()) {
             return;
         }
 
@@ -691,12 +747,12 @@ public class GuiMenuSettings extends UiScreen {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) {
         // Before super, and the whole point of the grip: a press that lands on one must not reach a button at all.
-        if (button == 0 && isInsideViewport(mouseY) && drag.press(mouseX, mouseY, contentLeft(), rows())) {
+        if (!toolBelt && button == 0 && isInsideViewport(mouseY) && drag.press(mouseX, mouseY, contentLeft(), rows())) {
             return;
         }
         super.mouseClicked(mouseX, mouseY, button);
         // A field clipped at the panel edge still answers to clicks on the part that was cut away.
-        if (menu.isBuiltIn() || !isShowing() || !isInsideViewport(mouseY)) {
+        if (readOnly || !isShowing() || !isInsideViewport(mouseY)) {
             return;
         }
         titleField.mouseClicked(mouseX, mouseY, button);
@@ -729,7 +785,7 @@ public class GuiMenuSettings extends UiScreen {
 
     @Override
     protected boolean handleKey(char typedChar, int keyCode) {
-        if (menu.isBuiltIn()) {
+        if (readOnly) {
             return false;
         }
         if (keyCode == Keyboard.KEY_ESCAPE && drag.isDragging()) {

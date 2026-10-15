@@ -1,9 +1,9 @@
 package com.xyp.gtnotgood.common.network;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
+import com.gtnewhorizon.gtnhlib.util.ServerThreadUtil;
 import com.xyp.gtnotgood.common.items.toolbelt.ConfigData;
 import com.xyp.gtnotgood.common.items.toolbelt.ToolBeltData;
 
@@ -12,9 +12,6 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 
-/**
- * Requests a server-authoritative swap between the held item and a tool belt slot.
- */
 public class SwapItems implements IMessage {
 
     private int swapWith;
@@ -35,20 +32,17 @@ public class SwapItems implements IMessage {
         buf.writeInt(swapWith);
     }
 
-    /**
-     * Handles tool belt swap packets on the logical server.
-     */
     public static class Handler implements IMessageHandler<SwapItems, IMessage> {
 
         @Override
         public IMessage onMessage(SwapItems message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-            swapItem(message.swapWith, player);
+            ServerThreadUtil.addScheduledTask(() -> swapItem(message.swapWith, ctx.getServerHandler().playerEntity));
             return null;
         }
     }
 
     public static void swapItem(int swapWith, EntityPlayer player) {
+        if (player.worldObj.isRemote) return;
         ToolBeltData data = ToolBeltData.get(player);
         if (data == null) {
             ToolBeltData.register(player);
@@ -57,50 +51,40 @@ public class SwapItems implements IMessage {
         if (data == null) return;
 
         ItemStack inHand = player.getHeldItem();
-        int size = ToolBeltData.SLOT_COUNT;
+        if (inHand != null && !ConfigData.isItemStackAllowed(inHand)) return;
 
         if (swapWith < 0) {
-            if (inHand == null) return;
-            if (!ConfigData.isItemStackAllowed(inHand)) return;
-
-            for (int i = 0; i < size; i++) {
-                ItemStack inSlot = data.getStackInSlot(i);
-                if (inSlot != null && inSlot.isItemEqual(inHand) && ItemStack.areItemStackTagsEqual(inSlot, inHand)) {
-                    int max = inSlot.getMaxStackSize();
-                    int acc = inSlot.stackSize + inHand.stackSize;
-                    if (acc <= max) {
-                        inSlot.stackSize = acc;
-                        data.setStackInSlot(i, inSlot);
-                        player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-                        break;
-                    } else {
-                        inSlot.stackSize = max;
-                        data.setStackInSlot(i, inSlot);
-                        inHand.stackSize = acc - max;
-                        player.inventory.setInventorySlotContents(player.inventory.currentItem,
-                            inHand.stackSize > 0 ? inHand : null);
-                    }
-                } else if (inSlot == null) {
-                    data.setStackInSlot(i, inHand.copy());
-                    player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-                    break;
-                }
-            }
+            if (swapWith != -1 || inHand == null) return;
+            ItemStack remaining = data.tryInsert(inHand);
+            if (remaining != null && remaining.stackSize == inHand.stackSize) return;
+            player.inventory.setInventorySlotContents(player.inventory.currentItem, remaining);
         } else {
-            if (swapWith >= size) return;
-
+            if (swapWith >= data.getSlotCount()) return;
             ItemStack inSlot = data.getStackInSlot(swapWith);
-
-            if (inHand != null) {
-                if (!ConfigData.isItemStackAllowed(inHand)) return;
-                data.setStackInSlot(swapWith, inHand.copy());
-            } else {
+            if (inHand == null) {
                 if (inSlot == null) return;
-                data.setStackInSlot(swapWith, null);
-            }
-            player.inventory.setInventorySlotContents(player.inventory.currentItem, inSlot);
+                data.setStackInSlotSilent(swapWith, null);
+                player.inventory.setInventorySlotContents(player.inventory.currentItem, inSlot);
+            } else
+                if (inSlot == null || inSlot.isItemEqual(inHand) && ItemStack.areItemStackTagsEqual(inSlot, inHand)) {
+                    int existing = inSlot == null ? 0 : inSlot.stackSize;
+                    int amount = Math.min(inHand.stackSize, Math.max(0, inHand.getMaxStackSize() - existing));
+                    if (amount <= 0) return;
+                    ItemStack inserted = inHand.copy();
+                    inserted.stackSize = existing + amount;
+                    data.setStackInSlotSilent(swapWith, inserted);
+                    ItemStack remaining = inHand.copy();
+                    remaining.stackSize -= amount;
+                    player.inventory.setInventorySlotContents(player.inventory.currentItem,
+                        remaining.stackSize > 0 ? remaining : null);
+                } else {
+                    if (inHand.stackSize > inHand.getMaxStackSize()) return;
+                    data.setStackInSlotSilent(swapWith, inHand.copy());
+                    player.inventory.setInventorySlotContents(player.inventory.currentItem, inSlot);
+                }
+            data.onContentsChanged();
         }
-
-        data.syncToTracking();
+        player.inventory.markDirty();
+        player.inventoryContainer.detectAndSendChanges();
     }
 }

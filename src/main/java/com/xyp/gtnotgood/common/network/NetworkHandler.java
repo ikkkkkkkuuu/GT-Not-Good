@@ -44,7 +44,9 @@ public final class NetworkHandler {
         registerMessage(OpenWirelessCardPacket.class, OpenWirelessCardPacket.Handler.class, id++, Side.SERVER);
         registerMessage(ToggleWirelessCardPacket.class, ToggleWirelessCardPacket.Handler.class, id++, Side.SERVER);
         registerMessage(WirelessHighlightPacket.class, WirelessHighlightPacket.Handler.class, id++, Side.CLIENT);
-        registerMessage(WirelessVisualisationPacket.class, WirelessVisualisationPacket.Handler.class, id, Side.CLIENT);
+        registerMessage(WirelessVisualisationPacket.class, WirelessVisualisationPacket.Handler.class, id++,
+            Side.CLIENT);
+        registerMessage(ResizeToolBelt.class, ResizeToolBelt.Handler.class, id, Side.SERVER);
     }
 
     private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<REQ> messageClass,

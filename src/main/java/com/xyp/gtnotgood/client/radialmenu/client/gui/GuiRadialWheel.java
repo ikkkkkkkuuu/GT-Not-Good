@@ -494,7 +494,9 @@ public class GuiRadialWheel extends GuiScreen {
         if (editRequested) {
 
             if (pointerSlot == RadialGeometry.NO_SLOT) {
-                if (!currentMenu().isBuiltIn()) GuiStack.push(new GuiMenuSettings(currentMenu()));
+                if (!currentMenu().isBuiltIn() || ToolBeltMenu.isMenu(currentMenu())) {
+                    GuiStack.push(new GuiMenuSettings(currentMenu()));
+                }
             } else {
                 openEditor();
             }
@@ -518,7 +520,7 @@ public class GuiRadialWheel extends GuiScreen {
         if (menu.isBuiltIn()) return;
         int index = menu.childIndexForSlot(pointerSlot);
         MenuNode child = menu.childAtIndex(index);
-        if (child != null && child.isBuiltIn()) return;
+        if (child != null && child.isBuiltIn() && !ToolBeltMenu.isMenu(child)) return;
         if (index < 0) {
             index = menu.layoutOrDefault().mode == SlotLayout.Mode.Dynamic ? menu.appendIndex() : pointerSlot;
         }

@@ -87,6 +87,14 @@ public abstract class GuiActionEditor extends UiScreen implements GuiKeyBindPick
 
     protected abstract List<ActionType> offeredTypes();
 
+    protected List<ActionField> offeredFields(ActionType type) {
+        return type.fields;
+    }
+
+    protected String fieldTooltip(ActionField field) {
+        return describe(field.tooltipKey());
+    }
+
     /** Sets the action to edit. Call from the subclass constructor, before the screen is shown. */
     protected void setSpec(ActionSpec spec, String typeId) {
         this.spec = spec;
@@ -114,14 +122,15 @@ public abstract class GuiActionEditor extends UiScreen implements GuiKeyBindPick
             return y;
         }
 
-        for (int i = 0; i < selected.fields.size(); i++) {
-            ActionField field = selected.fields.get(i);
+        List<ActionField> fields = offeredFields(selected);
+        for (int i = 0; i < fields.size(); i++) {
+            ActionField field = fields.get(i);
             // A field that has nothing to say about this action is not built at all, so it takes no row, no
             // position in the parallel lists, and no space in the panel's height.
             if (!FieldControls.isRelevant(field, spec)) {
                 continue;
             }
-            ActionField next = i + 1 < selected.fields.size() ? selected.fields.get(i + 1) : null;
+            ActionField next = i + 1 < fields.size() ? fields.get(i + 1) : null;
             if (FieldControls.standsApart(field)) {
                 y += Ui.GAP;
             }
@@ -286,7 +295,7 @@ public abstract class GuiActionEditor extends UiScreen implements GuiKeyBindPick
         int index = editableFields.size();
         editableFields.add(field);
         fieldRowTops.add(Integer.valueOf(y));
-        tooltip(ID_FIELD_BASE + index, describe(field.tooltipKey()));
+        tooltip(ID_FIELD_BASE + index, fieldTooltip(field));
 
         String current = spec.getString(field.key, field.defaultValue);
         fieldSliders.add(null);
