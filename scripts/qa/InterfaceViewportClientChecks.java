@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import appeng.api.storage.data.IAEStackType;
 import appeng.client.gui.implementations.GuiInterfaceTerminal;
+import appeng.core.AEConfig;
 import appeng.tile.inventory.AppEngInternalInventory;
 
 /** Invokes the transformed renderer under a real GL context and counts which inventory slots it touches. */
@@ -21,8 +22,8 @@ final class InterfaceViewportClientChecks {
             .forName("appeng.client.gui.implementations.GuiInterfaceTerminal$InterfaceTerminalEntry");
         Constructor<?> constructor = entryType.getDeclaredConstructors()[0];
         constructor.setAccessible(true);
-        Object entry = constructor
-            .newInstance(terminal, 9876L, "Viewport QA", "", 32, 8, 256, true, false, new IAEStackType<?>[0], 0);
+        Object entry = constructor.newInstance(terminal, 9876L, "Viewport QA", "", 32, 8, 256, true, false,
+            new IAEStackType<?>[0], 0);
         CountingInventory inventory = new CountingInventory();
         Field inv = entryType.getDeclaredField("inv");
         inv.setAccessible(true);
@@ -30,12 +31,14 @@ final class InterfaceViewportClientChecks {
         Field height = GuiInterfaceTerminal.class.getDeclaredField("viewHeight");
         height.setAccessible(true);
         int previousHeight = height.getInt(terminal);
-        Method draw = GuiInterfaceTerminal.class
-            .getDeclaredMethod("drawEntry", entryType, int.class, int.class, int.class, int.class);
+        Method draw = GuiInterfaceTerminal.class.getDeclaredMethod("drawEntry", entryType, int.class, int.class,
+            int.class, int.class);
         draw.setAccessible(true);
+        boolean previousFilter = AEConfig.instance.showOnlyInterfacesWithFreeSlotsInInterfaceTerminal;
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         GL11.glPushMatrix();
         try {
+            AEConfig.instance.showOnlyInterfacesWithFreeSlotsInInterfaceTerminal = false;
             height.setInt(terminal, 36);
             require((int) draw.invoke(terminal, entry, 0, 0, -10000, -10000) == 577, "full scroll height retained");
             checkReads(inventory, 0, 16);
@@ -46,6 +49,7 @@ final class InterfaceViewportClientChecks {
             draw.invoke(terminal, entry, -9, 0, -10000, -10000);
             checkReads(inventory, 0, 24);
         } finally {
+            AEConfig.instance.showOnlyInterfacesWithFreeSlotsInInterfaceTerminal = previousFilter;
             height.setInt(terminal, previousHeight);
             GL11.glPopMatrix();
             GL11.glPopAttrib();

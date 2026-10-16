@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.Coerce;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.xyp.gtnotgood.ae2thing.quickterminal.client.InterfacePatternRows;
 
 import appeng.client.gui.implementations.GuiInterfaceTerminal;
 import appeng.tile.inventory.AppEngInternalInventory;
@@ -30,7 +31,8 @@ public abstract class InterfaceTerminalViewportMixin {
     private ItemStack skipOffscreenPattern(AppEngInternalInventory inventory, int slot, Operation<ItemStack> original,
         @Coerce Object entry, int viewY, int titleBottom, int mouseX, int mouseY) {
         int rowSize = ((InterfaceEntryViewportAccessor) entry).getRowSize();
-        if (rowSize > 0 && viewY + slot / rowSize * 18 >= viewHeight) return null;
+        int visibleSlot = ((InterfacePatternRows) entry).getVisibleSlot(slot);
+        if (visibleSlot < 0 || rowSize > 0 && viewY + visibleSlot / rowSize * 18 >= viewHeight) return null;
         return original.call(inventory, slot);
     }
 }

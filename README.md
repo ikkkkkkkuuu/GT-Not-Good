@@ -43,14 +43,20 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.5.2          | [![1.5.2](https://img.shields.io/badge/release-1.5.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.2) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.5.3          | [![1.5.3](https://img.shields.io/badge/release-1.5.3-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.3) |         ✔️         |
 
-最新版本：[1.5.2 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.2)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.2/gtnotgood-1.5.2.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.2/gtnotgood-1.5.2-sources.jar)。
+最新版本：[1.5.3 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.3)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.3/gtnotgood-1.5.3.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.3/gtnotgood-1.5.3-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.5.2。
+1.3.4 因启动错误已撤回，请更新到 1.5.3。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.5.3 更新
+
+- 无线二合一接口终端的“隐藏已满样板行”按每行 9 格判断，保留最后一行满行供修改；下一行填满后才隐藏之前的满行，未满行继续显示。
+- 兼容样板总成等接口的空白空间自动折叠，末尾放入或取走样板后同步展开、收起，点击和放入样板仍对应原槽位。
+- 搜索中取走最后一个匹配样板后保留接口位置，方便修改后放回；折叠时同步更新滚动高度。
 
 ### 1.5.2 更新
 

@@ -40,6 +40,7 @@ gradle.projectsEvaluated {
             root.file('scripts/qa/InvTweaksOrderCacheClientChecks.java'),
             root.file('scripts/qa/ItemSortNameCacheClientChecks.java'),
             root.file('scripts/qa/InterfaceViewportClientChecks.java'),
+            root.file('scripts/qa/InterfaceRowFilterClientChecks.java'),
             root.file('scripts/qa/InterfaceNameClientChecks.java'),
             root.file('scripts/qa/GtnlCompatibilityChecks.java')))
     }
@@ -53,6 +54,7 @@ gradle.projectsEvaluated {
                 'scripts/qa/InvTweaksOrderCacheClientChecks.java',
                 'scripts/qa/ItemSortNameCacheClientChecks.java',
                 'scripts/qa/InterfaceViewportClientChecks.java',
+                'scripts/qa/InterfaceRowFilterClientChecks.java',
                 'scripts/qa/InterfaceNameClientChecks.java',
                 'scripts/qa/GtnlCompatibilityChecks.java',
                 'src/main/java/com/xyp/gtnotgood/ClientProxy.java',

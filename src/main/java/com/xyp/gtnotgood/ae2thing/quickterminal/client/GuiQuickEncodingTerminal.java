@@ -1857,7 +1857,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         }
     }
 
-    private static final class EmbeddedInterfaceTerminal extends GuiInterfaceTerminal {
+    private static final class EmbeddedInterfaceTerminal extends GuiInterfaceTerminal implements InterfaceRowFilter {
 
         private static final int VIEWPORT_LEFT = 10;
         private static final int VIEWPORT_TOP = 52;
@@ -2097,8 +2097,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             int viewHeight = VIEW_HEIGHT == null ? 0 : intField(this, VIEW_HEIGHT, 0);
             if (rowSize <= 0 || displayY <= -9000 || viewHeight <= 0) return;
 
-            int row = targetSlot / rowSize;
-            int column = targetSlot % rowSize;
+            int visibleSlot = ((InterfacePatternRows) highlightedEntry).getVisibleSlot(targetSlot);
+            if (visibleSlot < 0) return;
+            int row = visibleSlot / rowSize;
+            int column = visibleSlot % rowSize;
             int relativeY = displayY + row * 18 + 1;
             if (relativeY < 0 || relativeY + 16 > viewHeight) return;
 
@@ -2430,12 +2432,23 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
             private void restore(EmbeddedInterfaceTerminal terminal) {
                 replaceCollection(masterList, "visibleSections", visibleSections);
-                setIntField(masterList, "height", height);
                 setBooleanField(masterList, "isDirty", false);
                 for (Map.Entry<Object, List<Object>> entry : visibleEntries.entrySet()) {
                     replaceCollection(entry.getKey(), "visibleEntries", entry.getValue());
                     setBooleanField(entry.getKey(), "isDirty", false);
                 }
+                int restoredHeight = height;
+                if (AEConfig.instance.showOnlyInterfacesWithFreeSlotsInInterfaceTerminal) {
+                    restoredHeight = 0;
+                    for (Object section : visibleSections) {
+                        try {
+                            Method getHeight = section.getClass().getDeclaredMethod("getHeight");
+                            getHeight.setAccessible(true);
+                            restoredHeight += (int) getHeight.invoke(section);
+                        } catch (ReflectiveOperationException ignored) {}
+                    }
+                }
+                setIntField(masterList, "height", restoredHeight);
                 terminal.resetScrollBarRange();
             }
 
@@ -2524,7 +2537,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
                         int offsetX = relativeX - (174 - rowSize * 18) - 1;
                         int offsetY = relativeY - displayY - 1;
                         if (offsetX < 0 || offsetX >= rowSize * 18 || offsetY < 0) continue;
-                        int slot = offsetY / 18 * rowSize + offsetX / 18;
+                        int slot = ((InterfacePatternRows) entry).getActualSlot(offsetY / 18 * rowSize + offsetX / 18);
                         if (slot < 0 || slot >= numSlots) continue;
                         long id = longField(entry, "id", -1);
                         return id < 0 ? null : new InterfacePatternTarget(id, slot);

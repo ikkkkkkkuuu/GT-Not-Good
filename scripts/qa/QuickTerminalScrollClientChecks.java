@@ -681,6 +681,7 @@ public final class QuickTerminalScrollClientChecks {
             InvTweaksOrderCacheClientChecks.run();
             ItemSortNameCacheClientChecks.run();
             InterfaceViewportClientChecks.run(guiField("interfaceTerminal"));
+            InterfaceRowFilterClientChecks.run(guiField("interfaceTerminal"));
             InterfaceNameClientChecks.run(guiField("interfaceTerminal"));
             screenshot("top.png");
             VirtualMEPatternSlot first = ((VirtualMEPatternSlot[]) guiField("craftingSlots"))[0];

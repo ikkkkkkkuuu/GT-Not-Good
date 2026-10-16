@@ -136,6 +136,9 @@ public class LateMixinsLoader implements ILateMixinLoader {
                     "appliedenergistics.InvTweaksOrderCacheMixin", "appliedenergistics.ItemRepoSortNameCacheMixin",
                     "appliedenergistics.ItemSortersNameCacheMixin", "appliedenergistics.InterfaceEntryViewportAccessor",
                     "appliedenergistics.InterfaceTerminalViewportMixin",
+                    "appliedenergistics.InterfaceEntryRowFilterMixin",
+                    "appliedenergistics.InterfaceSectionRowFilterMixin",
+                    "appliedenergistics.InterfaceTerminalRowFilterMixin",
                     "appliedenergistics.QuickTerminalButtonTextureMixin",
                     "appliedenergistics.QuickTerminalTabButtonTextureMixin",
                     "appliedenergistics.QuickTerminalTypeButtonTextureMixin");
