@@ -128,33 +128,58 @@ public class SuperAdvancedMEInputHatch extends MTEHatchInputME {
         // Native automatic selection has a fixed 16-slot loop. Its flag stays disabled.
         super.onPostTick(tile, timer);
         if (tile.isServerSide() && timer % refreshTime == 0 && !processingRecipe) {
-            if (autoPull) refreshFluidList();
-            updateAllInformationSlots();
+            if (autoPull) {
+                refreshFluidList();
+                if (!isAllowedToWork()) clearExtractedStacks();
+            } else {
+                updateAllInformationSlots();
+            }
         }
     }
 
     private void refreshFluidList() {
         if (!isAllowedToWork()) return;
-        int free = 0;
-        while (free < SLOT_COUNT && slots[free] != null) free++;
-        if (free == SLOT_COUNT) return;
         try {
-            boolean changed = false;
+            Slot[] refreshed = new Slot[SLOT_COUNT];
+            FluidPolicy[] refreshedPolicies = new FluidPolicy[SLOT_COUNT];
+            int index = 0;
+            boolean newFluids = false;
             for (IAEFluidStack stack : getProxy().getStorage().getFluidInventory().getStorageList()) {
-                if (stack.getStackSize() < minAutoPullAmount || getMatchingSlot(stack.getFluidStack(), false) != null)
-                    continue;
-                slots[free] = new Slot(GTUtility.copyAmount(1, stack.getFluidStack()));
-                changed = true;
-                while (free < SLOT_COUNT && slots[free] != null) free++;
-                if (free == SLOT_COUNT) break;
+                if (stack.getStackSize() < minAutoPullAmount) continue;
+                FluidStack config = GTUtility.copyAmount(1, stack.getFluidStack());
+                Slot slot = null;
+                FluidPolicy policy = null;
+                for (int old = 0; old < SLOT_COUNT; old++) {
+                    if (slots[old] != null && GTUtility.areFluidsEqual(slots[old].config, config)) {
+                        slot = slots[old];
+                        policy = policies[old];
+                        break;
+                    }
+                }
+                if (slot == null) slot = new Slot(config);
+                if (policy == null) policy = new FluidPolicy();
+                int amount = policy.offered(stack.getStackSize(), limitedMode, fixedMode);
+                if (amount > slot.extractedAmount) newFluids = true;
+                slot.extracted = amount == 0 ? null : GTUtility.copyAmount(amount, slot.config);
+                slot.extractedAmount = amount;
+                refreshed[index] = slot;
+                refreshedPolicies[index] = policy;
+                if (++index == SLOT_COUNT) break;
             }
-            // Retain marked fluids and their policies when ME runs out of stock.
+            boolean changed = false;
+            for (int i = 0; i < SLOT_COUNT; i++) {
+                if (slots[i] != refreshed[i]) changed = true;
+            }
+            System.arraycopy(refreshed, 0, slots, 0, SLOT_COUNT);
+            System.arraycopy(refreshedPolicies, 0, policies, 0, SLOT_COUNT);
             if (changed) {
                 configureWatchers();
                 policyChanged();
-                scheduleRecipeCheck(RecipeCheckReason.IMMEDIATE);
             }
-        } catch (GridAccessException ignored) {}
+            if (newFluids) scheduleRecipeCheck(RecipeCheckReason.IMMEDIATE);
+        } catch (GridAccessException ignored) {
+            clearExtractedStacks();
+        }
     }
 
     @Override
@@ -164,10 +189,17 @@ public class SuperAdvancedMEInputHatch extends MTEHatchInputME {
 
     @Override
     public void setAutoPullFluidList(boolean enabled) {
+        if (processingRecipe || autoPull == enabled) return;
         if (getBaseMetaTileEntity() == null || !getBaseMetaTileEntity().isServerSide()) return;
         autoPull = enabled;
+        clearSlotConfigs();
         if (enabled) refreshFluidList();
-        policyChanged();
+    }
+
+    @Override
+    public void onDisableWorking() {
+        super.onDisableWorking();
+        if (autoPull) clearSlotConfigs();
     }
 
     @Override
@@ -465,8 +497,8 @@ public class SuperAdvancedMEInputHatch extends MTEHatchInputME {
             // # zh_CN 右键标记流体设置数量，单位为 mB
             StatCollector.translateToLocal("gtng.super_storage.config"),
             // #tr gtng.super_storage.autopull
-            // # Auto-marking keeps existing marks and settings; Data Stick copies settings
-            // # zh_CN 自动标记保留已有标记和设置；数据棒可复制配置
+            // # Auto-pull refreshes marks from ME; toggling auto-pull clears marks and per-fluid settings
+            // # zh_CN 自动拉取定期更新 ME 标记；开关自动拉取会清除标记及各流体设置
             StatCollector.translateToLocal("gtng.super_storage.autopull"),
             // #tr gtng.super_storage.pickup
             // # Pickup clears fluid marks and settings

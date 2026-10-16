@@ -27,6 +27,9 @@ security, controller transaction, and GT texture APIs are retained.
 The item bus applies the same 900-mark policies to item counts and retains native
 circuit and manual slots, moved beside the status row to leave room for the mode buttons.
 Item identity includes metadata and NBT. Only consumed recipe quantities leave ME.
+Automatic selection periodically replaces marks from current ME stock and clears
+marks and per-type settings when switching modes, matching the native lifecycle.
+Policies and open policy editors follow surviving types across automatic reordering.
 
 These adapted sources remain under LGPL-3.0 and are excluded from the project's
 general MIT grant. Upstream GUI/block textures are referenced from the installed

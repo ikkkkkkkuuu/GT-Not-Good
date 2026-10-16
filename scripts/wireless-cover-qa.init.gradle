@@ -1,0 +1,97 @@
+// gradlew.bat -I scripts/wireless-cover-qa.init.gradle runClient17 --no-configuration-cache
+// Add -PwirelessCoverGtnl=true to exercise the complete published GTNL runtime.
+gradle.beforeProject { project ->
+    if (project == gradle.rootProject) project.layout.buildDirectory.set(project.file('.gradle/wireless-cover-qa-build'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.isFile()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String)
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('NewHorizonsCoreMod') as String)
+    def withGtnl = root.findProperty('wirelessCoverGtnl') == 'true'
+    if (withGtnl) {
+        def gtnl = root.file('build/gtnl-compat-dependencies/sciencenotleisure-0.2.7-rc1-dev.jar')
+        if (!gtnl.isFile()) throw new GradleException('Missing cached GTNL QA dependency: ' + gtnl)
+        def digest = java.security.MessageDigest.getInstance('SHA-256').digest(gtnl.bytes).encodeHex().toString()
+        if (digest != 'c36ff329db26dd5df3d70e825bb2741c12fe1818c9d67d4a7b4323cd6ed6e8cc') {
+            throw new GradleException('GTNL RC1 development jar checksum mismatch: ' + gtnl)
+        }
+        root.dependencies.add('runtimeOnlyNonPublishable', root.files(gtnl))
+        root.dependencies.add('runtimeOnlyNonPublishable', 'com.github.ABKQPO:BetterQuestingAPI:1.1.3:dev') {
+            transitive = false
+        }
+        ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+            'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'AspectRecipeIndex'].each {
+            root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+        }
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/WirelessCoverRecipeChecks.java'))
+    }
+    root.spotless.java {
+        target 'scripts/qa/WirelessCoverRecipeChecks.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/gregtech/WirelessEnergyCoverRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/CommonProxy.java'
+    }
+    def mainSnapshot = root.layout.buildDirectory.dir('wireless-cover-qa-runtime/main')
+    def testSnapshot = root.layout.buildDirectory.dir('wireless-cover-qa-runtime/test')
+    def copyMain = root.tasks.register('snapshotWirelessCoverMain', Sync) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        into mainSnapshot
+    }
+    def copyTest = root.tasks.register('snapshotWirelessCoverTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/WirelessCoverRecipeChecks*.class'
+        into testSnapshot
+    }
+    def profile = withGtnl ? 'gtnl' : 'standalone'
+    def output = root.file('build/wireless-cover-qa/' + profile)
+    def result = new File(output, 'result.txt')
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn copyMain, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainSnapshot, testSnapshot)
+        classpath += root.configurations.testRuntimeClasspath.filter {
+            it.name.startsWith('jvmdowngrader-java-api-')
+        }
+        workingDir root.file('run/wireless-cover-check/' + profile)
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.wirelessCover.qa', 'true'
+        systemProperty 'gtng.wirelessCover.gtnl', withGtnl.toString()
+        systemProperty 'gtng.wirelessCover.output', output.absolutePath
+        systemProperty 'gtng.wirelessCover.workspace', workingDir.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in wireless cover recipe checks')
+        doFirst {
+            workingDir.mkdirs()
+            output.mkdirs()
+            java.nio.file.Files.deleteIfExists(result.toPath())
+            def configDirectory = new File(workingDir, 'config/GTNOTGOOD')
+            configDirectory.mkdirs()
+            new File(configDirectory, 'gtnotgood.cfg').setText('cutcorners {\n    I:mode=0\n}\n', 'UTF-8')
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', workingDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            if (!result.isFile() || !result.text.startsWith('PASS')) {
+                throw new GradleException('Wireless cover recipe QA failed; inspect WIRELESS_COVER_QA in ' +
+                    workingDir + '/logs/fml-client-latest.log.')
+            }
+        }
+    }
+}

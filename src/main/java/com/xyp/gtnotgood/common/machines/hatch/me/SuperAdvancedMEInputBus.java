@@ -126,33 +126,58 @@ public class SuperAdvancedMEInputBus extends MTEHatchInputBusME {
         // Native automatic selection has a fixed 16-slot loop. Its flag stays disabled.
         super.onPostTick(tile, timer);
         if (tile.isServerSide() && timer % refreshTime == 0 && !processingRecipe) {
-            if (autoPull) refreshItemList();
-            updateAllInformationSlots();
+            if (autoPull) {
+                refreshItemList();
+                if (!isAllowedToWork()) clearExtractedStacks();
+            } else {
+                updateAllInformationSlots();
+            }
         }
     }
 
     protected void refreshItemList() {
         if (!isAllowedToWork()) return;
-        int free = 0;
-        while (free < SLOT_COUNT && slots[free] != null) free++;
-        if (free == SLOT_COUNT) return;
         try {
-            boolean changed = false;
+            Slot[] refreshed = new Slot[SLOT_COUNT];
+            ItemPolicy[] refreshedPolicies = new ItemPolicy[SLOT_COUNT];
+            int index = 0;
+            boolean newItems = false;
             for (IAEItemStack stack : getProxy().getStorage().getItemInventory().getStorageList()) {
-                if (stack.getStackSize() < minAutoPullStackSize || getMatchingSlot(stack.getItemStack(), false) != null)
-                    continue;
-                slots[free] = new Slot(GTUtility.copyAmount(1, stack.getItemStack()));
-                changed = true;
-                while (free < SLOT_COUNT && slots[free] != null) free++;
-                if (free == SLOT_COUNT) break;
+                if (stack.getStackSize() < minAutoPullStackSize) continue;
+                ItemStack config = GTUtility.copyAmount(1, stack.getItemStack());
+                Slot slot = null;
+                ItemPolicy policy = null;
+                for (int old = 0; old < SLOT_COUNT; old++) {
+                    if (slots[old] != null && GTUtility.areStacksEqual(slots[old].config, config)) {
+                        slot = slots[old];
+                        policy = policies[old];
+                        break;
+                    }
+                }
+                if (slot == null) slot = new Slot(config);
+                if (policy == null) policy = new ItemPolicy();
+                int amount = policy.offered(stack.getStackSize(), limitedMode, fixedMode);
+                if (amount > slot.extractedAmount) newItems = true;
+                slot.extracted = amount == 0 ? null : GTUtility.copyAmountUnsafe(amount, slot.config);
+                slot.extractedAmount = amount;
+                refreshed[index] = slot;
+                refreshedPolicies[index] = policy;
+                if (++index == SLOT_COUNT) break;
             }
-            // Retain marked items and their policies when ME runs out of stock.
+            boolean changed = false;
+            for (int i = 0; i < SLOT_COUNT; i++) {
+                if (slots[i] != refreshed[i]) changed = true;
+            }
+            System.arraycopy(refreshed, 0, slots, 0, SLOT_COUNT);
+            System.arraycopy(refreshedPolicies, 0, policies, 0, SLOT_COUNT);
             if (changed) {
                 configureWatchers();
                 policyChanged();
-                scheduleRecipeCheck(RecipeCheckReason.IMMEDIATE);
             }
-        } catch (GridAccessException ignored) {}
+            if (newItems) scheduleRecipeCheck(RecipeCheckReason.IMMEDIATE);
+        } catch (GridAccessException ignored) {
+            clearExtractedStacks();
+        }
     }
 
     @Override
@@ -162,10 +187,17 @@ public class SuperAdvancedMEInputBus extends MTEHatchInputBusME {
 
     @Override
     public void setAutoPullItemList(boolean enabled) {
+        if (processingRecipe || autoPull == enabled) return;
         if (getBaseMetaTileEntity() == null || !getBaseMetaTileEntity().isServerSide()) return;
         autoPull = enabled;
+        clearSlotConfigs();
         if (enabled) refreshItemList();
-        policyChanged();
+    }
+
+    @Override
+    public void onDisableWorking() {
+        super.onDisableWorking();
+        if (autoPull) clearSlotConfigs();
     }
 
     @Override
@@ -447,8 +479,8 @@ public class SuperAdvancedMEInputBus extends MTEHatchInputBusME {
             // # zh_CN 右键标记物品设置数量，单位为 个
             StatCollector.translateToLocal("gtng.super_storage_bus.config"),
             // #tr gtng.super_storage_bus.autopull
-            // # Auto-marking keeps existing marks and settings; Data Stick copies settings
-            // # zh_CN 自动标记保留已有标记和设置；数据棒可复制配置
+            // # Auto-pull refreshes marks from ME; toggling auto-pull clears marks and per-item settings
+            // # zh_CN 自动拉取定期更新 ME 标记；开关自动拉取会清除标记及各物品设置
             StatCollector.translateToLocal("gtng.super_storage_bus.autopull"),
             // #tr gtng.super_storage_bus.pickup
             // # Pickup clears item marks and settings

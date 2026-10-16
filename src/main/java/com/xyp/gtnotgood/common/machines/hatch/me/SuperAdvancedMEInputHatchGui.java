@@ -26,9 +26,11 @@ import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.utils.fluid.FluidInteractions;
+import com.cleanroommc.modularui.utils.serialization.ByteBufAdapters;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.GenericListSyncHandler;
+import com.cleanroommc.modularui.value.sync.GenericSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.LongSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -40,6 +42,7 @@ import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.slot.FluidSlot;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+import com.xyp.gtnotgood.common.machines.hatch.me.SuperAdvancedMEInputHatch.FluidPolicy;
 
 import appeng.core.localization.WailaText;
 import appeng.me.GridAccessException;
@@ -61,9 +64,10 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
     private static final int STOCK_SLOT_PER_ROW = 9;
     private final Slot[] slots;
     private final VerticalScrollData fluidScroll = new VerticalScrollData();
-    private int selectedSlot;
-    private final IntSyncValue selection = new IntSyncValue(() -> selectedSlot,
-        value -> selectedSlot = Math.max(0, Math.min(SLOT_COUNT - 1, value))).allowC2S();
+    private FluidStack selectedFluid;
+    private final GenericSyncValue<FluidStack, ?> selection = GenericSyncValue.builder(FluidStack.class)
+        .getter(() -> selectedFluid).setter(value -> selectedFluid = GTUtility.copyAmount(1, value))
+        .adapter(ByteBufAdapters.FLUID_STACK).nullable().build().allowC2S();
     private IPanelHandler policyPanel;
 
     public SuperAdvancedMEInputHatchGui(SuperAdvancedMEInputHatch hatch, Slot[] slots) {
@@ -96,7 +100,7 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
             @Override
             public @NotNull Result onMousePressed(int button) {
                 if (button == 1 && getFluidStack() != null) {
-                    selection.setIntValue(index);
+                    selection.setValue(getFluidStack());
                     policyPanel.openPanel();
                     return Result.SUCCESS;
                 }
@@ -330,40 +334,60 @@ public class SuperAdvancedMEInputHatchGui extends MTEHatchBaseGui<SuperAdvancedM
     }
 
     private ModularPanel createPolicyPanel(ModularPanel parent, PanelSyncManager sync) {
-        LongSyncValue reserve = new LongSyncValue(() -> machine.getPolicy(selectedSlot).reserve, value -> {
-            if (baseMetaTileEntity.isServerSide()) {
-                machine.getPolicy(selectedSlot).reserve = Math.max(0, value);
+        LongSyncValue reserve = new LongSyncValue(() -> {
+            FluidPolicy policy = getSelectedPolicy();
+            return policy == null ? 0 : policy.reserve;
+        }, value -> {
+            FluidPolicy policy = getSelectedPolicy();
+            if (baseMetaTileEntity.isServerSide() && policy != null) {
+                policy.reserve = Math.max(0, value);
                 machine.policyChanged();
             }
         }).allowC2S();
-        IntSyncValue batch = new IntSyncValue(() -> machine.getPolicy(selectedSlot).batch, value -> {
-            if (baseMetaTileEntity.isServerSide()) {
-                machine.getPolicy(selectedSlot).batch = Math.max(1, value);
+        IntSyncValue batch = new IntSyncValue(() -> {
+            FluidPolicy policy = getSelectedPolicy();
+            return policy == null ? 1 : policy.batch;
+        }, value -> {
+            FluidPolicy policy = getSelectedPolicy();
+            if (baseMetaTileEntity.isServerSide() && policy != null) {
+                policy.batch = Math.max(1, value);
                 machine.policyChanged();
             }
         }).allowC2S();
         Flow content = Flow.col().coverChildren().childPadding(4).marginTop(16);
-        content.child(IKey.dynamic(() -> {
-            FluidStack fluid = machine.getSlotConfig(selection.getIntValue());
-            return fluid == null ? "" : fluid.getLocalizedName();
-        }).asWidget().maxWidth(200));
+        content.child(
+            IKey.dynamic(() -> selectedFluid == null ? "" : selectedFluid.getLocalizedName()).asWidget().maxWidth(200));
         // #tr gtng.super_storage.reserve_amount
         // # Keep in ME (mB)
         // # zh_CN ME网络保留量（mB）
         content.child(IKey.lang("gtng.super_storage.reserve_amount").asWidget());
         content.child(new TextFieldWidget().value(reserve).numbersLong(0, Long.MAX_VALUE).formatAsInteger(true)
-            .setMaxLength(19).width(180));
+            .setMaxLength(19).width(180).setEnabledIf(widget -> getSelectedSlot() >= 0));
         // #tr gtng.super_storage.batch_amount
         // # Available per recipe check (mB)
         // # zh_CN 每次配方检查可用量（mB）
         content.child(IKey.lang("gtng.super_storage.batch_amount").asWidget());
         content.child(new TextFieldWidget().value(batch).numbersInt(1, Integer.MAX_VALUE).formatAsInteger(true)
-            .setMaxLength(10).width(180));
+            .setMaxLength(10).width(180).setEnabledIf(widget -> getSelectedSlot() >= 0));
         // #tr gtng.super_storage.batch_help
         // # Waits for the full amount; consumes only what the recipe needs
         // # zh_CN 不足设定量则等待，实际只扣除配方消耗
         content.child(IKey.lang("gtng.super_storage.batch_help").asWidget().maxWidth(200));
         return createPopUpPanel("fluidPolicy").size(224, 160).relative(parent).center().padding(8).child(content);
+    }
+
+    private FluidPolicy getSelectedPolicy() {
+        if (!baseMetaTileEntity.isServerSide()) return null;
+        int index = getSelectedSlot();
+        return index < 0 ? null : machine.getPolicy(index);
+    }
+
+    private int getSelectedSlot() {
+        if (selectedFluid == null) return -1;
+        for (int i = 0; i < SLOT_COUNT; i++) {
+            if (slots[i] != null && GTUtility.areFluidsEqual(slots[i].config, selectedFluid)) return i;
+        }
+        return -1;
     }
 
     protected class ConfigFluidTank implements IFluidTank {

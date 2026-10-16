@@ -491,6 +491,18 @@ IDs, immediate preference application, saved preference reload, tooltip/HUD rend
 reload passed. Two focused namespace/palette/speed JUnit checks passed. Hidden-client screenshots
 and results are in ignored `build/text-effects-qa/{angelica,gtnl}`.
 
+## GTNL wireless energy cover recipes (2026-10-16)
+
+- Source: `AssemblerRecipes#loadWirelessHatch` and `utils/item/ItemUtils` from
+  https://github.com/ABKQPO/GT-Not-Leisure at `2abe879191443af5db2ae653a9087d34ad0432dc`.
+- Inspected `LICENSE.txt` (LGPL-3.0); packaged license and provenance are in
+  `src/main/resources/META-INF/licenses/GT-Not-Leisure-NOTICE.md` and its linked license files.
+- Destination: `common/recipe/gregtech/WirelessEnergyCoverRecipes.java` under `com.xyp.gtnotgood`.
+- Retained the fourteen native 1 A cover recipes, costs and solder alternatives. Registration uses
+  the GT builder at load complete, after ore unification, and is skipped when GTNL is installed.
+- Original GT recipes remain. GTNL-only 4 A covers, hatches, disassembly maps and assets are excluded.
+- Local reference checkouts remain outside compilation and resource source sets.
+
 ## GTNL compact AE machines (2026-09-22)
 
 - Source: https://github.com/ABKQPO/GT-Not-Leisure

@@ -115,7 +115,8 @@ public class LateMixinsLoader implements ILateMixinLoader {
                 "appliedenergistics.compact.CompactCraftingEnergyMixin",
                 "appliedenergistics.compact.MatrixInterfaceTerminalVisibilityMixin",
                 "appliedenergistics.compact.MatrixPatternPersistenceMixin",
-                "appliedenergistics.AutomaticMachineCircuitMixin");
+                "appliedenergistics.AutomaticMachineCircuitMixin", "appliedenergistics.AutomaticCircuitInterfaceMixin",
+                "appliedenergistics.AutomaticCircuitInterfaceTileMixin");
         }
 
         if (loadedMods.contains(ModList.AE2.getID())) {

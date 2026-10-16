@@ -16,6 +16,19 @@
 新增 ID 保留范围为 28700–28811：每级占八个位置，前七个为输入，第八个为输出。
 UMV 输出位置 28795、UXV 输入位置 28796–28802 保留不用，复用对应原版仓；原有 LV–UMV ID 不变。注册前检查整个范围的冲突，不覆盖其他机器。
 
+## 无线能源覆盖板配方
+
+未安装 GTNL 时，追加其 LV～MAX 共 14 级原版 1 A 无线能源覆盖板组装机配方；
+安装 GTNL 时整批跳过，交由 GTNL 注册。保留 GT 原版配方，不受 `enableEasyWirelessRecipes` 控制。
+
+每次产出一个同级覆盖板，消耗同级传感器 ×1、电路 ×4、分级线圈和功率芯片、
+末影珍珠板 ×12、对应单股线缆 ×8、红色合金单股线缆 ×32、对应材料板 ×12。
+LV 使用锡弹簧 ×16 代替功率芯片；UMV～MAX 的两种线缆均使用裸导线。
+焊接流体沿用 GT 替代规则：焊锡合金 144 mB、锡 288 mB 或铅 576 mB。
+标称耗时 200 tick，同级配方电压；全局配方提速配置仍然生效。
+
+材料及数量核对自 [GTNL 源码](https://github.com/ABKQPO/GT-Not-Leisure/blob/2abe879191443af5db2ae653a9087d34ad0432dc/src/main/java/com/science/gtnl/common/recipe/gregtech/AssemblerRecipes.java#L3162)。
+
 ## 无线转换配方
 
 配置文件：`config/GTNOTGOOD/gtnotgood.cfg`，分类 `Wireless_Energy`：
@@ -66,3 +79,11 @@ Java 适配类直接继承当前依赖中的 `MTEHatchWirelessMulti`、
 重复存电不增殖、NBT 电流及上限、激光类型标记和原生界面。
 测试仅创建独立的 `wireless-laser-qa-时间戳` 世界，测试模组不进入发布包。
 `scripts/wireless-recipe-qa.init.gradle` 仅运行启动配方检查，不创建世界；覆盖有线转换、直接材料递增、旧低价配方移除及关闭配置不注册配方。
+
+`scripts/wireless-cover-qa.init.gradle` 单独检查本页新增的 14 级覆盖板配方：
+完整材料与数量、200 tick / 同级电压、三种焊接流体、真实组装机匹配与扣料、材料不足拒绝、
+原版配方保留，以及 GTNL 存在时不新增或改动任何组装机配方。
+运行 `gradlew.bat -I scripts/wireless-cover-qa.init.gradle runClient17 --no-configuration-cache`；
+追加 `-PwirelessCoverGtnl=true` 检查完整 GTNL 共存环境。
+测试使用独立目录、隐藏客户端并自动退出，不创建世界；报告位于 `build/wireless-cover-qa/`。
+2026-10-16：未安装 GTNL 与安装 GTNL `0.2.7-rc1` 的两套环境各通过 456 项检查。

@@ -44,6 +44,8 @@ import com.xyp.gtnotgood.ae2thing.AE2Thing;
 import com.xyp.gtnotgood.ae2thing.client.gui.widget.CompactTerminalSwitchButton;
 import com.xyp.gtnotgood.ae2thing.coremod.mixin.ae.AccessorGuiScrollbar;
 import com.xyp.gtnotgood.ae2thing.inventory.gui.GuiType;
+import com.xyp.gtnotgood.ae2thing.nei.ButtonConstants;
+import com.xyp.gtnotgood.ae2thing.nei.NEI_TH_Config;
 import com.xyp.gtnotgood.ae2thing.nei.NeiCraftingFluid;
 import com.xyp.gtnotgood.ae2thing.nei.QuickTerminalRecipeTransferHandler;
 import com.xyp.gtnotgood.ae2thing.network.CPacketSwitchGuis;
@@ -53,6 +55,7 @@ import com.xyp.gtnotgood.ae2thing.quickterminal.ContainerQuickEncodingTerminal;
 import com.xyp.gtnotgood.ae2thing.quickterminal.InterfacePatternTarget;
 import com.xyp.gtnotgood.ae2thing.quickterminal.RecipeTransferPayload;
 import com.xyp.gtnotgood.ae2thing.quickterminal.StorageFluidRequest;
+import com.xyp.gtnotgood.utils.enums.ModList;
 
 import appeng.api.config.ActionItems;
 import appeng.api.config.ItemSubstitution;
@@ -148,6 +151,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         "textures/gui/quick_terminal/encoding.png");
     private static final ResourceLocation PATTERN_PANEL_4X4 = new ResourceLocation(GTNotGood.MODID,
         "textures/gui/quick_terminal/encoding4.png");
+    private static final ResourceLocation KEEP_CIRCUITS_ICONS = ModList.GTNotGood
+        .getResourceLocation("textures/gui/quick_terminal/keep_circuits_toggle.png");
 
     private static final Field ITEM_REPO = findField(GuiMEMonitorable.class, "repo");
     private static final Field ITEM_REPO_LIST = findField(ItemRepo.class, "list");
@@ -178,6 +183,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     private ModeButton craftingModeButton;
     private ModeButton processing4ModeButton;
     private CompactTerminalSwitchButton switchToCraftingButton;
+    private InterfaceSuffixButton appendSuffixButton;
     private GuiTabButton craftingStatusButton;
     private RightEncodingButton encodeButton;
     private boolean initializedOnce;
@@ -186,6 +192,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
     private int pendingTargetSelectionTicks;
     private boolean pendingAutoPlace;
     private int suppressExtensionButton = -1;
+    private int appendSuffixClickButton = -1;
     private int storageScrollPosition;
     private boolean draggingStorageScrollBar;
     private boolean draggingInterfaceScrollBar;
@@ -260,6 +267,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         switchToCraftingButton = new CompactTerminalSwitchButton(
             StatCollector.translateToLocal("gtnotgood.tooltip.switch_to_crafting_terminal"));
         buttonList.add(switchToCraftingButton);
+        appendSuffixButton = new InterfaceSuffixButton();
+        buttonList.add(appendSuffixButton);
 
         craftingStatusButton = new GuiTabButton(0, 0, 2 + 11 * 16, GuiText.CraftingStatus.getLocal(), itemRender);
         craftingStatusButton.setHideEdge(13);
@@ -535,6 +544,11 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         if (switchToCraftingButton != null) {
             switchToCraftingButton.xPosition = interfaceColumnX;
             switchToCraftingButton.yPosition = y;
+            y += 18;
+        }
+        if (appendSuffixButton != null) {
+            appendSuffixButton.xPosition = interfaceColumnX;
+            appendSuffixButton.yPosition = y;
         }
         if (craftingStatusButton != null) {
             craftingStatusButton.xPosition = guiLeft + PATTERN_PANEL_X - 25;
@@ -923,6 +937,11 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     @Override
     protected void actionPerformed(GuiButton button) {
+        if (button == appendSuffixButton) {
+            String setting = ButtonConstants.DUAL_INTERFACE_TERMINAL_APPEND_CIRCUIT_DAMAGE;
+            NEI_TH_Config.setConfigValue(setting, !NEI_TH_Config.getConfigValue(setting));
+            return;
+        }
         if (button == pinStateButton) {
             int craftingRows = patternContainer.craftingPinRowsSync.get();
             int playerRows = patternContainer.playerPinRowsSync.get();
@@ -1010,6 +1029,15 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         currentMouseY = mouseY;
         draggedStorageSlots.clear();
         storageShiftDrag = false;
+        if (
+            (button == 0 || button == 1) && appendSuffixButton != null
+                && appendSuffixButton.mousePressed(mc, mouseX, mouseY)
+        ) {
+            appendSuffixButton.func_146113_a(mc.getSoundHandler());
+            appendSuffixClickButton = button;
+            actionPerformed(appendSuffixButton);
+            return;
+        }
         int patternSide = patternScrollSide(mouseX, mouseY, true);
         if (button == 0 && patternSide >= 0) {
             draggingPatternScrollBar = patternSide;
@@ -1173,6 +1201,10 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     @Override
     protected void mouseMovedOrUp(int mouseX, int mouseY, int state) {
+        if (state >= 0 && state == appendSuffixClickButton) {
+            appendSuffixClickButton = -1;
+            return;
+        }
         if (state == 0 && draggingPatternScrollBar >= 0) {
             draggingPatternScrollBar = -1;
             return;
@@ -1197,6 +1229,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
 
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int button, long timeSinceLastClick) {
+        if (button == appendSuffixClickButton) return;
         if (draggingPatternScrollBar >= 0 && button == 0) {
             dragPatternScrollBar(mouseY);
             return;
@@ -1632,6 +1665,27 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         private KeepNonConsumablesButton() {
             super(0, 0, Settings.ACTIONS, ItemSubstitution.DISABLED);
             setHalfSize(true);
+        }
+
+        @Override
+        public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
+            if (!visible) return;
+            field_146123_n = mouseX >= xPosition && mouseY >= yPosition
+                && mouseX < xPosition + width
+                && mouseY < yPosition + height;
+            if (enabled) ScreenColor.setGuiColor();
+            else ScreenColor.setDimmedGuiColor();
+            GL11.glEnable(GL11.GL_BLEND);
+            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            minecraft.renderEngine.bindTexture(QuickTerminalButtonTextures.states());
+            func_152125_a(xPosition, yPosition, 240, 240, 16, 16, width, height, 256, 256);
+            if (enabled) ScreenColor.resetGuiColor();
+            minecraft.renderEngine.bindTexture(KEEP_CIRCUITS_ICONS);
+            func_146110_a(xPosition, yPosition, shouldKeepNonConsumables() ? 8 : 0,
+                QuickTerminalButtonTextures.isDark() ? 8 : 0, 8, 8, 16, 16);
+            mouseDragged(minecraft, mouseX, mouseY);
+            ScreenColor.resetGuiColor();
         }
 
         @Override

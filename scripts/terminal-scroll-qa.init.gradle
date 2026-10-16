@@ -21,6 +21,7 @@ gradle.projectsEvaluated {
         setSource(root.files(root.file('scripts/qa/QuickTerminalScrollClientChecks.java'),
             root.file('scripts/qa/InvTweaksOrderCacheClientChecks.java'),
             root.file('scripts/qa/ItemSortNameCacheClientChecks.java'),
+            root.file('scripts/qa/InterfaceSuffixButtonClientChecks.java'),
             root.file('scripts/qa/InterfaceViewportClientChecks.java'),
             root.file('scripts/qa/InterfaceNameClientChecks.java')))
     }
@@ -30,8 +31,11 @@ gradle.projectsEvaluated {
                 'src/main/java/com/xyp/gtnotgood/ae2thing/quickterminal/ContainerQuickEncodingTerminal.java',
                 'src/main/java/com/xyp/gtnotgood/ae2thing/quickterminal/DualTerminalGuiObject.java',
                 'src/main/java/com/xyp/gtnotgood/ae2thing/quickterminal/client/GuiQuickEncodingTerminal.java',
+                'src/main/java/com/xyp/gtnotgood/ae2thing/quickterminal/client/InterfaceSuffixButton.java',
+                'src/main/java/com/xyp/gtnotgood/ae2thing/nei/NEI_TH_Config.java',
                 'src/main/java/com/xyp/gtnotgood/ae2thing/nei/QuickTerminalRecipeTransferHandler.java',
                 'scripts/qa/QuickTerminalScrollClientChecks.java',
+                'scripts/qa/InterfaceSuffixButtonClientChecks.java',
                 'scripts/qa/InvTweaksOrderCacheClientChecks.java',
                 'scripts/qa/ItemSortNameCacheClientChecks.java',
                 'scripts/qa/InterfaceViewportClientChecks.java',

@@ -2,6 +2,7 @@ package com.xyp.gtnotgood.common.compat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,17 +16,23 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.GTNotGood;
+import com.xyp.gtnotgood.common.machines.hatch.me.CircuitPatternCodec;
 import com.xyp.gtnotgood.config.Config;
 
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
+import appeng.helpers.IInterfaceHost;
 import appeng.util.inv.MEInventoryCrafting;
 import gregtech.api.enums.GTValues;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
@@ -100,12 +107,66 @@ public final class AutomaticMachineCircuit {
             && machine.getRecipeMap() != null;
     }
 
+    /** Keeps encoded tools as configuration while publishing only consumed inputs to AE. */
+    public static ICraftingPatternDetails interfacePattern(ICraftingPatternDetails original, IInterfaceHost host) {
+        if (original == null || original.isCraftable() || original.isInputOnly()) return original;
+        List<RecipeMap<?>> maps = interfaceRecipeMaps(host);
+        if (maps.stream().allMatch(Objects::isNull)) return original;
+        ICraftingPatternDetails runtime = CircuitPatternCodec.runtime(original.getPattern(),
+            host.getTileEntity().getWorldObj());
+        if (runtime == null || !hasVirtualItems(runtime)) return original;
+        for (RecipeMap<?> map : maps) {
+            if (map != null && !patternConfigurations(map, runtime).isEmpty()) return runtime;
+        }
+        return original;
+    }
+
+    /** Directional recipe maps also invalidate provider details when a machine or interface facing changes. */
+    public static List<RecipeMap<?>> interfaceRecipeMaps(IInterfaceHost host) {
+        List<RecipeMap<?>> maps = new ArrayList<>(6);
+        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+            BaseMetaTileEntity tile = interfaceMachine(host, side);
+            maps.add(tile == null ? null : ((MTEBasicMachine) tile.getMetaTileEntity()).getRecipeMap());
+        }
+        return maps;
+    }
+
+    private static BaseMetaTileEntity interfaceMachine(IInterfaceHost host, ForgeDirection side) {
+        if (host == null || !host.getTargets().contains(side)) return null;
+        TileEntity origin = host.getTileEntity();
+        if (origin == null) return null;
+        World world = origin.getWorldObj();
+        if (
+            world == null || !world.blockExists(origin.xCoord + side.offsetX, origin.yCoord + side.offsetY,
+                origin.zCoord + side.offsetZ)
+        ) return null;
+        TileEntity target = world.getTileEntity(origin.xCoord + side.offsetX, origin.yCoord + side.offsetY,
+            origin.zCoord + side.offsetZ);
+        return target instanceof BaseMetaTileEntity tile && supports(tile) ? tile : null;
+    }
+
+    public static boolean hasVirtualItems(ICraftingPatternDetails pattern) {
+        ItemStack stack = pattern.getPattern();
+        return stack != null && stack.hasTagCompound()
+            && (stack.getTagCompound().hasKey("gtngPatternCircuit")
+                || stack.getTagCompound().hasKey("gtngPatternMolds"));
+    }
+
+    /** Tool-free deliveries must never fall through to a neighboring ordinary inventory. */
+    public static EnumSet<ForgeDirection> interfaceTargets(IInterfaceHost host, ICraftingPatternDetails pattern,
+        EnumSet<ForgeDirection> targets) {
+        if (!hasVirtualItems(pattern)) return targets;
+        EnumSet<ForgeDirection> supported = EnumSet.noneOf(ForgeDirection.class);
+        for (ForgeDirection side : targets) if (interfaceMachine(host, side) != null) supported.add(side);
+        return supported;
+    }
+
     /**
      * Validates recipe identity, actual CPU inputs and space for at least one runnable operation before committing.
      * A failed push leaves the circuit, input slots, tank and CPU table untouched. AE retries the complete batch.
      *
      * @param tile    receiving machine
-     * @param pattern processing pattern; virtual circuits and molds must be omitted from consumable inputs
+     * @param pattern processing pattern with encoded tools retained as runtime configuration, or omitted
      * @param table   actual resources supplied by AE, including native fluid stacks
      * @param side    receiving machine face
      * @return true only when every supplied resource has been inserted
@@ -427,7 +488,7 @@ public final class AutomaticMachineCircuit {
             if (encodedItems == null || encodedFluids == null) return result;
             for (GTRecipe recipe : map.getAllRecipes()) {
                 Match match = describe(recipe);
-                if (match == null) continue;
+                if (match == null || !matchesConfiguration(pattern, match)) continue;
                 long operations = CircuitPatternQuantities.requestedOutputBatches(match.outputs, outputs);
                 if (
                     operations <= 0
@@ -444,6 +505,27 @@ public final class AutomaticMachineCircuit {
             if (!validEncodedRecipe) result.clear();
             return result;
         });
+    }
+
+    private static boolean matchesConfiguration(ICraftingPatternDetails pattern, Match match) {
+        ItemStack stack = pattern.getPattern();
+        if (stack == null || !stack.hasTagCompound()) return true;
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag.hasKey("gtngPatternCircuit")) {
+            if (
+                !tag.hasKey("gtngPatternCircuit", Constants.NBT.TAG_INT) || match.circuit == null
+                    || match.circuit.getItemDamage() != tag.getInteger("gtngPatternCircuit")
+            ) return false;
+        }
+        if (tag.hasKey("gtngPatternMolds")) {
+            if (!tag.hasKey("gtngPatternMolds", Constants.NBT.TAG_LIST)) return false;
+            NBTTagList molds = tag.getTagList("gtngPatternMolds", Constants.NBT.TAG_COMPOUND);
+            if (
+                molds.tagCount() != 1 || match.mold == null
+                    || !sameCircuit(match.mold, ItemStack.loadItemStackFromNBT(molds.getCompoundTagAt(0)))
+            ) return false;
+        }
+        return true;
     }
 
     /** Accepts one circuit and one catalog mold as zero-size catalysts; excludes unsupported/probabilistic recipes. */

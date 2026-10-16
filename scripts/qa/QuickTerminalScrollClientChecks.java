@@ -26,6 +26,7 @@ import com.xyp.gtnotgood.ae2thing.nei.object.OrderStack;
 import com.xyp.gtnotgood.ae2thing.quickterminal.ContainerQuickEncodingTerminal;
 import com.xyp.gtnotgood.ae2thing.quickterminal.DualTerminalGuiObject;
 import com.xyp.gtnotgood.ae2thing.quickterminal.RecipeTransferPayload;
+import com.xyp.gtnotgood.config.Config;
 import com.xyp.gtnotgood.utils.machine.MoldDataManager;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
@@ -658,6 +659,7 @@ public final class QuickTerminalScrollClientChecks {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen != gui) return;
         if (++frames == 30) {
+            InterfaceSuffixButtonClientChecks.run(gui);
             checkNonConsumablesButton();
             if (Boolean.getBoolean("gtng.gtnlCompat.qa")) {
                 Class<?> batcher = Class.forName("com.gtnewhorizons.angelica.client.font.BatchingFontRenderer");
@@ -738,12 +740,27 @@ public final class QuickTerminalScrollClientChecks {
         require(gui.shouldKeepNonConsumables() && requested.equals(Arrays.asList(true)), "button enables retention");
         gui.drawScreen(button.xPosition + 3, button.yPosition + 3, 0);
         screenshot("keep-non-consumables.png");
+        screenshotNonConsumablesThemes(button, true);
         gui.mouseClicked(button.xPosition + 3, button.yPosition + 3, 0);
         require(
             !gui.shouldKeepNonConsumables() && requested.equals(Arrays.asList(true, false)),
             "button disables retention");
+        screenshotNonConsumablesThemes(button, false);
         setter.set(container, action);
         System.out.println("TERMINAL_CATALYST_QA: GUI toggle and tooltip PASS");
+    }
+
+    private void screenshotNonConsumablesThemes(GuiImgButton button, boolean enabled) {
+        String originalTheme = Config.quickTerminalButtonTheme;
+        try {
+            for (String theme : new String[] { "light", "dark" }) {
+                Config.quickTerminalButtonTheme = theme;
+                gui.drawScreen(button.xPosition + 3, button.yPosition + 3, 0);
+                screenshot("keep-circuits-" + (enabled ? "on" : "off") + "-" + theme + ".png");
+            }
+        } finally {
+            Config.quickTerminalButtonTheme = originalTheme;
+        }
     }
 
     private Object guiField(String name) throws Exception {

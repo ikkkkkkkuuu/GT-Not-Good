@@ -22,5 +22,27 @@
     "modified": false,
     "sha256": "8602baf1f970ce1b99a5015ffff3786b1d2370fc96c16982319b0324d4432118",
     "imageSize": [256, 256]
+  },
+  {
+    "project": "GT-Not-Good",
+    "source": "Original integer-pixel artwork; no upstream pixels copied.",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/quick_terminal/suffix_toggle.png",
+    "license": "MIT",
+    "licenseText": "LICENSE",
+    "modified": false,
+    "sha256": "dd9057d2157e119e462ffb921cb7f687ba0b47be906db8026370d0b400e5443e",
+    "imageSize": [32, 32],
+    "layout": "16x16 cells: light off, light on, dark off, dark on; gray or mint suffix plus beside name lines."
+  },
+  {
+    "project": "GT-Not-Good",
+    "source": "Original integer-pixel artwork; no upstream pixels copied.",
+    "local": "src/main/resources/assets/gtnotgood/textures/gui/quick_terminal/keep_circuits_toggle.png",
+    "license": "MIT",
+    "licenseText": "LICENSE",
+    "modified": false,
+    "sha256": "7108e9f8bdc4f6e3634bfddb18bf4aaf721e028ba8a5604ff28d8c08ddd32182",
+    "imageSize": [16, 16],
+    "layout": "8x8 cells: light off, light on, dark off, dark on; square chip, separate pins, gray or mint data traces."
   }
 ]

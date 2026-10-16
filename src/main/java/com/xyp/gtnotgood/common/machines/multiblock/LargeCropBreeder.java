@@ -72,6 +72,7 @@ import gregtech.api.structure.error.StructureError;
 import gregtech.api.structure.error.StructureErrors;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
+import gregtech.api.util.VoidProtectionHelper;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 import lombok.Getter;
 
@@ -94,6 +95,7 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
     private static final int POOL_BREEDING_EUT = 32;
     private static final int POOL_BREEDING_DURATION = 20 * 20;
     private static final int MAX_ARCHIVE_STEPS_PER_CYCLE = 1;
+    private static final int MAX_SEED_OUTPUTS_PER_CYCLE = 64;
     private static final byte OPERATION_NONE = 0;
     private static final byte OPERATION_ARCHIVE_BREEDING = 1;
     private static final byte OPERATION_OUTPUT = 2;
@@ -262,6 +264,11 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
     }
 
     @Override
+    public boolean protectsExcessItem() {
+        return true;
+    }
+
+    @Override
     public boolean doesBindPlayerInventory() {
         return true;
     }
@@ -323,16 +330,7 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
                 // # zh_CN 当前作物档案无法生成目标种子！
                 return SimpleCheckRecipeResult.ofFailure("CropBreeder_unreachable_target");
             }
-            if (!canOutputAll(new ItemStack[] { output })) {
-                return CheckRecipeResultRegistry.ITEM_OUTPUT_FULL;
-            }
-            allTasksBlocked = false;
-            missingCropId = "";
-            missingBreedingRequirements = false;
-            mOutputItems = new ItemStack[] { output };
-            activeOperation = OPERATION_OUTPUT;
-            prepareArchiveCycle(20, 0L);
-            return CheckRecipeResultRegistry.SUCCESSFUL;
+            return prepareSeedOutput(output);
         }
 
         if (machineMode == MODE_MUTATION_POOL) {
@@ -372,9 +370,27 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
     @Override
     public boolean onRunningTick(ItemStack stack) {
         if (mProgresstime >= mMaxProgresstime - 1) {
+            if (activeOperation == OPERATION_OUTPUT && !canOutputAll(mOutputItems)) return false;
             settleActiveOperation();
         }
         return super.onRunningTick(stack);
+    }
+
+    private CheckRecipeResult prepareSeedOutput(ItemStack output) {
+        int maxOutput = Math.min(pendingSeedOutputs, Math.min(MAX_SEED_OUTPUTS_PER_CYCLE, output.getMaxStackSize()));
+        int outputCount = new VoidProtectionHelper().setMachine(this).setItemOutputs(new ItemStack[] { output })
+            .setMaxParallel(maxOutput).build().getMaxParallel();
+        if (outputCount <= 0) {
+            return CheckRecipeResultRegistry.ITEM_OUTPUT_FULL;
+        }
+        output.stackSize = outputCount;
+        allTasksBlocked = false;
+        missingCropId = "";
+        missingBreedingRequirements = false;
+        mOutputItems = new ItemStack[] { output };
+        activeOperation = OPERATION_OUTPUT;
+        prepareArchiveCycle(20, 0L);
+        return CheckRecipeResultRegistry.SUCCESSFUL;
     }
 
     @Nullable
@@ -487,8 +503,12 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
         if (activeOperation == OPERATION_ARCHIVE_BREEDING) {
             changed = cropArchive.unlockCrop(activeCropId, activeSeedStats());
             if (changed) invalidateBreedingPlan();
-        } else if (activeOperation == OPERATION_OUTPUT && pendingSeedOutputs > 0) {
-            pendingSeedOutputs--;
+        } else if (
+            activeOperation == OPERATION_OUTPUT && mOutputItems != null
+                && mOutputItems.length > 0
+                && mOutputItems[0] != null
+        ) {
+            pendingSeedOutputs = Math.max(0, pendingSeedOutputs - mOutputItems[0].stackSize);
             changed = true;
         }
 
@@ -842,6 +862,10 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
             // # Each input seed requests one target seed; set the target in the GUI
             // # zh_CN 每投入一个种子，可输出一个目标种子；在 GUI 设置目标
             .addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_02"))
+            // #tr Tooltip_LargeCropBreeder_07
+            // # Unlocked crops: converts up to 64 seeds per second, limited by output space
+            // # zh_CN 已解锁作物每秒最多转换 64 个种子，受输出空间限制
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_07"))
             // #tr Tooltip_LargeCropBreeder_03
             // # Deterministic mode follows the planned chain when all parent crops are known
             // # zh_CN 确定性模式在亲本齐全时执行规划的杂交链

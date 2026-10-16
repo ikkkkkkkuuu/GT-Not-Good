@@ -237,6 +237,7 @@ public class SingularityDataHubGui extends GTNGModernMultiBlockBaseGui<Singulari
     }
 
     private static String formatPercent(double value) {
+        if (value > 0D && value < 0.001D) return "<0.1%";
         return String.format(Locale.ROOT, "%.1f%%", value * 100D);
     }
 

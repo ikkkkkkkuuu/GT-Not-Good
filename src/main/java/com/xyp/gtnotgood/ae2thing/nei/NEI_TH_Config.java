@@ -163,6 +163,10 @@ public class NEI_TH_Config implements IConfigureNEI {
         return tag.getTag(identifier).getBooleanValue(defaultValue);
     }
 
+    public static void setConfigValue(String identifier, boolean value) {
+        tag.getTag(identifier).setBooleanValue(value);
+    }
+
     @Override
     public String getName() {
         return AE2Thing.NAME;

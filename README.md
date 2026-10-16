@@ -43,14 +43,23 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.5.1          | [![1.5.1](https://img.shields.io/badge/release-1.5.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.1) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.5.2          | [![1.5.2](https://img.shields.io/badge/release-1.5.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.2) |         ✔️         |
 
-最新版本：[1.5.1 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.1)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.1/gtnotgood-1.5.1.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.1/gtnotgood-1.5.1-sources.jar)。
+最新版本：[1.5.2 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.2)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.2/gtnotgood-1.5.2.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.2/gtnotgood-1.5.2-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.5.1。
+1.3.4 因启动错误已撤回，请更新到 1.5.2。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.5.2 更新
+
+- 超级进阶 ME 输入总线、输入仓按刷新周期重新筛选库存并更新数量，移除耗尽或低于门槛的标记；开关自动拉取时清空标记及各物料设置，设置窗口随原物料跟踪重排。
+- 普通、流体接口支持保留编程电路和不消耗目录模具的加工样板，AE 只索取消耗材料；同张物理样板可迁移到电路样板输入总成，仍保留工具配置。
+- 无线二合一编码终端新增“不消耗物品后缀”开关，统一“保留不消耗物品”按钮的明暗主题图标。
+- 补齐 LV～MAX 共 14 级原生无线能源覆盖板的组装机配方；保留原版配方，安装 GTNL 时交由 GTNL 提供。
+- 大型作物育种机对已解锁作物每秒最多转换 64 个种子，按实际输出空间安排批量，堵塞时保留待输出请求。
+- 奇点数据中心将非零且低于 0.1% 的进度显示为 `<0.1%`，避免误显示为零。
 
 ### 连接纹理与保险库外观
 
