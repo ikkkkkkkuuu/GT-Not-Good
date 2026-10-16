@@ -808,55 +808,56 @@ public class LargeCropBreeder extends GTNGMultiBlockBase<LargeCropBreeder> imple
     @Override
     protected MultiblockTooltipBuilder createTooltip() {
         MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
-        tt.addMachineType(getMachineType());
-        // #tr Tooltip_LargeCropBreeder_00
-        // # A large electric automatic CropsNH crop breeding machine
-        // # zh_CN 大型电力 CropsNH 作物自动杂交机
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_00"));
-        // #tr Tooltip_LargeCropBreeder_01
-        // # Input analyzed seeds to unlock crop ids in the internal archive
-        // # zh_CN 投入已分析种子，将作物 ID 永久记入内部档案
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_01"));
-        // #tr Tooltip_LargeCropBreeder_02
-        // # Each input seed adds one pending target seed output request
-        // # zh_CN 每个输入种子都会增加一次目标种子输出请求
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_02"));
-        // #tr Tooltip_LargeCropBreeder_03
-        // # Deterministic mode runs the planned mutation chain when all parents are known
-        // # zh_CN 确定性模式会在亲本齐全时执行规划杂交链
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_03"));
-        // #tr Tooltip_LargeCropBreeder_04
-        // # Pool mode uses CropsNH mutation pools when the requested crop is in a reachable pool
-        // # zh_CN 池模式会使用 CropsNH 杂交池尝试可到达目标
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_04"));
-        // #tr Tooltip_LargeCropBreeder_05
-        // # Deterministic mutations use their CropsNH recipe EU/t and duration
-        // # zh_CN 确定性杂交使用 CropsNH 配方自身的 EU/t 与时长
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_05"));
-        // #tr Tooltip_LargeCropBreeder_06
-        // # The structure is fixed to steel casing, steel pipe casing, and steel frames
-        // # zh_CN 结构固定为钢机器外壳、钢级管道外壳和钢框架
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_06"));
         // #tr Tooltip_LargeCropBreeder_Controller
         // # Front center on the seed-bed layer
-        // # zh_CN 种床层正面中心
+        // # zh_CN 种床层正面中央
         String controller = StatCollector.translateToLocal("Tooltip_LargeCropBreeder_Controller");
         // #tr Tooltip_LargeCropBreeder_BorosilicateGlass
-        // # Borosilicate glass greenhouse wall
-        // # zh_CN 硼硅玻璃温室墙
+        // # Borosilicate Glass
+        // # zh_CN 硼硅玻璃
         String glass = StatCollector.translateToLocal("Tooltip_LargeCropBreeder_BorosilicateGlass");
         // #tr Tooltip_LargeCropBreeder_Casing
-        // # Steel machine casing
-        // # zh_CN 钢机器外壳
+        // # Solid Steel Machine Casing
+        // # zh_CN 坚实钢机械方块
         String casing = StatCollector.translateToLocal("Tooltip_LargeCropBreeder_Casing");
         // #tr Tooltip_LargeCropBreeder_SeedBed
-        // # Steel pipe casing seed bed
-        // # zh_CN 钢级管道外壳种床
+        // # Steel Pipe Casing
+        // # zh_CN 钢管机械方块
         String seedBed = StatCollector.translateToLocal("Tooltip_LargeCropBreeder_SeedBed");
-        tt.beginStructureBlock(5, 4, 3, false).addController(controller).addOtherStructurePart(glass, "A", 2)
-            .addInputBus("1+", casing, 1).addOutputBus("1+", casing, 1).addEnergyHatch("1+", casing, 1)
-            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1)
-            .addOtherStructurePart(seedBed, "C", 3).toolTipFinisher();
+        tt.addMachineType(getMachineType())
+            // #tr Tooltip_LargeCropBreeder_00
+            // # Breeds target crops from an archive of CropsNH seeds
+            // # zh_CN 利用 CropsNH 种子档案培育目标作物
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_00"))
+            .addStaticParallelInfo(MAX_ARCHIVE_STEPS_PER_CYCLE)
+            // #tr Tooltip_LargeCropBreeder_05
+            // # Planned mutations use recipe EU/t and duration; pool attempts use 32 EU/t for 20 seconds
+            // # zh_CN 确定性杂交采用配方耗电与耗时；池模式每次消耗 32 EU/t，耗时 20 秒
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_05")).addSeparator()
+            // #tr Tooltip_LargeCropBreeder_01
+            // # Input analyzed seeds to permanently unlock their crop types
+            // # zh_CN 投入已分析种子，永久解锁对应作物
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_01"))
+            // #tr Tooltip_LargeCropBreeder_02
+            // # Each input seed requests one target seed; set the target in the GUI
+            // # zh_CN 每投入一个种子，可输出一个目标种子；在 GUI 设置目标
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_02"))
+            // #tr Tooltip_LargeCropBreeder_03
+            // # Deterministic mode follows the planned chain when all parent crops are known
+            // # zh_CN 确定性模式在亲本齐全时执行规划的杂交链
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_03"))
+            // #tr Tooltip_LargeCropBreeder_04
+            // # Pool mode attempts the target through reachable CropsNH mutation pools
+            // # zh_CN 池模式通过可达的 CropsNH 杂交池尝试培育目标
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_04")).beginStructureBlock(5, 4, 3, false)
+            .addController(controller).addCasing("3+", casing, false).addCasing("4", glass, false)
+            .addCasing("4", seedBed, false)
+            // #tr Tooltip_LargeCropBreeder_06
+            // # 18 steel frames; casing and pipe tiers cannot be upgraded
+            // # zh_CN 18 个钢框架；外壳与管道固定为钢级，不能升级
+            .addStructureInfo(StatCollector.translateToLocal("Tooltip_LargeCropBreeder_06"))
+            .addEnergyHatch("1+", casing, 1).addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1)
+            .addInputBus("1+", casing, 1).addOutputBus("1+", casing, 1).toolTipFinisher();
         return tt;
     }
 

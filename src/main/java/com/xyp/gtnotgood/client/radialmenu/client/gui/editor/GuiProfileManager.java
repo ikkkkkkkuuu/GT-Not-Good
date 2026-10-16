@@ -83,8 +83,8 @@ public class GuiProfileManager extends UiScreen {
             // # zh_CN 启用
             "radialmenu.profiles.activate",
             // #tr radialmenu.profiles.activate.tip
-            // # Make the selected profile the one the wheel uses.
-            // # zh_CN 将选中的配置设为转盘当前使用的配置。
+            // # Use the selected profile
+            // # zh_CN 启用选中的配置方案
             "radialmenu.profiles.activate.tip", x, y, has && !isActive);
         y = addAction(ID_RULES,
             // #tr radialmenu.profiles.rules
@@ -92,8 +92,8 @@ public class GuiProfileManager extends UiScreen {
             // # zh_CN 自动绑定规则
             "radialmenu.profiles.rules",
             // #tr radialmenu.profiles.rules.tip
-            // # Conditions that switch to this profile on their own when you join a world.
-            // # zh_CN 加入世界时，根据条件自动切换到此配置。
+            // # Set when joining a server or world should activate this profile
+            // # zh_CN 设置进入服务器或世界时自动启用此配置方案的条件
             "radialmenu.profiles.rules.tip", x, y, has);
         y = addAction(ID_COLORS,
             // #tr radialmenu.profiles.colors
@@ -101,8 +101,8 @@ public class GuiProfileManager extends UiScreen {
             // # zh_CN 颜色
             "radialmenu.profiles.colors",
             // #tr radialmenu.profiles.colors.tip
-            // # Ring and highlight colors for every menu in this profile.
-            // # zh_CN 此配置中所有菜单的环形和高亮颜色。
+            // # Set ring and highlight colors for this profile
+            // # zh_CN 设置此配置方案的轮盘和高亮颜色
             "radialmenu.profiles.colors.tip", x, y, has);
         y += Ui.GAP;
         y = addAction(ID_NEW,
@@ -111,8 +111,8 @@ public class GuiProfileManager extends UiScreen {
             // # zh_CN 新建配置
             "radialmenu.profiles.new",
             // #tr radialmenu.profiles.new.tip
-            // # Create an empty profile.
-            // # zh_CN 创建一个空配置。
+            // # Create an empty profile
+            // # zh_CN 创建空白配置方案
             "radialmenu.profiles.new.tip", x, y, true);
         y = addAction(ID_RENAME,
             // #tr radialmenu.profiles.rename
@@ -120,8 +120,8 @@ public class GuiProfileManager extends UiScreen {
             // # zh_CN 重命名
             "radialmenu.profiles.rename",
             // #tr radialmenu.profiles.rename.tip
-            // # Rename the selected profile. Its file is renamed with it.
-            // # zh_CN 重命名选中的配置。对应文件也会一起重命名。
+            // # Rename this profile and its file
+            // # zh_CN 重命名此配置方案及其文件
             "radialmenu.profiles.rename.tip", x, y, has);
         y = addAction(ID_DUPLICATE,
             // #tr radialmenu.profiles.duplicate
@@ -129,8 +129,8 @@ public class GuiProfileManager extends UiScreen {
             // # zh_CN 复制
             "radialmenu.profiles.duplicate",
             // #tr radialmenu.profiles.duplicate.tip
-            // # Copy the selected profile, rules and all.
-            // # zh_CN 复制选中的配置，包括规则和全部内容。
+            // # Copy this profile, including its rules and entries
+            // # zh_CN 复制此配置方案，包含规则和全部条目
             "radialmenu.profiles.duplicate.tip", x, y, has);
         y = addAction(ID_BACKUPS,
             // #tr radialmenu.profiles.backups
@@ -138,14 +138,14 @@ public class GuiProfileManager extends UiScreen {
             // # zh_CN 备份...
             "radialmenu.profiles.backups",
             // #tr radialmenu.profiles.backups.tip
-            // # Earlier versions of this profile, kept each time a save changed something.
-            // # zh_CN 此配置的早期版本，每次保存修改时都会保留。
+            // # View versions backed up when changes were saved
+            // # zh_CN 查看保存修改时备份的历史版本
             "radialmenu.profiles.backups.tip", x, y, has);
         y += Ui.GAP;
         addAction(ID_DELETE, "radialmenu.profiles.delete",
             // #tr radialmenu.profiles.delete.tip
-            // # Delete the selected profile. Deleting the active one switches to another.
-            // # zh_CN 删除选中的配置。删除当前正在使用的配置后，会自动切换到其他配置。
+            // # Delete this profile. If active, another profile is selected automatically
+            // # zh_CN 删除此配置方案；若正在使用，则自动切换到其他方案
             "radialmenu.profiles.delete.tip", x, y, has);
 
         addBottomBar("gui.done", null, null);

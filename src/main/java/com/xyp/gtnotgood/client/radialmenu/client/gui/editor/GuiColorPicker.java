@@ -104,8 +104,8 @@ public class GuiColorPicker extends UiScreen {
             // # zh_CN 继承
             new GuiButton(ID_CLEAR, sideLeft, squareTop + 64, SIDE, Ui.ROW, I18n.format("radialmenu.color.inherit")));
         // #tr radialmenu.color.inherit.tip
-        // # Clear this color to inherit the profile or mod defaults.
-        // # zh_CN 清除此颜色，继承配置方案或模组默认值。
+        // # Clear this color to inherit the profile or mod default
+        // # zh_CN 清除此颜色，继承配置方案或模组默认颜色
         tooltip(ID_CLEAR, I18n.format("radialmenu.color.inherit.tip"));
 
         setContentHeight(SQUARE + Ui.GAP + 2 * (SWATCH + 2));

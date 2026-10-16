@@ -17,12 +17,16 @@ public final class ItemRequesterBlock extends ItemBlock {
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advanced) {
         // #tr tooltip.mestock.requester
-        // # Keeps five item/fluid targets in ME storage by automatically ordering missing resources.
-        // # zh_CN 自动下单补齐 ME 库存；可设置 5 种物品或流体。
+        // # Automatically crafts missing stock for up to 5 item or fluid targets.
+        // # zh_CN 自动合成短缺库存，最多设置 5 种物品或流体。
         lines.add(StatCollector.translateToLocal("tooltip.mestock.requester"));
+        // #tr tooltip.mestock.requester_configure
+        // # Right-click to set stock targets and batch sizes. Missing resources must be craftable.
+        // # zh_CN 右键设置目标库存与每单数量，短缺资源须有可用合成配方。
+        lines.add(StatCollector.translateToLocal("tooltip.mestock.requester_configure"));
         // #tr tooltip.mestock.requester_budget
-        // # Shared network scheduler; at most two calculations at once. One channel.
-        // # zh_CN 同网共享调度，每网最多同时计算两单；占用一个频道。
+        // # Uses one channel. Requesters share a limit of 2 recipe calculations per network.
+        // # zh_CN 占用一个频道，同网请求器最多同时进行 2 次配方计算。
         lines.add(StatCollector.translateToLocal("tooltip.mestock.requester_budget"));
     }
 }

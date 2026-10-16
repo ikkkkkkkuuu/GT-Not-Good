@@ -185,8 +185,8 @@ final class FieldControls {
     static String colorOffTip(String key) {
         String setting = switchFor(key);
         // #tr radialmenu.editor.colorOff.tip
-        // # %s is disabled in Wheel settings. This color is kept for later use.
-        // # zh_CN 轮盘设置中的 %s 已关闭。保留此颜色以便重新启用。
+        // # %s is disabled in Wheel settings. This color is kept until it is enabled again
+        // # zh_CN 轮盘设置中的 %s 已关闭；此颜色在重新启用后生效
         return setting == null ? null : I18n.format("radialmenu.editor.colorOff.tip", setting);
     }
 

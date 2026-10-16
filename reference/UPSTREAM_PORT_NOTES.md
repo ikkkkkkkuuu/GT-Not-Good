@@ -1000,6 +1000,22 @@ Reference checkouts remain outside build inputs.
   terms, are packaged under `META-INF/industrial-farm/`. Dependency source archives
   remain outside compilation and resource packaging.
 
+## JourneyMap context menu — 2026-10-16
+
+- Feature reference: peco331/journeymap-quick-teleport-GTNH, commit
+  `b50d0009717e11ce9c33e00cae0dce4e3561431b` (LGPL-3.0).
+  https://github.com/peco331/journeymap-quick-teleport-GTNH/tree/b50d0009717e11ce9c33e00cae0dce4e3561431b
+  Its README, source and license were inspected. This integration is independently
+  implemented; no source files or visual assets from that repository are incorporated.
+- Destinations: `client/journeymap/`, `utils/journeymap/JourneyMapCompat.java`
+  and `mixins/late/journeymap/FullscreenMenuMixin.java` under the main Java package.
+  The installed JourneyMap API is accessed at runtime, without bundling its classes.
+  The late mixin replaces the reference CoreMod transformer; native coordinate
+  projection, per-screen menu state, local landing checks, unloaded-terrain
+  confirmation, generated translations and optional client-only loading are local.
+- Baseline: GTNH 2.9.0-RC-1, JourneyMap 5.2.23-fairplay. Reference checkout remains
+  in an external temporary directory, outside compilation and resource packaging.
+
 ## ME output assembly overlays — 2026-10-15
 
 - Source: GTNewHorizons/GT5-Unofficial `5.09.54.183`, commit

@@ -120,12 +120,16 @@ public final class BlockLargeInterface extends FCBaseBlock {
 
     public static void addInterfaceInformation(List<String> lines) {
         // #tr tooltip.large_interface.patterns
-        // # 900 pattern slots; scroll through 9 columns
-        // # zh_CN 900 个样板槽，9 列滚动显示
+        // # Stores up to 900 patterns in a scrollable 9-column grid.
+        // # zh_CN 最多存放 900 张样板，以 9 列滚动显示。
         lines.add(StatCollector.translateToLocal("tooltip.large_interface.patterns"));
+        // #tr tooltip.large_interface.configure
+        // # Right-click to manage the interface's patterns.
+        // # zh_CN 右键管理接口中的样板。
+        lines.add(StatCollector.translateToLocal("tooltip.large_interface.configure"));
         // #tr tooltip.large_interface.return
-        // # Returns items and fluids to ME; no stocking configuration
-        // # zh_CN 物品与流体产物直接回 ME，不支持库存标记拉取
+        // # Returns item and fluid outputs to ME. Does not maintain marked stock.
+        // # zh_CN 将物品与流体产物送回 ME，不支持按标记补充库存。
         lines.add(StatCollector.translateToLocal("tooltip.large_interface.return"));
     }
 }

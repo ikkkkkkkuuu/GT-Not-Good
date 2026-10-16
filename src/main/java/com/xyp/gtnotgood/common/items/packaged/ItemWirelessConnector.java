@@ -103,19 +103,36 @@ public final class ItemWirelessConnector extends Item {
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advanced) {
+        // #tr tooltip.packaged.connector_info
+        // # Links a Wireless Packaged Pattern Provider to its machines.
+        // # zh_CN 将无线封包样板供应器连接至目标机器。
+        lines.add(StatCollector.translateToLocal("tooltip.packaged.connector_info"));
         // #tr tooltip.packaged.connector_select
-        // # Right click a Wireless Provider to select it.
-        // # zh_CN 普通右键无线供应器以选择。
+        // # Right-click a Wireless Packaged Pattern Provider to select it.
+        // # zh_CN 右键无线封包样板供应器，选中发射端。
         lines.add(StatCollector.translateToLocal("tooltip.packaged.connector_select"));
         // #tr tooltip.packaged.connector_bind
-        // # Shift + right click a target to connect; right click air to clear selection.
-        // # zh_CN Shift右键目标以连接；右键空气取消选择。
+        // # Shift-right-click a target machine to bind it.
+        // # zh_CN Shift 右键目标机器，完成绑定。
         lines.add(StatCollector.translateToLocal("tooltip.packaged.connector_bind"));
+        // #tr tooltip.packaged.connector_clear
+        // # Right-click air to clear the selection.
+        // # zh_CN 右键空气取消选择。
+        lines.add(StatCollector.translateToLocal("tooltip.packaged.connector_clear"));
+        // #tr tooltip.packaged.connector_dimension
+        // # The selected provider must be loaded in this dimension.
+        // # zh_CN 选中的供应器须在当前维度保持加载。
+        lines.add(StatCollector.translateToLocal("tooltip.packaged.connector_dimension"));
+        // #tr tooltip.packaged.connector_limit
+        // # Each provider supports up to %s distinct targets.
+        // # zh_CN 每个供应器最多连接 %s 个不同目标。
+        lines.add(StatCollector.translateToLocalFormatted("tooltip.packaged.connector_limit",
+            TilePackagedProvider.MAX_TARGETS));
         PackagedTarget selected = selection(stack);
         if (selected != null) {
             // #tr tooltip.packaged.connector_selection
-            // # Selected: dimension %s, %s / %s / %s
-            // # zh_CN 已选择：维度 %s，%s / %s / %s
+            // # Selected provider: dimension %s, %s / %s / %s
+            // # zh_CN 已选供应器：维度 %s，%s / %s / %s
             lines.add(StatCollector.translateToLocalFormatted("tooltip.packaged.connector_selection",
                 selected.dimension, selected.x, selected.y, selected.z));
         }

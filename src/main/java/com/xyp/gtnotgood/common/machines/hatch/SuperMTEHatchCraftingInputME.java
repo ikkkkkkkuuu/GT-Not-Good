@@ -1440,39 +1440,44 @@ public class SuperMTEHatchCraftingInputME extends MTEHatchInputBus
         // # zh_CN 机器类型：{\\YELLOW}CRIB{\\RESET}
         String type = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.type");
         // #tr tooltip.gtnotgood.crafting_input.item_input
-        // # Advanced item input for Multiblocks
-        // # zh_CN 多方块机器的高级物品输入舱
+        // # Supplies multiblocks with ingredients from ME crafting jobs
+        // # zh_CN 为多方块机器接收 ME 合成任务的配方原料
         String itemInput = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.item_input");
         // #tr tooltip.gtnotgood.crafting_input.tier
-        // # Hatch Tier: %s
-        // # zh_CN 舱室等级：%s
+        // # Hatch tier: %s
+        // # zh_CN 仓室等级：%s
         String tier = StatCollector.translateToLocalFormatted("tooltip.gtnotgood.crafting_input.tier",
             TIER_COLORS[supportFluids ? 10 : 6] + VN[supportFluids ? 10 : 6]);
         // #tr tooltip.gtnotgood.crafting_input.processes
-        // # Processes patterns directly from ME
-        // # zh_CN 直接处理来自ME网络的样板
+        // # Stores patterns and buffers their delivered ingredients separately
+        // # zh_CN 存放样板，并分别缓存各样板收到的原料
         String processes = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.processes");
         // #tr tooltip.gtnotgood.crafting_input.supports_fluids
-        // # It supports patterns including fluids
-        // # zh_CN 支持包含流体的样板
+        // # Supports fluid ingredients; use Ultimate Encoded Patterns for fluid recipes
+        // # zh_CN 支持流体原料；流体配方使用终极编码样板
         String supportsFluids = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.supports_fluids");
         // #tr tooltip.gtnotgood.crafting_input.no_fluids
-        // # It does not support patterns including fluids
-        // # zh_CN 不支持包含流体的样板
+        // # Item ingredients only; fluid patterns are not supported
+        // # zh_CN 仅接收物品原料，不支持流体样板
         String noFluids = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.no_fluids");
         // #tr tooltip.gtnotgood.crafting_input.connection
-        // # Change ME connection behavior by right-clicking with wire cutter
-        // # zh_CN 使用剪线钳右键点击可切换ME连接方式
+        // # Wire cutters: switch between front-only and all-side ME connections
+        // # zh_CN 剪线钳右键：切换仅正面或所有面的 ME 连接
         String connection = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.connection");
         // #tr tooltip.gtnotgood.crafting_input.ignores_hatches
-        // # Ignores the contents of other buses or hatches
-        // # zh_CN 不会使用其他总线或舱室中的物品
+        // # Pattern recipes do not draw ingredients from other input buses or hatches
+        // # zh_CN 样板配方不会使用其他输入总线或输入仓的原料
         String ignoresHatches = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.ignores_hatches");
         // #tr tooltip.gtnotgood.crafting_input.ignores_patterns
-        // # Also ignores other patterns within the same bus
-        // # zh_CN 同一总线内的不同样板也互不共用输入
+        // # Patterns keep separate ingredients; manual input slots are shared
+        // # zh_CN 不同样板的原料互不混用；手动物品槽由所有样板共用
         String ignoresPatterns = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input.ignores_patterns");
-        return PatternMEOutput.describe(new String[] { type, itemInput, tier, processes,
-            supportFluids ? supportsFluids : noFluids, connection, ignoresHatches, ignoresPatterns });
+        // #tr tooltip.gtnotgood.crafting_input.capacity
+        // # Pattern slots: %s; requires ME power and one channel
+        // # zh_CN 样板槽：%s 个；需要 ME 供电和一个频道
+        String capacity = StatCollector.translateToLocalFormatted("tooltip.gtnotgood.crafting_input.capacity",
+            getPatternCount());
+        return PatternMEOutput.describe(new String[] { type, itemInput, tier, processes, capacity,
+            supportFluids ? supportsFluids : noFluids, ignoresHatches, ignoresPatterns, connection });
     }
 }

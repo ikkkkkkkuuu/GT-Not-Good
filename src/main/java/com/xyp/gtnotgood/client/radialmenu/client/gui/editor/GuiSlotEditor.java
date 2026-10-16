@@ -141,8 +141,8 @@ public class GuiSlotEditor extends GuiActionEditor implements GuiIconPicker.Call
         this.buttonList.add(new GuiButton(ID_ICON, controlLeft + Ui.ROW + Ui.GAP, y, controlWidth - Ui.ROW - Ui.GAP,
             Ui.ROW, iconLabel()));
         // #tr radialmenu.editor.icon.tip
-        // # Pick an item, a bundled sprite, or your own PNG.
-        // # zh_CN 选择一个物品、内置精灵图或你自己的 PNG 文件。
+        // # Choose an item icon, a built-in sprite or a custom PNG
+        // # zh_CN 选择物品图标、内置精灵图或自定义 PNG
         tooltip(ID_ICON, describe("radialmenu.editor.icon.tip"));
         y += Ui.STEP;
 
@@ -152,8 +152,8 @@ public class GuiSlotEditor extends GuiActionEditor implements GuiIconPicker.Call
             // # zh_CN 保持菜单打开
             I18n.format("radialmenu.editor.keepOpen"), draft.keepOpen));
         // #tr radialmenu.editor.keepOpen.tip
-        // # Leave the wheel open after this entry fires, so it can be triggered again.
-        // # zh_CN 执行此条目后保持转盘打开，以便再次触发。
+        // # Keep the wheel open after running this action
+        // # zh_CN 执行此动作后保持轮盘打开
         tooltip(ID_KEEP_OPEN, describe("radialmenu.editor.keepOpen.tip"));
         y += Ui.STEP + Ui.GAP;
 
@@ -170,8 +170,8 @@ public class GuiSlotEditor extends GuiActionEditor implements GuiIconPicker.Call
                 // # zh_CN 条目 (%d)...
                 I18n.format("radialmenu.editor.entries", Integer.valueOf(draft.filledCount()))));
             // #tr radialmenu.editor.entries.tip
-            // # Save this slot, then reorder, copy, delete or move its submenu entries.
-            // # zh_CN 先保存此槽位，再对子菜单条目排序、复制、删除或移动。
+            // # Save this slot, then arrange, copy, remove or move its submenu entries
+            // # zh_CN 先保存此槽位，再调整、复制、删除或移动子菜单条目
             tooltip(ID_ENTRIES, describe("radialmenu.editor.entries.tip"));
             y += Ui.STEP;
         }

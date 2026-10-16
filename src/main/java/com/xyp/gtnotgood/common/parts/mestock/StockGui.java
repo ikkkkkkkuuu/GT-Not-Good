@@ -139,7 +139,8 @@ final class StockGui {
             }).setEnabledIf(w -> hasRedstone.getBoolValue()));
         panel.child(toolbarPosition(
             toolbar(sync, "schedule", data, -18, 23, () -> StockGuiAssets.icon(scheduling.getIntValue() * 16, 240),
-                () -> new String[] { "Default", "Round robin", "Random" }[scheduling.getIntValue()],
+                () -> new StockText[] { StockText.SchedulingDefault, StockText.SchedulingRoundRobin,
+                    StockText.SchedulingRandom }[scheduling.getIntValue()].text(),
                 mouse -> bus.getConfigManager().putSetting(Settings.SCHEDULING_MODE,
                     SchedulingMode.values()[(scheduling.getIntValue() + 1) % 3])),
             hasRedstone, 23, 1));

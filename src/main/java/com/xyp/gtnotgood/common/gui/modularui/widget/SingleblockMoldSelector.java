@@ -94,12 +94,20 @@ public final class SingleblockMoldSelector {
             }
         }.size(18).background(GTGuiTextures.SLOT_ITEM_STANDARD, GTGuiTextures.OVERLAY_SLOT_MOLD)
             // #tr gtng.singleblock.mold.help
-            // # Shift+click: select; scroll: cycle; Shift+right-click: clear
-            // # zh_CN Shift+左键选择；滚轮切换；Shift+右键清空
+            // # Shift+left-click to select a mold
+            // # zh_CN Shift+左键选择模具
             .addTooltipLine(IKey.lang("gtng.singleblock.mold.help"))
+            // #tr gtng.singleblock.mold.cycle
+            // # Scroll or click to cycle molds
+            // # zh_CN 滚动滚轮或点击切换模具
+            .addTooltipLine(IKey.lang("gtng.singleblock.mold.cycle"))
+            // #tr gtng.singleblock.mold.clear
+            // # Shift+right-click to clear the selection
+            // # zh_CN Shift+右键清空模具
+            .addTooltipLine(IKey.lang("gtng.singleblock.mold.clear"))
             // #tr gtng.singleblock.mold.idle
-            // # Changes require an idle machine with empty inputs.
-            // # zh_CN 机器停止且输入清空后可更换模具。
+            // # Stop the machine and empty its inputs before changing molds
+            // # zh_CN 更换模具前，需停止机器并清空输入
             .addTooltipLine(IKey.lang("gtng.singleblock.mold.idle"));
     }
 }

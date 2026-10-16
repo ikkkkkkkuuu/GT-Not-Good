@@ -20,8 +20,8 @@ public final class SteamChemicalReactor extends SteamProcessingMachine {
 
     private static String description() {
         // #tr tooltip.steam_chemical_reactor.description
-        // # Cell-free chemical reactions powered by steam
-        // # zh_CN 无需流体单元的蒸汽化学反应
+        // # Runs chemical reactions using steam; no fluid cells needed
+        // # zh_CN 使用蒸汽进行化学反应，无需流体单元
         return StatCollector.translateToLocal("tooltip.steam_chemical_reactor.description");
     }
 

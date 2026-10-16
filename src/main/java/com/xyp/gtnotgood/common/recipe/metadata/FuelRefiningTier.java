@@ -19,8 +19,8 @@ public final class FuelRefiningTier extends RecipeMetadataKey<Integer> {
     @Override
     public void drawInfo(RecipeDisplayInfo info, Object value) {
         // #tr gtng.chemical.recipe.refining_tier
-        // # Refining Core Tier: %s
-        // # zh_CN 精炼核心等级：%s
+        // # Field Restriction Coil Tier: %s
+        // # zh_CN 力场约束线圈等级：%s
         info.drawText(StatCollector.translateToLocalFormatted("gtng.chemical.recipe.refining_tier", cast(value, 0)));
     }
 }

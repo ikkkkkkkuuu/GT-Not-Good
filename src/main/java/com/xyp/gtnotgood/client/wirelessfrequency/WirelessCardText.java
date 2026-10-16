@@ -284,8 +284,8 @@ final class WirelessCardText {
             // # zh_CN 合成输入代理连线
             case "visualisation.proxy" -> "gtnotgood.wireless.gui.visualisation.proxy";
             // #tr gtnotgood.wireless.gui.visualisation_hint
-            // # Hold or wear the card to view the network. Switch views here or by hotkey.
-            // # zh_CN 手持或佩戴此卡查看网络；可在此处或用快捷键切换视图。
+            // # Hold or wear the card to view the network. Change views here or with the hotkey.
+            // # zh_CN 手持或佩戴此卡查看网络，在此处或用快捷键切换视图。
             case "visualisation_hint" -> "gtnotgood.wireless.gui.visualisation_hint";
             // #tr gtnotgood.wireless.gui.refresh
             // # Refresh

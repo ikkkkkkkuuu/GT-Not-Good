@@ -310,6 +310,10 @@ public class WirelessFrequencyCard extends GTNGItem implements IBaubleExpanded, 
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+        // #tr item.gtnotgood.wireless_frequency_card.purpose
+        // # Connects ME device clusters to a selected controller network wirelessly.
+        // # zh_CN 将 ME 设备簇无线接入选中的控制器网络。
+        tooltip.add(GRAY + StatCollector.translateToLocal("item.gtnotgood.wireless_frequency_card.purpose"));
         boolean automatic = WirelessCardBinding.automatic(stack.getTagCompound());
         tooltip.add((automatic ? GREEN : GRAY)
             + StatCollector.translateToLocal(WirelessCardItemText.key(automatic ? "auto_on" : "auto_off")));
@@ -326,8 +330,8 @@ public class WirelessFrequencyCard extends GTNGItem implements IBaubleExpanded, 
                 : binding.ownerName()));
         int mode = WirelessCardVisualisation.mode(stack.getTagCompound());
         // #tr item.gtnotgood.wireless_frequency_card.source_count
-        // # Saved sources: %s. Click the source line in the manager to switch.
-        // # zh_CN 已保存发射源：%s；点击管理界面左上角的发射源切换。
+        // # Saved sources: %s. Click the source entry in the manager to switch.
+        // # zh_CN 已保存发射源：%s；点击管理界面的发射源条目切换。
         tooltip
             .add(GRAY + StatCollector.translateToLocalFormatted("item.gtnotgood.wireless_frequency_card.source_count",
                 WirelessCardBinding.sources(stack.getTagCompound()).size()));
@@ -345,8 +349,8 @@ public class WirelessFrequencyCard extends GTNGItem implements IBaubleExpanded, 
             tooltip.add(GRAY + StatCollector.translateToLocal(WirelessCardItemText.key("tooltip.2")));
             tooltip.add(GRAY + StatCollector.translateToLocal(WirelessCardItemText.key("visualisation_scroll_hint")));
             // #tr gtnotgood.wireless.gui.visualisation_hint
-            // # Hold or wear the card to view the network. Switch views here or by hotkey.
-            // # zh_CN 手持或佩戴此卡查看网络；可在此处或用快捷键切换视图。
+            // # Hold or wear the card to view the network. Change views here or with the hotkey.
+            // # zh_CN 手持或佩戴此卡查看网络，在此处或用快捷键切换视图。
             tooltip.add(GRAY + StatCollector.translateToLocal("gtnotgood.wireless.gui.visualisation_hint"));
         } else tooltip.add(YELLOW + StatCollector.translateToLocal(WirelessCardItemText.key("more_hint")));
     }

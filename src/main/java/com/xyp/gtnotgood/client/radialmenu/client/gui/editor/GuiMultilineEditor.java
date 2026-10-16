@@ -142,8 +142,8 @@ public class GuiMultilineEditor extends UiScreen {
         this.buttonList.add(add);
         markFooter(ID_ADD);
         // #tr radialmenu.lines.add.tip
-        // # Add a line at the end. Enter adds one after the line you are typing.
-        // # zh_CN 在末尾添加一行。输入时按 Enter 会在当前行后添加新行。
+        // # Append a line. Enter inserts a line after the current one
+        // # zh_CN 在末尾添加一行；Enter 在当前行后插入新行
         tooltip(ID_ADD, I18n.format("radialmenu.lines.add.tip"));
 
         addBottomBar("gui.done", null, "gui.cancel");

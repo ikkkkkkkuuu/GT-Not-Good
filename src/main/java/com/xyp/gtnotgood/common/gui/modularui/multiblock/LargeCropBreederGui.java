@@ -112,8 +112,8 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
         CropSeedDropTextField input = new CropSeedDropTextField();
         input.value(draftSync).size(94, 14).background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
             // #tr gui.gtnotgood.crop_breeder.target.tooltip
-            // # Input the target crop id or name, or drag a CropsNH seed from NEI
-            // # zh_CN 输入目标作物 ID 或名称，或从 NEI 拖入 CropsNH 种子
+            // # Enter a crop name or ID, or drag a CropsNH seed from NEI
+            // # zh_CN 输入作物名称或 ID，或从 NEI 拖入 CropsNH 种子
             .tooltipBuilder(t -> t.addLine(translateToLocal("gui.gtnotgood.crop_breeder.target.tooltip")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
 
@@ -126,8 +126,8 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
                 () -> validSync.getBoolValue() ? EnumChatFormatting.GREEN + "OK" : EnumChatFormatting.RED + "!"))
             .syncHandler(applySync)
             // #tr gui.gtnotgood.crop_breeder.apply
-            // # Apply target
-            // # zh_CN 应用目标
+            // # Set breeding target
+            // # zh_CN 设置繁育目标
             .tooltipBuilder(t -> t.addLine(IKey.lang("gui.gtnotgood.crop_breeder.apply")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
 
@@ -149,8 +149,8 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
                 return true;
             })
             // #tr gui.gtnotgood.crop_breeder.view_chain
-            // # View breeding plan
-            // # zh_CN 查看繁育计划
+            // # View mutation chain and progress
+            // # zh_CN 查看杂交链与进度
             .tooltipBuilder(t -> t.addLine(IKey.lang("gui.gtnotgood.crop_breeder.view_chain")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
 
@@ -179,8 +179,8 @@ public class LargeCropBreederGui extends GTNGModernMultiBlockBaseGui<LargeCropBr
                 return true;
             })
             // #tr gui.gtnotgood.crop_breeder.view_archive
-            // # View crop archive
-            // # zh_CN 查看作物档案
+            // # View unlocked crop types
+            // # zh_CN 查看已解锁作物
             .tooltipBuilder(t -> t.addLine(IKey.lang("gui.gtnotgood.crop_breeder.view_archive")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
     }

@@ -118,8 +118,8 @@ public class LargeBeeBreederGui extends GTNGModernMultiBlockBaseGui<LargeBeeBree
         input.value(draftSync);
         input.size(96, 14);
         // #tr gt.blockmachines.multimachine.bee.species.tooltip
-        // # Input the target bee species name, or drag a bee from NEI
-        // # zh_CN 输入目标蜜蜂品种名称，或从NEI拖入蜜蜂
+        // # Enter a target bee species, or drag a bee from NEI
+        // # zh_CN 输入目标蜂种名称，或从 NEI 拖入蜜蜂
         input.tooltipBuilder(t -> t.addLine(translateToLocal("gt.blockmachines.multimachine.bee.species.tooltip")));
         ButtonWidget applyButton = new ButtonWidget<>().size(20, 18).background(new DynamicDrawable(
             () -> validSync.getBoolValue() && Objects.equals(draftSync.getStringValue(), targetSync.getStringValue())
@@ -130,8 +130,8 @@ public class LargeBeeBreederGui extends GTNGModernMultiBlockBaseGui<LargeBeeBree
                 () -> validSync.getBoolValue() ? EnumChatFormatting.GREEN + "\u2713" : EnumChatFormatting.RED + "!"))
             .syncHandler(applySync)
             // #tr gui.gtnotgood.bee_breeder.apply
-            // # Apply target
-            // # zh_CN 应用目标
+            // # Set breeding target
+            // # zh_CN 设置繁育目标
             .tooltipBuilder(t -> t.addLine(IKey.lang("gui.gtnotgood.bee_breeder.apply")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
         IPanelHandler chainPanel = syncManager.syncedPanel("chainPanel", false,
@@ -153,8 +153,8 @@ public class LargeBeeBreederGui extends GTNGModernMultiBlockBaseGui<LargeBeeBree
                 return true;
             })
             // #tr gui.gtnotgood.bee_breeder.view_chain
-            // # View breeding plan
-            // # zh_CN 查看繁育计划
+            // # View mutation chain and progress
+            // # zh_CN 查看杂交链与进度
             .tooltipBuilder(t -> t.addLine(IKey.lang("gui.gtnotgood.bee_breeder.view_chain")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
         return Flow.row().fullWidth().height(20).paddingLeft(5).paddingRight(5).marginTop(4).marginBottom(2)
@@ -202,8 +202,8 @@ public class LargeBeeBreederGui extends GTNGModernMultiBlockBaseGui<LargeBeeBree
                 return true;
             })
             // #tr gui.gtnotgood.bee_breeder.view_archive
-            // # View species archive
-            // # zh_CN 查看物种档案
+            // # View unlocked bee species
+            // # zh_CN 查看已解锁蜂种
             .tooltipBuilder(t -> t.addLine(IKey.lang("gui.gtnotgood.bee_breeder.view_archive")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
     }

@@ -22,6 +22,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -1128,14 +1129,33 @@ public class IntegratedProductionFactory extends GTNGCleanWirelessMultiMachineBa
 
     @Override
     protected MultiblockTooltipBuilder createTooltip() {
-        return new MultiblockTooltipBuilder().addMachineType(FactoryText.Name.text())
-            .addInfo(FactoryText.PowerHelp.text()).addInfo(FactoryText.GraphHelp.text())
-            .addInfo(FactoryText.Host.text()).addInfo(FactoryText.Reserved.text())
+        MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
+        tt.addMachineType(FactoryText.Name.text()).addInfo(FactoryText.FunctionHelp.text())
+            .addInfo(FactoryText.GraphHelp.text()).addPerfectOCInfo().addInfo(FactoryText.PowerHelp.text())
+            .addSeparator().addInfo(FactoryText.HostHelp.text()).addInfo(FactoryText.Reserved.text())
             .addInfo(FactoryText.SafetyHelp.text()).addInfo(FactoryText.RecipeHelp.text())
-            .beginStructureBlock(3, 3, 3, true).addController("Front center")
-            .addCasing("25+", "Robust Tungstensteel Machine Casing", false).addInputBus("0+", "Any casing", 1)
-            .addInputHatch("0+", "Any casing", 1).addOutputBus("0+", "Any casing", 1)
-            .addOutputHatch("0+", "Any casing", 1).toolTipFinisher();
+            .beginStructureBlock(3, 3, 3, true)
+            // #tr factory.gtnotgood.tooltip.controller
+            // # Front center, second layer
+            // # zh_CN 正面中央，第 2 层
+            .addController(StatCollector.translateToLocal("factory.gtnotgood.tooltip.controller"))
+            // #tr factory.gtnotgood.tooltip.casing
+            // # 25 outer positions: Robust Tungstensteel Machine Casing or hatches
+            // # zh_CN 25 个外壳位置可使用坚固钨钢机械方块或仓室
+            .addStructureInfo(StatCollector.translateToLocal("factory.gtnotgood.tooltip.casing"))
+            // #tr factory.gtnotgood.tooltip.hatch
+            // # Any outer casing
+            // # zh_CN 任意外围机械方块
+            .addEnergyHatch("0+", StatCollector.translateToLocal("factory.gtnotgood.tooltip.hatch"), 1)
+            .addInputBus("0+", StatCollector.translateToLocal("factory.gtnotgood.tooltip.hatch"), 1)
+            .addInputHatch("0+", StatCollector.translateToLocal("factory.gtnotgood.tooltip.hatch"), 1)
+            .addOutputBus("0+", StatCollector.translateToLocal("factory.gtnotgood.tooltip.hatch"), 1)
+            .addOutputHatch("0+", StatCollector.translateToLocal("factory.gtnotgood.tooltip.hatch"), 1)
+            // #tr factory.gtnotgood.tooltip.output
+            // # At least one output bus or output hatch is required
+            // # zh_CN 至少安装 1 个输出总线或输出仓
+            .addStructureFooter(StatCollector.translateToLocal("factory.gtnotgood.tooltip.output")).toolTipFinisher();
+        return tt;
     }
 
     @Override

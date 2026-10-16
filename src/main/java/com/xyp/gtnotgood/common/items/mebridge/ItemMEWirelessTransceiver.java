@@ -170,6 +170,10 @@ public final class ItemMEWirelessTransceiver extends Item implements IGuiHolder<
     @SideOnly(Side.CLIENT)
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addInformation(ItemStack stack, EntityPlayer player, List tooltip, boolean advanced) {
+        // #tr tooltip.me_wireless_transceiver.purpose
+        // # Connects an ME device to an ME Bridge Sender's network.
+        // # zh_CN 将 ME 设备接入网桥发起端所在的网络。
+        tooltip.add(StatCollector.translateToLocal("tooltip.me_wireless_transceiver.purpose"));
         String channel = getSelectedChannel(stack);
         // #tr tooltip.me_wireless_transceiver.channel
         // # Selected channel: %s
@@ -177,16 +181,16 @@ public final class ItemMEWirelessTransceiver extends Item implements IGuiHolder<
         tooltip.add(EnumChatFormatting.AQUA + StatCollector
             .translateToLocalFormatted("tooltip.me_wireless_transceiver.channel", channel.isEmpty() ? "-" : channel));
         // #tr tooltip.me_wireless_transceiver.open
-        // # Right-click air: open channel directory
-        // # zh_CN 右键空气：打开频道目录
+        // # Right-click air to select a sender channel.
+        // # zh_CN 右键空气，选择发起端频道。
         tooltip.add(EnumChatFormatting.GRAY + StatCollector.translateToLocal("tooltip.me_wireless_transceiver.open"));
         // #tr tooltip.me_wireless_transceiver.bind
-        // # Shift + right-click an ME node: bind, switch, or disconnect
-        // # zh_CN Shift + 右键 ME 节点：绑定、切换或断开
+        // # Shift-right-click an ME node to connect, change channels or disconnect.
+        // # zh_CN Shift 右键 ME 节点，连接、切换频道或断开。
         tooltip.add(EnumChatFormatting.GRAY + StatCollector.translateToLocal("tooltip.me_wireless_transceiver.bind"));
         // #tr tooltip.me_wireless_transceiver.inspect
-        // # Right-click an ME node: inspect its wireless link
-        // # zh_CN 右键 ME 节点：查看无线连接
+        // # Right-click an ME node to inspect its wireless connection.
+        // # zh_CN 右键 ME 节点，查看无线连接。
         tooltip
             .add(EnumChatFormatting.GRAY + StatCollector.translateToLocal("tooltip.me_wireless_transceiver.inspect"));
     }

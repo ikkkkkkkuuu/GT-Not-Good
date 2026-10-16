@@ -178,18 +178,29 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
     public MultiblockTooltipBuilder createTooltip() {
         MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
         // #tr gtng.QuantumComputer.name
-        // # QuantumComputer
+        // # Quantum Computer
         // # zh_CN 量子计算机
         tt.addMachineType(StatCollector.translateToLocal("gtng.QuantumComputer.name"))
+            // #tr gtng.QuantumComputer.function
+            // # Allocates AE crafting CPUs as jobs are submitted
+            // # zh_CN 按合成任务动态分配 AE 合成 CPU
+            .addInfo(StatCollector.translateToLocal("gtng.QuantumComputer.function"))
             // #tr gtng.QuantumComputer.maximum
-            // # Singularity storage and maximum coprocessors; dynamic crafting CPUs
-            // # zh_CN 奇点容量、最高协处理器数量，动态分配合成CPU
+            // # Maximum crafting storage and coprocessor count
+            // # zh_CN 提供最高合成存储容量与协处理器数量
             .addInfo(StatCollector.translateToLocal("gtng.QuantumComputer.maximum"))
             // #tr gtng.QuantumComputer.free
-            // # No upgrades, EU or AE crafting energy required
-            // # zh_CN 无需升级，不消耗EU或AE合成能量
+            // # Requires no upgrades, EU or AE crafting energy
+            // # zh_CN 无需升级，不消耗 EU 或 AE 合成能量
             .addInfo(StatCollector.translateToLocal("gtng.QuantumComputer.free")).beginStructureBlock(3, 2, 1, false)
-            .toolTipFinisher();
+            // #tr gtng.QuantumComputer.controller
+            // # Front bottom center
+            // # zh_CN 正面底部中央
+            .addController(StatCollector.translateToLocal("gtng.QuantumComputer.controller"))
+            // #tr gtng.QuantumComputer.casing
+            // # Solid Steel Machine Casing
+            // # zh_CN 坚实钢机械方块
+            .addCasing("5", StatCollector.translateToLocal("gtng.QuantumComputer.casing"), false).toolTipFinisher();
         return tt;
     }
 

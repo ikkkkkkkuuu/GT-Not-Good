@@ -130,8 +130,8 @@ public class AssemblerMatrixGui extends GTNGModernMultiBlockBaseGui<AssemblerMat
                 return true;
             })
             // #tr gtng.compact.machine.assembler_matrix.info.1
-            // # Pattern Multiplier Control Panel
-            // # zh_CN 样板倍率控制面板
+            // # Pattern Multipliers
+            // # zh_CN 样板倍率
             .tooltipBuilder(tooltip -> tooltip.addLine(IKey.lang("gtng.compact.machine.assembler_matrix.info.1")))
             .tooltipShowUpTimer(TOOLTIP_DELAY);
     }
@@ -174,8 +174,8 @@ public class AssemblerMatrixGui extends GTNGModernMultiBlockBaseGui<AssemblerMat
         return new TextFieldWidget().value(customNameSyncer).setTextAlignment(Alignment.Center)
             .setTextColor(Color.WHITE.main).background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
             // #tr gtng.compact.machine.assembler_matrix.info.3
-            // # Set Assembler Matrix custom name
-            // # zh_CN 设置装配矩阵自定义名称
+            // # Rename this Assembler Matrix
+            // # zh_CN 重命名装配矩阵
             .tooltipBuilder(tooltip -> tooltip.addLine(IKey.lang("gtng.compact.machine.assembler_matrix.info.3")))
             .tooltipShowUpTimer(TOOLTIP_DELAY).size(126, 18);
     }
@@ -189,8 +189,8 @@ public class AssemblerMatrixGui extends GTNGModernMultiBlockBaseGui<AssemblerMat
         panel.child(ButtonWidget.panelCloseButton());
         panel.child(IKey.str(
             // #tr gtng.compact.machine.assembler_matrix.info.1
-            // # Pattern Multiplier Control Panel
-            // # zh_CN 样板倍率控制面板
+            // # Pattern Multipliers
+            // # zh_CN 样板倍率
             EnumChatFormatting.UNDERLINE
                 + StatCollector.translateToLocal("gtng.compact.machine.assembler_matrix.info.1"))
             .asWidget().pos(0, 2).size(100, 18).textAlign(Alignment.Center));

@@ -65,28 +65,28 @@ public final class UniversalFluidPump extends MTEBasicMachine {
     private static String[] description() {
         return new String[] {
             // #tr gtng.pump.area
-            // # No mining pipes; scans 129 x 129 blocks below the pump
-            // # zh_CN 无需采矿管；向下扫描 129×129 格范围
+            // # Pumps fluids below the machine within a 129 x 129 block area
+            // # zh_CN 抽取机器下方 129×129 格范围内的流体
             StatCollector.translateToLocal("gtng.pump.area"),
             // #tr gtng.pump.search
-            // # Checks below first, then follows connected fluid downward before scanning the remaining area
-            // # zh_CN 先检查正下方，优先沿连通流体向下抽取，再扫描其余区域
+            // # Starts directly below, then follows connected fluid before searching the rest of the area
+            // # zh_CN 先抽正下方，再沿连通流体抽取，最后搜索其余区域
             StatCollector.translateToLocal("gtng.pump.search"),
             // #tr gtng.pump.speed
-            // # Up to 512 blocks/tick, 8 EU/block (4096 EU/t at full speed)
-            // # zh_CN 最多 512 方块/tick，每方块 8 EU（满速 4096 EU/t）
+            // # 8 EU/block; up to 512 blocks/t (4,096 EU/t at 128 A LV)
+            // # zh_CN 每方块消耗 8 EU；最高 512 方块/t（LV 128 A，4,096 EU/t）
             StatCollector.translateToLocal("gtng.pump.speed"),
             // #tr gtng.pump.fluids
-            // # Drains water, lava (including Nether lava), and drainable Forge fluid blocks
-            // # zh_CN 实际抽走水、岩浆（含下界）及可抽取的 Forge 流体方块
+            // # No mining pipes; drains water, lava (including the Nether) and other drainable fluids
+            // # zh_CN 无需采矿管；可抽取水、岩浆（含下界）及其他可抽取的流体
             StatCollector.translateToLocal("gtng.pump.fluids"),
             // #tr gtng.pump.output
-            // # Buffer: 16,000 buckets; auto-output: up to 512 buckets/tick
-            // # zh_CN 缓存 16000 桶；自动输出最高 512 桶/tick
+            // # Fluid capacity: 16,000,000 L; automatic output: up to 512,000 L/t
+            // # zh_CN 流体容量：16,000,000 L；自动输出最高 512,000 L/t
             StatCollector.translateToLocal("gtng.pump.output"),
             // #tr gtng.pump.safety
-            // # Loaded chunks only; pauses when full or when changing buffered fluid
-            // # zh_CN 仅扫描已加载区块；缓存满或切换流体时等待输出
+            // # Loaded chunks only; waits for output space before collecting another fluid
+            // # zh_CN 仅抽取已加载区块；缓存满或切换流体时等待输出
             StatCollector.translateToLocal("gtng.pump.safety") };
     }
 

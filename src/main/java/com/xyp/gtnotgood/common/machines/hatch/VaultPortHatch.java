@@ -63,9 +63,13 @@ public class VaultPortHatch extends MTEHatch
     public VaultPortHatch(int aID, String aName, String aNameRegional) {
         super(aID, aName, aNameRegional, 3, 0, new String[] {
             // #tr Tooltip_VaultPortHatch_00
-            // # All-in-one access for the Vault
-            // # zh_CN 保险库的一站式访问节点
-            StatCollector.translateToLocal("Tooltip_VaultPortHatch_00") });
+            // # Lets the ME network insert and extract items and fluids stored in the vault
+            // # zh_CN 供 ME 网络存入和取出保险库中的物品与流体
+            StatCollector.translateToLocal("Tooltip_VaultPortHatch_00"),
+            // #tr tooltip.vault_port.network
+            // # Connect ME on any side; requires a formed vault, ME power and one channel
+            // # zh_CN 可从任意面连接 ME；需要保险库成型、ME 供电和一个频道
+            StatCollector.translateToLocal("tooltip.vault_port.network") });
     }
 
     public VaultPortHatch(String aName, int aTier, String[] aDescription, ITexture[][][] aTextures) {

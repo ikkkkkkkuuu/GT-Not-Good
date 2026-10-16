@@ -43,6 +43,7 @@ public class Config {
     /** Hides this client's Windows taskbar button after its window opens. */
     public static boolean hideWindowsTaskbarButton = false;
     public static String quickTerminalButtonTheme = "dark";
+    public static boolean enableJourneyMapContextMenu = true;
     public static boolean enableAlwaysDisplayRecipeOwner = true;
     public static boolean enableAlwaysDisplayWailaAverageNS = true;
     public static boolean enableAlwaysDisplayNEIOriginalVoltage = true;
@@ -162,6 +163,10 @@ public class Config {
             "开启后在 Windows 上隐藏本客户端的任务栏按钮；游戏窗口仍可正常使用。默认关闭，可在游戏内设置中即时切换。").getBoolean(false);
         quickTerminalButtonTheme = configuration.getString("quickTerminalButtonTheme", CATEGORY_CLIENT,
             quickTerminalButtonTheme, "无线二合一接口终端按钮主题：dark 深色、light 浅色、auto 跟随 AE2 资源包。");
+        enableJourneyMapContextMenu = configuration
+            .get("JourneyMap", "enableContextMenu", true,
+                "JourneyMap 全屏地图右键菜单；传送仍需 /tp 权限。未加载地形需确认高度，未安装 JourneyMap 时不启用。重启生效。")
+            .setRequiresMcRestart(true).getBoolean(true);
         configuration.addCustomCategoryComment(CATEGORY_CUT_CORNERS, "配方提速配置");
         configuration.addCustomCategoryComment(CATEGORY_CROPSNH, "CropsNH 作物配置");
         configuration.addCustomCategoryComment(CATEGORY_FORESTRY, "Forestry 蜜蜂杂交配置");

@@ -91,6 +91,10 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> toolTip,
         boolean advancedToolTips) {
+        // #tr Tooltip_VeinMiningPickaxe_Use
+        // # Hold Shift while mining to break matching blocks in the vein.
+        // # zh_CN 按住 Shift 挖掘，连锁开采矿脉中符合条件的方块。
+        toolTip.add(StatCollector.translateToLocal("Tooltip_VeinMiningPickaxe_Use"));
         NBTTagCompound tags = itemStack.getTagCompound();
         int range = 3;
         int amount = 327670;
@@ -109,33 +113,41 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
         }
 
         // #tr Tooltip_VeinMiningPickaxe_00
-        // # Range: %d
-        // # zh_CN 范围: %d
+        // # Maximum gap between matching blocks: %d
+        // # zh_CN 符合条件的方块之间最大间隔：%d 格
         toolTip.add(StatCollector.translateToLocalFormatted("Tooltip_VeinMiningPickaxe_00", range));
 
         // #tr Tooltip_VeinMiningPickaxe_01
-        // # Amount: %d
-        // # zh_CN 数量: %d
+        // # Maximum blocks per vein: %d
+        // # zh_CN 单次连锁挖掘上限：%d 个方块
         toolTip.add(StatCollector.translateToLocalFormatted("Tooltip_VeinMiningPickaxe_01", amount));
 
         // #tr Tooltip_VeinMiningPickaxe_Backfill
-        // # Mined ores are automatically replaced with stone
-        // # zh_CN 挖掘矿石后自动用石头回填
+        // # Mined ores are replaced with stone.
+        // # zh_CN 挖掘矿石后自动用石头回填。
         toolTip.add(StatCollector.translateToLocal("Tooltip_VeinMiningPickaxe_Backfill"));
 
         // #tr Tooltip_VeinMiningPickaxe_PreciseMode_On
-        // # §aPrecise Mode: ON
-        // # zh_CN §a精确模式: 开启
+        // # §aPrecise matching: ON
+        // # zh_CN §a精确匹配：开启
         // #tr Tooltip_VeinMiningPickaxe_PreciseMode_Off
-        // # §cPrecise Mode: OFF
-        // # zh_CN §c精确模式: 关闭
+        // # §cPrecise matching: OFF
+        // # zh_CN §c精确匹配：关闭
         toolTip.add(StatCollector.translateToLocal(
             preciseMode ? "Tooltip_VeinMiningPickaxe_PreciseMode_On" : "Tooltip_VeinMiningPickaxe_PreciseMode_Off"));
 
         // #tr Tooltip_VeinMiningPickaxe_ShiftScroll
-        // # §7Hold §eShift§7 + §eScroll§7 to adjust range
-        // # zh_CN §7按住§eShift§7 + §e滚轮§7调整范围
+        // # §7Shift-scroll to change the maximum gap.
+        // # zh_CN §7Shift 滚轮调整最大间隔。
         toolTip.add(StatCollector.translateToLocal("Tooltip_VeinMiningPickaxe_ShiftScroll"));
+        // #tr Tooltip_VeinMiningPickaxe_Toggle
+        // # Shift-right-click to toggle precise matching.
+        // # zh_CN Shift 右键切换精确匹配。
+        toolTip.add(StatCollector.translateToLocal("Tooltip_VeinMiningPickaxe_Toggle"));
+        // #tr Tooltip_VeinMiningPickaxe_Cost
+        // # Vein mining consumes hunger and durability. Unloaded chunks are skipped.
+        // # zh_CN 连锁挖掘消耗饥饿值与耐久，不扫描未加载的区块。
+        toolTip.add(StatCollector.translateToLocal("Tooltip_VeinMiningPickaxe_Cost"));
     }
 
     @Override
@@ -198,11 +210,11 @@ public class VeinMiningPickaxe extends ItemPickaxe implements SubtitleDisplay {
 
             if (world.isRemote) {
                 // #tr Tooltip_VeinMiningPickaxe_PreciseMode_On
-                // # §aPrecise Mode: ON
-                // # zh_CN §a精确模式: 开启
+                // # §aPrecise matching: ON
+                // # zh_CN §a精确匹配：开启
                 // #tr Tooltip_VeinMiningPickaxe_PreciseMode_Off
-                // # §cPrecise Mode: OFF
-                // # zh_CN §c精确模式: 关闭
+                // # §cPrecise matching: OFF
+                // # zh_CN §c精确匹配：关闭
                 String key = isPreciseMode ? StatCollector.translateToLocal("Tooltip_VeinMiningPickaxe_PreciseMode_On")
                     : StatCollector.translateToLocal("Tooltip_VeinMiningPickaxe_PreciseMode_Off");
                 showSubtitle(key);

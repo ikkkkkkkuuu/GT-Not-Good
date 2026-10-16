@@ -20,20 +20,22 @@ public class BlockMEBridgeSender extends BlockMEBridgeBase {
 
     @Override
     public String[] getTooltipKeys() {
-        return new String[] { "tooltip.mebridge.sender.0", "tooltip.mebridge.sender.1", "tooltip.mebridge.sender.2",
+        return new String[] {
+            // #tr tooltip.mebridge.sender.0
+            // # §bShares its ME network with receivers across dimensions.
+            // # zh_CN §b通过频道与接收端跨维度共享 ME 网络。
+            "tooltip.mebridge.sender.0",
+            // #tr tooltip.mebridge.sender.1
+            // # §7Connect to the main ME network, then right-click to name the channel.
+            // # zh_CN §7接入主 ME 网络，右键设置频道名称。
+            "tooltip.mebridge.sender.1",
+            // #tr tooltip.mebridge.sender.2
+            // # §7Multiple receivers can join the same sender channel.
+            // # zh_CN §7同一发起端频道可连接多个接收端。
+            "tooltip.mebridge.sender.2",
+            // #tr tooltip.mebridge.sender.3
+            // # §eKeep the sender and receiver chunks loaded to maintain the connection.
+            // # zh_CN §e发起端与接收端的区块均须保持加载。
             "tooltip.mebridge.sender.3" };
     }
-
-    // #tr tooltip.mebridge.sender.0
-    // # §bBroadcasts a channel that receivers connect to.
-    // # zh_CN §b广播一个频道,供接收端连接。
-    // #tr tooltip.mebridge.sender.1
-    // # §7Connect it to your main ME network with a cable.
-    // # zh_CN §7用线缆把它接入你的主 ME 网络。
-    // #tr tooltip.mebridge.sender.2
-    // # §7Any number of receivers on the same channel join this network (cross-dimensional).
-    // # zh_CN §7任意多个同频道的接收端会并入此网络(跨维度)。
-    // #tr tooltip.mebridge.sender.3
-    // # §eKeep its chunk loaded for the link to stay active.
-    // # zh_CN §e需保持其区块常驻加载,连接才持续有效。
 }

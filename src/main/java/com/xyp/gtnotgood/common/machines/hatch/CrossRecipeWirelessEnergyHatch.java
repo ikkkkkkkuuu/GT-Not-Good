@@ -63,17 +63,25 @@ public final class CrossRecipeWirelessEnergyHatch extends MTEHatchEnergy {
     public String[] getDescription() {
         return new String[] {
             // #tr gtng.cross_wireless.desc.0
-            // # Runs different recipes concurrently using the owner's GT wireless EU.
-            // # zh_CN 使用仓主的GT无线电网，同时运行不同配方。
+            // # Supplies compatible multiblocks from the owner's GT wireless EU network
+            // # zh_CN 从仓主的 GT 无线电网为兼容多方块机器供能
             StatCollector.translateToLocal("gtng.cross_wireless.desc.0"),
+            // #tr gtng.cross_wireless.desc.tasks
+            // # Runs up to 64 recipe tasks concurrently, each using the configured batch limit
+            // # zh_CN 最多同时运行 64 项配方任务，每项使用设定的批量上限
+            StatCollector.translateToLocal("gtng.cross_wireless.desc.tasks"),
             // #tr gtng.cross_wireless.desc.1
-            // # Base recipe energy cost; adjustable time, minimum 1 tick.
-            // # zh_CN 按配方基础总耗电扣费；时间可调，最低1 tick。
+            // # Pays each recipe's base energy cost; adjustable processing time, minimum 1 tick
+            // # zh_CN 按各配方的基础总耗电扣费；处理时间可调，最低 1 tick
             StatCollector.translateToLocal("gtng.cross_wireless.desc.1"),
             // #tr gtng.cross_wireless.desc.2
-            // # Right-click to configure. Requires a compatible recipe-map controller.
-            // # zh_CN 右键设置。需要兼容的配方表多方块控制器。
-            StatCollector.translateToLocal("gtng.cross_wireless.desc.2") };
+            // # Right-click to configure recipe tasks, processing time and batch limits
+            // # zh_CN 右键设置配方任务数、处理时间和每项任务的批量上限
+            StatCollector.translateToLocal("gtng.cross_wireless.desc.2"),
+            // #tr gtng.cross_wireless.network
+            // # Requires a compatible controller and enough wireless EU; no local EU buffer or cable input
+            // # zh_CN 需要兼容控制器和充足的无线 EU；无本地 EU 缓存，不接受线缆供电
+            StatCollector.translateToLocal("gtng.cross_wireless.network") };
     }
 
     public int getDuration() {

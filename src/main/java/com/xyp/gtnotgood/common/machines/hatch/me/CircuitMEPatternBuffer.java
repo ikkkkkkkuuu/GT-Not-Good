@@ -176,8 +176,8 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
         String[] lines = super.getInfoData();
         if (pendingRefunds.isEmpty()) return lines;
         // #tr tooltip.gtng.circuit_buffer.refunds
-        // # Pending input refunds: %s buffers; reconnect ME to return them.
-        // # zh_CN 待退料缓冲：%s份；接回ME网络后自动退回。
+        // # Pending input returns: %s buffers; reconnect ME to return them
+        // # zh_CN 待退还原料：%s 份缓存；接回 ME 网络后自动退还
         return ArrayUtils.add(lines,
             StatCollector.translateToLocalFormatted("tooltip.gtng.circuit_buffer.refunds", pendingRefunds.size()));
     }
@@ -185,16 +185,16 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
     @Override
     public String[] getDescription() {
         // #tr tooltip.gtng.circuit_buffer.virtual
-        // # Reads each pattern's circuit and reusable molds; AE does not request these tools.
-        // # zh_CN 自动读取每份样板的电路和不消耗模具，AE下单不索取这些工具。
+        // # Supplies each pattern's circuit and reusable molds without requesting them from ME
+        // # zh_CN 自动提供各样板的电路和不消耗模具，无需 ME 合成任务索取
         String circuit = StatCollector.translateToLocal("tooltip.gtng.circuit_buffer.virtual");
         // #tr tooltip.gtng.circuit_buffer.capacity
-        // # 900 patterns; each buffers 64 item types and 64 fluid types, up to 2^63-1 each.
-        // # zh_CN 900个样板槽；每份缓冲64种物品和64种流体，每种上限2^63-1。
+        // # 900 patterns; each holds 64 item types and 64 fluid types, up to 2^63 - 1 per type
+        // # zh_CN 900 个样板槽；每份缓存最多 64 种物品和 64 种流体，每种上限 2^63 - 1
         String capacity = StatCollector.translateToLocal("tooltip.gtng.circuit_buffer.capacity");
         // #tr tooltip.gtng.circuit_buffer.recipe_view
-        // # GT sees up to 2^31-1 of each type per recipe check; the long reserve refills it.
-        // # zh_CN 单次配方检查每种最多提供2^31-1，剩余long库存自动补充。
+        // # Each recipe check can use up to 2^31 - 1 per type; remaining stock stays buffered
+        // # zh_CN 每次配方检查每种原料最多提供 2^31 - 1，剩余原料继续保留在缓存中
         String recipeView = StatCollector.translateToLocal("tooltip.gtng.circuit_buffer.recipe_view");
         return ArrayUtils.addAll(super.getDescription(), circuit, capacity, recipeView);
     }

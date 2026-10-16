@@ -116,8 +116,8 @@ final class MEContainerGui {
         // # zh_CN 流体
         panel.child(tab(controller, 1, IKey.lang("gui.me_container.tab_fluids")).pos(2, 65));
         // #tr gui.me_container.hint
-        // # Drag samples; empty left-click clears. No items consumed.
-        // # zh_CN 拖入样本；空手左键清空。样本不消耗。
+        // # Drag in samples; left-click with an empty cursor to clear. Samples are not consumed.
+        // # zh_CN 拖入样本，鼠标为空时左键清空；样本不消耗。
         panel.child(IKey.lang("gui.me_container.hint").color(0xFF4A5060).asWidget().pos(40, 191).size(244, 22));
         for (int i = 0; i < 36; i++) {
             int column = i < 9 ? i : (i - 9) % 9;
@@ -126,8 +126,8 @@ final class MEContainerGui {
                 219 + row * 18 + (i < 9 ? 4 : 0)));
         }
         // #tr gui.me_container.io
-        // # All sides: ME input / selected output.
-        // # zh_CN 所有面：存入 ME / 抽取已选资源
+        // # All sides accept resources into ME and export selected resources.
+        // # zh_CN 所有面均可存入 ME，并输出已标记的资源。
         panel.child(IKey.lang("gui.me_container.io").color(0xFF4A5060).asWidget().pos(40, 302).size(244, 10));
         return panel;
     }

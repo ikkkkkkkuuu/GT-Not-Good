@@ -262,8 +262,8 @@ public abstract class GuiActionEditor extends UiScreen implements GuiKeyBindPick
             this.buttonList.add(new GuiButton(ID_STEP_EDIT_BASE + i, left + UiDragReorder.GRIP + 2, y,
                 rowWidth - UiDragReorder.GRIP - 2, Ui.ROW, Ui.fit(label, rowWidth - UiDragReorder.GRIP - 10)));
             // #tr radialmenu.steps.edit.tip
-            // # Open this step. The arrows move it, x removes it.
-            // # zh_CN 打开此步骤。箭头可以移动它，X 可以删除它。
+            // # Edit this step. Use arrows to move it or X to remove it
+            // # zh_CN 编辑此步骤；箭头调整顺序，X 删除步骤
             tooltip(ID_STEP_EDIT_BASE + i, describe("radialmenu.steps.edit.tip"));
 
             GuiButton up = new UiIconButton(ID_STEP_UP_BASE + i, upLeft, y, ARROW, Ui.ROW, UiIconButton.Icon.Up);
@@ -285,8 +285,8 @@ public abstract class GuiActionEditor extends UiScreen implements GuiKeyBindPick
             // # zh_CN 添加步骤
             .add(new GuiButton(ID_STEP_ADD, left, y, contentWidth(), Ui.ROW, I18n.format("radialmenu.steps.add")));
         // #tr radialmenu.steps.add.tip
-        // # Append a step to the end of the chain.
-        // # zh_CN 在操作链末尾添加一个步骤。
+        // # Add a step at the end of the sequence
+        // # zh_CN 在操作序列末尾添加步骤
         tooltip(ID_STEP_ADD, describe("radialmenu.steps.add.tip"));
         return y + Ui.STEP;
     }
@@ -320,8 +320,8 @@ public abstract class GuiActionEditor extends UiScreen implements GuiKeyBindPick
                 clear.enabled = current != null && !current.trim().isEmpty();
                 this.buttonList.add(clear);
                 // #tr radialmenu.profileColors.clear.tip
-                // # Clear this one color, so it inherits again.
-                // # zh_CN 清除该颜色设置，使其重新继承。
+                // # Clear this color to restore inheritance
+                // # zh_CN 清除此颜色，恢复继承
                 tooltip(ID_CLEAR_BASE + index, describe("radialmenu.profileColors.clear.tip"));
             }
             if (!editable) {

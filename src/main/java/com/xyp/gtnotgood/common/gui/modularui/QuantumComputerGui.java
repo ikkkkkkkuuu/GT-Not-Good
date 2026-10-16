@@ -118,16 +118,16 @@ public class QuantumComputerGui extends GTNGModernMultiBlockBaseGui<QuantumCompu
                 .fullWidth())
             .child(IKey.dynamic(() -> StatCollector.translateToLocalFormatted(
                 // #tr gtng.compact.machine.quantum_computer.info.1
-                // # Co-processors: %s / %s used
-                // # zh_CN 并行：%s / %s 已用
+                // # Co-processors: %s total, %s used
+                // # zh_CN 合成协处理器：共 %s，已用 %s
                 "gtng.compact.machine.quantum_computer.info.1",
                 GTUtility.formatShortenedLong(maximumParallelSyncer.getIntValue()),
                 GTUtility.formatShortenedLong(usedParallelSyncer.getIntValue()))).asWidget()
                 .textAlign(Alignment.CenterLeft).color(Color.WHITE.main).fullWidth())
             .child(IKey.dynamic(() -> StatCollector.translateToLocalFormatted(
                 // #tr gtng.compact.machine.quantum_computer.info.2
-                // # Storage: %s / %s used
-                // # zh_CN 存储：%s / %s 已用
+                // # Storage: %s total, %s used
+                // # zh_CN 合成存储：共 %s，已用 %s
                 "gtng.compact.machine.quantum_computer.info.2",
                 GTUtility.formatShortenedLong(maximumStorageSyncer.getLongValue()),
                 GTUtility.formatShortenedLong(usedStorageSyncer.getLongValue()))).asWidget()
@@ -184,12 +184,12 @@ public class QuantumComputerGui extends GTNGModernMultiBlockBaseGui<QuantumCompu
     private IWidget createCustomNameField(PanelSyncManager syncManager) {
         StringSyncValue customNameSyncer = syncManager.findSyncHandler(CUSTOM_NAME_SYNC_KEY, StringSyncValue.class);
         return new TextFieldWidget().value(customNameSyncer).setTextAlignment(Alignment.Center)
-            .setTextColor(Color.WHITE.main).background(GTGuiTextures.BACKGROUND_TEXT_FIELD).tooltipBuilder(
+            .setTextColor(Color.WHITE.main).background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
+            .tooltipBuilder(tooltip -> tooltip
                 // #tr gtng.compact.machine.quantum_computer.info.3
-                // # Set Quantum Computer custom name
-                // # zh_CN 设置量子计算机自定义名称
-                tooltip -> tooltip
-                    .addLine(StatCollector.translateToLocal("gtng.compact.machine.quantum_computer.info.3")))
+                // # Rename this Quantum Computer
+                // # zh_CN 重命名量子计算机
+                .addLine(StatCollector.translateToLocal("gtng.compact.machine.quantum_computer.info.3")))
             .size(162, 18);
     }
 

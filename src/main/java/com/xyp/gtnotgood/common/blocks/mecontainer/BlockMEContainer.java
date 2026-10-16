@@ -53,10 +53,19 @@ public final class BlockMEContainer extends BlockMEBridgeBase {
 
     @Override
     public String[] getTooltipKeys() {
-        // #tr tooltip.me_container.info
-        // # 36 item + 36 fluid ghost slots. Bidirectional ME access; no local fluid capacity limit.
-        // # zh_CN 物品、流体各 36 个虚拟槽；双向接入 ME，流体无本地容量限制。
-        return new String[] { "tooltip.me_container.info" };
+        return new String[] {
+            // #tr tooltip.me_container.info
+            // # Imports resources into ME and exports selected items and fluids from any side.
+            // # zh_CN 所有面均可存入 ME，并输出选定的物品与流体。
+            "tooltip.me_container.info",
+            // #tr tooltip.me_container.samples
+            // # Right-click to set samples. 36 item selections and 36 fluid selections.
+            // # zh_CN 右键设置样本，物品与流体各有 36 个标记槽。
+            "tooltip.me_container.samples",
+            // #tr tooltip.me_container.fluid
+            // # Fluids transfer directly through ME, limited by network stock and free space.
+            // # zh_CN 流体直接通过 ME 存取，受网络库存与剩余存储空间限制。
+            "tooltip.me_container.fluid" };
     }
 
     @Override

@@ -32,8 +32,8 @@ public abstract class MixinMTEBrickedBlastFurnace {
         Config.ensureLoaded();
         if (!Config.enableBrickedBlastFurnaceAutomation) return original;
         // #tr gtng.bbf.automation
-        // # Supports automated item input/output through the controller
-        // # zh_CN 支持通过控制器自动输入和输出物品
+        // # Allows automated item input and output through the controller
+        // # zh_CN 可通过控制器自动输入和输出物品
         return Utils.tr("gtng.bbf.automation");
     }
 

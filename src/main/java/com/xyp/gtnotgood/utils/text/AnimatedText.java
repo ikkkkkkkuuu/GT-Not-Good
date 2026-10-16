@@ -57,16 +57,10 @@ public class AnimatedText {
         return TextEffectsCompat.apply(formatting + ModList.GTNotGood.getDisplayName(), creditStyle) + "\u00a7r";
     }
 
-    /**
-     * Standard animated "Mod Added by" tooltip line for GT Not Good machines.
-     * <p>
-     * The translation comment must stay directly above the translation key usage, because {@code addon.gradle} extracts
-     * language entries from Java comments during {@code processResources}.
-     */
     public static final Supplier<String> GT_NOT_GOOD = chain(
         // #tr tooltip.gtnotgood.adder
-        // # Mod Added by:
-        // # zh_CN 添加模组：
+        // # Added by:
+        // # zh_CN 添加者：
         () -> StatCollector.translateToLocal("tooltip.gtnotgood.adder"), AnimatedText::machineCredit);
 
     private AnimatedText() {}

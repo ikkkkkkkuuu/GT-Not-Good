@@ -21,13 +21,13 @@ public final class VoidMinerGuiText {
     public static final String REFRESH = "gui.gtnotgood.largeVoidMiner.config.refresh";
 
     // #tr gui.gtnotgood.largeVoidMiner.config.mode_hint.directional
-    // # Mode: directional mining\nOnly targeted ores are extracted.\nUU-Matter is consumed while running.
-    // # zh_CN 模式：定向采矿\n只抽取标记为定向的矿石。\n运行时消耗 UU 物质。
+    // # Directional mode\nExtracts marked ores only\nConsumes UU-Matter while running
+    // # zh_CN 定向模式\n只抽取标记矿石\n运行时消耗 UU 物质
     public static final String MODE_HINT_DIRECTIONAL = "gui.gtnotgood.largeVoidMiner.config.mode_hint.directional";
 
     // #tr gui.gtnotgood.largeVoidMiner.config.mode_hint.filtered
-    // # Mode: filtering\nFiltered ores are removed from the weighted pool.\nMore filters increase energy cost.
-    // # zh_CN 模式：过滤\n过滤矿石会从权重池中移除。\n过滤越多，能耗越高。
+    // # Filter mode\nRemoves marked ores from the pool\nMore filtering raises EU/t
+    // # zh_CN 过滤模式\n从矿池移除标记矿石\n过滤越多，功耗越高
     public static final String MODE_HINT_FILTERED = "gui.gtnotgood.largeVoidMiner.config.mode_hint.filtered";
 
     // #tr gui.gtnotgood.largeVoidMiner.config.uu_cost
@@ -101,7 +101,7 @@ public final class VoidMinerGuiText {
     public static final String OVERCLOCK = "gui.gtnotgood.largeVoidMiner.config.overclock";
 
     // #tr gui.gtnotgood.largeVoidMiner.config.slot1_hint
-    // # Shared controller slot for a dimension display item
-    // # zh_CN 可放维度显示物品的控制器共享槽
+    // # Controller slot; accepts a dimension display item
+    // # zh_CN 控制器共享槽，可放入维度显示物品
     public static final String SLOT1_HINT = "gui.gtnotgood.largeVoidMiner.config.slot1_hint";
 }

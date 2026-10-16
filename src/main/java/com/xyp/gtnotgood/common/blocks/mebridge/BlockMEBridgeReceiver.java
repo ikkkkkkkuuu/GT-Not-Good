@@ -20,20 +20,22 @@ public class BlockMEBridgeReceiver extends BlockMEBridgeBase {
 
     @Override
     public String[] getTooltipKeys() {
-        return new String[] { "tooltip.mebridge.receiver.0", "tooltip.mebridge.receiver.1",
-            "tooltip.mebridge.receiver.2", "tooltip.mebridge.receiver.3" };
+        return new String[] {
+            // #tr tooltip.mebridge.receiver.0
+            // # §bReceives an ME network from a sender channel.
+            // # zh_CN §b通过发起端频道接入 ME 网络。
+            "tooltip.mebridge.receiver.0",
+            // #tr tooltip.mebridge.receiver.1
+            // # §7Joins the sender's network across dimensions.
+            // # zh_CN §7可跨维度并入发起端所在的网络。
+            "tooltip.mebridge.receiver.1",
+            // #tr tooltip.mebridge.receiver.2
+            // # §7Right-click to select a sender channel.
+            // # zh_CN §7右键选择发起端频道。
+            "tooltip.mebridge.receiver.2",
+            // #tr tooltip.mebridge.receiver.3
+            // # §eKeep both endpoints' chunks loaded to maintain the connection.
+            // # zh_CN §e连接两端的区块均须保持加载。
+            "tooltip.mebridge.receiver.3" };
     }
-
-    // #tr tooltip.mebridge.receiver.0
-    // # §bConnects to a channel broadcast by a Sender.
-    // # zh_CN §b连接到发起端广播的频道。
-    // #tr tooltip.mebridge.receiver.1
-    // # §7Becomes part of the Sender's ME network across dimensions.
-    // # zh_CN §7跨维度并入发起端所在的 ME 网络。
-    // #tr tooltip.mebridge.receiver.2
-    // # §7Right-click to type or pick a channel.
-    // # zh_CN §7右键输入或从列表选择频道。
-    // #tr tooltip.mebridge.receiver.3
-    // # §eKeep both ends' chunks loaded for a stable link.
-    // # zh_CN §e两端区块需常驻加载以保持连接稳定。
 }

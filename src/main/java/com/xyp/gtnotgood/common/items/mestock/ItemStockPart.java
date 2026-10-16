@@ -73,19 +73,34 @@ public final class ItemStockPart extends GTNGItem implements IPartItem {
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advanced) {
         if (kind == Kind.ThresholdExportBus) {
             // #tr tooltip.mestock.threshold
-            // # Export above/below network stock thresholds; above mode preserves the reserve.
-            // # zh_CN 按 ME 库存上下限输出；高于阈值时只输出超出部分。
+            // # Exports items or fluids according to their stock in the ME network.
+            // # zh_CN 根据 ME 网络中的库存，向相邻容器输出物品或流体。
             lines.add(StatCollector.translateToLocal("tooltip.mestock.threshold"));
         } else if (kind == Kind.ThresholdLevelEmitter) {
             // #tr tooltip.mestock.emitter
-            // # Holds its signal between two thresholds. Items and fluids; exact matching.
-            // # zh_CN 上下限之间保持红石状态；支持物品与流体精确匹配。
+            // # Controls redstone with two stock thresholds. Keeps its state between them.
+            // # zh_CN 根据库存上下限控制红石信号，处于两阈值之间时保持状态。
             lines.add(StatCollector.translateToLocal("tooltip.mestock.emitter"));
         } else {
             // #tr tooltip.mestock.terminal
-            // # Configure and monitor loaded requesters on this ME network.
-            // # zh_CN 集中配置和查看同一 ME 网络中已加载的自动请求器。
+            // # Configures and monitors loaded requesters on the same ME network.
+            // # zh_CN 配置并监控同一 ME 网络中已加载的自动请求器。
             lines.add(StatCollector.translateToLocal("tooltip.mestock.terminal"));
+        }
+        // #tr tooltip.mestock.configure
+        // # Right-click to configure.
+        // # zh_CN 右键打开配置界面。
+        lines.add(StatCollector.translateToLocal("tooltip.mestock.configure"));
+        if (kind == Kind.ThresholdExportBus) {
+            // #tr tooltip.mestock.threshold_modes
+            // # Above mode keeps the reserve. Below mode exports while stock is at or below the threshold.
+            // # zh_CN 高于模式只输出超出部分；低于模式在库存不高于阈值时输出。
+            lines.add(StatCollector.translateToLocal("tooltip.mestock.threshold_modes"));
+        } else if (kind == Kind.ThresholdLevelEmitter) {
+            // #tr tooltip.mestock.emitter_match
+            // # Monitors one exact item or fluid type. The lower threshold must not exceed the upper.
+            // # zh_CN 精确匹配一种物品或流体，下限不能高于上限。
+            lines.add(StatCollector.translateToLocal("tooltip.mestock.emitter_match"));
         }
     }
 }

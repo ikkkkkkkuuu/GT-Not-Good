@@ -338,52 +338,53 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     public MultiblockTooltipBuilder createTooltip() {
         MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
+        // #tr Tooltip_SingularityDataHub_Casing
+        // # Solid Steel Machine Casing
+        // # zh_CN 坚实钢机械方块
+        String casing = StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing");
         // #tr SingularityDataHubRecipeType
         // # Vault
         // # zh_CN 保险库
         tt.addMachineType(StatCollector.translateToLocal("SingularityDataHubRecipeType"))
             // #tr Tooltip_SingularityDataHub_00
-            // # §9§oA vault woven from unfolded dimensions
-            // # zh_CN §9§o由展开维度编织的仓库
+            // # Stores items and fluids in a shared vault
+            // # zh_CN 集中存储物品与流体
             .addInfo(StatCollector.translateToLocal("Tooltip_SingularityDataHub_00"))
             // #tr Tooltip_SingularityDataHub_01
-            // # Infinite storage for items and fluids!
-            // # zh_CN §m无限的物品和流体存储！§r 其实并不无限:)
+            // # Shared byte capacity; each item and fluid type also has a storage limit
+            // # zh_CN 物品与流体共用字节容量，各类型另有存储上限
             .addInfo(StatCollector.translateToLocal("Tooltip_SingularityDataHub_01"))
+            // #tr Tooltip_SingularityDataHub_04
+            // # Requires no EU
+            // # zh_CN 不消耗 EU
+            .addInfo(StatCollector.translateToLocal("Tooltip_SingularityDataHub_04")).addSeparator()
             // #tr Tooltip_SingularityDataHub_02
-            // # No longer compatible with output bus or output hatche, input only
-            // # zh_CN 不再兼容输出总线或输出仓，仅限输入
+            // # Use the vault port for transfers; output buses and output hatches are not supported
+            // # zh_CN 通过仓库端口存取物资，不支持输出总线或输出仓
             .addInfo(StatCollector.translateToLocal("Tooltip_SingularityDataHub_02"))
             // #tr Tooltip_SingularityDataHub_03
-            // # Must be used with Vault Multiblock Input/Output Assembly
-            // # zh_CN 必须与仓库端口仓配合使用
+            // # Requires exactly one Vault Port Hatch
+            // # zh_CN 必须安装且只能安装 1 个仓库端口仓
             .addInfo(StatCollector.translateToLocal("Tooltip_SingularityDataHub_03"))
-            // #tr Tooltip_SingularityDataHub_04
-            // # Default energy consumption: NO!
-            // # zh_CN 默认能耗：完全不消耗！
-            .addInfo(StatCollector.translateToLocal("Tooltip_SingularityDataHub_04"))
             // #tr Tooltip_SingularityDataHub_05
-            // # If no energy hatch is installed, it will automatically enter wireless mode
-            // # zh_CN 如果未安装能源仓，将自动进入无线模式
+            // # The vault port binds automatically when the structure forms
+            // # zh_CN 结构成型时自动绑定仓库端口
             .addInfo(StatCollector.translateToLocal("Tooltip_SingularityDataHub_05"))
             // #tr Tooltip_SingularityDataHub_06
-            // # The index of a stored item can be obtained through the Tricorder
-            // # zh_CN 可通过扫描仪获取存储物品的索引
+            // # Use a Tricorder to inspect stored item indices
+            // # zh_CN 使用扫描仪查看已存物品的索引
             .addInfo(StatCollector.translateToLocal("Tooltip_SingularityDataHub_06"))
             // #tr Tooltip_SingularityDataHub_07
-            // # Right clicking the controller with a screwdriver will turn on excess voiding
-            // # zh_CN 用螺丝刀右键控制器可开启溢出销毁
+            // # Screwdriver: toggle voiding of excess inputs
+            // # zh_CN 螺丝刀右键切换输入溢出销毁
             .addInfo(StatCollector.translateToLocal("Tooltip_SingularityDataHub_07"))
-            .beginStructureBlock(15, 31, 15, false)
-            // #tr Tooltip_SingularityDataHub_Casing
-            // # Any Vibration-Safe Casing
-            // # zh_CN 任意抗震机械方块
-            .addCasing("10+", StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"), false)
-            .addInputBus("0+", StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"), 1)
-            .addInputHatch("0+", StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"), 1)
-            .addOtherStructurePart("1 " + StatCollector.translateToLocal("NameVaultPortHatch"),
-                StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing"), 1)
-            .toolTipFinisher();
+            .beginStructureBlock(3, 2, 2, false)
+            // #tr Tooltip_SingularityDataHub_Controller
+            // # Front bottom center
+            // # zh_CN 正面底部中央
+            .addController(StatCollector.translateToLocal("Tooltip_SingularityDataHub_Controller"))
+            .addCasing("10", casing, false)
+            .addMiscHatch("1", StatCollector.translateToLocal("NameVaultPortHatch"), casing, 1).toolTipFinisher();
         return tt;
     }
 

@@ -60,7 +60,8 @@ public final class BlockStockIOInterface extends BlockMEBridgeBase {
 
     @Override
     public String[] getTooltipKeys() {
-        return new String[] { "tooltip.stock_io_interface.direct", "tooltip.stock_io_interface.slots" };
+        return new String[] { "tooltip.stock_io_interface.direct", "tooltip.stock_io_interface.configure",
+            "tooltip.stock_io_interface.slots", "tooltip.stock_io_interface.network" };
     }
 
     @Override

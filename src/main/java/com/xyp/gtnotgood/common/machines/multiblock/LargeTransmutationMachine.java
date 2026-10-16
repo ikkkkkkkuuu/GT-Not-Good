@@ -125,35 +125,42 @@ public final class LargeTransmutationMachine extends GTNGMultiBlockBase<LargeTra
 
     @Override
     protected MultiblockTooltipBuilder createTooltip() {
-        return new MultiblockTooltipBuilder()
-            .addMachineType(StatCollector.translateToLocal("gtng.LargeTransmutationMachine.name"))
+        MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
+        // #tr gtng.transmutation.tooltip.casing
+        // # Solid Steel Machine Casing
+        // # zh_CN 坚实钢机械方块
+        String casing = StatCollector.translateToLocal("gtng.transmutation.tooltip.casing");
+        tt.addMachineType(StatCollector.translateToLocal("gtng.LargeTransmutationMachine.name"))
             // #tr gtng.transmutation.tooltip.function
-            // # Reverses assembly and crafting recipes; no Shimmer required
-            // # zh_CN 逆向拆解装配与合成配方，无需微光
-            .addInfo(StatCollector.translateToLocal("gtng.transmutation.tooltip.function"))
+            // # Recovers ingredients from assembly and crafting recipes without Shimmer
+            // # zh_CN 无需微光，将装配与合成产物拆回原料
+            .addInfo(StatCollector.translateToLocal("gtng.transmutation.tooltip.function")).addStaticParallelInfo(16)
+            .addPerfectOCInfo()
             // #tr gtng.transmutation.tooltip.power
-            // # EV: base 1920 EU/t, 5 seconds per batch, up to 16 parallels
-            // # zh_CN EV：基础每批1920 EU/t、5秒，最多16并行
+            // # Base recipe: 1920 EU/t for 5 seconds
+            // # zh_CN 基础配方：1920 EU/t，耗时 5 秒
             .addInfo(StatCollector.translateToLocal("gtng.transmutation.tooltip.power"))
             // #tr gtng.transmutation.tooltip.speed
-            // # Global recipe speed settings apply; see NEI for the actual duration
-            // # zh_CN 受全局配方加速设置影响，实际耗时见NEI
-            .addInfo(StatCollector.translateToLocal("gtng.transmutation.tooltip.speed"))
+            // # Global recipe speed settings apply; actual duration is shown in NEI
+            // # zh_CN 实际耗时受全局配方加速设置影响，详见 NEI
+            .addInfo(StatCollector.translateToLocal("gtng.transmutation.tooltip.speed")).addSeparator()
             // #tr gtng.transmutation.tooltip.rules
-            // # See NEI for Shimmer recovery recipes. Incomplete batches remain in input.
-            // # zh_CN NEI查询微光拆解配方；不足一批的物品留在输入端
+            // # Check Shimmer recovery recipes in NEI; incomplete batches stay in input
+            // # zh_CN 在 NEI 查看微光拆解配方；不足一批的物品留在输入端
             .addInfo(StatCollector.translateToLocal("gtng.transmutation.tooltip.rules"))
-            // #tr gtng.transmutation.tooltip.structure
-            // # Titanium frame, borosilicate glass, steel pipes and a glowstone core
-            // # zh_CN 钛框架、硼硅玻璃、钢管机械方块与萤石核心
-            .addInfo(StatCollector.translateToLocal("gtng.transmutation.tooltip.structure"))
             .beginStructureBlock(7, 5, 5, false)
-            // #tr gtng.transmutation.tooltip.casing
-            // # Solid Steel Machine Casing (hatches may replace casing)
-            // # zh_CN 坚实钢机械方块（仓室可替换外壳）
-            .addCasing("12+", StatCollector.translateToLocal("gtng.transmutation.tooltip.casing"), false)
-            .addInputBus("1+", "C", 1).addOutputBus("1+", "C", 1).addOutputHatch("1+", "C", 1)
-            .addEnergyHatch("1+", "C", 1).addMaintenanceHatch(shouldCheckMaintenance() ? "1" : "0", "C", 1)
+            // #tr gtng.transmutation.tooltip.controller
+            // # Front center of the chamber, third layer
+            // # zh_CN 主腔正面中央，第 3 层
+            .addController(StatCollector.translateToLocal("gtng.transmutation.tooltip.controller"))
+            .addCasing("12+", casing, false)
+            // #tr gtng.transmutation.tooltip.structure
+            // # 22 titanium frames, 34 borosilicate glass, 15 steel pipe casings, 2 glowstone
+            // # zh_CN 22 个钛框架、34 块硼硅玻璃、15 个钢管机械方块、2 块荧石
+            .addStructureInfo(StatCollector.translateToLocal("gtng.transmutation.tooltip.structure"))
+            .addEnergyHatch("1+", casing, 1).addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1)
+            .addInputBus("1+", casing, 1).addOutputBus("1+", casing, 1).addOutputHatch("1+", casing, 1)
             .toolTipFinisher();
+        return tt;
     }
 }

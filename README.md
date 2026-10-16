@@ -43,12 +43,20 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.4.9          | [![1.4.9](https://img.shields.io/badge/release-1.4.9-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.9) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.5.0          | [![1.5.0](https://img.shields.io/badge/release-1.5.0-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.0) |         ✔️         |
 
-最新版本：[1.4.9 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.4.9)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.9/gtnotgood-1.4.9.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.4.9/gtnotgood-1.4.9-sources.jar)。
+最新版本：[1.5.0 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.0)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.0/gtnotgood-1.5.0.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.0/gtnotgood-1.5.0-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.4.9。
+1.3.4 因启动错误已撤回，请更新到 1.5.0。
+
+### JourneyMap 右键菜单
+
+在全屏地图右键选择“传送到此处”或“新建导航点”。适配当前整合包的 JourneyMap 5.2.23-fairplay，使用原生地图坐标换算与导航点编辑器。
+已加载地形会检查落点支撑与两格净空；洞穴和导航点优先查找目标高度附近的位置。未加载地形需确认高度后才发送传送指令。
+传送仅限玩家当前维度，仍需服务端授予 `/tp` 权限；客户端连接本地独立服务端也使用相同规则。未安装 JourneyMap 时跳过集成，专用服务端不加载地图客户端代码。
+可在 `config/GTNOTGOOD/gtnotgood.cfg` 的 `JourneyMap.enableContextMenu` 关闭，重启生效。检测到原快捷传送附属模组时优先保留其菜单。
+详见 [适配与验证记录](docs/testing/journeymap.md)。
 
 ### 种子转化机（LV）
 
@@ -108,7 +116,8 @@ Waila 与扫描器分别显示物品和流体缓存容量，流体明细保留�
 5×5×5 电力多方块，支持燃料精炼、木化、石化三种模式，GUI或普通螺丝刀右键切换，潜行使用螺丝刀切换配方锁定。
 独立提供25条燃料配方、1条木化配方和11条石化配方，无需GTNL，不新增流体；跳过依赖GTNL树液的特殊石化配方。
 使用化学惰性机械方块、24个加热线圈、30块强化玻璃和16个不锈钢框架；外壳可换仓室，至少保留32个外壳。
-燃料模式保留配方的温度与精炼等级要求。中央核心默认使用化学惰性外壳（0级），可升级为燃料精炼厂线圈I–IV（1–4级）。
+燃料模式保留配方的温度与精炼等级要求。正中心（控制器向内2格）默认使用化学惰性机械方块（0级），可换为力场约束线圈（1–4级）。
+结构投影子信道 `coil` 选择加热线圈，`refining` 设为1–4时直接对应配方要求的1–4级，未设置时使用0级外壳。
 支持无损超频、最多16并行，产量以NEI配方为准。控制器在EV组装机合成。
 
 ### 青铜蒸汽机器

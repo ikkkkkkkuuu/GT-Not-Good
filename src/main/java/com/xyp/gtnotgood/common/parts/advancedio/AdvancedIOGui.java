@@ -92,8 +92,8 @@ final class AdvancedIOGui {
         hasRedstone.setChangeListener(panel::scheduleResize);
         panel.child(IKey.lang("item.advanced_io_bus.name").color(0xff404040).asWidget().pos(8, 6));
         // #tr gui.advancedio.amount_hint
-        // # Middle-click to set amount
-        // # zh_CN 鼠标中键设置数量
+        // # Middle-click a sample to set target stock.
+        // # zh_CN 中键样本，设置目标库存。
         panel.child(IKey.lang("gui.advancedio.amount_hint").color(0xff404040).scale(0.6f).asWidget().pos(10, 17));
         for (int i = 0; i < PartAdvancedIOBus.CONFIG_SLOTS; i++) {
             final int index = i;
@@ -170,8 +170,8 @@ final class AdvancedIOGui {
                 part.changed();
             }).left(-16).top(() -> hasRedstone.getBoolValue() ? 25 : 3, Unit.Measure.PIXEL));
         // #tr gui.advancedio.regulate
-        // # Recover excess stock
-        // # zh_CN 回收超量原料
+        // # Return stock above the target to ME
+        // # zh_CN 将超出目标的库存送回 ME
         panel.child(toolbarButton(sync, "regulateButton",
             () -> texture("advanced_states", 256, 256, regulate.getBoolValue() ? 32 : 48, 32, 16, 16),
             () -> IKey.lang("gui.advancedio.regulate").get() + ": " + yesNo(regulate.getBoolValue()),

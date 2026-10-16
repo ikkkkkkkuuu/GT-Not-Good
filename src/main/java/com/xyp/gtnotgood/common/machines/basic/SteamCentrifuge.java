@@ -20,8 +20,8 @@ public final class SteamCentrifuge extends SteamProcessingMachine {
 
     private static String description() {
         // #tr tooltip.steam_centrifuge.description
-        // # Cell-free centrifuging powered by steam
-        // # zh_CN 无需流体单元的蒸汽离心处理
+        // # Centrifuges items and fluids using steam; no fluid cells needed
+        // # zh_CN 使用蒸汽离心物品和流体，无需流体单元
         return StatCollector.translateToLocal("tooltip.steam_centrifuge.description");
     }
 

@@ -134,8 +134,8 @@ public final class NetworkGui {
             controller.markDirty();
         }, 244, 12, 54).tooltip(t -> {
             // #tr gui.network.type_hint
-            // # Switching type clears rules. Drain buffered cargo first.
-            // # zh_CN 切换类型会清空规则；须先传完缓冲内容。
+            // # Changing type clears this channel's rules. Empty its transfer buffer first.
+            // # zh_CN 切换类型会清空此通道的规则，须先传完缓冲内容。
             t.addLine(IKey.lang("gui.network.type_hint"));
         }));
         StringSyncValue name = new StringSyncValue(() -> controller.channels[selected[0]].name, value -> {
@@ -232,8 +232,8 @@ public final class NetworkGui {
             controller.markDirty();
         }, 436, 73, 18).size(18, 14).tooltip(t -> {
             // #tr gui.network.remove_rule
-            // # Remove this channel connection. The physical device remains in the matrix.
-            // # zh_CN 删除当前通道连接；物理设备仍保留在矩阵中。
+            // # Removes this channel's connection to the device; keeps the device in the matrix.
+            // # zh_CN 删除此通道与设备的连接，设备仍保留在矩阵中。
             t.addLine(IKey.lang("gui.network.remove_rule"));
         }));
         existingRulePanel.child(button(sync, "mode", () -> mode(integer(ruleState, 0)),
@@ -283,8 +283,8 @@ public final class NetworkGui {
             .value(interval).formatAsInteger(true).numbersInt(1, 1200).autoUpdateOnChange(false).pos(310, 135)
             .size(62, 18).tooltip(t -> {
                 // #tr gui.network.interval_hint
-                // # Operation interval in ticks (1-1200). 20 ticks = 1 second at normal TPS.
-                // # zh_CN 操作间隔（1至1200 tick）；正常TPS下20 tick为1秒。
+                // # Transfer interval: 1-1,200 ticks. At 20 TPS, 20 ticks = 1 second.
+                // # zh_CN 传输间隔：1–1,200 tick；20 TPS 时，20 tick = 1 秒。
                 t.addLine(IKey.lang("gui.network.interval_hint"));
             }));
         existingRulePanel.child(text(() -> "t", 377, 138, 10));
@@ -336,8 +336,8 @@ public final class NetworkGui {
         String[] clipboardStatus = { "" };
         String clipboardKey = ModList.GTNotGood.getID() + ".networkRuleClipboard";
         // #tr gui.network.copy_rule
-        // # Copy
-        // # zh_CN 复制配置
+        // # Copy this connection's settings
+        // # zh_CN 复制当前连接的配置
         existingRulePanel.child(button(sync, "copy_rule", () -> "C", () -> {
             NetworkRule current = rule.get();
             if (current == null) return;
@@ -346,9 +346,6 @@ public final class NetworkGui {
             sync.getPlayer().getEntityData().setTag(clipboardKey, copy);
             clipboardStatus[0] = "copied";
         }, 392, 73, 18).size(18, 14).tooltip(t -> t.addLine(IKey.lang("gui.network.copy_rule"))));
-        // #tr gui.network.paste_rule
-        // # Paste
-        // # zh_CN 粘贴配置
         Runnable pasteRule = () -> {
             NBTTagCompound playerData = sync.getPlayer().getEntityData();
             if (!playerData.hasKey(clipboardKey)) {
@@ -368,7 +365,13 @@ public final class NetworkGui {
             clipboardStatus[0] = "pasted";
         };
         existingRulePanel.child(button(sync, "paste_rule", () -> "P", pasteRule, 414, 73, 18).size(18, 14)
-            .tooltip(t -> t.addLine(IKey.lang("gui.network.paste_rule"))));
+            // #tr gui.network.paste_rule_hint
+            // # Paste settings copied from a connection of the same type.
+            // # zh_CN 粘贴从同类型连接复制的配置。
+            .tooltip(t -> t.addLine(IKey.lang("gui.network.paste_rule_hint"))));
+        // #tr gui.network.paste_rule
+        // # Paste settings
+        // # zh_CN 粘贴配置
         rulePanel.child(button(sync, "paste_new_rule", () -> tr("gui.network.paste_rule"), pasteRule, 304, 154, 100)
             .setEnabledIf(w -> integer(ruleState, 8) == 0));
         StringSyncValue clipboardMessage = read(sync, "clipboard_status", () -> clipboardStatus[0]);
@@ -516,8 +519,8 @@ public final class NetworkGui {
                 () -> connector.toggleFace(face), 10 + (i % 2) * 118, 60 + (i / 2) * 28, 112));
         }
         // #tr gui.network.connector_hint
-        // # Configure routing channels at the controller.
-        // # zh_CN 通道传输规则请在控制器中设置。
+        // # Open the controller to configure this connector's channels and transfer rules.
+        // # zh_CN 打开控制器，设置此连接器的通道与传输规则。
         panel.child(text(() -> tr("gui.network.connector_hint"), 10, 155, 230));
         return panel;
     }

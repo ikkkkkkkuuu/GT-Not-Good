@@ -40,42 +40,12 @@ import gregtech.api.util.GTModHandler;
 
 public class SteamTurbine extends MTEBasicGenerator implements IAddGregtechLogo {
 
-    // #tr Tooltip_SteamTurbine_00
-    // # Converts Steam to EU
-    // # zh_CN 将蒸汽转换为EU
-
-    // #tr Tooltip_SteamTurbine_01
-    // # Basic Efficiency: 2L Steam/EU
-    // # zh_CN 基础效率：2L蒸汽/EU
-
-    // #tr Tooltip_SteamTurbine_02
-    // # Fuel Efficiency: %s%%
-    // # zh_CN 燃料效率：%s%%
-
-    // #tr Tooltip_SteamTurbine_03
-    // # Fluid Capacity: %sL
-    // # zh_CN 流体容量：%sL
-
     public SteamTurbine(int aID, String aName, String aNameRegional, int aTier) {
-        super(aID, aName, aNameRegional, aTier,
-            new String[] { StatCollector.translateToLocal("Tooltip_SteamTurbine_00"),
-                StatCollector.translateToLocal("Tooltip_SteamTurbine_01"), "", "" });
-
-        mDescriptionArray[2] = StatCollector.translateToLocalFormatted("Tooltip_SteamTurbine_02",
-            800 / getEfficiency());
-
-        mDescriptionArray[3] = StatCollector.translateToLocalFormatted("Tooltip_SteamTurbine_03",
-            NumberFormatUtil.formatNumber(getCapacity()));
+        super(aID, aName, aNameRegional, aTier, new String[0]);
     }
 
     public SteamTurbine(String aName, int aTier, String[] aDescription, ITexture[][][] aTextures) {
         super(aName, aTier, aDescription, aTextures);
-
-        mDescriptionArray[2] = StatCollector.translateToLocalFormatted("Tooltip_SteamTurbine_02",
-            800 / getEfficiency());
-
-        mDescriptionArray[3] = StatCollector.translateToLocalFormatted("Tooltip_SteamTurbine_03",
-            NumberFormatUtil.formatNumber(getCapacity()));
     }
 
     @Override
@@ -95,7 +65,29 @@ public class SteamTurbine extends MTEBasicGenerator implements IAddGregtechLogo 
 
     @Override
     public String[] getDescription() {
-        return mDescriptionArray;
+        return new String[] {
+            // #tr Tooltip_SteamTurbine_00
+            // # Generates EU from steam without pollution
+            // # zh_CN 使用蒸汽发电，无污染
+            StatCollector.translateToLocal("Tooltip_SteamTurbine_00"),
+            // #tr Tooltip_SteamTurbine_01
+            // # Base fuel consumption: 2 L steam per EU
+            // # zh_CN 基础燃料消耗：每 EU 消耗 2 L 蒸汽
+            StatCollector.translateToLocal("Tooltip_SteamTurbine_01"),
+            // #tr Tooltip_SteamTurbine_02
+            // # Fuel efficiency: %s%%
+            // # zh_CN 燃料效率：%s%%
+            StatCollector.translateToLocalFormatted("Tooltip_SteamTurbine_02", 800 / getEfficiency()),
+            // #tr Tooltip_SteamTurbine_03
+            // # Steam capacity: %s L
+            // # zh_CN 蒸汽容量：%s L
+            StatCollector.translateToLocalFormatted("Tooltip_SteamTurbine_03",
+                NumberFormatUtil.formatNumber(getCapacity())),
+            // #tr tooltip.steam_turbine.output
+            // # Outputs up to %s EU/t at 32 A through the front face
+            // # zh_CN 从正面输出，最高 %s EU/t，32 A
+            StatCollector.translateToLocalFormatted("tooltip.steam_turbine.output",
+                NumberFormatUtil.formatNumber(V[mTier] * maxAmperesOut())) };
     }
 
     /**

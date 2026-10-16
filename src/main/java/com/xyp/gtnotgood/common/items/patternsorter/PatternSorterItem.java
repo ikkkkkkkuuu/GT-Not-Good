@@ -56,8 +56,12 @@ public final class PatternSorterItem extends GTNGItem implements IGuiHolder<Play
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advanced) {
         // #tr tooltip.pattern_sorter.use
-        // # Right-click: group inventory patterns by circuit and mold.
-        // # zh_CN 右键打开，按电路和模具整理背包中的样板。
+        // # Right-click to group inventory patterns by their circuits and molds.
+        // # zh_CN 右键打开界面，按电路与模具对背包中的样板分组。
         lines.add(StatCollector.translateToLocal("tooltip.pattern_sorter.use"));
+        // #tr tooltip.pattern_sorter.map
+        // # Select a recipe map before sorting. Keep the cursor empty.
+        // # zh_CN 先选择配方类型，再整理样板；操作时鼠标须为空。
+        lines.add(StatCollector.translateToLocal("tooltip.pattern_sorter.map"));
     }
 }

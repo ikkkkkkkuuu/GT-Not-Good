@@ -102,8 +102,8 @@ public class GuiAutoBindRules extends UiScreen {
 
             this.buttonList.add(new GuiButton(ID_TYPE_BASE + i, left, y, TYPE_WIDTH, Ui.ROW, typeLabel(binding)));
             // #tr radialmenu.rules.type.tip
-            // # Match a server address, a world folder, or any singleplayer world.
-            // # zh_CN 匹配服务器地址、单人世界文件夹，或任意单人世界。
+            // # Match a server address, a world folder or any singleplayer world
+            // # zh_CN 匹配服务器地址、世界文件夹或任意单人世界
             tooltip(ID_TYPE_BASE + i, I18n.format("radialmenu.rules.type.tip"));
 
             int fieldLeft = left + TYPE_WIDTH + Ui.GAP;
@@ -142,8 +142,8 @@ public class GuiAutoBindRules extends UiScreen {
         markFooter(ID_ADD);
         markFooter(ID_USE_CURRENT);
         // #tr radialmenu.rules.useCurrent.tip
-        // # Add a rule matching the world you are currently in.
-        // # zh_CN 添加与当前世界匹配的规则。
+        // # Add a rule for the current server or world
+        // # zh_CN 为当前服务器或世界添加规则
         tooltip(ID_USE_CURRENT, I18n.format("radialmenu.rules.useCurrent.tip"));
         // #tr radialmenu.editor.save
         // # Save

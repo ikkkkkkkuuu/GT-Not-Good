@@ -27,8 +27,8 @@ public class GuiProfileColors extends UiScreen {
             // # zh_CN 环形填充色
             "radialmenu.profileColors.ring",
             // #tr radialmenu.profileColors.ring.tip
-            // # Color of every ring in this profile, unless a submenu sets its own.
-            // # zh_CN 此配置中所有环形菜单的颜色，除非某个子菜单单独设置。
+            // # Ring color for this profile. Submenu colors override it
+            // # zh_CN 配置方案的轮盘颜色；子菜单可单独设置
             "radialmenu.profileColors.ring.tip", true, ActionTypes.PARAM_RING_COLOR),
         Border(
             // #tr radialmenu.profileColors.border
@@ -36,8 +36,8 @@ public class GuiProfileColors extends UiScreen {
             // # zh_CN 环形边框
             "radialmenu.profileColors.border",
             // #tr radialmenu.profileColors.border.tip
-            // # Color of the sector dividers and the ring edges, unless a submenu sets its own.
-            // # zh_CN 区域分隔线和环形边缘的颜色，除非某个子菜单单独设置。
+            // # Divider and edge color. Submenu colors override it
+            // # zh_CN 分隔线和边缘颜色；子菜单可单独设置
             "radialmenu.profileColors.border.tip", true, ActionTypes.PARAM_BORDER_COLOR),
         Highlight(
             // #tr radialmenu.profileColors.highlight
@@ -45,8 +45,8 @@ public class GuiProfileColors extends UiScreen {
             // # zh_CN 高亮填充色
             "radialmenu.profileColors.highlight",
             // #tr radialmenu.profileColors.highlight.tip
-            // # Color of the sector under the cursor, unless a submenu sets its own.
-            // # zh_CN 光标所在区域的颜色，除非某个子菜单单独设置。
+            // # Hovered sector color. Submenu colors override it
+            // # zh_CN 悬停扇区颜色；子菜单可单独设置
             "radialmenu.profileColors.highlight.tip", true, ActionTypes.PARAM_HIGHLIGHT_COLOR),
         HighlightBorder(
             // #tr radialmenu.profileColors.highlightBorder
@@ -54,8 +54,8 @@ public class GuiProfileColors extends UiScreen {
             // # zh_CN 高亮边框
             "radialmenu.profileColors.highlightBorder",
             // #tr radialmenu.profileColors.highlightBorder.tip
-            // # Color of the outline around the sector under the cursor.
-            // # zh_CN 光标所在区域边框的颜色。
+            // # Outline color of the hovered sector
+            // # zh_CN 悬停扇区的边框颜色
             "radialmenu.profileColors.highlightBorder.tip", true, ActionTypes.PARAM_HIGHLIGHT_BORDER_COLOR),
         Background(
             // #tr radialmenu.profileColors.background
@@ -63,8 +63,8 @@ public class GuiProfileColors extends UiScreen {
             // # zh_CN 背景
             "radialmenu.profileColors.background",
             // #tr radialmenu.profileColors.background.tip
-            // # Screen tint behind the wheel, when the background is enabled.
-            // # zh_CN 启用轮盘背景时，轮盘后方屏幕的蒙层颜色。
+            // # Screen tint behind the wheel when its background is enabled
+            // # zh_CN 启用轮盘背景时的屏幕蒙层颜色
             "radialmenu.profileColors.background.tip", true, ActionTypes.PARAM_BACKGROUND_COLOR),
         Icon(
             // #tr radialmenu.profileColors.icon
@@ -72,8 +72,8 @@ public class GuiProfileColors extends UiScreen {
             // # zh_CN 精灵图标
             "radialmenu.profileColors.icon",
             // #tr radialmenu.profileColors.icon.tip
-            // # Tint uncolored sprite icons. Items and custom PNGs keep their colors.
-            // # zh_CN 为未单独设色的精灵图标着色。物品和自定义 PNG 保持原色。
+            // # Tint sprite icons without their own color. Items and custom PNGs keep their colors
+            // # zh_CN 为未单独设色的精灵图标着色；物品和自定义 PNG 保持原色
             "radialmenu.profileColors.icon.tip", false, ActionTypes.PARAM_ICON_COLOR);
 
         private final String labelKey;
@@ -161,8 +161,8 @@ public class GuiProfileColors extends UiScreen {
         this.buttonList.add(new GuiButton(ID_ACCENT, controlLeft, y, controlWidth, Ui.ROW,
             I18n.format("radialmenu.editor.pickAccent")));
         // #tr radialmenu.profileColors.accent.tip
-        // # Generate the colors below from one accent, then adjust them individually.
-        // # zh_CN 用一种强调色生成下方配色，再分别调整各个颜色。
+        // # Generate the colors below from one accent, then adjust each color
+        // # zh_CN 用强调色生成下方配色，再分别调整
         tooltip(ID_ACCENT, I18n.format("radialmenu.profileColors.accent.tip"));
 
         y += Ui.STEP + Ui.GAP;

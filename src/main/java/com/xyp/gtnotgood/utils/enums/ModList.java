@@ -16,6 +16,7 @@ public enum ModList {
     TwistSpaceTechnology(ModIds.TWIST_SPACE_TECHNOLOGY, Names.TWIST_SPACE_TECHNOLOGY),
     GTNotGood(ModIds.GT_NOT_GOOD, Names.GT_NOT_GOOD),
     Angelica(ModIds.ANGELICA, Names.ANGELICA),
+    JourneyMap(ModIds.JOURNEY_MAP, Names.JOURNEY_MAP),
     NotEnoughItems(ModIds.NOT_ENOUGH_ITEMS, Names.NOT_ENOUGH_ITEMS),
     AE2(ModIds.APPLIED_ENERGISTICS_2, Names.APPLIED_ENERGISTICS_2),
     AE2FluidCraft(ModIds.AE2_FLUID_CRAFT, Names.AE2_FLUID_CRAFT),
@@ -44,6 +45,7 @@ public enum ModList {
         /** Preserved resource namespace of the embedded official RTS Building module. */
         public static final String RTS_BUILDING = "rtsbuilding";
         public static final String ANGELICA = "angelica";
+        public static final String JOURNEY_MAP = "journeymap";
         public static final String NOT_ENOUGH_ITEMS = "NotEnoughItems";
         public static final String BETTER_QUESTING_API = "bqapi";
         public static final String APPLIED_ENERGISTICS_2 = "appliedenergistics2";
@@ -73,6 +75,7 @@ public enum ModList {
         public static final String TWIST_SPACE_TECHNOLOGY = "Twist Space Technology";
         public static final String GT_NOT_GOOD = "GT-Not-Good";
         public static final String ANGELICA = "Angelica";
+        public static final String JOURNEY_MAP = "JourneyMap";
         public static final String NOT_ENOUGH_ITEMS = "Not Enough Items";
         public static final String BETTER_QUESTING_API = "Better Questing API";
         public static final String APPLIED_ENERGISTICS_2 = "Applied Energistics 2";

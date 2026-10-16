@@ -80,17 +80,21 @@ public final class EssentiaDisassembler extends MTEBasicMachine {
 
     private static String[] description() {
         return new String[] {
+            // #tr tooltip.essentia_disassembler.function
+            // # Breaks items down into essentia and stores it in ME
+            // # zh_CN 将物品分解为源质并存入 ME 网络
+            StatCollector.translateToLocal("tooltip.essentia_disassembler.function"),
             // #tr tooltip.essentia_disassembler.processing
-            // # Base duration: 20 ticks at 128 EU/t; follows global recipe speed settings
-            // # zh_CN 基础耗时 20 tick，128 EU/t；遵循全局配方提速设置
+            // # Base processing time: 1 s at 128 EU/t; affected by recipe speed settings
+            // # zh_CN 基础耗时：1 秒，128 EU/t；受配方提速设置影响
             StatCollector.translateToLocal("tooltip.essentia_disassembler.processing"),
             // #tr tooltip.essentia_disassembler.network
-            // # Outputs native essentia to ME; requires a powered channel and essentia storage
-            // # zh_CN 源质直接存入 ME；需要供电、频道和源质存储
+            // # Requires a powered ME channel and essentia storage
+            // # zh_CN 需要 ME 供电、一个频道和源质存储空间
             StatCollector.translateToLocal("tooltip.essentia_disassembler.network"),
             // #tr tooltip.essentia_disassembler.buffer
-            // # Pauses when full; buffered essentia survives saves and wrench removal
-            // # zh_CN 存储满时暂停；缓存源质在存档和扳手拆卸后保留
+            // # Waits when ME storage is full; buffered essentia survives saves and wrench pickup
+            // # zh_CN ME 存储满时等待；缓存源质在保存和扳手拆卸后保留
             StatCollector.translateToLocal("tooltip.essentia_disassembler.buffer") };
     }
 

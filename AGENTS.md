@@ -1,5 +1,7 @@
 # Project Memory
 
+- 后续新增或修改的 tooltip（机器、舱室、物品、方块及 GUI）统一沿用 GTNH 原版风格：简短说明用途，按需列出性能、操作和限制，复杂机制分段说明；多方块结构信息放在 Shift 说明中。中英文语义一致，沿用原版术语、性能辅助方法与语义配色。数值、尺寸、交互和失败条件必须核对实际实现，避免夸大、冗长口号和面向玩家的实现细节。
+
 - Release versions increment the last component by one regardless of feature size: 1.4.0 → 1.4.1, then 1.4.9 → 1.5.0. Carry to the next component only when the last component reaches 10.
 
 - As part of every “提交并更新” release workflow, update README release and version-specific download links to point to the new release and its matching assets, including any displayed version text. Include these README changes in the release commit and verify the links after the release is published.

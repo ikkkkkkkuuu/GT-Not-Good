@@ -163,13 +163,13 @@ public class GuiIconPicker extends UiScreen {
         colorButton.enabled = tab == Tab.Sprites || (tab == Tab.Files && !originalColors);
         this.buttonList.add(colorButton);
         // #tr radialmenu.icons.color.tip
-        // # Tint applied to sprites and your own PNGs. Items keep their own colors.
-        // # zh_CN 应用于精灵图和自定义 PNG 的颜色滤镜。物品会保留自身颜色。
+        // # Tint sprite icons and custom PNGs. Item icons keep their original colors
+        // # zh_CN 为精灵图标和自定义 PNG 着色；物品图标保持原色
         tooltip(ID_COLOR, I18n.format("radialmenu.icons.color.tip"));
         this.buttonList.add(new GuiButton(ID_REFRESH, refreshLeft, y, Ui.ROW, Ui.ROW, "R"));
         // #tr radialmenu.icons.refresh.tip
-        // # Re-scan the icons folder for PNG files you just added.
-        // # zh_CN 重新扫描图标文件夹，查找刚添加的 PNG 文件。
+        // # Reload PNG files from the icons folder
+        // # zh_CN 重新读取图标文件夹中的 PNG 文件
         tooltip(ID_REFRESH, I18n.format("radialmenu.icons.refresh.tip"));
 
         y += Ui.STEP;
@@ -190,8 +190,8 @@ public class GuiIconPicker extends UiScreen {
                 // # zh_CN 保持图片原始颜色
                 I18n.format("radialmenu.icons.original"), originalColors));
             // #tr radialmenu.icons.original.tip
-            // # Draw your PNG exactly as it was saved, ignoring the tint chosen for sprites.
-            // # zh_CN 按照 PNG 文件保存时的样子绘制，忽略为精灵图选择的颜色滤镜。
+            // # Use the PNG colors without applying the sprite tint
+            // # zh_CN 使用 PNG 原色，忽略精灵图标的颜色设置
             tooltip(ID_ORIGINAL, I18n.format("radialmenu.icons.original.tip"));
             afterTabs += Ui.STEP;
         }

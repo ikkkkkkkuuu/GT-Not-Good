@@ -451,30 +451,39 @@ public class LargeOreProcessor extends GTNGMultiBlockBase<LargeOreProcessor> imp
         // # Large Ore Processor
         // # zh_CN 大型矿石处理
         String machineType = StatCollector.translateToLocal("recipe.gtnotgood.largeOreProcessor");
+        // #tr tooltip.gtnotgood.largeOreProcessor.casing
+        // # Solid Steel Machine Casing
+        // # zh_CN 坚实钢机械方块
+        String casing = StatCollector.translateToLocal("tooltip.gtnotgood.largeOreProcessor.casing");
         tt.addMachineType(machineType)
             // #tr tooltip.gtnotgood.largeOreProcessor.0
-            // # A large ore processing machine
-            // # zh_CN 大型矿石处理机器
+            // # Turns ores into their processed products in one step
+            // # zh_CN 一步完成矿石加工
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeOreProcessor.0"))
             // #tr tooltip.gtnotgood.largeOreProcessor.1
-            // # Processes all ore inputs at once
-            // # zh_CN 一次处理全部输入矿石
+            // # Processes available ore inputs together in a 1-second cycle
+            // # zh_CN 每轮 1 秒，一并处理可用的输入矿石
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeOreProcessor.1"))
+            .addStaticParallelInfo(MAX_PARALLEL)
             // #tr tooltip.gtnotgood.largeOreProcessor.2
-            // # No energy or lubricant required
-            // # zh_CN 不需要能源或润滑油
+            // # Requires no EU or lubricant
+            // # zh_CN 无需能源或润滑油
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeOreProcessor.2"))
             // #tr tooltip.gtnotgood.largeOreProcessor.3
-            // # Supports unlimited parallel recipes
-            // # zh_CN 支持无限并行配方
+            // # Different ore recipes share the same cycle
+            // # zh_CN 同一轮可处理多种矿石配方
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeOreProcessor.3"))
             // #tr tooltip.gtnotgood.largeOreProcessor.4
-            // # Unprocessable items move to the output bus
-            // # zh_CN 无法处理的物品会转到输出总线
+            // # Unprocessable items are passed to output buses
+            // # zh_CN 无法处理的物品送至输出总线
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeOreProcessor.4"))
-            .beginStructureBlock(3, 2, 2, false).addCasing("0+", "Any Large Ore Processor Casing", false)
-            .addInputBus("1+", "Any Input Bus", 1).addOutputBus("1+", "Any Output Bus", 1)
-            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", "Any Maintenance Hatch", 1).toolTipFinisher();
+            .beginStructureBlock(3, 2, 1, false)
+            // #tr tooltip.gtnotgood.largeOreProcessor.controller
+            // # Front bottom center
+            // # zh_CN 正面底部中央
+            .addController(StatCollector.translateToLocal("tooltip.gtnotgood.largeOreProcessor.controller"))
+            .addCasing("1+", casing, false).addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1)
+            .addInputBus("1+", casing, 1).addOutputBus("1+", casing, 1).toolTipFinisher();
         return tt;
     }
 }

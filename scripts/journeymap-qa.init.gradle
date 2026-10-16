@@ -1,0 +1,81 @@
+// gradlew.bat -I scripts/journeymap-qa.init.gradle runClient17 --no-configuration-cache
+gradle.beforeProject { project ->
+    if (project == gradle.rootProject) project.layout.buildDirectory.set(project.file('.gradle/journeymap-qa-build'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def absent = root.hasProperty('journeyMapAbsent')
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.isFile()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    if (!absent) {
+        def instance = 'C:/Users/Administrator/Desktop/GTNH/instances/' +
+            'GT_New_Horizons_2.9.0-RC-1_Java_17-26/.minecraft/mods/'
+        def journeyMap = root.file(root.findProperty('journeyMapJar') ?:
+            instance + 'journeymap-1.7.10-5.2.23-fairplay.jar')
+        if (!journeyMap.isFile()) throw new GradleException('Missing JourneyMap jar; pass -PjourneyMapJar=<path>')
+        root.dependencies.add('runtimeOnlyNonPublishable', root.dependencies.rfg.deobf(root.files(journeyMap)))
+    }
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String)
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/JourneyMapClientChecks.java'))
+    }
+    root.spotless.java {
+        target 'scripts/qa/JourneyMapClientChecks.java'
+    }
+    def mainSnapshot = root.layout.buildDirectory.dir('journeymap-qa-runtime/main')
+    def testSnapshot = root.layout.buildDirectory.dir('journeymap-qa-runtime/test')
+    def copyMain = root.tasks.register('snapshotJourneyMapMain', Sync) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        into mainSnapshot
+    }
+    def copyTest = root.tasks.register('snapshotJourneyMapTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/JourneyMapClientChecks*.class'
+        into testSnapshot
+    }
+    def suffix = absent ? '-absent' : ''
+    def output = root.file('build/journeymap-qa' + suffix)
+    def result = new File(output, 'result.txt')
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn copyMain, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainSnapshot, testSnapshot)
+        classpath += root.configurations.testRuntimeClasspath.filter {
+            it.name.startsWith('jvmdowngrader-java-api-')
+        }
+        workingDir root.file('run/journeymap-qa' + suffix)
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.journeyMap.qa', 'true'
+        systemProperty 'gtng.journeyMap.qa.absent', absent.toString()
+        systemProperty 'gtng.journeyMap.qa.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1280', '--height', '900'
+        notCompatibleWithConfigurationCache('Opt-in JourneyMap client checks')
+        doFirst {
+            workingDir.mkdirs()
+            output.mkdirs()
+            java.nio.file.Files.deleteIfExists(result.toPath())
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', workingDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('JourneyMap QA failed; inspect JOURNEYMAP_QA in ' +
+                    workingDir + '/logs/fml-client-latest.log.')
+            }
+        }
+    }
+}

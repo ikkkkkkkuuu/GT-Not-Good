@@ -66,20 +66,28 @@ public final class ItemAdvancedIOBus extends Item implements IPartItem {
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advanced) {
         // #tr tooltip.advancedio.stock
-        // # Maintains selected item/fluid amounts; imports unlisted outputs.
-        // # zh_CN 定量补充选定物品与流体，回收未标记的产物。
+        // # Maintains item and fluid stock in the attached machine; returns unmarked resources to ME.
+        // # zh_CN 维持相邻机器的物品与流体库存，将未标记的资源送回 ME。
         lines.add(StatCollector.translateToLocal("tooltip.advancedio.stock"));
+        // #tr tooltip.advancedio.configure
+        // # Set item or fluid samples; middle-click a sample to set its target stock.
+        // # zh_CN 放入物品或流体样本，中键设置目标库存。
+        lines.add(StatCollector.translateToLocal("tooltip.advancedio.configure"));
         // #tr tooltip.advancedio.regulate
-        // # Optional excess recovery. Respects the connected machine face.
-        // # zh_CN 可开关超量回收；遵循所连接机器面的输入输出限制。
+        // # Excess stock recovery is optional. Transfers obey the connected face's access rules.
+        // # zh_CN 可切换超量回收；传输遵循机器连接面的访问限制。
         lines.add(StatCollector.translateToLocal("tooltip.advancedio.regulate"));
         // #tr tooltip.advancedio.speed
-        // # Base speed equals one superluminal card; acceleration cards add to it.
-        // # zh_CN 无卡速率等同原来一张超级光速卡；加速卡可继续叠加。
+        // # Base throughput equals one superluminal card. Acceleration cards increase it further.
+        // # zh_CN 基础吞吐量等同一张超级光速卡，可用加速卡继续提升。
         lines.add(StatCollector.translateToLocal("tooltip.advancedio.speed"));
         // #tr tooltip.advancedio.cards
-        // # 8 upgrade slots: acceleration, capacity and redstone cards.
-        // # zh_CN 8 个升级槽：支持加速卡、容量卡与红石卡。
+        // # 8 upgrade slots for acceleration, capacity and redstone cards.
+        // # zh_CN 8 个升级槽，支持加速卡、容量卡与红石卡。
         lines.add(StatCollector.translateToLocal("tooltip.advancedio.cards"));
+        // #tr tooltip.advancedio.capacity
+        // # 18 sample slots; each capacity card adds 9, up to 63.
+        // # zh_CN 默认 18 个样本槽，每张容量卡增加 9 个，最多 63 个。
+        lines.add(StatCollector.translateToLocal("tooltip.advancedio.capacity"));
     }
 }

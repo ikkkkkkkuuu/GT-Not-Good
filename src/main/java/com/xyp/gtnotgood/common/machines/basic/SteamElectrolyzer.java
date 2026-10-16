@@ -20,8 +20,8 @@ public final class SteamElectrolyzer extends SteamProcessingMachine {
 
     private static String description() {
         // #tr tooltip.steam_electrolyzer.description
-        // # Cell-free electrolysis powered by steam
-        // # zh_CN 无需流体单元的蒸汽电解处理
+        // # Electrolyzes items and fluids using steam; no fluid cells needed
+        // # zh_CN 使用蒸汽电解物品和流体，无需流体单元
         return StatCollector.translateToLocal("tooltip.steam_electrolyzer.description");
     }
 

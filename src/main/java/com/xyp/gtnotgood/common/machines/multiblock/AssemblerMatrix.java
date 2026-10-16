@@ -497,18 +497,29 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     public MultiblockTooltipBuilder createTooltip() {
         MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
         // #tr gtng.AssemblerMatrix.name
-        // # AssemblerMatrix
+        // # Assembler Matrix
         // # zh_CN 装配矩阵
         tt.addMachineType(StatCollector.translateToLocal("gtng.AssemblerMatrix.name"))
+            // #tr gtng.AssemblerMatrix.function
+            // # Executes AE crafting patterns
+            // # zh_CN 执行 AE 合成样板
+            .addInfo(StatCollector.translateToLocal("gtng.AssemblerMatrix.function"))
             // #tr gtng.AssemblerMatrix.maximum
-            // # Maximum parallel, 1 tick crafts, %s pattern slots
-            // # zh_CN 最高并行、1 tick合成、%s个样板槽位
+            // # 1-tick crafting; up to %s patterns
+            // # zh_CN 1 tick 合成，最多容纳 %s 个样板
             .addInfo(StatCollector.translateToLocalFormatted("gtng.AssemblerMatrix.maximum", PATTERN_CAPACITY))
             // #tr gtng.AssemblerMatrix.free
-            // # No upgrades, EU or AE crafting energy required
-            // # zh_CN 无需升级，不消耗EU或AE合成能量
+            // # Requires no upgrades, EU or AE crafting energy
+            // # zh_CN 无需升级，不消耗 EU 或 AE 合成能量
             .addInfo(StatCollector.translateToLocal("gtng.AssemblerMatrix.free")).beginStructureBlock(3, 2, 1, false)
-            .toolTipFinisher();
+            // #tr gtng.AssemblerMatrix.controller
+            // # Front bottom center
+            // # zh_CN 正面底部中央
+            .addController(StatCollector.translateToLocal("gtng.AssemblerMatrix.controller"))
+            // #tr gtng.AssemblerMatrix.casing
+            // # 5 positions: Solid Steel Machine Casing or input/output buses
+            // # zh_CN 5 个位置可使用坚实钢机械方块或输入、输出总线
+            .addStructureInfo(StatCollector.translateToLocal("gtng.AssemblerMatrix.casing")).toolTipFinisher();
         return tt;
     }
 

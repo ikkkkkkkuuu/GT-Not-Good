@@ -794,46 +794,56 @@ public class LargeBeeBreeder extends GTNGMultiBlockBase<LargeBeeBreeder> impleme
     @Override
     public MultiblockTooltipBuilder createTooltip() {
         MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
-        tt.addMachineType(StatCollector.translateToLocal("LargeBeeBreederRecipeType"));
-        // #tr Tooltip_LargeBeeBreeder_00
-        // # A large electric automatic bee breeding machine
-        // # zh_CN 大型电力自动养蜂杂交机
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_00"));
-        // #tr Tooltip_LargeBeeBreeder_01
-        // # Input any princess or drone to unlock that species permanently
-        // # zh_CN 投入任意公主蜂或雄蜂，永久记入物种档案
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_01"));
-        // #tr Tooltip_LargeBeeBreeder_02
-        // # The machine plans and runs every reachable mutation step automatically
-        // # zh_CN 机器会自动规划并执行可到达的杂交步骤
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_02"));
-        // #tr Tooltip_LargeBeeBreeder_03
-        // # Each breeding cycle takes 3.2 seconds and uses Forestry mutation chance
-        // # zh_CN 每次繁育周期 3.2 秒，使用林业原版杂交概率
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_03"));
-        // #tr Tooltip_LargeBeeBreeder_04
-        // # Each princess input becomes one target princess when the chain completes
-        // # zh_CN 每投入一只公主蜂，完成后输出一只目标公主蜂
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_04"));
-        // #tr Tooltip_LargeBeeBreeder_05
-        // # Each parallel breeding attempt costs 400 EU/t before glass upgrades
-        // # zh_CN 每个并行杂交任务基础消耗 400 EU/t
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_05"));
-        // #tr Tooltip_LargeBeeBreeder_06
-        // # Insert a Stainless Steel gear in the controller slot for extra mutation chance
-        // # zh_CN 在主机内插入不锈钢齿轮提高杂交成功率
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_06"));
-        // #tr Tooltip_LargeBeeBreeder_07
-        // # Higher glass tier improves mutation chance and increases EU/t
-        // # zh_CN 玻璃等级越高，成功率和耗电越高
-        tt.addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_07"));
         // #tr Tooltip_LargeBeeBreeder_Casing
-        // # Machine casing
-        // # zh_CN 机器外壳
+        // # Bronze Plated Bricks
+        // # zh_CN 砖砌青铜机器外壳
         String casing = StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_Casing");
-        tt.beginStructureBlock(15, 17, 15, false).addInputBus("1+", casing, 1).addOutputBus("1+", casing, 1)
+        tt.addMachineType(StatCollector.translateToLocal("LargeBeeBreederRecipeType"))
+            // #tr Tooltip_LargeBeeBreeder_00
+            // # Automatically breeds bees through a planned mutation chain
+            // # zh_CN 自动规划杂交链，培育目标蜂种
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_00"))
+            .addStaticParallelInfo(MAX_PARALLEL_STEPS)
+            // #tr Tooltip_LargeBeeBreeder_03
+            // # Each attempt takes 3.2 seconds and uses Forestry mutation chances
+            // # zh_CN 每次尝试耗时 3.2 秒，采用林业杂交概率
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_03"))
+            // #tr Tooltip_LargeBeeBreeder_05
+            // # Each attempt uses 400 EU/t, plus 400 EU/t per glass tier
+            // # zh_CN 每个并行任务消耗 400 EU/t，每级玻璃再增加 400 EU/t
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_05"))
+            // #tr Tooltip_LargeBeeBreeder_07
+            // # Each glass tier adds 1 percentage point to mutation chance
+            // # zh_CN 玻璃每升 1 级，杂交成功率增加 1 个百分点
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_07")).addSeparator()
+            // #tr Tooltip_LargeBeeBreeder_01
+            // # Input princesses or drones to permanently unlock their species
+            // # zh_CN 投入公主蜂或雄蜂，永久解锁对应蜂种
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_01"))
+            // #tr Tooltip_LargeBeeBreeder_02
+            // # Set the target in the GUI; reachable mutation steps run automatically
+            // # zh_CN 在 GUI 设置目标，机器自动执行可达的杂交步骤
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_02"))
+            // #tr Tooltip_LargeBeeBreeder_04
+            // # Each input princess requests one target princess
+            // # zh_CN 每投入一只公主蜂，可输出一只目标公主蜂
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_04"))
+            // #tr Tooltip_LargeBeeBreeder_06
+            // # A Stainless Steel Gear in the controller adds 2 percentage points to mutation chance
+            // # zh_CN 控制器槽放入不锈钢齿轮，杂交成功率增加 2 个百分点
+            .addInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_06"))
+            .beginStructureBlock(15, 17, 15, false)
+            // #tr Tooltip_LargeBeeBreeder_Controller
+            // # Front center, ninth layer from the top
+            // # zh_CN 正面中央，从顶向下第 9 层
+            .addController(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_Controller"))
+            .addCasing("10+", casing, false)
+            // #tr Tooltip_LargeBeeBreeder_Structure
+            // # 121 glass, 459 dirt/grass, 185 planks, 9 wooden slabs, 85 bronze frames
+            // # zh_CN 121 块玻璃、459 块泥土或草方块、185 块木板、9 个木台阶、85 个青铜框架
+            .addStructureInfo(StatCollector.translateToLocal("Tooltip_LargeBeeBreeder_Structure"))
             .addEnergyHatch("1+", casing, 1).addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1)
-            .toolTipFinisher();
+            .addInputBus("1+", casing, 1).addOutputBus("1+", casing, 1).toolTipFinisher();
         return tt;
     }
 

@@ -96,13 +96,13 @@ public class MachineLoader {
                 StatCollector.translateToLocal("gtng.LargeTransmutationMachine.name")));
         addItemTooltip(GTNGItemList.LargeTransmutationMachine.get(1), AnimatedText.GT_NOT_GOOD);
         // #tr gtng.QuantumComputer.name
-        // # QuantumComputer
+        // # Quantum Computer
         // # zh_CN 量子计算机
         GTNGItemList.QuantumComputer.set(new QuantumComputer(GTNGMachineID.QuantumComputer.id, "QuantumComputer",
             StatCollector.translateToLocal("gtng.QuantumComputer.name")));
         addItemTooltip(GTNGItemList.QuantumComputer.get(1), AnimatedText.GT_NOT_GOOD);
         // #tr gtng.AssemblerMatrix.name
-        // # AssemblerMatrix
+        // # Assembler Matrix
         // # zh_CN 装配矩阵
         GTNGItemList.AssemblerMatrix.set(new AssemblerMatrix(GTNGMachineID.AssemblerMatrix.id, "AssemblerMatrix",
             StatCollector.translateToLocal("gtng.AssemblerMatrix.name")));

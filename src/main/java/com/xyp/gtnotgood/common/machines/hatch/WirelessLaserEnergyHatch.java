@@ -2,7 +2,10 @@ package com.xyp.gtnotgood.common.machines.hatch;
 
 import net.minecraft.util.StatCollector;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.gtnewhorizon.gtnhlib.util.numberformatting.NumberFormatUtil;
+import com.xyp.gtnotgood.utils.text.EnergyHatchTooltip;
 
 import gregtech.api.enums.GTValues;
 import gregtech.api.interfaces.ITexture;
@@ -11,13 +14,6 @@ import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import tectech.thing.metaTileEntity.hatch.MTEHatchWirelessMulti;
 
-/**
- * Registers additional voltage tiers using GregTech's existing wireless laser implementation.
- * Network ownership, buffering, adjustable amperage, GUI and textures remain provided by GregTech.
- * Only the localized family name and the factory retaining this subtype are supplied here.
- *
- * @see MTEHatchWirelessMulti
- */
 @IMetaTileEntity.SkipGenerateName
 @IMetaTileEntity.SkipGenerateDescription
 public final class WirelessLaserEnergyHatch extends MTEHatchWirelessMulti {
@@ -40,19 +36,29 @@ public final class WirelessLaserEnergyHatch extends MTEHatchWirelessMulti {
             NumberFormatUtil.formatNumber(maxAmperes));
     }
 
-    /**
-     * Keeps native energy details and screwdriver help; the loader supplies this variant's animated mod credit.
-     * Upstream implementation attribution remains documented separately from the item's added-by line.
-     */
     @Override
     public String[] getDescription() {
-        return formatEnergyInfoDesc(null, StatCollector.translateToLocal("gt.blockmachines.hatch.screwdrivertooltip"),
-            false, mTier, maxAmperes, "gt.blockmachines.energy_hatch.wireless");
+        // #tr gtng.wireless.laser.input.description
+        // # Draws EU from the owner's GT wireless network to power a multiblock
+        // # zh_CN 从仓主的 GT 无线电网提取 EU，为多方块机器供能
+        String description = StatCollector.translateToLocal("gtng.wireless.laser.input.description");
+        String[] details = EnergyHatchTooltip.format(description, false, mTier, maxAmperes);
+        // #tr gtng.wireless.laser.input.capacity
+        // # Internal energy capacity: %s EU
+        // # zh_CN 内部能量容量：%s EU
+        String capacity = StatCollector.translateToLocalFormatted("gtng.wireless.laser.input.capacity",
+            NumberFormatUtil.formatNumber(maxEUStore()));
+        // #tr gtng.wireless.laser.input.network
+        // # Requires enough wireless EU for each transfer; does not accept cables
+        // # zh_CN 无线电网须有足够 EU 完成每次传输；不接受线缆供电
+        String network = StatCollector.translateToLocal("gtng.wireless.laser.input.network");
+        // #tr gtng.wireless.laser.input.controls
+        // # Right-click with a screwdriver to adjust amperage
+        // # zh_CN 螺丝刀右键调整电流
+        String controls = StatCollector.translateToLocal("gtng.wireless.laser.input.controls");
+        return ArrayUtils.addAll(details, capacity, network, controls);
     }
 
-    /**
-     * Creates a fresh tile with the registered ceiling; saved adjustable amperage is restored by native NBT loading.
-     */
     @Override
     public MetaTileEntity newMetaEntity(IGregTechTileEntity tile) {
         return new WirelessLaserEnergyHatch(mName, mTier, maxAmperes, mDescriptionArray, mTextures);

@@ -352,27 +352,51 @@ public class LargeCombProcessor extends GTNGMultiBlockBase<LargeCombProcessor> i
         MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
         // #tr gtng.comb.casing
         // # Solid Steel Machine Casing
-        // # zh_CN 固态钢机器外壳
+        // # zh_CN 坚实钢机械方块
         String casing = StatCollector.translateToLocal("gtng.comb.casing");
         tt.addMachineType(getMachineType())
             // #tr gtng.comb.direct
-            // # Processes combs into dust, gems, fluids and special products
-            // # zh_CN 直接将蜂窝加工为粉末、宝石、流体与特殊产物
+            // # Extracts dusts, gems, fluids and special products from combs
+            // # zh_CN 从蜂窝提取粉末、宝石、流体及特殊产物
             .addInfo(StatCollector.translateToLocal("gtng.comb.direct"))
+            // #tr GT5U.MBTT.Parallel.Base
+            // # %s Parallels
+            // # zh_CN %s 并行
+            .addStaticParallelInfo(MAX_PARALLEL_RECIPES)
+            // #tr GT5U.MBTT.Speed.Base
+            // # %s Speed
+            // # zh_CN %s 速度
+            .addStaticSpeedInfo(10f)
+            // #tr GT5U.MBTT.EuDiscount.Base
+            // # %s EU Usage
+            // # zh_CN %s 耗电
+            .addStaticEuEffInfo(0.1f)
+            // #tr GT5U.MBTT.PerfectOC
+            // # Machine does not lose efficiency when overclocked
+            // # zh_CN 支持无损超频
+            .addPerfectOCInfo()
             // #tr gtng.comb.bonus
-            // # Perfect overclocking; 10% recipe duration and EU usage
-            // # zh_CN 完美超频；配方耗时与耗电均为原值的10%
-            .addInfo(StatCollector.translateToLocal("gtng.comb.bonus"))
+            // # Parallel processing is limited by the available power
+            // # zh_CN 实际并行受可用功率限制
+            .addInfo(StatCollector.translateToLocal("gtng.comb.bonus")).addSeparator()
             // #tr gtng.comb.cross
-            // # With overflow allowed: groups share power; duration and EU/t add up
-            // # zh_CN 允许溢出时跨配方处理：共享功率预算，耗时与EU/t累加
+            // # Allow overflow to process recipe groups together; their EU/t and durations add up
+            // # zh_CN 允许溢出时可跨配方处理；各组共享功率，EU/t 与耗时分别累加
             .addInfo(StatCollector.translateToLocal("gtng.comb.cross")).beginStructureBlock(15, 17, 15, false)
             // #tr gtng.comb.controller
             // # Front center, ninth layer from the top
-            // # zh_CN 正面中央，从顶向下第九层
-            .addController(StatCollector.translateToLocal("gtng.comb.controller")).addInputBus(casing, 1)
-            .addOutputBus(casing, 1).addInputHatch(casing, 1).addOutputHatch(casing, 1).addEnergyHatch(casing, 1)
-            .addMaintenanceHatch(casing, 1).toolTipFinisher();
+            // # zh_CN 正面中央，从顶向下第 9 层
+            .addController(StatCollector.translateToLocal("gtng.comb.controller")).addCasing("1+", casing, false)
+            // #tr gtng.comb.structure
+            // # 121 glass, 459 dirt/grass, 185 planks, 9 wooden slabs, 85 bronze frames
+            // # zh_CN 121 块玻璃、459 块泥土或草方块、185 块木板、9 个木台阶、85 个青铜框架
+            .addStructureInfo(StatCollector.translateToLocal("gtng.comb.structure")).addEnergyHatch("1+", casing, 1)
+            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1).addInputBus("0+", casing, 1)
+            .addInputHatch("0+", casing, 1).addOutputBus("0+", casing, 1).addOutputHatch("0+", casing, 1)
+            // #tr GT5U.MBTT.Structure.Projector
+            // # §fUse the Multiblock Structure §9Hologram §1Projector§f to visualize/build the structure!
+            // # zh_CN §f使用多方块结构§9全息§1投影仪§f预览或建造结构
+            .toolTipFinisher();
         return tt;
     }
 

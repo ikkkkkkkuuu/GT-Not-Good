@@ -21,7 +21,7 @@ public final class SteamAssembler extends SteamProcessingMachine {
     private static String description() {
         // #tr tooltip.steam_assembler.description
         // # Assembles items using steam
-        // # zh_CN 蒸汽驱动的组装处理
+        // # zh_CN 使用蒸汽组装物品
         return StatCollector.translateToLocal("tooltip.steam_assembler.description");
     }
 

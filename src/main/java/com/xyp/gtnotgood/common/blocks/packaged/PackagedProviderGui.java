@@ -165,8 +165,8 @@ public final class PackagedProviderGui {
             // The original atlas slot begins at U=0; its five-pixel padding is vertical only.
             .pos(186, 77)
             // #tr gui.packaged.core_slot
-            // # Packaged Core (locked while jobs are active)
-            // # zh_CN 封包核心（有任务时锁定）
+            // # Packaged Core; cannot be changed while jobs are active
+            // # zh_CN 封包核心，有进行中的任务时无法更换
             .tooltip(
                 t -> t.addLine(IKey.lang("gui.packaged.core_slot"))
                     .addLine(IKey.dynamic(() -> missingUnits.getIntValue() > 0
@@ -191,8 +191,8 @@ public final class PackagedProviderGui {
                 h, theme);
         panel.child(toolbar(-18, 23, terminalIcon, () -> {
             // #tr gui.packaged.terminal
-            // # Show in Pattern Access Terminal: %s
-            // # zh_CN 在样板终端中显示：%s
+            // # Visible in the Pattern Access Terminal: %s
+            // # zh_CN 在样板访问终端中显示：%s
             return StatCollector.translateToLocalFormatted("gui.packaged.terminal", state(visible.getBoolValue()));
         }, () -> {
             if (tile.canConfigure(sync.getPlayer())) {
@@ -235,13 +235,13 @@ public final class PackagedProviderGui {
         panel.child(toolbar(-18, 89, icon("frequency_connect"), () -> {
             if (essentia.getBoolValue()) {
                 // #tr gui.packaged.essentia_ae
-                // # AE essentia: %sx | Left: source; right: speed (idle only)
-                // # zh_CN AE 源质：%s 倍 | 左键切来源，右键调速（空闲时）
+                // # AE essentia: %sx. Left-click: source; right-click: speed. No active jobs allowed.
+                // # zh_CN AE 源质：%s 倍；左键切换来源，右键调速，须先结束所有任务。
                 return StatCollector.translateToLocalFormatted("gui.packaged.essentia_ae", essentiaSpeed.getIntValue());
             }
             // #tr gui.packaged.essentia_altar
-            // # Essentia: altar supply (click for AE; requires Thaumic Energistics)
-            // # zh_CN 源质：祭坛供给（点击切换 AE；需神秘能源）
+            // # Use nearby altar essentia. Click to use AE essentia; requires Thaumic Energistics.
+            // # zh_CN 使用祭坛周围的源质；点击切换 AE 源质，需要神秘能源。
             return StatCollector.translateToLocal("gui.packaged.essentia_altar");
         }, () -> {}).name("essentia_mode").setEnabledIf(widget -> infusionCore.getBoolValue())
             .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
@@ -367,16 +367,20 @@ public final class PackagedProviderGui {
                 .overlay(IKey.dynamic(label::getValue).color(0xff404040))
                 .setEnabledIf(widget -> !label.getValue().isEmpty()).tooltip(t -> {
                     // #tr gui.packaged.remove_target
-                    // # Right click: unlink. Shift-right click: release job. Cancel AE requests separately.
-                    // # zh_CN 右键断开；Shift右键中断并释放任务，需另行取消AE订单。
+                    // # Right-click to unlink. Shift-right-click to try stopping and releasing the job.
+                    // # zh_CN 右键断开连接；Shift 右键尝试中断并释放此目标的任务。
                     t.addLine(IKey.lang("gui.packaged.remove_target"));
+                    // #tr gui.packaged.remove_target_busy
+                    // # Active targets cannot be unlinked. Cancel the AE request separately after releasing a job.
+                    // # zh_CN 有任务的目标无法直接断开，释放任务后须另行取消对应的 AE 订单。
+                    t.addLine(IKey.lang("gui.packaged.remove_target_busy"));
                     // #tr gui.packaged.arcane_record
-                    // # Arcane core: left-click to record this table; bring a blank pattern.
-                    // # zh_CN 奥术核心：左击录入此工作台配方，需携带空白样板。
+                    // # Arcane core: left-click the table to record its grid. Consumes a blank pattern.
+                    // # zh_CN 奥术核心：左键工作台条目，消耗空白样板录入九宫格。
                     t.addLine(IKey.lang("gui.packaged.arcane_record"));
                     // #tr gui.packaged.interrupt_materials
-                    // # Assembly lines stop. Consumed inputs are lost; clear leftovers before restarting.
-                    // # zh_CN 装配线停机，已消耗材料不退还；重启前清理剩余材料。
+                    // # Stopping an assembly line loses consumed inputs. Clear leftover materials before restarting.
+                    // # zh_CN 中断装配线不会返还已消耗的材料，重启前须清理剩余材料。
                     t.addLine(IKey.lang("gui.packaged.interrupt_materials"));
                 }).syncHandler(new InteractionSyncHandler().setOnMousePressed(mouse -> {
                     if (
@@ -390,8 +394,8 @@ public final class PackagedProviderGui {
                         if (mouse.shift) {
                             boolean released = tile.releaseInterrupted(page[0] + offset);
                             // #tr gui.packaged.recovery_result
-                            // # Interrupted: %s. Remaining items stay at the target; cancel its AE requests.
-                            // # zh_CN 中断结果：%s。剩余材料保留在目标内，请取消对应AE订单。
+                            // # Job released: %s. Check remaining materials and cancel the corresponding AE request.
+                            // # zh_CN 任务已释放：%s。请检查剩余材料并取消对应的 AE 订单。
                             sync.getPlayer()
                                 .addChatMessage(new ChatComponentTranslation("gui.packaged.recovery_result", released));
                         } else tile.removeTarget(page[0] + offset);

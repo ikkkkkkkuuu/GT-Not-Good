@@ -111,13 +111,13 @@ public final class ServerSettingsScreen extends GuiConfig {
                 copy.setMaxValue(Double.parseDouble(source.getMaxValue()));
             }
             // #tr gui.gtnotgood.server_live
-            // # Takes effect on subsequent server processing; existing results are not undone.
-            // # zh_CN 后续服务器处理生效；已有结果不会撤销。
+            // # Applies to subsequent processing; existing results are kept
+            // # zh_CN 后续处理生效，已有结果保留
             String timing = I18n.format("gui.gtnotgood.server_live");
             if (!option.live) {
                 // #tr gui.gtnotgood.server_restart
-                // # Saved for the next server restart; clients may also need matching settings and a restart.
-                // # zh_CN 保存后重启服务器生效；客户端可能也需同步设置并重启。
+                // # Requires a server restart; clients may also need matching settings and a restart
+                // # zh_CN 需重启服务器；客户端可能也需同步设置并重启
                 timing = I18n.format("gui.gtnotgood.server_restart");
             }
             copy.comment = source.comment + "\n\n" + timing;
@@ -173,8 +173,8 @@ public final class ServerSettingsScreen extends GuiConfig {
         public ServerEntry(GuiConfig screen, GuiConfigEntries entries, IConfigElement element) {
             super(screen, entries, element);
             // #tr gui.gtnotgood.server_settings_description
-            // # Edit this server's settings. Requires OP level 2. Hover over each option for its effect and timing.
-            // # zh_CN 修改当前服务器的设置，需要 OP 2 级权限。悬停各选项可查看功能和生效时机。
+            // # Edit server settings (OP 2+). Hover over options for their effects and timing
+            // # zh_CN 修改服务器设置，需要 OP 2 级权限。悬停选项查看功能和生效时机
             String description = I18n.format("gui.gtnotgood.server_settings_description");
             toolTip = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(description, 300);
         }

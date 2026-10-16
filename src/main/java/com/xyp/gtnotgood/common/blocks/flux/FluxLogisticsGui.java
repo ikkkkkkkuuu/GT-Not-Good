@@ -112,12 +112,12 @@ public final class FluxLogisticsGui {
         }
         panel.child(IKey.dynamic(() -> {
             // #tr flux.logistics.import_hint
-            // # Auto-collect output slots/tanks on this face. Filters and counts are unused.
-            // # zh_CN 自动回收该侧输出槽与流体；无需过滤槽或数量。
+            // # Collects this face's output items and fluids. Ignores filters and target amounts.
+            // # zh_CN 回收连接面可输出的物品与流体，忽略过滤槽和目标数量。
             if ("1".equals(direction.getValue())) return IKey.lang("flux.logistics.import_hint").get();
             // #tr flux.logistics.target_hint
-            // # Blank/0: fill container. Positive: restock to target. Fluids use mB.
-            // # zh_CN 留空或 0：装满；填写数量：补到目标。流体单位为 mB。
+            // # 0 or blank: fill available space. Positive: maintain that amount. Fluids use mB.
+            // # zh_CN 留空或 0：装满可用空间；正数：维持目标数量。流体单位为 mB。
             return IKey.lang("flux.logistics.target_hint").get();
         }).color(0xFF202830).asWidget().pos(8, 239).size(384, 14));
         panel.bindPlayerInventory();

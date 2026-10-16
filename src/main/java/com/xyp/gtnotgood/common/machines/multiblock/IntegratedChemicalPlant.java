@@ -17,8 +17,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import com.gtnewhorizon.structurelib.alignment.constructable.ChannelDataAccessor;
 import com.gtnewhorizon.structurelib.alignment.constructable.ISurvivalConstructable;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
+import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.base.GTNGModernMultiBlockBaseGui;
@@ -63,7 +65,7 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
     private IStructureDefinition<IntegratedChemicalPlant> definition;
     private HeatingCoilLevel coilLevel = HeatingCoilLevel.None;
     private int casingCount;
-    private int refiningTier;
+    private int refiningTier = -1;
 
     public IntegratedChemicalPlant(int id, String name, String regionalName) {
         super(id, name, regionalName);
@@ -81,6 +83,13 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
     @Override
     public IStructureDefinition<IntegratedChemicalPlant> getStructureDefinition() {
         if (definition == null) {
+            List<IStructureElement<IntegratedChemicalPlant>> refiningCores = Arrays.asList(
+                onElementPass(machine -> machine.refiningTier = 0, Casings.ChemicallyInertMachineCasing.asElement()),
+                onElementPass(machine -> machine.refiningTier = 1, ofBlock(Loaders.FRF_Coil_1, 0)),
+                onElementPass(machine -> machine.refiningTier = 2, ofBlock(Loaders.FRF_Coil_2, 0)),
+                onElementPass(machine -> machine.refiningTier = 3, ofBlock(Loaders.FRF_Coil_3, 0)),
+                onElementPass(machine -> machine.refiningTier = 4, ofBlock(Loaders.FRF_Coil_4, 0)));
+            var refiningCoreCheck = ofChain(refiningCores);
             var builder = StructureDefinition.<IntegratedChemicalPlant>builder();
             definition = builder
                 .addShape("main",
@@ -97,15 +106,11 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
                 .addElement('H',
                     GTStructureChannels.HEATING_COIL.use(GTStructureUtility
                         .ofCoil((machine, level) -> { machine.coilLevel = level; }, machine -> machine.coilLevel)))
-                .addElement('R',
-                    ofChain(
-                        onElementPass(machine -> machine.refiningTier = 0,
-                            Casings.ChemicallyInertMachineCasing.asElement()),
-                        onElementPass(machine -> machine.refiningTier = 1, ofBlock(Loaders.FRF_Coil_1, 0)),
-                        onElementPass(machine -> machine.refiningTier = 2, ofBlock(Loaders.FRF_Coil_2, 0)),
-                        onElementPass(machine -> machine.refiningTier = 3, ofBlock(Loaders.FRF_Coil_3, 0)),
-                        onElementPass(machine -> machine.refiningTier = 4, ofBlock(Loaders.FRF_Coil_4, 0))))
-                .addElement('-', isAir()).build();
+                .addElement('R', withChannel("refining", defer((machine, trigger) -> {
+                    if (trigger == null) return refiningCoreCheck;
+                    int tier = ChannelDataAccessor.hasSubChannel(trigger, "refining") ? trigger.stackSize : 0;
+                    return refiningCores.get(Math.max(0, Math.min(tier, refiningCores.size() - 1)));
+                }))).addElement('-', isAir()).build();
         }
         return definition;
     }
@@ -124,7 +129,7 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
     public void checkMachine(IGregTechTileEntity tile, ItemStack stack, List<StructureError> errors) {
         casingCount = 0;
         coilLevel = HeatingCoilLevel.None;
-        refiningTier = 0;
+        refiningTier = -1;
         if (!checkPiece("main", 2, 2, 0, errors)) return;
         checkCasingMin(errors, casingCount, 32);
         if (mInputBusses.isEmpty() && mDualInputHatches.isEmpty()) errors.add(StructureErrors.missingHatch(InputBus));
@@ -268,37 +273,53 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
 
     @Override
     protected MultiblockTooltipBuilder createTooltip() {
-        return new MultiblockTooltipBuilder().addMachineType(StatCollector.translateToLocal("gtng.chemical.name"))
+        MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
+        // #tr gtng.chemical.tooltip.casing
+        // # Chemically Inert Machine Casing
+        // # zh_CN 化学惰性机械方块
+        String casing = StatCollector.translateToLocal("gtng.chemical.tooltip.casing");
+        tt.addMachineType(StatCollector.translateToLocal("gtng.chemical.name"))
             // #tr gtng.chemical.tooltip.modes
-            // # Three modes: fuel refining, wood distillation and petrochemical processing
-            // # zh_CN 三种模式：燃料精炼、木化、石化
-            .addInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.modes"))
-            // #tr gtng.chemical.tooltip.switch
-            // # Switch modes with the GUI or screwdriver; sneak-screwdriver toggles recipe locking
-            // # zh_CN GUI或螺丝刀切换模式；潜行使用螺丝刀切换配方锁定
-            .addInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.switch"))
+            // # Refines fuels, distills wood and processes petrochemicals
+            // # zh_CN 集成燃料精炼、木化与石化工序
+            .addInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.modes")).addStaticParallelInfo(16)
+            .addPerfectOCInfo()
             // #tr gtng.chemical.tooltip.processing
-            // # Perfect overclocking, up to 16 parallels; outputs follow the displayed recipes
-            // # zh_CN 无损超频，最多16并行；产量以配方显示为准
-            .addInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.processing"))
+            // # See NEI for recipe outputs
+            // # zh_CN 各配方产出见 NEI
+            .addInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.processing")).addSeparator()
+            // #tr gtng.chemical.tooltip.switch
+            // # GUI or screwdriver: switch modes; sneak-screwdriver: recipe locking
+            // # zh_CN GUI 或螺丝刀切换模式；潜行使用螺丝刀切换配方锁定
+            .addInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.switch"))
             // #tr gtng.chemical.tooltip.heat
-            // # Fuel refining requires the recipe's coil temperature and refining core tier
-            // # zh_CN 燃料精炼需要满足配方的线圈温度与精炼核心等级
-            .addInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.heat"))
-            // #tr gtng.chemical.tooltip.core
-            // # Center core: inert casing (tier 0) or Fuel Refinery Coil I-IV (tier 1-4)
-            // # zh_CN 中央核心：化学惰性外壳（0级）或燃料精炼厂线圈I-IV（1-4级）
-            .addInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.core")).beginStructureBlock(5, 5, 5, false)
-            // #tr gtng.chemical.tooltip.casing
-            // # Chemically Inert Machine Casing (hatches may replace outer casing)
-            // # zh_CN 化学惰性机械方块（仓室可替换外壳）
-            .addCasing("32+", StatCollector.translateToLocal("gtng.chemical.tooltip.casing"), false)
+            // # Fuel recipes require sufficient temperature and Field Restriction Coil tier
+            // # zh_CN 燃料精炼须满足配方的温度与力场约束线圈等级
+            .addInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.heat")).beginStructureBlock(5, 5, 5, false)
+            // #tr gtng.chemical.tooltip.controller
+            // # Front center, third layer
+            // # zh_CN 正面中央，第 3 层
+            .addController(StatCollector.translateToLocal("gtng.chemical.tooltip.controller"))
+            .addCasing("32+", casing, false)
             // #tr gtng.chemical.tooltip.structure
-            // # 24 heating coils, 30 reinforced glass and 16 stainless steel frames
-            // # zh_CN 24个加热线圈、30块强化玻璃、16个不锈钢框架
-            .addInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.structure")).addInputBus("1+", "C", 1)
-            .addOutputBus("1+", "C", 1).addInputHatch("1+", "C", 1).addOutputHatch("1+", "C", 1)
-            .addEnergyHatch("1+", "C", 1).addMaintenanceHatch(shouldCheckMaintenance() ? "1" : "0", "C", 1)
-            .toolTipFinisher();
+            // # 24 heating coils, 30 reinforced glass, 16 stainless steel frames
+            // # zh_CN 24 个加热线圈、30 块强化玻璃、16 个不锈钢框架
+            .addStructureInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.structure"))
+            // #tr gtng.chemical.tooltip.core
+            // # Center, 2 blocks behind controller: inert casing for tier 0
+            // # zh_CN 正中心（控制器向内 2 格）：化学惰性机械方块为 0 级
+            .addStructureInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.core"))
+            // #tr gtng.chemical.tooltip.core_upgrade
+            // # Replace the center casing with a Field Restriction Coil for tiers 1-4
+            // # zh_CN 将中心方块换为力场约束线圈，可升至 1-4 级
+            .addStructureInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.core_upgrade"))
+            .addEnergyHatch("1+", casing, 1).addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1)
+            .addInputBus("1+", casing, 1).addInputHatch("1+", casing, 1).addOutputBus("1+", casing, 1)
+            .addOutputHatch("1+", casing, 1)
+            // #tr gtng.chemical.tooltip.channel
+            // # Subchannels: coil for heating coils; refining 1-4 for core tiers 1-4, unset for tier 0
+            // # zh_CN 子信道 coil 选择加热线圈；refining 1-4 对应中心等级 1-4，未设置为 0 级
+            .addStructureInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.channel")).toolTipFinisher();
+        return tt;
     }
 }

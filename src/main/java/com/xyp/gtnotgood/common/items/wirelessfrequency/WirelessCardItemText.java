@@ -14,32 +14,32 @@ final class WirelessCardItemText {
             // # zh_CN 无线频率卡
             case "name" -> "item.gtnotgood.wireless_frequency_card.name";
             // #tr item.gtnotgood.wireless_frequency_card.tooltip.0
-            // # Sneak-right-click an ME Controller: save and select source
-            // # zh_CN 潜行右键 ME 控制器：添加并选中发射源
+            // # Shift-right-click an ME Controller to save and select a source.
+            // # zh_CN Shift 右键 ME 控制器，保存并选中发射源。
             case "tooltip.0" -> "item.gtnotgood.wireless_frequency_card.tooltip.0";
             // #tr item.gtnotgood.wireless_frequency_card.tooltip.1
-            // # Right-click an ME device: link / unlink cluster
-            // # zh_CN 右键 ME 设备：连接 / 断开整簇
+            // # Right-click an ME device to connect or disconnect its whole cluster.
+            // # zh_CN 右键 ME 设备，连接或断开其整个物理簇。
             case "tooltip.1" -> "item.gtnotgood.wireless_frequency_card.tooltip.1";
             // #tr item.gtnotgood.wireless_frequency_card.tooltip.2
-            // # Sneak-right-click air: remove the selected source
-            // # zh_CN 潜行右键空气：移除当前选中的发射源
+            // # Shift-right-click air to remove the selected source.
+            // # zh_CN Shift 右键空气，移除当前选中的发射源。
             case "tooltip.2" -> "item.gtnotgood.wireless_frequency_card.tooltip.2";
             // #tr item.gtnotgood.wireless_frequency_card.manage_hint
-            // # Right-click air: open manager
-            // # zh_CN 右键空气：打开管理界面
+            // # Right-click air to open the manager.
+            // # zh_CN 右键空气打开管理界面。
             case "manage_hint" -> "item.gtnotgood.wireless_frequency_card.manage_hint";
             // #tr item.gtnotgood.wireless_frequency_card.more_hint
-            // # Hold Shift for controls
-            // # zh_CN 按住 Shift 查看操作
+            // # Hold Shift for controls.
+            // # zh_CN 按住 Shift 查看操作。
             case "more_hint" -> "item.gtnotgood.wireless_frequency_card.more_hint";
             // #tr item.gtnotgood.wireless_frequency_card.unbound
             // # Unbound. Sneak-right-click an ME Controller.
             // # zh_CN 尚未绑定。请潜行右键 ME 控制器。
             case "unbound" -> "item.gtnotgood.wireless_frequency_card.unbound";
             // #tr item.gtnotgood.wireless_frequency_card.bind_hint
-            // # Sneak-right-click an ME Controller to bind; aim at air to clear the binding.
-            // # zh_CN 请潜行右键 ME 控制器进行绑定；清除绑定需要对空气操作。
+            // # Shift-right-click an ME Controller to bind. Shift-right-click air to remove the source.
+            // # zh_CN Shift 右键 ME 控制器绑定发射源；Shift 右键空气移除发射源。
             case "bind_hint" -> "item.gtnotgood.wireless_frequency_card.bind_hint";
             // #tr item.gtnotgood.wireless_frequency_card.bound
             // # Source: dimension %s, position (%s, %s, %s).
@@ -50,8 +50,8 @@ final class WirelessCardItemText {
             // # zh_CN 绑定玩家：%s
             case "owner" -> "item.gtnotgood.wireless_frequency_card.owner";
             // #tr item.gtnotgood.wireless_frequency_card.source_unbound
-            // # Source: sneak-right-click an ME Controller to bind a source.
-            // # zh_CN 发射源：请潜行右键ME控制器以绑定发射源。
+            // # No source selected. Shift-right-click an ME Controller to bind one.
+            // # zh_CN 尚未选择发射源，请 Shift 右键 ME 控制器进行绑定。
             case "source_unbound" -> "item.gtnotgood.wireless_frequency_card.source_unbound";
             // #tr item.gtnotgood.wireless_frequency_card.owner_none
             // # None
@@ -170,8 +170,8 @@ final class WirelessCardItemText {
             // # zh_CN 自动连接：关闭
             case "auto_off" -> "item.gtnotgood.wireless_frequency_card.auto_off";
             // #tr item.gtnotgood.wireless_frequency_card.visualisation_scroll_hint
-            // # Sneak-scroll: cycle network views (up: previous; down: next)
-            // # zh_CN 潜行滚轮：切换网络可视化模式（上滚：前一个；下滚：下一个）
+            // # Shift-scroll to cycle network views: up for previous, down for next.
+            // # zh_CN Shift 滚轮切换网络视图：上滚为上一项，下滚为下一项。
             case "visualisation_scroll_hint" -> "item.gtnotgood.wireless_frequency_card.visualisation_scroll_hint";
             // #tr item.gtnotgood.wireless_frequency_card.auto_ambiguous
             // # Multiple usable frequency cards. Hold the intended card or disable auto-connect on the others.
@@ -182,8 +182,8 @@ final class WirelessCardItemText {
             // # zh_CN 背包或饰品栏中没有可由你操作的频率卡。
             case "auto_no_card" -> "item.gtnotgood.wireless_frequency_card.auto_no_card";
             // #tr item.gtnotgood.wireless_frequency_card.bauble_hint
-            // # Can be equipped in a bauble slot; hold this frequency card to link manually.
-            // # zh_CN 可放入饰品栏；手动连接需手持该频率卡。
+            // # Can be worn as a bauble. Manual linking requires holding the card.
+            // # zh_CN 可佩戴于饰品栏，手动连接时须手持此卡。
             case "bauble_hint" -> "item.gtnotgood.wireless_frequency_card.bauble_hint";
             // #tr item.gtnotgood.wireless_frequency_card.auto_busy
             // # Auto-connect queue is full. Connect this device manually later.

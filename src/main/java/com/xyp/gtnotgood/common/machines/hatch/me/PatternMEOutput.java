@@ -142,12 +142,12 @@ public final class PatternMEOutput {
     public static String[] describe(String[] original) {
         List<String> lines = new ArrayList<>(Arrays.asList(original));
         // #tr tooltip.gtnotgood.pattern_me_output
-        // # Also outputs items and fluids to ME
-        // # zh_CN 同时支持物品和流体ME输出
+        // # Also transfers item and fluid products to the same ME network
+        // # zh_CN 同时将物品和流体产物存入同一 ME 网络
         lines.add(StatCollector.translateToLocal("tooltip.gtnotgood.pattern_me_output"));
         // #tr tooltip.gtnotgood.pattern_me_output_cache
-        // # Separate maximum-capacity ME output caches
-        // # zh_CN 物品和流体输出各有独立最大容量缓存
+        // # Separate output caches: 2^63 - 1 items and 2^63 - 1 L of fluid
+        // # zh_CN 物品和流体输出各有独立缓存，容量为 2^63 - 1 个和 2^63 - 1 L
         lines.add(StatCollector.translateToLocal("tooltip.gtnotgood.pattern_me_output_cache"));
         return lines.toArray(new String[0]);
     }

@@ -85,8 +85,8 @@ public class GuiProfileBackups extends UiScreen {
                     // # zh_CN 恢复
                     I18n.format("radialmenu.backups.restore")));
             // #tr radialmenu.backups.restore.tip
-            // # Restore this version. The current version is backed up so you can undo this.
-            // # zh_CN 恢复此版本，同时备份当前版本，便于撤销恢复。
+            // # Restore this version and back up the current one
+            // # zh_CN 恢复此版本，并备份当前版本
             tooltip(ID_RESTORE_BASE + age, describe("radialmenu.backups.restore.tip"));
             rowPositions.add(new int[] { contentLeft(), y });
             ages.add(Integer.valueOf(age));

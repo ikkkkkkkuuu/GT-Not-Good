@@ -79,18 +79,17 @@ public abstract class SteamProcessingMachine extends MTEBasicMachineBronze {
         String[] baseDescription = super.getDescription();
         String[] description = Arrays.copyOf(baseDescription, baseDescription.length + 3);
         // #tr tooltip.steam_processing_machine.capacity
-        // # Fluid inputs: %s; outputs: %s; 16,000 L each; separate steam buffer: 32,000 L
-        // # zh_CN 流体输入 %s 槽，输出 %s 槽；每槽 16,000 L；独立蒸汽缓存 32,000 L
-        description[baseDescription.length] = StatCollector.translateToLocalFormatted(
+        // # Fluid input/output tanks: %s/%s at 16,000 L each; steam capacity: 32,000 L
+        // # zh_CN 流体输入/输出槽：%s/%s，每槽 16,000 L；蒸汽容量：32,000 L
+        description[baseDescription.length + 1] = StatCollector.translateToLocalFormatted(
             "tooltip.steam_processing_machine.capacity", getFluidInputSlotCount(), getFluidOutputSlotCount());
         // #tr tooltip.steam_processing_machine.power
-        // # Recipes up to 32 EU/t; double duration; 2 L steam per EU
-        // # zh_CN 支持至 32 EU/t 的配方；耗时翻倍；每 EU 消耗 2 L 蒸汽
-        description[baseDescription.length + 1] = StatCollector
-            .translateToLocal("tooltip.steam_processing_machine.power");
+        // # Recipes up to 32 EU/t; processing time: 200%; consumes 2 L steam per EU
+        // # zh_CN 支持最高 32 EU/t 的配方；耗时为原配方的 200%；每 EU 消耗 2 L 蒸汽
+        description[baseDescription.length] = StatCollector.translateToLocal("tooltip.steam_processing_machine.power");
         // #tr tooltip.steam_processing_machine.vent
-        // # Keep the steam vent unobstructed
-        // # zh_CN 蒸汽排气面须保持畅通
+        // # Keep the steam vent clear; configure automatic output in the GUI
+        // # zh_CN 保持蒸汽排气面畅通；可在界面设置自动输出
         description[baseDescription.length + 2] = StatCollector
             .translateToLocal("tooltip.steam_processing_machine.vent");
         return description;

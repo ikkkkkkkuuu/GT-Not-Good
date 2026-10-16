@@ -288,55 +288,61 @@ public class LargeIndustrialApiary extends GTNGMultiBlockBase<LargeIndustrialApi
         // # Industrial Apiary
         // # zh_CN 工业蜂箱
         tt.addMachineType(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.type"));
+        // #tr tooltip.gtnotgood.largeIndustrialApiary.function
+        // # Produces bee products and copies princesses
+        // # zh_CN 批量生产蜂产品，分蜂培育公主蜂
+        tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.function"));
         // #tr tooltip.gtnotgood.largeIndustrialApiary.capacity
-        // # Queen capacity: floor(total input EU/t / 32) x 8.
-        // # zh_CN 蜂后容量：向下取整（总输入功率 / 32 EU/t）× 8。
+        // # Queen capacity: floor(total input EU/t / 32) x 8
+        // # zh_CN 蜂后容量：向下取整（总输入功率 / 32 EU/t）× 8
         tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.capacity"));
         // #tr tooltip.gtnotgood.largeIndustrialApiary.energy
-        // # Normal mode uses 32 EU/t per stored queen; maintenance penalties apply.
-        // # zh_CN 普通模式每只已存蜂后基础消耗 32 EU/t，维护故障会增加实际耗电。
+        // # Normal mode: 32 EU/t per stored queen, before maintenance penalties
+        // # zh_CN 普通模式每只已存蜂后消耗 32 EU/t，另受维护故障影响
         tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.energy"));
         // #tr tooltip.gtnotgood.largeIndustrialApiary.power
-        // # All stored queens must fit the capacity and available power to run.
-        // # zh_CN 全部已存蜂后必须同时满足容量和供电要求，才能开始生产。
+        // # All stored queens must fit both capacity and available power
+        // # zh_CN 全部已存蜂后须同时满足容量与供电要求
         tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.power"));
         // #tr tooltip.gtnotgood.largeIndustrialApiary.production
-        // # Produces every 5 seconds at 64x speed; queens do not age.
-        // # zh_CN 每 5 秒结算一次，以 64 倍时间加速生产，蜂后不会衰老。
+        // # Produces every 5 seconds with 64x time acceleration; queens do not age
+        // # zh_CN 每 5 秒结算产出，生产时间加速 64 倍；蜂后不会衰老
         tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.production"));
         // #tr tooltip.gtnotgood.largeIndustrialApiary.upgrades
-        // # Uses 8 production upgrades; total input power also boosts production.
-        // # zh_CN 内置相当于 8 个生产升级的加成，总输入功率也会影响产量。
+        // # Includes 8 production upgrades; total input power also increases production
+        // # zh_CN 内置 8 个生产升级的效果，总输入功率额外提高产量
         tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.upgrades"));
+        tt.addSeparator();
         // #tr tooltip.gtnotgood.largeIndustrialApiary.environment
-        // # Ignores climate, weather, time and specialty conditions.
-        // # zh_CN 忽略温湿度、天气、昼夜和特产欣喜条件。
+        // # Ignores climate, weather, time and specialty conditions
+        // # zh_CN 忽略温湿度、天气、昼夜与特产欣喜条件
         tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.environment"));
         // #tr tooltip.gtnotgood.largeIndustrialApiary.flowers
-        // # Normal mode needs any one registered flower source in a flower position.
-        // # zh_CN 普通模式只需任一花位有任意已注册花源，无需匹配蜂后基因。
+        // # Normal mode needs one registered flower source; queen flower genes do not matter
+        // # zh_CN 普通模式只需任一花位有已注册花源，无需匹配蜂后基因
         tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.flowers"));
         // #tr tooltip.gtnotgood.largeIndustrialApiary.jelly
-        // # Up to 40 Royal Jelly per queen per cycle boosts drops up to 3x.
-        // # zh_CN 每轮每只蜂后最多消耗 40 个蜂王浆，按实际用量将产出提升至最多 3 倍。
+        // # Uses up to 40 Royal Jelly per queen per cycle for up to 3x drops
+        // # zh_CN 每轮每只蜂后最多消耗 40 个蜂王浆，按用量将产出提高至最多 3 倍
         tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.jelly"));
+        tt.addSeparator();
         // #tr tooltip.gtnotgood.largeIndustrialApiary.swarmer
-        // # Swarmer: 1 queen, 100 Royal Jelly, 60 s, 8190 EU/t; normal overclocking.
-        // # zh_CN 分蜂：1 只蜂后、100 蜂王浆、60 秒、8190 EU/t，支持普通超频。
+        // # Swarmer: 1 queen, 100 Royal Jelly, 60 seconds, 8190 EU/t; normal overclocks
+        // # zh_CN 分蜂：1 只蜂后、100 个蜂王浆、60 秒、8190 EU/t，采用普通超频
         tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.swarmer"));
         // #tr tooltip.gtnotgood.largeIndustrialApiary.princess
-        // # Swarmer produces an ignoble princess copy and preserves the queen.
-        // # zh_CN 分蜂输出保留基因的劣等公主蜂副本，原蜂后保留。
+        // # Swarmer outputs an ignoble princess copy with the same genes; keeps the queen
+        // # zh_CN 分蜂产出保留基因的劣等公主蜂副本，原蜂后保留
         tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.princess"));
         // #tr tooltip.gtnotgood.largeIndustrialApiary.modes
-        // # Screwdriver: input/output/run; sneak to switch normal/swarmer when empty.
-        // # zh_CN 螺丝刀切换输入/输出/运行；空仓时潜行使用可切换普通/分蜂。
+        // # Screwdriver: input/output/run; sneak-screwdriver while empty: normal/swarmer
+        // # zh_CN 螺丝刀切换输入、输出、运行；空仓时潜行使用，切换普通与分蜂
         tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.modes"));
-        // #tr tooltip.gtnotgood.largeIndustrialApiary.glass
-        // # Requires standard Borosilicate Glass. Energy hatches have no tier restriction.
-        // # zh_CN 玻璃固定使用普通硼玻璃方块，能源仓无等级限制。
-        tt.addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.glass"));
         tt.beginStructureBlock(15, 17, 15, true);
+        // #tr tooltip.gtnotgood.largeIndustrialApiary.glass
+        // # Standard Borosilicate Glass only; energy hatches have no tier limit
+        // # zh_CN 玻璃固定使用普通硼玻璃；能源仓无等级限制
+        tt.addStructureInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.glass"));
         tt.addController(StatCollector.translateToLocal("gt.mbtt.structure.front_center_9th_layer"));
         // #tr tooltip.gtnotgood.largeIndustrialApiary.dirt
         // # Dirt or Grass
@@ -349,7 +355,7 @@ public class LargeIndustrialApiary extends GTNGMultiBlockBase<LargeIndustrialApi
         tt.addCasing("185", StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.planks"), false);
         tt.addCasing("121", ModsItemlist.BorosilicateGlass.get(1).getDisplayName(), false);
         // #tr tooltip.gtnotgood.largeIndustrialApiary.water
-        // # Water (automatically filled)
+        // # Water (filled automatically)
         // # zh_CN 水（自动补充，无需输入）
         tt.addCasing("34", StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.water"), false);
         tt.addCasing("24",
@@ -374,12 +380,13 @@ public class LargeIndustrialApiary extends GTNGMultiBlockBase<LargeIndustrialApi
         // # zh_CN 木台阶
         tt.addCasing("9", StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.slabs"), false);
         // #tr tooltip.gtnotgood.largeIndustrialApiary.flower_position
-        // # Any registered flower source (normal mode)
+        // # Any registered flower source (required in normal mode)
         // # zh_CN 任意已注册花源（普通模式需要）
         tt.addCasing("1+", StatCollector.translateToLocal("tooltip.gtnotgood.largeIndustrialApiary.flower_position"),
             false);
         tt.addEnergyHatch("1+", StatCollector.translateToLocal("gt.mbtt.structure.any_casing"), 1);
-        tt.addMaintenanceHatch("1+", StatCollector.translateToLocal("gt.mbtt.structure.any_casing"), 1);
+        tt.addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+",
+            StatCollector.translateToLocal("gt.mbtt.structure.any_casing"), 1);
         tt.addInputBus("0+", StatCollector.translateToLocal("gt.mbtt.structure.any_casing"), 1);
         tt.addOutputBus("1+", StatCollector.translateToLocal("gt.mbtt.structure.any_casing"), 1);
         tt.toolTipFinisher();

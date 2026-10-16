@@ -39,12 +39,12 @@ public enum AltarStatus {
     // # zh_CN 祭坛：请检查研究、材料与样板产物
     Recipe("gui.packaged.altar_recipe"),
     // #tr gui.packaged.altar_interrupted
-    // # Altar stopped without its expected output; inspect it before releasing the job.
-    // # zh_CN 祭坛已停止且缺少预期产物；检查祭坛后可释放中断任务。
+    // # Altar stopped without the expected result. Inspect the altar before releasing its job.
+    // # zh_CN 祭坛已停止且缺少预期产物，检查祭坛后再释放任务。
     Interrupted("gui.packaged.altar_interrupted"),
     // #tr gui.packaged.returns_full
-    // # Return inventory full; result remains at the altar.
-    // # zh_CN 回收槽已满；产物保留在祭坛。
+    // # Return slots full. The result remains in the altar.
+    // # zh_CN 回收槽已满，产物保留在祭坛中。
     ReturnsFull("gui.packaged.returns_full"),
     // #tr gui.packaged.blood_recipe
     // # Blood Altar: check tier, single-step ingredients and output.
@@ -79,16 +79,16 @@ public enum AltarStatus {
     // # zh_CN 工作台：请腾出供应器回收栏空间。
     ArcaneReturnsFull("gui.packaged.arcane_returns_full"),
     // #tr gui.packaged.arcane_ready
-    // # Workbench: last craft completed; results buffered for AE.
-    // # zh_CN 工作台：上次合成已完成，产物已进入 AE 回收流程。
+    // # Workbench: crafting complete; results are waiting to enter ME.
+    // # zh_CN 工作台：合成已完成，产物等待送入 ME。
     ArcaneReady("gui.packaged.arcane_ready"),
     // #tr gui.packaged.crucible_owner
     // # Crucible: owner must be online here and allowed to use the target.
     // # zh_CN 坩埚：所有者须在本维度在线且有权使用目标。
     CrucibleOwner("gui.packaged.crucible_owner"),
     // #tr gui.packaged.crucible_heat
-    // # Crucible: heat above 150, or place a heat source under an empty crucible.
-    // # zh_CN 坩埚：温度须高于 150；空坩埚可直接在下方放置热源。
+    // # Crucible: heat above 150, or place a heat source below a dry crucible.
+    // # zh_CN 坩埚：温度须高于 150；无水时可直接在下方放置热源。
     CrucibleHeat("gui.packaged.crucible_heat"),
     // #tr gui.packaged.crucible_recipe
     // # Crucible: check research, one catalyst, output and competing local aspects.
@@ -103,8 +103,8 @@ public enum AltarStatus {
     // # zh_CN 坩埚：请腾出供应器回收栏空间。
     CrucibleReturnsFull("gui.packaged.crucible_returns_full"),
     // #tr gui.packaged.crucible_ready
-    // # Crucible: alchemy complete; results buffered for AE.
-    // # zh_CN 坩埚：炼金术已完成，产物已进入 AE 回收流程。
+    // # Crucible: alchemy complete; results are waiting to enter ME.
+    // # zh_CN 坩埚：炼金术已完成，产物等待送入 ME。
     CrucibleReady("gui.packaged.crucible_ready");
 
     public final String key;

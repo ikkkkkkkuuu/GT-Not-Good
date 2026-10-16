@@ -134,27 +134,27 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advanced) {
         lines.add(StatCollector.translateToLocal(modeKey(mode(stack))));
         // #tr compass.use
-        // # Right-click: open compass. Sneak-right-click: switch/reset.
-        // # zh_CN 右键打开罗盘界面；潜行右键切换并重置。
+        // # Right-click to open. Shift-right-click to switch target type and clear the search.
+        // # zh_CN 右键打开界面；Shift 右键切换目标类型并清除搜索结果。
         lines.add(StatCollector.translateToLocal("compass.use"));
         // #tr compass.range
-        // # Predicts seed candidates within 8192 blocks without generating terrain.
-        // # zh_CN 按种子预测周围 8192 格候选区域，不生成地形。
+        // # Predicts candidate areas within 8,192 blocks without generating terrain.
+        // # zh_CN 预测周围 8,192 格内的候选区域，不生成地形。
         lines.add(StatCollector.translateToLocal("compass.range"));
         // #tr compass.historical
-        // # Recorded structures may already be looted or changed.
-        // # zh_CN 记录的遗迹可能已被探索或改动。
+        // # Recorded structures may already be explored or modified.
+        // # zh_CN 已记录的遗迹可能已被探索或改动。
         lines.add(StatCollector.translateToLocal("compass.historical"));
         if (!stack.hasTagCompound() || !stack.getTagCompound().getBoolean("Found")) return;
         NBTTagCompound tag = stack.getTagCompound();
         if (!tag.getBoolean("Confirmed")) {
             // #tr compass.unconfirmed
-            // # Unconfirmed candidate; terrain or tower type may prevent a match.
-            // # zh_CN 待确认候选区域；地形或入口类型可能不符合目标。
+            // # Candidate unconfirmed. Terrain or entrance type may prevent a match.
+            // # zh_CN 候选区域尚未确认，地形或入口类型可能不符合目标。
             lines.add(StatCollector.translateToLocal("compass.unconfirmed"));
             // #tr compass.candidate_position
-            // # Candidate: X %s, Z %s (dimension %s).
-            // # zh_CN 候选：X %s，Z %s（维度 %s）。
+            // # Candidate: X %s, Z %s (dimension %s)
+            // # zh_CN 候选区域：X %s，Z %s（维度 %s）
             lines.add(StatCollector.translateToLocalFormatted("compass.candidate_position", tag.getInteger("X"),
                 tag.getInteger("Z"), tag.getInteger("Dimension")));
         } else {
@@ -172,8 +172,8 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
             lines.add(StatCollector.translateToLocalFormatted("compass.distance", (int) Math.sqrt(dx * dx + dz * dz)));
         } else {
             // #tr compass.dimension
-            // # Target is in another dimension. Search again here.
-            // # zh_CN 目标在其他维度，请在当前维度重新搜索。
+            // # Target is in another dimension. Search again in this dimension.
+            // # zh_CN 目标位于其他维度，请在当前维度重新搜索。
             lines.add(StatCollector.translateToLocal("compass.dimension"));
         }
     }

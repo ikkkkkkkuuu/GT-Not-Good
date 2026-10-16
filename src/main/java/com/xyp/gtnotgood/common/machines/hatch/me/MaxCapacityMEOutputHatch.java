@@ -263,28 +263,32 @@ public class MaxCapacityMEOutputHatch extends MTEHatchOutputME {
     private static String[] getLocalizedDescription() {
         return new String[] {
             // #tr tooltip.gtnotgood.maxCapacityMEOutputHatch.0
-            // # Fluid Output for Multiblocks
-            // # zh_CN 多方块流体输出
+            // # Transfers multiblock fluid outputs to the ME network
+            // # zh_CN 将多方块机器产出的流体存入 ME 网络
             StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputHatch.0"),
             // #tr tooltip.gtnotgood.maxCapacityMEOutputHatch.1
-            // # Stores directly into ME
-            // # zh_CN 直接输出到ME网络
+            // # Requires a powered ME network and one channel
+            // # zh_CN 需要 ME 网络供电和一个频道
             StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputHatch.1"),
             // #tr tooltip.gtnotgood.maxCapacityMEOutputHatch.2
-            // # Max cache capacity by default
-            // # zh_CN 默认最大缓存容量
+            // # Output cache capacity: 2^63 - 1 L of fluid
+            // # zh_CN 输出缓存容量：2^63 - 1 L
             StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputHatch.2"),
             // #tr tooltip.gtnotgood.maxCapacityMEOutputHatch.3
-            // # 9 ghost filters; empty accepts all; matches get output priority
-            // # zh_CN 9格虚拟过滤：全空接收全部，标记后仅接收并优先分配匹配流体
+            // # 9 filters; empty accepts all; configured filters accept matching outputs only
+            // # zh_CN 9 格流体筛选；全空时接收全部，设置后仅接收匹配产物
             StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputHatch.3"),
             // #tr tooltip.gtnotgood.maxCapacityMEOutputHatch.4
-            // # Right click with screwdriver to toggle Cache Mode
-            // # zh_CN 螺丝刀右键切换缓存模式
+            // # Screwdriver: toggle cache mode
+            // # zh_CN 螺丝刀右键：切换缓存模式
             StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputHatch.4"),
             // #tr tooltip.gtnotgood.maxCapacityMEOutputHatch.5
-            // # Shift right click with screwdriver to toggle Check Mode
-            // # zh_CN 潜行螺丝刀右键切换检查模式
-            StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputHatch.5") };
+            // # Shift + screwdriver: toggle check mode
+            // # zh_CN 潜行螺丝刀右键：切换检查模式
+            StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputHatch.5"),
+            // #tr tooltip.gtnotgood.maxCapacityMEOutputHatch.priority
+            // # Matching filters take priority over unfiltered outputs
+            // # zh_CN 筛选匹配的输出仓优先于未设置筛选的输出仓
+            StatCollector.translateToLocal("tooltip.gtnotgood.maxCapacityMEOutputHatch.priority") };
     }
 }

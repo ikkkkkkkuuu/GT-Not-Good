@@ -969,72 +969,83 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
 
     @Override
     protected MultiblockTooltipBuilder createTooltip() {
-        var tooltip = new MultiblockTooltipBuilder();
-        tooltip.addMachineType(StatCollector.translateToLocal(getLocalNameKey()));
-        // #tr gtng.industrial_farm.workflow
-        // # Preserves Industrial Farm crops, environment cards and farming modes.
-        // # zh_CN 沿用工业农场的作物、环境卡及输入/种植/输出模式
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.workflow"));
-        // #tr gtng.industrial_farm.fixed_size
-        // # Fixed maximum structure: 12 growing slices, 36 seed beds and 12 upgrade slots.
-        // # zh_CN 固定最大结构：12 个种植段、36 个苗床、12 个升级槽位
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.fixed_size"));
-        // #tr gtng.industrial_farm.capacity
-        // # Up to 36 seed types, each with 12 times the original capacity at the same tier.
-        // # zh_CN 最多同时种植 36 种种子，每种独享同阶原版 12 倍容量
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.capacity"));
-        // #tr gtng.industrial_farm.plot_inventory
-        // # Seeds are grouped automatically without sub-soil; each seed type has two independent environment cards.
-        // # zh_CN 种子自动归集，无需底土；每种种子独立保存两张环境卡
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.plot_inventory"));
-        // #tr gtng.industrial_farm.roof
-        // # Replace the 12 roof wooden frames with upgrades as needed.
-        // # zh_CN 顶部 12 个木框架可按需替换为升级模块
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.roof"));
-        // #tr gtng.industrial_farm.upgrades
-        // # Upgrades may use any valid tier independently of the uniform seed bed tier.
-        // # zh_CN 升级模块等级独立；苗床仍需同级，并决定容量、耗能与作物等级
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.upgrades"));
-        // #tr gtng.industrial_farm.upgrade_limits
-        // # Original upgrade count limits apply; normal and overclocked growth units stack.
-        // # zh_CN 沿用原版升级数量限制；普通生长加速与超频生长加速可叠加
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.upgrade_limits"));
-        // #tr gtng.industrial_farm.module_tiers
-        // # Each module tier above its minimum adds 25% effectiveness.
-        // # zh_CN 模块等级每高于自身最低等级一级，效力增加 25%
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.module_tiers"));
-        // #tr gtng.industrial_farm.perfect_overclock
-        // # Each overclock gives 4x power and 4x throughput; high-tier OC modules add throughput.
-        // # zh_CN 每级完美超频耗电与吞吐均乘 4；高阶超频模块额外提高吞吐
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.perfect_overclock"));
-        // #tr gtng.industrial_farm.consumption
-        // # Water/fertilizer scale with planted seeds and OC throughput; higher fertilizer units save fertilizer.
-        // # zh_CN 水肥按实际种子数及超频倍率结算；高阶施肥模块可节约肥料
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.consumption"));
-        // #tr gtng.industrial_farm.continuous_growth
-        // # Continuous growth keeps partial growth and fractional harvest progress.
-        // # zh_CN 连续生长保留生长余量与小数产出；条件不符的作物不影响其他作物
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.continuous_growth"));
-        // #tr gtng.industrial_farm.energy
-        // # Multi-amp energy needs no upgrade; glass does not limit energy hatch tiers.
-        // # zh_CN 多安能源仓无需升级模块；玻璃不限制能源仓等级
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.energy"));
-        // #tr gtng.industrial_farm.energy_limits
-        // # At most one multi-amp hatch; cannot mix with normal energy hatches. No lasers.
-        // # zh_CN 最多一个多安能源仓，不能与普通能源仓混用，不支持激光仓
-        tooltip.addInfo(StatCollector.translateToLocal("gtng.industrial_farm.energy_limits"));
+        MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
         // #tr gtng.industrial_farm.end_casing
-        // # Front or rear agricultural casing
+        // # Front or rear Agricultural Casing
         // # zh_CN 前后端农业机械方块
         String endCasing = StatCollector.translateToLocal("gtng.industrial_farm.end_casing");
-        tooltip.beginStructureBlock(5, 4, SLICES + 2, true).addController(endCasing).addEnergyHatch("1+", endCasing, 1)
-            .addMaintenanceHatch("1", endCasing, 1).addInputBus("0+", endCasing, 1).addInputHatch("1+", endCasing, 1)
-            .addOutputBus("1+", endCasing, 1);
-        // #tr gtng.industrial_farm.glass
-        // # 48 Borosilicate Glass blocks (standard variant)
-        // # zh_CN 48 个硼玻璃（普通型号）
-        tooltip.addStructureInfo(StatCollector.translateToLocal("gtng.industrial_farm.glass"));
-        tooltip.addSubChannel(CropsNHStructureChannels.IFTier).toolTipFinisher();
-        return tooltip;
+        tt.addMachineType(StatCollector.translateToLocal(getLocalNameKey()))
+            // #tr gtng.industrial_farm.workflow
+            // # Grows CropsNH crops with independent environment cards
+            // # zh_CN 为 CropsNH 作物提供独立环境并自动种植
+            .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.workflow"))
+            // #tr gtng.industrial_farm.capacity
+            // # Grows up to 36 seed types, each with 12x the same-tier Industrial Farm capacity
+            // # zh_CN 最多种植 36 种种子，每种容量为同阶工业农场的 12 倍
+            .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.capacity"))
+            // #tr gtng.industrial_farm.module_tiers
+            // # Each module tier above its minimum adds 25% effectiveness
+            // # zh_CN 升级模块每高于自身最低等级 1 级，效力增加 25%
+            .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.module_tiers"))
+            // #tr gtng.industrial_farm.perfect_overclock
+            // # Each perfect overclock gives 4x EU/t and throughput; stronger OC modules add throughput
+            // # zh_CN 每级无损超频使功耗与吞吐乘 4；高阶超频模块额外提高吞吐
+            .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.perfect_overclock"))
+            // #tr gtng.industrial_farm.consumption
+            // # Water and fertilizer scale with seeds and throughput; stronger fertilizer units reduce fertilizer use
+            // # zh_CN 水肥消耗随种子数量及吞吐增加；高阶施肥模块降低肥料消耗
+            .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.consumption")).addSeparator()
+            // #tr gtng.industrial_farm.plot_inventory
+            // # Seeds sort automatically; each seed type has two environment cards and needs no sub-soil
+            // # zh_CN 种子自动归集，每种拥有两个独立环境卡槽，无需底土
+            .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.plot_inventory"))
+            // #tr gtng.industrial_farm.upgrades
+            // # Uniform seed beds set capacity, power and crop tier; upgrade modules may use different tiers
+            // # zh_CN 苗床须同级，决定容量、功耗与作物等级；升级模块可单独选择等级
+            .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.upgrades"))
+            // #tr gtng.industrial_farm.upgrade_limits
+            // # Industrial Farm upgrade limits apply; normal and overclocked growth units stack
+            // # zh_CN 沿用工业农场的升级数量限制；普通与超频生长加速可叠加
+            .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.upgrade_limits"))
+            // #tr gtng.industrial_farm.continuous_growth
+            // # Retains partial growth and harvests; blocked crops do not stop other crops
+            // # zh_CN 保留生长进度与小数产出，条件不符的作物不影响其他作物
+            .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.continuous_growth"))
+            // #tr gtng.industrial_farm.energy
+            // # Multi-amp hatches need no upgrade; glass does not limit energy hatch tiers
+            // # zh_CN 多安能源仓无需升级；玻璃不限制能源仓等级
+            .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.energy"))
+            // #tr gtng.industrial_farm.energy_limits
+            // # At most one multi-amp hatch; cannot mix with normal energy hatches; no laser hatches
+            // # zh_CN 最多 1 个多安能源仓，不能与普通能源仓混用；不支持激光仓
+            .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.energy_limits"))
+            .beginStructureBlock(5, 4, SLICES + 2, true)
+            // #tr gtng.industrial_farm.controller
+            // # Front center on the seed-bed layer
+            // # zh_CN 种床层正面中央
+            .addController(StatCollector.translateToLocal("gtng.industrial_farm.controller"))
+            // #tr gtng.industrial_farm.casing
+            // # Agricultural Casing
+            // # zh_CN 农业机械方块
+            .addCasing("40+", StatCollector.translateToLocal("gtng.industrial_farm.casing"), false)
+            // #tr gtng.industrial_farm.fixed_size
+            // # 12 growing sections, 36 uniform seed beds, 12 upgrade positions
+            // # zh_CN 12 个种植段、36 个同级苗床、12 个升级位置
+            .addStructureInfo(StatCollector.translateToLocal("gtng.industrial_farm.fixed_size"))
+            // #tr gtng.industrial_farm.glass
+            // # 48 Borosilicate Glass blocks (standard variant)
+            // # zh_CN 48 块硼玻璃（普通型号）
+            .addStructureInfo(StatCollector.translateToLocal("gtng.industrial_farm.glass"))
+            // #tr gtng.industrial_farm.roof
+            // # Each of the 12 roof wooden frames may be replaced by an upgrade module
+            // # zh_CN 顶部 12 个木框架均可替换为升级模块
+            .addStructureInfo(StatCollector.translateToLocal("gtng.industrial_farm.roof"))
+            .addEnergyHatch("1+", endCasing, 1).addMaintenanceHatch("1", endCasing, 1).addInputBus("0+", endCasing, 1)
+            .addInputHatch("1+", endCasing, 1).addOutputBus("1+", endCasing, 1)
+            // #tr gtng.industrial_farm.channel
+            // # Subchannel if_tier sets the industrial farm tier
+            // # zh_CN 子信道 if_tier 决定工业农场等级
+            .addStructureInfo(StatCollector.translateToLocal("gtng.industrial_farm.channel")).toolTipFinisher();
+        return tt;
     }
 }

@@ -149,8 +149,8 @@ public class GuiScriptEditor extends UiScreen implements GuiIconPicker.Callback 
         this.buttonList.add(toggle);
         markFooter(ID_SNIPPETS);
         // #tr radialmenu.script.snippets.tip
-        // # Click an entry to write it into the script where the caret is.
-        // # zh_CN 点击条目，将其写入光标所在位置。
+        // # Insert the selected snippet at the cursor
+        // # zh_CN 在光标处插入选中的脚本片段
         tooltip(ID_SNIPPETS, I18n.format("radialmenu.script.snippets.tip"));
 
         // Opposite the API toggle and the same width, so the bar stays balanced around Done and Cancel.
@@ -162,8 +162,8 @@ public class GuiScriptEditor extends UiScreen implements GuiIconPicker.Callback 
                 I18n.format("radialmenu.script.icon")));
         markFooter(ID_ICON);
         // #tr radialmenu.script.icon.tip
-        // # Insert an icon name, replacing the quoted string around the caret if any.
-        // # zh_CN 插入图标名称；若光标处于引号字符串内，则替换该字符串。
+        // # Insert an icon name. Replace the quoted string if the cursor is inside one
+        // # zh_CN 插入图标名称；光标在引号内时替换整个字符串
         tooltip(ID_ICON, I18n.format("radialmenu.script.icon.tip"));
     }
 

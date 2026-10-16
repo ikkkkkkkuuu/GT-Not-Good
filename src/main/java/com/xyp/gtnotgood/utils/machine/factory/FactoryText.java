@@ -14,16 +14,16 @@ public enum FactoryText {
     // # zh_CN 下界合金／空气与地狱岩处理
     PresetNetherite("factory.gtnotgood.preset_netherite"),
     // #tr factory.gtnotgood.preset_netherite_help
-    // # Whole-line batch: feed nether air, glowstone, grade 2 water, lava and hellish metal; recycle scrap.
-    // # zh_CN 整线结算；供下界空气、荧石、二级净化水、岩浆和地狱金属，产出强键合纳米颗粒及副产物。
+    // # Nether air, glowstone, grade 2 water, lava, hellish metal -> bonded nanoparticles; scrap is recycled.
+    // # zh_CN 输入下界空气、荧石、二级净化水、岩浆与地狱金属；回收碎片，产出强键合纳米颗粒及副产物。
     PresetNetheriteHelp("factory.gtnotgood.preset_netherite_help"),
     // #tr factory.gtnotgood.preset_epoxy
     // # Epoxy resin / propene recovery
     // # zh_CN 环氧树脂／丙烯回收路线
     PresetEpoxy("factory.gtnotgood.preset_epoxy"),
     // #tr factory.gtnotgood.preset_epoxy_help
-    // # Feed propene, phenol, acetone, water and chlorine makeup; recycle salt water and excess acid.
-    // # zh_CN 输入丙烯、苯酚、丙酮、水并补充氯；回收盐水和多余氢氯酸，产出熔融环氧树脂。
+    // # Feed propene, phenol, acetone, water and chlorine; makes epoxy resin and recycles salt water and acid.
+    // # zh_CN 输入丙烯、苯酚、丙酮、水与氯，产出环氧树脂，回收盐水与多余盐酸。
     PresetEpoxyHelp("factory.gtnotgood.preset_epoxy_help"),
     // #tr factory.gtnotgood.preset_pbi
     // # PBI / phenol, chlorine and acid recovery
@@ -31,23 +31,23 @@ public enum FactoryText {
     PresetPbi("factory.gtnotgood.preset_pbi"),
     // #tr factory.gtnotgood.preset_pbi_help
     // # Feed benzene, methane, oxygen, ammonia, acids, Cu, Zn and dichromate; recycle phenol, chlorine and acid.
-    // # zh_CN 供苯、甲烷、氧、氨、酸、铜、锌和重铬酸钾；回收苯酚、氯及硫酸。
+    // # zh_CN 输入苯、甲烷、氧、氨、酸、铜、锌与重铬酸钾；生产 PBI，回收苯酚、氯与硫酸。
     PresetPbiHelp("factory.gtnotgood.preset_pbi_help"),
     // #tr factory.gtnotgood.preset_rp1
     // # Rocket fuel / RP-1
     // # zh_CN 火箭燃料／RP-1
     PresetRp1("factory.gtnotgood.preset_rp1"),
     // #tr factory.gtnotgood.preset_rp1_help
-    // # Feed diesel and liquid oxygen; includes kerosene and RP-1 refining.
-    // # zh_CN 供柴油和液氧；内含煤油、RP-1 精炼。
+    // # Refines diesel through kerosene and RP-1; adds liquid oxygen to make rocket fuel.
+    // # zh_CN 将柴油依次精炼为煤油、RP-1，再与液氧合成火箭燃料。
     PresetRp1Help("factory.gtnotgood.preset_rp1_help"),
     // #tr factory.gtnotgood.preset_hydrazine
     // # Rocket fuel / dense hydrazine
     // # zh_CN 火箭燃料／浓缩肼
     PresetHydrazine("factory.gtnotgood.preset_hydrazine"),
     // #tr factory.gtnotgood.preset_hydrazine_help
-    // # Feed hydrogen, oxygen, anthracene, ammonia and methanol; peroxide uses a recycling loop.
-    // # zh_CN 供氢、氧、蒽、氨和甲醇；内含过氧化氢循环。
+    // # Feed hydrogen, oxygen, anthracene, ammonia and methanol; includes a peroxide production loop.
+    // # zh_CN 输入氢、氧、蒽、氨与甲醇合成浓缩肼，包含过氧化氢循环生产工序。
     PresetHydrazineHelp("factory.gtnotgood.preset_hydrazine_help"),
     // #tr factory.gtnotgood.preset_cn_fuel
     // # Rocket fuel / CN3H7O3
@@ -55,7 +55,7 @@ public enum FactoryText {
     PresetCnFuel("factory.gtnotgood.preset_cn_fuel"),
     // #tr factory.gtnotgood.preset_cn_fuel_help
     // # Feed hydrogen, oxygen, anthracene, ammonia, carbon and nitric acid; includes peroxide and hydrazine.
-    // # zh_CN 供氢、氧、蒽、氨、碳和硝酸；内含过氧化氢及肼合成。
+    // # zh_CN 输入氢、氧、蒽、氨、碳与硝酸；生产 CN3H7O3 燃料，包含过氧化氢与肼合成。
     PresetCnFuelHelp("factory.gtnotgood.preset_cn_fuel_help"),
     // #tr factory.gtnotgood.preset_h8_fuel
     // # Rocket fuel / H8N4C2O4
@@ -63,19 +63,19 @@ public enum FactoryText {
     PresetH8Fuel("factory.gtnotgood.preset_h8_fuel"),
     // #tr factory.gtnotgood.preset_h8_fuel_help
     // # Feed hydrogen, oxygen, anthracene, ammonia, methanol and nitric acid; recycles copper and anthraquinone.
-    // # zh_CN 供氢、氧、蒽、氨、甲醇和硝酸；回收铜及蒽醌。
+    // # zh_CN 输入氢、氧、蒽、氨、甲醇与硝酸；生产 H8N4C2O4 燃料，回收铜与蒽醌。
     PresetH8FuelHelp("factory.gtnotgood.preset_h8_fuel_help"),
     // #tr factory.gtnotgood.preset_cetane
     // # Rocket fuel / cetane-boosted diesel
     // # zh_CN 火箭燃料／高十六烷值柴油
     PresetCetane("factory.gtnotgood.preset_cetane"),
     // #tr factory.gtnotgood.preset_cetane_help
-    // # Feed light fuel, heavy fuel, ethenone and nitric acid; includes diesel and tetranitromethane.
-    // # zh_CN 供轻燃油、重燃油、乙烯酮和硝酸；内含柴油及四硝基甲烷合成。
+    // # Feed light fuel, heavy fuel, ethenone and nitric acid; includes diesel and tetranitromethane synthesis.
+    // # zh_CN 输入轻燃油、重燃油、乙烯酮与硝酸；生产高十六烷值柴油，包含柴油与四硝基甲烷合成。
     PresetCetaneHelp("factory.gtnotgood.preset_cetane_help"),
     // #tr factory.gtnotgood.preset_help
-    // # Load into an empty page, then preview and install. Route inter-page outputs externally.
-    // # zh_CN 载入空白页后预览安装；跨页中间产物需外部输送。
+    // # Load into an empty page, preview and install; transfer products between pages externally
+    // # zh_CN 载入空白页后预览并安装；跨页产物须从外部输送
     PresetHelp("factory.gtnotgood.preset_help"),
     // #tr factory.gtnotgood.preset_loaded
     // # Preset loaded; preview and confirm installation
@@ -86,8 +86,8 @@ public enum FactoryText {
     // # zh_CN 预设配方不可用，或当前页不是空白页
     PresetUnavailable("factory.gtnotgood.preset_unavailable"),
     // #tr factory.gtnotgood.preset_chance
-    // # Auto-balanced recovery loops; weighted outputs settle in whole batches and support pattern export.
-    // # zh_CN 自动配平回收循环；概率折算为确定整批产出，可导出样板。
+    // # Recovery loops balance automatically; chance outputs settle as whole batches
+    // # zh_CN 自动配平回收循环；概率产出折算为确定的整批产出
     PresetChance("factory.gtnotgood.preset_chance"),
     // #tr factory.gtnotgood.deterministic_batch
     // # Waiting for materials or power for a whole deterministic batch
@@ -98,8 +98,8 @@ public enum FactoryText {
     // # zh_CN 完整铂族处理（单页）
     PresetPlatinumGroup("factory.gtnotgood.preset_platinum_group"),
     // #tr factory.gtnotgood.preset_platinum_group_help
-    // # All seven branches with shared recovery, balanced and settled as one line.
-    // # zh_CN 七条分支合为一页，共用回收工序，整线配平结算。
+    // # Combines all seven platinum-group branches on one page with shared recovery loops.
+    // # zh_CN 单页整合铂族全部七条分支，共用回收工序并整线配平结算。
     PresetPlatinumGroupHelp("factory.gtnotgood.preset_platinum_group_help"),
 
     // #tr factory.gtnotgood.preset_platinum
@@ -107,56 +107,56 @@ public enum FactoryText {
     // # zh_CN 铂／铂盐与钙回收
     PresetPlatinum("factory.gtnotgood.preset_platinum"),
     // #tr factory.gtnotgood.preset_platinum_help
-    // # Feed metallic platinum, aqua regia, ammonium chloride. Export Pt, Pd ammonia and residue.
-    // # zh_CN 供铂金属粉、王水、氯化铵；产铂、富钯氨及铂渣。
+    // # Refines metallic platinum with aqua regia and ammonium chloride; exports platinum, Pd ammonia and residue.
+    // # zh_CN 用王水与氯化铵处理铂金属粉，产出铂、富钯氨与铂渣。
     PresetPlatinumHelp("factory.gtnotgood.preset_platinum_help"),
     // #tr factory.gtnotgood.preset_palladium
     // # Palladium / salt loop
     // # zh_CN 钯／钯盐循环
     PresetPalladium("factory.gtnotgood.preset_palladium"),
     // #tr factory.gtnotgood.preset_palladium_help
-    // # Feed Pd ammonia and formic acid. Export Pd and byproducts.
-    // # zh_CN 供富钯氨、甲酸；产钯及副产物。
+    // # Refines Pd ammonia with formic acid into palladium and byproducts.
+    // # zh_CN 用甲酸处理富钯氨，产出钯与副产物。
     PresetPalladiumHelp("factory.gtnotgood.preset_palladium_help"),
     // #tr factory.gtnotgood.preset_residue
     // # Platinum residue / branch separation
     // # zh_CN 铂渣／分离后续支线
     PresetResidue("factory.gtnotgood.preset_residue"),
     // #tr factory.gtnotgood.preset_residue_help
-    // # Feed Pt residue and reagents. Export Ru salt, Os solution, Ir oxide and Rh solution.
-    // # zh_CN 供铂渣及辅料；产钌酸钠、酸性锇液、二氧化铱及硫酸铑液。
+    // # Separates platinum residue into ruthenium salt, osmium solution, iridium oxide and rhodium solution.
+    // # zh_CN 将铂渣分离为钌酸钠、酸性锇溶液、二氧化铱与硫酸铑溶液。
     PresetResidueHelp("factory.gtnotgood.preset_residue_help"),
     // #tr factory.gtnotgood.preset_ruthenium
     // # Ruthenium / refining and salt recovery
     // # zh_CN 钌／精炼与盐回收
     PresetRuthenium("factory.gtnotgood.preset_ruthenium"),
     // #tr factory.gtnotgood.preset_ruthenium_help
-    // # Feed sodium ruthenate, chlorine and hydrochloric acid. Export ruthenium.
-    // # zh_CN 供钌酸钠、氯、盐酸；产钌。
+    // # Refines sodium ruthenate with chlorine and hydrochloric acid into ruthenium.
+    // # zh_CN 用氯与盐酸处理钌酸钠，精炼出钌。
     PresetRutheniumHelp("factory.gtnotgood.preset_ruthenium_help"),
     // #tr factory.gtnotgood.preset_osmium
     // # Osmium / distillation and reduction
     // # zh_CN 锇／蒸馏还原
     PresetOsmium("factory.gtnotgood.preset_osmium"),
     // #tr factory.gtnotgood.preset_osmium_help
-    // # Feed acidic osmium solution and hydrochloric acid. Export osmium.
-    // # zh_CN 供酸性锇溶液、盐酸；产锇。
+    // # Distills and reduces acidic osmium solution with hydrochloric acid to recover osmium.
+    // # zh_CN 用盐酸处理酸性锇溶液，经蒸馏与还原回收锇。
     PresetOsmiumHelp("factory.gtnotgood.preset_osmium_help"),
     // #tr factory.gtnotgood.preset_iridium
     // # Iridium / calcium and residue recovery
     // # zh_CN 铱／钙与泥渣回收
     PresetIridium("factory.gtnotgood.preset_iridium"),
     // #tr factory.gtnotgood.preset_iridium_help
-    // # Feed iridium dioxide, hydrochloric acid and ammonium chloride. Export iridium, copper and nickel.
-    // # zh_CN 供二氧化铱、盐酸、氯化铵；产铱、铜、镍。
+    // # Refines iridium dioxide with hydrochloric acid and ammonium chloride; recovers iridium, copper and nickel.
+    // # zh_CN 用盐酸与氯化铵处理二氧化铱，回收铱、铜与镍。
     PresetIridiumHelp("factory.gtnotgood.preset_iridium_help"),
     // #tr factory.gtnotgood.preset_rhodium
     // # Rhodium / zinc and salt recovery
     // # zh_CN 铑／锌与盐回收
     PresetRhodium("factory.gtnotgood.preset_rhodium"),
     // #tr factory.gtnotgood.preset_rhodium_help
-    // # Feed rhodium sulfate solution and reagents. Export rhodium; keep outlets clear.
-    // # zh_CN 供硫酸铑溶液及辅料；产铑，注意排出剩余副产物。
+    // # Refines rhodium sulfate solution into rhodium; excess byproducts must leave the line.
+    // # zh_CN 精炼硫酸铑溶液以回收铑，多余副产物须排出产线。
     PresetRhodiumHelp("factory.gtnotgood.preset_rhodium_help"),
 
     // #tr factory.gtnotgood.pattern_mismatch
@@ -218,8 +218,8 @@ public enum FactoryText {
     // # zh_CN 导出AE样板
     PatternExport("factory.gtnotgood.pattern_export"),
     // #tr factory.gtnotgood.pattern_help
-    // # Creates a free pattern matching the displayed batch quantities.
-    // # zh_CN 免费生成与预览批次数量一致的样板。
+    // # Creates a free AE pattern using the previewed batch quantities
+    // # zh_CN 按预览的批次数量免费生成 AE 样板
     PatternHelp("factory.gtnotgood.pattern_help"),
     // #tr factory.gtnotgood.pattern_lock_first
     // # Lock the line and wait for installation before exporting.
@@ -255,8 +255,8 @@ public enum FactoryText {
     // # zh_CN 导入／导出
     RouteCode("factory.gtnotgood.route_code"),
     // #tr factory.gtnotgood.route_code_help
-    // # GTNG route code: paste to import into an empty list.
-    // # zh_CN GTNG 工序代码：粘贴后导入空工序列表。
+    // # Paste a route code to import it into an empty page
+    // # zh_CN 粘贴工序代码，导入空白产线页
     RouteCodeHelp("factory.gtnotgood.route_code_help"),
     // #tr factory.gtnotgood.import_code
     // # Import
@@ -383,21 +383,25 @@ public enum FactoryText {
     // # Click nodes to edit; drag to move. Right-click source then destination to connect.
     // # zh_CN 单击节点打开详情；拖动节点移动；依次右键源节点和目标节点连线；拖动空白平移。
     Help("factory.gtnotgood.help"),
+    // #tr factory.gtnotgood.tooltip.function
+    // # Combines linked recipes into an automated production line
+    // # zh_CN 连接配方工序，自动执行整条产线
+    FunctionHelp("factory.gtnotgood.tooltip.function"),
     // #tr factory.gtnotgood.tooltip.power
-    // # Energy hatch installed: wired. No normal/exotic energy hatch: owner's wireless grid.
-    // # zh_CN 安装能源仓时有线供电；无普通或特殊能源仓时使用归属玩家的无线电网。
+    // # Energy hatches take priority; without one, uses the owner's wireless grid
+    // # zh_CN 安装能源仓时使用有线供电；未安装时使用拥有者的无线电网
     PowerHelp("factory.gtnotgood.tooltip.power"),
     // #tr factory.gtnotgood.tooltip.graph
-    // # Up to 64 nodes; parallel up to 2,147,483,647. Linked materials stay inside; other products are exported.
-    // # zh_CN 最多64工序，默认1并行；物料自动衔接，其余产物排出。
+    // # Up to 99 pages with 64 processes each; batch size adapts to supplies, power and output space
+    // # zh_CN 最多 99 页，每页 64 道工序；批量随供料、功率与输出空间自动调整
     GraphHelp("factory.gtnotgood.tooltip.graph"),
     // #tr factory.gtnotgood.tooltip.safety
-    // # Output jams stop producers. Power loss pauses jobs without refunding consumed inputs.
-    // # zh_CN 输出堵塞时上游停止；断电暂停任务，已消耗输入不退回。
+    // # Blocked outputs stop producers; power loss pauses jobs without returning consumed inputs
+    // # zh_CN 输出堵塞时上游停产；断电暂停任务，已消耗的原料不退回
     SafetyHelp("factory.gtnotgood.tooltip.safety"),
     // #tr factory.gtnotgood.tooltip.recipes
-    // # Ordinary GT recipes only; special machine conditions require dedicated adapters.
-    // # zh_CN 支持普通GT配方；特殊机器条件需要专用适配。
+    // # Supports ordinary GT recipes; special machine requirements need an adapter
+    // # zh_CN 支持普通 GT 配方；特殊机器条件须有对应适配
     RecipeHelp("factory.gtnotgood.tooltip.recipes"),
     // #tr factory.gtnotgood.add_node
     // # Add node
@@ -428,8 +432,8 @@ public enum FactoryText {
     // # zh_CN 保持此页打开，在 NEI 中按 R 查看配方，点击＋导入工序。
     ImportHelp("factory.gtnotgood.import_help"),
     // #tr factory.gtnotgood.reserved
-    // # Controllers and non-consumables are stored internally and returned on unload.
-    // # zh_CN 控制器与不可消耗物收入内部保管，卸载产线时返还。
+    // # Controllers and non-consumable inputs are stored inside and returned when unloading
+    // # zh_CN 控制器与不可消耗物存于内部，卸载产线时返还
     Reserved("factory.gtnotgood.reserved"),
     // #tr factory.gtnotgood.balance
     // # Auto balance
@@ -448,12 +452,12 @@ public enum FactoryText {
     // # zh_CN 工序需求（已收入 / 需要）
     Requirements("factory.gtnotgood.requirements"),
     // #tr factory.gtnotgood.requirement_help
-    // # Insert controllers and non-consumables into input buses.
-    // # zh_CN 请将控制器和不可消耗物放入输入总线。
+    // # Put the required controllers and non-consumable inputs into input buses
+    // # zh_CN 将所需控制器与不可消耗物放入输入总线
     RequirementHelp("factory.gtnotgood.requirement_help"),
     // #tr factory.gtnotgood.host_help
-    // # Any multiblock controller supporting this recipe map is accepted.
-    // # zh_CN 放入支持此配方表的多方块控制器即可。
+    // # Supply a multiblock controller that supports each selected recipe map
+    // # zh_CN 为各配方表提供支持该表的多方块控制器
     HostHelp("factory.gtnotgood.host_help"),
     // #tr factory.gtnotgood.no_requirements
     // # No submitted requirements
@@ -468,8 +472,8 @@ public enum FactoryText {
     // # zh_CN 缺少
     Missing("factory.gtnotgood.missing"),
     // #tr factory.gtnotgood.auto_parallel
-    // # Batches adapt to supplies, power and output capacity.
-    // # zh_CN 批量随供料、供电和输出容量自动调整。
+    // # Batch size adapts to supplies, power and output capacity
+    // # zh_CN 批量随供料、功率与输出容量自动调整
     AutoParallel("factory.gtnotgood.auto_parallel"),
     // #tr factory.gtnotgood.batch_duration
     // # Batch duration
@@ -480,8 +484,8 @@ public enum FactoryText {
     // # zh_CN 每批
     PerBatch("factory.gtnotgood.per_batch"),
     // #tr factory.gtnotgood.atomic_note
-    // # Inputs are consumed at start; outputs release together when processing finishes.
-    // # zh_CN 启动时一次性扣料，加工完成后统一输出；小数数量向上取整。
+    // # Consumes inputs at startup; releases all outputs together; fractional amounts round up
+    // # zh_CN 启动时一次性扣料，完成时统一输出；小数数量向上取整
     AtomicNote("factory.gtnotgood.atomic_note"),
     // #tr factory.gtnotgood.node_eut
     // # Base EU/t
@@ -556,8 +560,8 @@ public enum FactoryText {
     // # zh_CN 产线预览
     Preview("factory.gtnotgood.preview"),
     // #tr factory.gtnotgood.preview_note
-    // # Node rates exclude auto batching; internal loops need no startup material.
-    // # zh_CN 节点基础速率，不含自动批量；内部循环无需启动物料。
+    // # Rates exclude automatic batching; internal loops need no startup materials
+    // # zh_CN 速率不含自动批量；内部循环无需启动物料
     PreviewNote("factory.gtnotgood.preview_note"),
     // #tr factory.gtnotgood.external_input
     // # External input

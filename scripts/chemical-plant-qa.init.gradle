@@ -5,6 +5,7 @@ gradle.projectsEvaluated {
     if (!efr.exists()) throw new GradleException('Missing factory QA dependency: ' + efr)
     root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
     def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('testCompileOnly', pack.gtnhdev('BlockRenderer6343') as String)
     ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
         'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
         root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)

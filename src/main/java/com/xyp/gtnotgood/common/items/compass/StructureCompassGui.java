@@ -109,8 +109,8 @@ public final class StructureCompassGui {
             }
         }, () -> state.getIntValue() >= 2 && distance.getIntValue() >= 0));
         // #tr gui.compass.note
-        // # Search predicts only. Teleport loads terrain. ESC closes.
-        // # zh_CN 搜索仅预测；传送才加载地形。按 ESC 关闭。
+        // # Search predicts candidates only. Teleporting loads terrain. Escape closes this screen.
+        // # zh_CN 搜索仅预测候选区域，传送会加载地形；Esc 关闭界面。
         panel.child(IKey.lang("gui.compass.note").color(0xff525b69).asWidget().pos(14, 199).width(312));
         return panel;
     }
@@ -149,20 +149,20 @@ public final class StructureCompassGui {
     private static String status(int state) {
         if (state == 1) {
             // #tr gui.compass.searching
-            // # Searching seed candidates... Keep holding the compass.
-            // # zh_CN 正在搜索种子候选区域……请保持手持。
+            // # Searching candidate areas... Keep the compass in your hand.
+            // # zh_CN 正在搜索候选区域……请保持手持罗盘。
             return StatCollector.translateToLocal("gui.compass.searching");
         }
         if (state == 2) {
             // #tr gui.compass.candidate
-            // # Candidate area - approach to confirm the structure
-            // # zh_CN 待确认区域 · 靠近后验证是否生成对应遗迹
+            // # Unconfirmed candidate. Approach to check whether the target structure generated.
+            // # zh_CN 尚未确认的候选区域，靠近后检查目标遗迹是否生成。
             return StatCollector.translateToLocal("gui.compass.candidate");
         }
         if (state == 3) {
             // #tr gui.compass.confirmed
-            // # Recorded structure - ready to navigate or teleport
-            // # zh_CN 已记录遗迹 · 可以导航或直接传送
+            // # Recorded structure. Navigate to it or teleport nearby.
+            // # zh_CN 已记录的遗迹，可前往探索或传送至附近。
             return StatCollector.translateToLocal("gui.compass.confirmed");
         }
         // #tr gui.compass.idle

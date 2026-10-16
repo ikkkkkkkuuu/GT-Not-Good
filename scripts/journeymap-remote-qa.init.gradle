@@ -1,0 +1,157 @@
+// gradlew.bat -I scripts/journeymap-remote-qa.init.gradle runJourneyMapRemoteQA --no-configuration-cache
+gradle.beforeProject { project ->
+    if (project == gradle.rootProject) {
+        project.layout.buildDirectory.set(project.file('.gradle/journeymap-remote-qa-build'))
+    }
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def output = root.file('build/journeymap-remote-qa')
+    def serverDirectory = root.file('run/journeymap-remote-server-qa')
+    def clientDirectory = root.file('run/journeymap-remote-client-qa')
+    def instance = 'C:/Users/Administrator/Desktop/GTNH/instances/' +
+        'GT_New_Horizons_2.9.0-RC-1_Java_17-26/.minecraft/mods/'
+    def journeyMap = root.file(root.findProperty('journeyMapJar') ?:
+        instance + 'journeymap-1.7.10-5.2.23-fairplay.jar')
+    if (!journeyMap.isFile()) throw new GradleException('Missing JourneyMap jar; pass -PjourneyMapJar=<path>')
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.isFile()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.dependencies.add('runtimeOnlyNonPublishable', root.dependencies.rfg.deobf(root.files(journeyMap)))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String)
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/JourneyMapServerChecks.java', 'scripts/qa/JourneyMapRemoteClientChecks.java'))
+    }
+    root.spotless.java {
+        target 'scripts/qa/JourneyMapServerChecks.java', 'scripts/qa/JourneyMapRemoteClientChecks.java'
+    }
+    def snapshots = [:]
+    ['server': 'JourneyMapServerChecks', 'client': 'JourneyMapRemoteClientChecks'].each { side, fixture ->
+        def directory = root.layout.buildDirectory.dir('journeymap-remote-runtime/' + side)
+        snapshots[side] = root.tasks.register('snapshotJourneyMapRemote' + side.capitalize(), Sync) {
+            dependsOn root.tasks.named('classes'), root.tasks.named('testClasses')
+            from root.sourceSets.main.output
+            from(root.sourceSets.test.output) { include '**/' + fixture + '*.class' }
+            into directory
+        }
+    }
+    def serverTask = root.tasks.named('runServer17').get()
+    def clientTask = root.tasks.named('runClient17').get()
+    [serverTask, clientTask].each { task ->
+        task.javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        task.classpath -= root.sourceSets.main.output
+        task.classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        task.classpath += root.configurations.testRuntimeClasspath.filter {
+            it.name.startsWith('jvmdowngrader-java-api-')
+        }
+        task.systemProperty 'gtng.journeyMap.remote.output', output.absolutePath
+        task.systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        task.systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        task.maxHeapSize = '3G'
+        task.notCompatibleWithConfigurationCache('Opt-in isolated dedicated-server/client JourneyMap QA')
+    }
+    root.tasks.named('runServer17').configure {
+        dependsOn snapshots.server
+        classpath = classpath.filter {
+            def name = it.name.toLowerCase(Locale.ROOT)
+            !name.contains('journeymap') && !name.contains('angelica')
+        }
+        classpath += root.files(root.layout.buildDirectory.dir('journeymap-remote-runtime/server'))
+        workingDir serverDirectory
+        systemProperty 'gtng.journeyMap.remote.server', 'true'
+    }
+    root.tasks.named('runClient17').configure {
+        dependsOn snapshots.client
+        classpath += root.files(root.layout.buildDirectory.dir('journeymap-remote-runtime/client'))
+        workingDir clientDirectory
+        username.set('JourneyMapQA')
+        userUUID.set(UUID.nameUUIDFromBytes('OfflinePlayer:JourneyMapQA'.getBytes('UTF-8')).toString())
+        extraArgs.addAll(['--width', '1100', '--height', '740'])
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.journeyMap.remote.client', 'true'
+    }
+    def prepare = {
+        output.mkdirs()
+        serverDirectory.mkdirs()
+        clientDirectory.mkdirs()
+        ['ready', 'joined', 'deny-attempt', 'denied', 'grant-op', 'op-granted', 'allowed-attempt', 'target',
+            'teleported', 'client-result', 'server-result', 'stop-server'].each {
+            java.nio.file.Files.deleteIfExists(new File(output, it + '.txt').toPath())
+        }
+        new File(serverDirectory, 'eula.txt').setText('eula=true\n', 'UTF-8')
+        new File(serverDirectory, 'ops.json').setText('[]\n', 'UTF-8')
+        new File(serverDirectory, 'server.properties').setText(
+            'server-ip=127.0.0.1\nserver-port=25576\nlevel-type=FLAT\nonline-mode=false\n' +
+            'level-name=journeymap-remote-qa-' + System.currentTimeMillis() + '\n' +
+            'allow-flight=true\nmax-tick-time=-1\nenable-query=false\nenable-rcon=false\n' +
+            'spawn-protection=0\nview-distance=3\nmax-players=1\nop-permission-level=4\n', 'UTF-8')
+        new File(clientDirectory, 'options.txt').setText(
+            'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+    }
+    def launch = { task, side ->
+        def arguments = task.allJvmArgs + task.calculateJvmArgs() +
+            ['-cp', task.classpath.asPath, task.mainClass.get()] + (task.args ?: []) + task.calculateArgs()
+        def argumentFile = new File(output, side + '-launch.args')
+        argumentFile.setText(arguments.collect {
+            '"' + it.toString().replace('\\', '\\\\').replace('"', '\\"') + '"'
+        }.join('\n'), 'UTF-8')
+        def command = [task.javaLauncher.get().executablePath.asFile.absolutePath]
+        if (side == 'client') {
+            command += ['-Dgtng.factory.qa=true',
+                '-Dgtng.journeyMap.remote.runDirectory=' + clientDirectory.absolutePath]
+        }
+        command += '@' + argumentFile.absolutePath
+        new ProcessBuilder(command.collect { it.toString() }).directory(task.workingDir)
+            .redirectErrorStream(true).redirectOutput(new File(output, side + '-process.log')).start()
+    }
+    def waitUntil = { process, timeout, condition ->
+        long deadline = System.currentTimeMillis() + timeout
+        while (!condition()) {
+            if (!process.isAlive()) throw new GradleException('QA process exited early; inspect ' + output)
+            if (System.currentTimeMillis() > deadline) throw new GradleException('QA timed out; inspect ' + output)
+            Thread.sleep(250)
+        }
+    }
+    root.tasks.register('runJourneyMapRemoteQA') {
+        dependsOn snapshots.values()
+        dependsOn({ serverTask.taskDependencies.getDependencies(serverTask) })
+        dependsOn({ clientTask.taskDependencies.getDependencies(clientTask) })
+        notCompatibleWithConfigurationCache('Launches an isolated local QA server and client')
+        doLast {
+            prepare()
+            Process server = null
+            Process client = null
+            try {
+                server = launch(serverTask, 'server')
+                root.logger.lifecycle('JourneyMap QA dedicated server starting on 127.0.0.1:25576')
+                waitUntil(server, 600000L) { new File(output, 'ready.txt').isFile() }
+                if (System.getProperty('os.name').startsWith('Windows')) {
+                    new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                        '-ExecutionPolicy', 'Bypass', '-File',
+                        root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                        '-Workspace', clientDirectory.absolutePath).redirectErrorStream(true)
+                        .redirectOutput(new File(output, 'window-helper.log')).start()
+                }
+                client = launch(clientTask, 'client')
+                root.logger.lifecycle('JourneyMap QA remote client connecting; outputs: ' + output)
+                waitUntil(client, 600000L) { new File(output, 'client-result.txt').isFile() }
+                waitUntil(server, 60000L) { new File(output, 'server-result.txt').isFile() }
+                ['client', 'server'].each {
+                    def result = new File(output, it + '-result.txt')
+                    if (result.text.trim() != 'PASS') throw new GradleException(result.text)
+                }
+                root.logger.lifecycle('JourneyMap dedicated-server/client QA: PASS')
+            } finally {
+                new File(output, 'stop-server.txt').setText('launcher cleanup', 'UTF-8')
+                [client, server].findAll { it != null }.each {
+                    if (!it.waitFor(30, java.util.concurrent.TimeUnit.SECONDS)) {
+                        it.destroy()
+                        if (!it.waitFor(5, java.util.concurrent.TimeUnit.SECONDS)) it.destroyForcibly()
+                    }
+                }
+            }
+        }
+    }
+}

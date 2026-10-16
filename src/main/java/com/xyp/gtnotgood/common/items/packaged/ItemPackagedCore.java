@@ -54,62 +54,90 @@ public final class ItemPackagedCore extends Item {
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advanced) {
+        if (!adapterId.isEmpty()) {
+            // #tr tooltip.packaged.install_core
+            // # Install in a Wireless Packaged Pattern Provider and bind the matching machine.
+            // # zh_CN 装入无线封包样板供应器，再用连接器绑定对应机器。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.install_core"));
+        }
         if ("thaumcraft_crucible".equals(adapterId)) {
             // #tr tooltip.packaged.crucible
-            // # Requires research and a heated crucible. No water needed or consumed.
-            // # zh_CN 需要研究和加热的坩埚；无需供水，也不消耗水。
+            // # Automates crucible alchemy. Requires research and heat, but no water.
+            // # zh_CN 自动执行坩埚炼金术，需要研究与热源，无需供水。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.crucible"));
             // #tr tooltip.packaged.crucible_pattern
-            // # Processing pattern: one catalyst to one recipe's output.
-            // # zh_CN 处理样板：一个催化剂对应一次配方产物。
+            // # Encode one catalyst and one recipe's output in a processing pattern.
+            // # zh_CN 用处理样板填写一个催化剂与单次配方产物。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.crucible_pattern"));
             // #tr tooltip.packaged.crucible_essentia
-            // # Uses local aspects first, then missing AE essentia via Thaumic Energistics.
-            // # zh_CN 优先使用坩埚已有源质，不足部分通过神秘能源从 AE 补充。
+            // # Uses the crucible's aspects first; Thaumic Energistics supplies any missing essentia.
+            // # zh_CN 优先使用坩埚已有源质，不足部分通过神秘能源从 ME 补充。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.crucible_essentia"));
         }
         if ("arcane_workbench".equals(adapterId)) {
             // #tr tooltip.packaged.arcane
-            // # Wand Vis first; missing Vis is converted from matching AE primal essentia.
-            // # zh_CN 优先使用法杖 Vis；不足时转换 AE 中对应的基础源质。
+            // # Automates an Arcane Workbench using its wand's Vis first.
+            // # zh_CN 自动执行奥术工作台配方，优先消耗法杖中的 Vis。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.arcane"));
             // #tr tooltip.packaged.arcane_record
-            // # Left-click a connected table row to record its grid using a blank pattern.
-            // # zh_CN 左击连接列表中的工作台，消耗空白样板录入九宫格。
+            // # Left-click the bound table in the target list to record its grid. Needs a blank pattern.
+            // # zh_CN 左键连接列表中的工作台，消耗空白样板录入九宫格。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.arcane_record"));
             // #tr tooltip.packaged.arcane_owner
-            // # Clear the grid after recording. Owner must remain online in this dimension.
-            // # zh_CN 录入后清空九宫格；所有者须在本维度在线。
+            // # Empty the grid and close the workbench screen before dispatching a recipe.
+            // # zh_CN 派发配方前须清空九宫格并关闭工作台界面。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.arcane_owner"));
+            // #tr tooltip.packaged.arcane_vis
+            // # Thaumic Energistics can supply missing Vis from matching AE primal essentia.
+            // # zh_CN Vis 不足时，可通过神秘能源将 ME 中对应的基础源质转化为 Vis。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.arcane_vis"));
         }
         if ("thaumcraft_infusion".equals(adapterId)) {
             // #tr tooltip.packaged.infusion
-            // # Automates a real infusion altar; research and essentia are required.
-            // # zh_CN 自动操作真实注魔祭坛；需要研究与源质。
+            // # Automates an activated infusion altar using the owner's research.
+            // # zh_CN 按所有者已完成的研究，自动操作已激活的注魔祭坛。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.infusion"));
+            // #tr tooltip.packaged.infusion_inputs
+            // # Empty the pedestals and supply essentia. Only recipes with ordinary item outputs are supported.
+            // # zh_CN 须清空基座并供应源质，仅支持产物为普通物品的注魔配方。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.infusion_inputs"));
         } else if ("assembly_line".equals(adapterId) || "advanced_assembly_line".equals(adapterId)) {
             // #tr tooltip.packaged.assembly_line
-            // # Bind the controller; requires its data recipe and power.
-            // # zh_CN 绑定控制器；需要机器的数据配方和供电。
+            // # Dispatches recipes to a bound assembly line controller. Requires recipe data and power.
+            // # zh_CN 向已绑定的装配线控制器派发配方，需要配方数据与供电。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.assembly_line"));
             // #tr tooltip.packaged.assembly_hatches
-            // # Use empty ordinary input buses, fluid hatches and one output bus.
-            // # zh_CN 使用空的普通输入总线、流体输入舱和一个输出总线。
+            // # Use empty ordinary input buses and fluid hatches, plus exactly one ordinary output bus.
+            // # zh_CN 输入总线与流体输入仓须为空且为普通仓室，输出须为一个普通总线。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.assembly_hatches"));
+            // #tr tooltip.packaged.assembly_fluids
+            // # Recipes with fluid inputs require Ultimate Encoded Patterns.
+            // # zh_CN 含流体输入的配方须使用终极编码样板。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.assembly_fluids"));
         } else if ("blood_altar".equals(adapterId)) {
             // #tr tooltip.packaged.blood_altar
-            // # Bind an empty Blood Altar; supply LP normally.
-            // # zh_CN 绑定空血祭坛；通过原有方式供应生命源质。
+            // # Automates an empty Blood Altar. Supply LP and the required altar tier normally.
+            // # zh_CN 自动操作空血祭坛，仍需供应 LP 并满足祭坛等级。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.blood_altar"));
             // #tr tooltip.packaged.blood_altar_step
-            // # One recipe step per pattern. Holds the result until collected.
-            // # zh_CN 每张样板填写单步配方；产物保留到回收为止。
+            // # Encode one recipe step per pattern. Results stay in the altar until collected.
+            // # zh_CN 每张样板只填写单步配方，产物保留在祭坛中等待回收。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.blood_altar_step"));
+            // #tr tooltip.packaged.blood_altar_limit
+            // # Does not charge blood orbs or run several recipe steps from one pattern.
+            // # zh_CN 不支持血球充能，也不会用一张样板连续执行多步配方。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.blood_altar_limit"));
         } else if (adapterId.isEmpty()) {
             // #tr tooltip.packaged.basic_core
-            // # Base for machine-specific Packaged Cores.
-            // # zh_CN 用于制作对应机器的封包核心。
+            // # Crafting component for machine-specific Packaged Cores.
+            // # zh_CN 用于制作各类机器专用的封包核心。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.basic_core"));
+        }
+        if (!adapterId.isEmpty()) {
+            // #tr tooltip.packaged.owner_required
+            // # The provider's owner must be online in the target's dimension with permission to use it.
+            // # zh_CN 供应器所有者须在目标维度在线，并具有目标的操作权限。
+            lines.add(StatCollector.translateToLocal("tooltip.packaged.owner_required"));
         }
     }
 }

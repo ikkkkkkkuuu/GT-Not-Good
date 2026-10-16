@@ -255,8 +255,8 @@ public class GuiMenuSettings extends UiScreen implements GuiIconPicker.Callback 
             // # zh_CN 复制此条目
             tooltip(ID_COPY_BASE + i, describe("radialmenu.menu.copy.tip"));
             // #tr radialmenu.menu.remove.tip
-            // # Remove this entry from the wheel. Nothing is written until you save.
-            // # zh_CN 从转盘中移除此条目。保存前不会写入修改。
+            // # Remove this entry. Changes take effect when saved
+            // # zh_CN 移除此条目，保存后生效
             tooltip(ID_DELETE_BASE + i, describe("radialmenu.menu.remove.tip"));
             if (toolBelt || child.isBuiltIn()) {
                 tooltip(ID_COPY_BASE + i, EditorRestrictions.builtInTip());

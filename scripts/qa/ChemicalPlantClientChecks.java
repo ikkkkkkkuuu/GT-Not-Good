@@ -16,7 +16,9 @@ import java.util.stream.Collectors;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,6 +35,7 @@ import com.cleanroommc.modularui.ModularUIConfig;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.GuiContainerWrapper;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.gtnewhorizon.structurelib.alignment.constructable.ChannelDataAccessor;
 import com.xyp.gtnotgood.common.machines.multiblock.IntegratedChemicalPlant;
 import com.xyp.gtnotgood.common.recipe.metadata.FuelRefiningTier;
 import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
@@ -40,8 +43,15 @@ import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.GTNGMachineID;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
+import blockrenderer6343.client.renderer.WorldSceneRenderer;
+import blockrenderer6343.client.utils.ConstructableData;
+import blockrenderer6343.client.utils.GuiSlider;
+import blockrenderer6343.integration.gregtech.GTNEIMultiblockHandler;
+import blockrenderer6343.integration.nei.GuiMultiblockHandler;
+import blockrenderer6343.integration.nei.MultiblockHandler;
 import codechicken.nei.recipe.GuiCraftingRecipe;
 import codechicken.nei.recipe.GuiRecipe;
+import codechicken.nei.recipe.ICraftingHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
@@ -77,6 +87,7 @@ public final class ChemicalPlantClientChecks {
     private volatile boolean serverChecked, finished;
     private volatile int requestedMode = -1, openedMode = -1;
     private int clientTicks, serverTicks, frames, stageFrames, capturedMode = -1, neiMode = -1;
+    private int refiningPreviewStage = -1;
     private final int[] nativeCounts = new int[3];
     private final StringBuilder checks = new StringBuilder();
 
@@ -117,6 +128,7 @@ public final class ChemicalPlantClientChecks {
             EntityPlayerMP player = (EntityPlayerMP) server.getConfigurationManager().playerEntityList.get(0);
             if (serverTicks == 1) setup(player);
             if (serverTicks == 60) {
+                verifyRefiningConstruction();
                 verifyStructure();
                 require(machine.getRefiningTier() == 0, "Default refining core");
                 verifyNativeRecipes();
@@ -139,8 +151,11 @@ public final class ChemicalPlantClientChecks {
                     require(map.getAllRecipes().size() == nativeCounts[mode], "Fixture cleanup in mode " + mode);
                 }
                 checks.append("Structure; native recipe yields; three modes; save/reload; invalid mode; wrong mode; ")
-                    .append("heat rejection and coil upgrade; core tier rejection and four core upgrades; ")
-                    .append("recipe lock map switching.\n");
+                    .append("heat rejection and coil upgrade; refining channels 1-4 match core tiers 1-4; ")
+                    .append("unset refining channel stays tier 0 at main channel 1 or 64; ")
+                    .append("refining channels 5 and 64 clamp to tier 4; ")
+                    .append("core tier rejection and four core upgrades; missing/invalid core rejection; ")
+                    .append("core downgrade clears the previous tier; ").append("recipe lock map switching.\n");
                 serverChecked = true;
             }
             int mode = requestedMode;
@@ -181,6 +196,34 @@ public final class ChemicalPlantClientChecks {
         player.playerNetServerHandler.setPlayerLocation(-8, 16, -9, -40, 18);
         player.capabilities.isFlying = true;
         player.sendPlayerAbilities();
+    }
+
+    private void verifyRefiningConstruction() {
+        for (int tier = 1; tier <= 4; tier++) {
+            ItemStack trigger = new ItemStack(Items.diamond);
+            ChannelDataAccessor.setChannelData(trigger, "refining", tier);
+            verifyRefiningConstruction(trigger, tier, "Refining subchannel " + tier);
+        }
+        for (int channel : new int[] { 5, 64 }) {
+            ItemStack trigger = new ItemStack(Items.diamond);
+            ChannelDataAccessor.setChannelData(trigger, "refining", channel);
+            verifyRefiningConstruction(trigger, 4, "Out-of-range refining subchannel " + channel);
+        }
+        for (int mainChannel : new int[] { 64, 1 }) {
+            verifyRefiningConstruction(new ItemStack(Items.diamond, mainChannel), 0,
+                "Unset refining subchannel with main channel " + mainChannel);
+        }
+    }
+
+    private void verifyRefiningConstruction(ItemStack trigger, int tier, String description) {
+        World world = base.getWorld();
+        world.setBlockToAir(0, 12, 2);
+        machine.construct(trigger, false);
+        Block expected = tier == 0 ? GregTechAPI.sBlockCasings8 : coreBlock(tier);
+        require(world.getBlock(0, 12, 2) == expected && world.getBlockMetadata(0, 12, 2) == 0,
+            description + " constructs tier " + tier);
+        verifyStructure();
+        require(machine.getRefiningTier() == tier, description + " validates as recipe tier " + tier);
     }
 
     private static BaseMetaTileEntity place(World world, int x, int y, int z, int id) {
@@ -348,9 +391,31 @@ public final class ChemicalPlantClientChecks {
                 resetProcessing();
             }
         }
+        verifyInvalidRefiningCore(Blocks.air, "Missing core");
+        base.getWorld().setBlock(0, 12, 2, coreBlock(4), 0, 3);
+        verifyStructure();
+        require(machine.getRefiningTier() == 4, "Tier 4 restored after removing the core");
+        verifyInvalidRefiningCore(Blocks.stone, "Unsupported core block");
+        base.getWorld().setBlock(0, 12, 2, coreBlock(4), 0, 3);
+        verifyStructure();
+        require(machine.getRefiningTier() == 4, "Tier 4 restored before downgrade");
         base.getWorld().setBlock(0, 12, 2, GregTechAPI.sBlockCasings8, 0, 3);
         verifyStructure();
         require(machine.getRefiningTier() == 0, "Default core restored after tier 4");
+        seed(12);
+        result = machine.checkProcessing();
+        require(!result.wasSuccessful() && result.getID().contains("tier"),
+            "Downgraded core rejects tier 1: " + result.getID());
+        require(inputAmount() == 1 && inputFluidAmount() == 250, "Downgraded core preserves inputs");
+        resetProcessing();
+    }
+
+    private void verifyInvalidRefiningCore(Block block, String description) {
+        base.getWorld().setBlock(0, 12, 2, block, 0, 3);
+        List<StructureError> errors = new ArrayList<>();
+        machine.checkMachine(base, null, errors);
+        require(!errors.isEmpty() && !machine.checkStructure(true, base), description + " rejects the structure");
+        require(machine.getRefiningTier() < 0, description + " clears the previous core tier");
     }
 
     private static Block coreBlock(int tier) {
@@ -480,8 +545,14 @@ public final class ChemicalPlantClientChecks {
                     + capturedMode
                     + ", NEI="
                     + neiMode
+                    + ", refining preview="
+                    + refiningPreviewStage
                     + ", screen="
                     + (mc.currentScreen == null ? "null" : mc.currentScreen.getClass().getSimpleName()));
+            if (refiningPreviewStage >= 0) {
+                verifyRefiningPreview();
+                return;
+            }
             if (neiMode >= 0) {
                 if (!(mc.currentScreen instanceof GuiRecipe) || ++frames < 60) return;
                 capture("nei-mode-" + neiMode);
@@ -491,7 +562,8 @@ public final class ChemicalPlantClientChecks {
                     openNei(++neiMode);
                     return;
                 }
-                finish();
+                neiMode = -1;
+                refiningPreviewStage = 0;
                 return;
             }
             if (openedMode < 0) {
@@ -537,6 +609,79 @@ public final class ChemicalPlantClientChecks {
             default -> throw new AssertionError("Unexpected NEI mode " + mode);
         };
         require(GuiCraftingRecipe.openRecipeGui(key), "NEI recipe page " + key);
+    }
+
+    private void verifyRefiningPreview() throws Exception {
+        if (refiningPreviewStage == 0) {
+            IntegratedChemicalPlant controller = (IntegratedChemicalPlant) GregTechAPI.METATILEENTITIES[GTNGMachineID.IntegratedChemicalPlant.id];
+            ConstructableData data = ConstructableData.getTierData(controller);
+            if (!data.hasData()) return;
+            require(data.getChannelMaxTierMap().getInt("refining") == 4, "NEI discovers refining tiers 1-4");
+            GTNEIMultiblockHandler handler = new GTNEIMultiblockHandler();
+            handler.loadCraftingRecipes(GTNGItemList.IntegratedChemicalPlant.get(1));
+            require(handler.numRecipes() == 1, "Chemical plant structure preview selected");
+            ArrayList<ICraftingHandler> handlers = new ArrayList<>();
+            handlers.add(handler);
+            var constructor = GuiCraftingRecipe.class.getDeclaredConstructor(ArrayList.class);
+            constructor.setAccessible(true);
+            Minecraft.getMinecraft().displayGuiScreen(constructor.newInstance(handlers));
+            refiningPreviewStage = 1;
+            frames = 0;
+            stageFrames = 0;
+            return;
+        }
+        GuiMultiblockHandler handler = MultiblockHandler.getCurrentGuiHandler();
+        if (handler == null || ++frames < 60) return;
+        GuiSlider refining = previewSlider(handler, "Refining");
+        require(refining.getMaxValue() == 4, "NEI refining slider ends at tier 4");
+        if (refiningPreviewStage == 1) {
+            refining.setValue(1);
+            previewSlider(handler, I18n.format("blockrenderer6343.nei.layer")).setValue(2);
+            refiningPreviewStage = 2;
+        } else {
+            int tier = refiningPreviewStage - 1;
+            verifyPreviewCore(handler, tier);
+            capture("refining-" + tier);
+            if (tier == 2) {
+                checks.append("NEI refining channel maximum 4; displayed tiers 1 and 2 construct matching cores.\n");
+                finish();
+                return;
+            }
+            refining.setValue(2);
+            refiningPreviewStage = 3;
+        }
+        frames = 0;
+        stageFrames = 0;
+    }
+
+    private static GuiSlider previewSlider(GuiMultiblockHandler handler, String name) throws Exception {
+        Field buttons = GuiMultiblockHandler.class.getDeclaredField("allButtons");
+        buttons.setAccessible(true);
+        for (Object button : (List<?>) buttons.get(handler)) {
+            if (button instanceof GuiSlider slider && slider.name.equals(name)) return slider;
+        }
+        throw new AssertionError("Missing NEI slider " + name);
+    }
+
+    private static void verifyPreviewCore(GuiMultiblockHandler handler, int tier) throws Exception {
+        Field triggerField = GuiMultiblockHandler.class.getDeclaredField("trigger");
+        triggerField.setAccessible(true);
+        ItemStack trigger = (ItemStack) triggerField.get(handler);
+        require(ChannelDataAccessor.hasSubChannel(trigger, "refining")
+            && ChannelDataAccessor.getChannelData(trigger, "refining") == tier, "Displayed refining tier " + tier);
+        Field rendererField = GuiMultiblockHandler.class.getDeclaredField("renderer");
+        rendererField.setAccessible(true);
+        World world = ((WorldSceneRenderer) rendererField.get(null)).world;
+        var origin = GuiMultiblockHandler.MB_PLACE_POS;
+        BaseMetaTileEntity previewBase = (BaseMetaTileEntity) world.getTileEntity(origin.x, origin.y, origin.z);
+        require(previewBase != null && previewBase.getMetaTileEntity() instanceof IntegratedChemicalPlant,
+            "Chemical plant controller in the preview world");
+        ForgeDirection inward = previewBase.getFrontFacing().getOpposite();
+        int x = origin.x + inward.offsetX * 2;
+        int y = origin.y + inward.offsetY * 2;
+        int z = origin.z + inward.offsetZ * 2;
+        require(world.getBlock(x, y, z) == coreBlock(tier) && world.getBlockMetadata(x, y, z) == 0,
+            "NEI refining " + tier + " constructs the matching recipe core");
     }
 
     private void finish() throws Exception {

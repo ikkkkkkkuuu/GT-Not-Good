@@ -1062,42 +1062,44 @@ public class LargeVoidMiner extends GTNGMultiBlockBase<LargeVoidMiner> implement
         // # Large Void Miner
         // # zh_CN 大型虚空矿机
         String machineType = StatCollector.translateToLocal("recipe.gtnotgood.largeVoidMiner");
+        // #tr tooltip.gtnotgood.largeVoidMiner.casing
+        // # Solid Steel Machine Casing
+        // # zh_CN 坚实钢机械方块
+        String casing = StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing");
         tt.addMachineType(machineType)
             // #tr tooltip.gtnotgood.largeVoidMiner.0
-            // # Mines GalacticGreg void ores from the selected dimension.
-            // # zh_CN 从选定维度的维度虚空矿池采矿。
+            // # Extracts ores from the void mining pools of selected dimensions
+            // # zh_CN 从选定维度的虚空矿池抽取矿石
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.0"))
-            // #tr tooltip.gtnotgood.largeVoidMiner.1
-            // # Draws EU from the owner's wireless network; no energy hatch is required.
-            // # zh_CN 直接使用拥有者所属无线电网的 EU，无需能源仓。
-            .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.1"))
             // #tr tooltip.gtnotgood.largeVoidMiner.wireless_grade
-            // # Fixed HV output grade, independent of energy hatches; existing overclocks still apply.
-            // # zh_CN 固定使用 HV 产量档位，不受能源仓影响，保留现有超频。
+            // # Fixed HV output grade; each of four overclock levels multiplies EU/t by 4 and shortens cycles
+            // # zh_CN 固定 HV 产量档位；支持 4 级超频，每级功耗乘 4 并缩短周期
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.wireless_grade"))
+            // #tr tooltip.gtnotgood.largeVoidMiner.1
+            // # Uses the owner's wireless grid; energy hatches are optional
+            // # zh_CN 使用拥有者的无线电网，无需能源仓
+            .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.1")).addSeparator()
             // #tr tooltip.gtnotgood.largeVoidMiner.2
-            // # The config terminal supports dimensions, filtering, directional mining, fortune, and ore modes.
-            // # zh_CN 配置终端支持维度、过滤、定向、时运和矿石模式。
+            // # Set dimensions, ore filters, directional targets and fortune in the configuration terminal
+            // # zh_CN 在配置终端设置维度、矿石过滤、定向目标、时运与矿石形态
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.2"))
             // #tr tooltip.gtnotgood.largeVoidMiner.3
-            // # Directional mode consumes UU-Matter from input hatches.
-            // # zh_CN 定向模式会消耗 UU 物质。
+            // # Directional mode extracts only marked ores and consumes UU-Matter from input hatches
+            // # zh_CN 定向模式只抽取标记矿石，并消耗输入仓内的 UU 物质
             .addInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.3"))
             .beginStructureBlock(7, 9, 7, false)
             // #tr tooltip.gtnotgood.largeVoidMiner.controller
-            // # Front center, second layer
-            // # zh_CN 正面中心，第二层
+            // # Front center, second layer, one block behind the front edge
+            // # zh_CN 正面中央，第 2 层，距最前沿向内 1 格
             .addController(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.controller"))
-            // #tr tooltip.gtnotgood.largeVoidMiner.casing
-            // # Steel void miner casing
-            // # zh_CN 脱氧钢机器外壳
-            .addInputBus("0+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
-            .addInputHatch("0+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
-            .addOutputBus("1+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
-            .addEnergyHatch("0+", StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
-            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+",
-                StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.casing"), 1)
-            .toolTipFinisher();
+            .addCasing("3+", casing, false)
+            // #tr tooltip.gtnotgood.largeVoidMiner.structure
+            // # 12 steel pipe casings and 6 steel frames; hatches replace outer steel casings
+            // # zh_CN 12 个钢管机械方块、6 个钢框架；仓室可替换外围钢外壳
+            .addStructureInfo(StatCollector.translateToLocal("tooltip.gtnotgood.largeVoidMiner.structure"))
+            .addEnergyHatch("0+", casing, 1, 2)
+            .addMaintenanceHatch(shouldCheckMaintenance() ? "1+" : "0+", casing, 1, 2).addInputBus("0+", casing, 1, 2)
+            .addInputHatch("0+", casing, 1, 2).addOutputBus("1+", casing, 1, 2).toolTipFinisher();
         return tt;
     }
 

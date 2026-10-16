@@ -86,23 +86,23 @@ public final class SteamCropManager extends MTETieredMachineBlock {
         return new String[] {
             // #tr tooltip.steam_crop_manager.functions
             // # Harvests, waters, fertilizes and applies Weed-EX to CropsNH crops
-            // # zh_CN 自动收割、浇水、施肥及为 CropsNH 作物施加除草剂
+            // # zh_CN 自动收割、浇水、施肥并为 CropsNH 作物施加除草剂
             StatCollector.translateToLocal("tooltip.steam_crop_manager.functions"),
             // #tr tooltip.steam_crop_manager.range
-            // # Area: 7 x 7 x 5 centered on the machine; checks every 2.5 seconds
-            // # zh_CN 管理以机器为中心的 7×7×5 范围；每 2.5 秒检查一次
+            // # Working area: 7 x 7 x 5 centered on the machine; cycle time: 2.5 s
+            // # zh_CN 工作范围：以机器为中心的 7×7×5 区域；工作周期：2.5 秒
             StatCollector.translateToLocal("tooltip.steam_crop_manager.range"),
             // #tr tooltip.steam_crop_manager.steam
-            // # Steam: 8 L per harvest, 2 L per care action; buffer: 32,000 L
-            // # zh_CN 每次收割消耗 8 L 蒸汽，辅助操作各耗 2 L；蒸汽缓存 32,000 L
+            // # Steam: 8 L per harvest, 2 L per care action; capacity: 32,000 L
+            // # zh_CN 每次收割消耗 8 L 蒸汽，每次养护消耗 2 L；蒸汽容量：32,000 L
             StatCollector.translateToLocal("tooltip.steam_crop_manager.steam"),
             // #tr tooltip.steam_crop_manager.supplies
             // # Separate water, Weed-EX and fertilizer stores; 15 output slots; no harvest bonus
-            // # zh_CN 水、除草剂与肥料独立存储；15 个产物槽；无额外收获加成
+            // # zh_CN 水、除草剂和肥料独立存储；15 个输出槽；无额外收获加成
             StatCollector.translateToLocal("tooltip.steam_crop_manager.supplies"),
             // #tr tooltip.steam_crop_manager.safety
-            // # Loaded chunks only; pauses harvesting when outputs are full
-            // # zh_CN 仅管理已加载区块；产物缓存满时暂停收割
+            // # Loaded chunks only; pauses harvesting when the output buffer is full
+            // # zh_CN 仅管理已加载区块；输出缓存满时暂停收割
             StatCollector.translateToLocal("tooltip.steam_crop_manager.safety") };
     }
 

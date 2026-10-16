@@ -100,12 +100,12 @@ public class GhostMoldSlotWidget extends PhantomItemSlot {
         }
         tooltip.clearText().addLine(moldName)
             // #tr GT5U.machines.select_mold.tooltip.1
-            // # Shift+Click to select mold
-            // # zh_CN Shift+点击以选择模具
+            // # Shift+left-click to select a mold
+            // # zh_CN Shift+左键选择模具
             .addLine(IKey.lang("GT5U.machines.select_mold.tooltip.1"))
             // #tr GT5U.machines.select_mold.tooltip.2
-            // # Scroll to change mold
-            // # zh_CN 滚动鼠标滚轮切换模具
+            // # Scroll to cycle molds
+            // # zh_CN 滚动滚轮切换模具
             .addLine(IKey.lang("GT5U.machines.select_mold.tooltip.2"));
     }
 

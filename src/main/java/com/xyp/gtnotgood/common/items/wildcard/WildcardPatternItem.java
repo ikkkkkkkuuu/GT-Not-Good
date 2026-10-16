@@ -111,38 +111,36 @@ public class WildcardPatternItem extends ItemEncodedPattern implements IGuiHolde
             WildcardPatternGenerator.markAsWildcard(stack);
         }
 
-        // 实时计算考虑排除规则后的实际配方数量(添加异常保护)
         int actualCount;
         try {
             actualCount = WildcardPatternGenerator.countActualPatternsAfterExclude(stack);
         } catch (Exception e) {
-            // 如果计算失败,使用保存的固定值作为fallback
             actualCount = WildcardPatternState.getExpandedPatternCount(stack);
         }
 
-        // #tr tooltip.wildcardpattern.expand_count
-        // # Expanded Patterns:
-        // # zh_CN 展开配方数:
-        lines.add(StatCollector.translateToLocal("tooltip.wildcardpattern.expand_count") + " " + actualCount);
-
-        // #tr tooltip.wildcardpattern.usage
-        // # Right-click to configure
-        // # zh_CN 右键配置
-        lines.add(StatCollector.translateToLocal("tooltip.wildcardpattern.usage"));
-
         // #tr tooltip.wildcardpattern.desc_axis
-        // # §7Generates one pattern per material that passes the filter.
-        // # zh_CN §7为每个通过过滤的材料各生成一个样板。
+        // # §7Generates a pattern for each material that passes the filter.
+        // # zh_CN §7为每种符合过滤条件的材料生成一张样板。
         lines.add(StatCollector.translateToLocal("tooltip.wildcardpattern.desc_axis"));
 
+        // #tr tooltip.wildcardpattern.usage
+        // # Right-click to configure material filters and inputs/outputs.
+        // # zh_CN 右键设置材料过滤条件与输入输出。
+        lines.add(StatCollector.translateToLocal("tooltip.wildcardpattern.usage"));
+
         // #tr tooltip.wildcardpattern.desc_io
-        // # §7Input/Output: prefix (ingot/plate...), fluid, or fixed item.
-        // # zh_CN §7输入/输出: 前缀(锭/板...)、流体、或固定物品。
+        // # §7Inputs and outputs support material prefixes, fluids and fixed items.
+        // # zh_CN §7输入输出支持材料前缀、流体与固定物品。
         lines.add(StatCollector.translateToLocal("tooltip.wildcardpattern.desc_io"));
 
         // #tr tooltip.wildcardpattern.desc_filter
-        // # §7Filter materials by property, tag, or name.
-        // # zh_CN §7按属性、标签或名称过滤材料。
+        // # §7Filter by material properties, tags or names.
+        // # zh_CN §7可按材料属性、标签或名称过滤。
         lines.add(StatCollector.translateToLocal("tooltip.wildcardpattern.desc_filter"));
+
+        // #tr tooltip.wildcardpattern.expand_count
+        // # Expanded patterns:
+        // # zh_CN 展开样板数：
+        lines.add(StatCollector.translateToLocal("tooltip.wildcardpattern.expand_count") + " " + actualCount);
     }
 }

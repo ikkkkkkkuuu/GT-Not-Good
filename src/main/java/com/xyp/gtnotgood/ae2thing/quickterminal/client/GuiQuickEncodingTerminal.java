@@ -1637,8 +1637,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         @Override
         public String getMessage() {
             // #tr gtnotgood.terminal.quick.keep_non_consumables
-            // # Keep circuits and virtual mold items
-            // # zh_CN 保留电路与虚拟模具物品
+            // # Keep circuits and virtual molds when importing recipes
+            // # zh_CN 导入配方时保留电路和虚拟模具
             String title = StatCollector.translateToLocal("gtnotgood.terminal.quick.keep_non_consumables");
             // #tr gtnotgood.terminal.quick.keep_non_consumables.on
             // # Enabled
@@ -1649,8 +1649,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             // # zh_CN 已关闭
             String disabled = StatCollector.translateToLocal("gtnotgood.terminal.quick.keep_non_consumables.off");
             // #tr gtnotgood.terminal.quick.keep_non_consumables.detail
-            // # NEI imports zero-sized circuits and supported virtual mold items as 1; other catalysts are omitted.
-            // # zh_CN NEI导入时将不消耗的电路及虚拟模具槽支持物品记为1；其他不消耗物品仍忽略。
+            // # Import supported non-consumed circuits and molds as 1 item; omit other catalysts
+            // # zh_CN 不消耗的电路和支持的虚拟模具按 1 件导入；忽略其他不消耗物品
             String detail = StatCollector.translateToLocal("gtnotgood.terminal.quick.keep_non_consumables.detail");
             return title + "\n" + (shouldKeepNonConsumables() ? enabled : disabled) + "\n" + detail;
         }
@@ -1667,8 +1667,8 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
         public String getMessage() {
             return super.getMessage() + "\n"
             // #tr gtnotgood.terminal.quick.encode_alt_upload
-            // # Hold ALT to encode and upload directly
-            // # zh_CN 按住 ALT 编码并直接上传
+            // # Alt-click to encode and upload the pattern
+            // # zh_CN Alt+点击编码并上传样板
                 + StatCollector.translateToLocal("gtnotgood.terminal.quick.encode_alt_upload");
         }
 
@@ -1945,7 +1945,7 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             List<String> lines = (List<String>) rawList;
             // #tr gtnotgood.terminal.quick.interface_ctrl_teleport
             // # Ctrl-click to teleport beside this interface
-            // # zh_CN Ctrl+点击传送到该接口旁边
+            // # zh_CN Ctrl+点击传送到此接口旁
             String tooltip = StatCollector.translateToLocal("gtnotgood.terminal.quick.interface_ctrl_teleport");
             if (!lines.contains(tooltip)) lines.add(tooltip);
         }

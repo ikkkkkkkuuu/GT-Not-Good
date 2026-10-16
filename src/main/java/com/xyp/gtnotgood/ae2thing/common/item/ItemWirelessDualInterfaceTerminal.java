@@ -72,33 +72,33 @@ public class ItemWirelessDualInterfaceTerminal extends ItemBaseWirelessTerminal 
         super.addCheckedInformation(stack, player, toolTip, displayMoreInfo);
         if (isShiftKeyDown()) {
             // #tr gtnotgood.tooltip.wireless_dual_interface_terminal.desc
-            // # Dual interface terminal, support encode pattern
-            // # zh_CN 二合一接口终端,支持编写样板
+            // # Access ME interfaces and encode patterns wirelessly
+            // # zh_CN 无线访问 ME 接口并编码样板
             toolTip.add(I18n.format(NameConst.TT_INTERFACE_TERMINAL_DESC));
             // #tr gtnotgood.tooltip.wireless_dual_interface_terminal.key_open
-            // # §r> Press §b%s§r to open the terminal GUI
-            // # zh_CN §r> 按 §b%s§r 打开终端界面
+            // # §7Press §b%s§7 to open the terminal
+            // # zh_CN §7按 §b%s§7 打开终端
             toolTip.add(I18n.format(NameConst.TT_INTERFACE_TERMINAL_KEY_OPEN,
                 keyName(KeybindLoader.openDualInterfaceTerminal)));
             // #tr gtnotgood.tooltip.wireless_dual_interface_terminal.key_send
-            // # §r> Press §b%s§r to send the held item into the ME network
-            // # zh_CN §r> 按 §b%s§r 将手持物品发送到 ME 网络
+            // # §7Press §b%s§7 to send the held item to the ME network
+            // # zh_CN §7按 §b%s§7 将手持物品存入 ME 网络
             toolTip.add(
                 I18n.format(NameConst.TT_INTERFACE_TERMINAL_KEY_SEND, keyName(KeybindLoader.sendHeldItemToNetwork)));
             // #tr gtnotgood.tooltip.wireless_dual_interface_terminal.nei_to_inv
-            // # §r> §bShift§r/§bCtrl§r + §bMiddle-click§r a NEI item to send it to your inventory
-            // # zh_CN §r> 在 NEI 物品上 §bShift§r/§bCtrl§r + §b中键§r 发送到物品栏
+            // # §7Shift/Ctrl+middle-click an NEI item to request it from the ME network
+            // # zh_CN §7Shift/Ctrl+中键点击 NEI 物品，从 ME 网络提取到物品栏
             toolTip.add(I18n.format(NameConst.TT_INTERFACE_TERMINAL_NEI_TO_INV));
         } else {
             // #tr gtnotgood.tooltip.shift_for_more
-            // # §r> Hold §3Shift§r for more information
-            // # zh_CN §r> 按 §3Shift§r 显示更多信息
+            // # §7Hold §bShift§7 for controls and functions
+            // # zh_CN §7按住 §bShift§7 查看功能和操作
             toolTip.add(I18n.format(NameConst.TT_SHIFT_FOR_MORE));
         }
         if (isCtrlKeyDown()) {
             // #tr gtnotgood.tooltip.wireless.installed
-            // # Installed Card:
-            // # zh_CN 已安装的卡:
+            // # Installed cards:
+            // # zh_CN 已安装的卡：
             toolTip.add(I18n.format(NameConst.TT_WIRELESS_INSTALLED));
             if (hasInfinityBoosterCard(stack) && getInfinityBoosterCard() != null) {
                 toolTip.add("  " + EnumChatFormatting.GOLD + getInfinityBoosterCard().getDisplayName());
@@ -108,8 +108,8 @@ public class ItemWirelessDualInterfaceTerminal extends ItemBaseWirelessTerminal 
             }
         } else {
             // #tr gtnotgood.tooltip.ctrl_for_more
-            // # §r> Hold §3Ctrl§r for more information
-            // # zh_CN §r> 按 §3Ctrl§r 显示更多信息
+            // # §7Hold §bCtrl§7 to view installed cards
+            // # zh_CN §7按住 §bCtrl§7 查看已安装的卡
             toolTip.add(I18n.format(NameConst.TT_CTRL_FOR_MORE));
         }
 

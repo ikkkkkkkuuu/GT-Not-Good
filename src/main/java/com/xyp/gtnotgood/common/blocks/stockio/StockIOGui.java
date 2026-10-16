@@ -147,8 +147,8 @@ public final class StockIOGui {
         // # zh_CN 流体
         panel.child(tab(controller, 1, IKey.lang("gui.stock_io.fluids")).pos(86, 25));
         // #tr gui.stock_io.samples_hint
-        // # Samples are not consumed. Right-click a sample to configure its quantities.
-        // # zh_CN 样本不消耗，右键样本设置保留量与固定量。
+        // # Samples are not consumed. Right-click to set reserve and fixed amounts.
+        // # zh_CN 样本不消耗，右键设置保留量与固定可用量。
         panel.child(IKey.lang("gui.stock_io.samples_hint").asWidget().pos(8, 141).size(350, 10));
 
         // #tr gui.stock_io.enabled
@@ -156,8 +156,8 @@ public final class StockIOGui {
         // # zh_CN 运行
         IKey enabledLabel = IKey.lang("gui.stock_io.enabled");
         // #tr gui.stock_io.enabled_help
-        // # Allow the target machine to read ME directly and recycle its outputs.
-        // # zh_CN 允许目标机器直接读取 ME，并执行已启用的回收。
+        // # Allows GT machines to read ME stock and enables the selected recovery settings.
+        // # zh_CN 允许 GT 机器读取 ME 库存，并执行已启用的回收。
         IKey enabledHelp = IKey.lang("gui.stock_io.enabled_help");
         panel.child(toggle(enabled, enabledLabel, enabledHelp).pos(8, 157));
         // #tr gui.stock_io.limited
@@ -165,8 +165,8 @@ public final class StockIOGui {
         // # zh_CN 限制
         IKey limitedLabel = IKey.lang("gui.stock_io.limited");
         // #tr gui.stock_io.limited_help
-        // # Keep each resource's configured reserve in ME.
-        // # zh_CN 每种资源在 ME 中保留设定数量。
+        // # Keeps each marked resource's reserve in ME; only the surplus is available.
+        // # zh_CN 为每种标记资源保留设定的 ME 库存，仅提供超出部分。
         IKey limitedHelp = IKey.lang("gui.stock_io.limited_help");
         panel.child(
             toggle(toggleValue("limited", logic::isLimitedMode, logic::setLimitedMode), limitedLabel, limitedHelp)
@@ -176,8 +176,8 @@ public final class StockIOGui {
         // # zh_CN 固定
         IKey fixedLabel = IKey.lang("gui.stock_io.fixed");
         // #tr gui.stock_io.fixed_help
-        // # Offer the configured amount per recipe or fuel check; wait if ME has less.
-        // # zh_CN 每次配方或燃料检查提供设定量，ME 不足则等待。
+        // # Offers a fixed amount per recipe or fuel check. Waits until the full amount is available.
+        // # zh_CN 每次配方或燃料检查提供固定数量，可用库存不足时等待。
         IKey fixedHelp = IKey.lang("gui.stock_io.fixed_help");
         panel.child(
             toggle(toggleValue("fixed", logic::isFixedMode, logic::setFixedMode), fixedLabel, fixedHelp).pos(186, 157));
@@ -186,8 +186,8 @@ public final class StockIOGui {
         // # zh_CN 回收
         IKey recycleLabel = IKey.lang("gui.stock_io.recycle");
         // #tr gui.stock_io.recycle_help
-        // # Return GT item and fluid outputs to ME without extracting its inputs.
-        // # zh_CN 回收 GT 机器的物品与流体输出，不抽取输入。
+        // # Returns GT item and fluid outputs to ME without extracting recipe inputs.
+        // # zh_CN 将 GT 物品与流体输出送回 ME，不抽取配方输入。
         IKey recycleHelp = IKey.lang("gui.stock_io.recycle_help");
         panel.child(toggle(toggleValue("recycle", logic::isRecycle, logic::setRecycle), recycleLabel, recycleHelp)
             .pos(275, 157));
@@ -223,8 +223,8 @@ public final class StockIOGui {
             .size(gridWidth, gridHeight).scrollable(scroll).pos(184, 14);
         page.child(samples).child(stocks);
         // #tr gui.stock_io.autopull
-        // # Auto-mark resources from ME. Right-click: refresh and minimum quantities.
-        // # zh_CN 自动标记 ME 资源。右键：设置刷新间隔与最小数量。
+        // # Automatically marks ME resources. Right-click to set refresh interval and minimum stock.
+        // # zh_CN 自动标记 ME 资源，右键设置刷新间隔与最低库存。
         IKey autoPullHelp = IKey.lang("gui.stock_io.autopull");
         page.child(new ToggleButton() {
 
@@ -282,8 +282,8 @@ public final class StockIOGui {
             protected void phantomScroll(MouseData mouse) {}
         };
         // #tr gui.stock_io.configure
-        // # Right-click: reserve and fixed quantity
-        // # zh_CN 右键：设置保留量与固定量
+        // # Right-click to set reserve and fixed amounts.
+        // # zh_CN 右键设置保留量与固定可用量。
         IKey configure = IKey.lang("gui.stock_io.configure");
         PhantomItemSlot widget = new PhantomItemSlot() {
 
@@ -385,8 +385,8 @@ public final class StockIOGui {
         content.child(new TextFieldWidget().value(batch).numbersInt(1, Integer.MAX_VALUE).formatAsInteger(true)
             .setMaxLength(10).width(192));
         // #tr gui.stock_io.fixed_hint
-        // # Waits for the full amount; recipes and fuels debit only actual use.
-        // # zh_CN 不足设定量则等待，只扣除配方或燃料的实际消耗。
+        // # Waits for the full available amount. Only actual recipe or fuel consumption is extracted.
+        // # zh_CN 可用库存不足设定量时等待，只扣除配方或燃料的实际消耗。
         content.child(IKey.lang("gui.stock_io.fixed_hint").asWidget().maxWidth(204));
         return createPopUpPanel(fluid ? "fluidPolicy" : "itemPolicy").size(224, 164).relative(parent).center()
             .padding(8).child(content);
@@ -421,8 +421,8 @@ public final class StockIOGui {
         sync.syncValue("targetSelectable", selectable);
         sync.syncValue("targetName", target);
         // #tr gui.stock_io.target_side
-        // # Inventory-facing side. Click to cycle.
-        // # zh_CN 面向容器的方向，点击切换。
+        // # Machine-facing side. Click to select another side.
+        // # zh_CN 面向机器的一侧，点击切换方向。
         IKey directionHelp = IKey.lang("gui.stock_io.target_side");
         panel.child(new ButtonWidget<>().size(84, 18).pos(8, 179).background(GTGuiTextures.BUTTON_STANDARD)
             .overlay(IKey.dynamic(() -> directionName(side.getIntValue())))

@@ -445,29 +445,33 @@ public class SuperAdvancedMEInputHatch extends MTEHatchInputME {
     public String[] getDescription() {
         return new String[] {
             // #tr gtng.super_storage.slots
-            // # Marks up to 900 fluids; connects to ME using one channel
-            // # zh_CN 可标记900种流体，连接ME网络并占用一个频道
+            // # Supplies up to 900 marked fluids from ME; requires power and one channel
+            // # zh_CN 从 ME 提供最多 900 种标记流体；需要供电和一个频道
             StatCollector.translateToLocal("gtng.super_storage.slots"),
             // #tr gtng.super_storage.reserve
-            // # Per-fluid reserve: only stock above the reserve can be consumed
-            // # zh_CN 每种流体可设置保留量，仅允许使用超出保留量的部分
+            // # Reserve mode: only stock above each fluid's reserve can be used
+            // # zh_CN 保留模式：仅允许使用超出各流体保留量的部分
             StatCollector.translateToLocal("gtng.super_storage.reserve"),
             // #tr gtng.super_storage.fixed
             // # Fixed mode: offers the configured amount per recipe check; waits if insufficient
-            // # zh_CN 固定模式：每次配方检查提供设定量，数量不足时等待
+            // # zh_CN 固定模式：每次配方检查提供设定量，不足时等待
             StatCollector.translateToLocal("gtng.super_storage.fixed"),
             // #tr gtng.super_storage.virtual
-            // # No fluid buffer: consumes only recipe inputs; pickup clears marks and settings
-            // # zh_CN 无实体缓存，仅扣除配方消耗；挖掉后清除标记和设置
+            // # No local fluid storage; only recipe consumption is withdrawn from ME
+            // # zh_CN 不在本地存放流体，仅从 ME 扣除配方实际消耗量
             StatCollector.translateToLocal("gtng.super_storage.virtual"),
             // #tr gtng.super_storage.config
-            // # Right-click a marked fluid to configure; values are in mB
-            // # zh_CN 右键标记流体进行配置，数量单位为mB
+            // # Right-click a marked fluid to configure amounts in mB
+            // # zh_CN 右键标记流体设置数量，单位为 mB
             StatCollector.translateToLocal("gtng.super_storage.config"),
             // #tr gtng.super_storage.autopull
-            // # Automatic marking retains existing marks and policies; data-stick copy supported
-            // # zh_CN 自动标记保留已有标记及规则，支持数据棒复制配置
-            StatCollector.translateToLocal("gtng.super_storage.autopull") };
+            // # Auto-marking keeps existing marks and settings; Data Stick copies settings
+            // # zh_CN 自动标记保留已有标记和设置；数据棒可复制配置
+            StatCollector.translateToLocal("gtng.super_storage.autopull"),
+            // #tr gtng.super_storage.pickup
+            // # Pickup clears fluid marks and settings
+            // # zh_CN 拆下后清除流体标记和设置
+            StatCollector.translateToLocal("gtng.super_storage.pickup") };
     }
 
     /** Reserve uses long ME quantities; Forge recipe stacks remain bounded to an int. */

@@ -30,16 +30,16 @@ public final class SeedConverter extends MTEBasicMachine {
     private static String[] description() {
         return new String[] {
             // #tr tooltip.seed_converter.conversion
-            // # Converts registered alternative seeds into CropsNH seeds at a 1:1 ratio
-            // # zh_CN 将已注册的替代种子按 1:1 转化为 CropsNH 种子
+            // # Converts supported seeds into CropsNH seeds at a 1:1 ratio
+            // # zh_CN 将支持的种子按 1:1 转化为 CropsNH 种子
             StatCollector.translateToLocal("tooltip.seed_converter.conversion"),
             // #tr tooltip.seed_converter.processing
-            // # Base duration: 20 ticks at 16 EU/t; follows global recipe speed settings
-            // # zh_CN 基础耗时 20 tick，16 EU/t；遵循全局配方提速设置
+            // # Base processing time: 1 s at 16 EU/t; affected by recipe speed settings
+            // # zh_CN 基础耗时：1 秒，16 EU/t；受配方提速设置影响
             StatCollector.translateToLocal("tooltip.seed_converter.processing"),
             // #tr tooltip.seed_converter.stats
-            // # Output seed stats follow the existing crop stat configuration
-            // # zh_CN 输出种子的属性遵循现有作物属性配置
+            // # Output seed stats follow the crop stat settings
+            // # zh_CN 输出种子的属性由作物属性配置决定
             StatCollector.translateToLocal("tooltip.seed_converter.stats") };
     }
 

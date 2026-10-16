@@ -34,8 +34,8 @@ public final class WildcardIndexPage extends ParentWidget<WildcardIndexPage> {
         size(158, 80);
         child(
             // #tr gui.wildcardpattern.available_count
-            // # %s Patterns Available
-            // # zh_CN %s 个可用样板
+            // # Available patterns: %s
+            // # zh_CN 可用样板：%s
             IKey.dynamic(() -> IKey.lang("gui.wildcardpattern.available_count", patterns.size()).get()).asWidget()
                 .pos(2, 2).size(136, 15));
         child(WildcardPatternGui.THEME.button().pos(140, 2).size(14)
@@ -43,8 +43,8 @@ public final class WildcardIndexPage extends ParentWidget<WildcardIndexPage> {
             .onUpdateListener(button -> button.setEnabled(currentMaterialName() != null))
             .tooltipBuilder(tooltip -> tooltip.addLine(
                 // #tr gui.wildcardpattern.exclude_current
-                // # Exclude the current material and save
-                // # zh_CN 排除当前材料并保存到黑名单
+                // # Add this material to the blacklist and save
+                // # zh_CN 将当前材料加入黑名单并保存
                 IKey.lang("gui.wildcardpattern.exclude_current")))
             .onMousePressed(mouse -> {
                 if (mouse != 0) return false;

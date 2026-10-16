@@ -370,21 +370,21 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
     @Override
     public String[] getDescription() {
         // #tr tooltip.gtnotgood.crafting_input_mirror.proxy
-        // # Proxy for Crafting Input Buffer/Bus (CRIB)
-        // # zh_CN 样板输入总成或总线（CRIB）的镜像舱
+        // # Shares a linked Crafting Input Buffer/Bus with another multiblock
+        // # zh_CN 让其他多方块机器共用已连接的样板输入总成或总线
         String proxy = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input_mirror.proxy");
         // #tr tooltip.gtnotgood.crafting_input_mirror.tier
-        // # Hatch Tier: %s
-        // # zh_CN 舱室等级：%s
+        // # Hatch tier: %s
+        // # zh_CN 仓室等级：%s
         String tier = StatCollector.translateToLocalFormatted("tooltip.gtnotgood.crafting_input_mirror.tier",
             TIER_COLORS[11] + VN[11]);
         // #tr tooltip.gtnotgood.crafting_input_mirror.share
-        // # Link with Crafting Input Buffer/Bus using Data Stick to share inventory
-        // # zh_CN 使用数据棒连接样板输入总成或总线以共享库存
+        // # Uses the linked master's pattern inputs and product output caches
+        // # zh_CN 共用主仓的样板原料与产物输出缓存
         String share = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input_mirror.share");
         // #tr tooltip.gtnotgood.crafting_input_mirror.link
-        // # Left click on the Crafting Input Buffer/Bus, then right click on this block to link them
-        // # zh_CN 左键点击样板输入总成或总线，再右键点击此方块完成连接
+        // # Data Stick: left-click the master, then right-click this hatch to link
+        // # zh_CN 手持数据棒左键点击主仓，再右键点击此仓完成连接
         String link = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input_mirror.link");
         return PatternMEOutput.describe(new String[] { proxy, tier, share, link });
     }

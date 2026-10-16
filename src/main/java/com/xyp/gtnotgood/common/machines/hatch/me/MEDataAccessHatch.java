@@ -319,20 +319,20 @@ public class MEDataAccessHatch extends MTEHatchDataAccess
     public String[] getDescription() {
         return new String[] {
             // #tr tooltip.gtnotgood.meDataAccess.0
-            // # Data Access for Multiblocks
-            // # zh_CN 多方块结构的数据访问
+            // # Supplies multiblocks with recipes from data sticks in ME storage
+            // # zh_CN 为多方块机器提供 ME 存储中数据棒记录的配方
             StatCollector.translateToLocal("tooltip.gtnotgood.meDataAccess.0"),
             // #tr tooltip.gtnotgood.meDataAccess.1
-            // # Reads all data sticks stored in the ME network
-            // # zh_CN 读取 ME 网络中存储的所有数据棒
+            // # Reads every stored data stick; no manual loading needed
+            // # zh_CN 读取网络中存储的所有数据棒，无需手动装入
             StatCollector.translateToLocal("tooltip.gtnotgood.meDataAccess.1"),
             // #tr tooltip.gtnotgood.meDataAccess.2
-            // # Data sticks remain in ME storage and can be shared
+            // # Data sticks stay in ME storage and can serve multiple machines
             // # zh_CN 数据棒保留在 ME 存储中，可供多台机器共享
             StatCollector.translateToLocal("tooltip.gtnotgood.meDataAccess.2"),
             // #tr tooltip.gtnotgood.meDataAccess.3
-            // # Connect on the front; requires ME power and one channel
-            // # zh_CN 从正面接入，需要 ME 供电和一个频道
+            // # Connect ME at the front; requires power and one channel
+            // # zh_CN 从正面连接 ME，需要供电和一个频道
             StatCollector.translateToLocal("tooltip.gtnotgood.meDataAccess.3") };
     }
 }
