@@ -1,0 +1,74 @@
+// gradlew.bat -I scripts/eddington-ctm-qa.init.gradle runClient17 --no-configuration-cache
+gradle.beforeProject { project ->
+    if (project == gradle.rootProject) project.layout.buildDirectory.set(project.file('.gradle/eddington-ctm-qa-build'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def absent = root.hasProperty('withoutAngelica')
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.isFile()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String)
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/EddingtonCtmClientChecks.java'))
+    }
+    root.spotless.java {
+        target 'scripts/qa/EddingtonCtmClientChecks.java'
+    }
+    def mainSnapshot = root.layout.buildDirectory.dir('eddington-ctm-qa-runtime/main')
+    def testSnapshot = root.layout.buildDirectory.dir('eddington-ctm-qa-runtime/test')
+    def copyMain = root.tasks.register('snapshotEddingtonCtmMain', Sync) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        into mainSnapshot
+    }
+    def copyTest = root.tasks.register('snapshotEddingtonCtmTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/EddingtonCtmClientChecks*.class'
+        into testSnapshot
+    }
+    def output = root.file('build/eddington-ctm-qa' + (absent ? '-without-angelica' : ''))
+    def result = new File(output, 'result.txt')
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn copyMain, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainSnapshot, testSnapshot)
+        if (absent) classpath = classpath.filter { !it.name.toLowerCase().contains('angelica') }
+        classpath += root.configurations.testRuntimeClasspath.filter {
+            it.name.startsWith('jvmdowngrader-java-api-')
+        }
+        workingDir new File(output, 'client')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.eddingtonCtm.qa', 'true'
+        systemProperty 'gtng.eddingtonCtm.qa.withoutAngelica', absent.toString()
+        systemProperty 'gtng.eddingtonCtm.qa.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1280', '--height', '900'
+        notCompatibleWithConfigurationCache('Opt-in Eddington CTM client checks')
+        doFirst {
+            workingDir.mkdirs()
+            output.mkdirs()
+            java.nio.file.Files.deleteIfExists(result.toPath())
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:1\npauseOnLostFocus:false\nrenderDistance:5\nfov:0.0\n', 'UTF-8')
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', workingDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            if (!result.exists() || !result.text.startsWith('PASS')) {
+                throw new GradleException('Eddington CTM QA failed; inspect EDDINGTON_CTM_QA in ' +
+                    workingDir + '/logs/fml-client-latest.log.')
+            }
+        }
+    }
+}

@@ -43,12 +43,21 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.5.0          | [![1.5.0](https://img.shields.io/badge/release-1.5.0-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.0) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.5.1          | [![1.5.1](https://img.shields.io/badge/release-1.5.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.1) |         ✔️         |
 
-最新版本：[1.5.0 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.0)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.0/gtnotgood-1.5.0.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.0/gtnotgood-1.5.0-sources.jar)。
+最新版本：[1.5.1 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.1)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.1/gtnotgood-1.5.1.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.1/gtnotgood-1.5.1-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.5.0。
+1.3.4 因启动错误已撤回，请更新到 1.5.1。
+
+> **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 连接纹理与保险库外观
+
+新增 Beyond the Stars 的 54 种方块外观及 28 种控制器、舱室装饰面板，补齐中英文名称。面板正面固定朝北，保留原图案、动画和发光；这些面板不具备上游机器功能。
+全部方块和面板底材支持内置连接纹理，无需 MyCTMLib、Angelica 或额外材质包。相同底材可拼接，玻璃保留透明效果及不同材质的分界。
+保险库主控改用克尔压缩机正面，主控、端口和爱丁顿壁外壳的底材可连成整体。外壳拆除后会停止工作并解绑端口，恢复结构后重新启用即可继续访问原库存。
+爱丁顿壁外壳使用 MV 装配机配方：6 钢板、1 钢框架、4 铜箔、144 mB 熔融锡，集成电路 24（不消耗），产出 2 个；120 EU/t，基础耗时 10 秒，沿用全局配方加速设置。
 
 ### JourneyMap 右键菜单
 

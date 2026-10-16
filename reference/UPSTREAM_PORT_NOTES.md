@@ -1,5 +1,72 @@
 # AE2LT faithful port audit
 
+## Beyond the Stars decorative blocks — 2026-10-16
+
+- Source: https://github.com/v3rysp3d/GTNH-Beyond-the-Stars, user-supplied sibling
+  `GTNH-Beyond-the-Stars-master`. This local snapshot has no Git metadata; commit is unknown.
+  Inspected the root/resource MIT licenses, README credits, block classes and texture generator.
+  Copyright 2026 V3rySp3d; the original MIT notice is packaged unchanged.
+- All 136 files in `assets/beyondthestars/textures/blocks/` move byte-for-byte to
+  `assets/gtnotgood/textures/blocks/stellar/`: 56 ordinary block PNGs, 56 controller/hatch
+  overlay PNGs and 24 animation metadata files. The overlays form 28 decorative panels,
+  using original normal/glow layers, animated versions and runtime GT casing backgrounds.
+  Packaged source/destination/hash and local snapshot records: `META-INF/stellar-block-port/`.
+- `common/blocks/stellar/` adapts upstream metadata, six-face texture selection, translucent
+  glass/face culling and the crystal/node light levels. Registers 54 ordinary variants
+  across eight IDs and 28 panels across two more IDs, including the two formerly hidden
+  module cores and both fuel/turbine appearances. Existing metadata holes remain empty. Every variant has a central
+  `GTNGItemList` container and generated English/Chinese names in the block creative tab.
+  Panels use native GT `IBlockWithTextures` rendering with a north-facing front and no TE.
+- The existing Vault uses Eddington Wall Casings and the Kerr Compressor's normal/active
+  front and glow artwork. Its controller and port share the Eddington background without
+  taking a global GT casing texture index. Only the Eddington metadata conducts GT machine
+  updates, so removing/replacing its structure propagates a native recheck. Its initial
+  recheck delay uses the native 50 ticks instead of blocking changes for 200 ticks. Invalid Vaults
+  unbind their port; the required casing is reflected in the generated structure tooltip.
+- Adds 2,632 deterministic 16x16 MIT connected tiles across all 56 ordinary face
+  textures. Existing Eddington paths and its 47 tiles remain unchanged and are reproduced
+  by `scripts/generate-eddington-ctm.py`. `scripts/generate-stellar-ctm.py` adds the
+  remaining 2,585 tiles with per-texture profiles: preserve central artwork; sample safe
+  core backgrounds; continue bands, fins and rail interiors; extend the original
+  alpha-110 glass through joined 1 px frames. Both generators preserve isolated mask 0
+  byte-for-byte, retain exposed frames/concave caps and introduce no new colors or rotation.
+  The manifest records every upstream source and destination hash, generator SHA-256 and
+  profile separately. Original imported assets, references and snapshot hashes are unchanged.
+- `StellarConnections`, `StellarConnectedIcons` and `StellarConnectedTexture` replace the
+  Eddington-only classes. The built-in engine covers 54 ordinary variants, 28 panel backgrounds
+  and the Vault controller/port using the vanilla/GT copied-block face UVs. Identity is
+  each face's texture key: empty/fueled pillar top faces join while their sides remain
+  distinct; panels with the same base join across different overlays; Extraction panels
+  join the matching local casing. Different glass metadata retains its shared interface,
+  and matching glass in the face-normal direction excludes hidden faces from connections.
+  Native GT casing renderers are unchanged, so ordinary native GT casing blocks do not join.
+  Front graphics, animation/glow and inventory appearances remain separate. There is no
+  MyCTMLib, resource-pack rule, additional dependency, ticking or networking requirement.
+- Five native GT panel bases add 235 derived LGPL-3.0-or-later tiles. These are outside
+  the MIT asset list and the project's general MIT grant, with their own exact source,
+  revision, modification, hash and license records in `META-INF/stellar-panel-ctm/`.
+  Together the 56 MIT textures and five native GT bases have 61 materials and 2,867 tiles.
+- Adds a host-specific MV assembler recipe for two Eddington Wall Casings: six steel
+  plates, one steel frame, four copper foils, circuit 24 and 144 mB molten tin;
+  a base duration of 10 seconds at 120 EU/t. This acquisition recipe is not copied from upstream.
+- No upstream recipes, controllers, inventories, fuel/rotor interactions, heating-coil capability,
+  glass-tier registration or stellar TESR/shader carriers are ported. Descriptions claim only
+  decorative use. The sibling reference project never participates in compilation or packaging.
+- Resource audit and native-pixel preview: ignored `build/stellar-block-reference/`.
+  Isolated client validation: `scripts/stellar-block-qa.init.gradle`,
+  `scripts/vault-appearance-qa.init.gradle`, `scripts/eddington-ctm-qa.init.gradle`,
+  `scripts/eddington-recipe-qa.init.gradle`, `scripts/stellar-ctm-qa.init.gradle`
+  and their matching classes in `scripts/qa/`;
+  marked client windows use `HideFactoryClient.ps1`.
+- General connected-texture QA passes 8,027 checks in each of two real clients,
+  with and without Angelica; neither includes MyCTMLib. Covers all 82 appearances,
+  61 sets of 47 stitched tiles, unchanged source PNGs/animation metadata, six-face
+  masks, glass boundaries, panel graphics/glow, shared pillar ends, chunk-edge
+  removal/replacement and the existing Vault. Each run captures 11 screenshots.
+- Recipe QA loads GT5-Unofficial 5.09.54.183 and NewHorizonsCoreMod 2.9.76:
+  7,893 loaded assembler entries have zero bidirectional quantity-independent conflicts.
+  Native lookup rejects LV, accepts MV, consumes exact materials and retains circuit 24.
+
 ## Radial menu and toolbelt — 2026-10-15
 
 - Source: https://github.com/Navatusein/GTNH-Radial-Menu, pinned commit

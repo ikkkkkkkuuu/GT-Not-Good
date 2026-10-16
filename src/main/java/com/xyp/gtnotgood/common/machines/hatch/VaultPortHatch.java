@@ -11,6 +11,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.common.api.IItemVault;
+import com.xyp.gtnotgood.common.blocks.stellar.StellarCasingTextures;
 import com.xyp.gtnotgood.common.gui.BlockIcons;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
@@ -92,6 +93,11 @@ public class VaultPortHatch extends MTEHatch
     public ITexture[] getTexture(IGregTechTileEntity aBaseMetaTileEntity, ForgeDirection side, ForgeDirection facing,
         int colorIndex, boolean aActive, boolean aRedstone) {
         return super.getTexture(aBaseMetaTileEntity, side, facing, colorIndex, aActive, aRedstone);
+    }
+
+    @Override
+    public ITexture getCasingTexture() {
+        return StellarCasingTextures.EDDINGTON;
     }
 
     @Override

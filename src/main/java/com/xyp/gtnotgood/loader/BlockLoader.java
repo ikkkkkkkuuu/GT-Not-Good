@@ -32,6 +32,7 @@ import com.xyp.gtnotgood.common.blocks.network.TileNetworkNode;
 import com.xyp.gtnotgood.common.blocks.packaged.BlockPackagedProvider;
 import com.xyp.gtnotgood.common.blocks.packaged.PackagedServerActions;
 import com.xyp.gtnotgood.common.blocks.packaged.TilePackagedProvider;
+import com.xyp.gtnotgood.common.blocks.stellar.StellarBlocks;
 import com.xyp.gtnotgood.common.blocks.stockio.BlockStockIOInterface;
 import com.xyp.gtnotgood.common.blocks.stockio.TileStockIOInterface;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -88,6 +89,7 @@ public final class BlockLoader {
      * Registers all non-GregTech blocks and stores their item stacks for recipe and creative-tab use.
      */
     public static void registry() {
+        StellarBlocks.register();
         if (ModList.Forestry.isModLoaded()) {
             WorkingApiaryRegistration.register();
         }

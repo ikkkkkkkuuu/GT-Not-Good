@@ -1,0 +1,71 @@
+// gradlew.bat -I scripts/stellar-block-qa.init.gradle runClient17 --no-configuration-cache
+gradle.beforeProject { project ->
+    if (project == gradle.rootProject) project.layout.buildDirectory.set(project.file('.gradle/stellar-block-qa-build'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.isFile()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String)
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/StellarBlockClientChecks.java'))
+    }
+    root.spotless.java {
+        target 'scripts/qa/StellarBlockClientChecks.java'
+    }
+    def mainSnapshot = root.layout.buildDirectory.dir('stellar-block-qa-runtime/main')
+    def testSnapshot = root.layout.buildDirectory.dir('stellar-block-qa-runtime/test')
+    def copyMain = root.tasks.register('snapshotStellarBlockMain', Sync) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        into mainSnapshot
+    }
+    def copyTest = root.tasks.register('snapshotStellarBlockTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/StellarBlockClientChecks*.class'
+        into testSnapshot
+    }
+    def output = root.file('build/stellar-block-qa')
+    def result = new File(output, 'result.txt')
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn copyMain, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainSnapshot, testSnapshot)
+        classpath += root.configurations.testRuntimeClasspath.filter {
+            it.name.startsWith('jvmdowngrader-java-api-')
+        }
+        workingDir new File(output, 'client')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.stellarBlock.qa', 'true'
+        systemProperty 'gtng.stellarBlock.qa.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1280', '--height', '900'
+        notCompatibleWithConfigurationCache('Opt-in stellar block client checks')
+        doFirst {
+            workingDir.mkdirs()
+            output.mkdirs()
+            java.nio.file.Files.deleteIfExists(result.toPath())
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:1\npauseOnLostFocus:false\nrenderDistance:5\nfov:0.0\n', 'UTF-8')
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', workingDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            if (!result.exists() || !result.text.startsWith('PASS')) {
+                throw new GradleException('Stellar block QA failed; inspect STELLAR_BLOCK_QA in ' +
+                    workingDir + '/logs/fml-client-latest.log.')
+            }
+        }
+    }
+}

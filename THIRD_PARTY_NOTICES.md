@@ -148,6 +148,26 @@ relocated under its MIT terms. Original notices, LuaJ copyright lines, source
 mappings, asset hashes and adaptation records are included in
 `META-INF/radial-menu-port/`.
 
+## Beyond the Stars block artwork
+
+The decorative block textures and reserved controller/hatch overlays under
+`assets/gtnotgood/textures/blocks/stellar/` are copied unchanged from the
+user-supplied `GTNH-Beyond-the-Stars-master` snapshot inspected on 2026-10-16,
+copyright 2026 V3rySp3d, under MIT. The original license, per-file hashes,
+source mappings and adaptation details are bundled in `META-INF/stellar-block-port/`.
+The port registers 54 ordinary variants and 28 decorative controller/hatch panels
+with English and Chinese names. The existing Vault uses the Eddington casing and
+Kerr Compressor front artwork. All 56 ordinary face textures have 47 derived
+connected states: 2,632 MIT tiles generated from their original pixels by
+`scripts/generate-eddington-ctm.py` and `scripts/generate-stellar-ctm.py`.
+Original imports, animation metadata and upstream snapshot hashes remain unchanged.
+The built-in renderer covers all 54 ordinary variants, 28 panel backgrounds and
+the Vault background without MyCTMLib. Five native GT panel backgrounds add 235
+separately licensed LGPL-3.0-or-later tiles, outside this project's MIT grant;
+their source mappings, hashes and licenses are in `META-INF/stellar-panel-ctm/`.
+No upstream recipes or machine capabilities are added. Eddington Wall Casing has
+a host-specific MV assembler recipe.
+
 ## GT5-Unofficial ME output assembly textures
 
 The inactive and active ME output assembly overlays combine GT5-Unofficial's

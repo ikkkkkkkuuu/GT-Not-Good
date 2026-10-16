@@ -5,7 +5,6 @@ import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofChain;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.onElementPass;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.transpose;
 import static com.xyp.gtnotgood.GTNotGood.RESOURCE_ROOT_ID;
-import static gregtech.api.GregTechAPI.sBlockCasings2;
 import static gregtech.api.util.GTStructureUtility.buildHatchAdder;
 
 import java.io.File;
@@ -43,6 +42,7 @@ import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.xyp.gtnotgood.common.api.IItemVault;
+import com.xyp.gtnotgood.common.blocks.stellar.StellarCasingTextures;
 import com.xyp.gtnotgood.common.gui.BlockIcons;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.SingularityDataHubGui;
 import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
@@ -51,6 +51,7 @@ import com.xyp.gtnotgood.common.machines.storage.VaultStackSnapshots;
 import com.xyp.gtnotgood.common.machines.storage.VaultStorageUsage;
 import com.xyp.gtnotgood.utils.StructureUtils;
 import com.xyp.gtnotgood.utils.Utils;
+import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.item.ItemId;
 
 import appeng.api.AEApi;
@@ -59,7 +60,6 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
-import gregtech.api.enums.Textures;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
@@ -171,7 +171,7 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
     public void onFirstTick(IGregTechTileEntity aBaseMetaTileEntity) {
         if (checkStructure(true, aBaseMetaTileEntity)) {
             this.mStartUpCheck = -1;
-            this.mUpdate = 200;
+            this.mUpdate = 50;
         }
         this.ownerUUID = aBaseMetaTileEntity.getOwnerUuid();
         super.onFirstTick(aBaseMetaTileEntity);
@@ -275,8 +275,9 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
                 ofChain(
                     buildHatchAdder(SingularityDataHub.class).hatchClass(VaultPortHatch.class)
                         .shouldReject(t -> t.portHatch != null).adder(SingularityDataHub::addPortBusToMachineList)
-                        .casingIndex(getCasingTextureID()).hint(1).build(),
-                    onElementPass(t -> t.mCountCasing++, ofBlock(sBlockCasings2, 0))))
+                        .casingIndex(16).hint(1).build(),
+                    onElementPass(t -> t.mCountCasing++, ofBlock(GTNGItemList.EddingtonWallCasing.getBlock(),
+                        GTNGItemList.EddingtonWallCasing.getWithMeta()))))
             .build();
     }
 
@@ -311,12 +312,9 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
         super.clearHatches();
         wirelessMode = false;
         if (portHatch != null) {
+            portHatch.unbind();
             portHatch = null;
         }
-    }
-
-    public int getCasingTextureID() {
-        return 16; // Solid Steel Machine Casing texture ID (same as Large Steel Boiler)
     }
 
     @Override
@@ -339,8 +337,8 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
     public MultiblockTooltipBuilder createTooltip() {
         MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
         // #tr Tooltip_SingularityDataHub_Casing
-        // # Solid Steel Machine Casing
-        // # zh_CN 坚实钢机械方块
+        // # Eddington Wall Casing
+        // # zh_CN 爱丁顿壁外壳
         String casing = StatCollector.translateToLocal("Tooltip_SingularityDataHub_Casing");
         // #tr SingularityDataHubRecipeType
         // # Vault
@@ -391,17 +389,14 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
     @Override
     public ITexture[] getTexture(IGregTechTileEntity aBaseMetaTileEntity, ForgeDirection side, ForgeDirection facing,
         int colorIndex, boolean aActive, boolean aRedstone) {
-        if (side == facing) {
-            if (
-                aActive
-            ) return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(getCasingTextureID()),
-                TextureFactory.builder().addIcon(BlockIcons.OverlayFrontSingularityDataHubActive).extFacing().build(),
-                TextureFactory.builder().addIcon(BlockIcons.OverlayFrontSingularityDataHubActiveGlow).extFacing().glow()
-                    .build() };
-            return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(getCasingTextureID()),
-                TextureFactory.builder().addIcon(BlockIcons.OverlayFrontSingularityDataHub).extFacing().build() };
-        }
-        return new ITexture[] { Textures.BlockIcons.getCasingTextureForId(getCasingTextureID()) };
+        if (side != facing) return new ITexture[] { StellarCasingTextures.EDDINGTON };
+        return new ITexture[] { StellarCasingTextures.EDDINGTON,
+            TextureFactory.builder()
+                .addIcon(aActive ? BlockIcons.OverlayFrontKerrCompressorActive : BlockIcons.OverlayFrontKerrCompressor)
+                .extFacing().build(),
+            TextureFactory.builder().addIcon(
+                aActive ? BlockIcons.OverlayFrontKerrCompressorActiveGlow : BlockIcons.OverlayFrontKerrCompressorGlow)
+                .extFacing().glow().build() };
     }
 
     @Override
@@ -867,7 +862,6 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
             if (aMetaTileEntity instanceof VaultPortHatch vaultPortHatch) {
                 if (portHatch != null) return false;
                 portHatch = vaultPortHatch;
-                portHatch.updateTexture(aBaseCasingIndex);
                 return true;
             }
         }
@@ -876,7 +870,8 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
 
     @Override
     public boolean isValid() {
-        return true;
+        IGregTechTileEntity base = getBaseMetaTileEntity();
+        return mMachine && base != null && !base.isDead();
     }
 
     @Override
