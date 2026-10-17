@@ -43,14 +43,22 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.5.4          | [![1.5.4](https://img.shields.io/badge/release-1.5.4-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.4) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.5.5          | [![1.5.5](https://img.shields.io/badge/release-1.5.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.5) |         ✔️         |
 
-最新版本：[1.5.4 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.4)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.4/gtnotgood-1.5.4.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.4/gtnotgood-1.5.4-sources.jar)。
+最新版本：[1.5.5 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.5)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.5/gtnotgood-1.5.5.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.5/gtnotgood-1.5.5-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.5.4。
+1.3.4 因启动错误已撤回，请更新到 1.5.5。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.5.5 更新
+
+- 新增独立的电路样板输入镜像 (ME)，共用电路总成的原料、虚拟工具和物品／流体输出缓存；原超级镜像继续兼容。
+- 数据棒左键主仓，再右键同维度镜像绑定。LV 装配机配方：超级镜像 ×1、LV 电路 ×2、铝板 ×2，配置电路 23，基础耗时 5 秒、32 EU/t。
+- 修复电路总成的通配符兼容，展开配方继续支持虚拟电路、可复用模具和原生流体，AE 只索取消耗材料。所需电路编号须作为通配符的固定输入。
+- 每个槽位缓存清空后才能切换展开配方；存档恢复保留当前分支和完整数量。旧版含实体工具或无法确定配方的缓存完整转入待退还队列，接回 ME 后重试退还。
+- 修复样板优化按钮对电路总成原生展开样板的识别，准确对应原通配符模板。
 
 ### 1.5.4 更新
 
@@ -203,6 +211,11 @@ Waila 与扫描器分别显示物品和流体缓存容量，流体明细保留�
 已注册到接口终端，名称随连接的多方块主机配方图更新，支持无线二合一接口终端上传与取回样板。
 界面只保留手动物品槽，不提供虚拟模具槽、手动电路配置和批量写电路按钮。
 总成合成配方的编程电路编号改为 **23**。
+新增独立的 **电路样板输入镜像 (ME)**，仅连接电路样板总成，共用主仓原料、虚拟电路、模具和产物输出缓存。
+使用数据棒左键点击主仓，再右键点击同维度内的镜像完成绑定；现有超级样板输入镜像仍可连接电路总成。
+镜像的 LV 装配机配方：超级样板输入镜像 ×1、LV 电路 ×2、铝板 ×2，配置电路 **23**，基础耗时 **5 秒**，耗电 **32 EU/t**。
+支持通配符样板，展开后的配方继续使用虚拟电路、模具和大数量缓存；同一槽位的缓存清空后才能切换展开配方。
+需要编程电路的配方须将对应编号作为固定输入写入通配符，所有展开配方共用该编号，AE 无需提供实物电路。
 GT 每次读取的物品与流体数量仍受 `int` 限制，消耗后从 `long` 缓冲继续补充。
 存档、拆除、放回和退料保留完整数量，ME 暂时拒收的材料会保留并重试退回。
 

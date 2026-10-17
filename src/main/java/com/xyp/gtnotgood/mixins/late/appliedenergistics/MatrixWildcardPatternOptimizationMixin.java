@@ -1,7 +1,9 @@
 package com.xyp.gtnotgood.mixins.late.appliedenergistics;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants.NBT;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,6 +15,7 @@ import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternGenerator;
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternState;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardModelState;
 
+import appeng.api.AEApi;
 import appeng.container.implementations.ContainerOptimizePatterns;
 import codechicken.nei.ItemStackMap;
 
@@ -52,11 +55,24 @@ public abstract class MatrixWildcardPatternOptimizationMixin {
     }
 
     private static boolean sameTemplate(ItemStack physical, ItemStack generated) {
-        if (physical.getItem() != generated.getItem() || physical.getItemDamage() != generated.getItemDamage())
-            return false;
+        if (!sameSourceItem(physical, generated)) return false;
         NBTTagCompound physicalTag = templateTag(physical);
         NBTTagCompound generatedTag = templateTag(generated);
         return physicalTag.equals(generatedTag);
+    }
+
+    private static boolean sameSourceItem(ItemStack physical, ItemStack generated) {
+        if (physical.getItem() == generated.getItem() && physical.getItemDamage() == generated.getItemDamage())
+            return true;
+        if (
+            !generated.hasTagCompound() || !generated.getTagCompound().hasKey("gtngWildcardSource", NBT.TAG_COMPOUND)
+                || !(AEApi.instance().definitions().items().encodedPattern().isSameAs(generated)
+                    || AEApi.instance().definitions().items().encodedUltimatePattern().isSameAs(generated))
+        ) return false;
+        NBTTagCompound source = generated.getTagCompound().getCompoundTag("gtngWildcardSource");
+        return source.hasKey("id", NBT.TAG_STRING) && source.hasKey("Damage", NBT.TAG_INT)
+            && source.getString("id").equals(Item.itemRegistry.getNameForObject(physical.getItem()))
+            && source.getInteger("Damage") == physical.getItemDamage();
     }
 
     private static NBTTagCompound templateTag(ItemStack stack) {
@@ -67,8 +83,15 @@ public abstract class MatrixWildcardPatternOptimizationMixin {
         tag.removeTag("crafting");
         tag.removeTag("InvalidPattern");
         tag.removeTag("WildcardSelectedMaterial");
+        tag.removeTag("WildcardPattern");
         tag.removeTag(WildcardPatternGenerator.KEY_GENERATED_PATTERN_ID);
         tag.removeTag(WildcardModelState.KEY_EXPANDED_COUNT);
+        tag.removeTag("WildcardExpandedPatternCount");
+        tag.removeTag("gtngPatternCircuit");
+        tag.removeTag("gtngPatternMolds");
+        tag.removeTag("gtngWildcardSource");
+        tag.setBoolean("substitute", tag.getBoolean("substitute"));
+        tag.setBoolean("beSubstitute", tag.getBoolean("beSubstitute"));
         return tag;
     }
 }

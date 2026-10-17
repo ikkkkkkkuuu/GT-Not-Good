@@ -33,6 +33,7 @@ public enum GTNGMachineID {
     LargeIndustrialFarm(Machine, 25),
     MEOutputAssembly(Machine, 26),
     LargeIndustrialApiary(Machine, 27),
+    CircuitMEPatternMirror(Machine, 28),
 
     DieselGeneratorLV(BasicMachine, 0),
     DieselGeneratorMV(BasicMachine, 1),

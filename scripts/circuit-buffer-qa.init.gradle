@@ -1,4 +1,4 @@
-// Checks per-pattern circuits and reusable molds, native AE plans, input limits, persistence and the GUI.
+// Checks per-pattern circuits, dedicated mirrors, reusable molds, native AE plans, persistence and the GUI.
 gradle.projectsEvaluated {
     def root = gradle.rootProject
     def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
@@ -21,16 +21,16 @@ gradle.projectsEvaluated {
         into root.layout.buildDirectory.dir('circuit-buffer-qa/classes')
     }
     root.extensions.findByName('spotless')?.java {
-        target 'src/main/java/com/xyp/gtnotgood/common/machines/hatch/SuperMTEHatchCraftingInputME.java',
-            'src/main/java/com/xyp/gtnotgood/CommonProxy.java',
-            'src/main/java/com/xyp/gtnotgood/common/gui/modularui/hatch/SuperMTEHatchCraftingInputMEGui.java',
+        target 'src/main/java/com/xyp/gtnotgood/common/machines/hatch/SuperMTEHatchCraftingInputSlave.java',
             'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
             'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
             'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
             'src/main/java/com/xyp/gtnotgood/common/machines/hatch/me/CircuitMEPatternBuffer.java',
-            'src/main/java/com/xyp/gtnotgood/common/machines/hatch/me/LongCircuitBuffer.java',
             'src/main/java/com/xyp/gtnotgood/common/machines/hatch/me/CircuitPatternCodec.java',
-            'src/main/java/com/xyp/gtnotgood/common/compat/CircuitPatternMolds.java',
+            'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/SuperMTEHatchCraftingInputMEMixin.java',
+            'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/MatrixWildcardPatternOptimizationMixin.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/hatch/me/CircuitMEPatternMirror.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/SuperCraftingInputRecipes.java',
             'scripts/qa/CircuitPatternBufferChecks.java'
     }
     root.tasks.named('runClient').configure {
@@ -44,7 +44,7 @@ gradle.projectsEvaluated {
         doFirst {
             workingDir.mkdirs()
             java.nio.file.Files.deleteIfExists(new File(workingDir, 'result.txt').toPath())
-            new File(workingDir, 'options.txt').setText('lang:en_US\npauseOnLostFocus:false\n', 'UTF-8')
+            new File(workingDir, 'options.txt').setText('lang:en_US\npauseOnLostFocus:false\nsoundCategory_master:0.0\n', 'UTF-8')
             new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
                 '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
                 '-Workspace', root.projectDir.absolutePath)

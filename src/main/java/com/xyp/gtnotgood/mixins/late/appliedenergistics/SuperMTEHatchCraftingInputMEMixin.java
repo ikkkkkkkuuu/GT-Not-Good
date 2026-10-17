@@ -26,6 +26,7 @@ import com.glodblock.github.common.item.ItemFluidPacket;
 import com.xyp.gtnotgood.common.gui.slots.WildcardPatternSlotSuper;
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternGenerator;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
+import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
 
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.networking.crafting.ICraftingProvider;
@@ -56,6 +57,7 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
 
     @Inject(method = "provideCrafting", at = @At("HEAD"), cancellable = true)
     private void wildcardpattern$provideExpandedPatterns(ICraftingProviderHelper craftingTracker, CallbackInfo ci) {
+        if ((Object) this instanceof CircuitMEPatternBuffer) return;
         if (!hasWildcardPattern()) {
             return;
         }
@@ -95,6 +97,7 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
     @Inject(method = "pushPattern", at = @At("HEAD"), cancellable = true)
     private void wildcardpattern$pushExpandedPattern(ICraftingPatternDetails patternDetails, InventoryCrafting table,
         CallbackInfoReturnable<Boolean> cir) {
+        if ((Object) this instanceof CircuitMEPatternBuffer) return;
         if (patternDetails == null) {
             cir.setReturnValue(false);
             return;
@@ -161,11 +164,13 @@ public abstract class SuperMTEHatchCraftingInputMEMixin {
 
     @Inject(method = "onPatternChange", at = @At("RETURN"))
     private void wildcardpattern$registerExpandedPatternMap(int index, ItemStack newItem, CallbackInfo ci) {
+        if ((Object) this instanceof CircuitMEPatternBuffer) return;
         registerExpandedPatterns(index, newItem);
     }
 
     @Inject(method = "loadNBTData", at = @At("RETURN"))
     private void wildcardpattern$registerLoadedExpandedPatternMap(NBTTagCompound tag, CallbackInfo ci) {
+        if ((Object) this instanceof CircuitMEPatternBuffer) return;
         IInventory patterns = getPatterns();
         Map<Integer, NBTTagCompound> activePatternTags = readSavedActivePatternTags(tag);
         boolean hasItems = false;

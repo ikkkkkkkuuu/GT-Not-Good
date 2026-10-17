@@ -205,6 +205,7 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
         if (tileEntity == null) return null;
         if (!(tileEntity instanceof IGregTechTileEntity GTTE)) return null;
         if (!(GTTE.getMetaTileEntity() instanceof SuperMTEHatchCraftingInputME newMaster)) return null;
+        if (!acceptsMaster(newMaster)) return null;
         if (master != newMaster) {
             if (master != null) master.removeProxyHatch(this);
             master = newMaster;
@@ -215,6 +216,10 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
         masterZ = z;
         masterSet = true;
         return master;
+    }
+
+    protected boolean acceptsMaster(SuperMTEHatchCraftingInputME master) {
+        return true;
     }
 
     private boolean tryLinkDataStick(EntityPlayer aPlayer) {
@@ -383,8 +388,8 @@ public class SuperMTEHatchCraftingInputSlave extends MTEHatchInputBus
         // # zh_CN 共用主仓的样板原料与产物输出缓存
         String share = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input_mirror.share");
         // #tr tooltip.gtnotgood.crafting_input_mirror.link
-        // # Data Stick: left-click the master, then right-click this hatch to link
-        // # zh_CN 手持数据棒左键点击主仓，再右键点击此仓完成连接
+        // # Data Stick: left-click the master, then right-click this hatch in the same dimension
+        // # zh_CN 手持数据棒左键点击主仓，再右键点击同维度内的此仓完成连接
         String link = StatCollector.translateToLocal("tooltip.gtnotgood.crafting_input_mirror.link");
         return PatternMEOutput.describe(new String[] { proxy, tier, share, link });
     }

@@ -1,8 +1,16 @@
 package com.xyp.gtnotgood.common.machines.hatch.me;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.xyp.gtnotgood.common.gui.slots.WildcardPatternSlotSuper.KEY_ACTIVE_PATTERN;
+import static com.xyp.gtnotgood.common.gui.slots.WildcardPatternSlotSuper.KEY_ACTIVE_PATTERN_ID;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -13,12 +21,16 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternCache;
+import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternGenerator;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 
 import appeng.api.networking.crafting.ICraftingPatternDetails;
+import appeng.api.networking.crafting.ICraftingProviderHelper;
 import appeng.api.networking.security.BaseActionSource;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IAEStack;
 import appeng.me.GridAccessException;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.util.inv.MEInventoryCrafting;
@@ -34,6 +46,9 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
     public static final int patternCount = 900;
     public static final int bufferTypeLimit = 64;
     private final List<CircuitSlot> pendingRefunds = new ArrayList<>();
+    private final Map<ICraftingPatternDetails, CircuitRecipe> craftingSlots = new HashMap<>();
+    private boolean craftingSlotsDirty = true;
+    private boolean inputsChanged;
     private boolean inputsSerializedIntoDrop;
 
     public CircuitMEPatternBuffer(int id, String name, String regionalName) {
@@ -51,11 +66,35 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
 
     @Override
     protected PatternSlot<SuperMTEHatchCraftingInputME> createPatternSlot(ItemStack pattern, NBTTagCompound saved) {
-        World world = getBaseMetaTileEntity().getWorld();
-        ICraftingPatternDetails original = CircuitPatternCodec.decode(pattern, world);
-        ItemStack[] molds = CircuitPatternCodec.molds(original);
-        return new CircuitSlot(pattern, saved, this, CircuitPatternCodec.runtime(pattern, world, original, molds),
-            CircuitPatternCodec.circuit(original), molds);
+        return new CircuitSlot(pattern, saved, this);
+    }
+
+    private void rebuildCraftingSlots() {
+        craftingSlots.clear();
+        for (PatternSlot<SuperMTEHatchCraftingInputME> slot : iterableSlots()) {
+            if (!(slot instanceof CircuitSlot circuitSlot)) continue;
+            for (CircuitRecipe recipe : circuitSlot.recipes()) craftingSlots.put(recipe.details, recipe);
+        }
+        craftingSlotsDirty = false;
+    }
+
+    @Override
+    public void provideCrafting(ICraftingProviderHelper tracker) {
+        if (!isActive()) return;
+        rebuildCraftingSlots();
+        for (ICraftingPatternDetails details : craftingSlots.keySet()) tracker.addCraftingOption(this, details);
+    }
+
+    @Override
+    public boolean pushPattern(ICraftingPatternDetails details, InventoryCrafting table) {
+        if (
+            !isActive() || !getBaseMetaTileEntity().isAllowedToWork() || !(table instanceof MEInventoryCrafting meTable)
+        ) return false;
+        if (craftingSlotsDirty) rebuildCraftingSlots();
+        CircuitRecipe recipe = craftingSlots.get(details);
+        if (recipe == null || !recipe.slot.insert(recipe, meTable)) return false;
+        inputsChanged = true;
+        return true;
     }
 
     /** Each pattern supplies its own circuit and molds; only physical manual slots are shared. */
@@ -85,6 +124,7 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
     public void onPatternChange(int index, ItemStack replacement) {
         PatternSlot<SuperMTEHatchCraftingInputME> previous = getPatternSlot(index);
         super.onPatternChange(index, replacement);
+        craftingSlotsDirty = true;
         if (previous instanceof CircuitSlot slot && previous != getPatternSlot(index) && !slot.isEmpty()) {
             pendingRefunds.add(slot);
             markDirty();
@@ -94,6 +134,11 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
     @Override
     public void onPostTick(IGregTechTileEntity tile, long timer) {
         super.onPostTick(tile, timer);
+        if (tile.isServerSide() && inputsChanged) {
+            notifyWatchers();
+            for (var mirror : getProxyHatches()) mirror.onParentInvChange();
+            inputsChanged = false;
+        }
         if (tile.isServerSide() && timer % 20 == 0 && !pendingRefunds.isEmpty() && isActive()) retryRefunds(4);
     }
 
@@ -159,6 +204,13 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
                 if (!slot.isEmpty()) pendingRefunds.add(slot);
             }
         }
+        for (PatternSlot<SuperMTEHatchCraftingInputME> slot : iterableSlots()) {
+            if (!(slot instanceof CircuitSlot circuitSlot) || !circuitSlot.needsRecoveryRefund()) continue;
+            pendingRefunds.add(circuitSlot.takeRecoveryRefund());
+        }
+        craftingSlots.clear();
+        craftingSlotsDirty = true;
+        inputsChanged = iterableSlots().stream().anyMatch(slot -> !slot.isEmpty());
     }
 
     /**
@@ -196,22 +248,102 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
         // # Each recipe check can use up to 2^31 - 1 per type; remaining stock stays buffered
         // # zh_CN 每次配方检查每种原料最多提供 2^31 - 1，剩余原料继续保留在缓存中
         String recipeView = StatCollector.translateToLocal("tooltip.gtng.circuit_buffer.recipe_view");
-        return ArrayUtils.addAll(super.getDescription(), circuit, capacity, recipeView);
+        // #tr tooltip.gtng.circuit_buffer.mirror
+        // # Supports Circuit Pattern Input Mirrors (ME) and Super Pattern Input Mirrors (ME)
+        // # zh_CN 可连接电路样板输入镜像 (ME) 或超级样板输入镜像 (ME)
+        String mirror = StatCollector.translateToLocal("tooltip.gtng.circuit_buffer.mirror");
+        // #tr tooltip.gtng.circuit_buffer.wildcard
+        // # Wildcard patterns expand automatically; each slot handles one generated recipe until its buffer is empty
+        // # zh_CN 自动展开通配符样板；每个槽位的缓存清空后才能切换展开配方
+        String wildcard = StatCollector.translateToLocal("tooltip.gtng.circuit_buffer.wildcard");
+        return ArrayUtils.addAll(super.getDescription(), circuit, capacity, recipeView, mirror, wildcard);
     }
 
     /** Live stacks are debited by GT; phantom tools never make an empty buffer runnable. */
     public static final class CircuitSlot extends PatternSlot<SuperMTEHatchCraftingInputME> {
 
-        private final int circuit;
-        private final ItemStack[] molds;
         private final LongCircuitBuffer buffer;
+        private final boolean wildcard;
+        private final boolean legacyInventory;
+        private final WildcardPatternCache<List<CircuitRecipe>> expansionCache = new WildcardPatternCache<>();
+        private CircuitRecipe activeRecipe;
 
-        private CircuitSlot(ItemStack pattern, NBTTagCompound saved, CircuitMEPatternBuffer parent,
-            ICraftingPatternDetails details, int circuit, ItemStack[] molds) {
-            super(pattern, null, parent, details);
-            this.circuit = circuit;
-            this.molds = molds;
+        private CircuitSlot(ItemStack pattern, NBTTagCompound saved, CircuitMEPatternBuffer parent) {
+            super(pattern, null, parent, null);
             buffer = new LongCircuitBuffer(saved, parent::markDirty);
+            wildcard = WildcardPatternGenerator.isWildcardPattern(pattern)
+                && !WildcardPatternGenerator.isGeneratedPattern(pattern);
+            legacyInventory = saved != null && !saved.hasKey("longItems") && !saved.hasKey("longFluids");
+            if (!wildcard) activeRecipe = decodeRecipe(pattern);
+            else if (saved != null && !isEmpty()) {
+                String savedId = saved.getString(KEY_ACTIVE_PATTERN_ID);
+                for (CircuitRecipe recipe : recipes()) {
+                    if (
+                        !savedId.isEmpty()
+                            && savedId.equals(WildcardPatternGenerator.getGeneratedPatternId(recipe.original))
+                    ) {
+                        activeRecipe = recipe;
+                        break;
+                    }
+                }
+                if (activeRecipe == null && saved.hasKey(KEY_ACTIVE_PATTERN, Constants.NBT.TAG_COMPOUND)) {
+                    ItemStack active = ItemStack.loadItemStackFromNBT(saved.getCompoundTag(KEY_ACTIVE_PATTERN));
+                    if (WildcardPatternGenerator.isGeneratedPattern(active)) activeRecipe = decodeRecipe(active);
+                }
+            }
+        }
+
+        private CircuitRecipe decodeRecipe(ItemStack encoded) {
+            World world = parentMTE.getBaseMetaTileEntity().getWorld();
+            ICraftingPatternDetails original = CircuitPatternCodec.decode(encoded, world);
+            ItemStack[] molds = CircuitPatternCodec.molds(original);
+            ICraftingPatternDetails details = CircuitPatternCodec.runtime(encoded, world, original, molds);
+            return details == null ? null
+                : new CircuitRecipe(this, encoded, details, CircuitPatternCodec.circuit(original), molds);
+        }
+
+        private List<CircuitRecipe> recipes() {
+            if (!wildcard)
+                return activeRecipe == null ? Collections.emptyList() : Collections.singletonList(activeRecipe);
+            World world = parentMTE.getBaseMetaTileEntity().getWorld();
+            return expansionCache.get(pattern, world, () -> {
+                List<CircuitRecipe> result = new ArrayList<>();
+                for (ICraftingPatternDetails details : WildcardPatternGenerator.generateAllDetails(pattern, world)) {
+                    CircuitRecipe recipe = decodeRecipe(details.getPattern());
+                    if (recipe != null) result.add(recipe);
+                }
+                return result;
+            });
+        }
+
+        private boolean needsRecoveryRefund() {
+            if (!wildcard || isEmpty()) return false;
+            if (activeRecipe == null) return true;
+            if (!legacyInventory) return false;
+            for (IAEItemStack item : buffer.storedItems())
+                if (CircuitPatternCodec.isCircuit(item) || CircuitPatternCodec.isMold(item, activeRecipe.molds))
+                    return true;
+            return false;
+        }
+
+        private CircuitSlot takeRecoveryRefund() {
+            CircuitSlot refund = new CircuitSlot(pattern, writeToNBT(new NBTTagCompound()),
+                (CircuitMEPatternBuffer) parentMTE);
+            buffer.clear();
+            return refund;
+        }
+
+        private boolean insert(CircuitRecipe recipe, MEInventoryCrafting table) {
+            if (!isEmpty() && (activeRecipe == null || !Objects.equals(activeRecipe.details, recipe.details)))
+                return false;
+            if (!buffer.insert(table, recipe.molds)) return false;
+            activeRecipe = recipe;
+            return true;
+        }
+
+        @Override
+        public ICraftingPatternDetails getPatternDetails() {
+            return activeRecipe == null ? null : activeRecipe.details;
         }
 
         @Override
@@ -245,6 +377,14 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
         public NBTTagCompound writeToNBT(NBTTagCompound tag) {
             tag.setTag("pattern", pattern.writeToNBT(new NBTTagCompound()));
             buffer.write(tag);
+            if (wildcard && activeRecipe != null && !isEmpty()) {
+                tag.setTag(KEY_ACTIVE_PATTERN, activeRecipe.original.writeToNBT(new NBTTagCompound()));
+                tag.setString(KEY_ACTIVE_PATTERN_ID,
+                    WildcardPatternGenerator.getGeneratedPatternId(activeRecipe.original));
+            } else {
+                tag.removeTag(KEY_ACTIVE_PATTERN);
+                tag.removeTag(KEY_ACTIVE_PATTERN_ID);
+            }
             return tag;
         }
 
@@ -256,8 +396,9 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
 
         private ItemStack[] recipeTools() {
             List<ItemStack> tools = new ArrayList<>();
-            if (circuit >= 0) tools.add(GTUtility.getIntegratedCircuit(circuit));
-            for (ItemStack mold : molds) tools.add(mold.copy());
+            if (activeRecipe == null) return new ItemStack[0];
+            if (activeRecipe.circuit >= 0) tools.add(GTUtility.getIntegratedCircuit(activeRecipe.circuit));
+            for (ItemStack mold : activeRecipe.molds) tools.add(mold.copy());
             return tools.toArray(new ItemStack[0]);
         }
 
@@ -275,14 +416,42 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
 
         @Override
         public GTDualInputPattern getPatternInputs() {
-            GTDualInputPattern inputs = super.getPatternInputs();
-            inputs.inputItems = ArrayUtils.addAll(inputs.inputItems, recipeTools());
+            GTDualInputPattern inputs = new GTDualInputPattern();
+            List<ItemStack> items = new ArrayList<>();
+            List<FluidStack> fluids = new ArrayList<>();
+            Collections.addAll(items, parentMTE.getSharedItems());
+            ICraftingPatternDetails details = getPatternDetails();
+            if (details != null) for (IAEStack<?> input : details.getAEInputs()) {
+                if (input instanceof IAEItemStack item) items.add(item.getItemStack());
+                else if (input instanceof IAEFluidStack fluid) fluids.add(fluid.getFluidStack());
+            }
+            Collections.addAll(items, recipeTools());
+            inputs.inputItems = items.toArray(new ItemStack[0]);
+            inputs.inputFluid = fluids.toArray(new FluidStack[0]);
             return inputs;
         }
 
         @Override
         public boolean insertItemsAndFluids(MEInventoryCrafting table) {
-            return patternDetails != null && buffer.insert(table, molds);
+            return activeRecipe != null && buffer.insert(table, activeRecipe.molds);
+        }
+    }
+
+    private static final class CircuitRecipe {
+
+        private final CircuitSlot slot;
+        private final ItemStack original;
+        private final ICraftingPatternDetails details;
+        private final int circuit;
+        private final ItemStack[] molds;
+
+        private CircuitRecipe(CircuitSlot slot, ItemStack original, ICraftingPatternDetails details, int circuit,
+            ItemStack[] molds) {
+            this.slot = slot;
+            this.original = original;
+            this.details = details;
+            this.circuit = circuit;
+            this.molds = molds;
         }
     }
 }

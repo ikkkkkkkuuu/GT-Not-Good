@@ -18,6 +18,7 @@ import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputSlave;
 import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
+import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternMirror;
 import com.xyp.gtnotgood.common.machines.hatch.me.MEDataAccessHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.MEOutputAssembly;
 import com.xyp.gtnotgood.common.machines.hatch.me.MaxCapacityMEOutputBus;
@@ -65,6 +66,12 @@ public class MachineLoader {
         GTNGItemList.CircuitMEPatternBuffer.set(new CircuitMEPatternBuffer(GTNGMachineID.CircuitMEPatternBuffer.id,
             "CircuitMEPatternBuffer", StatCollector.translateToLocal("NameCircuitMEPatternBuffer")));
         addItemTooltip(GTNGItemList.CircuitMEPatternBuffer.get(1), AnimatedText.GT_NOT_GOOD);
+        // #tr NameCircuitMEPatternMirror
+        // # Circuit Pattern Input Mirror (ME)
+        // # zh_CN 电路样板输入镜像 (ME)
+        GTNGItemList.CircuitMEPatternMirror.set(new CircuitMEPatternMirror(GTNGMachineID.CircuitMEPatternMirror.id,
+            "CircuitMEPatternMirror", StatCollector.translateToLocal("NameCircuitMEPatternMirror")));
+        addItemTooltip(GTNGItemList.CircuitMEPatternMirror.get(1), AnimatedText.GT_NOT_GOOD);
         // #tr NameSuperAdvancedMEInputHatch
         // # Super Advanced Stocking Input Hatch (ME)
         // # zh_CN 超级进阶存储输入仓 (ME)

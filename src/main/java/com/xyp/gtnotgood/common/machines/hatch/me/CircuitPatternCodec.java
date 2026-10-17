@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.common.machines.hatch.me;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -7,9 +8,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import com.xyp.gtnotgood.common.compat.CircuitPatternMolds;
+import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternGenerator;
+import com.xyp.gtnotgood.common.items.wildcard.model.WildcardModelState;
 
+import appeng.api.AEApi;
 import appeng.api.implementations.ICraftingPatternItem;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
+import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.util.Platform;
@@ -77,18 +82,65 @@ public final class CircuitPatternCodec {
         if (original == null || original.isCraftable() || original.isInputOnly()) return null;
         int config = circuit(original);
         if (config == -2) return null;
-        if (config < 0 && molds.length == 0) return original;
-        ItemStack runtime = withoutVirtualItems(pattern, molds);
+        boolean generated = WildcardPatternGenerator.isGeneratedPattern(pattern)
+            && WildcardPatternGenerator.isWildcardPattern(pattern);
+        if (!generated && config < 0 && molds.length == 0) return original;
+        ItemStack runtime = generated ? nativePattern(pattern, original, molds) : withoutVirtualItems(pattern, molds);
         if (runtime == null) return null;
-        if (config >= 0) runtime.getTagCompound().setInteger("gtngPatternCircuit", config);
+        NBTTagCompound tag = runtime.getTagCompound();
+        tag.removeTag("InvalidPattern");
+        tag.removeTag("gtngPatternCircuit");
+        tag.removeTag("gtngPatternMolds");
+        if (config >= 0) tag.setInteger("gtngPatternCircuit", config);
         if (molds.length > 0) {
             NBTTagList tools = new NBTTagList();
             for (ItemStack mold : molds) tools.appendTag(mold.writeToNBT(new NBTTagCompound()));
-            runtime.getTagCompound().setTag("gtngPatternMolds", tools);
+            tag.setTag("gtngPatternMolds", tools);
         }
         ICraftingPatternDetails decoded = decode(runtime, world);
         if (decoded == null || decoded.getCondensedAEInputs().length == 0 || circuit(decoded) != -1) return null;
         return decoded;
+    }
+
+    private static ItemStack nativePattern(ItemStack pattern, ICraftingPatternDetails original, ItemStack[] molds) {
+        if (pattern == null || !pattern.hasTagCompound()) return null;
+        IAEStack<?>[] inputs = original.getAEInputs(), outputs = original.getAEOutputs();
+        boolean ultimate = hasFluids(inputs) || hasFluids(outputs);
+        ItemStack result = (ultimate ? AEApi.instance().definitions().items().encodedUltimatePattern()
+            : AEApi.instance().definitions().items().encodedPattern()).maybeStack(1).orNull();
+        if (result == null) return null;
+        NBTTagCompound tag = (NBTTagCompound) pattern.getTagCompound().copy();
+        tag.setTag("in", encodeStacks(inputs, molds, ultimate));
+        tag.setTag("out", encodeStacks(outputs, null, ultimate));
+        tag.setBoolean("crafting", false);
+        tag.setBoolean("substitute", original.canSubstitute());
+        tag.setBoolean("beSubstitute", original.canBeSubstitute());
+        tag.removeTag("WildcardPattern");
+        tag.removeTag(WildcardModelState.KEY_EXPANDED_COUNT);
+        tag.removeTag("WildcardExpandedPatternCount");
+        NBTTagCompound source = new NBTTagCompound();
+        source.setString("id", Item.itemRegistry.getNameForObject(pattern.getItem()));
+        source.setInteger("Damage", pattern.getItemDamage());
+        tag.setTag("gtngWildcardSource", source);
+        result.setTagCompound(tag);
+        return result;
+    }
+
+    private static boolean hasFluids(IAEStack<?>[] stacks) {
+        for (IAEStack<?> stack : stacks) if (stack instanceof IAEFluidStack) return true;
+        return false;
+    }
+
+    private static NBTTagList encodeStacks(IAEStack<?>[] stacks, ItemStack[] molds, boolean ultimate) {
+        NBTTagList list = new NBTTagList();
+        for (IAEStack<?> stack : stacks) {
+            if (stack == null || molds != null && (isCircuit(stack) || isMold(stack, molds))) continue;
+            NBTTagCompound entry = new NBTTagCompound();
+            if (ultimate) stack.writeToNBTGeneric(entry);
+            else stack.writeToNBT(entry);
+            list.appendTag(entry);
+        }
+        return list;
     }
 
     private static ItemStack withoutVirtualItems(ItemStack pattern, ItemStack[] molds) {
@@ -105,9 +157,6 @@ public final class CircuitPatternCodec {
         }
         if (inputs.tagCount() == 0) return null;
         tag.setTag("in", inputs);
-        tag.removeTag("InvalidPattern");
-        tag.removeTag("gtngPatternCircuit");
-        tag.removeTag("gtngPatternMolds");
         return edited;
     }
 }
