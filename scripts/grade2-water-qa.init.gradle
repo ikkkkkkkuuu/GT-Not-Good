@@ -1,0 +1,30 @@
+// Focused grade 2 water checks; QA dependencies stay out of release artifacts.
+gradle.beforeProject { project ->
+    if (project.parent == null) {
+        project.layout.buildDirectory.set(project.file('.gradle/grade2-water-qa-build'))
+    }
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def bytecodeTools = root.configurations.create('grade2WaterBytecodeTools')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm:9.8')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm-tree:9.8')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm-commons:9.8')
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/mixins/late/treatedwater/Grade2WaterPurificationMixin.java',
+                'src/main/java/com/xyp/gtnotgood/config/MainConfig.java',
+                'src/main/java/com/xyp/gtnotgood/config/ServerConfigOptions.java',
+                'scripts/qa/Grade2WaterPurificationTargetTest.java'
+        }
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files(root.file('scripts/qa/Grade2WaterPurificationTargetTest.java')))
+        classpath = bytecodeTools + classpath
+    }
+    root.tasks.named('test').configure {
+        classpath = bytecodeTools + classpath
+        filter { includeTestsMatching '*Grade2WaterPurificationTargetTest' }
+    }
+}

@@ -40,6 +40,7 @@ import com.xyp.gtnotgood.common.recipe.machine.SeedConverterRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SingularityDataHubRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.StockIOInterfaceRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SuperCraftingInputRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.WebScreenRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.WildcardPatternRecipes;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
@@ -82,6 +83,7 @@ public class RecipeLoader {
         LargeInterfaceRecipes.register();
         PackagedRecipes.register();
         MechanicalUserRecipes.loadRecipes();
+        WebScreenRecipes.loadRecipes();
         FluxConnectorRecipes.loadRecipes();
         IntegratedProductionFactoryRecipes.loadRecipes();
         AssemblerRecipes.loadRecipes();

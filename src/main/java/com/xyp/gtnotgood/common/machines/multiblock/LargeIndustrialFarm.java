@@ -74,6 +74,7 @@ import gregtech.api.util.ItemEjectionHelper;
 import gregtech.api.util.MultiblockTooltipBuilder;
 import gregtech.api.util.OverclockCalculator;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
+import tectech.thing.metaTileEntity.hatch.MTEHatchWirelessMulti;
 
 @IMetaTileEntity.SkipGenerateName
 public final class LargeIndustrialFarm extends MTEIndustrialFarm {
@@ -469,6 +470,13 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
     @Override
     public int survivalConstruct(ItemStack trigger, int elementBudget, ISurvivalBuildEnvironment env) {
         return mMachine ? -1 : survivalBuildPiece(STRUCTURE_MAIN, trigger, 2, 2, 0, elementBudget, env, false, true);
+    }
+
+    @Override
+    public boolean addMultiAmpEnergyInputToMachineList(IGregTechTileEntity tileEntity, int casingIndex) {
+        if (tileEntity != null && tileEntity.getMetaTileEntity() instanceof MTEHatchWirelessMulti)
+            return addExoticEnergyInputToMachineList(tileEntity, casingIndex);
+        return super.addMultiAmpEnergyInputToMachineList(tileEntity, casingIndex);
     }
 
     @Override
@@ -1012,12 +1020,12 @@ public final class LargeIndustrialFarm extends MTEIndustrialFarm {
             // # zh_CN 保留生长进度与小数产出，条件不符的作物不影响其他作物
             .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.continuous_growth"))
             // #tr gtng.industrial_farm.energy
-            // # Multi-amp hatches need no upgrade; glass does not limit energy hatch tiers
-            // # zh_CN 多安能源仓无需升级；玻璃不限制能源仓等级
+            // # Multi-amp and wireless laser hatches need no upgrade or glass tier
+            // # zh_CN 多安与无线激光能源仓无需升级，玻璃不限制能源仓等级
             .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.energy"))
             // #tr gtng.industrial_farm.energy_limits
-            // # At most one multi-amp hatch; cannot mix with normal energy hatches; no laser hatches
-            // # zh_CN 最多 1 个多安能源仓，不能与普通能源仓混用；不支持激光仓
+            // # At most 1 multi-amp or wireless laser hatch; no normal-hatch mixing or wired lasers
+            // # zh_CN 多安或无线激光仓合计最多 1 个，不能与普通能源仓混用；不支持有线激光仓
             .addInfo(StatCollector.translateToLocal("gtng.industrial_farm.energy_limits"))
             .beginStructureBlock(5, 4, SLICES + 2, true)
             // #tr gtng.industrial_farm.controller

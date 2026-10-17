@@ -2,6 +2,7 @@ package com.xyp.gtnotgood.config;
 
 import java.io.File;
 
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 
 import com.xyp.gtnotgood.common.items.toolbelt.ConfigData;
@@ -42,6 +43,10 @@ public class Config {
     public static boolean useEdgeWindowIcon = false;
     /** Hides this client's Windows taskbar button after its window opens. */
     public static boolean hideWindowsTaskbarButton = false;
+    public static boolean enableWebScreens = true;
+    public static String webScreenBrowserExecutable = "";
+    public static int webScreenMaxSessions = 2;
+    public static int webScreenRange = 24;
     public static String quickTerminalButtonTheme = "dark";
     public static boolean enableJourneyMapContextMenu = true;
     public static boolean enableAlwaysDisplayRecipeOwner = true;
@@ -161,6 +166,19 @@ public class Config {
             .setRequiresMcRestart(true).getBoolean(false);
         hideWindowsTaskbarButton = configuration.get(CATEGORY_CLIENT, "hideWindowsTaskbarButton", false,
             "开启后在 Windows 上隐藏本客户端的任务栏按钮；游戏窗口仍可正常使用。默认关闭，可在游戏内设置中即时切换。").getBoolean(false);
+        enableWebScreens = configuration.getBoolean("enableWebScreens", CATEGORY_CLIENT, true,
+            "启用网页显示屏。右键时使用本机 Windows Edge 或 Chrome 独立会话联网，登录态保存在本机；关闭可停止所有网页显示屏。");
+        webScreenBrowserExecutable = configuration.getString("webScreenBrowserExecutable", CATEGORY_CLIENT, "",
+            "网页显示屏使用的 msedge.exe 或 chrome.exe 完整路径；留空自动检测常见安装位置。下次启动显示屏生效。");
+        ConfigCategory client = configuration.getCategory(CATEGORY_CLIENT);
+        client.remove("webScreenMuted");
+        client.remove("webScreenResolution");
+        client.remove("webScreenJpegQuality");
+        client.remove("webScreenFrameRate");
+        webScreenMaxSessions = configuration.getInt("webScreenMaxSessions", CATEGORY_CLIENT, 2, 1, 4,
+            "本机同时运行的显示屏数量，超出时关闭最早打开的显示屏。每个显示屏使用独立浏览器进程。");
+        webScreenRange = configuration.getInt("webScreenRange", CATEGORY_CLIENT, 24, 4, 64,
+            "离显示屏超过此距离（格）时停止本机浏览器；区块卸载或退出世界也会停止。");
         quickTerminalButtonTheme = configuration.getString("quickTerminalButtonTheme", CATEGORY_CLIENT,
             quickTerminalButtonTheme, "无线二合一接口终端按钮主题：dark 深色、light 浅色、auto 跟随 AE2 资源包。");
         enableJourneyMapContextMenu = configuration
@@ -333,6 +351,15 @@ public class Config {
         ensureLoaded();
         hideWindowsTaskbarButton = configuration.getCategory(CATEGORY_CLIENT).get("hideWindowsTaskbarButton")
             .getBoolean(false);
+    }
+
+    public static synchronized void refreshWebScreenOptions() {
+        ensureLoaded();
+        ConfigCategory category = configuration.getCategory(CATEGORY_CLIENT);
+        enableWebScreens = category.get("enableWebScreens").getBoolean(true);
+        webScreenBrowserExecutable = category.get("webScreenBrowserExecutable").getString();
+        webScreenMaxSessions = Math.max(1, Math.min(4, category.get("webScreenMaxSessions").getInt(2)));
+        webScreenRange = Math.max(4, Math.min(64, category.get("webScreenRange").getInt(24)));
     }
 
     /**

@@ -35,6 +35,9 @@ import com.xyp.gtnotgood.common.blocks.packaged.TilePackagedProvider;
 import com.xyp.gtnotgood.common.blocks.stellar.StellarBlocks;
 import com.xyp.gtnotgood.common.blocks.stockio.BlockStockIOInterface;
 import com.xyp.gtnotgood.common.blocks.stockio.TileStockIOInterface;
+import com.xyp.gtnotgood.common.blocks.webscreen.BlockWebScreen;
+import com.xyp.gtnotgood.common.blocks.webscreen.ItemBlockWebScreen;
+import com.xyp.gtnotgood.common.blocks.webscreen.TileWebScreen;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
@@ -53,6 +56,7 @@ public final class BlockLoader {
     public static final BlockFluxLogistics fluxLogistics = new BlockFluxLogistics();
 
     public static final BlockMechanicalUser mechanicalUser = new BlockMechanicalUser();
+    public static final BlockWebScreen webScreen = new BlockWebScreen();
 
     // #tr tile.flux_plug.name
     // # Flux Plug
@@ -95,6 +99,7 @@ public final class BlockLoader {
         }
         registerPackagedProvider();
         registerMechanicalUser();
+        registerWebScreen();
         registerFluxBlocks();
         registerMEContainer();
         registerStockIOInterface();
@@ -119,6 +124,12 @@ public final class BlockLoader {
         GameRegistry.registerBlock(mechanicalUser, "mechanical_user");
         GameRegistry.registerTileEntity(TileMechanicalUser.class, ModList.GTNotGood.getResourcePath("mechanical_user"));
         GTNGItemList.MechanicalUser.set(new ItemStack(mechanicalUser));
+    }
+
+    private static void registerWebScreen() {
+        GameRegistry.registerBlock(webScreen, ItemBlockWebScreen.class, "web_screen");
+        GameRegistry.registerTileEntity(TileWebScreen.class, ModList.GTNotGood.getResourcePath("web_screen"));
+        GTNGItemList.WebScreen.set(new ItemStack(webScreen));
     }
 
     private static void registerFluxBlocks() {

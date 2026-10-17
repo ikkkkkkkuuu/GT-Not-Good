@@ -152,6 +152,7 @@ public enum GTNGItemList implements IItemContainer {
 
     MechanicalUser,
     MechanicalUserSpeedUpgrade,
+    WebScreen,
 
     NetworkController,
     NetworkPipe,

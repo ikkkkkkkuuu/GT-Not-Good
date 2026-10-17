@@ -85,8 +85,7 @@ public class MainConfig {
             CATEGORY_PURIFIED_WATER, grade1WaterPurificationEnabled, "开启后1级水机器的过滤器永不损坏");
 
         grade2WaterPurificationEnabled = configuration.getBoolean("Grade2WaterPurificationEnabled",
-            CATEGORY_PURIFIED_WATER, grade2WaterPurificationEnabled,
-            "开启后2级水机器百分百成功并且输入臭氧过量也不会爆炸(注：配方百分百成功是利用ASM字节码进行修改,如果您在游玩中使用热重载关闭了这个功能,对配方的修改也不会失效!必须重启游戏才可以");
+            CATEGORY_PURIFIED_WATER, grade2WaterPurificationEnabled, "开启后2级水机器只需输入1级净化水，不消耗臭氧且百分百成功；关闭后恢复原版规则。");
 
         grade3WaterPurificationEnabled = configuration.getBoolean("Grade3WaterPurificationEnabled",
             CATEGORY_PURIFIED_WATER, grade3WaterPurificationEnabled, "开启后3级水机器输入2级水即可工作并且百分百成功，不需要任何额外自动化");

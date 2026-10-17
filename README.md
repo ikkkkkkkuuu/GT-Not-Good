@@ -43,14 +43,24 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.5.3          | [![1.5.3](https://img.shields.io/badge/release-1.5.3-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.3) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.5.4          | [![1.5.4](https://img.shields.io/badge/release-1.5.4-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.4) |         ✔️         |
 
-最新版本：[1.5.3 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.3)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.3/gtnotgood-1.5.3.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.3/gtnotgood-1.5.3-sources.jar)。
+最新版本：[1.5.4 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.4)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.4/gtnotgood-1.5.4.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.4/gtnotgood-1.5.4-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.5.3。
+1.3.4 因启动错误已撤回，请更新到 1.5.4。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.5.4 更新
+
+- 新增可合成的网页显示屏，同朝向方块可拼接为最大 16×9 的完整矩形；右键浏览网页，Esc 返回后继续在大屏显示。Windows 需安装 Edge 或 Chrome，使用独立的本机浏览器数据，暂不支持多人同步观看。
+- 显示屏默认 1080P，支持 2K、4K 和 25%～300% 网页缩放；分辨率、15～100 FPS 刷新上限、画质和静音在每块大屏的“设置”中独立保存。应用只重载当前网页，保留网址、登录数据和缩放。
+- 优化 2K、4K 解码和纹理上传，修复加载时快速缩放导致的布局回退及设置保存竞争；实际刷新率受硬件、浏览器和游戏帧率影响，不保证最低 90 FPS。详见 [显示屏说明](docs/web-screen.md)。
+- 大型工业农场支持无线多安、无线激光能源仓，仍最多使用一个特殊能源仓，不能与普通能源仓混用，不接受有线激光能源仓。
+- 二级纯水辅助开启时只消耗一级净化水，不消耗臭氧且成功率为 100%；关闭后恢复原版耗料、检查和风险。
+- 蒸汽涡轮输出提升到 64 A，蒸汽效率改为每 1 L 产出 10 EU，保留原有储汽容量并更新中英文提示。
+- 无线二合一接口终端将“不消耗物品后缀”按钮移到合成切换按钮上方。
 
 ### 1.5.3 更新
 

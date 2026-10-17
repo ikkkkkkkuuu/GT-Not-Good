@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -13,10 +14,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -59,6 +62,7 @@ import com.gtnewhorizon.cropsnh.tileentity.multi.MTEIndustrialFarm;
 import com.gtnewhorizon.cropsnh.tileentity.multi.MTEIndustrialFarmGui;
 import com.gtnewhorizon.cropsnh.utility.CropsNHUtils;
 import com.gtnewhorizon.cropsnh.utility.IFDropTable;
+import com.xyp.gtnotgood.common.machines.hatch.WirelessLaserEnergyHatch;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeIndustrialFarm;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.GTNGMachineID;
@@ -83,8 +87,10 @@ import gregtech.api.recipe.check.CheckRecipeResult;
 import gregtech.api.recipe.check.CheckRecipeResultRegistry;
 import gregtech.api.structure.error.StructureError;
 import gregtech.api.util.GTUtility;
+import gregtech.common.misc.WirelessNetworkManager;
 import tectech.thing.metaTileEntity.hatch.MTEHatchEnergyMulti;
 import tectech.thing.metaTileEntity.hatch.MTEHatchEnergyTunnel;
+import tectech.thing.metaTileEntity.hatch.MTEHatchWirelessMulti;
 
 @Mod(
     modid = "industrialfarmqa",
@@ -118,6 +124,7 @@ public final class LargeIndustrialFarmClientChecks {
             Minecraft mc = Minecraft.getMinecraft();
             mc.gameSettings.pauseOnLostFocus = false;
             mc.gameSettings.guiScale = 2;
+            mc.gameSettings.setSoundLevel(SoundCategory.MASTER, 0.0f);
             if (!started && mc.theWorld == null && mc.currentScreen != null) {
                 started = true;
                 mc.launchIntegratedServer("industrial-farm-qa-" + System.currentTimeMillis(), "Industrial Farm QA",
@@ -139,6 +146,7 @@ public final class LargeIndustrialFarmClientChecks {
             if (ticks == 1) setup(player);
             if (ticks == 40) {
                 verifyStructures(player.worldObj);
+                verifyWirelessEnergy(player.worldObj);
                 verifyCrafting(player.worldObj);
                 verifyProcessing();
                 verifyPersistence(player.worldObj);
@@ -291,6 +299,98 @@ public final class LargeIndustrialFarmClientChecks {
             "UXV provides 41772 independent seeds per type");
         beds(VoltageIndex.MV);
         valid("restore MV farm without upgrades");
+    }
+
+    private void verifyWirelessEnergy(World world) {
+        GTNGItemList[] fixtures = { GTNGItemList.WirelessLaserEnergyMV256A, GTNGItemList.WirelessLaserEnergyUV256A,
+            GTNGItemList.WirelessLaserEnergyUXV256A };
+        for (int index = 0; index < fixtures.length; index++) {
+            int id = fixtures[index].get(1).getItemDamage();
+            BaseMetaTileEntity wirelessBase = place(world, -1, 12, 0, id, ForgeDirection.NORTH);
+            require(wirelessBase.getMetaTileEntity() instanceof MTEHatchWirelessMulti,
+                "catalog wireless laser retains its native wireless energy implementation");
+            MTEHatchWirelessMulti wireless = (MTEHatchWirelessMulti) wirelessBase.getMetaTileEntity();
+            require(
+                index == 2 ? !(wireless instanceof WirelessLaserEnergyHatch)
+                    : wireless instanceof WirelessLaserEnergyHatch,
+                "project hatches and reused native UXV alias are covered");
+            valid("MV seed beds and standard borosilicate glass accept " + fixtures[index]
+                + " without overclock upgrades");
+            require(
+                wireless.getHatchType() == 2 && wireless.getConnectionType() == MTEHatch.ConnectionType.WIRELESS
+                    && machine.getExoticEnergyHatches().size() == 1
+                    && machine.getExoticEnergyHatches().contains(wireless)
+                    && machine.mEnergyHatches.isEmpty(),
+                "wireless lasers register as exotic wireless inputs without changing hatch types");
+            long powerBudget = wirelessBase.getInputVoltage() * wireless.maxWorkingAmperesIn();
+            require(
+                machine.getMaxInputEu() == powerBudget && machine.expectedOCs == 0
+                    && machine.expectedEUt == BlockSeedBed.getBaseEUt(VoltageIndex.MV),
+                "unupgraded farm reads the wireless hatch's actual power budget without forced overclocking");
+            place(world, 0, 14, 13, id, ForgeDirection.SOUTH);
+            invalid("two wireless laser energy hatches retain the one-exotic-input limit");
+            place(world, 0, 14, 13, normalEnergyId, ForgeDirection.SOUTH);
+            invalid("wireless laser and normal energy hatches remain mutually exclusive");
+            casing(0, 14, 13);
+            upgrade(0, CropsNHBlocks.blockOverclockedGrowthAccelerationUnit, VoltageIndex.ZPM);
+            valid("wireless laser input power enables normal farm overclock calculation");
+            long expectedPower = BlockSeedBed.getBaseEUt(VoltageIndex.MV);
+            int expectedOverclocks = 0;
+            while (expectedPower <= powerBudget / 4) {
+                expectedPower *= 4;
+                expectedOverclocks++;
+            }
+            require(
+                machine.expectedOCs == expectedOverclocks && machine.expectedEUt == expectedPower
+                    && machine.expectedOCs > 0,
+                "wireless voltage and amperage supply the correct overclock count and EU/t");
+            frame(0);
+            valid("wireless farm also remains valid after removing its overclock module");
+            verifyWirelessFunding(wirelessBase, wireless);
+        }
+        place(world, -1, 12, 0, laserId, ForgeDirection.NORTH);
+        invalid("ordinary wired laser energy hatches remain rejected after wireless support");
+        place(world, -1, 12, 0, multiAmpId, ForgeDirection.NORTH);
+        valid("restore the standard multi-amp farm after wireless energy checks");
+        report.append(
+            "Project MV/UV and native UXV wireless lasers form, fund, overclock and power the farm correctly.\n");
+    }
+
+    private void verifyWirelessFunding(BaseMetaTileEntity wirelessBase, MTEHatchWirelessMulti wireless) {
+        UUID owner = UUID.randomUUID();
+        wirelessBase.setOwnerName(base.getOwnerName());
+        wirelessBase.setOwnerUuid(owner);
+        wireless.setEUVar(0);
+        WirelessNetworkManager.strongCheckOrAddUser(owner);
+        BigInteger credit = BigInteger.valueOf(wireless.eu_transferred_per_operation_long)
+            .multiply(BigInteger.valueOf(3));
+        WirelessNetworkManager.setUserEU(owner, credit);
+        wireless.onFirstTick(wirelessBase);
+        long funded = wirelessBase.getStoredEU();
+        require(
+            owner.equals(wireless.owner_uuid) && funded > 0
+                && WirelessNetworkManager.getUserEU(owner).equals(credit.subtract(BigInteger.valueOf(funded))),
+            "placed wireless hatch debits its real owner's network and fills its physical EU buffer");
+        BigInteger networkBefore = WirelessNetworkManager.getUserEU(owner);
+        long demand = machine.expectedEUt;
+        require(
+            machine.drainEnergyInput(demand) && wirelessBase.getStoredEU() == funded - demand
+                && WirelessNetworkManager.getUserEU(owner).equals(networkBefore),
+            "the real farm energy drain consumes EU from its registered wireless hatch");
+        long beforeRefill = wirelessBase.getStoredEU();
+        wireless.tryFetchingEnergy();
+        long refilled = wirelessBase.getStoredEU() - beforeRefill;
+        require(
+            refilled > 0
+                && WirelessNetworkManager.getUserEU(owner).equals(networkBefore.subtract(BigInteger.valueOf(refilled))),
+            "wireless refills conserve network and buffered EU exactly");
+        WirelessNetworkManager.setUserEU(owner, BigInteger.ZERO);
+        wireless.setEUVar(0);
+        wireless.tryFetchingEnergy();
+        require(
+            wirelessBase.getStoredEU() == 0 && !machine.drainEnergyInput(demand)
+                && WirelessNetworkManager.getUserEU(owner).signum() == 0,
+            "an unfunded wireless hatch cannot power the farm");
     }
 
     private void verifyProcessing() throws Exception {

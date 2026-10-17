@@ -82,18 +82,14 @@ public class GTNGConfigGuiFactory implements IModGuiFactory {
         return null;
     }
 
-    /**
-     * Saves the existing Configuration objects after Forge applies the Done button's edits.
-     * Refreshes only the client taskbar option; gameplay fields, including an integrated server's fields, stay fixed.
-     *
-     * @param event configuration change accepted by the Forge GUI
-     */
+    /** Saves accepted edits and refreshes live client options. */
     @SubscribeEvent
     public void onConfigChanged(OnConfigChangedEvent event) {
         if (ModList.GTNotGood.getID().equals(event.modID)) {
             Config.getConfiguration().save();
             MainConfig.getConfiguration().save();
             Config.refreshClientTaskbarButton();
+            Config.refreshWebScreenOptions();
         }
     }
 

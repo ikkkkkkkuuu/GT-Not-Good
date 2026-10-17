@@ -10,7 +10,7 @@
 
 - Release notes must summarize all accumulated changes since the previous published release tag through the new release, including work across earlier conversations and commits plus changes being committed now. Inspect the full Git log and diff for that range and summarize the resulting features, improvements, and fixes in Chinese, consolidating duplicates and excluding reverted changes. Never limit the notes to the current conversation, latest commit, or most recent feature, even if a long time has passed since the user last said “提交并更新”.
 
-- Agent-launched Windows test clients must stay transparent, click-through, and hidden from the taskbar. Use the scoped helper in `scripts/qa/HideFactoryClient.ps1` for factory QA; never change windows belonging to the user's normal game client.
+- Agent-launched Windows test clients must stay muted, transparent, click-through, and hidden from the taskbar. Mute both Minecraft and any browser/media subprocesses used by QA. Use the scoped helper in `scripts/qa/HideFactoryClient.ps1` for factory QA; never change windows belonging to the user's normal game client.
 
 - On the current GTNH/AE2 version, every processing recipe containing fluids uses the Ultimate Encoded Pattern. Read native fluid inputs from `MEInventoryCrafting#getAEStackInSlot`; its ItemStack view contains fluid packets, not legacy AE2FC fluid drops. Test fixtures must encode native fluid NBT in Ultimate Encoded Patterns.
 

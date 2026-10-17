@@ -1,0 +1,162 @@
+// gradlew.bat -I scripts/web-screen-qa.init.gradle runClient17 --no-configuration-cache
+gradle.beforeProject { project ->
+    if (project == gradle.rootProject) project.layout.buildDirectory.set(project.file('.gradle/web-screen-qa-build'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def mainClasses = root.layout.buildDirectory.dir('classes/java/main')
+    def testClasses = root.layout.buildDirectory.dir('classes/java/test')
+    def mainResources = root.layout.buildDirectory.dir('resources/main')
+    def testResources = root.layout.buildDirectory.dir('resources/test')
+    def mixinSrg = root.layout.buildDirectory.file('tmp/mixins/mixins.srg')
+    def mixinRefmap = root.layout.buildDirectory.file('tmp/mixins/mixins.' + root.findProperty('modId') + '.refmap.json')
+    def compileMain = root.tasks.named('compileJava')
+    def compileTest = root.tasks.named('compileTestJava')
+    compileMain.configure {
+        destinationDirectory.set(mainClasses)
+        options.generatedSourceOutputDirectory.set(root.layout.buildDirectory.dir('generated/sources/annotationProcessor/java/main'))
+        options.headerOutputDirectory.set(root.layout.buildDirectory.dir('generated/sources/headers/java/main'))
+        options.compilerArgumentProviders.each { provider ->
+            if (provider.metaClass.respondsTo(provider, 'getOutSrgFile')) provider.getOutSrgFile().set(mixinSrg)
+            if (provider.metaClass.respondsTo(provider, 'getOutRefMapFile')) provider.getOutRefMapFile().set(mixinRefmap)
+        }
+        outputs.files(mixinSrg, mixinRefmap)
+        doFirst {
+            mixinSrg.get().asFile.parentFile.mkdirs()
+            logger.lifecycle('WEB_SCREEN_QA_BUILD compileJava=' + destinationDirectory.get().asFile)
+            logger.lifecycle('WEB_SCREEN_QA_BUILD mainClasses=' + root.sourceSets.main.output.classesDirs.files)
+            logger.lifecycle('WEB_SCREEN_QA_BUILD mainResources=' + root.sourceSets.main.output.resourcesDir)
+            logger.lifecycle('WEB_SCREEN_QA_BUILD generatedSources=' + options.generatedSourceOutputDirectory.get().asFile)
+            options.compilerArgumentProviders.each { provider ->
+                def paths = provider.asArguments().findAll {
+                    it.startsWith('-AreobfSrgFile=') || it.startsWith('-AoutSrgFile=') || it.startsWith('-AoutRefMapFile=')
+                }
+                logger.lifecycle('WEB_SCREEN_QA_BUILD compilerArgumentProvider=' + provider.class.name + ' ' + paths)
+            }
+        }
+    }
+    compileTest.configure {
+        destinationDirectory.set(testClasses)
+        options.generatedSourceOutputDirectory.set(root.layout.buildDirectory.dir('generated/sources/annotationProcessor/java/test'))
+        options.headerOutputDirectory.set(root.layout.buildDirectory.dir('generated/sources/headers/java/test'))
+        doFirst {
+            logger.lifecycle('WEB_SCREEN_QA_BUILD compileTestJava=' + destinationDirectory.get().asFile)
+            logger.lifecycle('WEB_SCREEN_QA_BUILD testClasses=' + root.sourceSets.test.output.classesDirs.files)
+            logger.lifecycle('WEB_SCREEN_QA_BUILD testResources=' + root.sourceSets.test.output.resourcesDir)
+            logger.lifecycle('WEB_SCREEN_QA_BUILD generatedTestSources=' + options.generatedSourceOutputDirectory.get().asFile)
+        }
+    }
+    root.sourceSets.main.output.classesDirs.setFrom(compileMain.flatMap { it.destinationDirectory })
+    root.sourceSets.test.output.classesDirs.setFrom(compileTest.flatMap { it.destinationDirectory })
+    root.sourceSets.main.output.resourcesDir = mainResources.get().asFile
+    root.sourceSets.test.output.resourcesDir = testResources.get().asFile
+    root.tasks.named('processResources').configure {
+        destinationDir = mainResources.get().asFile
+        doFirst { logger.lifecycle('WEB_SCREEN_QA_BUILD processResources=' + destinationDir) }
+    }
+    root.tasks.named('processTestResources').configure {
+        destinationDir = testResources.get().asFile
+    }
+    def requiredBrowserClasses = [
+        'com/xyp/gtnotgood/client/webscreen/ChromiumSession.class',
+        'com/xyp/gtnotgood/client/webscreen/WebScreenTexture.class',
+        'com/xyp/gtnotgood/client/webscreen/GuiWebScreenSettings.class',
+        'com/xyp/gtnotgood/client/webscreen/WebScreenSettings.class'
+    ]
+    ['shadowJar', 'reobfJar'].each { taskName ->
+        root.tasks.named(taskName).configure {
+            doLast {
+                def archive = new java.util.zip.ZipFile(archiveFile.get().asFile)
+                try {
+                    def missing = requiredBrowserClasses.findAll { archive.getEntry(it) == null }
+                    if (!missing.empty) throw new GradleException(taskName + ' is missing browser classes: ' + missing)
+                    logger.lifecycle('WEB_SCREEN_QA_BUILD verified=' + archiveFile.get().asFile)
+                } finally { archive.close() }
+            }
+        }
+    }
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.isFile()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String)
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/WebScreenClientChecks.java',
+            'src/test/java/com/xyp/gtnotgood/common/blocks/webscreen/WebScreenAddressTest.java',
+            'src/test/java/com/xyp/gtnotgood/common/blocks/webscreen/WebScreenShapeTest.java'))
+    }
+    root.spotless.java {
+        target 'scripts/qa/WebScreenClientChecks.java',
+            'src/main/java/com/xyp/gtnotgood/client/webscreen/*.java',
+            'src/main/java/com/xyp/gtnotgood/common/blocks/webscreen/*.java',
+            'src/main/java/com/xyp/gtnotgood/ClientProxy.java',
+            'src/main/java/com/xyp/gtnotgood/client/config/GTNGConfigGuiFactory.java',
+            'src/main/java/com/xyp/gtnotgood/config/Config.java',
+            'src/main/java/com/xyp/gtnotgood/loader/BlockLoader.java',
+            'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/WebScreenRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+            'src/test/java/com/xyp/gtnotgood/common/blocks/webscreen/*.java'
+    }
+    def mainSnapshot = root.layout.buildDirectory.dir('web-screen-qa-runtime/main')
+    def testSnapshot = root.layout.buildDirectory.dir('web-screen-qa-runtime/test')
+    def copyMain = root.tasks.register('snapshotWebScreenMain', Sync) {
+        dependsOn root.tasks.named('classes')
+        if (Boolean.getBoolean('gtng.webscreen.qa.baselineOnly')) {
+            from root.file('build/web-screen-qa/baseline-main')
+        } else from root.sourceSets.main.output
+        into mainSnapshot
+    }
+    def copyTest = root.tasks.register('snapshotWebScreenTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/WebScreenClientChecks*.class'
+        into testSnapshot
+    }
+    def output = root.file('build/web-screen-qa')
+    def result = new File(output, 'result.txt')
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn copyMain, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainSnapshot, testSnapshot)
+        classpath += root.configurations.testRuntimeClasspath.filter {
+            it.name.startsWith('jvmdowngrader-java-api-')
+        }
+        workingDir root.file('run/web-screen-check')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.webscreen.qa', 'true'
+        systemProperty 'gtng.webscreen.qa.output', output.absolutePath
+        systemProperty 'gtng.webscreen.qa.bilibili', System.getProperty('gtng.webscreen.qa.bilibili', 'false')
+        systemProperty 'gtng.webscreen.qa.recipeOnly', System.getProperty('gtng.webscreen.qa.recipeOnly', 'false')
+        systemProperty 'gtng.webscreen.qa.resolutionOnly', System.getProperty('gtng.webscreen.qa.resolutionOnly', 'false')
+        systemProperty 'gtng.webscreen.qa.baselineOnly', System.getProperty('gtng.webscreen.qa.baselineOnly', 'false')
+        systemProperty 'gtng.webscreen.qa.preset', System.getProperty('gtng.webscreen.qa.preset', '1080p')
+        systemProperty 'gtng.webscreen.qa.benchmarkPresets', System.getProperty('gtng.webscreen.qa.benchmarkPresets', '')
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1280', '--height', '900'
+        notCompatibleWithConfigurationCache('Opt-in web display client checks')
+        doFirst {
+            workingDir.mkdirs()
+            output.mkdirs()
+            java.nio.file.Files.deleteIfExists(result.toPath())
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:1\npauseOnLostFocus:false\nrenderDistance:4\nfov:0.0\nsoundCategory_master:0.0\n', 'UTF-8')
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            if (!result.exists() || !result.text.startsWith('PASS')) {
+                throw new GradleException('Web display QA failed; inspect WEB_SCREEN_QA in ' +
+                    workingDir + '/logs/fml-client-latest.log.')
+            }
+        }
+    }
+}

@@ -22,6 +22,12 @@ https://github.com/GTNewHorizons/CropsNH/blob/47debb72b230382c91aa256b92d715062c
 Changes: a separate controller with fixed maximum dimensions (5 x 4 x 14),
 upgrade modules independent of seed-bed tier, default multi-amp energy support,
 and fixed borosilicate glass without a glass-based energy-tier limit.
+Native `MultiAmpEnergy` accepts only hatch type 1, rejecting wireless type 2
+above 64 A. The controller accepts `MTEHatchWirelessMulti` inputs, including local
+`WirelessLaserEnergyHatch` subclasses and native UXV catalog entries. These use
+the native `WIRELESS` connection type, without an overclock upgrade prerequisite
+or glass voltage cap. At most one exotic energy hatch is allowed, without mixing
+normal energy hatches; ordinary `LASER` hatches are rejected.
 The controller also provides independent 12-fold capacity per seed type, coexistence of growth
 and overclock modules, perfect overclocks with fourfold power and throughput,
 tier-scaled module effects, automatic grouping of up to 36 seed types, and

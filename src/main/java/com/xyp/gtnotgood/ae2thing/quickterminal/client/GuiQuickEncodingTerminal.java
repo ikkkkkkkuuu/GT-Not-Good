@@ -541,14 +541,14 @@ public final class GuiQuickEncodingTerminal extends GuiPatternTerm implements II
             button.yPosition = y;
             y += 18;
         }
-        if (switchToCraftingButton != null) {
-            switchToCraftingButton.xPosition = interfaceColumnX;
-            switchToCraftingButton.yPosition = y;
-            y += 18;
-        }
         if (appendSuffixButton != null) {
             appendSuffixButton.xPosition = interfaceColumnX;
             appendSuffixButton.yPosition = y;
+            y += 18;
+        }
+        if (switchToCraftingButton != null) {
+            switchToCraftingButton.xPosition = interfaceColumnX;
+            switchToCraftingButton.yPosition = y;
         }
         if (craftingStatusButton != null) {
             craftingStatusButton.xPosition = guiLeft + PATTERN_PANEL_X - 25;

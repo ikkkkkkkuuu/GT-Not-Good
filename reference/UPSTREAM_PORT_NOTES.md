@@ -1052,6 +1052,12 @@ Reference checkouts remain outside build inputs.
   Adapted structure, validation and farming calculations fix the maximum dimensions
   at 5 x 4 x 14, accept upgrades independently of seed-bed tier, support multi-amp
   energy by default and use fixed borosilicate glass without an energy-tier limit.
+  Native `MultiAmpEnergy` accepts only hatch type 1, rejecting wireless type 2
+  above 64 A. The controller accepts `MTEHatchWirelessMulti` inputs, including
+  local `WirelessLaserEnergyHatch` subclasses and native UXV catalog entries.
+  These use the native `WIRELESS` connection type, without an overclock upgrade
+  prerequisite or glass voltage cap. The limit remains one exotic energy hatch,
+  with no normal/exotic mixing; ordinary `LASER` hatches are rejected.
   Up to 36 seed types are grouped automatically without soil requirements.
   Each type independently holds 12 times the native seed-bed capacity and uses
   its own two environment cards. Storage contains 108 slots: 36 sets of one seed

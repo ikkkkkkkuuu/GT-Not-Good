@@ -30,6 +30,7 @@ import com.xyp.gtnotgood.client.text.EffectTextRenderer;
 import com.xyp.gtnotgood.client.text.TextEffectPreferences;
 import com.xyp.gtnotgood.client.text.effect.BuiltinTextEffects;
 import com.xyp.gtnotgood.client.text.preview.TextEffectPreviewCommand;
+import com.xyp.gtnotgood.client.webscreen.ClientWebScreens;
 import com.xyp.gtnotgood.client.wireless.WirelessMonitorHud;
 import com.xyp.gtnotgood.client.wireless.WirelessMonitorPreferences;
 import com.xyp.gtnotgood.client.wirelessfrequency.WirelessCardInput;
@@ -108,6 +109,7 @@ public class ClientProxy extends CommonProxy {
         registerPackagedCoreRenderers();
         registerPreviewCommands();
         registerBlockRenderers();
+        ClientWebScreens.register();
         KeyBindManager.registerAllKeyBinds();
         RadialMenuMod.init();
         WirelessCardInput.register();

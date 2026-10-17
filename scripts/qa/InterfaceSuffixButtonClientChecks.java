@@ -107,8 +107,8 @@ final class InterfaceSuffixButtonClientChecks {
         require(button.visible && button.isVisible() && button.enabled, "suffix button is visible and enabled");
         require(button.width == 16 && button.height == 16 && button.getWidth() == 16 && button.getHeight() == 16,
             "suffix button uses a 16 by 16 hitbox and tooltip area");
-        require(button.xPosition == switchButton.xPosition && button.yPosition == switchButton.yPosition + 18,
-            "suffix button is below the interface column crafting button");
+        require(button.xPosition == switchButton.xPosition && button.yPosition + 18 == switchButton.yPosition,
+            "suffix button is above the interface column crafting button");
         require(button.xPosition >= 0 && button.yPosition >= 0
             && button.xPosition + 16 <= gui.width
             && button.yPosition + 16 <= gui.height, "suffix button stays within the GUI viewport");

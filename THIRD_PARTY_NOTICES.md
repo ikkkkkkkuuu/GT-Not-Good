@@ -127,8 +127,13 @@ from GTNewHorizons/CropsNH `2.0.129`, commit
 LGPL-3.0-or-later and is outside this project's general MIT grant. It adds independent
 12-fold capacity per seed type, compatible acceleration and overclock modules, perfect
 overclocking, tier-scaled module bonuses, automatic grouping of up to 36 seed
-types, and resource use based on planted seeds. Crops require no soil. Storage
-contains 108 slots: each seed type has its own seed slot and two independent
+types, and resource use based on planted seeds. Wireless multi-amp input hatches
+above 64 A bypass the native adder's hatch-type restriction, including this
+addon's wireless laser hatches and native UXV catalog entries. No overclock
+upgrade or glass voltage cap applies. At most one exotic energy hatch is allowed,
+without normal energy hatches; ordinary laser hatches are rejected.
+Crops require no soil. Storage contains 108 slots: each seed type has its own
+seed slot and two independent
 environment-card slots. Older shared cards stay with the saved selected type
 during migration; per-type cards are retained and old soil is returned safely.
 The GUI inherits CropsNH's native layout, controls and textures, removes only

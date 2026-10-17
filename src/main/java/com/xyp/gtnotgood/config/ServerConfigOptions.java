@@ -48,7 +48,7 @@ public final class ServerConfigOptions {
         add(options, true, "黑洞压缩机", "BlackHoleCompressorStabilityLock", "blackHoleCompressorStabilityLock", true);
         add(options, true, "净化水", "Water", "water", false);
         add(options, true, "净化水", "Grade1WaterPurificationEnabled", "grade1WaterPurificationEnabled", true);
-        add(options, true, "净化水", "Grade2WaterPurificationEnabled", "grade2WaterPurificationEnabled", false);
+        add(options, true, "净化水", "Grade2WaterPurificationEnabled", "grade2WaterPurificationEnabled", true);
         add(options, true, "净化水", "Grade3WaterPurificationEnabled", "grade3WaterPurificationEnabled", true);
         add(options, true, "净化水", "Grade4WaterPurificationEnabled", "grade4WaterPurificationEnabled", true);
         add(options, true, "净化水", "Grade5WaterPurificationEnabled", "grade5WaterPurificationEnabled", true);

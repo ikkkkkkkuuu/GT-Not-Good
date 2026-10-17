@@ -54,7 +54,7 @@ gradle.projectsEvaluated {
         doFirst {
             workingDir.mkdirs()
             root.file('build/industrial-farm-qa').mkdirs()
-            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\n', 'UTF-8')
             java.nio.file.Files.deleteIfExists(root.file('build/industrial-farm-qa/result.txt').toPath())
             if (System.getProperty('os.name').startsWith('Windows')) {
                 new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',

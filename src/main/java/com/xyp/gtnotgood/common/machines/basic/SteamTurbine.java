@@ -71,45 +71,40 @@ public class SteamTurbine extends MTEBasicGenerator implements IAddGregtechLogo 
             // # zh_CN 使用蒸汽发电，无污染
             StatCollector.translateToLocal("Tooltip_SteamTurbine_00"),
             // #tr Tooltip_SteamTurbine_01
-            // # Base fuel consumption: 2 L steam per EU
-            // # zh_CN 基础燃料消耗：每 EU 消耗 2 L 蒸汽
+            // # Steam consumption: 1 L per 10 EU
+            // # zh_CN 蒸汽消耗：每 10 EU 消耗 1 L 蒸汽
             StatCollector.translateToLocal("Tooltip_SteamTurbine_01"),
             // #tr Tooltip_SteamTurbine_02
             // # Fuel efficiency: %s%%
             // # zh_CN 燃料效率：%s%%
-            StatCollector.translateToLocalFormatted("Tooltip_SteamTurbine_02", 800 / getEfficiency()),
+            StatCollector.translateToLocalFormatted("Tooltip_SteamTurbine_02", getEfficiency()),
             // #tr Tooltip_SteamTurbine_03
             // # Steam capacity: %s L
             // # zh_CN 蒸汽容量：%s L
             StatCollector.translateToLocalFormatted("Tooltip_SteamTurbine_03",
                 NumberFormatUtil.formatNumber(getCapacity())),
             // #tr tooltip.steam_turbine.output
-            // # Outputs up to %s EU/t at 32 A through the front face
-            // # zh_CN 从正面输出，最高 %s EU/t，32 A
+            // # Outputs up to %s EU/t at %s A through the front face
+            // # zh_CN 从正面输出，最高 %s EU/t，%s A
             StatCollector.translateToLocalFormatted("tooltip.steam_turbine.output",
-                NumberFormatUtil.formatNumber(V[mTier] * maxAmperesOut())) };
+                NumberFormatUtil.formatNumber(V[mTier] * maxAmperesOut()), maxAmperesOut()) };
     }
 
-    /**
-     * Stores 2 L/EU for the nominal energy buffer so the 10-tick fuel cycle can sustain 32 A.
-     *
-     * @return capacity in liters, retaining the original tier capacity as a lower bound
-     * @see #maxEUStore()
-     */
     @Override
     public int getCapacity() {
-        long steamForEnergyBuffer = V[mTier] * 1280L * 2L;
-        return (int) Math.min(Integer.MAX_VALUE, Math.max(640000L * mTier, steamForEnergyBuffer));
+        // Preserve the existing tanks when increasing fuel efficiency.
+        long legacySteamCapacity = V[mTier] * 2560L;
+        return (int) Math.min(Integer.MAX_VALUE, Math.max(640000L * mTier, legacySteamCapacity));
     }
 
     @Override
     public int getEfficiency() {
-        return 8;
+        return 2000;
     }
 
     @Override
     public int consumedFluidPerOperation(FluidStack aLiquid) {
-        return getEfficiency();
+        return 1;
     }
 
     @Override
@@ -120,7 +115,7 @@ public class SteamTurbine extends MTEBasicGenerator implements IAddGregtechLogo 
     @Override
     public int getFuelValue(FluidStack aLiquid) {
         if (aLiquid == null) return 0;
-        return GTModHandler.isAnySteam(aLiquid) ? 4 : 0;
+        return GTModHandler.isAnySteam(aLiquid) ? getEfficiency() / 200 : 0;
     }
 
     @Override
@@ -198,7 +193,7 @@ public class SteamTurbine extends MTEBasicGenerator implements IAddGregtechLogo 
 
     @Override
     public long maxAmperesOut() {
-        return 32;
+        return 64;
     }
 
     @Override
