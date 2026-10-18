@@ -43,14 +43,20 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.5.6          | [![1.5.6](https://img.shields.io/badge/release-1.5.6-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.6) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.5.7          | [![1.5.7](https://img.shields.io/badge/release-1.5.7-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.7) |         ✔️         |
 
-最新版本：[1.5.6 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.6)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.6/gtnotgood-1.5.6.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.6/gtnotgood-1.5.6-sources.jar)。
+最新版本：[1.5.7 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.7)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.7/gtnotgood-1.5.7.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.7/gtnotgood-1.5.7-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.5.6。
+1.3.4 因启动错误已撤回，请更新到 1.5.7。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.5.7 更新
+
+- 优化原版工业蜂箱在大量蜂后下的库存界面、状态查询与产物结算，保留分页、遗传数据、原有产量和小数进度。
+- 原版工业蜂箱与本模组大型工业蜂箱的 Waila 仅同步前三项产物预览，保留完整总数，减少准星悬停查看时的数据开销。
+- 新增 GuideNH 中英文教程，覆盖无线封包样板供应器、ME 舱室与虚拟模具、AE 总线／接口／终端及通量电网；附可旋转的三维预览。安装 GuideNH 后悬停相关物品并按住 G 打开。
 
 ### 1.5.6 更新
 

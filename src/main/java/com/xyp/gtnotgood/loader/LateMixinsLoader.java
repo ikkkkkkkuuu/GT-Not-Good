@@ -181,7 +181,9 @@ public class LateMixinsLoader implements ILateMixinLoader {
         }
 
         if (loadedMods.contains(ModList.GregTech.getID()) && loadedMods.contains(ModList.Forestry.getID())) {
-            addAll(list, "gregtech.MixinGTBeeMutation");
+            addAll(list, "gregtech.MixinGTBeeMutation", "gregtech.MegaApiaryStorageMixin",
+                "gregtech.MegaApiaryGuiMixin", "gregtech.MegaApiaryDropAccessor", "gregtech.MegaApiaryBeeDropsMixin",
+                "gregtech.MegaApiaryDropScanScopeMixin", "gregtech.MegaApiaryWailaMixin");
         }
 
         if (loadedMods.contains(ModList.CropsNH.getID())) {

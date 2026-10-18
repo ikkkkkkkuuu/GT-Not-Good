@@ -1,0 +1,86 @@
+// gradlew.bat -I scripts/packaged-guide-qa.init.gradle runClient17 -PguidePage=ae-devices -PguideLanguage=zh_CN --no-configuration-cache
+gradle.beforeProject { project ->
+    if (project == gradle.rootProject) {
+        def suite = ['ae-devices': 'ae-devices-guide-qa', 'me-hatches': 'me-hatches-guide-qa',
+            'flux-network': 'flux-network-guide-qa'][project.findProperty('guidePage')] ?: 'packaged-guide-qa'
+        project.layout.buildDirectory.set(project.file('.gradle/' + suite + '-build'))
+    }
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def language = root.findProperty('guideLanguage') ?: 'zh_CN'
+    if (!(language in ['zh_CN', 'en_US'])) throw new GradleException('guideLanguage must be zh_CN or en_US')
+    def page = root.findProperty('guidePage') ?: 'packaged-pattern-provider'
+    if (!(page in ['packaged-pattern-provider', 'me-hatches', 'ae-devices', 'flux-network'])) {
+        throw new GradleException('Unsupported guidePage: ' + page)
+    }
+    def suite = ['ae-devices': 'ae-devices-guide-qa', 'me-hatches': 'me-hatches-guide-qa',
+        'flux-network': 'flux-network-guide-qa'][page] ?: 'packaged-guide-qa'
+    def output = root.file('build/' + suite + '/' + language)
+    def result = new File(output, 'result.txt')
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.isFile()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('testImplementation', pack.gtnhdev('GuideNH') as String) { transitive = false }
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String) { transitive = false }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/PackagedGuideClientChecks.java'))
+    }
+    root.spotless.java {
+        target 'scripts/qa/PackagedGuideClientChecks.java'
+    }
+    def runtimeJar = root.tasks.register('jarPackagedGuideQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'gtnotgood-packaged-guide-qa.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('packaged-guide-qa-runtime')
+    }
+    def testSnapshot = root.layout.buildDirectory.dir('packaged-guide-qa-runtime/test')
+    def copyTest = root.tasks.register('snapshotPackagedGuideTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/PackagedGuideClientChecks*.class'
+        into testSnapshot
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn runtimeJar, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(runtimeJar.flatMap { it.archiveFile }, testSnapshot)
+        classpath += root.configurations.testRuntimeClasspath.filter {
+            it.name.startsWith('jvmdowngrader-java-api-')
+        }
+        workingDir root.file('run/' + suite + '/' + language)
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.packagedGuide.qa', 'true'
+        systemProperty 'gtng.packagedGuide.qa.language', language
+        systemProperty 'gtng.packagedGuide.qa.page', page
+        systemProperty 'gtng.packagedGuide.qa.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1500', '--height', '1000'
+        notCompatibleWithConfigurationCache('Opt-in packaged provider GuideNH client checks')
+        doFirst {
+            workingDir.mkdirs()
+            output.mkdirs()
+            java.nio.file.Files.deleteIfExists(result.toPath())
+            new File(workingDir, 'options.txt').setText(
+                'lang:' + language + '\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\n', 'UTF-8')
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', workingDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('Packaged guide QA failed; inspect PACKAGED_GUIDE_QA in ' +
+                    workingDir + '/logs/fml-client-latest.log.')
+            }
+        }
+    }
+}

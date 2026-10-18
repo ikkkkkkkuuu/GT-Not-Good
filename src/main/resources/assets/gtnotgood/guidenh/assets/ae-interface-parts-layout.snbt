@@ -1,0 +1,18 @@
+{
+  size: [7, 3, 3],
+  palette: [{Name: "appliedenergistics2:tile.BlockCableBus"}],
+  blocks: [
+    {pos: [1, 1, 1], state: 0, nbt: {id: "BlockCableBus", __guidenh_encoded_keys_v1: [
+      {k: "def:6", v: {id: "appliedenergistics2:item.ItemMultiPart", Count: 1b, Damage: 16s}},
+      {k: "extra:6", v: {}},
+      {k: "def:2", v: {id: "gtnotgood:stock_io_interface_part", Count: 1b, Damage: 0s}},
+      {k: "extra:2", v: {}}
+    ]}},
+    {pos: [5, 1, 1], state: 0, nbt: {id: "BlockCableBus", __guidenh_encoded_keys_v1: [
+      {k: "def:6", v: {id: "appliedenergistics2:item.ItemMultiPart", Count: 1b, Damage: 16s}},
+      {k: "extra:6", v: {}},
+      {k: "def:2", v: {id: "gtnotgood:large_interface_part", Count: 1b, Damage: 0s}},
+      {k: "extra:2", v: {}}
+    ]}}
+  ]
+}

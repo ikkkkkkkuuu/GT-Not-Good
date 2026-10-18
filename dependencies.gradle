@@ -91,6 +91,7 @@ dependencies {
     devOnlyNonPublishable(elytraModpackVersion.gtnhdev("BetterBuildersWands") as String)
     compileOnlyApi(elytraModpackVersion.gtnhdev("NewHorizonsCoreMod") as String)
     devOnlyNonPublishable(elytraModpackVersion.gtnhdev("BlockRenderer6343") as String)
+    devOnlyNonPublishable(elytraModpackVersion.gtnhdev("GuideNH") as String) { transitive = false }
 
 
 

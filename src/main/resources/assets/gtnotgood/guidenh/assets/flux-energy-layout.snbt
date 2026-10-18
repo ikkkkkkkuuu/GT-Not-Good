@@ -1,0 +1,14 @@
+{
+  size: [7, 2, 3],
+  palette: [
+    {Name: "gregtech:gt.blockmachines"},
+    {Name: "gtnotgood:flux_plug"},
+    {Name: "gtnotgood:flux_point"}
+  ],
+  blocks: [
+    {pos: [0, 1, 1], state: 0, meta: 161, nbt: {mFacing: 5s}},
+    {pos: [1, 1, 1], state: 1},
+    {pos: [5, 1, 1], state: 2},
+    {pos: [6, 1, 1], state: 0, meta: 281, nbt: {mFacing: 3s, mMainFacing: 2}}
+  ]
+}
