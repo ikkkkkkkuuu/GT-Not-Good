@@ -43,14 +43,19 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.5.5          | [![1.5.5](https://img.shields.io/badge/release-1.5.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.5) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.5.6          | [![1.5.6](https://img.shields.io/badge/release-1.5.6-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.6) |         ✔️         |
 
-最新版本：[1.5.5 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.5)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.5/gtnotgood-1.5.5.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.5/gtnotgood-1.5.5-sources.jar)。
+最新版本：[1.5.6 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.6)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.6/gtnotgood-1.5.6.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.6/gtnotgood-1.5.6-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.5.5。
+1.3.4 因启动错误已撤回，请更新到 1.5.6。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.5.6 更新
+
+- 修复安装 LogisticsPipes 时，在独立服务端放置网页显示屏立即栈溢出崩溃的问题；保留显示屏标识、朝向、拼接与存档同步。
+- 补充初始化回归测试，并在 GTNH 2.9.0-RC-1 服务端验证四向放置、4×2 拼接屏和关服重启读档。
 
 ### 1.5.5 更新
 

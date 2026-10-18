@@ -49,10 +49,9 @@ public final class TileWebScreen extends TileEntity {
     @Override
     public void validate() {
         super.validate();
+        // Block notifications here can re-enter tile creation before chunk registration.
         if (worldObj != null && !worldObj.isRemote && screenId == null) {
             screenId = UUID.randomUUID();
-            markDirty();
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
     }
 

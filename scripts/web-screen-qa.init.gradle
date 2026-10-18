@@ -84,7 +84,8 @@ gradle.projectsEvaluated {
     root.tasks.named('compileTestJava').configure {
         setSource(root.files('scripts/qa/WebScreenClientChecks.java',
             'src/test/java/com/xyp/gtnotgood/common/blocks/webscreen/WebScreenAddressTest.java',
-            'src/test/java/com/xyp/gtnotgood/common/blocks/webscreen/WebScreenShapeTest.java'))
+            'src/test/java/com/xyp/gtnotgood/common/blocks/webscreen/WebScreenShapeTest.java',
+            'src/test/java/com/xyp/gtnotgood/common/blocks/webscreen/TileWebScreenValidationTest.java'))
     }
     root.spotless.java {
         target 'scripts/qa/WebScreenClientChecks.java',

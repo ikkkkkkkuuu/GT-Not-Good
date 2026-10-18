@@ -1,0 +1,62 @@
+// Build a QA-only jar for a copied dedicated server containing its real LogisticsPipes version.
+gradle.beforeProject { project ->
+    if (project == gradle.rootProject) project.layout.buildDirectory.set(project.file('.gradle/web-screen-server-qa-build'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def compileMain = root.tasks.named('compileJava')
+    def compileTest = root.tasks.named('compileTestJava')
+    def mainResources = root.layout.buildDirectory.dir('resources/main')
+    def testResources = root.layout.buildDirectory.dir('resources/test')
+    def mixinSrg = root.layout.buildDirectory.file('tmp/mixins/mixins.srg')
+    def mixinRefmap = root.layout.buildDirectory.file('tmp/mixins/mixins.' + root.findProperty('modId') + '.refmap.json')
+    compileMain.configure {
+        destinationDirectory.set(root.layout.buildDirectory.dir('classes/java/main'))
+        options.generatedSourceOutputDirectory.set(root.layout.buildDirectory.dir('generated/sources/annotationProcessor/java/main'))
+        options.headerOutputDirectory.set(root.layout.buildDirectory.dir('generated/sources/headers/java/main'))
+        options.compilerArgumentProviders.each { provider ->
+            if (provider.metaClass.respondsTo(provider, 'getOutSrgFile')) provider.getOutSrgFile().set(mixinSrg)
+            if (provider.metaClass.respondsTo(provider, 'getOutRefMapFile')) provider.getOutRefMapFile().set(mixinRefmap)
+        }
+        outputs.files(mixinSrg, mixinRefmap)
+        doFirst { mixinSrg.get().asFile.parentFile.mkdirs() }
+    }
+    compileTest.configure {
+        setSource(root.files('scripts/qa/WebScreenServerChecks.java'))
+        destinationDirectory.set(root.layout.buildDirectory.dir('classes/java/test'))
+        options.generatedSourceOutputDirectory.set(root.layout.buildDirectory.dir('generated/sources/annotationProcessor/java/test'))
+        options.headerOutputDirectory.set(root.layout.buildDirectory.dir('generated/sources/headers/java/test'))
+    }
+    root.sourceSets.main.output.classesDirs.setFrom(compileMain.flatMap { it.destinationDirectory })
+    root.sourceSets.test.output.classesDirs.setFrom(compileTest.flatMap { it.destinationDirectory })
+    root.sourceSets.main.output.resourcesDir = mainResources.get().asFile
+    root.sourceSets.test.output.resourcesDir = testResources.get().asFile
+    root.tasks.named('processResources').configure { destinationDir = mainResources.get().asFile }
+    root.tasks.named('processTestResources').configure { destinationDir = testResources.get().asFile }
+    ['jar', 'shadowJar'].each { taskName ->
+        root.tasks.named(taskName).configure {
+            dependsOn root.tasks.named('testClasses')
+            from root.sourceSets.test.output
+        }
+    }
+    root.tasks.named('jar').configure { archiveFileName = 'gtnotgood-web-screen-server-qa-preshadow.jar' }
+    root.tasks.named('shadowJar').configure { archiveFileName = 'gtnotgood-web-screen-server-qa-dev.jar' }
+    root.tasks.named('reobfJar').configure {
+        archiveFileName = 'gtnotgood-web-screen-server-qa.jar'
+        doLast {
+            def archive = new java.util.zip.ZipFile(archiveFile.get().asFile)
+            try {
+                ['com/xyp/gtnotgood/common/blocks/webscreen/TileWebScreen.class',
+                 'com/xyp/gtnotgood/qa/WebScreenServerChecks.class',
+                 'com/xyp/gtnotgood/client/webscreen/ChromiumSession.class'].each { required ->
+                    if (archive.getEntry(required) == null) throw new GradleException('Missing QA class: ' + required)
+                }
+            } finally { archive.close() }
+        }
+    }
+    root.extensions.findByName('spotless')?.java {
+        target 'scripts/qa/WebScreenServerChecks.java',
+            'src/main/java/com/xyp/gtnotgood/common/blocks/webscreen/TileWebScreen.java'
+    }
+}
