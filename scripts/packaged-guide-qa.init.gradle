@@ -23,6 +23,7 @@ gradle.projectsEvaluated {
     if (!efr.isFile()) throw new GradleException('Missing factory QA dependency: ' + efr)
     root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
     def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('devOnlyNonPublishable', pack.gtnhdev('GuideNH') as String) { transitive = false }
     root.dependencies.add('testImplementation', pack.gtnhdev('GuideNH') as String) { transitive = false }
     root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String) { transitive = false }
     root.tasks.named('compileTestJava').configure {
