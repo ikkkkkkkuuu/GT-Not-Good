@@ -104,6 +104,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
 
         if (loadedMods.contains(ModList.AE2.getID()) && loadedMods.contains(ModList.GregTech.getID())) {
             addAll(list, "gregtech.BasicMachineStockIOMixin", "gregtech.BasicGeneratorStockIOMixin",
+                "appliedenergistics.PatternInputMultiblockMixin", "appliedenergistics.PatternInputHatchElementMixin",
                 "appliedenergistics.PatternMEOutputMultiblockMixin",
                 "appliedenergistics.MEOutputAssemblyMultiblockMixin",
                 "appliedenergistics.MEOutputAssemblyHatchElementMixin",

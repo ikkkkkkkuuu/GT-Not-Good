@@ -1153,3 +1153,19 @@ Reference checkouts remain outside build inputs.
   and LGPL/GPL texts are packaged under `META-INF/industrial-apiary/`.
   Extracted dependency references remain in ignored `build/tmp/apiary-study`,
   outside compilation and resource packaging.
+
+## Precision Auto-Assembler — 2026-10-18
+
+- Source: GTNewHorizons/GT5-Unofficial `5.09.54.205`, commit
+  `a3e1e11241a814c9fa0dd0973d5699548428f689`,
+  `src/main/java/goodgenerator/blocks/tileEntity/MTEPreciseAssembler.java`
+  and `src/main/resources/assets/gregtech/lang/en_US/tooltip/precise-assembler.md`.
+- Destination: `src/main/java/com/xyp/gtnotgood/common/machines/multiblock/PrecisionAssembler.java`.
+  The structure, two processing modes and tooltip wording are adapted with five GregTech
+  mechanical casing tiers, an MV controller recipe, perfect overclocking and standard
+  energy-hatch amperage behavior. Internal machine casings limit base recipe tiers,
+  without limiting energy hatch tiers or overclocking voltage.
+- The adapted source retains LGPL-3.0-or-later, outside the project's general MIT grant.
+  Attribution and the full LGPL/GPL terms are packaged under
+  `META-INF/licenses/precision-assembler/`. Textures are referenced from GregTech at
+  runtime; no upstream images or reference checkout files are packaged.

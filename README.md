@@ -43,14 +43,21 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.5.7          | [![1.5.7](https://img.shields.io/badge/release-1.5.7-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.7) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.5.8          | [![1.5.8](https://img.shields.io/badge/release-1.5.8-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.8) |         ✔️         |
 
-最新版本：[1.5.7 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.7)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.7/gtnotgood-1.5.7.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.7/gtnotgood-1.5.7-sources.jar)。
+最新版本：[1.5.8 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.8)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.8/gtnotgood-1.5.8.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.8/gtnotgood-1.5.8-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.5.7。
+1.3.4 因启动错误已撤回，请更新到 1.5.8。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.5.8 更新
+
+- 新增精密自动组装机，支持精密与常规组装模式；五档结构外壳分别提供常规模式 16／32／64／128／256 并行，常规模式速度为原配方的 2 倍，支持完美超频。
+- 内部机械方块限制基础配方等级，不限制能源仓等级或超频电压；支持多安、激光能源仓及双仓升压。提供 MV 阶段控制器配方、9×5×5 结构和完整中英文提示。
+- 修复超级样板输入镜像、电路样板输入镜像在未绑定、读档重连或主仓暂不可用时误报“缺少输入仓”，统一输入仓识别并避免重复计数。
+- GuideNH 开发依赖仅在教程专项测试中加载，普通开发启动不再自动附带。
 
 ### 1.5.7 更新
 

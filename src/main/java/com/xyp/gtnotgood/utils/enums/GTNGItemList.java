@@ -290,6 +290,7 @@ public enum GTNGItemList implements IItemContainer {
     LargeOreProcessor,
     QuantumComputer,
     AssemblerMatrix,
+    PrecisionAssembler,
     LargeVoidMiner,
     LargeBeeBreeder,
     LargeIndustrialApiary,

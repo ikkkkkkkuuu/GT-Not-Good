@@ -1,0 +1,25 @@
+Precision Assembler attribution
+
+Upstream: GTNewHorizons/GT5-Unofficial
+Repository: https://github.com/GTNewHorizons/GT5-Unofficial
+Version: 5.09.54.205
+Commit: a3e1e11241a814c9fa0dd0973d5699548428f689
+Source: src/main/java/goodgenerator/blocks/tileEntity/MTEPreciseAssembler.java
+Tooltip: src/main/resources/assets/gregtech/lang/en_US/tooltip/precise-assembler.md
+License: LGPL-3.0-or-later, as stated in the upstream README.md License section.
+The full upstream LGPL version 3 text is provided in LICENSE.txt in this directory.
+The corresponding GNU GPL version 3 text is provided in GPL-3.0.txt beside it.
+
+Adapted in GT-Not-Good:
+src/main/java/com/xyp/gtnotgood/common/machines/multiblock/PrecisionAssembler.java
+The multiblock layout, two processing modes, tier checks, parallel counts and
+related tooltip wording are based on the upstream Precise Auto-Assembler.
+The adaptation uses five GregTech machine casings, standard energy-hatch
+amperage overclocking with two-hatch tier skipping, perfect overclocking and
+an MV-stage controller recipe. Internal machine casings restrict the base
+recipe tier, without restricting energy hatch tiers or overclocking voltage.
+GregTech textures are referenced at runtime;
+no upstream texture images are copied into this feature.
+
+The adapted source remains available under LGPL-3.0-or-later. This notice does
+not change the license of unrelated GT-Not-Good code or other bundled assets.

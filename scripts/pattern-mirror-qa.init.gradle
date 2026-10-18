@@ -1,0 +1,82 @@
+// Opt-in mirror structure checks; excluded from release artifacts.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr.parentFile.mkdirs()
+        def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+        connection.connectTimeout = 30000
+        connection.readTimeout = 30000
+        def pending = new File(efr.parentFile, efr.name + '.pending')
+        connection.inputStream.withCloseable { input -> pending.withOutputStream { it << input } }
+        java.nio.file.Files.move(pending.toPath(), efr.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(root.layout.buildDirectory.dir('pattern-mirror-qa/test-classes'))
+        setSource(root.files('scripts/qa/PatternMirrorClientChecks.java'))
+    }
+    root.spotless.java {
+        target 'scripts/qa/PatternMirrorClientChecks.java'
+    }
+    def mainJar = root.tasks.register('jarPatternMirrorQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'pattern-mirror-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('pattern-mirror-qa/runtime')
+    }
+    def testCopy = root.tasks.register('snapshotPatternMirrorQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.layout.buildDirectory.dir('pattern-mirror-qa/test-classes')
+        include '**/PatternMirrorClientChecks*.class'
+        into root.layout.buildDirectory.dir('pattern-mirror-qa/runtime/test')
+    }
+    root.tasks.matching { it.name == 'runClient' || it.name == 'runClient17' }.configureEach {
+        dependsOn mainJar, testCopy
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('pattern-mirror-qa/runtime/test'))
+        if (name == 'runClient17') {
+            javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+            classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        }
+        if (root.hasProperty('patternMirrorNoAngelica')) {
+            classpath = classpath.filter { !it.name.toLowerCase().contains('angelica') }
+        }
+        workingDir root.file('run/pattern-mirror-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.patternMirror.qa', 'true'
+        systemProperty 'gtng.patternMirror.output', root.file('build/pattern-mirror-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in pattern mirror checks')
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/pattern-mirror-qa').mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\n', 'UTF-8')
+            ['result.txt', 'checks.txt', 'failure.txt'].each {
+                java.nio.file.Files.deleteIfExists(root.file('build/pattern-mirror-qa/' + it).toPath())
+            }
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(root.file('build/pattern-mirror-qa/window-helper.log'))
+                    .start()
+            }
+        }
+        doLast {
+            def result = root.file('build/pattern-mirror-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('Pattern mirror QA failed; inspect PATTERN_MIRROR_QA in the client log.')
+            }
+        }
+    }
+}

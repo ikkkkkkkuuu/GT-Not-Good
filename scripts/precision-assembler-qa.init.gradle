@@ -1,0 +1,56 @@
+// Isolated structure, processing and GUI checks without GTNL on the runtime classpath.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/PrecisionAssemblerClientChecks.java'))
+    }
+    def qaClasses = root.tasks.register('isolatePrecisionAssemblerQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/PrecisionAssemblerClientChecks*.class'
+        into root.layout.buildDirectory.dir('precision-assembler-qa/classes')
+    }
+    root.spotless.java {
+        target 'scripts/qa/PrecisionAssemblerClientChecks.java'
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir('precision-assembler-qa/classes'))
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir root.file('run/precision-assembler-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.precisionAssembler.qa', 'true'
+        systemProperty 'gtng.precisionAssembler.output', root.file('build/precision-assembler-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('Isolated precision assembler client checks')
+        args '--width', '1100', '--height', '740'
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/precision-assembler-qa').mkdirs()
+            java.nio.file.Files.deleteIfExists(root.file('build/precision-assembler-qa/result.txt').toPath())
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            def qaConfig = new File(workingDir, 'config/GTNOTGOOD/gtnotgood.cfg')
+            qaConfig.parentFile.mkdirs()
+            qaConfig.setText('cutcorners {\n    I:mode=0\n}\n', 'UTF-8')
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(root.file('build/precision-assembler-qa/window-helper.log')).start()
+        }
+        doLast {
+            def result = root.file('build/precision-assembler-qa/result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) throw new GradleException('Precision assembler QA failed')
+        }
+    }
+}

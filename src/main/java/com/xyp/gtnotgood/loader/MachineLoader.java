@@ -36,6 +36,7 @@ import com.xyp.gtnotgood.common.machines.multiblock.LargeIndustrialFarm;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeOreProcessor;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeTransmutationMachine;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidMiner;
+import com.xyp.gtnotgood.common.machines.multiblock.PrecisionAssembler;
 import com.xyp.gtnotgood.common.machines.multiblock.QuantumComputer;
 import com.xyp.gtnotgood.common.machines.multiblock.SingularityDataHub;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -114,6 +115,12 @@ public class MachineLoader {
         GTNGItemList.AssemblerMatrix.set(new AssemblerMatrix(GTNGMachineID.AssemblerMatrix.id, "AssemblerMatrix",
             StatCollector.translateToLocal("gtng.AssemblerMatrix.name")));
         addItemTooltip(GTNGItemList.AssemblerMatrix.get(1), AnimatedText.GT_NOT_GOOD);
+        // #tr gtng.PrecisionAssembler.name
+        // # Precision Auto-Assembler
+        // # zh_CN 精密自动组装机
+        GTNGItemList.PrecisionAssembler.set(new PrecisionAssembler(GTNGMachineID.PrecisionAssembler.id,
+            "PrecisionAssembler", StatCollector.translateToLocal("gtng.PrecisionAssembler.name")));
+        addItemTooltip(GTNGItemList.PrecisionAssembler.get(1), AnimatedText.GT_NOT_GOOD);
         GTNGItemList.IntegratedProductionFactory.set(new IntegratedProductionFactory(
             GTNGMachineID.IntegratedProductionFactory.id, "IntegratedProductionFactory", FactoryText.Name.text()));
         addItemTooltip(GTNGItemList.IntegratedProductionFactory.get(1), AnimatedText.GT_NOT_GOOD);
