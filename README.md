@@ -43,14 +43,25 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.5.9          | [![1.5.9](https://img.shields.io/badge/release-1.5.9-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.9) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.6.0          | [![1.6.0](https://img.shields.io/badge/release-1.6.0-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.0) |         ✔️         |
 
-最新版本：[1.5.9 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.9)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.9/gtnotgood-1.5.9.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.9/gtnotgood-1.5.9-sources.jar)。
+最新版本：[1.6.0 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.0)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.0/gtnotgood-1.6.0.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.0/gtnotgood-1.6.0-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.5.9。
+1.3.4 因启动错误已撤回，请更新到 1.6.0。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.6.0 更新
+
+- 新增大型虚空钻机，沿用 7×9×7 钢制钻塔和拥有者无线电网，使用流体输出仓；支持地下流体、行星海洋及木星、土星、天王星、海王星气体。
+- 提供 25 个维度槽、四个巨行星开关、流体搜索、过滤和 UU 物质定向钻取；基础 480 EU/t、20 秒一周期，支持四级超频。满仓保留待输出流体，存档恢复后继续输出。
+- 新增电路装配线封包核心，基础核心与电路装配线控制器无序合成。支持 CAL 模式的真实铭刻、终极编码样板原生流体及自动回收，每台机器同时处理一份订单；沿用普通仓室、供电和权限要求。
+- 优化无线频率卡的稳定网络扫描、可视化与频道统计；自动入口按频道需求批量选择位置，并撤回无收益入口。
+- 优化电路样板输入总成的物品、流体视图和虚拟工具查询，减少重复分配；虚拟模具目录加入两种切削器刀刃。
+- 大型蜂窝处理机补齐海晶、下界合金、凯芙拉、龙血、力量、宇宙中子态素、无尽七类简化处理，保留已有配方优先级与原生机器配方。
+- 补齐标准晶体宝石的挤压成棒配方，1 宝石产 2 根棒，棒模头不消耗；大化反新增铂粉催化的过氧化氢合成，氢氧各 2000 L 产 1000 L，24 号电路，基础 480 EU/t、20 秒。
+- 修复 LDLib 终端的中文、英文文本输入、名称搜索与组合键编辑，避免新旧输入事件重复插入或删除。
 
 ### 1.5.9 更新
 

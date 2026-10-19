@@ -14,6 +14,8 @@ import net.minecraftforge.fluids.FluidStack;
 import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
 
+import gregtech.api.enums.Materials;
+import gregtech.api.enums.Mods;
 import gregtech.api.enums.OrePrefixes;
 import gregtech.api.objects.ItemData;
 import gregtech.api.recipe.RecipeMap;
@@ -22,7 +24,12 @@ import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTRecipeBuilder;
 import gregtech.api.util.GTUtility;
+import gregtech.common.items.CombType;
 import gregtech.common.items.ItemComb;
+import gregtech.loaders.misc.GTBees;
+import gtPlusPlus.core.material.MaterialsElements;
+import gtPlusPlus.xmod.forestry.bees.handler.GTPPCombType;
+import gtPlusPlus.xmod.forestry.bees.registry.GTPP_Bees;
 
 /** Imports upstream comb conversions after mods have populated the native recipe maps. */
 public class CombProcessingRecipes {
@@ -46,7 +53,43 @@ public class CombProcessingRecipes {
         count += importFromCentrifuge();
         count += importFromChemical();
         count += importFromFluidExtractor();
+        count += addSpecialCombRecipes();
         GTNotGood.LOG.info("Loaded {} Comb Processing Recipes", count);
+    }
+
+    private static int addSpecialCombRecipes() {
+        if (!Mods.Forestry.isModLoaded()) return 0;
+        // Special processing routes also consume feedstock; recover only the comb's primary material here.
+        int count = 0;
+        if (GTBees.combs != null) {
+            count += addSpecialCombRecipe(GTBees.combs.getStackForType(CombType.PRISMATIC),
+                GTOreDictUnificator.get(OrePrefixes.shard, Materials.Prismarine, 1), null);
+            count += addSpecialCombRecipe(GTBees.combs.getStackForType(CombType.NETHERITE),
+                GTOreDictUnificator.get(OrePrefixes.dust, Materials.Netherite, 1), null);
+            count += addSpecialCombRecipe(GTBees.combs.getStackForType(CombType.KEVLAR), null,
+                Materials.Kevlar.getMolten(144));
+            count += addSpecialCombRecipe(GTBees.combs.getStackForType(CombType.COSMICNEUTRONIUM),
+                GTOreDictUnificator.get(OrePrefixes.dust, Materials.CosmicNeutronium, 1), null);
+            count += addSpecialCombRecipe(GTBees.combs.getStackForType(CombType.INFINITY),
+                GTOreDictUnificator.get(OrePrefixes.dust, Materials.Infinity, 1), null);
+        }
+        if (GTPP_Bees.combs != null) {
+            count += addSpecialCombRecipe(GTPPCombType.DRAGONBLOOD.getStackForType(1),
+                MaterialsElements.STANDALONE.DRAGON_METAL.getDust(1), null);
+            count += addSpecialCombRecipe(GTPPCombType.FORCE.getStackForType(1),
+                MaterialsElements.STANDALONE.FORCE.getDust(1), null);
+        }
+        return count;
+    }
+
+    private static int addSpecialCombRecipe(ItemStack comb, ItemStack itemOutput, FluidStack fluidOutput) {
+        if (seenCombs.contains(combId(comb)) || itemOutput == null && fluidOutput == null) return 0;
+        GTRecipeBuilder builder = GTRecipeBuilder.builder().itemInputs(comb.copy()).eut(30).duration(100);
+        if (itemOutput != null) builder.itemOutputs(itemOutput.copy());
+        if (fluidOutput != null) builder.fluidOutputs(fluidOutput.copy());
+        int count = builder.addTo(RM).size();
+        if (count > 0) seenCombs.add(combId(comb));
+        return count;
     }
 
     // ==================== 离心机 → 直接复制 ====================

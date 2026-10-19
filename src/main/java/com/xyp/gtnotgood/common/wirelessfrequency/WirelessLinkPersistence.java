@@ -46,6 +46,7 @@ public class WirelessLinkPersistence {
     private static final Map<IGridNode, Endpoint> IMPORTED = new IdentityHashMap<>();
     private static final Map<Entrance, RememberedEntrance> REMEMBERED_ENTRANCES = new IdentityHashMap<>();
     private static boolean initialized;
+    private static boolean pendingSeeds;
 
     @Desugar
     private record RememberedEntrance(Endpoint endpoint, NBTBase payload) {
@@ -74,15 +75,19 @@ public class WirelessLinkPersistence {
 
     private WirelessLinkPersistence() {}
 
-    public static void discover(TileEntity tile) {
-        if (tile instanceof IWirelessTileData data && data.gtng$hasWirelessData()) TILES.add(tile);
+    public static boolean discover(TileEntity tile) {
+        if (!(tile instanceof IWirelessTileData data) || !data.gtng$hasWirelessData()) return false;
+        TILES.add(tile);
+        return true;
     }
 
-    public static void discover(Chunk chunk) {
+    public static boolean discover(Chunk chunk) {
         // World.loadedTileEntityList contains only ticking tiles in Forge 1.7.10; most AE cable hosts are absent.
+        boolean found = false;
         for (Object object : chunk.chunkTileEntityMap.values()) {
-            if (object instanceof TileEntity tile) discover(tile);
+            if (object instanceof TileEntity tile) found |= discover(tile);
         }
+        return found;
     }
 
     static void discoverLoaded(Iterable<Chunk> chunks) {
@@ -114,6 +119,7 @@ public class WirelessLinkPersistence {
             }
         }
         List<IGridNode> seeds = new ArrayList<>();
+        pendingSeeds = false;
         var tiles = TILES.iterator();
         while (tiles.hasNext()) {
             TileEntity tile = tiles.next();
@@ -134,12 +140,17 @@ public class WirelessLinkPersistence {
                 }
                 Endpoint endpoint = endpoint(tile, entry.getKey(), kind);
                 IGridNode node = endpoint.node();
-                if (node != null) seeds.add(node); // Keep a not-yet-ready AE part for a later server tick.
+                if (node != null) seeds.add(node);
+                else pendingSeeds = true;
             }
             if (changed) save(tile, claims);
             if (claims.isEmpty()) tiles.remove();
         }
         return seeds;
+    }
+
+    static boolean hasPendingSeeds() {
+        return pendingSeeds;
     }
 
     static Set<Address> restore(IGridNode node, PhysicalMeTopology topology) {
@@ -353,13 +364,14 @@ public class WirelessLinkPersistence {
         if (WirelessLinkData.write(IWirelessTileData.of(tile), claims)) tile.markDirty();
     }
 
-    static void forget(Predicate<Address> removed) {
+    static boolean forget(Predicate<Address> removed) {
         REMEMBERED_ENTRANCES.keySet()
             .removeIf(entrance -> removed.test(entrance.source()) || removed.test(entrance.target()));
-        IMPORTED.values().removeIf(endpoint -> removed.test(endpoint.address()));
-        TILES.removeIf(
+        boolean forgotten = IMPORTED.values().removeIf(endpoint -> removed.test(endpoint.address()));
+        return TILES.removeIf(
             tile -> tile.getWorldObj() != null && removed.test(new Address(tile.getWorldObj().provider.dimensionId,
-                tile.xCoord, tile.yCoord, tile.zCoord, ForgeDirection.UNKNOWN)));
+                tile.xCoord, tile.yCoord, tile.zCoord, ForgeDirection.UNKNOWN)))
+            || forgotten;
     }
 
     static void clear() {
@@ -367,6 +379,7 @@ public class WirelessLinkPersistence {
         IMPORTED.clear();
         REMEMBERED_ENTRANCES.clear();
         initialized = false;
+        pendingSeeds = false;
     }
 
     public static void clearLoadedClaims() {

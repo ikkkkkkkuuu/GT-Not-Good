@@ -267,7 +267,7 @@ public class WirelessFrequencyCard extends GTNGItem implements IBaubleExpanded, 
     }
 
     private static void showStatus(WirelessCardBinding binding, EntityPlayer player) {
-        WirelessClusterManager.refresh();
+        WirelessClusterManager.refreshIfStale();
         var summary = WirelessClusterManager.summary(binding.source());
         message(player, "cluster_status", summary.clusters(), summary.active(), summary.conflicted(),
             summary.waiting());
@@ -352,6 +352,7 @@ public class WirelessFrequencyCard extends GTNGItem implements IBaubleExpanded, 
             // # Hold or wear the card to view the network. Change views here or with the hotkey.
             // # zh_CN 手持或佩戴此卡查看网络，在此处或用快捷键切换视图。
             tooltip.add(GRAY + StatCollector.translateToLocal("gtnotgood.wireless.gui.visualisation_hint"));
+            tooltip.add(GRAY + StatCollector.translateToLocal(WirelessCardItemText.key("tooltip.3")));
         } else tooltip.add(YELLOW + StatCollector.translateToLocal(WirelessCardItemText.key("more_hint")));
     }
 }

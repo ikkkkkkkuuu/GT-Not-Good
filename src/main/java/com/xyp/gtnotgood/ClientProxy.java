@@ -43,6 +43,7 @@ import com.xyp.gtnotgood.common.network.ServerConfigMessage;
 import com.xyp.gtnotgood.common.network.WirelessMonitorSnapshot;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 import com.xyp.gtnotgood.utils.event.SubscribeEventClientUtils;
 import com.xyp.gtnotgood.utils.keybind.KeyBindManager;
 import com.xyp.gtnotgood.utils.text.TextEffectsCompat;
@@ -157,6 +158,8 @@ public class ClientProxy extends CommonProxy {
             new PackagedCoreRenderer(() -> ItemList.Machine_Multi_Assemblyline.get(1)));
         MinecraftForgeClient.registerItemRenderer(GTNGItemList.AdvancedAssemblyLineCore.getItem(),
             new PackagedCoreRenderer(() -> GGItemList.AdvAssLine.get(1)));
+        MinecraftForgeClient.registerItemRenderer(GTNGItemList.CircuitAssemblyLineCore.getItem(),
+            new PackagedCoreRenderer(() -> ModsItemlist.CircuitAssemblyLine.get(1)));
     }
 
     private void registerPreviewCommands() {

@@ -35,6 +35,7 @@ import com.xyp.gtnotgood.common.machines.multiblock.LargeIndustrialApiary;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeIndustrialFarm;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeOreProcessor;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeTransmutationMachine;
+import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidDriller;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidMiner;
 import com.xyp.gtnotgood.common.machines.multiblock.PrecisionAssembler;
 import com.xyp.gtnotgood.common.machines.multiblock.QuantumComputer;
@@ -137,6 +138,13 @@ public class MachineLoader {
         GTNGItemList.LargeVoidMiner.set(new LargeVoidMiner(GTNGMachineID.LargeVoidMiner.id, "LargeVoidMiner",
             StatCollector.translateToLocal("NameLargeVoidMiner")));
         addItemTooltip(GTNGItemList.LargeVoidMiner.get(1), AnimatedText.GT_NOT_GOOD);
+
+        // #tr NameLargeVoidDriller
+        // # Large Void Driller
+        // # zh_CN 大型虚空钻机
+        GTNGItemList.LargeVoidDriller.set(new LargeVoidDriller(GTNGMachineID.LargeVoidDriller.id, "LargeVoidDriller",
+            StatCollector.translateToLocal("NameLargeVoidDriller")));
+        addItemTooltip(GTNGItemList.LargeVoidDriller.get(1), AnimatedText.GT_NOT_GOOD);
 
         // #tr NameLargeBeeBreeder
         // # Large Bee Breeder

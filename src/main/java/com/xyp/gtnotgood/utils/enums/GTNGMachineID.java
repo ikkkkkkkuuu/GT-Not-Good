@@ -35,6 +35,7 @@ public enum GTNGMachineID {
     LargeIndustrialApiary(Machine, 27),
     CircuitMEPatternMirror(Machine, 28),
     PrecisionAssembler(Machine, 29),
+    LargeVoidDriller(Machine, 30),
 
     DieselGeneratorLV(BasicMachine, 0),
     DieselGeneratorMV(BasicMachine, 1),

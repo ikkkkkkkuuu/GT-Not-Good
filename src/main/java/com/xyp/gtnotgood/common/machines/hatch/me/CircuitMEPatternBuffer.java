@@ -34,6 +34,7 @@ import appeng.api.storage.data.IAEStack;
 import appeng.me.GridAccessException;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.util.inv.MEInventoryCrafting;
+import gregtech.api.enums.GTValues;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -270,7 +271,7 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
 
         private CircuitSlot(ItemStack pattern, NBTTagCompound saved, CircuitMEPatternBuffer parent) {
             super(pattern, null, parent, null);
-            buffer = new LongCircuitBuffer(saved, parent::markDirty);
+            buffer = new LongCircuitBuffer(saved, parent::markDirty, itemInventory, fluidInventory);
             wildcard = WildcardPatternGenerator.isWildcardPattern(pattern)
                 && !WildcardPatternGenerator.isGeneratedPattern(pattern);
             legacyInventory = saved != null && !saved.hasKey("longItems") && !saved.hasKey("longFluids");
@@ -353,14 +354,12 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
 
         @Override
         public void updateSlotItems() {
-            itemInventory.clear();
-            itemInventory.addAll(buffer.itemViews());
+            buffer.itemViews();
         }
 
         @Override
         public void updateSlotFluids() {
-            fluidInventory.clear();
-            fluidInventory.addAll(buffer.fluidViews());
+            buffer.fluidViews();
         }
 
         @Override
@@ -395,23 +394,33 @@ public class CircuitMEPatternBuffer extends SuperMTEHatchCraftingInputME {
         }
 
         private ItemStack[] recipeTools() {
-            List<ItemStack> tools = new ArrayList<>();
-            if (activeRecipe == null) return new ItemStack[0];
-            if (activeRecipe.circuit >= 0) tools.add(GTUtility.getIntegratedCircuit(activeRecipe.circuit));
-            for (ItemStack mold : activeRecipe.molds) tools.add(mold.copy());
-            return tools.toArray(new ItemStack[0]);
+            if (activeRecipe == null) return GTValues.emptyItemStackArray;
+            ItemStack[] tools = new ItemStack[activeRecipe.molds.length + (activeRecipe.circuit >= 0 ? 1 : 0)];
+            addRecipeTools(tools, 0);
+            return tools;
+        }
+
+        private void addRecipeTools(ItemStack[] inputs, int index) {
+            if (activeRecipe == null) return;
+            if (activeRecipe.circuit >= 0) inputs[index++] = GTUtility.getIntegratedCircuit(activeRecipe.circuit);
+            for (ItemStack mold : activeRecipe.molds) inputs[index++] = mold.copy();
         }
 
         @Override
         public ItemStack[] getItemInputs() {
-            ItemStack[] inputs = super.getItemInputs();
-            return isEmpty() ? inputs : ArrayUtils.addAll(inputs, recipeTools());
+            List<ItemStack> items = buffer.itemViews();
+            if (items.isEmpty() && buffer.fluidViews().isEmpty()) return GTValues.emptyItemStackArray;
+            int toolCount = activeRecipe == null ? 0 : activeRecipe.molds.length + (activeRecipe.circuit >= 0 ? 1 : 0);
+            if (items.isEmpty() && toolCount == 0) return GTValues.emptyItemStackArray;
+            ItemStack[] inputs = items.toArray(new ItemStack[items.size() + toolCount]);
+            addRecipeTools(inputs, items.size());
+            return inputs;
         }
 
         @Override
         public FluidStack[] getFluidInputs() {
-            updateSlotFluids();
-            return super.getFluidInputs();
+            List<FluidStack> fluids = buffer.fluidViews();
+            return fluids.isEmpty() ? GTValues.emptyFluidStackArray : fluids.toArray(new FluidStack[fluids.size()]);
         }
 
         @Override

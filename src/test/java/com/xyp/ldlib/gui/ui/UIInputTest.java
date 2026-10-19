@@ -17,6 +17,58 @@ import com.xyp.ldlib.gui.ui.event.UIEvents;
 public class UIInputTest {
 
     @Test
+    public void textInputDeliversOneUnicodeCommitToTheFocusedElement() {
+        UIElement root = new UIElement(0, 0, 100, 100);
+        UIElement first = new UIElement(0, 0, 40, 20).setFocusable(true);
+        UIElement second = new UIElement(0, 30, 40, 20).setFocusable(true);
+        root.addChild(first);
+        root.addChild(second);
+        List<String> commits = new ArrayList<>();
+        first.addEventListener(UIEvents.TEXT_INPUT, event -> {
+            commits.add(event.text);
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        second.addEventListener(UIEvents.TEXT_INPUT, event -> fail("Text reached the unfocused element"));
+        root.addEventListener(UIEvents.TEXT_INPUT, event -> fail("Consumed text must not bubble"));
+        UIInput input = new UIInput(root);
+        assertFalse(input.textInput("岩浆"));
+        input.focus(first);
+        assertTrue(input.textInput("岩浆"));
+        assertFalse(input.textInput(""));
+        assertEquals(Arrays.asList("岩浆"), commits);
+    }
+
+    @Test
+    public void textInputDropsStaleFocusAndPreservesKeyModifiers() {
+        UIElement root = new UIElement(0, 0, 100, 100);
+        UIElement field = new UIElement(0, 0, 40, 20).setFocusable(true);
+        root.addChild(field);
+        int[] commits = { 0 };
+        field.addEventListener(UIEvents.TEXT_INPUT, event -> {
+            commits[0]++;
+            event.preventDefault();
+        });
+        field.addEventListener(UIEvents.KEY_DOWN, event -> {
+            assertTrue(event.shift);
+            assertTrue(event.control);
+            assertEquals(203, event.keyCode);
+            assertEquals('\0', event.codePoint);
+            event.preventDefault();
+        });
+        UIInput input = new UIInput(root);
+        input.focus(field);
+        assertTrue(input.keyTyped('\0', 203, true, true, false));
+        field.setEnabled(false);
+        assertFalse(input.textInput("water"));
+        field.setEnabled(true);
+        input.focus(field);
+        root.removeChild(field);
+        assertFalse(input.textInput("water"));
+        assertEquals(0, commits[0]);
+    }
+
+    @Test
     public void dispatchesCaptureTargetAndBubbleInOrder() {
         UIElement root = new UIElement(0, 0, 100, 100);
         UIElement child = new UIElement(0, 0, 40, 40);

@@ -64,3 +64,10 @@ It uses the installed Thaumic Energistics 1.7.60-GTNH API (upstream commit
 fbefd7b), without copying its implementation or textures. The source-mode button
 reuses the already-manifested frequency_connect.png and original button atlas,
 unchanged; only layout/behavior and localized tooltips are extended.
+
+CircuitAssemblyLineAdapter is new GTNG integration with installed GT5-Unofficial
+5.09.54.205. It queries the native CAL recipe map using the controller's existing
+imprint and supplies ordinary local hatches in recipe order. Imprinting and the
+circuit-assembler mode are unchanged. The core reuses PackagedCoreRenderer and
+the manifested core base, with the installed CAL controller as its overlay.
+No GT5U source or artwork is copied.

@@ -102,7 +102,7 @@ public class PhysicalClusterTracker<N, F> {
         Map<Scan, Set<N>> components = new IdentityHashMap<>();
         owners.forEach((node, owner) -> components.computeIfAbsent(owner.root(), ignored -> identitySet()).add(node));
         List<Cluster<N, F>> scanned = new ArrayList<>();
-        components.forEach((scan, members) -> scanned.add(new Cluster<>(Collections.unmodifiableSet(members),
+        components.forEach((scan, members) -> scanned.add(new Cluster<>(WirelessCollections.copySet(members),
             WirelessCollections.setOf(), members.stream().anyMatch(topology::blocksWireless), scan.limited)));
         rebuildClaims(scanned, savedClaims, frequencyIdentity);
     }
@@ -127,7 +127,7 @@ public class PhysicalClusterTracker<N, F> {
                 provenance.put(node, labels);
                 frequencies.addAll(labels);
             }
-            Cluster<N, F> cluster = new Cluster<>(Collections.unmodifiableSet(members),
+            Cluster<N, F> cluster = new Cluster<>(WirelessCollections.copySet(members),
                 frequencies.stream().map(frequencyIdentity).collect(WirelessCollections.toImmutableSet()), blocked,
                 limited);
             Set<F> sharedClaim = frequencies.size() == 1 && !blocked && !limited
@@ -189,8 +189,8 @@ public class PhysicalClusterTracker<N, F> {
         }
     }
 
-    public void forget(Predicate<N> removed) {
-        claims.keySet().removeIf(removed);
+    public boolean forget(Predicate<N> removed) {
+        return claims.keySet().removeIf(removed);
     }
 
     public void clear() {

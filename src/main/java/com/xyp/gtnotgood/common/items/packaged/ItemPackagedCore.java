@@ -101,11 +101,25 @@ public final class ItemPackagedCore extends Item {
             // # Empty the pedestals and supply essentia. Only recipes with ordinary item outputs are supported.
             // # zh_CN 须清空基座并供应源质，仅支持产物为普通物品的注魔配方。
             lines.add(StatCollector.translateToLocal("tooltip.packaged.infusion_inputs"));
-        } else if ("assembly_line".equals(adapterId) || "advanced_assembly_line".equals(adapterId)) {
-            // #tr tooltip.packaged.assembly_line
-            // # Dispatches recipes to a bound assembly line controller. Requires recipe data and power.
-            // # zh_CN 向已绑定的装配线控制器派发配方，需要配方数据与供电。
-            lines.add(StatCollector.translateToLocal("tooltip.packaged.assembly_line"));
+        } else if (
+            "assembly_line".equals(adapterId) || "advanced_assembly_line".equals(adapterId)
+                || "circuit_assembly_line".equals(adapterId)
+        ) {
+            if ("circuit_assembly_line".equals(adapterId)) {
+                // #tr tooltip.packaged.circuit_assembly_line
+                // # Supplies recipe inputs in order to a bound Circuit Assembly Line.
+                // # zh_CN 按配方顺序向已绑定的电路装配线投料。
+                lines.add(StatCollector.translateToLocal("tooltip.packaged.circuit_assembly_line"));
+                // #tr tooltip.packaged.circuit_imprint
+                // # Requires Circuit Assembly Line mode, a matching imprint and power.
+                // # zh_CN 须处于电路装配线模式，完成对应铭刻并正常供电。
+                lines.add(StatCollector.translateToLocal("tooltip.packaged.circuit_imprint"));
+            } else {
+                // #tr tooltip.packaged.assembly_line
+                // # Dispatches recipes to a bound assembly line controller. Requires recipe data and power.
+                // # zh_CN 向已绑定的装配线控制器派发配方，需要配方数据与供电。
+                lines.add(StatCollector.translateToLocal("tooltip.packaged.assembly_line"));
+            }
             // #tr tooltip.packaged.assembly_hatches
             // # Use empty ordinary input buses and fluid hatches, plus exactly one ordinary output bus.
             // # zh_CN 输入总线与流体输入仓须为空且为普通仓室，输出须为一个普通总线。

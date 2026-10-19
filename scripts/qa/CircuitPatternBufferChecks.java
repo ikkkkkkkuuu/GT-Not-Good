@@ -41,6 +41,7 @@ import com.glodblock.github.loader.ItemAndBlockHolder;
 import com.xyp.gtnotgood.ae2thing.quickterminal.ContainerQuickEncodingTerminal;
 import com.xyp.gtnotgood.ae2thing.quickterminal.DualTerminalGuiObject;
 import com.xyp.gtnotgood.ae2thing.quickterminal.InterfacePatternTarget;
+import com.xyp.gtnotgood.common.compat.CircuitPatternMolds;
 import com.xyp.gtnotgood.common.gui.modularui.widget.GhostMoldSlotWidget;
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternGenerator;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardModelState;
@@ -94,6 +95,9 @@ import gregtech.api.interfaces.tileentity.IVoidable;
 import gregtech.api.logic.ProcessingLogic;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
 import gregtech.api.metatileentity.implementations.MTEMultiBlockBase;
+import gregtech.api.recipe.RecipeCategory;
+import gregtech.api.recipe.RecipeMap;
+import gregtech.api.recipe.RecipeMapBuilder;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.util.FluidEjectionHelper;
 import gregtech.api.util.GTOreDictUnificator;
@@ -501,6 +505,7 @@ public final class CircuitPatternBufferChecks {
             moldPattern(consumedMold, -1, new ItemStack(Items.quartz)),
             moldPattern(plateMold, 21, new ItemStack(Items.blaze_rod)),
             moldPattern(blockMold, -1, new ItemStack(Blocks.snow), 1000) };
+        checkMoldCacheInvalidation(player, patterns[0], plateMold);
         ItemStack[] templates = { plateMold, ingotMold, consumedMold, plateMold, blockMold };
         for (int i = 0; i < patterns.length; i++) hatch.setInventorySlotContents(10 + i, patterns[i]);
         var plate = slotAt(hatch, 10);
@@ -626,6 +631,29 @@ public final class CircuitPatternBufferChecks {
                 && hasVirtualMold(reloaded.getItemInputs(), plateMold)
                 && countItem(reloaded.getItemInputs(), GTUtility.getIntegratedCircuit(21)) == 1,
             "tile NBT reload retains fluid quantity and independently reconstructs mold and circuit");
+    }
+
+    private static void checkMoldCacheInvalidation(EntityPlayerMP player, ItemStack pattern, ItemStack mold) {
+        require(GregTechAPI.sFullLoadFinished, "mold cache fixture runs after full GT load");
+        var map = RecipeMapBuilder.of("circuitbufferqa.mold_cache").maxIO(1, 1, 1, 0).disableRegisterNEI().build();
+        try {
+            ICraftingPatternDetails details = CircuitPatternCodec.decode(pattern, player.worldObj);
+            require(hasVirtualMold(CircuitPatternMolds.resolve(details), mold),
+                "cached pattern initially resolves its nonconsumed mold");
+            var consumed = GTRecipeBuilder.builder().itemInputs(mold.copy())
+                .fluidInputs(new FluidStack(FluidRegistry.WATER, 144)).itemOutputs(new ItemStack(Items.sugar))
+                .duration(20).eut(8).build().get();
+            map.getBackend().compileRecipe(consumed);
+            require(CircuitPatternMolds.resolve(details).length == 0,
+                "adding a matching consumed-mold recipe invalidates the same cached pattern");
+            map.getBackend().removeRecipe(consumed);
+            require(hasVirtualMold(CircuitPatternMolds.resolve(details), mold),
+                "removing the consumed-mold recipe restores the same cached pattern's virtual mold");
+        } finally {
+            map.getBackend().clearRecipes();
+            RecipeMap.ALL_RECIPE_MAPS.remove(map.unlocalizedName, map);
+            RecipeCategory.ALL_RECIPE_CATEGORIES.remove(map.unlocalizedName, map.getDefaultRecipeCategory());
+        }
     }
 
     private void checkWildcardPatterns(EntityPlayerMP player) throws Exception {

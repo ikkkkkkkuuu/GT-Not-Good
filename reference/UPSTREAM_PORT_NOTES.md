@@ -992,6 +992,43 @@ in `META-INF/ae2lt-port/CODE_PORT_NOTES.md` covers all relocated port sources.
   GTNH AE2 `rv3-beta-1080-GTNH` already supplies this asset; it is not copied.
   The ignored reference checkout is excluded from compilation and packaging.
 
+## GTNL wireless frequency card performance — 2026-10-19
+
+- Source: https://github.com/ABKQPO/GT-Not-Leisure, five consecutive commits:
+  `3e2d43da1260507a29fe674eb90dc8e99553bf83`,
+  `0730f502bbe1f3f48e27699ab8085ee8c0d58929`,
+  `1ea3990f6d6c3b02fc09e5459e48c2b93c5f357e`,
+  `27712ce26fd045526768fef396b16fe57ec56dcc`,
+  `831f06ceb172025a91a55ca00deca7c21ea4a6f0` (2026-10-17).
+  Inspected the complete range and `LICENSE.txt` at the final commit (LGPL-3.0).
+- Destinations under `common/wirelessfrequency`: `AutomaticEntrancePlanner`,
+  `AutomaticWirelessEntrances`, `EntranceCandidates`, `IWirelessPathingState`,
+  `PhysicalClusterTracker`, `PhysicalMeTopology`, `WirelessCardVisualisation`,
+  `WirelessChannelManager`, `WirelessClusterManager`, `WirelessLinkPersistence`
+  and `WirelessTopologyWatch`. Also adapts the item and adjacent translation
+  declarations in `common/items/wirelessfrequency`, plus `MixinWirelessGridNode`
+  and `MixinWirelessPathGridCache` in `mixins/late/appliedenergistics/wireless`.
+- Reuses stable topology for 600 ticks with prompt invalidation for physical
+  changes and 20-tick retries while saved nodes are unavailable. Reuses entrance
+  indexes, channel counts, per-tick statistics and batch candidate distance maps.
+  Entrance trials cover multiple missing devices before one repath and roll back
+  trials without channel gain. Render-only device refreshes keep the cached graph.
+- Adaptations preserve GTNG packages, `gtng$` hooks, Java-compatible collection
+  helpers, multi-source bindings and machine ownership behavior. New tooltip text
+  uses Java translation declarations. Packaged code provenance is appended to
+  `META-INF/wireless-frequency-card/NOTICE.md`. No new assets; existing texture
+  hashes and license records remain unchanged. Reference checkouts stay outside
+  source sets and resources.
+- Validation: `compileJava`, `processResources` and all 22 focused wireless-frequency
+  JUnit tests passed. `scripts/wireless-frequency-qa.init.gradle` with
+  `-PwirelessFrequencyPerformance=true runClient17` passed on AE2
+  `rv3-beta-1073-GTNH` and GT `5.09.54.183`: 180 stable ticks and 60 render refreshes
+  retained physical membership; native wired additions/removals changed membership
+  and topology revisions; actual remote chunk unload removed nodes/entrances without
+  reloading the chunk. `-PwirelessFrequencyMultiSource=true runClient17` also passed
+  source switching, separate auto preferences, naming and deletion preserving links.
+  Both clients use the scoped hidden-window helper and muted sound settings.
+
 ## Packaged provider pattern capacity — 2026-10-13
 
 User-requested extension: 80 rows of nine patterns, with four visible rows and wheel/scrollbar navigation.
@@ -1169,3 +1206,19 @@ Reference checkouts remain outside build inputs.
   Attribution and the full LGPL/GPL terms are packaged under
   `META-INF/licenses/precision-assembler/`. Textures are referenced from GregTech at
   runtime; no upstream images or reference checkout files are packaged.
+
+## Circuit Assembly Line packaged core — 2026-10-19
+
+- Inspected GTNewHorizons/GT5-Unofficial `5.09.54.205`, commit
+  `a3e1e11241a814c9fa0dd0973d5699548428f689`, `MTECircuitAssemblyLine.java`,
+  `CircuitImprint.java` and recipe lookup sources from its source JAR. The controller
+  source carries the BartWorks MIT notice. No GT5U implementation is copied.
+- Destination: new `common/blocks/packaged/CircuitAssemblyLineAdapter.java` and
+  core registration, acquisition recipe and tooltip glue. The native CAL recipe
+  map and existing permanent imprint determine accepted jobs; circuit-assembler
+  mode and its Crafting Input Buffer/Bus support are unchanged.
+- Inspected the pinned AE2LTPP renderer and LGPL-3.0 license at
+  `1d3f183ecf258aff0001567d742ed30d6038d77b`. The existing renderer and unchanged
+  core base are reused; the installed CAL controller supplies its icon at runtime.
+  Packaged records: `META-INF/ae2lt-port/ASSET_MANIFEST.json` and `CODE_PORT_NOTES.md`.
+  No textures or reference sources are added to compilation or packaging.

@@ -33,3 +33,21 @@ not open a redundant entrance-detail panel.
 GTNG adds saved source selection and per-source automatic-placement preferences,
 with migration from the legacy single binding and server-validated switching.
 Saved sources support per-card names, displayed with their original coordinates.
+
+Performance updates ported on 2026-10-19 from the same LGPL-3.0 repository:
+
+- `3e2d43da1260507a29fe674eb90dc8e99553bf83`: reduce full cluster scans and repeated view statistics.
+- `0730f502bbe1f3f48e27699ab8085ee8c0d58929`: cache channel counts and batch entrance trials.
+- `1ea3990f6d6c3b02fc09e5459e48c2b93c5f357e`: reuse cluster distance tables during batch selection.
+- `27712ce26fd045526768fef396b16fe57ec56dcc`: prefer candidates covering more devices lacking channels.
+- `831f06ceb172025a91a55ca00deca7c21ea4a6f0`: ignore render-only updates and reuse entrance indexes.
+
+Adapted destinations are `AutomaticEntrancePlanner`, `AutomaticWirelessEntrances`,
+`EntranceCandidates`, `IWirelessPathingState`, `PhysicalClusterTracker`,
+`PhysicalMeTopology`, `WirelessCardVisualisation`, `WirelessChannelManager`,
+`WirelessClusterManager`, `WirelessLinkPersistence` and `WirelessTopologyWatch`
+in `common/wirelessfrequency`, the item and its adjacent generated translations,
+and `MixinWirelessGridNode` / `MixinWirelessPathGridCache` in the AE2 adapter package.
+Changes retain GTNG package names, `gtng$` mixin methods, collection compatibility
+helpers, multiple saved sources and machine ownership adaptations. The upstream
+license was inspected at `831f06c`; no new visual asset was copied or modified.

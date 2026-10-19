@@ -1,0 +1,85 @@
+// Opt-in disposable Forge checks; QA classes never enter the release jar.
+// gradlew -I scripts/circuit-assembly-qa.init.gradle runClient17 --no-configuration-cache
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def endToEnd = root.hasProperty('calEndToEnd')
+    def outputFolder = endToEnd ? 'circuit-assembly-e2e' : 'circuit-assembly-qa'
+    def qaSources = endToEnd ? root.files(
+        'scripts/qa/CircuitAssemblyLineEndToEndChecks.java',
+        'scripts/qa/CircuitAssemblyLineQaNetwork.java',
+        'scripts/qa/CircuitAssemblyLineQaStructure.java') : root.files('scripts/qa/CircuitAssemblyLineClientChecks.java')
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    if (endToEnd) root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('NewHorizonsCoreMod') as String)
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    def qaClasses = root.layout.buildDirectory.dir(outputFolder + '/classes')
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(qaClasses)
+        setSource(qaSources)
+    }
+    def runtimeSnapshot = root.layout.buildDirectory.dir(outputFolder + '/runtime')
+    def snapshot = root.tasks.register('snapshotCircuitAssemblyQA', Sync) {
+        dependsOn root.tasks.named('classes'), root.tasks.named('testClasses')
+        from(root.sourceSets.main.output) { into 'main' }
+        from(qaClasses) { into 'test' }
+        into runtimeSnapshot
+    }
+    root.spotless.java {
+        target qaSources
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn snapshot
+        def localJars = root.layout.buildDirectory.dir('libs').get().asFile.canonicalFile
+        classpath = classpath.filter {
+            !root.sourceSets.main.output.files.contains(it) && !root.sourceSets.test.output.files.contains(it)
+                && !(it.name.endsWith('.jar') && it.parentFile.canonicalFile == localJars)
+        }
+        classpath += root.files(runtimeSnapshot.map { it.dir('main') }, runtimeSnapshot.map { it.dir('test') })
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir root.file('run/' + outputFolder)
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty endToEnd ? 'gtng.circuitAssembly.e2e' : 'gtng.circuitAssembly.qa', 'true'
+        systemProperty 'fml.coreMods.load', 'com.xyp.gtnotgood.loader.EarlyMixinsLoader'
+        systemProperty 'gtng.circuitAssembly.output', root.file('build/' + outputFolder).absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Opt-in circuit assembly line client checks')
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/' + outputFolder).mkdirs()
+            ['result.txt', 'events.log', 'progress.txt', 'report.json', 'save-name.txt'].each {
+                java.nio.file.Files.deleteIfExists(root.file('build/' + outputFolder + '/' + it).toPath())
+            }
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            if (endToEnd) {
+                def qaConfig = new File(workingDir, 'config/GTNOTGOOD/gtnotgood.cfg')
+                qaConfig.parentFile.mkdirs()
+                qaConfig.setText('cutcorners {\n    I:mode=0\n}\n', 'UTF-8')
+                def coreConfig = new File(workingDir, 'config/DreamCoreMod.properties')
+                def coreProperties = new Properties()
+                if (coreConfig.exists()) coreConfig.withInputStream { coreProperties.load(it) }
+                coreProperties.setProperty('showConfirmExitWindow', 'false')
+                coreConfig.withOutputStream { coreProperties.store(it, null) }
+            }
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(root.file('build/' + outputFolder + '/window-helper.log')).start()
+            }
+        }
+        doLast {
+            def result = root.file('build/' + outputFolder + '/result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) throw new GradleException('Circuit assembly QA failed')
+        }
+    }
+}

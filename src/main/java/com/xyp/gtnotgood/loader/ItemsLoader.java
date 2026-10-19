@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import com.xyp.gtnotgood.common.blocks.packaged.ArcaneWorkbenchAdapter;
 import com.xyp.gtnotgood.common.blocks.packaged.AssemblyLineAdapter;
 import com.xyp.gtnotgood.common.blocks.packaged.BloodAltarAdapter;
+import com.xyp.gtnotgood.common.blocks.packaged.CircuitAssemblyLineAdapter;
 import com.xyp.gtnotgood.common.blocks.packaged.PackagedCoreRegistry;
 import com.xyp.gtnotgood.common.blocks.packaged.ThaumcraftCrucibleAdapter;
 import com.xyp.gtnotgood.common.blocks.packaged.ThaumcraftInfusionAdapter;
@@ -109,6 +110,12 @@ public final class ItemsLoader {
         registerItem(advancedCore, "advanced_assembly_line_packaged_core", GTNGItemList.AdvancedAssemblyLineCore);
         PackagedCoreRegistry.register("assembly_line", new AssemblyLineAdapter(false));
         PackagedCoreRegistry.register("advanced_assembly_line", new AssemblyLineAdapter(true));
+        // #tr item.circuit_assembly_line_packaged_core.name
+        // # Circuit Assembly Line Packaged Core
+        // # zh_CN 电路装配线封包核心
+        var circuitCore = new ItemPackagedCore("circuit_assembly_line", "circuit_assembly_line_packaged_core");
+        registerItem(circuitCore, "circuit_assembly_line_packaged_core", GTNGItemList.CircuitAssemblyLineCore);
+        PackagedCoreRegistry.register("circuit_assembly_line", new CircuitAssemblyLineAdapter());
     }
 
     private static void registerThaumcraftCores() {

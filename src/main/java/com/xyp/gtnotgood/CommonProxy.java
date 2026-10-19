@@ -10,6 +10,7 @@ import com.xyp.gtnotgood.commandtree.CommandTreeBootstrap;
 import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceGuiFactory;
 import com.xyp.gtnotgood.common.blocks.mebridge.MEBridgeEventHandler;
 import com.xyp.gtnotgood.common.blocks.mebridge.MEWirelessLinkEventHandler;
+import com.xyp.gtnotgood.common.gui.modularui.multiblock.LargeVoidDrillerConfigGuiFactory;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.LargeVoidMinerConfigGuiFactory;
 import com.xyp.gtnotgood.common.items.compass.StructureSearch;
 import com.xyp.gtnotgood.common.items.toolbelt.common.BeltEvents;
@@ -24,6 +25,7 @@ import com.xyp.gtnotgood.common.parts.advancedio.AdvancedIOGuiFactory;
 import com.xyp.gtnotgood.common.parts.largeinterface.PartLargeInterface;
 import com.xyp.gtnotgood.common.parts.mestock.StockRegistration;
 import com.xyp.gtnotgood.common.parts.stockio.StockIOGuiFactory;
+import com.xyp.gtnotgood.common.recipe.gregtech.ExtruderRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.WirelessEnergyCoverRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.CombProcessingRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
@@ -102,6 +104,7 @@ public class CommonProxy {
         GuiManager.registerFactory(StockIOGuiFactory.INSTANCE);
         GuiManager.registerFactory(LargeInterfaceGuiFactory.INSTANCE);
         GuiManager.registerFactory(LargeVoidMinerConfigGuiFactory.INSTANCE);
+        GuiManager.registerFactory(LargeVoidDrillerConfigGuiFactory.INSTANCE);
         RecipeLoader.loadRecipes();
         StockRegistration.init();
         AE2Thing.init(event);
@@ -120,6 +123,7 @@ public class CommonProxy {
     }
 
     public void complete(FMLLoadCompleteEvent event) {
+        ExtruderRecipes.loadRecipes();
         WirelessEnergyCoverRecipes.loadRecipes();
         SeedConverterRecipes.loadConversionRecipes();
         LargeInterfaceRecipes.registerUpgrades();

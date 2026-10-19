@@ -6,10 +6,12 @@ import net.minecraft.item.ItemStack;
 
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 
 import WayofTime.alchemicalWizardry.ModBlocks;
 import appeng.api.AEApi;
 import cpw.mods.fml.common.registry.GameRegistry;
+import ggfab.GGItemList;
 import gregtech.api.enums.ItemList;
 import thaumcraft.common.config.ConfigBlocks;
 
@@ -34,7 +36,9 @@ public final class PackagedRecipes {
         GameRegistry.addShapelessRecipe(GTNGItemList.AssemblyLineCore.get(1), GTNGItemList.BasicPackagedCore.get(1),
             ItemList.Machine_Multi_Assemblyline.get(1));
         GameRegistry.addShapelessRecipe(GTNGItemList.AdvancedAssemblyLineCore.get(1),
-            GTNGItemList.BasicPackagedCore.get(1), ggfab.GGItemList.AdvAssLine.get(1));
+            GTNGItemList.BasicPackagedCore.get(1), GGItemList.AdvAssLine.get(1));
+        GameRegistry.addShapelessRecipe(GTNGItemList.CircuitAssemblyLineCore.get(1),
+            GTNGItemList.BasicPackagedCore.get(1), ModsItemlist.CircuitAssemblyLine.get(1));
     }
 
     /** Kept separate so an installation without TC never resolves a TC item while registering common recipes. */

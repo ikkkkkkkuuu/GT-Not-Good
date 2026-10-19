@@ -27,17 +27,19 @@ import net.minecraftforge.common.util.ForgeDirection;
 import com.cleanroommc.modularui.factory.GuiFactories;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.xyp.gtnotgood.common.items.wirelessfrequency.WirelessFrequencyCard;
 import com.xyp.gtnotgood.client.wirelessfrequency.WirelessCardGui;
 import com.xyp.gtnotgood.client.wirelessfrequency.WirelessCardRenameDialog;
+import com.xyp.gtnotgood.common.items.wirelessfrequency.WirelessFrequencyCard;
 import com.xyp.gtnotgood.common.wirelessfrequency.IWirelessLinkView;
+import com.xyp.gtnotgood.common.wirelessfrequency.IWirelessPathingState;
+import com.xyp.gtnotgood.common.wirelessfrequency.PhysicalClusterTracker;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessCardActions;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessCardBinding;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessCardContainer;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessCardViewBuilder;
-import com.xyp.gtnotgood.common.wirelessfrequency.WirelessClusterManager;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessChannelManager;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessChannelManager.Address;
+import com.xyp.gtnotgood.common.wirelessfrequency.WirelessClusterManager;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessHatchOwner;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessInterfaceView;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessMachineGroups;
@@ -50,6 +52,7 @@ import appeng.api.AEApi;
 import appeng.api.networking.IGridBlock;
 import appeng.api.networking.IGridHost;
 import appeng.api.networking.IGridNode;
+import appeng.api.networking.pathing.IPathingGrid;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -86,6 +89,11 @@ public final class WirelessFrequencyClientChecks {
     private int readyTicks;
     private int guiTicks;
     private volatile boolean deletedSourceLinksVerified;
+    private Object stableCluster;
+    private IGridNode performanceTarget;
+    private IGridNode addedNode;
+    private IWirelessPathingState performancePath;
+    private long topologyRevision;
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
@@ -99,6 +107,15 @@ public final class WirelessFrequencyClientChecks {
         if (server == null || server.getConfigurationManager().playerEntityList.isEmpty()) return;
         EntityPlayerMP player = (EntityPlayerMP) server.getConfigurationManager().playerEntityList.get(0);
         WorldServer world = player.getServerForPlayer();
+        if (Boolean.getBoolean("gtng.wirelessFrequency.performance")) {
+            try {
+                inspectPerformance(world, player);
+            } catch (Throwable failure) {
+                failure.printStackTrace();
+                finish("performance: " + failure);
+            }
+            return;
+        }
         if (Boolean.getBoolean("gtng.wirelessFrequency.multiSource")) {
             try {
                 inspectMultipleSources(world, player);
@@ -169,6 +186,108 @@ public final class WirelessFrequencyClientChecks {
         }
     }
 
+    private void inspectPerformance(WorldServer world, EntityPlayerMP player) throws Exception {
+        int tick = ++readyTicks;
+        int dimension = world.provider.dimensionId;
+        Address source = new Address(dimension, 2, 6, 2, ForgeDirection.UNKNOWN);
+        Address target = new Address(dimension, 514, 6, 2, ForgeDirection.UNKNOWN);
+        var blocks = AEApi.instance().definitions().blocks();
+        if (tick == 1) {
+            player.setPositionAndUpdate(2, 8, 2);
+            world.setSpawnLocation(0, 4, 0);
+            require(world.setBlock(2, 6, 2, blocks.creativeEnergyController().maybeBlock().get()),
+                "performance source placement");
+            require(world.setBlock(514, 6, 2, blocks.iface().maybeBlock().get()), "remote target placement");
+            player.inventory.currentItem = 0;
+            player.inventory.setInventorySlotContents(0, GTNGItemList.WirelessFrequencyCard.get(1));
+        } else if (tick == 80) {
+            ItemStack card = player.getCurrentEquippedItem();
+            player.setSneaking(true);
+            ((WirelessFrequencyCard) card.getItem()).onItemUseFirst(card, player, world, 2, 6, 2, 1, .5F, .5F, .5F);
+            player.setSneaking(false);
+            var binding = WirelessCardBinding.read(card.getTagCompound());
+            require(binding != null, "performance controller binding");
+            require(WirelessOperations.toggle(player, binding, target) == WirelessOperations.Result.CONNECTED,
+                "performance wireless link");
+        } else if (tick == 160) {
+            performanceTarget = target.node();
+            require(performanceTarget != null, "remote target node remains loaded");
+            stableCluster = clusterOf(performanceTarget);
+            require(stableCluster != null && clusterMembers(performanceTarget).size() == 1,
+                "wireless edge is excluded from physical membership");
+            IPathingGrid path = performanceTarget.getGrid().getCache(IPathingGrid.class);
+            require(path instanceof IWirelessPathingState, "PathGridCache topology mixin applied");
+            performancePath = (IWirelessPathingState) path;
+            require(!path.isNetworkBooting() && !performancePath.gtng$isRepathPending(),
+                "wireless network settled before observing scans");
+            topologyRevision = performancePath.gtng$topologyRevision();
+        } else if (tick > 160 && tick <= 400) {
+            require(clusterOf(performanceTarget) == stableCluster,
+                "stable topology must retain the physical cluster at tick " + tick);
+            require(performancePath.gtng$topologyRevision() == topologyRevision,
+                "stable network must retain its topology revision");
+            require(
+                WirelessChannelManager.entrances().size() == 1 && WirelessChannelManager.entrances().get(0).isLive(),
+                "stable wireless entrance remains live");
+            if (tick > 340) {
+                world.markBlockForUpdate(514, 6, 2);
+                world.markBlockForUpdate(2, 6, 2);
+            }
+            if (tick == 340) System.out.println("WIRELESS_FREQUENCY_QA: 180 stable ticks without a physical scan PASS");
+        } else if (tick == 401) {
+            require(clusterOf(performanceTarget) == stableCluster, "render refresh does not schedule a scan");
+            System.out.println("WIRELESS_FREQUENCY_QA: 60 render refreshes without a scan PASS");
+            require(world.setBlock(515, 6, 2, blocks.iface().maybeBlock().get()), "adjacent interface placement");
+        } else if (tick == 440) {
+            addedNode = new Address(dimension, 515, 6, 2, ForgeDirection.UNKNOWN).node();
+            require(addedNode != null && clusterMembers(performanceTarget).contains(addedNode)
+                && clusterMembers(performanceTarget).size() == 2, "wired addition invalidates physical membership");
+            require(clusterOf(performanceTarget) != stableCluster, "wired addition rebuilds physical cluster");
+            require(performancePath.gtng$topologyRevision() > topologyRevision,
+                "PathGridCache observes native node and connection additions");
+            stableCluster = clusterOf(performanceTarget);
+            performancePath = (IWirelessPathingState) performanceTarget.getGrid().getCache(IPathingGrid.class);
+            topologyRevision = performancePath.gtng$topologyRevision();
+            require(world.setBlockToAir(515, 6, 2), "adjacent interface removal");
+        } else if (tick == 480) {
+            require(clusterOf(performanceTarget) != stableCluster && clusterMembers(performanceTarget).size() == 1,
+                "wired removal rebuilds physical membership");
+            require(clusterOf(addedNode) == null, "removed native node is no longer tracked");
+            require(performancePath.gtng$topologyRevision() > topologyRevision,
+                "PathGridCache observes native node and connection removals");
+            System.out.println("WIRELESS_FREQUENCY_QA: real wired additions, removals and topology revisions PASS");
+            require(world.theChunkProviderServer.chunkExists(32, 0), "remote target chunk was loaded");
+            world.theChunkProviderServer.unloadChunksIfNotNearSpawn(32, 0);
+            world.theChunkProviderServer.unloadQueuedChunks();
+            require(!world.theChunkProviderServer.chunkExists(32, 0), "remote target chunk actually unloaded");
+        } else if (tick == 500) {
+            require(!world.theChunkProviderServer.chunkExists(32, 0) && target.node() == null,
+                "wireless bookkeeping does not reload the target chunk");
+            require(clusterOf(performanceTarget) == null && WirelessClusterManager.links(source).isEmpty(),
+                "chunk unload invalidates physical membership");
+            require(WirelessChannelManager.entrances().isEmpty(), "chunk unload removes stale wireless entrances");
+            System.out.println("WIRELESS_FREQUENCY_QA: native chunk unload removes stale nodes and entrances PASS");
+            finish("PASS");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static PhysicalClusterTracker<IGridNode, Address> clusterTracker() throws Exception {
+        Field field = WirelessClusterManager.class.getDeclaredField("TRACKER");
+        field.setAccessible(true);
+        return (PhysicalClusterTracker<IGridNode, Address>) field.get(null);
+    }
+
+    private static Object clusterOf(IGridNode node) throws Exception {
+        return clusterTracker().clusterOf(node);
+    }
+
+    private static Set<IGridNode> clusterMembers(IGridNode node) throws Exception {
+        var cluster = clusterTracker().clusterOf(node);
+        require(cluster != null, "physical cluster is available");
+        return cluster.nodes();
+    }
+
     private void inspectMultipleSources(WorldServer world, EntityPlayerMP player) throws Exception {
         int tick = ++readyTicks;
         var blocks = AEApi.instance().definitions().blocks();
@@ -224,17 +343,17 @@ public final class WirelessFrequencyClientChecks {
             require(container.display.getBoolean("sourcesPage"), "selected source button is inactive");
             ScreenShotHelper.saveScreenshot(output(), "wireless-multiple-sources.png", mc.displayWidth,
                 mc.displayHeight, mc.getFramebuffer());
-            var selectButton = gui.buttons.stream()
-                .filter(button -> button.id == WirelessCardActions.OPEN_DETAILS).findFirst().get();
+            var selectButton = gui.buttons.stream().filter(button -> button.id == WirelessCardActions.OPEN_DETAILS)
+                .findFirst().get();
             require(selectButton.widget.getArea().width == 60, "source has a dedicated select button");
             ((ButtonWidget<?>) selectButton.widget).onMousePressed(0);
         } else if (guiTicks == 70) {
             require(!container.display.getBoolean("sourcesPage"), "source selection returns to network");
             require(container.display.getString("source").equals("D0  2, 6, 2"), "selected first network");
             require(container.display.getBoolean("auto"), "first source auto preference restored");
-            require(container.display.getTagList("rows", 10).tagCount() == 1
-                && container.display.getTagList("rows", 10).getCompoundTagAt(0).getString("position")
-                    .contains("14, 6, 2"),
+            require(
+                container.display.getTagList("rows", 10).tagCount() == 1 && container.display.getTagList("rows", 10)
+                    .getCompoundTagAt(0).getString("position").contains("14, 6, 2"),
                 "first source shows only its own target");
             ScreenShotHelper.saveScreenshot(output(), "wireless-source-first-network.png", mc.displayWidth,
                 mc.displayHeight, mc.getFramebuffer());
@@ -246,15 +365,15 @@ public final class WirelessFrequencyClientChecks {
         } else if (guiTicks == 130) {
             require(container.display.getString("source").equals("D0  32, 6, 2"), "selected second network");
             require(!container.display.getBoolean("auto"), "second source remains auto disabled");
-            require(container.display.getTagList("rows", 10).tagCount() == 1
-                && container.display.getTagList("rows", 10).getCompoundTagAt(0).getString("position")
-                    .contains("44, 6, 2"),
+            require(
+                container.display.getTagList("rows", 10).tagCount() == 1 && container.display.getTagList("rows", 10)
+                    .getCompoundTagAt(0).getString("position").contains("44, 6, 2"),
                 "second source retains only its own target");
             gui.action(WirelessCardActions.OPEN_SOURCES);
             gui.action(WirelessCardActions.OPEN_DETAILS);
         } else if (guiTicks == 160) {
-            require(container.display.getString("source").equals("D0  2, 6, 2")
-                && !container.display.getBoolean("auto"),
+            require(
+                container.display.getString("source").equals("D0  2, 6, 2") && !container.display.getBoolean("auto"),
                 "switching back restores updated preference");
             container.sync.request(WirelessCardActions.SELECT_SOURCE, 999, "", 0);
         } else if (guiTicks == 190) {
@@ -282,8 +401,8 @@ public final class WirelessFrequencyClientChecks {
             var sources = container.display.getTagList("sources", 10);
             require(sources.getCompoundTagAt(0).getString("name").equals("生产网络")
                 && sources.getCompoundTagAt(1).getString("name").equals("仓储网络"), "separate source names retained");
-            ScreenShotHelper.saveScreenshot(output(), "wireless-named-sources.png", mc.displayWidth,
-                mc.displayHeight, mc.getFramebuffer());
+            ScreenShotHelper.saveScreenshot(output(), "wireless-named-sources.png", mc.displayWidth, mc.displayHeight,
+                mc.getFramebuffer());
             gui.action(WirelessCardActions.BACK);
         } else if (guiTicks == 320) {
             require(container.display.getString("sourceName").equals("生产网络"), "overview shows selected source name");
@@ -298,12 +417,14 @@ public final class WirelessFrequencyClientChecks {
             ((ButtonWidget<?>) button.widget).onMousePressed(0);
         } else if (guiTicks == 360) {
             require(container.display.getBoolean("sourcesPage"), "deleting current source keeps source page open");
-            require(container.display.getTagList("rows", 10).tagCount() == 1
-                && container.display.getString("sourceName").equals("仓储网络"),
+            require(
+                container.display.getTagList("rows", 10).tagCount() == 1
+                    && container.display.getString("sourceName").equals("仓储网络"),
                 "deleting current source selects remaining named source");
         } else if (guiTicks == 420) {
-            require(container.display.getBoolean("sourcesPage") && !container.display.getBoolean("bound")
-                && container.display.getTagList("rows", 10).tagCount() == 0,
+            require(
+                container.display.getBoolean("sourcesPage") && !container.display.getBoolean("bound")
+                    && container.display.getTagList("rows", 10).tagCount() == 0,
                 "deleting final source leaves an empty card");
             require(!container.display.getBoolean("auto"), "deleting final source disables auto connect");
             require(deletedSourceLinksVerified, "source removal preserves existing network connections");
@@ -330,16 +451,34 @@ public final class WirelessFrequencyClientChecks {
         }
         if (readyTicks != 240) return;
         for (Object value : new ArrayList<>(world.loadedTileEntityList)) {
-            if (!(value instanceof BaseMetaTileEntity base) || base.xCoord < 220 || base.xCoord > 250
-                || base.zCoord < 800 || base.zCoord > 830) continue;
+            if (
+                !(value instanceof BaseMetaTileEntity base) || base.xCoord < 220
+                    || base.xCoord > 250
+                    || base.zCoord < 800
+                    || base.zCoord > 830
+            ) continue;
             var meta = base.getMetaTileEntity();
-            System.out.println("WIRELESS_WORLD: tile=" + base.xCoord + "," + base.yCoord + "," + base.zCoord
-                + " meta=" + meta.getClass().getName());
+            System.out.println("WIRELESS_WORLD: tile=" + base.xCoord
+                + ","
+                + base.yCoord
+                + ","
+                + base.zCoord
+                + " meta="
+                + meta.getClass().getName());
             if (meta instanceof MTEMultiBlockBase controller) {
-                System.out.println("WIRELESS_WORLD: formed=" + controller.mMachine + " valid=" + controller.isValid()
-                    + " in=" + controller.mInputHatches.size() + "/" + controller.mInputBusses.size()
-                    + "/" + controller.mDualInputHatches.size() + " out=" + controller.mOutputHatches.size()
-                    + "/" + controller.mOutputBusses.size());
+                System.out.println("WIRELESS_WORLD: formed=" + controller.mMachine
+                    + " valid="
+                    + controller.isValid()
+                    + " in="
+                    + controller.mInputHatches.size()
+                    + "/"
+                    + controller.mInputBusses.size()
+                    + "/"
+                    + controller.mDualInputHatches.size()
+                    + " out="
+                    + controller.mOutputHatches.size()
+                    + "/"
+                    + controller.mOutputBusses.size());
                 System.out.println("WIRELESS_WORLD: recheck=" + controller.checkStructure(true, base));
                 Field errors = MTEMultiBlockBase.class.getDeclaredField("structureErrors");
                 errors.setAccessible(true);
@@ -349,8 +488,10 @@ public final class WirelessFrequencyClientChecks {
             if (meta instanceof WirelessHatchOwner hatch) {
                 System.out.println("WIRELESS_WORLD: owners=" + hatch.wirelessFrequency$getControllers().stream()
                     .map(controller -> controller.getBaseMetaTileEntity().getXCoord() + ","
-                        + controller.getBaseMetaTileEntity().getYCoord() + ","
-                        + controller.getBaseMetaTileEntity().getZCoord()).collect(Collectors.joining(";")));
+                        + controller.getBaseMetaTileEntity().getYCoord()
+                        + ","
+                        + controller.getBaseMetaTileEntity().getZCoord())
+                    .collect(Collectors.joining(";")));
             }
             IGridNode node = ((IGridHost) base).getGridNode(ForgeDirection.UNKNOWN);
             if (node != null) System.out.println("WIRELESS_WORLD: node.host=" + node.getMachine().getClass().getName());
@@ -411,8 +552,8 @@ public final class WirelessFrequencyClientChecks {
         for (BaseMetaTileEntity hatch : new BaseMetaTileEntity[] { secondBus, secondOutput, secondInput })
             checkOwners(hatch, second);
         checkOwners(sharedInput, first, second);
-        checkRows(first, second, new BaseMetaTileEntity[] { firstBus, firstOutput, firstInput, secondBus,
-            secondOutput, secondInput, sharedInput });
+        checkRows(first, second, new BaseMetaTileEntity[] { firstBus, firstOutput, firstInput, secondBus, secondOutput,
+            secondInput, sharedInput });
         first.formed = second.formed = false;
         require(!first.checkStructure(true, first.getBaseMetaTileEntity()), "first controller remains incomplete");
         require(!second.checkStructure(true, second.getBaseMetaTileEntity()), "second controller remains incomplete");
@@ -420,8 +561,8 @@ public final class WirelessFrequencyClientChecks {
         checkOwners(firstOutput, first);
         checkOwners(firstInput, first);
         checkOwners(sharedInput, first, second);
-        checkRows(first, second, new BaseMetaTileEntity[] { firstBus, firstOutput, firstInput, secondBus,
-            secondOutput, secondInput, sharedInput });
+        checkRows(first, second, new BaseMetaTileEntity[] { firstBus, firstOutput, firstInput, secondBus, secondOutput,
+            secondInput, sharedInput });
         second.attach(secondBus, secondOutput, secondInput, null);
         require(!second.checkStructure(true, second.getBaseMetaTileEntity()), "incomplete controller recheck");
         checkOwners(sharedInput, first);
@@ -460,9 +601,10 @@ public final class WirelessFrequencyClientChecks {
         require(owners.size() == expected.length, "owner count at " + base.xCoord + ": " + owners.size());
         for (MTEMultiBlockBase controller : expected)
             require(owners.contains(controller), "controller missing at " + base.xCoord);
-        System.out.println("WIRELESS_FREQUENCY_QA: hatch=" + base.xCoord + " owners=" + owners.stream()
-            .map(controller -> Integer.toString(controller.getBaseMetaTileEntity().getXCoord()))
-            .collect(Collectors.joining(",")));
+        System.out.println("WIRELESS_FREQUENCY_QA: hatch=" + base.xCoord
+            + " owners="
+            + owners.stream().map(controller -> Integer.toString(controller.getBaseMetaTileEntity().getXCoord()))
+                .collect(Collectors.joining(",")));
     }
 
     private static void checkRows(TestController first, TestController second, BaseMetaTileEntity[] hatches)
@@ -486,8 +628,7 @@ public final class WirelessFrequencyClientChecks {
             boolean isGroup = (boolean) group.invoke(row);
             Address address = (Address) target.invoke(row);
             Object key = type.invoke(row);
-            System.out.println("WIRELESS_FREQUENCY_QA: row.group=" + isGroup + " typeKey=" + key + " x="
-                + address.x());
+            System.out.println("WIRELESS_FREQUENCY_QA: row.group=" + isGroup + " typeKey=" + key + " x=" + address.x());
             if (isGroup) {
                 grouped++;
                 machineRows.add(address.x());
@@ -499,8 +640,9 @@ public final class WirelessFrequencyClientChecks {
         }
         require(grouped == 2 && separate == 2 && shared == 1 && crossMachine == 1,
             "two machine rows, one shared row and one cross-machine row");
-        require(machineRows.size() == 2 && machineRows.contains(first.getBaseMetaTileEntity().getXCoord())
-            && machineRows.contains(second.getBaseMetaTileEntity().getXCoord()),
+        require(
+            machineRows.size() == 2 && machineRows.contains(first.getBaseMetaTileEntity().getXCoord())
+                && machineRows.contains(second.getBaseMetaTileEntity().getXCoord()),
             "each grouped row targets its controller");
     }
 
@@ -652,8 +794,9 @@ public final class WirelessFrequencyClientChecks {
                     "single-node hatch displays its own identity without another details layer");
                 require(view.navigate(WirelessCardActions.OPEN_DETAILS + i, true), "device does not drill down");
             }
-            require(metadata.contains(GTNGItemList.SuperMTEHatchCraftingInputME.get(1).getItemDamage())
-                && metadata.contains(ItemList.Hatch_Output_Bus_ME.get(1).getItemDamage()),
+            require(
+                metadata.contains(GTNGItemList.SuperMTEHatchCraftingInputME.get(1).getItemDamage())
+                    && metadata.contains(ItemList.Hatch_Output_Bus_ME.get(1).getItemDamage()),
                 "correct ME hatch variants in machine panel");
             require(view.groupDisplay().getTagList("rows", 10).tagCount() == 2,
                 "input and output stay together after device clicks");

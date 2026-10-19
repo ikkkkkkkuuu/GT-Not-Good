@@ -22,6 +22,7 @@ gradle.projectsEvaluated {
         systemProperty 'gtng.wirelessFrequency.qa', 'true'
         systemProperty 'gtng.wirelessFrequency.world', root.findProperty('wirelessFrequencyWorld') ?: ''
         systemProperty 'gtng.wirelessFrequency.multiSource', root.findProperty('wirelessFrequencyMultiSource') ?: 'false'
+        systemProperty 'gtng.wirelessFrequency.performance', root.findProperty('wirelessFrequencyPerformance') ?: 'false'
         systemProperty 'gtng.wirelessFrequency.output', root.file('build/wireless-frequency-qa').absolutePath
         systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
         systemProperty 'sun.net.client.defaultReadTimeout', '15000'
@@ -30,7 +31,9 @@ gradle.projectsEvaluated {
         doFirst {
             root.file('build/wireless-frequency-qa').mkdirs()
             workingDir.mkdirs()
-            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            def clientOptions = 'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n'
+            clientOptions += 'soundCategory_master:0.0\nsoundCategory_music:0.0\n'
+            new File(workingDir, 'options.txt').setText(clientOptions, 'UTF-8')
             java.nio.file.Files.deleteIfExists(root.file('build/wireless-frequency-qa/result.txt').toPath())
             if (System.getProperty('os.name').startsWith('Windows')) {
                 new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',

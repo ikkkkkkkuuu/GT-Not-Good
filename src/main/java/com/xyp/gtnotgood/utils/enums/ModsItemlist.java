@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import gregtech.api.enums.MetaTileEntityIDs;
 import gregtech.api.enums.Mods;
 import gregtech.api.util.GTModHandler;
 import ic2.api.item.IC2Items;
@@ -635,6 +636,9 @@ public enum ModsItemlist {
 
     // 喷射引擎
     JetEngine(Mods.GraviSuite.ID, "itemSimpleItem", 6),
+
+    // 电路装配线
+    CircuitAssemblyLine(Mods.GregTech.ID, "gt.blockmachines", MetaTileEntityIDs.CircuitAssemblyLine.ID),
 
     // 脱水线圈 []
     DehydratorCoil(Mods.GTPlusPlus.ID, "itemDehydratorCoil", 3),

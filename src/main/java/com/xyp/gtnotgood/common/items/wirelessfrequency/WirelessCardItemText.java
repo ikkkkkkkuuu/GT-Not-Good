@@ -25,6 +25,10 @@ final class WirelessCardItemText {
             // # Shift-right-click air to remove the selected source.
             // # zh_CN Shift 右键空气，移除当前选中的发射源。
             case "tooltip.2" -> "item.gtnotgood.wireless_frequency_card.tooltip.2";
+            // #tr item.gtnotgood.wireless_frequency_card.tooltip.3
+            // # Use dense cable among ME interfaces: up to 32 channels per dense entrance, 8 per ordinary entrance.
+            // # zh_CN 在 ME 接口簇中铺设致密线缆：致密入口最多 32 个频道，普通入口最多 8 个。
+            case "tooltip.3" -> "item.gtnotgood.wireless_frequency_card.tooltip.3";
             // #tr item.gtnotgood.wireless_frequency_card.manage_hint
             // # Right-click air to open the manager.
             // # zh_CN 右键空气打开管理界面。

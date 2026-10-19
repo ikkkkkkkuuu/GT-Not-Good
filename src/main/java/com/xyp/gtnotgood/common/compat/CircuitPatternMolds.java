@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.common.compat;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +20,7 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import gregtech.api.GregTechAPI;
 import gregtech.api.recipe.RecipeMap;
+import gregtech.api.recipe.RecipeMapBackend;
 import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTUtility;
@@ -43,17 +45,32 @@ public final class CircuitPatternMolds {
      */
     public static synchronized ItemStack[] resolve(ICraftingPatternDetails details) {
         if (details == null || details.isCraftable() || details.isInputOnly()) return new ItemStack[0];
+        boolean hasMold = false;
+        for (IAEStack<?> stack : details.getAEInputs()) {
+            if (stack instanceof IAEItemStack item && VirtualMachineMolds.indexOf(item.getItemStack()) >= 0) {
+                hasMold = true;
+                break;
+            }
+        }
+        if (!hasMold) return new ItemStack[0];
         if (!GregTechAPI.sFullLoadFinished) return findMolds(details);
+        invalidateChangedRecipes();
+        return copy(cache.computeIfAbsent(details, CircuitPatternMolds::findMolds));
+    }
+
+    private static void invalidateChangedRecipes() {
         int recipeCount = 0;
         for (RecipeMap<?> map : RecipeMap.ALL_RECIPE_MAPS.values()) {
-            if (!map.getBackend().doesOverwriteFindRecipe()) recipeCount += map.getAllRecipes().size();
+            RecipeMapBackend backend = map.getBackend();
+            if (backend.doesOverwriteFindRecipe()) continue;
+            // getAllRecipes() flattens every category into a new list, including when only its size is needed.
+            for (Collection<GTRecipe> recipes : backend.getRecipeCategoryMap().values()) recipeCount += recipes.size();
         }
         if (cachedRecipeCount != recipeCount || cachedMapCount != RecipeMap.ALL_RECIPE_MAPS.size()) {
             cache.clear();
             cachedRecipeCount = recipeCount;
             cachedMapCount = RecipeMap.ALL_RECIPE_MAPS.size();
         }
-        return copy(cache.computeIfAbsent(details, CircuitPatternMolds::findMolds));
     }
 
     private static ItemStack[] findMolds(ICraftingPatternDetails details) {

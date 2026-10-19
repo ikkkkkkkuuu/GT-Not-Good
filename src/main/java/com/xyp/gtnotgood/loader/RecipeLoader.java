@@ -10,6 +10,7 @@ import com.xyp.gtnotgood.common.recipe.gregtech.CentrifugeRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.CraftingTableRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FuelRodRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
+import com.xyp.gtnotgood.common.recipe.gregtech.LargeChemicalReactorRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.MixerRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.AdvancedIORecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.FuelRefiningRecipes;
@@ -29,6 +30,7 @@ import com.xyp.gtnotgood.common.recipe.machine.LargeIndustrialApiaryRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeIndustrialFarmRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeTransmutationMachineRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.LargeVoidDrillerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeVoidMinerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEBridgeRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEContainerRecipes;
@@ -55,6 +57,7 @@ public class RecipeLoader {
     /** Waits for external fluid and dimension-display registrations. */
     public static void loadPostInitRecipes() {
         CentrifugeRecipes.loadRecipes();
+        LargeChemicalReactorRecipes.loadRecipes();
         LargeIndustrialFarmRecipes.loadRecipes();
         MixerRecipes.loadRecipes();
         FuelRefiningRecipes.loadRecipes();
@@ -103,6 +106,7 @@ public class RecipeLoader {
         PatternSorterRecipes.register();
         SuperCraftingInputRecipes.loadRecipes();
         LargeVoidMinerRecipes.loadRecipes();
+        LargeVoidDrillerRecipes.loadRecipes();
         LargeBeeBreederRecipes.loadRecipes();
         LargeCombProcessorRecipes.loadRecipes();
         LargeCropBreederRecipes.loadRecipes();

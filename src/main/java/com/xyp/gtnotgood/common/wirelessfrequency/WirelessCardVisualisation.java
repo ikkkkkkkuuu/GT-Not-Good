@@ -114,11 +114,17 @@ public class WirelessCardVisualisation {
         return WirelessCardSelection.select(candidates, true).card();
     }
 
+    private static boolean due(EntityPlayerMP player, WirelessCardBinding binding) {
+        Refresh previous = LAST_UPDATES.get(player);
+        return previous == null || previous.due(binding, player.dimension, player.worldObj.getTotalWorldTime());
+    }
+
     public static void update(ItemStack card, EntityPlayerMP player, int slot) {
         int mode = mode(card.getTagCompound());
-        if (mode == 0 || activeCard(player) != card) return;
+        if (mode == 0) return;
         WirelessCardBinding binding = WirelessCardBinding.read(card.getTagCompound());
-        if (binding == null || !binding.belongsTo(player.getUniqueID())) return;
+        if (binding == null || !binding.belongsTo(player.getUniqueID()) || !due(player, binding)) return;
+        if (activeCard(player) != card) return;
         var source = binding.source().node();
         if (!WirelessChannelManager.canBuild(source, player)) return;
         // Address.node() only visits already loaded chunks. Never let the native collector load its target.

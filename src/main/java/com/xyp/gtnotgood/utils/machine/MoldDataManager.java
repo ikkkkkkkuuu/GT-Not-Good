@@ -16,7 +16,7 @@ import gtPlusPlus.xmod.gregtech.api.enums.GregtechItemList;
 
 public class MoldDataManager {
 
-    // 普通模具、一次性模具、挤出模头、透镜和纳米蜂群。
+    // 普通模具、一次性模具、挤出模头、透镜、纳米蜂群和切削器刀刃。
     public static final ItemStack[] CRIB_MOLDS = buildMoldArray();
 
     private static ItemStack[] buildMoldArray() {
@@ -145,6 +145,9 @@ public class MoldDataManager {
                 items.add(new ItemStack(WerkstoffLoader.items.get(OrePrefixes.nanite), 1, werkstoff.getmID()));
             }
         }
+
+        items.add(ItemList.Shape_Slicer_Flat.get(1));
+        items.add(ItemList.Shape_Slicer_Stripes.get(1));
 
         // 去重: 多个来源的透镜/纳米蜂群可能存在重复（如 GT++ 专用透镜与材料透镜重叠、GT 材料与 Werkstoff 材料重叠）
         for (int i = items.size() - 1; i >= 0; i--) {

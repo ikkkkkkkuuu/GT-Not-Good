@@ -16,6 +16,7 @@ public final class UIEvent {
     public final long timeStamp = System.currentTimeMillis();
     public int x, y, deltaY, button, keyCode;
     public char codePoint;
+    public String text;
     public boolean shift, control;
     public UIElement target, currentElement;
     public EventPhase phase;

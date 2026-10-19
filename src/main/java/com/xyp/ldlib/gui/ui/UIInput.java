@@ -139,6 +139,16 @@ public final class UIInput {
         return event.isDefaultPrevented();
     }
 
+    public boolean textInput(String text) {
+        validate();
+        if (focused == null || text == null || text.isEmpty()) return false;
+        UIEvent event = new UIEvent(UIEvents.TEXT_INPUT);
+        event.text = text;
+        dispatch(focused, event);
+        validate();
+        return event.isDefaultPrevented();
+    }
+
     public void cycleFocus(boolean backwards) {
         List<UIElement> candidates = new ArrayList<>();
         collect(scope, candidates);

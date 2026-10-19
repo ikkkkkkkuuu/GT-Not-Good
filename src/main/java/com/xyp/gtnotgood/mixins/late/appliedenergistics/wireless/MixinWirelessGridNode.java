@@ -20,7 +20,7 @@ public abstract class MixinWirelessGridNode {
         method = { "addConnection", "removeConnection" },
         at = @At(value = "INVOKE", target = "Lappeng/api/networking/IGridConnection;hasDirection()Z"))
     private void gtng$connectionsChanged(IGridConnection connection, CallbackInfo ci) {
-        WirelessChannelManager.connectionsChanged((IGridNode) this);
+        WirelessChannelManager.connectionsChanged((IGridNode) this, connection);
     }
 
     @Inject(method = "updateState", at = @At("RETURN"))

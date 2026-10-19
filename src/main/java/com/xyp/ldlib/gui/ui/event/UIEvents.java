@@ -11,4 +11,5 @@ public interface UIEvents {
     String FOCUS = "focus";
     String BLUR = "blur";
     String KEY_DOWN = "keyDown";
+    String TEXT_INPUT = "textInput";
 }

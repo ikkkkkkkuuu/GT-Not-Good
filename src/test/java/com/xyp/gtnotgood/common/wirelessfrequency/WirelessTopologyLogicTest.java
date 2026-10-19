@@ -85,19 +85,19 @@ public class WirelessTopologyLogicTest {
     public void entranceTrialKeepsOnlyAnObservedChannelGain() {
         AutomaticEntrancePlanner<Object> planner = new AutomaticEntrancePlanner<>();
         Object first = new Object();
-        Observation before = new Observation(1, 1, 10, true, true, true, 32, 0, 0, 1, false);
+        Observation before = new Observation(1, 1, 10, true, true, true, 32, 0, 0, 1, 1);
         assertEquals(Action.NONE,
-            planner.decide(new Observation(1, 1, 0, true, true, true, 32, 0, 0, 1, false), eligible -> first).action());
+            planner.decide(new Observation(1, 1, 0, true, true, true, 32, 0, 0, 1, 1), eligible -> first).action());
         assertEquals(Action.ADD, planner.decide(before, eligible -> first).action());
-        planner.created(first, 7, before);
+        planner.created(Collections.singletonList(first), Collections.singletonList(7), before);
         assertEquals(Action.KEEP,
-            planner.decide(new Observation(1, 2, 11, true, true, true, 32, 1, 1, 0, false), eligible -> null).action());
+            planner.decide(new Observation(1, 2, 11, true, true, true, 32, 1, 1, 0, 1), eligible -> null).action());
 
-        Observation next = new Observation(1, 3, 12, true, true, true, 32, 1, 1, 1, false);
+        Observation next = new Observation(1, 3, 12, true, true, true, 32, 1, 1, 1, 1);
         assertEquals(Action.ADD, planner.decide(next, eligible -> first).action());
-        planner.created(first, 8, next);
+        planner.created(Collections.singletonList(first), Collections.singletonList(8), next);
         assertEquals(Action.REMOVE,
-            planner.decide(new Observation(1, 4, 13, true, true, true, 32, 1, 1, 1, false), eligible -> null).action());
+            planner.decide(new Observation(1, 4, 13, true, true, true, 32, 1, 1, 1, 1), eligible -> null).action());
         assertEquals(AutomaticEntrancePlanner.Status.ROLLING_BACK, planner.status());
     }
 }

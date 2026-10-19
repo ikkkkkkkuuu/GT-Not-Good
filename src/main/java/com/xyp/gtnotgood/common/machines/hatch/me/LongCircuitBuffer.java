@@ -31,11 +31,11 @@ final class LongCircuitBuffer {
     private final Buffer<IAEItemStack, ItemStack> items;
     private final Buffer<IAEFluidStack, FluidStack> fluids;
 
-    LongCircuitBuffer(NBTTagCompound saved, Runnable changed) {
+    LongCircuitBuffer(NBTTagCompound saved, Runnable changed, List<ItemStack> itemViews, List<FluidStack> fluidViews) {
         items = new Buffer<>(IAEItemStack::getItemStack, stack -> stack.stackSize,
-            (stack, count) -> stack.stackSize = count, changed);
+            (stack, count) -> stack.stackSize = count, changed, itemViews);
         fluids = new Buffer<>(IAEFluidStack::getFluidStack, stack -> stack.amount,
-            (stack, count) -> stack.amount = count, changed);
+            (stack, count) -> stack.amount = count, changed, fluidViews);
         if (saved == null) return;
         if (saved.hasKey("longItems") || saved.hasKey("longFluids")) {
             load(saved.getTagList("longItems", Constants.NBT.TAG_COMPOUND));
@@ -155,28 +155,37 @@ final class LongCircuitBuffer {
     }
 
     void clear() {
-        items.entries.clear();
-        fluids.entries.clear();
+        items.clear();
+        fluids.clear();
     }
 
     private static final class Buffer<T extends IAEStack<T>, V> {
 
         private final List<Entry<T, V>> entries = new ArrayList<>();
+        private final List<V> views;
         private final Function<T, V> view;
         private final ToIntFunction<V> count;
         private final ObjIntConsumer<V> setCount;
         private final Runnable changed;
 
-        Buffer(Function<T, V> view, ToIntFunction<V> count, ObjIntConsumer<V> setCount, Runnable changed) {
+        Buffer(Function<T, V> view, ToIntFunction<V> count, ObjIntConsumer<V> setCount, Runnable changed,
+            List<V> views) {
             this.view = view;
             this.count = count;
             this.setCount = setCount;
             this.changed = changed;
+            this.views = views;
         }
 
         private void settle() {
-            entries.forEach(Entry::settle);
-            entries.removeIf(entry -> entry.stored.getStackSize() == 0);
+            for (int i = entries.size() - 1; i >= 0; i--) {
+                Entry<T, V> entry = entries.get(i);
+                entry.settle();
+                if (entry.stored.getStackSize() == 0) {
+                    entries.remove(i);
+                    views.remove(i);
+                }
+            }
         }
 
         List<T> stacks() {
@@ -188,8 +197,6 @@ final class LongCircuitBuffer {
 
         List<V> views() {
             settle();
-            List<V> views = new ArrayList<>();
-            for (Entry<T, V> entry : entries) views.add(entry.view);
             return views;
         }
 
@@ -200,19 +207,24 @@ final class LongCircuitBuffer {
         }
 
         void replace(List<T> stacks) {
-            for (T stack : stacks) {
-                Entry<T, V> match = null;
-                for (Entry<T, V> entry : entries) if (entry.stored.isSameType(stack)) {
-                    match = entry;
-                    break;
-                }
-                if (match == null) entries.add(new Entry<>(stack.copy(), this));
-                else {
-                    match.stored.setStackSize(stack.getStackSize());
-                    match.refresh();
-                }
+            // Staging preserves existing entry order and only appends new types.
+            int existing = entries.size();
+            for (int i = 0; i < existing; i++) {
+                Entry<T, V> entry = entries.get(i);
+                entry.stored.setStackSize(stacks.get(i).getStackSize());
+                entry.refresh();
+            }
+            for (int i = existing; i < stacks.size(); i++) {
+                Entry<T, V> entry = new Entry<>(stacks.get(i).copy(), this);
+                entries.add(entry);
+                views.add(entry.view);
             }
             changed.run();
+        }
+
+        void clear() {
+            entries.clear();
+            views.clear();
         }
     }
 

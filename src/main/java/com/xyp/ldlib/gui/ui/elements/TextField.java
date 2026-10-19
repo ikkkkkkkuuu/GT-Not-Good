@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 
 import org.lwjgl.input.Keyboard;
@@ -12,6 +13,7 @@ import org.lwjgl.input.Keyboard;
 import com.xyp.ldlib.gui.render.ScissorScope;
 import com.xyp.ldlib.gui.texture.IGuiTexture;
 import com.xyp.ldlib.gui.ui.UIElement;
+import com.xyp.ldlib.gui.ui.event.UIEvent;
 import com.xyp.ldlib.gui.ui.event.UIEvents;
 
 /**
@@ -76,22 +78,83 @@ public final class TextField extends UIElement {
                 e.preventDefault();
                 return;
             }
-            prepare();
-            int cursor = editor.getCursorPosition(), selection = editor.getSelectionEnd();
-            if (editor.textboxKeyTyped(e.codePoint, e.keyCode)) {
-                String candidate = editor.getText();
-                if (!validator.test(candidate)) {
-                    editor.setText(value);
-                    editor.setCursorPosition(cursor);
-                    editor.setSelectionPos(selection);
-                } else if (!candidate.equals(value)) {
-                    value = candidate;
-                    onChange.accept(value);
-                }
-            }
+            edit(() -> applyKey(e));
             e.preventDefault();
             e.stopPropagation();
         });
+        addEventListener(UIEvents.TEXT_INPUT, e -> {
+            edit(() -> editor.writeText(e.text));
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
+
+    private void edit(Runnable action) {
+        prepare();
+        int cursor = editor.getCursorPosition(), selection = editor.getSelectionEnd();
+        action.run();
+        String candidate = editor.getText();
+        if (!validator.test(candidate)) {
+            editor.setText(value);
+            editor.setCursorPosition(cursor);
+            editor.setSelectionPos(selection);
+        } else if (!candidate.equals(value)) {
+            value = candidate;
+            onChange.accept(value);
+        }
+    }
+
+    private void applyKey(UIEvent event) {
+        if (event.control) {
+            switch (event.keyCode) {
+                case Keyboard.KEY_A:
+                    editor.setCursorPositionEnd();
+                    editor.setSelectionPos(0);
+                    return;
+                case Keyboard.KEY_C:
+                    GuiScreen.setClipboardString(editor.getSelectedText());
+                    return;
+                case Keyboard.KEY_V:
+                    editor.writeText(GuiScreen.getClipboardString());
+                    return;
+                case Keyboard.KEY_X:
+                    GuiScreen.setClipboardString(editor.getSelectedText());
+                    editor.writeText("");
+                    return;
+                default:
+                    break;
+            }
+        }
+        switch (event.keyCode) {
+            case Keyboard.KEY_BACK:
+                if (event.control) editor.deleteWords(-1);
+                else editor.deleteFromCursor(-1);
+                return;
+            case Keyboard.KEY_DELETE:
+                if (event.control) editor.deleteWords(1);
+                else editor.deleteFromCursor(1);
+                return;
+            case Keyboard.KEY_HOME:
+                if (event.shift) editor.setSelectionPos(0);
+                else editor.setCursorPositionZero();
+                return;
+            case Keyboard.KEY_END:
+                if (event.shift) editor.setSelectionPos(editor.getText().length());
+                else editor.setCursorPositionEnd();
+                return;
+            case Keyboard.KEY_LEFT:
+            case Keyboard.KEY_RIGHT:
+                int direction = event.keyCode == Keyboard.KEY_LEFT ? -1 : 1;
+                if (event.shift) {
+                    int selection = editor.getSelectionEnd();
+                    editor.setSelectionPos(
+                        event.control ? editor.getNthWordFromPos(direction, selection) : selection + direction);
+                } else if (event.control) editor.setCursorPosition(editor.getNthWordFromCursor(direction));
+                else editor.moveCursorBy(direction);
+                return;
+            default:
+                editor.textboxKeyTyped(event.codePoint, event.keyCode);
+        }
     }
 
     private void prepare() {
