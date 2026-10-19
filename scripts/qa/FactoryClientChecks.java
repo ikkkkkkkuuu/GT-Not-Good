@@ -71,7 +71,11 @@ import gregtech.api.enums.Materials;
 import gregtech.api.objects.GTDualInputPattern;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.util.GTRecipe;
+import gregtech.api.util.GTRecipeBuilder;
+import gregtech.api.util.GTRecipeConstants;
 import gregtech.common.tileentities.machines.IDualInputInventoryWithPattern;
+import gtPlusPlus.core.fluids.GTPPFluids;
+import gtnhlanth.api.recipe.LanthanidesRecipeMaps;
 
 /** Runs after real recipe registration and renders the production editor twice with four locked routes. */
 @Mod(modid = "factoryqa", name = "Factory QA", version = "1", dependencies = "after:" + ModList.ModIds.GT_NOT_GOOD)
@@ -376,7 +380,7 @@ public final class FactoryClientChecks {
                             .size() == 11
                         && groups.get(0) != groups.get(offset),
                     "whole batches cannot cross pages");
-            } else if (preset != FactoryPresets.Preset.PlatinumGroup) {
+            } else if (preset != FactoryPresets.Preset.PlatinumGroup && preset != FactoryPresets.Preset.PrismaticAcid) {
                 require(
                     result.copy().nodes.stream()
                         .noneMatch(n -> n.wholeLineBatch),
@@ -414,6 +418,13 @@ public final class FactoryClientChecks {
                 require(
                     FactoryRouting.decode(FactoryRouting.encode(full)).nodes.size() == FactoryGraph.MAX_NODES,
                     "full page with long counts imports without truncation");
+            }
+            if (preset == FactoryPresets.Preset.PrismaticAcid) {
+                checkPrismaticAcid(result, snapshot);
+                for (var input : snapshot.inputs)
+                    report.append("input: ").append(input.name()).append(" ").append(input.batchAmount).append('\n');
+                for (var output : snapshot.outputs)
+                    report.append("output: ").append(output.name()).append(" ").append(output.batchAmount).append('\n');
             }
             if (preset == FactoryPresets.Preset.EpoxyPropene) {
                 require(result.size() == 5, "epoxy recovery stays on one page");
@@ -555,6 +566,49 @@ public final class FactoryClientChecks {
             report.toString()
                 .getBytes(StandardCharsets.UTF_8));
         require(valid, report.toString());
+    }
+
+    private void checkPrismaticAcid(FactoryPresets.Result result, FactoryPreview.Snapshot snapshot) {
+        FactoryGraph graph = result.copy();
+        require(result.size() == 12 && graph.nodes.stream().allMatch(n -> n.wholeLineBatch),
+            "prismatic acid includes melting, nitrogen cooling and strontium recovery in one batch");
+        require(FactoryCycles.groups(graph).get(graph.nodes.get(0).id).size() == 12,
+            "prismatic acid settles all processes together");
+        require(FactoryRouting.decode(FactoryRouting.encode(graph)).nodes.stream().allMatch(n -> n.wholeLineBatch),
+            "prismatic acid preserves whole-line batching in route codes");
+        for (FluidStack fluid : new FluidStack[] { Materials.PrismarineSolution.getFluid(1),
+            Materials.PrismarineContaminatedNitrobenzeSolution.getFluid(1),
+            Materials.PrismarineContaminatedHydrogenPeroxide.getFluid(1), Materials.Strontium.getMolten(1),
+            Materials.LiquidNitrogen.getGas(1), Materials.CrystallineAlloy.getMolten(1) }) {
+            require(snapshot.inputs.stream().noneMatch(i -> i.fluid != null && i.fluid.isFluidEqual(fluid)),
+                "prismatic acid recycles or prepares " + fluid.getLocalizedName());
+        }
+        require(snapshot.inputs.stream()
+            .noneMatch(i -> i.item != null && (i.item.isItemEqual(Materials.Strontium.getDust(1))
+                || i.item.isItemEqual(Materials.Strontium.getIngots(1)))),
+            "strontium needs no external makeup");
+        for (FluidStack fluid : new FluidStack[] { new FluidStack(GTPPFluids.HydrogenPeroxide, 1),
+            new FluidStack(GTPPFluids.Nitrobenzene, 1), Materials.Hydrogen.getGas(1), Materials.Oxygen.getGas(1),
+            Materials.Nitrogen.getGas(1), Materials.Boron.getPlasma(1) }) {
+            require(
+                snapshot.inputs.stream().anyMatch(i -> i.fluid != null && i.fluid.isFluidEqual(fluid) && i.rate > 0),
+                "prismatic acid retains real feed " + fluid.getLocalizedName());
+        }
+        require(
+            snapshot.inputs.stream().anyMatch(
+                i -> i.item != null && i.item.isItemEqual(Materials.CrystallineAlloy.getIngots(1)) && i.rate > 0),
+            "crystalline alloy ingots remain a consumed feed");
+        for (FluidStack fluid : new FluidStack[] { Materials.PrismaticAcid.getFluid(1),
+            Materials.PrismarineContaminatedHydrogenPeroxide.getFluid(1), Materials.Strontium.getMolten(1) }) {
+            require(
+                snapshot.outputs.stream()
+                    .anyMatch(i -> i.fluid != null && i.fluid.isFluidEqual(fluid) && i.rate > 0 && !i.internal),
+                "prismatic acid exports " + fluid.getLocalizedName());
+        }
+        require(
+            snapshot.inputs.stream()
+                .noneMatch(i -> i.fluid != null && i.fluid.getFluid() == GTPPFluids.IndustrialStrengthHydrofluoricAcid),
+            "steady prismatic acid line does not consume bootstrap hydrofluoric acid");
     }
 
     private void checkIndustrialControllers() throws Exception {
@@ -935,6 +989,7 @@ public final class FactoryClientChecks {
     }
 
     private void checkRecipes() {
+        checkDissolutionRecipes();
         GTRecipe recipe = new GTRecipe(false, null, null, null, null, null, null, null, null, null, 20, 30, 7);
         require(
             FactoryRecipeCatalog.unsupportedReason(RecipeMaps.chemicalPlantRecipes, recipe) == null,
@@ -963,6 +1018,51 @@ public final class FactoryClientChecks {
             break;
         }
         require(recipeId != null, "at least one tiered chemical recipe imports");
+    }
+
+    private void checkDissolutionRecipes() {
+        var map = LanthanidesRecipeMaps.dissolutionTankRecipes;
+        GTRecipe original = map.getAllRecipes().stream()
+            .filter(r -> Arrays.stream(r.mFluidInputs).anyMatch(
+                f -> f != null && f.isFluidEqual(Materials.PrismarineContaminatedHydrogenPeroxide.getFluid(1))))
+            .findFirst().get();
+        require(FactoryRecipeCatalog.unsupportedReason(map, original) == null,
+            "registered 3:1 dissolution recipe is supported");
+        GTRecipe invalid = dissolutionFixture(original);
+        invalid.mFluidInputs[0].amount--;
+        require(FactoryRecipeCatalog.unsupportedReason(map, invalid) == FactoryText.ImportSpecial,
+            "dissolution rejects quantities that violate the required ratio");
+        invalid = dissolutionFixture(original);
+        invalid.mSpecialValue++;
+        require(FactoryRecipeCatalog.unsupportedReason(map, invalid) == FactoryText.ImportSpecial,
+            "dissolution rejects mismatched special value and ratio metadata");
+        invalid = dissolutionFixture(original);
+        invalid.mFluidInputs[1] = new FluidStack(invalid.mFluidInputs[0], invalid.mFluidInputs[1].amount);
+        require(FactoryRecipeCatalog.unsupportedReason(map, invalid) == FactoryText.ImportSpecial,
+            "dissolution requires two distinct fluid inputs");
+        require(FactoryRecipeCatalog.unsupportedReason(RecipeMaps.chemicalPlantRecipes, original) != null,
+            "dissolution ratio does not waive requirements on other maps");
+        invalid = dissolutionFixture(original);
+        invalid.getMetadataStorage().store(GTRecipeConstants.DISSOLUTION_TANK_RATIO, null);
+        require(FactoryRecipeCatalog.unsupportedReason(map, invalid) == FactoryText.ImportSpecial,
+            "dissolution requires explicit ratio metadata");
+        invalid = dissolutionFixture(original);
+        invalid.getMetadataStorage().store(GTRecipeConstants.COMPRESSION_TIER, 1);
+        require(FactoryRecipeCatalog.unsupportedReason(map, invalid) == FactoryText.ImportMetadata,
+            "dissolution retains unknown metadata restrictions");
+    }
+
+    private static GTRecipe dissolutionFixture(GTRecipe registered) {
+        GTRecipe fixture = GTRecipeBuilder.builder()
+            .itemInputsUnified(Arrays.stream(registered.mInputs).map(ItemStack::copy).toArray(ItemStack[]::new))
+            .itemOutputs(Arrays.stream(registered.mOutputs).map(ItemStack::copy).toArray(ItemStack[]::new))
+            .fluidInputs(Arrays.stream(registered.mFluidInputs).map(FluidStack::copy).toArray(FluidStack[]::new))
+            .fluidOutputs(Arrays.stream(registered.mFluidOutputs).map(FluidStack::copy).toArray(FluidStack[]::new))
+            .duration(registered.mDuration).eut(registered.mEUt).specialValue(3)
+            .metadata(GTRecipeConstants.DISSOLUTION_TANK_RATIO, 3).build().get();
+        require(FactoryRecipeCatalog.unsupportedReason(LanthanidesRecipeMaps.dissolutionTankRecipes, fixture) == null,
+            "dissolution fixture starts with valid ratio metadata and quantities");
+        return fixture;
     }
 
     private void openEditor() throws Exception {

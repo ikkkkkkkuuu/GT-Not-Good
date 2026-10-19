@@ -9,6 +9,14 @@ public enum FactoryText {
     // # Built-in lines
     // # zh_CN 内置产线
     Presets("factory.gtnotgood.presets"),
+    // #tr factory.gtnotgood.preset_prismatic_acid
+    // # Prismatic acid / nitrobenzene and strontium recovery
+    // # zh_CN 海晶酸／硝基苯与锶回收
+    PresetPrismaticAcid("factory.gtnotgood.preset_prismatic_acid"),
+    // #tr factory.gtnotgood.preset_prismatic_acid_help
+    // # Feed prismarine, H2O2, nitrobenzene, crystalline alloy ingots, H2, O2, N2 and boron plasma; recycles Sr.
+    // # zh_CN 输入海晶碎片、过氧化氢、硝基苯、晶化合金锭、氢、氧、氮与硼等离子体；回收锶。
+    PresetPrismaticAcidHelp("factory.gtnotgood.preset_prismatic_acid_help"),
     // #tr factory.gtnotgood.preset_netherite
     // # Netherite / air and netherrack processing
     // # zh_CN 下界合金／空气与地狱岩处理

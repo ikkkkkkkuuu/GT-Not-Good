@@ -23,6 +23,7 @@ import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.recipe.RecipeMetadataKey;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTRecipeConstants;
+import gtnhlanth.api.recipe.LanthanidesRecipeMaps;
 
 /**
  * Lazy catalog of ordinary GT recipes. Special-machine recipes are excluded until their requirements have an adapter.
@@ -114,10 +115,12 @@ public final class FactoryRecipeCatalog {
         if (recipe.mFakeRecipe) return FactoryText.ImportVirtual;
         if (!recipe.mEnabled || recipe.mHidden) return FactoryText.ImportDisabled;
         if (recipe.getClass() != GTRecipe.class) return FactoryText.ImportCustom;
+        boolean dissolutionRatio = map == LanthanidesRecipeMaps.dissolutionTankRecipes;
+        if (dissolutionRatio && !validDissolutionRatio(recipe)) return FactoryText.ImportSpecial;
         // Heat and chemical-plant casing tiers are waived; negative environment flags remain restricted.
         if (
-            recipe.mSpecialItems != null
-                || (recipe.mSpecialValue != 0 && !((ignoreHeat || ignoreMachineTier) && recipe.mSpecialValue > 0))
+            recipe.mSpecialItems != null || (recipe.mSpecialValue != 0 && !dissolutionRatio
+                && !((ignoreHeat || ignoreMachineTier) && recipe.mSpecialValue > 0))
         ) return FactoryText.ImportSpecial;
         if (recipe.getMetadataStorage() != null) {
             for (Map.Entry<RecipeMetadataKey<?>, Object> metadata : recipe.getMetadataStorage().getEntries()) {
@@ -131,6 +134,7 @@ public final class FactoryRecipeCatalog {
                         && metadata.getValue() instanceof Integer tier
                         && tier >= 0
                 ) continue;
+                if (dissolutionRatio && metadata.getKey().equals(GTRecipeConstants.DISSOLUTION_TANK_RATIO)) continue;
                 if (!inactiveEnvironmentRequirement(metadata.getKey(), metadata.getValue()))
                     return FactoryText.ImportMetadata;
             }
@@ -148,6 +152,20 @@ public final class FactoryRecipeCatalog {
         if (recipe.mFluidOutputChances != null)
             for (int chance : recipe.mFluidOutputChances) if (chance != 10000) return FactoryText.ImportChances;
         return null;
+    }
+
+    private static boolean validDissolutionRatio(GTRecipe recipe) {
+        Integer ratio = recipe.getMetadata(GTRecipeConstants.DISSOLUTION_TANK_RATIO);
+        if (ratio == null || ratio <= 0 || recipe.mSpecialValue != ratio || recipe.mFluidInputs.length != 2)
+            return false;
+        FluidStack major = recipe.mFluidInputs[0], minor = recipe.mFluidInputs[1];
+        // The tank distinguishes both ingredients by their unlocalized fluid names.
+        return major != null && minor != null
+            && major.amount > 0
+            && minor.amount > 0
+            && major.getFluid() != minor.getFluid()
+            && !major.getUnlocalizedName().equals(minor.getUnlocalizedName())
+            && major.amount == (long) minor.amount * ratio;
     }
 
     /** Explicit false means the environment is not required (UniversalChemical adds CLEANROOM=false to LCR). */

@@ -2,6 +2,7 @@
 // Adapted from GT5-Unofficial's MTEPreciseAssembler; see META-INF/licenses/precision-assembler/NOTICE.txt.
 package com.xyp.gtnotgood.common.machines.multiblock;
 
+import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofBlock;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofBlocksTiered;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.onElementPass;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.transpose;
@@ -34,8 +35,8 @@ import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.base.GTNGModernMultiBlockBaseGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiBlockBase;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 
-import bartworks.API.BorosilicateGlass;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import goodgenerator.api.recipe.GoodGeneratorRecipeMaps;
@@ -94,7 +95,6 @@ public final class PrecisionAssembler extends GTNGMultiBlockBase<PrecisionAssemb
     private int mechanicalCasingTier = -1;
     private int machineCasingTier = -1;
     private int casingCount;
-    private byte glassTier = -1;
 
     public PrecisionAssembler(int id, String name, String regionalName) {
         super(id, name, regionalName);
@@ -112,26 +112,22 @@ public final class PrecisionAssembler extends GTNGMultiBlockBase<PrecisionAssemb
     @Override
     public IStructureDefinition<PrecisionAssembler> getStructureDefinition() {
         if (definition == null) {
-            definition = StructureDefinition
-                .<PrecisionAssembler>builder().addShape("main",
-                    transpose(SHAPE))
+            definition = StructureDefinition.<PrecisionAssembler>builder().addShape("main", transpose(SHAPE))
                 .addElement('C',
                     GTStructureChannels.PRASS_UNIT_CASING
-                        .use(buildHatchAdder(PrecisionAssembler.class)
-                            .atLeast(InputBus, InputHatch, OutputBus, Maintenance, Muffler, Energy.or(ExoticEnergy))
-                            .casingIndex(MECHANICAL_CASINGS[0].getTextureId()).hint(1)
-                            .buildAndChain(onElementPass(machine -> machine.casingCount++,
-                                ofBlocksTiered(PrecisionAssembler::getMechanicalCasingBlockTier,
-                                    Arrays.stream(MECHANICAL_CASINGS)
-                                        .map(casing -> Pair.of(casing.getBlock(), casing.getBlockMeta()))
-                                        .collect(Collectors.toList()),
-                                    -1, (machine, tier) -> machine.mechanicalCasingTier = tier,
-                                    machine -> machine.mechanicalCasingTier)))))
+                        .use(
+                            buildHatchAdder(PrecisionAssembler.class)
+                                .atLeast(InputBus, InputHatch, OutputBus, Maintenance, Muffler, Energy.or(ExoticEnergy))
+                                .casingIndex(MECHANICAL_CASINGS[0].getTextureId()).hint(1)
+                                .buildAndChain(onElementPass(machine -> machine.casingCount++,
+                                    ofBlocksTiered(PrecisionAssembler::getMechanicalCasingBlockTier,
+                                        Arrays.stream(MECHANICAL_CASINGS)
+                                            .map(casing -> Pair.of(casing.getBlock(), casing.getBlockMeta()))
+                                            .collect(Collectors.toList()),
+                                        -1, (machine, tier) -> machine.mechanicalCasingTier = tier,
+                                        machine -> machine.mechanicalCasingTier)))))
                 .addElement('F', GTStructureUtility.ofFrame(Materials.TungstenSteel))
-                .addElement('G',
-                    GTStructureChannels.BOROGLASS
-                        .use(BorosilicateGlass.ofBoroGlass((byte) -1, (byte) VoltageIndex.EV, (byte) VoltageIndex.UXV,
-                            (machine, tier) -> machine.glassTier = tier, machine -> machine.glassTier)))
+                .addElement('G', ofBlock(Block.getBlockFromItem(ModsItemlist.BorosilicateGlass.get(1).getItem()), 0))
                 .addElement('M',
                     GTStructureChannels.TIER_MACHINE_CASING.use(ofBlocksTiered(
                         (block, meta) -> block == GregTechAPI.sBlockCasings1 && meta >= 0 && meta <= 9 ? meta : null,
@@ -165,7 +161,6 @@ public final class PrecisionAssembler extends GTNGMultiBlockBase<PrecisionAssemb
     public void checkMachine(IGregTechTileEntity tile, ItemStack stack, List<StructureError> errors) {
         mechanicalCasingTier = -1;
         machineCasingTier = -1;
-        glassTier = -1;
         casingCount = 0;
         if (!checkPiece("main", 4, 4, 0, errors)) return;
         updateHatchTextures();
@@ -427,8 +422,8 @@ public final class PrecisionAssembler extends GTNGMultiBlockBase<PrecisionAssemb
             .addController(StatCollector.translateToLocal("gtng.precision.controller"))
             .addCasing("42-81", casing + tiered, false)
             // #tr gtng.precision.glass
-            // # Borosilicate Glass (EV or higher)
-            // # zh_CN 硼玻璃（最低 EV 级）
+            // # Borosilicate Glass (standard variant only)
+            // # zh_CN 硼玻璃（仅普通型号）
             .addCasing("42", StatCollector.translateToLocal("gtng.precision.glass"), false)
             // #tr gtng.precision.machine_casing
             // # Internal Machine Casings (ULV-UHV)
@@ -446,11 +441,6 @@ public final class PrecisionAssembler extends GTNGMultiBlockBase<PrecisionAssemb
             // # zh_CN 子信道 {\\AQUA}%s{\\GRAY}：结构外壳等级（1-5）
             .addStructureInfo(StatCollector.translateToLocalFormatted("gtng.precision.channel.casing",
                 GTStructureChannels.PRASS_UNIT_CASING.get()))
-            // #tr gtng.precision.channel.glass
-            // # Subchannel {\\AQUA}%s{\\GRAY}: borosilicate glass tier (1-10, EV-UXV)
-            // # zh_CN 子信道 {\\AQUA}%s{\\GRAY}：硼玻璃等级（1-10，EV-UXV）
-            .addStructureInfo(StatCollector.translateToLocalFormatted("gtng.precision.channel.glass",
-                GTStructureChannels.BOROGLASS.get()))
             // #tr gtng.precision.channel.machine
             // # Subchannel {\\AQUA}%s{\\GRAY}: internal machine casing tier (1-10, ULV-UHV)
             // # zh_CN 子信道 {\\AQUA}%s{\\GRAY}：内部机械方块等级（1-10，ULV-UHV）

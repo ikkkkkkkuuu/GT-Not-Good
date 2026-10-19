@@ -63,7 +63,7 @@ gradle.projectsEvaluated {
         notCompatibleWithConfigurationCache('Opt-in factory client checks')
         doFirst {
             workingDir.mkdirs()
-            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\n', 'UTF-8')
             java.nio.file.Files.deleteIfExists(root.file('build/factory-qa/result.txt').toPath())
             if (System.getProperty('os.name').startsWith('Windows')) {
                 new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',

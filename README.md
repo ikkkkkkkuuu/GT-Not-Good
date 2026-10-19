@@ -43,14 +43,21 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.5.8          | [![1.5.8](https://img.shields.io/badge/release-1.5.8-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.8) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.5.9          | [![1.5.9](https://img.shields.io/badge/release-1.5.9-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.9) |         ✔️         |
 
-最新版本：[1.5.8 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.8)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.8/gtnotgood-1.5.8.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.8/gtnotgood-1.5.8-sources.jar)。
+最新版本：[1.5.9 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.5.9)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.9/gtnotgood-1.5.9.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.5.9/gtnotgood-1.5.9-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.5.8。
+1.3.4 因启动错误已撤回，请更新到 1.5.9。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.5.9 更新
+
+- 集成工厂新增 12 工序海晶酸内置产线，包含晶化合金熔化、液氮制备与锶循环；硝基苯部分回收，仍需补充，整线共同结算并输出多余回收物。
+- 支持溶解罐工序的配方比例校验，补充中英文说明、原生流体样板导出及多页隔离验证。
+- 精密自动组装机固定使用 42 块普通硼玻璃，建造投影不再随主信道或旧 `glass` 子信道更换玻璃型号。
+- **升级提示：1.5.8 使用 EV 及以上强化硼玻璃建成的精密自动组装机，需换成普通硼玻璃才能重新成型。**
 
 ### 1.5.8 更新
 

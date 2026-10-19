@@ -39,7 +39,6 @@ import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.GTNGMachineID;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
-import bartworks.API.BorosilicateGlass;
 import bartworks.common.loaders.ItemRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -182,7 +181,6 @@ public final class PrecisionAssemblerClientChecks {
         base.disableWorking();
         machine = (PrecisionAssembler) base.getMetaTileEntity();
         ItemStack trigger = new ItemStack(Items.diamond);
-        ChannelDataAccessor.setChannelData(trigger, "glass", 1);
         machine.construct(trigger, false);
         place(world, -3, 12, 0, ItemList.Hatch_Input_Bus_EV.get(1).getItemDamage());
         place(world, -2, 12, 0, ItemList.Hatch_Output_Bus_EV.get(1).getItemDamage());
@@ -292,24 +290,52 @@ public final class PrecisionAssemblerClientChecks {
 
     private void verifyGlass() {
         World world = base.getWorld();
-        int[] position = null;
-        for (int x = -4; x <= 4 && position == null; x++)
-            for (int y = 12; y <= 16 && position == null; y++) for (int z = 0; z <= 4 && position == null; z++)
-                if (BorosilicateGlass.getTier(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z)) >= 4)
-                    position = new int[] { x, y, z };
-        require(position != null, "Real EV or higher borosilicate glass constructed");
-        Block original = world.getBlock(position[0], position[1], position[2]);
-        int originalMeta = world.getBlockMetadata(position[0], position[1], position[2]);
-        for (Block replacement : new Block[] { Blocks.glass, GregTechAPI.sBlockGlass1, ItemRegistry.bw_realglas }) {
-            world.setBlock(position[0], position[1], position[2], replacement, 0, 3);
+        List<int[]> glassPositions = new ArrayList<>();
+        for (int x = -4; x <= 4; x++) for (int y = 12; y <= 16; y++) for (int z = 0; z <= 4; z++) {
+            if (world.getBlock(x, y, z) == ItemRegistry.bw_realglas) {
+                require(world.getBlockMetadata(x, y, z) == 0, "Only standard borosilicate glass constructed");
+                glassPositions.add(new int[] { x, y, z });
+            }
+        }
+        require(glassPositions.size() == 42, "Exactly 42 standard borosilicate glass blocks constructed");
+        int[] position = glassPositions.get(0);
+        List<ItemStack> replacements = new ArrayList<>();
+        replacements.add(new ItemStack(Blocks.glass));
+        replacements.add(new ItemStack(GregTechAPI.sBlockGlass1));
+        for (int meta = 1; meta <= 10; meta++) replacements.add(new ItemStack(ItemRegistry.bw_realglas, 1, meta));
+        for (int meta = 0; meta <= 5; meta++) replacements.add(new ItemStack(ItemRegistry.bw_realglas2, 1, meta));
+        for (ItemStack replacement : replacements) {
+            setBlock(position, replacement);
             machine.clearHatches();
             List<StructureError> errors = new ArrayList<>();
             machine.checkMachine(base, null, errors);
-            require(!errors.isEmpty() && !machine.checkStructure(true, base), "Invalid or below-EV glass rejected");
-            world.setBlock(position[0], position[1], position[2], original, originalMeta, 3);
+            require(!errors.isEmpty() && !machine.checkStructure(true, base),
+                "Nonstandard glass rejected: " + replacement.getUnlocalizedName() + ":" + replacement.getItemDamage());
+            world.setBlock(position[0], position[1], position[2], ItemRegistry.bw_realglas, 0, 3);
             verifyStructure();
         }
-        report.append("EV borosilicate glass accepted; vanilla, other EV glass and HV borosilicate glass rejected.\n");
+        BaseMetaTileEntity previewBase = place(world, 16, 12, 0, GTNGMachineID.PrecisionAssembler.id);
+        previewBase.setOwnerName(base.getOwnerName());
+        previewBase.setOwnerUuid(base.getOwnerUuid());
+        previewBase.disableWorking();
+        PrecisionAssembler preview = (PrecisionAssembler) previewBase.getMetaTileEntity();
+        for (int stackSize : new int[] { 1, 64 }) for (int glassChannel : new int[] { 0, 1, 2, 10, 64 }) {
+            for (int[] glassPosition : glassPositions)
+                world.setBlockToAir(glassPosition[0] + 16, glassPosition[1], glassPosition[2]);
+            ItemStack trigger = new ItemStack(Items.diamond, stackSize);
+            if (glassChannel > 0) ChannelDataAccessor.setChannelData(trigger, "glass", glassChannel);
+            preview.construct(trigger, false);
+            for (int[] glassPosition : glassPositions) require(
+                world.getBlock(glassPosition[0] + 16, glassPosition[1], glassPosition[2]) == ItemRegistry.bw_realglas
+                    && world.getBlockMetadata(glassPosition[0] + 16, glassPosition[1], glassPosition[2]) == 0,
+                "Fixed standard glass for main channel " + stackSize + " and glass subchannel " + glassChannel);
+        }
+        for (int x = 12; x <= 20; x++)
+            for (int y = 12; y <= 16; y++) for (int z = 0; z <= 4; z++) world.setBlockToAir(x, y, z);
+        report
+            .append("Exactly 42 standard borosilicate glass blocks required; vanilla, other glass and all reinforced ")
+            .append(
+                "borosilicate variants rejected. Main and obsolete glass subchannels cannot change construction.\n");
     }
 
     private void setBlock(int[] position, ItemStack stack) {
@@ -665,6 +691,12 @@ public final class PrecisionAssemblerClientChecks {
             "All tooltip translations resolve: " + locale);
         require(!text.contains("平均等级") && !text.contains("average tier") && !text.contains("MK-I"),
             "Tooltip excludes removed hatch restriction and original precision casing names: " + locale);
+        require(
+            !text.contains("EV-UXV") && !text.contains("EV or higher")
+                && !text.contains("最低 EV")
+                && !text.contains("子信道 §bglass")
+                && !text.contains("Subchannel §bglass"),
+            "Fixed glass tooltip excludes obsolete glass tier and subchannel: " + locale);
         require(text.contains("16") && text.contains("256") && text.contains("9") && text.contains("42"),
             "Tooltip includes real parallel and structure values: " + locale);
         Files.write(new File(output(), "tooltip-" + locale + ".txt").toPath(), text.getBytes(StandardCharsets.UTF_8));

@@ -2,8 +2,11 @@ package com.xyp.gtnotgood.utils.machine.factory;
 
 import static bartworks.system.material.WerkstoffLoader.*;
 import static gregtech.api.enums.OrePrefixes.dust;
+import static gregtech.api.enums.OrePrefixes.lens;
 import static gregtech.api.enums.OrePrefixes.milled;
+import static gregtech.api.enums.OrePrefixes.shard;
 import static gregtech.api.recipe.RecipeMaps.*;
+import static gtnhlanth.api.recipe.LanthanidesRecipeMaps.dissolutionTankRecipes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +28,7 @@ import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTUtility;
 import gtPlusPlus.core.fluids.GTPPFluids;
+import gtPlusPlus.core.material.MaterialMisc;
 import gtPlusPlus.xmod.gregtech.api.enums.GregtechItemList;
 
 /** Curated process templates resolved against registered recipes; never creates recipes or bypasses catalog checks. */
@@ -47,7 +51,8 @@ public final class FactoryPresets {
         RocketH8n4c2o4(FactoryText.PresetH8Fuel, FactoryText.PresetH8FuelHelp),
         CetaneDiesel(FactoryText.PresetCetane, FactoryText.PresetCetaneHelp),
         EpoxyPropene(FactoryText.PresetEpoxy, FactoryText.PresetEpoxyHelp),
-        Netherite(FactoryText.PresetNetherite, FactoryText.PresetNetheriteHelp);
+        Netherite(FactoryText.PresetNetherite, FactoryText.PresetNetheriteHelp),
+        PrismaticAcid(FactoryText.PresetPrismaticAcid, FactoryText.PresetPrismaticAcidHelp);
 
         public final FactoryText title;
         public final FactoryText help;
@@ -153,6 +158,36 @@ public final class FactoryPresets {
                 steps.add(step(blastFurnaceRecipes, ItemList.Netherite_Nanoparticles.get(1),
                     ItemList.Intensely_Bonded_Netherite_Nanoparticles.get(1), Materials.HellishMetal.getMolten(1),
                     GTUtility.getIntegratedCircuit(1)));
+                break;
+            case PrismaticAcid:
+                steps.add(step(dissolutionTankRecipes, GTOreDictUnificator.get(shard, Materials.Prismarine, 1),
+                    Materials.PrismarineSolution.getFluid(1),
+                    Materials.PrismarineContaminatedHydrogenPeroxide.getFluid(1),
+                    new FluidStack(GTPPFluids.HydrogenPeroxide, 1)));
+                steps.add(step(chemicalBathRecipes, Materials.PrismarineSolution.getFluid(1),
+                    Materials.PrismarineRichNitrobenzeneSolution.getFluid(1),
+                    new FluidStack(GTPPFluids.Nitrobenzene, 1), GTUtility.getIntegratedCircuit(1)));
+                steps.add(step(chemicalBathRecipes, Materials.PrismarineContaminatedNitrobenzeSolution.getFluid(1),
+                    Materials.PrismarineRichNitrobenzeneSolution.getFluid(1), Materials.PrismarineSolution.getFluid(1),
+                    GTUtility.getIntegratedCircuit(1)));
+                steps.add(step(chemicalPlantRecipes, Materials.PrismarineRichNitrobenzeneSolution.getFluid(1),
+                    ItemList.Prismarine_Precipitate.get(1), MaterialMisc.STRONTIUM_HYDROXIDE.getDust(1)));
+                steps.add(step(fluidExtractionRecipes, Materials.CrystallineAlloy.getIngots(1),
+                    Materials.CrystallineAlloy.getMolten(1)));
+                steps.add(step(laserEngraverRecipes, ItemList.Prismarine_Precipitate.get(1),
+                    ItemList.Prismatic_Crystal.get(1), Materials.CrystallineAlloy.getMolten(1),
+                    MagnetoResonaticDust.get(lens, 0)));
+                steps.add(step(fluidSolidifierRecipes, Materials.Strontium.getMolten(1),
+                    Materials.Strontium.getIngots(1), ItemList.Shape_Mold_Ingot.get(0)));
+                steps.add(step(maceratorRecipes, Materials.Strontium.getIngots(1), Materials.Strontium.getDust(1)));
+                steps.add(step(multiblockChemicalReactorRecipes, Materials.Strontium.getDust(1),
+                    MaterialMisc.STRONTIUM_HYDROXIDE.getDust(1), Materials.Hydrogen.getGas(1),
+                    Materials.Oxygen.getGas(1)));
+                steps.add(step(vacuumFurnaceRecipes, ItemList.Prismatic_Crystal.get(1),
+                    Materials.PrismaticGas.getFluid(1), Materials.Boron.getPlasma(1)));
+                steps.add(step(vacuumFreezerRecipes, Materials.PrismaticGas.getFluid(1),
+                    Materials.PrismaticAcid.getFluid(1), Materials.LiquidNitrogen.getGas(1)));
+                steps.add(step(vacuumFreezerRecipes, Materials.Nitrogen.getGas(1), Materials.LiquidNitrogen.getGas(1)));
                 break;
             case EpoxyPropene:
                 steps.add(step(multiblockChemicalReactorRecipes, Materials.Propene.getGas(1),
@@ -339,7 +374,7 @@ public final class FactoryPresets {
         List<Step> steps = stepsFor(preset);
         FactoryGraph graph = new FactoryGraph();
         for (Step step : steps) graph.add(step.resolve().id);
-        if (preset == Preset.Netherite || preset == Preset.PlatinumGroup)
+        if (preset == Preset.Netherite || preset == Preset.PlatinumGroup || preset == Preset.PrismaticAcid)
             for (FactoryGraph.Node node : graph.nodes) node.wholeLineBatch = true;
         FactoryRouting.connect(graph);
         balanceRegisteredFlows(graph, steps, preset);
@@ -375,12 +410,22 @@ public final class FactoryPresets {
                 preset == Preset.Netherite && input instanceof FluidStack fluid
                     && fluid.isFluidEqual(Materials.NefariousGas.getFluid(1))
             ) continue;
+            // Only solidify the strontium needed for hydroxide; export the surplus from crystallization.
+            if (
+                preset == Preset.PrismaticAcid && input instanceof FluidStack fluid
+                    && fluid.isFluidEqual(Materials.Strontium.getMolten(1))
+            ) continue;
             intermediates.add(input);
         }
         if (preset == Preset.Netherite) {
             intermediates.add(ItemList.Heavy_Hellish_Mud.get(1));
             intermediates.add(Materials.NefariousOil.getFluid(1));
             intermediates.add(Materials.PoorNetherWaste.getFluid(1));
+        }
+        if (preset == Preset.PrismaticAcid) {
+            intermediates.add(Materials.CrystallineAlloy.getMolten(1));
+            intermediates.add(MaterialMisc.STRONTIUM_HYDROXIDE.getDust(1));
+            intermediates.add(Materials.LiquidNitrogen.getGas(1));
         }
         if (preset == Preset.Rhodium || preset == Preset.PlatinumGroup) intermediates.add(SodiumNitrate.get(dust));
         if (preset == Preset.Polybenzimidazole) {
