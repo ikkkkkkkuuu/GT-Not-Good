@@ -4,7 +4,7 @@ import net.minecraft.item.ItemStack;
 
 import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.common.machines.hatch.WirelessLaserDynamoHatch;
-import com.xyp.gtnotgood.common.machines.hatch.WirelessLaserEnergyHatch;
+import com.xyp.gtnotgood.common.machines.hatch.WirelessMultiAmpEnergyHatch;
 import com.xyp.gtnotgood.config.Config;
 
 import gregtech.api.GregTechAPI;
@@ -25,7 +25,7 @@ import tectech.thing.metaTileEntity.hatch.MTEHatchWirelessDynamoMulti;
 import tectech.thing.metaTileEntity.hatch.MTEHatchWirelessMulti;
 
 /**
- * Adds optional conversion recipes for every registered native wireless energy hatch and this mod's lasers.
+ * Adds optional conversion recipes for registered native wireless hatches and this mod's wireless hatches.
  * Runs after all init handlers, when TecTech's item containers are populated. No original recipe is removed.
  * A regular same-tier hatch keeps LV-EV recipes usable without nonexistent wired laser hatches.
  */
@@ -63,7 +63,7 @@ public final class EasyWirelessRecipes {
         if (
             type != MTEWirelessEnergy.class && type != MTEHatchWirelessMulti.class
                 && type != MTEHatchWirelessDynamoMulti.class
-                && type != WirelessLaserEnergyHatch.class
+                && type != WirelessMultiAmpEnergyHatch.class
                 && type != WirelessLaserDynamoHatch.class
         ) return false;
         MTEHatch hatch = (MTEHatch) machine;

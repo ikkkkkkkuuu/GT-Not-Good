@@ -23,6 +23,8 @@ public enum ModList {
     CropsNH(ModIds.CROPSNH, Names.CROPSNH),
     SpiceOfLife(ModIds.SPICE_OF_LIFE, Names.SPICE_OF_LIFE),
     Forestry(ModIds.FORESTRY, Names.FORESTRY),
+    MagicBees(ModIds.MAGIC_BEES, Names.MAGIC_BEES),
+    ExtraBees(ModIds.EXTRA_BEES, Names.EXTRA_BEES),
     Railcraft(ModIds.RAILCRAFT, Names.RAILCRAFT),
     GregTech(ModIds.GREGTECH, Names.GREGTECH),
     KubaTech(ModIds.KUBATECH, Names.KUBATECH),
@@ -54,6 +56,8 @@ public enum ModList {
         public static final String CROPSNH = "cropsnh";
         public static final String SPICE_OF_LIFE = "SpiceOfLife";
         public static final String FORESTRY = "Forestry";
+        public static final String MAGIC_BEES = "MagicBees";
+        public static final String EXTRA_BEES = "ExtraBees";
         public static final String RAILCRAFT = "Railcraft";
         public static final String GREGTECH = "gregtech";
         public static final String KUBATECH = "kubatech";
@@ -85,6 +89,8 @@ public enum ModList {
         public static final String CROPSNH = "CropsNH";
         public static final String SPICE_OF_LIFE = "Spice of Life";
         public static final String FORESTRY = "Forestry";
+        public static final String MAGIC_BEES = "Magic Bees";
+        public static final String EXTRA_BEES = "Extra Bees";
         public static final String RAILCRAFT = "Railcraft";
         public static final String GREGTECH = "GregTech";
         public static final String KUBATECH = "KubaTech";

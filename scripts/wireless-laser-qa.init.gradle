@@ -1,6 +1,28 @@
 // Opt-in native GT wireless checks; the test mod is never included in release jars.
+gradle.beforeProject { project ->
+    if (project.parent == null && project.hasProperty('wirelessQaBuildDir')) {
+        project.layout.buildDirectory.set(project.file(project.property('wirelessQaBuildDir')))
+    }
+}
+
 gradle.projectsEvaluated {
     def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr = root.layout.buildDirectory.file('wireless-laser-qa-runtime/etfuturum-2.6.59-GTNH-dev.jar').get().asFile
+        if (!efr.exists()) {
+            efr.parentFile.mkdirs()
+            def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+            connection.connectTimeout = 30000
+            connection.readTimeout = 30000
+            def pending = new File(efr.parentFile, efr.name + '.pending')
+            connection.inputStream.withCloseable { input -> pending.withOutputStream { it << input } }
+            java.nio.file.Files.move(pending.toPath(), efr.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+        }
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.dependencies.add('runtimeOnlyNonPublishable',
+        root.extensions.getByName('elytraModpackVersion').gtnhdev('Galaxy-Space-GTNH') as String)
     root.tasks.named('compileTestJava').configure {
         setSource(root.fileTree('src/test/java/com/xyp/gtnotgood/common/wireless') { include '*ClientChecks.java' })
     }
@@ -9,6 +31,7 @@ gradle.projectsEvaluated {
         from root.sourceSets.main.output
         archiveFileName = 'wireless-laser-qa-main.jar'
         destinationDirectory = root.layout.buildDirectory.dir('wireless-laser-qa-runtime')
+        manifest.from(root.tasks.named('jar').get().manifest)
     }
     def copyTest = root.tasks.register('snapshotWirelessLaserTest', Sync) {
         dependsOn root.tasks.named('testClasses')
@@ -16,19 +39,40 @@ gradle.projectsEvaluated {
         include '**/WirelessLaserClientChecks*.class'
         into root.layout.buildDirectory.dir('wireless-laser-qa-runtime/test')
     }
-    def result = root.file('run/client/wireless-laser-qa-result.txt')
-    root.tasks.named('runClient').configure {
+    def runDirectory = root.file(root.findProperty('wirelessQaRunDir') ?: 'run/wireless-multi-amp-check')
+    def result = new File(runDirectory, 'wireless-laser-qa-result.txt')
+    root.tasks.matching { it.name in ['runClient', 'runClient17', 'runClient21', 'runClient25'] }.configureEach {
         dependsOn runtimeJar, copyTest
         classpath -= root.sourceSets.main.output
         classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
         classpath += root.files(runtimeJar.flatMap { it.archiveFile }, root.layout.buildDirectory.dir('wireless-laser-qa-runtime/test'))
+        workingDir runDirectory
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.qa.workspace', root.projectDir.absolutePath
         systemProperty 'gtng.wireless.qa', 'true'
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
         args '--width', '1100', '--height', '800'
         notCompatibleWithConfigurationCache('Opt-in real-client QA')
-        doFirst { java.nio.file.Files.deleteIfExists(result.toPath()) }
+        doFirst {
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\n', 'UTF-8')
+            def galaxyConfig = new File(workingDir, 'config/GalaxySpace/core.conf')
+            galaxyConfig.parentFile.mkdirs()
+            galaxyConfig.setText('general {\n    B:enableNewMenu=false\n}\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(result.toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(new File(runDirectory, 'window-helper.log'))
+                    .start()
+            }
+        }
         doLast {
             if (!result.exists() || result.text.trim() != 'PASS') {
-                throw new GradleException('Wireless laser checks failed; inspect WIRELESS_LASER_QA in the client log.')
+                throw new GradleException('Wireless multi-amp checks failed; inspect WIRELESS_LASER_QA in the client log.')
             }
         }
     }

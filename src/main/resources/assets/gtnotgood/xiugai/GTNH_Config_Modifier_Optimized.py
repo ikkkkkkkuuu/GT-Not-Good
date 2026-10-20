@@ -54,11 +54,6 @@ CONFIG_MODIFICATIONS = {
     # ===== AE2 配置修改 =====
     "config/AppliedEnergistics2/AppliedEnergistics2.cfg": {
         "modifications": [
-            {
-                "type": "replace",
-                "search": "B:Channels=true",
-                "replace": "B:Channels=false"
-            },
             # 修改合成数量按钮
             {
                 "type": "replace",
@@ -88,8 +83,6 @@ CONFIG_MODIFICATIONS = {
             }
         ]
     },
-
-
 
     # ===== GregTech 爆炸配置修改 =====
     "config/GregTech/GregTech.cfg": {
@@ -183,17 +176,6 @@ CONFIG_MODIFICATIONS = {
         ]
     },
 
-    # ===== EnhancedLootBags LootBags.xml 配置修改 =====
-    "config/EnhancedLootBags/LootBags.xml": {
-        "modifications": [
-            {
-                "type": "replace",
-                "search": 'CombineTrashGroup="true"',
-                "replace": 'CombineTrashGroup="false"'
-            }
-        ]
-    },
-
     # ===== Matter Manipulator 配置修改 =====
     "config/matter-manipulator.cfg": {
         "modifications": [
@@ -262,31 +244,6 @@ CONFIG_MODIFICATIONS = {
             }
         ]
     },
-
-
-    "config/gendustry/overrides/tuning.cfg": {
-        "modifications": [
-            # 修改死亡概率为 0
-            {"type": "replace", "search": "DeathChanceArtificial = 80", "replace": "DeathChanceArtificial = 0"},
-            {"type": "replace", "search": "DeathChanceNatural = 20", "replace": "DeathChanceNatural = 0"},
-            {"type": "replace", "search": "DeathChanceArtificial = 50", "replace": "DeathChanceArtificial = 0"},
-            {"type": "replace", "search": "DeathChanceNatural = 10", "replace": "DeathChanceNatural = 0"},
-
-            # 修改突变成功率为 100
-            {"type": "replace", "search": "SecretMutationChance = 10", "replace": "SecretMutationChance = 100"},
-            {"type": "replace", "search": "SecretMutationChance = 20", "replace": "SecretMutationChance = 100"},
-
-            # 修改器材使用消耗为 0
-            {"type": "replace", "search": "LabwareConsumeChance = 100", "replace": "LabwareConsumeChance = 0"},
-            {"type": "replace", "search": "LabwareConsumeChance = 50", "replace": "LabwareConsumeChance = 0"},
-            {"type": "replace", "search": "LabwareConsumeChance = 20", "replace": "LabwareConsumeChance = 0"},
-        ]
-    }
-
-
-
-
-
 
     # ===== 在下方添加更多配置文件修改 =====
     # 路径格式：相对于 .minecraft 目录

@@ -44,7 +44,7 @@ import com.xyp.gtnotgood.loader.BlockLoader;
 import com.xyp.gtnotgood.loader.ItemsLoader;
 import com.xyp.gtnotgood.loader.MachineLoader;
 import com.xyp.gtnotgood.loader.RecipeLoader;
-import com.xyp.gtnotgood.loader.WirelessLaserLoader;
+import com.xyp.gtnotgood.loader.WirelessHatchLoader;
 
 import appeng.api.AEApi;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -114,7 +114,7 @@ public class CommonProxy {
     public void postInit(FMLPostInitializationEvent event) {
         AEApi.instance().registries().interfaceTerminal().register(PartLargeInterface.class);
         RecipeLoader.loadPostInitRecipes();
-        WirelessLaserLoader.bindNativeHatches();
+        WirelessHatchLoader.bindNativeHatches();
         EasyWirelessRecipes.loadRecipes();
         AEApi.instance().registries().interfaceTerminal().register(SuperMTEHatchCraftingInputME.class);
         AEApi.instance().registries().interfaceTerminal().register(CircuitMEPatternBuffer.class);

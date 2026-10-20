@@ -138,7 +138,7 @@ public final class GTNGCreativeTabs {
 
     /** Uses a wireless hatch icon after registration, with the existing safe fallback during early client loading. */
     private static ItemStack getWirelessHatchIcon() {
-        return GTNGItemList.WirelessLaserEnergyLV256A.hasBeenSet() ? GTNGItemList.WirelessLaserEnergyLV256A.get(1)
+        return GTNGItemList.WirelessMultiAmpEnergyLV256A.hasBeenSet() ? GTNGItemList.WirelessMultiAmpEnergyLV256A.get(1)
             : getEyeOfHarmonyIcon();
     }
 

@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
-import com.xyp.gtnotgood.loader.WirelessLaserLoader;
+import com.xyp.gtnotgood.loader.WirelessHatchLoader;
 import com.xyp.gtnotgood.utils.enums.ModList;
 import com.xyp.gtnotgood.utils.text.AnimatedText;
 import com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler;
@@ -49,8 +49,8 @@ public final class WirelessRecipeClientChecks {
         int credits = 0;
         for (int tier = 1; tier <= 14; tier++) {
             for (int slot = 0; slot < 8; slot++) {
-                ItemStack stack = slot == 7 ? WirelessLaserLoader.dynamo(tier).get(1)
-                    : WirelessLaserLoader.energy(tier, slot).get(1);
+                ItemStack stack = slot == 7 ? WirelessHatchLoader.dynamo(tier).get(1)
+                    : WirelessHatchLoader.energy(tier, slot).get(1);
                 List<Supplier<String>> lines = AnimatedTooltipHandler.tooltipMap.get(stack);
                 if (lines == null || Collections.frequency(lines, AnimatedText.GT_NOT_GOOD) != 1) {
                     throw new AssertionError("Missing or duplicate wireless credit: " + tier + "/" + slot);

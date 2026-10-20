@@ -33,7 +33,7 @@
  *
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
-// GTNH 2.9.0-RC-1: DreamAssemblerXXL/releases/manifests/2.9.0-RC-1.json
+// GTNH 2.9.0-RC-2: DreamAssemblerXXL/releases/manifests/2.9.0-RC-2.json
 def elytraModpackVersion = project.extensions.getByName("elytraModpackVersion")
 
 // The plugin extension is loaded dynamically; declare its dependency coordinates as strings for IDE type checking.
@@ -45,9 +45,7 @@ dependencies {
     testRuntimeOnly(elytraModpackVersion.gtnhdev("BuildCraft") as String) { transitive = false }
     testRuntimeOnly(elytraModpackVersion.gtnhdev("EnderIO") as String) { transitive = false }
     testRuntimeOnly(elytraModpackVersion.gtnhdev("ProjectRed") as String) { transitive = false }
-    compileOnly(elytraModpackVersion.gtnhdev("Roguelike-Dungeons") as String) { transitive = false }
     compileOnly(elytraModpackVersion.gtnhdev("LootGames") as String) { transitive = false }
-    runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("Roguelike-Dungeons") as String) { transitive = false }
     runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("LootGames") as String)
     compileOnly(elytraModpackVersion.gtnhdev("BloodMagic") as String) { transitive = false }
     runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("BloodMagic") as String) { transitive = false }
@@ -120,6 +118,7 @@ configurations.configureEach {
         force elytraModpackVersion.gtnh("GT5-Unofficial")
         force elytraModpackVersion.gtnh("GTNHLib")
         force elytraModpackVersion.gtnh("NotEnoughItems")
+        force elytraModpackVersion.gtnh("lwjgl3ify")
     }
     exclude group: "com.github.GTNewHorizons", module: "CodeChickenLib"
     exclude group: "com.github.GTNewHorizons", module: "Guide-API"

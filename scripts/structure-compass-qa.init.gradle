@@ -1,9 +1,13 @@
 // Opt-in real-client checks. Fixtures never enter release artifacts.
 gradle.beforeProject { project ->
-    project.layout.buildDirectory.set(project.file('.gradle/structure-compass-qa-build'))
+    def qaRoot = gradle.startParameter.projectProperties['structureCompassQaRoot']
+    project.layout.buildDirectory.set(qaRoot ? new File(qaRoot, 'build') : project.file('.gradle/structure-compass-qa-build'))
 }
+
 gradle.projectsEvaluated {
     def root = gradle.rootProject
+    def qaRoot = root.findProperty('structureCompassQaRoot')
+    def qaOutput = qaRoot ? new File(qaRoot.toString(), 'results') : root.file('build/structure-compass-qa')
     root.tasks.named('compileJava').configure {
         destinationDirectory.set(root.layout.buildDirectory.dir('classes/java/main'))
     }
@@ -11,21 +15,39 @@ gradle.projectsEvaluated {
         destinationDirectory.set(root.layout.buildDirectory.dir('classes/java/test'))
         setSource(root.files(root.file('scripts/qa/StructureCompassClientChecks.java')))
     }
-    root.tasks.named('runClient').configure {
+    def qaClasses = root.tasks.register('isolateStructureCompassQA', Sync) {
         dependsOn root.tasks.named('testClasses')
-        classpath += root.sourceSets.test.output
-        workingDir root.file('run/structure-compass-check')
+        from root.sourceSets.test.output
+        include '**/StructureCompassClientChecks*.class'
+        into root.layout.buildDirectory.dir('structure-compass-qa/classes')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir('structure-compass-qa/classes'))
+        workingDir(qaRoot ? new File(qaRoot.toString(), 'run') : root.file('run/structure-compass-check'))
+        systemProperty 'gtng.factory.qa', 'true'
         systemProperty 'gtng.compass.qa', 'true'
-        systemProperty 'gtng.compass.qa.output', root.file('build/structure-compass-qa').absolutePath
+        systemProperty 'gtng.compass.qa.workspace', root.projectDir.absolutePath
+        systemProperty 'gtng.compass.qa.output', qaOutput.absolutePath
         args '--width', '1100', '--height', '740'
         notCompatibleWithConfigurationCache('Opt-in integrated-server checks')
         doFirst {
             workingDir.mkdirs()
-            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
-            java.nio.file.Files.deleteIfExists(root.file('build/structure-compass-qa/result.txt').toPath())
+            qaOutput.mkdirs()
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(new File(qaOutput, 'result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(new File(qaOutput, 'window-helper.log'))
+                    .start()
+            }
         }
         doLast {
-            def result = root.file('build/structure-compass-qa/result.txt')
+            def result = new File(qaOutput, 'result.txt')
             if (!result.exists() || result.text.trim() != 'PASS') throw new GradleException('Structure compass QA failed')
         }
     }
@@ -33,7 +55,11 @@ gradle.projectsEvaluated {
         java {
             target 'src/main/java/com/xyp/gtnotgood/common/items/compass/*.java',
                 'src/main/java/com/xyp/gtnotgood/client/StructureCompassRenderer.java',
-                'src/main/java/com/xyp/gtnotgood/mixins/late/compass/*.java'
+                'src/main/java/com/xyp/gtnotgood/ClientProxy.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/ModList.java',
+                'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/compass/*.java',
+                'scripts/qa/StructureCompassClientChecks.java'
         }
     }
 }

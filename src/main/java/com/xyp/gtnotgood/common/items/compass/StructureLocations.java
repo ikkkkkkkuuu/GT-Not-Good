@@ -29,13 +29,24 @@ public final class StructureLocations extends WorldSavedData {
         return data;
     }
 
-    /** Merges the old-map chest marker with a generation-time entrance within the same house. */
     public void add(int kind, int x, int y, int z) {
         for (Location p : locations) {
-            if (p.kind == kind && Math.abs((long) p.x - x) <= 16 && Math.abs((long) p.z - z) <= 16) return;
+            if (p.kind != kind) continue;
+            if (
+                kind == 0 ? p.x == x && p.y == y && p.z == z
+                    : Math.abs((long) p.x - x) <= 16 && Math.abs((long) p.z - z) <= 16
+            ) return;
         }
         locations.add(new Location(kind, x, y, z));
         markDirty();
+    }
+
+    public void removeHivesInChunk(int x, int z) {
+        if (locations.removeIf(p -> p.kind == 0 && p.x >> 4 == x && p.z >> 4 == z)) markDirty();
+    }
+
+    public void removeHive(int x, int y, int z) {
+        if (locations.removeIf(p -> p.kind == 0 && p.x == x && p.y == y && p.z == z)) markDirty();
     }
 
     public Location nearest(int kind, double x, double z, double radius) {
@@ -51,6 +62,20 @@ public final class StructureLocations extends WorldSavedData {
         return best;
     }
 
+    public Location nearestInChunk(int kind, int chunkX, int chunkZ, double x, double z, double radius) {
+        Location best = null;
+        double distance = radius * radius;
+        for (Location p : locations) {
+            if (p.kind != kind || p.x >> 4 != chunkX || p.z >> 4 != chunkZ) continue;
+            double d = p.distanceSquared(x, z);
+            if (d <= distance) {
+                best = p;
+                distance = d;
+            }
+        }
+        return best;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         locations.clear();
@@ -58,13 +83,14 @@ public final class StructureLocations extends WorldSavedData {
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tag = list.getCompoundTagAt(i);
             int kind = tag.getInteger("Kind");
-            if (kind < 0 || kind > 1) continue;
+            if (kind < 0 || kind > 1 || kind == 0 && !nbt.getBoolean("HiveTargets")) continue;
             locations.add(new Location(kind, tag.getInteger("X"), tag.getInteger("Y"), tag.getInteger("Z")));
         }
     }
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
+        nbt.setBoolean("HiveTargets", true);
         NBTTagList list = new NBTTagList();
         for (Location p : locations) {
             NBTTagCompound tag = new NBTTagCompound();

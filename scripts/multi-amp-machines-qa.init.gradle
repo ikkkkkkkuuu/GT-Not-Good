@@ -1,0 +1,45 @@
+// Focused multi-amp hatch checks; QA dependencies stay out of release artifacts.
+gradle.beforeProject { project ->
+    if (project.parent == null) {
+        project.layout.buildDirectory.set(project.file(project.findProperty('multiAmpQaBuildDir')
+            ?: '.gradle/multi-amp-machines-qa-build'))
+    }
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def bytecodeTools = root.configurations.create('multiAmpMachinesBytecodeTools')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm:9.8')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm-tree:9.8')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm-commons:9.8')
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/mixins/late/gregtech/ElectricBlastFurnaceMultiAmpMixin.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/gregtech/VacuumFreezerMultiAmpMixin.java',
+                'src/main/java/com/xyp/gtnotgood/utils/machine/MultiAmpEnergyHatchElement.java',
+                'src/main/java/com/xyp/gtnotgood/config/MainConfig.java',
+                'src/main/java/com/xyp/gtnotgood/config/ServerConfigOptions.java',
+                'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
+                'src/main/java/com/xyp/gtnotgood/common/machines/hatch/WirelessMultiAmpEnergyHatch.java',
+                'src/main/java/com/xyp/gtnotgood/mixins/late/gregtech/wireless/NativeWirelessMultiAmpMixin.java',
+                'src/main/java/com/xyp/gtnotgood/loader/WirelessHatchLoader.java',
+                'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
+                'src/main/java/com/xyp/gtnotgood/CommonProxy.java',
+                'src/main/java/com/xyp/gtnotgood/client/GTNGCreativeTabs.java',
+                'src/main/java/com/xyp/gtnotgood/common/recipe/machine/EasyWirelessRecipes.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
+                'src/test/java/com/xyp/gtnotgood/common/wireless/*ClientChecks.java',
+                'scripts/qa/LargeIndustrialFarmClientChecks.java',
+                'scripts/qa/MultiAmpMachinesTest.java'
+        }
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files(root.file('scripts/qa/MultiAmpMachinesTest.java')))
+        classpath = bytecodeTools + classpath
+    }
+    root.tasks.named('test').configure {
+        classpath = bytecodeTools + classpath
+        filter { includeTestsMatching '*MultiAmpMachinesTest' }
+    }
+}

@@ -62,7 +62,7 @@ import com.gtnewhorizon.cropsnh.tileentity.multi.MTEIndustrialFarm;
 import com.gtnewhorizon.cropsnh.tileentity.multi.MTEIndustrialFarmGui;
 import com.gtnewhorizon.cropsnh.utility.CropsNHUtils;
 import com.gtnewhorizon.cropsnh.utility.IFDropTable;
-import com.xyp.gtnotgood.common.machines.hatch.WirelessLaserEnergyHatch;
+import com.xyp.gtnotgood.common.machines.hatch.WirelessMultiAmpEnergyHatch;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeIndustrialFarm;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.GTNGMachineID;
@@ -302,38 +302,38 @@ public final class LargeIndustrialFarmClientChecks {
     }
 
     private void verifyWirelessEnergy(World world) {
-        GTNGItemList[] fixtures = { GTNGItemList.WirelessLaserEnergyMV256A, GTNGItemList.WirelessLaserEnergyUV256A,
-            GTNGItemList.WirelessLaserEnergyUXV256A };
+        GTNGItemList[] fixtures = { GTNGItemList.WirelessMultiAmpEnergyMV256A,
+            GTNGItemList.WirelessMultiAmpEnergyUV256A, GTNGItemList.WirelessMultiAmpEnergyUXV256A };
         for (int index = 0; index < fixtures.length; index++) {
             int id = fixtures[index].get(1).getItemDamage();
             BaseMetaTileEntity wirelessBase = place(world, -1, 12, 0, id, ForgeDirection.NORTH);
             require(wirelessBase.getMetaTileEntity() instanceof MTEHatchWirelessMulti,
-                "catalog wireless laser retains its native wireless energy implementation");
+                "catalog multi-amp hatch retains its native wireless energy implementation");
             MTEHatchWirelessMulti wireless = (MTEHatchWirelessMulti) wirelessBase.getMetaTileEntity();
             require(
-                index == 2 ? !(wireless instanceof WirelessLaserEnergyHatch)
-                    : wireless instanceof WirelessLaserEnergyHatch,
+                index == 2 ? !(wireless instanceof WirelessMultiAmpEnergyHatch)
+                    : wireless instanceof WirelessMultiAmpEnergyHatch,
                 "project hatches and reused native UXV alias are covered");
             valid("MV seed beds and standard borosilicate glass accept " + fixtures[index]
                 + " without overclock upgrades");
             require(
-                wireless.getHatchType() == 2 && wireless.getConnectionType() == MTEHatch.ConnectionType.WIRELESS
+                wireless.getHatchType() == 1 && wireless.getConnectionType() == MTEHatch.ConnectionType.WIRELESS
                     && machine.getExoticEnergyHatches().size() == 1
                     && machine.getExoticEnergyHatches().contains(wireless)
                     && machine.mEnergyHatches.isEmpty(),
-                "wireless lasers register as exotic wireless inputs without changing hatch types");
+                "wireless multi-amp hatches register as exotic wireless inputs");
             long powerBudget = wirelessBase.getInputVoltage() * wireless.maxWorkingAmperesIn();
             require(
                 machine.getMaxInputEu() == powerBudget && machine.expectedOCs == 0
                     && machine.expectedEUt == BlockSeedBed.getBaseEUt(VoltageIndex.MV),
                 "unupgraded farm reads the wireless hatch's actual power budget without forced overclocking");
             place(world, 0, 14, 13, id, ForgeDirection.SOUTH);
-            invalid("two wireless laser energy hatches retain the one-exotic-input limit");
+            invalid("two wireless multi-amp hatches retain the one-exotic-input limit");
             place(world, 0, 14, 13, normalEnergyId, ForgeDirection.SOUTH);
-            invalid("wireless laser and normal energy hatches remain mutually exclusive");
+            invalid("wireless multi-amp and normal energy hatches remain mutually exclusive");
             casing(0, 14, 13);
             upgrade(0, CropsNHBlocks.blockOverclockedGrowthAccelerationUnit, VoltageIndex.ZPM);
-            valid("wireless laser input power enables normal farm overclock calculation");
+            valid("wireless multi-amp input power enables normal farm overclock calculation");
             long expectedPower = BlockSeedBed.getBaseEUt(VoltageIndex.MV);
             int expectedOverclocks = 0;
             while (expectedPower <= powerBudget / 4) {
@@ -353,7 +353,7 @@ public final class LargeIndustrialFarmClientChecks {
         place(world, -1, 12, 0, multiAmpId, ForgeDirection.NORTH);
         valid("restore the standard multi-amp farm after wireless energy checks");
         report.append(
-            "Project MV/UV and native UXV wireless lasers form, fund, overclock and power the farm correctly.\n");
+            "Project MV/UV and native UXV wireless multi-amp hatches form, fund, overclock and power the farm.\n");
     }
 
     private void verifyWirelessFunding(BaseMetaTileEntity wirelessBase, MTEHatchWirelessMulti wireless) {

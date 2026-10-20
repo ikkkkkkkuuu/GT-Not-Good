@@ -5,9 +5,11 @@ import net.minecraft.util.StatCollector;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.gtnewhorizon.gtnhlib.util.numberformatting.NumberFormatUtil;
+import com.xyp.gtnotgood.loader.WirelessHatchLoader;
 import com.xyp.gtnotgood.utils.text.EnergyHatchTooltip;
 
 import gregtech.api.enums.GTValues;
+import gregtech.api.enums.VoltageIndex;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
@@ -16,24 +18,44 @@ import tectech.thing.metaTileEntity.hatch.MTEHatchWirelessMulti;
 
 @IMetaTileEntity.SkipGenerateName
 @IMetaTileEntity.SkipGenerateDescription
-public final class WirelessLaserEnergyHatch extends MTEHatchWirelessMulti {
+public final class WirelessMultiAmpEnergyHatch extends MTEHatchWirelessMulti {
 
-    public WirelessLaserEnergyHatch(int id, String name, int tier, int amperes) {
+    public WirelessMultiAmpEnergyHatch(int id, String name, int tier, int amperes) {
         super(id, name, "", tier, amperes);
     }
 
-    private WirelessLaserEnergyHatch(String name, int tier, int amperes, String[] description,
+    private WirelessMultiAmpEnergyHatch(String name, int tier, int amperes, String[] description,
         ITexture[][][] textures) {
         super(name, tier, amperes, description, textures);
     }
 
     @Override
     public String getLocalName() {
+        return formatName(mTier, maxAmperes);
+    }
+
+    public static String formatName(int tier, int amperes) {
         // #tr gtng.wireless.laser.input.name
-        // # %1$s %2$sA Wireless Laser Energy Hatch
-        // # zh_CN %2$s安%1$s无线激光能源仓
-        return StatCollector.translateToLocalFormatted("gtng.wireless.laser.input.name", GTValues.VN[mTier],
-            NumberFormatUtil.formatNumber(maxAmperes));
+        // # %1$s %2$sA Wireless Multi-Amp Energy Hatch
+        // # zh_CN %2$s安%1$s无线多安培能源仓
+        return StatCollector.translateToLocalFormatted("gtng.wireless.laser.input.name", GTValues.VN[tier],
+            NumberFormatUtil.formatNumber(amperes));
+    }
+
+    @Override
+    public int getHatchType() {
+        return 1;
+    }
+
+    public static boolean isNativeCatalogInput(MTEHatchWirelessMulti hatch) {
+        if (hatch.getClass() != MTEHatchWirelessMulti.class || hatch.mTier != VoltageIndex.UXV) return false;
+        for (int variant = 0; variant < WirelessHatchLoader.INPUT_VARIANTS; variant++) {
+            if (
+                hatch.maxAmperes == (256 << (2 * variant)) && hatch.getMetaName()
+                    .equals("hatch.energywirelesstunnel" + (variant + 1) + ".tier." + VoltageIndex.UXV)
+            ) return true;
+        }
+        return false;
     }
 
     @Override
@@ -61,6 +83,6 @@ public final class WirelessLaserEnergyHatch extends MTEHatchWirelessMulti {
 
     @Override
     public MetaTileEntity newMetaEntity(IGregTechTileEntity tile) {
-        return new WirelessLaserEnergyHatch(mName, mTier, maxAmperes, mDescriptionArray, mTextures);
+        return new WirelessMultiAmpEnergyHatch(mName, mTier, maxAmperes, mDescriptionArray, mTextures);
     }
 }

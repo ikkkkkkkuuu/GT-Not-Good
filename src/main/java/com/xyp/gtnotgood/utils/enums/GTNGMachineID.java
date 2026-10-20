@@ -4,8 +4,8 @@ public enum GTNGMachineID {
 
     Machine(28500),
     BasicMachine(28600),
-    /** LV through MAX: seven laser inputs and one dynamo slot per tier, 28700-28811. */
-    WirelessLaser(28700),
+    /** LV through MAX: seven multi-amp inputs and one dynamo slot per tier, 28700-28811. */
+    WirelessHatches(28700),
 
     LargeOreProcessor(Machine, 0),
     MaxCapacityMEOutputBus(Machine, 1),

@@ -357,6 +357,6 @@ public class MachineLoader {
     public static void registry() {
         registerMachines();
         registerbasicMachine();
-        WirelessLaserLoader.register();
+        WirelessHatchLoader.register();
     }
 }

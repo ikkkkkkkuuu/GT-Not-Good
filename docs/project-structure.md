@@ -60,7 +60,7 @@ com/xyp/gtnotgood/
 
 ## 命名
 
-- 类、接口和枚举类型使用大驼峰；枚举成员同样使用大驼峰，如 `LargeOreProcessor`、`WirelessLaserEnergyLV256A`。
+- 类、接口和枚举类型使用大驼峰；枚举成员同样使用大驼峰，如 `LargeOreProcessor`、`WirelessMultiAmpEnergyLV256A`。
 - 方法、参数和普通字段使用小驼峰，如 `gasInput`、`structureDefinition`、`storedItems`。
 - 真正的 `static final` 常量保留全大写下划线形式；外部接口覆盖、Mixin `@Shadow` 和反射目标遵循对应 API。
 - 新增包目录使用全小写。项目规范指定的 `common.machines.multiblock.multiMachineBase` 保持现有路径。

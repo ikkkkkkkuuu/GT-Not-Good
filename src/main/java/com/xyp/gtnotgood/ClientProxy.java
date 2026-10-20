@@ -102,8 +102,9 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
-        MinecraftForgeClient.registerItemRenderer(GTNGItemList.StructureCompass.getItem(),
-            new StructureCompassRenderer());
+        StructureCompassRenderer compassRenderer = new StructureCompassRenderer();
+        MinecraftForgeClient.registerItemRenderer(GTNGItemList.StructureCompass.getItem(), compassRenderer);
+        MinecraftForge.EVENT_BUS.register(compassRenderer);
         registerAEPartRenderer();
         initializeTextEffects();
         WirelessMonitorPreferences.load();

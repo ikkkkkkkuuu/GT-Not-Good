@@ -65,9 +65,6 @@ public class LateMixinsLoader implements ILateMixinLoader {
         if (loadedMods.contains(ModList.Railcraft.getID())) {
             addAll(list, "railcraft.MultiblockBoilerMixin");
         }
-        if (loadedMods.contains(ModList.Roguelike.getID())) {
-            addAll(list, "compass.RoguelikeWorldAccessor", "compass.RoguelikeHouseMixin");
-        }
         if (loadedMods.contains(ModList.LootGames.getID())) {
             addAll(list, "compass.LootGamesStructureMixin", "lootgames.EasyLightConfigMixin",
                 "lootgames.EasyMinesweeperConfigMixin", "lootgames.EasyMinesweeperStageMixin",
@@ -77,6 +74,8 @@ public class LateMixinsLoader implements ILateMixinLoader {
             addAll(list, "bloodmagic.MixinPackagedBloodAltar");
         }
         if (loadedMods.contains(ModList.GregTech.getID())) {
+            addAll(list, "gregtech.ElectricBlastFurnaceMultiAmpMixin", "gregtech.VacuumFreezerMultiAmpMixin",
+                "gregtech.wireless.NativeWirelessMultiAmpMixin");
             addAll(list, "gregtech.arcfurnace.ArcFurnaceElectrodeAccess",
                 "gregtech.arcfurnace.ArcFurnaceElectrodeMixin", "gregtech.arcfurnace.ElectrodeItemMixin",
                 "gregtech.arcfurnace.ElectrodeHatchMixin");

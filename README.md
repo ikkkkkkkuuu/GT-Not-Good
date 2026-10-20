@@ -44,13 +44,24 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
 |  2.9.0-RC-1  |     1.1.6     |         1.6.2          | [![1.6.2](https://img.shields.io/badge/release-1.6.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.2) |         ✔️         |
+|  2.9.0-RC-2  |     1.6.3     |         1.6.3          | [![1.6.3](https://img.shields.io/badge/release-1.6.3-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.3) |         ✔️         |
 
-最新版本：[1.6.2 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.2)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.2/gtnotgood-1.6.2.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.2/gtnotgood-1.6.2-sources.jar)。
+当前版本面向 GTNH 2.9.0-RC-2；RC1 请使用 1.6.2。
 
-1.3.4 因启动错误已撤回，请更新到 1.6.2。
+最新版本：[1.6.3 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.3)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.3/gtnotgood-1.6.3.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.3/gtnotgood-1.6.3-sources.jar)。
+
+1.3.4 因启动错误已撤回，请更新到 1.6.3。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.6.3 更新
+
+- 适配 GTNH 2.9.0-RC-2，并同步开发环境的 lwjgl3ify 与 forgePatches，修复 Java 25 客户端因缺少 `BytePatternMatcher` 无法启动。
+- LV～MAX 原有七档无线激光能源仓改为无线多安培能源仓，保留机器 ID、存档和电流档位；UXV 原版前七档同步调整，动力仓及原版更高两档激光能源仓保持原分类。
+- 工业高炉与真空冷冻机新增默认开启的多安培能源仓支持，可分别配置并在重启后生效；高炉沿用底层能源仓位置，两种机器均拒绝激光能源仓。
+- 遗迹探寻罗盘的红砖房模式改为野生蜂巢，支持 Forestry、Magic Bees 和 Extra Bees，提供金色指针及透视轮廓；搜索已有区块，蜂巢拆除后目标失效，保留 LootGames 模式。
+- 配置修改器不再自动关闭 AE2 频道，也不再修改战利品袋垃圾组合规则及基因工业的死亡、突变和器材消耗参数。
 
 ### 1.6.2 更新
 

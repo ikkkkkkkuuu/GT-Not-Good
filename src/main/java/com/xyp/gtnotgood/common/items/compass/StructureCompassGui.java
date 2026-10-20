@@ -52,7 +52,7 @@ public final class StructureCompassGui {
 
     private NBTTagCompound tag() {
         ItemStack compass = compass();
-        return compass != null && compass.hasTagCompound() ? compass.getTagCompound() : new NBTTagCompound();
+        return compass != null ? StructureCompassItem.data(compass) : new NBTTagCompound();
     }
 
     /**
@@ -109,8 +109,8 @@ public final class StructureCompassGui {
             }
         }, () -> state.getIntValue() >= 2 && distance.getIntValue() >= 0));
         // #tr gui.compass.note
-        // # Search predicts candidates only. Teleporting loads terrain. Escape closes this screen.
-        // # zh_CN 搜索仅预测候选区域，传送会加载地形；Esc 关闭界面。
+        // # Held compass highlights bee hives. Teleporting loads terrain. Escape closes this screen.
+        // # zh_CN 手持罗盘高亮蜂巢；传送会加载地形；Esc 关闭界面。
         panel.child(IKey.lang("gui.compass.note").color(0xff525b69).asWidget().pos(14, 199).width(312));
         return panel;
     }
@@ -149,8 +149,8 @@ public final class StructureCompassGui {
     private static String status(int state) {
         if (state == 1) {
             // #tr gui.compass.searching
-            // # Searching candidate areas... Keep the compass in your hand.
-            // # zh_CN 正在搜索候选区域……请保持手持罗盘。
+            // # Searching... Keep the compass in your hand.
+            // # zh_CN 正在搜索……请保持手持罗盘。
             return StatCollector.translateToLocal("gui.compass.searching");
         }
         if (state == 2) {
@@ -161,8 +161,8 @@ public final class StructureCompassGui {
         }
         if (state == 3) {
             // #tr gui.compass.confirmed
-            // # Recorded structure. Navigate to it or teleport nearby.
-            // # zh_CN 已记录的遗迹，可前往探索或传送至附近。
+            // # Target located. Navigate to it or teleport nearby.
+            // # zh_CN 已找到目标，可前往或传送至附近。
             return StatCollector.translateToLocal("gui.compass.confirmed");
         }
         // #tr gui.compass.idle

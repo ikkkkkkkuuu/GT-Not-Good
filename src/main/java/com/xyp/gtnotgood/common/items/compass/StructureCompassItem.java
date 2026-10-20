@@ -40,7 +40,12 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
 
     public static NBTTagCompound data(ItemStack stack) {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
-        return stack.getTagCompound();
+        NBTTagCompound tag = stack.getTagCompound();
+        if (mode(stack) == 0 && !tag.getBoolean("HiveTarget")) {
+            tag.removeTag("Found");
+            tag.setBoolean("HiveTarget", true);
+        }
+        return tag;
     }
 
     public static int mode(ItemStack stack) {
@@ -54,15 +59,16 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
             // # zh_CN LootGames 游戏区域
             return "compass.target.lootgames";
         }
-        // #tr compass.target.house
-        // # Roguelike red-brick entrance
-        // # zh_CN Roguelike 红砖地牢入口
-        return "compass.target.house";
+        // #tr compass.target.hive
+        // # Wild bee hive
+        // # zh_CN 野生蜂巢
+        return "compass.target.hive";
     }
 
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) return stack;
+        data(stack);
         if (player.isSneaking()) selectMode(player, stack, 1 - mode(stack));
         else PlayerInventoryGuiFactory.INSTANCE.openFromMainHand(player);
         return stack;
@@ -91,7 +97,7 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
     /** Starts a search only when the selected optional mod is installed. */
     public static void search(EntityPlayer player, ItemStack stack) {
         if (player.worldObj.isRemote) return;
-        ModList mod = mode(stack) == 0 ? ModList.Roguelike : ModList.LootGames;
+        ModList mod = mode(stack) == 0 ? ModList.Forestry : ModList.LootGames;
         if (!mod.isModLoaded()) {
             // #tr compass.missing
             // # Required mod is not installed: %s
@@ -100,7 +106,6 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
         } else StructureSearch.INSTANCE.start(player, stack);
     }
 
-    /** Resolves seed candidates after normal player exploration has generated a matching structure nearby. */
     @Override
     public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean held) {
         if (
@@ -109,11 +114,15 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
                 || world.getTotalWorldTime() % 20 != 0
                 || !stack.hasTagCompound()
         ) return;
-        NBTTagCompound tag = stack.getTagCompound();
+        NBTTagCompound tag = data(stack);
+        if (mode(stack) == 0) {
+            StructureSearch.validateHiveTarget((EntityPlayer) entity, stack);
+            return;
+        }
         if (!tag.getBoolean("Found") || tag.getBoolean("Confirmed") || tag.getInteger("Dimension") != entity.dimension)
             return;
         StructureLocations.Location found = StructureLocations.get(world).nearest(mode(stack), tag.getInteger("X"),
-            tag.getInteger("Z"), mode(stack) == 0 ? 128 : 24);
+            tag.getInteger("Z"), 24);
         if (found != null) StructureSearch.setTarget((EntityPlayer) entity, stack, found, true);
     }
 
@@ -138,19 +147,29 @@ public final class StructureCompassItem extends GTNGItem implements IGuiHolder<P
         // # zh_CN 右键打开界面；Shift 右键切换目标类型并清除搜索结果。
         lines.add(StatCollector.translateToLocal("compass.use"));
         // #tr compass.range
-        // # Predicts candidate areas within 8,192 blocks without generating terrain.
-        // # zh_CN 预测周围 8,192 格内的候选区域，不生成地形。
+        // # Searches within 8,192 blocks without generating terrain.
+        // # zh_CN 搜索周围 8,192 格内的目标，不生成地形。
         lines.add(StatCollector.translateToLocal("compass.range"));
-        // #tr compass.historical
-        // # Recorded structures may already be explored or modified.
-        // # zh_CN 已记录的遗迹可能已被探索或改动。
-        lines.add(StatCollector.translateToLocal("compass.historical"));
-        if (!stack.hasTagCompound() || !stack.getTagCompound().getBoolean("Found")) return;
+        if (mode(stack) == 0) {
+            // #tr compass.hive_highlight
+            // # Finds existing bee hives. Hold the compass to highlight the target in gold.
+            // # zh_CN 寻找已生成的蜂巢，手持罗盘时以金色高亮目标。
+            lines.add(StatCollector.translateToLocal("compass.hive_highlight"));
+        } else {
+            // #tr compass.historical
+            // # Recorded structures may already be explored or modified.
+            // # zh_CN 已记录的遗迹可能已被探索或改动。
+            lines.add(StatCollector.translateToLocal("compass.historical"));
+        }
+        if (
+            !stack.hasTagCompound() || !stack.getTagCompound().getBoolean("Found")
+                || mode(stack) == 0 && !stack.getTagCompound().getBoolean("HiveTarget")
+        ) return;
         NBTTagCompound tag = stack.getTagCompound();
         if (!tag.getBoolean("Confirmed")) {
             // #tr compass.unconfirmed
-            // # Candidate unconfirmed. Terrain or entrance type may prevent a match.
-            // # zh_CN 候选区域尚未确认，地形或入口类型可能不符合目标。
+            // # Candidate unconfirmed. Terrain may prevent a match.
+            // # zh_CN 候选区域尚未确认，地形可能不符合生成条件。
             lines.add(StatCollector.translateToLocal("compass.unconfirmed"));
             // #tr compass.candidate_position
             // # Candidate: X %s, Z %s (dimension %s)

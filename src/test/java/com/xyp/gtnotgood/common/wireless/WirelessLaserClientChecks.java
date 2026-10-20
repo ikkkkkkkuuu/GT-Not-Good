@@ -1,6 +1,8 @@
 package com.xyp.gtnotgood.common.wireless;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -19,9 +21,12 @@ import net.minecraft.world.WorldType;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.cleanroommc.modularui.screen.GuiContainerWrapper;
+import com.gtnewhorizon.structurelib.structure.IStructureElement;
+import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.xyp.gtnotgood.common.recipe.machine.EasyWirelessRecipes;
 import com.xyp.gtnotgood.config.Config;
-import com.xyp.gtnotgood.loader.WirelessLaserLoader;
+import com.xyp.gtnotgood.config.MainConfig;
+import com.xyp.gtnotgood.loader.WirelessHatchLoader;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -37,6 +42,9 @@ import gregtech.api.metatileentity.BaseMetaTileEntity;
 import gregtech.api.metatileentity.implementations.MTEHatch;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.common.misc.WirelessNetworkManager;
+import gregtech.common.tileentities.machines.multi.MTEElectricBlastFurnace;
+import gregtech.common.tileentities.machines.multi.MTEVacuumFreezer;
+import tectech.thing.CustomItemList;
 import tectech.thing.metaTileEntity.hatch.MTEHatchWirelessDynamoMulti;
 import tectech.thing.metaTileEntity.hatch.MTEHatchWirelessMulti;
 
@@ -51,6 +59,8 @@ public class WirelessLaserClientChecks {
     private boolean started;
     private boolean checked;
     private volatile boolean finished;
+    private volatile Throwable failure;
+    private long deadline;
     private int frames;
     private BaseMetaTileEntity displayTile;
     private int guiTicks;
@@ -61,20 +71,31 @@ public class WirelessLaserClientChecks {
     }
 
     @SubscribeEvent
-    public void client(TickEvent.ClientTickEvent event) throws Exception {
+    public void client(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         Minecraft mc = Minecraft.getMinecraft();
-        if (!started && mc.theWorld == null && mc.currentScreen != null) {
-            started = true;
-            mc.launchIntegratedServer("wireless-laser-qa-" + System.currentTimeMillis(), "Wireless Laser QA",
-                new WorldSettings(91L, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT));
-        }
-        if (finished && ++frames == 80) {
-            require(mc.currentScreen instanceof GuiContainerWrapper, "native GUI opened");
-            ScreenShotHelper.saveScreenshot(new File("."), "wireless-laser-gui.png", mc.displayWidth, mc.displayHeight,
-                mc.getFramebuffer());
-            Files.write(new File("wireless-laser-qa-result.txt").toPath(), "PASS".getBytes(StandardCharsets.UTF_8));
-            System.out.println("WIRELESS_LASER_QA: PASS");
+        try {
+            if (deadline == 0) deadline = System.currentTimeMillis() + 300_000;
+            require(System.currentTimeMillis() < deadline, "client QA completed within five minutes");
+            if (failure != null) throw new AssertionError("server checks failed", failure);
+            if (!started && mc.theWorld == null && mc.currentScreen != null) {
+                started = true;
+                mc.launchIntegratedServer("wireless-laser-qa-" + System.currentTimeMillis(), "Wireless Multi-Amp QA",
+                    new WorldSettings(91L, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT));
+            }
+            if (finished && ++frames == 80) {
+                require(mc.currentScreen instanceof GuiContainerWrapper, "native GUI opened");
+                ScreenShotHelper.saveScreenshot(new File("."), "wireless-laser-gui.png", mc.displayWidth,
+                    mc.displayHeight, mc.getFramebuffer());
+                writeResult("PASS");
+                System.out.println("WIRELESS_LASER_QA: PASS");
+                mc.shutdown();
+            }
+        } catch (Throwable problem) {
+            problem.printStackTrace();
+            StringWriter trace = new StringWriter();
+            problem.printStackTrace(new PrintWriter(trace));
+            writeResult("FAIL\n" + trace);
             mc.shutdown();
         }
     }
@@ -100,8 +121,9 @@ public class WirelessLaserClientChecks {
             player.setPositionAndUpdate(2, 7, 3);
             UUID owner = UUID.randomUUID();
             WirelessNetworkManager.strongCheckOrAddUser(owner);
+            checkMachineAcceptance(world, owner);
             for (int tier = 1; tier <= 14; tier++) {
-                BaseMetaTileEntity tile = place(world, WirelessLaserLoader.energy(tier, 6).get(1), owner);
+                BaseMetaTileEntity tile = place(world, WirelessHatchLoader.energy(tier, 6).get(1), owner);
                 MTEHatchWirelessMulti hatch = (MTEHatchWirelessMulti) tile.getMetaTileEntity();
                 BigInteger budget = BigInteger.valueOf(hatch.maxEUStore()).multiply(BigInteger.valueOf(3));
                 WirelessNetworkManager.setUserEU(owner, budget);
@@ -115,18 +137,20 @@ public class WirelessLaserClientChecks {
                 hatch.tryFetchingEnergy();
                 require(hatch.getEUVar() == 0, "empty network cannot create EU " + tier);
                 hatch.setAmperes(256);
+                require(hatch.getHatchType() == 1, "adjusting amperage keeps multi-amp classification " + tier);
                 NBTTagCompound nbt = new NBTTagCompound();
                 tile.writeToNBT(nbt);
                 BaseMetaTileEntity loaded = new BaseMetaTileEntity();
                 loaded.readFromNBT(nbt);
                 MTEHatchWirelessMulti restored = (MTEHatchWirelessMulti) loaded.getMetaTileEntity();
-                require(restored.getAmperes() == 256 && restored.maxAmperes == 1_048_576,
+                require(
+                    restored.getAmperes() == 256 && restored.maxAmperes == 1_048_576 && restored.getHatchType() == 1,
                     "amperage and registered ceiling survive NBT " + tier);
 
-                tile = place(world, WirelessLaserLoader.dynamo(tier).get(1), owner);
+                tile = place(world, WirelessHatchLoader.dynamo(tier).get(1), owner);
                 MTEHatchWirelessDynamoMulti dynamo = (MTEHatchWirelessDynamoMulti) tile.getMetaTileEntity();
                 dynamo.onPreTick(tile, 1);
-                long deposit = GTValues.V[tier] * WirelessLaserLoader.DYNAMO_AMPERES;
+                long deposit = GTValues.V[tier] * WirelessHatchLoader.DYNAMO_AMPERES;
                 dynamo.setEUVar(deposit);
                 dynamo.onPreTick(tile, WirelessNetworkManager.ticks_between_energy_addition);
                 require(
@@ -137,42 +161,96 @@ public class WirelessLaserClientChecks {
                 require(WirelessNetworkManager.getUserEU(owner).equals(BigInteger.valueOf(deposit)),
                     "no duplicate deposit");
             }
-            displayTile = place(world, WirelessLaserLoader.energy(14, 6).get(1), player.getUniqueID());
+            displayTile = place(world, WirelessHatchLoader.energy(14, 6).get(1), player.getUniqueID());
             System.out.println("WIRELESS_LASER_QA: all 14 voltage tiers passed transfer and NBT checks");
         } catch (Throwable failure) {
             failure.printStackTrace();
-            throw new AssertionError("WIRELESS_LASER_QA failed", failure);
+            this.failure = failure;
         }
     }
 
     private static BaseMetaTileEntity place(WorldServer world, ItemStack stack, UUID owner) {
-        world.setBlockToAir(0, 6, 0);
-        world.setBlock(0, 6, 0, GregTechAPI.sBlockMachines, 0, 3);
-        BaseMetaTileEntity tile = (BaseMetaTileEntity) world.getTileEntity(0, 6, 0);
+        return place(world, stack, owner, 0);
+    }
+
+    private static BaseMetaTileEntity place(WorldServer world, ItemStack stack, UUID owner, int x) {
+        world.setBlockToAir(x, 6, 0);
+        world.setBlock(x, 6, 0, GregTechAPI.sBlockMachines, 0, 3);
+        BaseMetaTileEntity tile = (BaseMetaTileEntity) world.getTileEntity(x, 6, 0);
         tile.setInitialValuesAsNBT(null, (short) stack.getItemDamage());
         tile.setOwnerUuid(owner);
         tile.setFrontFacing(ForgeDirection.SOUTH);
         return tile;
     }
 
+    private static void checkMachineAcceptance(WorldServer world, UUID owner) {
+        require(MainConfig.electricBlastFurnaceMultiAmpEnergy && MainConfig.vacuumFreezerMultiAmpEnergy,
+            "both machine options enabled for client QA");
+        MTEElectricBlastFurnace furnace = (MTEElectricBlastFurnace) place(world,
+            ItemList.Machine_Multi_BlastFurnace.get(1), owner, 3).getMetaTileEntity();
+        MTEVacuumFreezer freezer = (MTEVacuumFreezer) place(world, ItemList.Machine_Multi_VacuumFreezer.get(1), owner,
+            4).getMetaTileEntity();
+        IStructureElement<MTEElectricBlastFurnace> furnaceElement = ((StructureDefinition<MTEElectricBlastFurnace>) furnace
+            .getStructureDefinition()).getElements().get('b');
+        IStructureElement<MTEVacuumFreezer> freezerElement = ((StructureDefinition<MTEVacuumFreezer>) freezer
+            .getStructureDefinition()).getElements().get('C');
+        for (int tier = 1; tier <= 14; tier++) {
+            for (int variant = 0; variant < 7; variant++) {
+                BaseMetaTileEntity tile = place(world, WirelessHatchLoader.energy(tier, variant).get(1), owner);
+                furnace.getExoticEnergyHatches().clear();
+                freezer.getExoticEnergyHatches().clear();
+                require(
+                    furnaceElement.check(furnace, world, 0, 6, 0)
+                        && furnace.getExoticEnergyHatches().contains(tile.getMetaTileEntity()),
+                    "EBF structure accepts wireless multi-amp " + tier + "/" + variant);
+                require(
+                    freezerElement.check(freezer, world, 0, 6, 0)
+                        && freezer.getExoticEnergyHatches().contains(tile.getMetaTileEntity()),
+                    "freezer structure accepts wireless multi-amp " + tier + "/" + variant);
+            }
+        }
+        for (CustomItemList nativeLaser : new CustomItemList[] { CustomItemList.eM_energyWirelessTunnel8_UXV,
+            CustomItemList.eM_energyWirelessTunnel9_UXV }) {
+            MTEHatchWirelessMulti laser = (MTEHatchWirelessMulti) place(world, nativeLaser.get(1), owner)
+                .getMetaTileEntity();
+            require(laser.getHatchType() == 2, "uncatalogued native laser retains classification");
+            furnace.getExoticEnergyHatches().clear();
+            freezer.getExoticEnergyHatches().clear();
+            require(!furnaceElement.check(furnace, world, 0, 6, 0) && furnace.getExoticEnergyHatches().isEmpty(),
+                "EBF rejects uncatalogued native laser");
+            require(!freezerElement.check(freezer, world, 0, 6, 0) && freezer.getExoticEnergyHatches().isEmpty(),
+                "freezer rejects uncatalogued native laser");
+        }
+        System.out.println("WIRELESS_LASER_QA: both native structures accepted all 98 inputs and rejected native 8/9");
+    }
+
+    private static void writeResult(String result) {
+        try {
+            Files.write(new File("wireless-laser-qa-result.txt").toPath(), result.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception failure) {
+            failure.printStackTrace();
+        }
+    }
+
     static void checkCatalogAndRecipes() {
         Set<Integer> ids = new HashSet<>();
         for (int tier = 1; tier <= 14; tier++) {
             for (int variant = 0; variant < 7; variant++) {
-                ItemStack stack = WirelessLaserLoader.energy(tier, variant).get(1);
+                ItemStack stack = WirelessHatchLoader.energy(tier, variant).get(1);
                 require(ids.add(stack.getItemDamage()), "unique input ID");
                 MTEHatchWirelessMulti hatch = (MTEHatchWirelessMulti) GregTechAPI.METATILEENTITIES[stack
                     .getItemDamage()];
-                require(hatch.mTier == tier && hatch.maxAmperes == WirelessLaserLoader.amperes(variant),
+                require(hatch.mTier == tier && hatch.maxAmperes == WirelessHatchLoader.amperes(variant),
                     "correct rating");
-                require(hatch.getHatchType() == 2 && hatch.getConnectionType() == MTEHatch.ConnectionType.WIRELESS,
-                    "laser classification");
-                require(hatch.newMetaEntity(null) instanceof MTEHatchWirelessMulti, "placed subtype");
+                require(hatch.getHatchType() == 1 && hatch.getConnectionType() == MTEHatch.ConnectionType.WIRELESS,
+                    "wireless multi-amp classification");
+                require(hatch.newMetaEntity(null) instanceof MTEHatchWirelessMulti placed && placed.getHatchType() == 1,
+                    "placed subtype and multi-amp classification");
                 require(hatch.maxEUStore() > 0 && hatch.eu_transferred_per_operation_long > 0
                     && hatch.actualTicksBetweenEnergyAddition > 0, "no capacity overflow");
                 require(!hatch.getLocalName().contains("gtng."), "translated item name");
             }
-            require(ids.add(WirelessLaserLoader.dynamo(tier).get(1).getItemDamage()), "unique dynamo ID");
+            require(ids.add(WirelessHatchLoader.dynamo(tier).get(1).getItemDamage()), "unique dynamo ID");
         }
         require(ids.size() == 112, "full LV-MAX catalog");
         int supported = 0;

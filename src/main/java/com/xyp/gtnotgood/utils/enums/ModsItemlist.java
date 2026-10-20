@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.utils.enums;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -500,6 +501,9 @@ public enum ModsItemlist {
     // 不死图腾
     TotemOfUndying(Mods.EtFuturumRequiem.ID, "totem_of_undying", 0),
 
+    // 野生蜂巢
+    ExtraBeesHive(ModList.ExtraBees.getID(), "hive"),
+
     // 七重压缩圆石
     CompressedCobbleSeven(Mods.ExtraUtilities.ID, "cobblestone_compressed", 6),
     // 八重压缩圆石
@@ -520,6 +524,8 @@ public enum ModsItemlist {
     // 邪术气血宝珠
     EldritchOrb(Mods.ForbiddenMagic.ID, "EldritchOrb", 0),
 
+    // 野生蜂巢
+    ForestryHive(ModList.Forestry.getID(), "beehives"),
     // 蜂箱组组件
     Alveary(Mods.Forestry.ID, "alveary", 0),
     // 蜂箱组克隆盒
@@ -722,6 +728,9 @@ public enum ModsItemlist {
 
     // 兰波顿机械方块/电容
     LapotronicEnergyUnitBlock(Mods.KekzTech.ID, "kekztech_lapotronicenergyunit_block", 0),
+
+    // 野生蜂巢
+    MagicBeesHive(ModList.MagicBees.getID(), "hive"),
 
     // 穿刺箭
     PiercingArrow(Mods.MineAndBladeBattleGear2.ID, "mb.arrow", 3),
@@ -1294,6 +1303,10 @@ public enum ModsItemlist {
         this.metadata = metadata;
         this.forgeRegistry = forgeRegistry;
         this.ic2NamedItem = ic2NamedItem;
+    }
+
+    public Block getBlock() {
+        return GameRegistry.findBlock(modId, registryName);
     }
 
     public ItemStack get(long amount) {

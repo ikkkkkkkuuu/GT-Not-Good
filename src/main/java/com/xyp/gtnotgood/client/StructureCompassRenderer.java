@@ -1,16 +1,28 @@
 package com.xyp.gtnotgood.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.EmptyChunk;
 import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import org.lwjgl.opengl.GL11;
 
+import com.xyp.gtnotgood.common.items.compass.HiveMarkers;
 import com.xyp.gtnotgood.common.items.compass.StructureCompassItem;
 
-/** Original code-drawn compass face. Each stack's needle uses its own destination, including in the inventory. */
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public final class StructureCompassRenderer implements IItemRenderer {
 
     @Override
@@ -60,9 +72,11 @@ public final class StructureCompassRenderer implements IItemRenderer {
             quad(13, 7, 14, 9, .01);
             Minecraft mc = Minecraft.getMinecraft();
             NBTTagCompound tag = stack.getTagCompound();
-            boolean active = mc.thePlayer != null && tag != null
+            boolean active = mc.thePlayer != null && mc.theWorld != null
+                && tag != null
                 && tag.getBoolean("Found")
-                && mc.thePlayer.dimension == tag.getInteger("Dimension");
+                && mc.thePlayer.dimension == tag.getInteger("Dimension")
+                && (StructureCompassItem.mode(stack) != 0 || isHiveTarget(mc, tag));
             double angle = 0;
             if (active) {
                 double dx = tag.getInteger("X") + .5 - mc.thePlayer.posX;
@@ -75,7 +89,7 @@ public final class StructureCompassRenderer implements IItemRenderer {
             triangle(0, 5, -1.5, 0, 1.5, 0);
             if (!active) GL11.glColor3f(.4f, .4f, .4f);
             else if (!tag.getBoolean("Confirmed")) GL11.glColor3f(1, .7f, .15f);
-            else if (StructureCompassItem.mode(stack) == 0) GL11.glColor3f(.95f, .25f, .19f);
+            else if (StructureCompassItem.mode(stack) == 0) GL11.glColor3f(1, .8f, .2f);
             else GL11.glColor3f(.2f, .9f, .95f);
             triangle(0, -5, 1.5, 0, -1.5, 0);
             GL11.glColor3f(1, .92f, .64f);
@@ -84,6 +98,63 @@ public final class StructureCompassRenderer implements IItemRenderer {
             GL11.glPopMatrix();
             GL11.glPopAttrib();
         }
+    }
+
+    @SubscribeEvent
+    public void renderWorld(RenderWorldLastEvent event) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.theWorld == null || mc.thePlayer == null || mc.renderViewEntity == null) return;
+        ItemStack held = mc.thePlayer.getHeldItem();
+        if (held == null || !(held.getItem() instanceof StructureCompassItem) || StructureCompassItem.mode(held) != 0)
+            return;
+        NBTTagCompound tag = held.getTagCompound();
+        if (
+            tag == null || !tag.getBoolean("Found")
+                || !tag.getBoolean("Confirmed")
+                || tag.getInteger("Dimension") != mc.thePlayer.dimension
+                || !isHiveTarget(mc, tag)
+        ) return;
+
+        int x = tag.getInteger("X"), y = tag.getInteger("Y"), z = tag.getInteger("Z");
+        Entity camera = mc.renderViewEntity;
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+        GL11.glPushMatrix();
+        try {
+            GL11.glTranslated(-(camera.lastTickPosX + (camera.posX - camera.lastTickPosX) * event.partialTicks),
+                -(camera.lastTickPosY + (camera.posY - camera.lastTickPosY) * event.partialTicks),
+                -(camera.lastTickPosZ + (camera.posZ - camera.lastTickPosZ) * event.partialTicks));
+            OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDisable(GL11.GL_FOG);
+            GL11.glDepthMask(false);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glLineWidth(2.5F);
+            GL11.glColor4f(1, .8f, .2f, .95f);
+            RenderGlobal.drawOutlinedBoundingBox(
+                AxisAlignedBB.getBoundingBox(x - .005, y - .005, z - .005, x + 1.005, y + 1.005, z + 1.005), -1);
+            Tessellator marker = Tessellator.instance;
+            marker.startDrawing(GL11.GL_LINES);
+            marker.setColorRGBA_F(1, .8f, .2f, .7f);
+            marker.addVertex(x + .5, y + 1.05, z + .5);
+            marker.addVertex(x + .5, mc.theWorld.getActualHeight() + 16, z + .5);
+            marker.draw();
+        } finally {
+            GL11.glPopMatrix();
+            GL11.glPopAttrib();
+        }
+    }
+
+    private static boolean isHiveTarget(Minecraft mc, NBTTagCompound tag) {
+        if (!tag.getBoolean("HiveTarget")) return false;
+        int x = tag.getInteger("X"), y = tag.getInteger("Y"), z = tag.getInteger("Z");
+        Chunk chunk = mc.theWorld.getChunkFromChunkCoords(x >> 4, z >> 4);
+        return y >= 0 && y < mc.theWorld.getActualHeight()
+            && (chunk instanceof EmptyChunk || HiveMarkers.isHive(chunk.getBlock(x & 15, y, z & 15)));
     }
 
     private static void quad(double x, double y, double right, double bottom, double z) {

@@ -24,7 +24,7 @@ upgrade modules independent of seed-bed tier, default multi-amp energy support,
 and fixed borosilicate glass without a glass-based energy-tier limit.
 Native `MultiAmpEnergy` accepts only hatch type 1, rejecting wireless type 2
 above 64 A. The controller accepts `MTEHatchWirelessMulti` inputs, including local
-`WirelessLaserEnergyHatch` subclasses and native UXV catalog entries. These use
+`WirelessMultiAmpEnergyHatch` subclasses and native UXV catalog entries. These use
 the native `WIRELESS` connection type, without an overclock upgrade prerequisite
 or glass voltage cap. At most one exotic energy hatch is allowed, without mixing
 normal energy hatches; ordinary `LASER` hatches are rejected.

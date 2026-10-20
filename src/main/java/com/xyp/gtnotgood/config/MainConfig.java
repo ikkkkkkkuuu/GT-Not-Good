@@ -26,6 +26,9 @@ public class MainConfig {
 
     public static boolean hipCompressorNoOverheat = true;
 
+    public static boolean electricBlastFurnaceMultiAmpEnergy = true;
+    public static boolean vacuumFreezerMultiAmpEnergy = true;
+
     // WATER
     public static boolean water = true;
     public static boolean grade8WaterPurificationEnabled = true;
@@ -40,6 +43,8 @@ public class MainConfig {
     private static final String CATEGORY_PURIFIED_WATER = "净化水";
     private static final String CATEGORY_PURIFIED_COM = "黑洞压缩机";
     private static final String CATEGORY_HIP_COMPRESSOR = "热等静压机";
+    private static final String CATEGORY_ELECTRIC_BLAST_FURNACE = "工业高炉";
+    private static final String CATEGORY_VACUUM_FREEZER = "真空冷冻机";
     private static final String CATEGORY_PURIFIED_FOG = "诸神之锻炉";
     private static final String CATEGORY_PURIFIED_EOH = "鸿蒙之眼";
     private static final String CATEGORY_WIRELESS_FREQUENCY = "无线频率卡";
@@ -62,6 +67,8 @@ public class MainConfig {
         configuration.addCustomCategoryComment(CATEGORY_PURIFIED_FOG, "调整诸神之锻炉升级的材料和解锁条件。");
         configuration.addCustomCategoryComment(CATEGORY_PURIFIED_COM, "控制黑洞压缩机是否锁定稳定性。");
         configuration.addCustomCategoryComment(CATEGORY_HIP_COMPRESSOR, "控制热等静压机的过热机制。");
+        configuration.addCustomCategoryComment(CATEGORY_ELECTRIC_BLAST_FURNACE, "控制工业高炉的多安培能源仓支持。");
+        configuration.addCustomCategoryComment(CATEGORY_VACUUM_FREEZER, "控制真空冷冻机的多安培能源仓支持。");
         configuration.addCustomCategoryComment(CATEGORY_PURIFIED_WATER, "调整各等级净化水机器的处理规则；仍需搭建正确的多方块结构。");
         configuration.addCustomCategoryComment(CATEGORY_WIRELESS_FREQUENCY, "调整无线频率卡的连接限制。");
 
@@ -85,6 +92,15 @@ public class MainConfig {
 
         hipCompressorNoOverheat = configuration.getBoolean("hipCompressorNoOverheat", CATEGORY_HIP_COMPRESSOR,
             hipCompressorNoOverheat, "开启后热等静压机永不过热，热量仍正常升降；关闭后恢复原版过热机制。");
+
+        electricBlastFurnaceMultiAmpEnergy = configuration
+            .get(CATEGORY_ELECTRIC_BLAST_FURNACE, "electricBlastFurnaceMultiAmpEnergy",
+                electricBlastFurnaceMultiAmpEnergy, "开启后工业高炉可在底层能源仓位置使用多安培能源仓；关闭后恢复原版规则。不支持激光仓，修改后需重启。")
+            .setRequiresMcRestart(true).getBoolean();
+
+        vacuumFreezerMultiAmpEnergy = configuration.get(CATEGORY_VACUUM_FREEZER, "vacuumFreezerMultiAmpEnergy",
+            vacuumFreezerMultiAmpEnergy, "开启后真空冷冻机可使用多安培能源仓；关闭后恢复原版规则。不支持激光仓，修改后需重启。").setRequiresMcRestart(true)
+            .getBoolean();
 
         water = configuration.getBoolean("Water", CATEGORY_PURIFIED_WATER, water, "净化水机器修改仅改动了内部处理逻辑，机器多方块结构依然要保证正确！");
 
