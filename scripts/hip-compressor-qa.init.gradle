@@ -14,7 +14,8 @@ gradle.projectsEvaluated {
     root.spotless {
         java {
             target 'src/main/java/com/xyp/gtnotgood/mixins/late/gregtech/HipCompressorHeatMixin.java',
-                'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
+                'src/main/java/com/xyp/gtnotgood/config/MainConfig.java',
+                'src/main/java/com/xyp/gtnotgood/config/ServerConfigOptions.java',
                 'scripts/qa/HipCompressorHeatTest.java'
         }
     }

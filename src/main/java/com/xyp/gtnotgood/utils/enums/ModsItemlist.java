@@ -577,6 +577,8 @@ public enum ModsItemlist {
 
     // 巴纳德C树木原木
     BarnardaCLog(Mods.GalaxySpace.ID, "barnardaClog", 0),
+    // 神秘水晶碎片
+    MysteriousCrystalShard(Mods.GalaxySpace.ID, "item.UnknowCrystal", 0),
     // 4阶火箭控制电脑
     RocketControlComputerTier4(Mods.GalaxySpace.ID, "item.RocketControlComputer", 4),
     // 7阶火箭控制电脑

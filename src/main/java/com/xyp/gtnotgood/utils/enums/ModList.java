@@ -25,6 +25,7 @@ public enum ModList {
     Forestry(ModIds.FORESTRY, Names.FORESTRY),
     Railcraft(ModIds.RAILCRAFT, Names.RAILCRAFT),
     GregTech(ModIds.GREGTECH, Names.GREGTECH),
+    KubaTech(ModIds.KUBATECH, Names.KUBATECH),
     Thaumcraft(ModIds.THAUMCRAFT, Names.THAUMCRAFT),
     ThaumcraftResearchTweaks(ModIds.THAUMCRAFT_RESEARCH_TWEAKS, Names.THAUMCRAFT_RESEARCH_TWEAKS),
     Baubles(ModIds.BAUBLES, Names.BAUBLES),
@@ -55,6 +56,7 @@ public enum ModList {
         public static final String FORESTRY = "Forestry";
         public static final String RAILCRAFT = "Railcraft";
         public static final String GREGTECH = "gregtech";
+        public static final String KUBATECH = "kubatech";
         public static final String THAUMCRAFT = "Thaumcraft";
         public static final String THAUMCRAFT_RESEARCH_TWEAKS = "ThaumcraftResearchTweaks";
         public static final String BAUBLES = "Baubles";
@@ -85,6 +87,7 @@ public enum ModList {
         public static final String FORESTRY = "Forestry";
         public static final String RAILCRAFT = "Railcraft";
         public static final String GREGTECH = "GregTech";
+        public static final String KUBATECH = "KubaTech";
         public static final String THAUMCRAFT = "Thaumcraft";
         public static final String THAUMCRAFT_RESEARCH_TWEAKS = "Thaumcraft Research Tweaks";
         public static final String BAUBLES = "Baubles";

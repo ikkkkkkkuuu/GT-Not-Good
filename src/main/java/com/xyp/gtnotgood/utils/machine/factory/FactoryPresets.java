@@ -52,7 +52,8 @@ public final class FactoryPresets {
         CetaneDiesel(FactoryText.PresetCetane, FactoryText.PresetCetaneHelp),
         EpoxyPropene(FactoryText.PresetEpoxy, FactoryText.PresetEpoxyHelp),
         Netherite(FactoryText.PresetNetherite, FactoryText.PresetNetheriteHelp),
-        PrismaticAcid(FactoryText.PresetPrismaticAcid, FactoryText.PresetPrismaticAcidHelp);
+        PrismaticAcid(FactoryText.PresetPrismaticAcid, FactoryText.PresetPrismaticAcidHelp),
+        StemCells(FactoryText.PresetStemCells, FactoryText.PresetStemCellsHelp);
 
         public final FactoryText title;
         public final FactoryText help;
@@ -122,6 +123,15 @@ public final class FactoryPresets {
     private static List<Step> stepsFor(Preset preset) {
         List<Step> steps = new ArrayList<>();
         switch (preset) {
+            case StemCells:
+                steps.add(step(mixerNonCellRecipes, Materials.Osmium.getDust(1), Materials.Osmiridium.getDust(1),
+                    Materials.Iridium.getDust(1), GTUtility.getIntegratedCircuit(1)));
+                steps.add(step(fluidHeaterRecipes, Materials.GrowthMediumRaw.getFluid(1),
+                    Materials.GrowthMediumSterilized.getFluid(1)));
+                steps.add(step(multiblockChemicalReactorRecipes, Materials.GrowthMediumSterilized.getFluid(1),
+                    ItemList.Circuit_Chip_Stemcell.get(1), ModsItemlist.MysteriousCrystalShard.get(1),
+                    Materials.Osmiridium.getDust(1)));
+                break;
             case PlatinumGroup:
                 Map<String, Step> unique = new LinkedHashMap<>();
                 for (Preset part : new Preset[] { Preset.Platinum, Preset.Palladium, Preset.Residue, Preset.Ruthenium,
@@ -441,6 +451,7 @@ public final class FactoryPresets {
             intermediates.add(Materials.SodiumHydroxide.getDust(1));
         }
         if (preset == Preset.CetaneDiesel) intermediates.add(Materials.Tetranitromethane.getFluid(1));
+        if (preset == Preset.StemCells) intermediates.add(Materials.Osmiridium.getDust(1));
         List<FactoryBalancer.Fraction[]> equations = new ArrayList<>();
         for (Object type : intermediates) {
             FactoryBalancer.Fraction[] row = new FactoryBalancer.Fraction[graph.nodes.size()];

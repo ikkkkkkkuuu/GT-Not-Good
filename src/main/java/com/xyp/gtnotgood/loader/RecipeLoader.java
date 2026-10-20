@@ -8,6 +8,7 @@ import com.xyp.gtnotgood.common.recipe.gregtech.AssemblerRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.CentrifugeRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.CraftingTableRecipes;
+import com.xyp.gtnotgood.common.recipe.gregtech.FormingPressRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FuelRodRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.FurnaceRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.LargeChemicalReactorRecipes;
@@ -94,6 +95,7 @@ public class RecipeLoader {
         AssemblerRecipes.loadRecipes();
         CrossRecipeWirelessEnergyHatchRecipes.loadRecipes();
         BenderRecipes.loadRecipes();
+        FormingPressRecipes.loadRecipes();
         FurnaceRecipes.loadRecipes();
         FuelRodRecipes.loadRecipes();
         SingularityDataHubRecipes.loadRecipes();

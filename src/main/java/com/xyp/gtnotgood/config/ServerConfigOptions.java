@@ -46,6 +46,7 @@ public final class ServerConfigOptions {
         add(options, true, "鸿蒙之眼", "RecipeChance", "recipeChance", true);
         add(options, true, "诸神之锻炉", "FOGUpDate", "fogUpdate", true);
         add(options, true, "黑洞压缩机", "BlackHoleCompressorStabilityLock", "blackHoleCompressorStabilityLock", true);
+        add(options, true, "热等静压机", "hipCompressorNoOverheat", "hipCompressorNoOverheat", true);
         add(options, true, "净化水", "Water", "water", false);
         add(options, true, "净化水", "Grade1WaterPurificationEnabled", "grade1WaterPurificationEnabled", true);
         add(options, true, "净化水", "Grade2WaterPurificationEnabled", "grade2WaterPurificationEnabled", true);

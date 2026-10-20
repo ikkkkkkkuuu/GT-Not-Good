@@ -13,6 +13,7 @@ import com.xyp.gtnotgood.common.blocks.packaged.ThaumcraftInfusionAdapter;
 import com.xyp.gtnotgood.common.items.GTNGItem;
 import com.xyp.gtnotgood.common.items.advancedio.ItemAdvancedIOBus;
 import com.xyp.gtnotgood.common.items.compass.StructureCompassItem;
+import com.xyp.gtnotgood.common.items.electrode.IronElectrode;
 import com.xyp.gtnotgood.common.items.fuel.IronFuelRod;
 import com.xyp.gtnotgood.common.items.largeinterface.ItemLargeInterface;
 import com.xyp.gtnotgood.common.items.mebridge.ItemMEWirelessTransceiver;
@@ -59,6 +60,7 @@ public final class ItemsLoader {
         registerWirelessFrequencyCard();
         registerWildcardPattern();
         registerFuelRods();
+        registerItem(new IronElectrode(), "iron_electrode", GTNGItemList.IronElectrode);
         registerTools();
     }
 

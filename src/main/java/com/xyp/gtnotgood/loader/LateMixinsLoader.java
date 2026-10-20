@@ -77,6 +77,9 @@ public class LateMixinsLoader implements ILateMixinLoader {
             addAll(list, "bloodmagic.MixinPackagedBloodAltar");
         }
         if (loadedMods.contains(ModList.GregTech.getID())) {
+            addAll(list, "gregtech.arcfurnace.ArcFurnaceElectrodeAccess",
+                "gregtech.arcfurnace.ArcFurnaceElectrodeMixin", "gregtech.arcfurnace.ElectrodeItemMixin",
+                "gregtech.arcfurnace.ElectrodeHatchMixin");
             addAll(list, "gregtech.wireless.MixinWirelessControllerVersion",
                 "gregtech.wireless.MixinWirelessHatchOwner");
             addAll(list, "gregtech.wireless.WirelessProcessingAccess", "gregtech.wireless.CrossRecipeProcessingMixin",

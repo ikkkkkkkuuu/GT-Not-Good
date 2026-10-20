@@ -52,7 +52,8 @@ public final class WildcardMaterials {
      * Copper 导线这类输入输出材料不一致的样板。
      */
     public static boolean isExpandableMaterial(Materials material) {
-        return isRealMaterial(material) && material.mUnifiable;
+        // Netherite parts use dedicated arc furnace recipes instead of standard material forming.
+        return isRealMaterial(material) && material.mUnifiable && material != Materials.Netherite;
     }
 
     /** 按名（大小写不敏感）查找材料，找不到返回 {@link Materials#_NULL}。 */

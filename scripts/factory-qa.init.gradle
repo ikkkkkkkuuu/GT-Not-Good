@@ -13,6 +13,8 @@ gradle.projectsEvaluated {
         java.nio.file.Files.move(pending.toPath(), efr.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
     }
     root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.dependencies.add('runtimeOnlyNonPublishable',
+        root.extensions.getByName('elytraModpackVersion').gtnhdev('Galaxy-Space-GTNH') as String)
     root.tasks.named('compileTestJava').configure {
         setSource(root.files(root.file('scripts/qa/FactoryRegressionTest.java'), root.file('scripts/qa/FactoryClientChecks.java'), root.file('scripts/qa/FactoryWholeBatchChecks.java')))
     }
@@ -64,6 +66,9 @@ gradle.projectsEvaluated {
         doFirst {
             workingDir.mkdirs()
             new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\n', 'UTF-8')
+            def galaxyConfig = new File(workingDir, 'config/GalaxySpace/core.conf')
+            galaxyConfig.parentFile.mkdirs()
+            galaxyConfig.setText('general {\n    B:enableNewMenu=false\n}\n', 'UTF-8')
             java.nio.file.Files.deleteIfExists(root.file('build/factory-qa/result.txt').toPath())
             if (System.getProperty('os.name').startsWith('Windows')) {
                 new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',

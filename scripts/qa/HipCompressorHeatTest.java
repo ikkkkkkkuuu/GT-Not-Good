@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -20,19 +22,45 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import com.xyp.gtnotgood.config.MainConfig;
+import com.xyp.gtnotgood.config.ServerConfigOptions;
+import com.xyp.gtnotgood.config.ServerConfigOptions.Option;
 
 public class HipCompressorHeatTest {
 
     private static final String TARGET = "gregtech/common/tileentities/machines/multi/compressor/MTEHIPCompressor";
     private static final String MIXIN = "com/xyp/gtnotgood/mixins/late/gregtech/HipCompressorHeatMixin";
     private static final String HANDLER = "gtnotgood$preventOverheating";
-    private static final List<String> REDIRECTED = Arrays.asList("onPostTick", "loadNBTData", "onValueUpdate");
+    private static final String CLEAR_HANDLER = "gtnotgood$clearOverheated";
+    private static final List<String> REDIRECTED = Arrays.asList("onPostTick", "loadNBTData");
     private static final String TILE = "gregtech/api/interfaces/tileentity/IGregTechTileEntity";
     private static final String NBT = "net/minecraft/nbt/NBTTagCompound";
     private static final String FIXTURE = "com/xyp/gtnotgood/qa/HipCompressorHeatFixture";
+    private boolean previousNoOverheat;
+    private boolean previousConfigLoaded;
+    private Field configLoaded;
+
+    @Before
+    public void isolateConfiguration() throws Exception {
+        previousNoOverheat = MainConfig.hipCompressorNoOverheat;
+        configLoaded = MainConfig.class.getDeclaredField("configLoaded");
+        configLoaded.setAccessible(true);
+        previousConfigLoaded = configLoaded.getBoolean(null);
+        configLoaded.setBoolean(null, true);
+        MainConfig.hipCompressorNoOverheat = true;
+    }
+
+    @After
+    public void restoreConfiguration() throws Exception {
+        MainConfig.hipCompressorNoOverheat = previousNoOverheat;
+        configLoaded.setBoolean(null, previousConfigLoaded);
+    }
 
     @Test
     public void redirectMatchesExactlyOneFlagWriteInEachNativeMethod() throws Exception {
@@ -52,12 +80,33 @@ public class HipCompressorHeatTest {
         AnnotationNode redirect = annotation(handler.visibleAnnotations,
             "Lorg/spongepowered/asm/mixin/injection/Redirect;");
         assertEquals(REDIRECTED, value(redirect, "method"));
-        assertEquals(Integer.valueOf(3), value(redirect, "require"));
-        assertEquals(Integer.valueOf(3), value(redirect, "allow"));
+        assertEquals(Integer.valueOf(2), value(redirect, "require"));
+        assertEquals(Integer.valueOf(2), value(redirect, "allow"));
         AnnotationNode at = value(redirect, "at");
         assertEquals("FIELD", value(at, "value"));
         assertEquals("L" + TARGET + ";overheated:Z", value(at, "target"));
         assertEquals(Integer.valueOf(Opcodes.PUTFIELD), value(at, "opcode"));
+
+        MethodNode clear = method(mixin, CLEAR_HANDLER);
+        assertEquals("(L" + TILE + ";JLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", clear.desc);
+        AnnotationNode inject = annotation(clear.visibleAnnotations, "Lorg/spongepowered/asm/mixin/injection/Inject;");
+        assertEquals(Arrays.asList("onPostTick"), value(inject, "method"));
+        assertEquals(Integer.valueOf(1), value(inject, "require"));
+        assertEquals(Integer.valueOf(1), value(inject, "allow"));
+        List<AnnotationNode> points = value(inject, "at");
+        assertEquals(1, points.size());
+        assertEquals("HEAD", value(points.get(0), "value"));
+    }
+
+    @Test
+    public void administratorOptionUpdatesTheRuntimeSwitch() {
+        Option option = ServerConfigOptions.options().get("main/热等静压机/hipCompressorNoOverheat");
+        assertNotNull(option);
+        assertTrue(option.live);
+        option.applyRuntime(false);
+        assertFalse(MainConfig.hipCompressorNoOverheat);
+        option.applyRuntime(true);
+        assertTrue(MainConfig.hipCompressorNoOverheat);
     }
 
     @Test
@@ -104,7 +153,7 @@ public class HipCompressorHeatTest {
     }
 
     @Test
-    public void loadedCoolingFlagsAndClientUpdatesCannotRestoreOverheating() throws Exception {
+    public void enabledSwitchClearsLoadedCoolingFlagsAndPreservesOtherNbt() throws Exception {
         Object machine = fixture().getConstructor().newInstance();
         NbtProbe nbt = new NbtProbe();
         nbt.setFloat("heat", 83.5F);
@@ -117,8 +166,6 @@ public class HipCompressorHeatTest {
         assertEquals(7, field(machine, "coilTier").getInt(machine));
         assertEquals(14, field(machine, "coolingTimer").getInt(machine));
         assertEquals(1, ((CompressorProbe) machine).loads);
-        machine.getClass().getMethod("onValueUpdate", byte.class).invoke(machine, (byte) 1);
-        assertFalse(field(machine, "overheated").getBoolean(machine));
         assertEquals((byte) 0, machine.getClass().getMethod("getUpdateData").invoke(machine));
         NbtProbe saved = new NbtProbe();
         machine.getClass().getMethod("saveNBTData", NbtProbe.class).invoke(machine, saved);
@@ -126,6 +173,52 @@ public class HipCompressorHeatTest {
         assertEquals(83.5F, saved.getFloat("heat"), 0F);
         assertEquals(7, saved.getInteger("coilTier"));
         assertEquals(14, saved.getInteger("coolingTimer"));
+    }
+
+    @Test
+    public void disabledSwitchPreservesLoadedAndSavedOverheating() throws Exception {
+        MainConfig.hipCompressorNoOverheat = false;
+        Object machine = fixture().getConstructor().newInstance();
+        NbtProbe nbt = new NbtProbe();
+        nbt.setFloat("heat", 83.5F);
+        nbt.setBoolean("cooling", true);
+        machine.getClass().getMethod("loadNBTData", NbtProbe.class).invoke(machine, nbt);
+        assertTrue(field(machine, "overheated").getBoolean(machine));
+        assertEquals(83.5F, field(machine, "heat").getFloat(machine), 0F);
+        NbtProbe saved = new NbtProbe();
+        machine.getClass().getMethod("saveNBTData", NbtProbe.class).invoke(machine, saved);
+        assertTrue(saved.getBoolean("cooling"));
+        assertEquals((byte) 1, machine.getClass().getMethod("getUpdateData").invoke(machine));
+    }
+
+    @Test
+    public void clientAcceptsAuthoritativeUpdatesWithTheLocalSwitchEnabled() throws Exception {
+        Object machine = fixture().getConstructor().newInstance();
+        CompressorProbe probe = (CompressorProbe) machine;
+        probe.tile.client = true;
+        machine.getClass().getMethod("onValueUpdate", byte.class).invoke(machine, (byte) 1);
+        assertTrue(field(machine, "overheated").getBoolean(machine));
+        tick(machine, 1);
+        assertTrue(probe.overheatedBeforeProcessing);
+        assertTrue(field(machine, "overheated").getBoolean(machine));
+        machine.getClass().getMethod("onValueUpdate", byte.class).invoke(machine, (byte) 0);
+        assertFalse(field(machine, "overheated").getBoolean(machine));
+    }
+
+    @Test
+    public void liveEnableClearsOverheatingBeforeTheNextProcessingTick() throws Exception {
+        MainConfig.hipCompressorNoOverheat = false;
+        Object machine = fixture().getConstructor().newInstance();
+        CompressorProbe probe = (CompressorProbe) machine;
+        probe.duration = 100;
+        for (int second = 1; second <= 25; second++) tick(machine, second * 20L);
+        assertTrue(field(machine, "overheated").getBoolean(machine));
+        assertTrue(probe.overheatedBeforeProcessing);
+        MainConfig.hipCompressorNoOverheat = true;
+        tick(machine, 501);
+        assertFalse(probe.overheatedBeforeProcessing);
+        assertFalse(field(machine, "overheated").getBoolean(machine));
+        assertEquals(100F, field(machine, "heat").getFloat(machine), 0F);
     }
 
     @Test
@@ -149,17 +242,45 @@ public class HipCompressorHeatTest {
             logicType.getMethod("validateRecipe", RecipeProbe.class).invoke(logic, new RecipeProbe(2)));
     }
 
+    @Test
+    public void disabledSwitchRestoresNativeOverheatPenaltiesAndHipFailure() throws Exception {
+        MainConfig.hipCompressorNoOverheat = false;
+        Class<?> type = fixture();
+        Object machine = type.getConstructor().newInstance();
+        CompressorProbe probe = (CompressorProbe) machine;
+        probe.duration = 100;
+        for (int second = 1; second <= 25; second++) tick(machine, second * 20L);
+        assertTrue(field(machine, "overheated").getBoolean(machine));
+        assertEquals(100F, field(machine, "heat").getFloat(machine), 0F);
+        assertEquals(3, type.getMethod("getMaxParallelRecipes").invoke(machine));
+        Class<?> logicType = type.getClassLoader().loadClass((FIXTURE + "$Logic").replace('/', '.'));
+        LogicProbe logic = (LogicProbe) logicType.getConstructor(type).newInstance(machine);
+        RecipeProbe hip = new RecipeProbe(1);
+        assertSame(ResultRegistryProbe.SUCCESS,
+            logicType.getMethod("validateRecipe", RecipeProbe.class).invoke(logic, hip));
+        assertEquals(2.5D, logic.speed, 0D);
+        assertEquals(1.1D, logic.euModifier, 0.0000001D);
+        assertSame(ResultRegistryProbe.NO_RECIPE,
+            logicType.getMethod("onRecipeStart", RecipeProbe.class).invoke(logic, hip));
+        assertEquals(1, probe.stops);
+    }
+
     private static Class<?> fixture() throws Exception {
         ClassNode node = read(TARGET);
         String parent = node.superName;
-        MethodNode handler = method(read(MIXIN), HANDLER);
+        ClassNode mixin = read(MIXIN);
+        MethodNode handler = method(mixin, HANDLER);
         handler.visibleAnnotations = null;
         handler.invisibleAnnotations = null;
+        MethodNode clear = method(mixin, CLEAR_HANDLER);
+        clear.visibleAnnotations = null;
+        clear.invisibleAnnotations = null;
         node.methods.removeIf(method -> !REDIRECTED.contains(method.name) && !method.name.equals("saveNBTData")
             && !method.name.equals("getUpdateData")
+            && !method.name.equals("onValueUpdate")
             && !method.name.equals("getMaxParallelRecipes")
             && !method.name.endsWith("$get$overheated"));
-        // Preserve native bodies and the real Redirect handler without starting Forge.
+        // Preserve native bodies and production mixin handlers without starting Forge.
         for (MethodNode method : node.methods) {
             if (!REDIRECTED.contains(method.name)) continue;
             int temporary = method.maxLocals;
@@ -174,7 +295,15 @@ public class HipCompressorHeatTest {
                     new MethodInsnNode(Opcodes.INVOKESPECIAL, TARGET, HANDLER, handler.desc, false));
             }
         }
+        InsnList head = new InsnList();
+        head.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        head.add(new VarInsnNode(Opcodes.ALOAD, 1));
+        head.add(new VarInsnNode(Opcodes.LLOAD, 2));
+        head.add(new InsnNode(Opcodes.ACONST_NULL));
+        head.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, TARGET, CLEAR_HANDLER, clear.desc, false));
+        method(node, "onPostTick").instructions.insert(head);
         node.methods.add(handler);
+        node.methods.add(clear);
         node.fields.removeIf(field -> !Arrays.asList("heat", "overheated", "coilTier", "coolingTimer", "sensorHatches")
             .contains(field.name));
         MethodNode constructor = new MethodNode(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
@@ -253,7 +382,7 @@ public class HipCompressorHeatTest {
         return (List<SensorProbe>) field(machine, "sensorHatches").get(machine);
     }
 
-    private static Field field(Object machine, String name) throws Exception {
+    private static Field field(Object machine, String name) throws NoSuchFieldException {
         Field field = machine.getClass().getDeclaredField(name);
         field.setAccessible(true);
         return field;
@@ -312,6 +441,7 @@ public class HipCompressorHeatTest {
         private int ticks;
         private int loads;
         private int stops;
+        private boolean overheatedBeforeProcessing;
 
         public int maxProgresstime() {
             return duration;
@@ -326,6 +456,11 @@ public class HipCompressorHeatTest {
         }
 
         public void onPostTick(TileAccess tile, long tick) {
+            try {
+                overheatedBeforeProcessing = field(this, "overheated").getBoolean(this);
+            } catch (ReflectiveOperationException e) {
+                throw new AssertionError(e);
+            }
             ticks++;
         }
 

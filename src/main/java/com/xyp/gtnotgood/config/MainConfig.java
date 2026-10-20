@@ -24,6 +24,8 @@ public class MainConfig {
     // 黑洞压缩机
     public static boolean blackHoleCompressorStabilityLock = true;
 
+    public static boolean hipCompressorNoOverheat = true;
+
     // WATER
     public static boolean water = true;
     public static boolean grade8WaterPurificationEnabled = true;
@@ -37,6 +39,7 @@ public class MainConfig {
 
     private static final String CATEGORY_PURIFIED_WATER = "净化水";
     private static final String CATEGORY_PURIFIED_COM = "黑洞压缩机";
+    private static final String CATEGORY_HIP_COMPRESSOR = "热等静压机";
     private static final String CATEGORY_PURIFIED_FOG = "诸神之锻炉";
     private static final String CATEGORY_PURIFIED_EOH = "鸿蒙之眼";
     private static final String CATEGORY_WIRELESS_FREQUENCY = "无线频率卡";
@@ -58,6 +61,7 @@ public class MainConfig {
         configuration.addCustomCategoryComment(CATEGORY_PURIFIED_EOH, "调整鸿蒙之眼的流体消耗和配方成功率。");
         configuration.addCustomCategoryComment(CATEGORY_PURIFIED_FOG, "调整诸神之锻炉升级的材料和解锁条件。");
         configuration.addCustomCategoryComment(CATEGORY_PURIFIED_COM, "控制黑洞压缩机是否锁定稳定性。");
+        configuration.addCustomCategoryComment(CATEGORY_HIP_COMPRESSOR, "控制热等静压机的过热机制。");
         configuration.addCustomCategoryComment(CATEGORY_PURIFIED_WATER, "调整各等级净化水机器的处理规则；仍需搭建正确的多方块结构。");
         configuration.addCustomCategoryComment(CATEGORY_WIRELESS_FREQUENCY, "调整无线频率卡的连接限制。");
 
@@ -78,6 +82,9 @@ public class MainConfig {
 
         blackHoleCompressorStabilityLock = configuration.getBoolean("BlackHoleCompressorStabilityLock",
             CATEGORY_PURIFIED_COM, blackHoleCompressorStabilityLock, "黑洞压缩机稳定性锁定，开启后黑洞压缩机的稳定性将被锁定");
+
+        hipCompressorNoOverheat = configuration.getBoolean("hipCompressorNoOverheat", CATEGORY_HIP_COMPRESSOR,
+            hipCompressorNoOverheat, "开启后热等静压机永不过热，热量仍正常升降；关闭后恢复原版过热机制。");
 
         water = configuration.getBoolean("Water", CATEGORY_PURIFIED_WATER, water, "净化水机器修改仅改动了内部处理逻辑，机器多方块结构依然要保证正确！");
 

@@ -9,6 +9,14 @@ public enum FactoryText {
     // # Built-in lines
     // # zh_CN 内置产线
     Presets("factory.gtnotgood.presets"),
+    // #tr factory.gtnotgood.preset_stem_cells
+    // # Stem cells / sterilization and synthesis
+    // # zh_CN 干细胞／培养基灭菌与合成
+    PresetStemCells("factory.gtnotgood.preset_stem_cells"),
+    // #tr factory.gtnotgood.preset_stem_cells_help
+    // # Feed raw growth medium, mysterious crystal shards and Os/Ir dust; export stem cells and bacterial sludge.
+    // # zh_CN 输入原始生长培养基、神秘水晶碎片、锇粉和铱粉，产出干细胞与细菌泥。
+    PresetStemCellsHelp("factory.gtnotgood.preset_stem_cells_help"),
     // #tr factory.gtnotgood.preset_prismatic_acid
     // # Prismatic acid / nitrobenzene and strontium recovery
     // # zh_CN 海晶酸／硝基苯与锶回收

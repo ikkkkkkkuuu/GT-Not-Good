@@ -26,6 +26,7 @@ public enum GTNGItemList implements IItemContainer {
 
     StructureCompass,
     WorkingApiary,
+    IronElectrode,
 
     SuperradiantMirrorCasing,
     MirrorBackingCasing,

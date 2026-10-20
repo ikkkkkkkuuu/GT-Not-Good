@@ -43,14 +43,22 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.6.1          | [![1.6.1](https://img.shields.io/badge/release-1.6.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.1) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.6.2          | [![1.6.2](https://img.shields.io/badge/release-1.6.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.2) |         ✔️         |
 
-最新版本：[1.6.1 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.1)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.1/gtnotgood-1.6.1.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.1/gtnotgood-1.6.1-sources.jar)。
+最新版本：[1.6.2 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.2)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.2/gtnotgood-1.6.2.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.2/gtnotgood-1.6.2-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.6.1。
+1.3.4 因启动错误已撤回，请更新到 1.6.2。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.6.2 更新
+
+- 新增铁电极：耐久 2147483647、速度 5000%、初始并行 4096、超频 12/4、EU 修正 0.5 倍、启动惩罚 1 倍、启动电流 1 A；每次完成作业后并行翻倍，停机重置为 4096，保留原版热重启。
+- 添加简化冲压机配方：4 铁粉与长棍模具制得 1 铁电极，模具不消耗，无需流体，LV 30 EU/t、基础耗时 10 秒。
+- 一体化生产工厂新增三工序干细胞产线，自动配平锇铱合金粉与无菌生长培养基；外供原始生长培养基、神秘水晶碎片、锇粉和铱粉，输出干细胞及细菌泥，保留真实配方的能耗、耗时和控制器要求。
+- 热等静压机新增默认开启、可即时切换的“永不过热”配置；热量正常升降，关闭后恢复原版过热机制，并修复客户端状态同步。
+- 通配符样板不再按普通材料自动展开下界合金，避免生成不适用于其专用电弧炉路线的成形样板。
 
 ### 1.6.1 更新
 
