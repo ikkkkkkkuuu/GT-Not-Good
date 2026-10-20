@@ -4,6 +4,7 @@ import static com.xyp.gtnotgood.utils.text.AnimatedTooltipHandler.addItemTooltip
 
 import net.minecraft.util.StatCollector;
 
+import com.xyp.gtnotgood.common.machines.basic.BasicIndustrialApiary;
 import com.xyp.gtnotgood.common.machines.basic.EssentiaDisassembler;
 import com.xyp.gtnotgood.common.machines.basic.SeedConverter;
 import com.xyp.gtnotgood.common.machines.basic.SteamAssembler;
@@ -154,6 +155,13 @@ public class MachineLoader {
         addItemTooltip(GTNGItemList.LargeBeeBreeder.get(1), AnimatedText.GT_NOT_GOOD);
 
         if (ModList.Forestry.isModLoaded()) {
+            // #tr gtng.basicapiary.name
+            // # Basic Industrial Apiary
+            // # zh_CN 基础工业蜂箱
+            GTNGItemList.BasicIndustrialApiary.set(new BasicIndustrialApiary(GTNGMachineID.BasicIndustrialApiary.id,
+                "BasicIndustrialApiary", StatCollector.translateToLocal("gtng.basicapiary.name")));
+            addItemTooltip(GTNGItemList.BasicIndustrialApiary.get(1), AnimatedText.GT_NOT_GOOD);
+
             // #tr gtng.apiary.name
             // # Large Industrial Apiary
             // # zh_CN 大型工业蜂箱

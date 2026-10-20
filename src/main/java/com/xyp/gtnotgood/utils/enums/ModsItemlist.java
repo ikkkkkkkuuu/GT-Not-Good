@@ -639,6 +639,8 @@ public enum ModsItemlist {
 
     // 电路装配线
     CircuitAssemblyLine(Mods.GregTech.ID, "gt.blockmachines", MetaTileEntityIDs.CircuitAssemblyLine.ID),
+    // 铱合金锭
+    IridiumAlloyIngot(Mods.GregTech.ID, "gt.metaitem.01", 32480),
 
     // 脱水线圈 []
     DehydratorCoil(Mods.GTPlusPlus.ID, "itemDehydratorCoil", 3),
@@ -660,6 +662,8 @@ public enum ModsItemlist {
     EVTransformer(Mods.IndustrialCraft2.ID, "blockElectric", 6),
     // 合金锭
     MixedMetalIngot(Mods.IndustrialCraft2.ID, "mixedMetalIngot", false, true),
+    // 强化铱板
+    ReinforcedIridiumPlate(Mods.IndustrialCraft2.ID, "iridiumPlate", false, true),
     // 核反应堆
     NuclearReactor(Mods.IndustrialCraft2.ID, "blockGenerator", 5),
     // 工业TNT

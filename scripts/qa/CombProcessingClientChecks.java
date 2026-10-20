@@ -35,6 +35,7 @@ import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import gregtech.api.GregTechAPI;
+import gregtech.api.enums.ItemList;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
 import gregtech.api.recipe.RecipeMap;
@@ -118,7 +119,7 @@ public final class CombProcessingClientChecks {
         verifyComb("Prismatic", GTBees.combs.getStackForType(CombType.PRISMATIC),
             GTOreDictUnificator.get(OrePrefixes.shard, Materials.Prismarine, 1), null, nativeStacks);
         verifyComb("Netherite", GTBees.combs.getStackForType(CombType.NETHERITE),
-            GTOreDictUnificator.get(OrePrefixes.dust, Materials.Netherite, 1), null, nativeStacks);
+            ItemList.Intensely_Bonded_Netherite_Nanoparticles.get(1), null, nativeStacks);
         verifyComb("Kevlar", GTBees.combs.getStackForType(CombType.KEVLAR), null, Materials.Kevlar.getMolten(144),
             nativeStacks);
         verifyComb("Cosmic Neutronium", GTBees.combs.getStackForType(CombType.COSMICNEUTRONIUM),

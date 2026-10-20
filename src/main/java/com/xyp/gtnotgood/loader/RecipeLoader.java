@@ -19,6 +19,7 @@ import com.xyp.gtnotgood.common.recipe.gtnotgood.PackagedRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.PatternSorterRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.PetrochemicalRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.WoodDistillationRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.BasicIndustrialApiaryRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.CrossRecipeWirelessEnergyHatchRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.IntegratedChemicalPlantRecipes;
@@ -70,6 +71,7 @@ public class RecipeLoader {
             ItemList.Electric_Pump_LV.get(1));
         if (ModList.Forestry.isModLoaded()) {
             WorkingApiaryRegistration.registerRecipe();
+            BasicIndustrialApiaryRecipes.loadRecipes();
             LargeIndustrialApiaryRecipes.loadRecipes();
         }
         GameRegistry.addShapelessRecipe(GTNGItemList.StructureCompass.get(1), Items.compass, Items.map, Items.brick);

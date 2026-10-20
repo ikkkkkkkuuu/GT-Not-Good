@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 import com.xyp.gtnotgood.GTNotGood;
 import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
 
+import gregtech.api.enums.ItemList;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.Mods;
 import gregtech.api.enums.OrePrefixes;
@@ -65,7 +66,7 @@ public class CombProcessingRecipes {
             count += addSpecialCombRecipe(GTBees.combs.getStackForType(CombType.PRISMATIC),
                 GTOreDictUnificator.get(OrePrefixes.shard, Materials.Prismarine, 1), null);
             count += addSpecialCombRecipe(GTBees.combs.getStackForType(CombType.NETHERITE),
-                GTOreDictUnificator.get(OrePrefixes.dust, Materials.Netherite, 1), null);
+                ItemList.Intensely_Bonded_Netherite_Nanoparticles.get(1), null);
             count += addSpecialCombRecipe(GTBees.combs.getStackForType(CombType.KEVLAR), null,
                 Materials.Kevlar.getMolten(144));
             count += addSpecialCombRecipe(GTBees.combs.getStackForType(CombType.COSMICNEUTRONIUM),

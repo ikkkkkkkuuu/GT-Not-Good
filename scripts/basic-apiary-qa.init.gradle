@@ -1,0 +1,83 @@
+// gradlew.bat --offline --no-configuration-cache -I scripts/basic-apiary-qa.init.gradle runClient17
+gradle.beforeProject { project ->
+    if (project == gradle.rootProject) project.layout.buildDirectory.set(project.file('.gradle/basic-apiary-qa-build'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.isFile()) throw new GradleException('Missing factory QA dependency: ' + efr)
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/BasicIndustrialApiaryClientChecks.java'))
+    }
+    root.spotless.java {
+        target 'scripts/qa/BasicIndustrialApiaryClientChecks.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/basic/BasicIndustrialApiary.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/bee/ApiaryOutputBuffer.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/BasicIndustrialApiaryRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
+            'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/ModsItemlist.java'
+    }
+    def mainSnapshot = root.layout.buildDirectory.dir('basic-apiary-runtime/main')
+    def testSnapshot = root.layout.buildDirectory.dir('basic-apiary-runtime/test')
+    def copyMain = root.tasks.register('snapshotBasicApiaryMain', Sync) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        into mainSnapshot
+    }
+    def copyTest = root.tasks.register('snapshotBasicApiaryTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/BasicIndustrialApiaryClientChecks*.class'
+        into testSnapshot
+    }
+    def output = root.file('build/basic-apiary-qa')
+    def result = new File(output, 'result.txt')
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn copyMain, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainSnapshot, testSnapshot)
+        classpath += root.configurations.testRuntimeClasspath.filter {
+            it.name.startsWith('jvmdowngrader-java-api-')
+        }
+        workingDir new File(output, 'client')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.basicApiary.qa', 'true'
+        systemProperty 'gtng.basicApiary.clientDirectory', workingDir.absolutePath
+        systemProperty 'gtng.basicApiary.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1300', '--height', '920'
+        notCompatibleWithConfigurationCache('Opt-in basic industrial apiary client checks')
+        doFirst {
+            workingDir.mkdirs()
+            output.mkdirs()
+            java.nio.file.Files.deleteIfExists(result.toPath())
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nrenderDistance:4\nsoundCategory_master:0.0\n', 'UTF-8')
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', workingDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            if (!result.isFile() || !result.text.startsWith('PASS')) {
+                throw new GradleException('Basic industrial apiary QA failed; inspect BASIC_APIARY_QA in ' +
+                    workingDir + '/logs/fml-client-latest.log.')
+            }
+        }
+    }
+}

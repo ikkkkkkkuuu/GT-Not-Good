@@ -71,10 +71,10 @@ public class Config {
     public static boolean enableCropGuaranteedSeedDrop = true;
     public static boolean enableBeeAlwaysJubilant = true;
     /** Native lifecycle ticks per server tick, limited to bound work per loaded apiary. */
-    public static float workingApiarySpeed = 1F;
+    public static float workingApiarySpeed = 4F;
     /** Quantity multipliers applied only to successful ordinary and specialty product rolls. */
-    public static float workingApiaryProducts = 5F;
-    public static float workingApiarySpecialties = 5F;
+    public static float workingApiaryProducts = 10F;
+    public static float workingApiarySpecialties = 10F;
     /** Multipliers composed with Forestry's native frame and housing modifiers. */
     public static float workingApiaryLifespan = 2_147_436F;
     public static float workingApiaryMutation = 1F;
@@ -249,11 +249,11 @@ public class Config {
         enableCropGuaranteedSeedDrop = configuration.getBoolean("enableGuaranteedSeedDrop", CATEGORY_CROPSNH,
             enableCropGuaranteedSeedDrop, "开启后,左键收获成熟 CropsNH 作物必定掉落种子,绕过抗性概率判定。");
 
-        workingApiarySpeed = configuration.getFloat("speed", "WorkingApiary", 1F, 0.05F, 64F,
+        workingApiarySpeed = configuration.getFloat("speed", "WorkingApiary", 4F, 0.05F, 64F,
             "工作蜂箱速度倍率。1 为原版；同时加速生产、繁殖、寿命消耗、蜂框磨损和蜜蜂效果。重启生效。");
-        workingApiaryProducts = configuration.getFloat("products", "WorkingApiary", 5F, 0F, 64F,
+        workingApiaryProducts = configuration.getFloat("products", "WorkingApiary", 10F, 0F, 64F,
             "普通产物数量倍率。0 禁用，1 为原版；小数部分按概率取整，不改变原版出产概率。重启生效。");
-        workingApiarySpecialties = configuration.getFloat("specialties", "WorkingApiary", 5F, 0F, 64F,
+        workingApiarySpecialties = configuration.getFloat("specialties", "WorkingApiary", 10F, 0F, 64F,
             "特产数量倍率。仍需满足现有特产条件；0 禁用，1 为原版。重启生效。");
         workingApiaryLifespan = configuration.getFloat("lifespan", "WorkingApiary", 2_147_436F, 0.05F, 100_000_000F,
             "蜂后寿命倍率。默认 2147436 倍；1 为原版，增大可抵消加速的寿命消耗。重启生效。");

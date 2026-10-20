@@ -1,0 +1,29 @@
+// Focused HIP compressor checks; QA dependencies stay out of release artifacts.
+gradle.beforeProject { project ->
+    if (project.parent == null) {
+        project.layout.buildDirectory.set(project.file('.gradle/hip-compressor-qa-build'))
+    }
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def bytecodeTools = root.configurations.create('hipCompressorBytecodeTools')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm:9.8')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm-tree:9.8')
+    root.dependencies.add(bytecodeTools.name, 'org.ow2.asm:asm-commons:9.8')
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/mixins/late/gregtech/HipCompressorHeatMixin.java',
+                'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
+                'scripts/qa/HipCompressorHeatTest.java'
+        }
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files(root.file('scripts/qa/HipCompressorHeatTest.java')))
+        classpath = bytecodeTools + classpath
+    }
+    root.tasks.named('test').configure {
+        classpath = bytecodeTools + classpath
+        filter { includeTestsMatching '*HipCompressorHeatTest' }
+    }
+}

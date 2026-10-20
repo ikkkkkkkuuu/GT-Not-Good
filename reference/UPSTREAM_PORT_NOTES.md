@@ -1222,3 +1222,19 @@ Reference checkouts remain outside build inputs.
   core base are reused; the installed CAL controller supplies its icon at runtime.
   Packaged records: `META-INF/ae2lt-port/ASSET_MANIFEST.json` and `CODE_PORT_NOTES.md`.
   No textures or reference sources are added to compilation or packaging.
+
+# Basic Industrial Apiary (2026-10-20)
+
+- Source: GTNewHorizons/GT5-Unofficial `5.09.54.183`, commit
+  `f8453bce28793713d314f6dcfa5ac551d700efd6`,
+  `src/main/java/gregtech/common/tileentities/machines/basic/MTEIndustrialApiary.java`.
+- Destination: `common/machines/basic/BasicIndustrialApiary.java`; source remains
+  LGPL-3.0-or-later. Existing LGPL/GPL texts and the feature's
+  `META-INF/industrial-apiary/BASIC_APIARY_NOTICE.md` are packaged.
+- Preserves native bee genetics, breeding, effects, upgrades, original controls and
+  runtime overlays. Adds independent LV registration, 32 EU/t operation, 64x base
+  acceleration, 16x product quantities, relaxed work/specialty conditions, offspring
+  recycling, 54 output slots, persistent long-count overflow and per-tick auto-output.
+- Expanded GUI keeps native controls and upgrade interactions; no textures are copied.
+  Extracted reference sources stay in ignored `build/basic-apiary-reference/`, outside
+  compilation and resource packaging.

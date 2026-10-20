@@ -8,7 +8,7 @@
 | 蜂窝 | 产物 |
 | --- | --- |
 | 海晶 | 海晶碎片 ×1 |
-| 下界合金 | 下界合金粉 ×1 |
+| 下界合金 | 强键合下界合金纳米颗粒 ×1 |
 | 凯芙拉 | 熔融凯芙拉 144 mB |
 | 龙血 | 龙血粉 ×1 |
 | 力量 | 力量粉 ×1 |
@@ -33,10 +33,15 @@ $env:TMP='C:/Windows/Temp'
 .\gradlew.bat -I scripts/comb-processing-qa.init.gradle runClient17 --no-configuration-cache
 ```
 
+若 Angelica 在渲染初始化时出现 `CowDepths.claim` 错误，追加 `-PwithoutAngelica`，
+仅从隔离测试客户端的运行类路径移除 Angelica。
+
 隔离客户端在完成配方加载后检查七种蜂窝的实际注册、原生匹配、产物数量、输入不足、
 扣料和重复加载，并核对原生配方未被修改。报告写入 `build/comb-processing-qa/result.txt`。
 测试客户端静音，并通过 `HideFactoryClient.ps1` 隐藏窗口、启用点击穿透和移除任务栏按钮。
 
 2026-10-19：98 项检查全部通过，七种蜂窝均可在真实配方表中匹配并正确扣料。
+下界合金调整为 1 蜂窝产出 1 个强键合下界合金纳米颗粒后，使用 `-PwithoutAngelica` 复测通过；
+实际产物为 `gregtech:gt.metaitem.03:32246`。
 `compileJava`、`checkstyleMain`、定向 Spotless 格式化及 `git diff --check` 通过。
 此回归覆盖配方注册与原生处理查询，未验证完整整合包中的多方块实机运行。

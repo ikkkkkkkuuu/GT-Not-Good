@@ -43,16 +43,24 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 |:------------:|:-------------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------:|
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
-|  2.9.0-RC-1  |     1.1.6     |         1.6.0          | [![1.6.0](https://img.shields.io/badge/release-1.6.0-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.0) |         ✔️         |
+|  2.9.0-RC-1  |     1.1.6     |         1.6.1          | [![1.6.1](https://img.shields.io/badge/release-1.6.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.1) |         ✔️         |
 
-最新版本：[1.6.0 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.0)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.0/gtnotgood-1.6.0.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.0/gtnotgood-1.6.0-sources.jar)。
+最新版本：[1.6.1 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.1)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.1/gtnotgood-1.6.1.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.1/gtnotgood-1.6.1-sources.jar)。
 
-**1.6.0 已于 2026-10-19 重新发布，修复严格配方校验下客户端和服务端启动崩溃。已下载旧 1.6.0 的玩家请重新下载并替换旧 JAR；版本号保持 1.6.0。**
-
-1.3.4 因启动错误已撤回，请更新到 1.6.0。
+1.3.4 因启动错误已撤回，请更新到 1.6.1。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.6.1 更新
+
+- 新增基础工业蜂箱（LV），固定 32 EU/t、1 A，基础速度 64 倍、普通产物与特产数量 16 倍；沿用原版外观、操作和四格升级，自动回收子代，保留蜜蜂基因与育种规则，无需花源、露天、温湿度、昼夜或天气条件。
+- 蜂箱提供 54 格输出，保留物品原有堆叠上限，自动输出每刻最多 54 栈；溢出产物随存档保存，缓存达到 1,048,576 件后暂停开启新周期，当前周期可完整结束。断电、重载和拆机保留已完成产物与相应蜜蜂。
+- 添加蜂箱 LV 组装机配方：LV 机器外壳与林业蜂箱各 1、LV 电路与电动马达各 2、LV 电动活塞 1、钢板 4、熔融焊锡合金 144 mB，基础耗时 20 秒。
+- 工作蜂箱默认速度由 1 倍提高至 4 倍，普通产物与特产数量由 5 倍提高至 10 倍；已有配置不覆盖，如需新默认值，将 `WorkingApiary` 的 `speed`、`products`、`specialties` 分别改为 `4`、`10`、`10` 后重启。
+- 大型蜂窝处理机的下界合金蜂窝改为每个产出 1 个强键合下界合金纳米颗粒。
+- 新增铱合金锭压制强化铱板配方，1:1 转换，电路 1、30 EU/t、基础耗时 5 秒。
+- 修复热等静压机因过热停机的问题，保留原生升温、空闲降温、线圈修正、传感器及性能计算，并清除旧存档载入的过热状态。
 
 ### 1.6.0 更新
 

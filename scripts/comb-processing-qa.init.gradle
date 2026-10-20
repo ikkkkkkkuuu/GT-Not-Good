@@ -42,6 +42,7 @@ gradle.projectsEvaluated {
         classpath += root.configurations.testRuntimeClasspath.filter {
             it.name.startsWith('jvmdowngrader-java-api-')
         }
+        if (root.hasProperty('withoutAngelica')) classpath = classpath.filter { !it.name.toLowerCase().contains('angelica') }
         workingDir new File(output, 'client')
         systemProperty 'gtng.factory.qa', 'true'
         systemProperty 'gtng.combProcessing.qa', 'true'
