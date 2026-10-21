@@ -79,7 +79,9 @@ public final class SimpleIOComponent implements IWildcardIOComponent {
             FluidStack copy = fluid.copy();
             copy.amount = (int) Math.max(1L, Math.min(Integer.MAX_VALUE, amount));
             // [液滴分类] 必须留液滴：重建 ItemFluidDrop 作为样板展开后的流体请求，CPU 靠它识别下单
-            return FluidDropCompat.newStack(copy);
+            ItemStack result = FluidDropCompat.newStack(copy);
+            if (result != null && copy.tag != null) result.getTagCompound().setTag("FluidTag", copy.tag.copy());
+            return result;
         }
         ItemStack result = stack.copy();
         result.stackSize = (int) Math.max(1L, Math.min(Integer.MAX_VALUE, amount));

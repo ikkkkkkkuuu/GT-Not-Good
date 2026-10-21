@@ -46,16 +46,28 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
 |  2.9.0-RC-1  |     1.1.6     |         1.6.2          | [![1.6.2](https://img.shields.io/badge/release-1.6.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.2) |         ✔️         |
-|  2.9.0-RC-2  |     1.6.3     |         1.6.4          | [![1.6.4](https://img.shields.io/badge/release-1.6.4-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.4) |         ✔️         |
+|  2.9.0-RC-2  |     1.6.3     |         1.6.5          | [![1.6.5](https://img.shields.io/badge/release-1.6.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.5) |         ✔️         |
 
 当前版本面向 GTNH 2.9.0-RC-2；RC1 请使用 1.6.2。
 
-最新版本：[1.6.4 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.4)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.4/gtnotgood-1.6.4.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.4/gtnotgood-1.6.4-sources.jar)。
+最新版本：[1.6.5 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.5)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.5/gtnotgood-1.6.5.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.5/gtnotgood-1.6.5-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.6.4。
+1.3.4 因启动错误已撤回，请更新到 1.6.5。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.6.5 更新
+
+- 通配符样板支持从 NEI「＋」导入 GT 加工与熔炉配方，自动填写材料前缀、材料流体及数量；电路、不消耗工具和无法安全通配的含 NBT 项保持固定。保留已有过滤条件，调整后点击保存生效，每侧最多 6 项。
+- 普通／流体 ME 接口支持通配符样板的固定电路和不消耗模具，合法展开分支仅索取消耗材料；接口朝向或相邻机器变化后刷新识别，原样板可直接移入电路样板总成。
+- 修复电路样板总成及普通／流体接口只认配方代表透镜，漏掉合法矿辞替代透镜的问题；实际投料保留编码工具配置，真正消耗的工具仍须供应。
+- 修复样板整理器将保留电路或模具的加工样板误判为未匹配。
+- 无线频率卡设备列表按实际连接机器显示名称、图标并分类，支持普通及大型 ME 接口、库存 IO 接口和高级 IO 总线；无目标或多个有效目标时保留设备自身分类，自定义备注及绑定坐标不变。
+- 修复固定流体通配项展开时丢失附加 NBT；配置界面的固定物品长名称改为滚动显示。
+- 移除默认关闭的内置 RTS 建筑模块及相关配置、资源和混入；曾手动启用该功能的存档，升级后无法继续使用其物品或执行 RTS 任务。
+
+通配符导入仍沿用同一材料轴，不保证每个展开分支都有对应机器配方。详见[导入说明](docs/wildcard-pattern.md)。
 
 ### 1.6.4 更新
 

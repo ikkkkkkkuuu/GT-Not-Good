@@ -3,7 +3,6 @@ package com.xyp.gtnotgood;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.rtsbuilding.rtsbuilding.RtsbuildingMod;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessChannelManager;
 import com.xyp.gtnotgood.loader.QuestLoader;
@@ -16,10 +15,8 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 /**
@@ -111,27 +108,12 @@ public class GTNotGood {
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         proxy.serverStarting(event);
-        if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.onServerStarting(event);
     }
 
-    /** Starts the embedded RTS persistence scheduler after world creation. */
-    @Mod.EventHandler
-    public void serverStarted(FMLServerStartedEvent event) {
-        if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.onServerStarted(event);
-    }
-
-    /** Flushes upstream durable tasks while worlds are still available. */
-    @Mod.EventHandler
-    public void serverStopping(FMLServerStoppingEvent event) {
-        if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.onServerStopping(event);
-    }
-
-    /** Clears connection-scoped RTS state before another integrated or dedicated server starts. */
     @Mod.EventHandler
     public void serverStopped(FMLServerStoppedEvent event) {
         WirelessMonitorService.reset();
         WirelessChannelManager.clear();
-        if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.onServerStopped(event);
     }
 }
 // #tr gui.example.key

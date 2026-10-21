@@ -45,8 +45,6 @@ public enum ModList {
         public static final String GT_NOT_LEISURE = "sciencenotleisure";
         public static final String TWIST_SPACE_TECHNOLOGY = "TwistSpaceTechnology";
         public static final String GT_NOT_GOOD = "gtnotgood";
-        /** Preserved resource namespace of the embedded official RTS Building module. */
-        public static final String RTS_BUILDING = "rtsbuilding";
         public static final String ANGELICA = "angelica";
         public static final String JOURNEY_MAP = "journeymap";
         public static final String NOT_ENOUGH_ITEMS = "NotEnoughItems";

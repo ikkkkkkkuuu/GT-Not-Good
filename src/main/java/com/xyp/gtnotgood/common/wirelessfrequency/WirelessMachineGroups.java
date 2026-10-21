@@ -178,8 +178,9 @@ public class WirelessMachineGroups {
             Object machine = host instanceof IGregTechTileEntity base ? base.getMetaTileEntity() : host;
             machineDevices &= machine instanceof MTEHatch || host instanceof IInterfaceHost;
             if (pureDevices) {
-                TypeKey next = TypeKey.of(TypeKind.DEVICE, node.getGridBlock().getMachineRepresentation(),
-                    link.target().dimension());
+                ItemStack icon = interfaces.displayIcon(host);
+                TypeKey next = TypeKey.of(TypeKind.DEVICE,
+                    icon == null ? node.getGridBlock().getMachineRepresentation() : icon, link.target().dimension());
                 if (next == null || type != null && !type.equals(next)) pureDevices = false;
                 if (type == null) type = next;
             }

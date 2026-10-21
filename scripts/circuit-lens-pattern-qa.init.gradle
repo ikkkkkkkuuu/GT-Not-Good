@@ -1,0 +1,70 @@
+// Opt-in integration: gradlew -I scripts/circuit-lens-pattern-qa.init.gradle runClient17 --no-configuration-cache
+gradle.beforeProject { project ->
+    if (project == gradle.rootProject) project.layout.buildDirectory.set(project.file('.gradle/circuit-lens-pattern-qa-build'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr.parentFile.mkdirs()
+        def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+        connection.connectTimeout = 30000
+        connection.readTimeout = 30000
+        def pending = new File(efr.parentFile, efr.name + '.pending')
+        connection.inputStream.withCloseable { input -> pending.withOutputStream { it << input } }
+        java.nio.file.Files.move(pending.toPath(), efr.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.dependencies.add('runtimeOnlyNonPublishable', root.extensions.getByName('elytraModpackVersion').gtnhdev('Railcraft') as String)
+    def qaClasses = root.layout.buildDirectory.dir('circuit-lens-pattern-qa/test-classes')
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(qaClasses)
+        setSource(root.files('scripts/qa/CircuitLensPatternChecks.java'))
+    }
+    def runtimeClasses = root.layout.buildDirectory.dir('circuit-lens-pattern-qa/runtime')
+    def snapshot = root.tasks.register('snapshotCircuitLensPatternQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from qaClasses
+        into runtimeClasses
+    }
+    root.extensions.findByName('spotless')?.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/compat/CircuitPatternMolds.java',
+            'src/main/java/com/xyp/gtnotgood/common/compat/AutomaticMachineCircuit.java',
+            'src/main/java/com/xyp/gtnotgood/common/items/patternsorter/PatternSorter.java',
+            'scripts/qa/CircuitLensPatternChecks.java',
+            'src/test/java/com/xyp/gtnotgood/common/compat/CircuitPatternMoldsMatchingTest.java'
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn snapshot
+        classpath += root.files(runtimeClasses)
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir root.file('run/circuit-lens-pattern-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.circuit.lens.qa', 'true'
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('Opt-in circuit lens pattern QA')
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/circuit-lens-pattern-qa').mkdirs()
+            java.nio.file.Files.deleteIfExists(new File(workingDir, 'result.txt').toPath())
+            new File(workingDir, 'options.txt').setText(
+                'lang:en_US\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true)
+                    .redirectOutput(root.file('build/circuit-lens-pattern-qa/window-helper.log')).start()
+            }
+        }
+        doLast {
+            def result = new File(workingDir, 'result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('Circuit lens pattern QA failed; inspect CIRCUIT_LENS_PATTERN_QA in the client log.')
+            }
+        }
+    }
+}

@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -27,6 +29,12 @@ import net.minecraftforge.fluids.FluidStack;
 import com.glodblock.github.loader.ItemAndBlockHolder;
 import com.xyp.gtnotgood.common.compat.AutomaticMachineCircuit;
 import com.xyp.gtnotgood.common.compat.VirtualMachineMolds;
+import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternGenerator;
+import com.xyp.gtnotgood.common.items.wildcard.model.IWildcardIOComponent;
+import com.xyp.gtnotgood.common.items.wildcard.model.WildcardModelState;
+import com.xyp.gtnotgood.common.items.wildcard.model.filter.StringFilterComponent;
+import com.xyp.gtnotgood.common.items.wildcard.model.io.PrefixIOComponent;
+import com.xyp.gtnotgood.common.items.wildcard.model.io.SimpleIOComponent;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
 import com.xyp.gtnotgood.common.machines.hatch.me.CircuitPatternCodec;
@@ -55,12 +63,15 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import gregtech.api.GregTechAPI;
 import gregtech.api.enums.GTValues;
 import gregtech.api.enums.ItemList;
+import gregtech.api.enums.Materials;
+import gregtech.api.enums.OrePrefixes;
 import gregtech.api.interfaces.tileentity.IVoidable;
 import gregtech.api.logic.ProcessingLogic;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
 import gregtech.api.metatileentity.implementations.MTEBasicMachine;
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.RecipeMaps;
+import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTRecipeBuilder;
 import gregtech.api.util.GTUtility;
@@ -83,6 +94,10 @@ public final class AutomaticCircuitPatternChecks {
     private ItemStack firstOriginal, fluidOriginal;
     private ICraftingPatternDetails firstDetails, secondDetails, fluidDetails, consumedDetails, legacyDetails;
     private final List<Future<ICraftingJob>> plans = new ArrayList<>();
+    private final List<Future<ICraftingJob>> wildcardPlans = new ArrayList<>();
+    private final ItemStack[] wildcardPatterns = new ItemStack[2];
+    private final ItemStack[] wildcardOriginals = new ItemStack[2];
+    private final ICraftingPatternDetails[][] wildcardDetails = new ICraftingPatternDetails[2][2];
     private final ItemStack itemOutput = named(Items.feather, "Automatic circuit QA item");
     private final ItemStack fluidOutput = named(Items.sugar, "Automatic circuit QA fluid");
     private final ItemStack consumedOutput = named(Items.quartz, "Automatic circuit QA consumed mold");
@@ -120,14 +135,22 @@ public final class AutomaticCircuitPatternChecks {
             if (++ticks > 1600) throw new AssertionError("automatic circuit pattern QA timeout");
             if (ticks == 1) setup(player);
             if (ticks == 120) inspectAndPlan(player);
-            if (!plans.isEmpty() && migrationTick == 0 && plans.stream().allMatch(Future::isDone)) {
+            if (ticks == 160) beginPlans(player);
+            if (
+                !plans.isEmpty() && migrationTick == 0
+                    && plans.stream().allMatch(Future::isDone)
+                    && wildcardPlans.stream().allMatch(Future::isDone)
+            ) {
                 checkPlans();
+                checkWildcardPlans();
                 checkSingleBlocks(player.worldObj);
+                checkWildcardSingleBlocks(player.worldObj);
                 migrate(player.worldObj);
                 migrationTick = ticks;
             }
             if (migrationTick > 0 && ticks >= migrationTick + 40) {
                 checkMigrated(player.worldObj);
+                checkWildcardMigrated(player.worldObj);
                 finish("PASS");
             }
         } catch (Throwable failure) {
@@ -171,6 +194,7 @@ public final class AutomaticCircuitPatternChecks {
         itemInterface.getInterfaceDuality().getPatterns().setInventorySlotContents(2, legacyPattern);
         fluidInterface.getInterfaceDuality().getPatterns().setInventorySlotContents(0, fluidPattern);
         fluidInterface.getInterfaceDuality().getPatterns().setInventorySlotContents(1, consumedPattern);
+        setupWildcardPatterns(world);
         player.playerNetServerHandler.setPlayerLocation(2, 12, -2, 0, 0);
     }
 
@@ -225,12 +249,142 @@ public final class AutomaticCircuitPatternChecks {
             "provider leaves physical encoded tools intact");
         supply(items, false);
         supply(fluids, true);
+        inspectWildcardPatterns(player);
+    }
+
+    private void beginPlans(EntityPlayerMP player) throws Exception {
         for (int i = 0; i < 4; i++) {
-            DualityInterface provider = i < 2 ? items : fluids;
+            DualityInterface provider = (i < 2 ? itemInterface : fluidInterface).getInterfaceDuality();
             ItemStack output = i == 0 ? itemOutput : i == 1 ? legacyOutput : i == 2 ? fluidOutput : consumedOutput;
             plans.add(provider.getProxy().getCrafting().beginCraftingJob(player.worldObj, provider.getProxy().getGrid(),
                 provider.getActionSource(), AEItemStack.create(output.copy()), null));
         }
+        for (TileInterface host : new TileInterface[] { itemInterface, fluidInterface }) {
+            DualityInterface provider = host.getInterfaceDuality();
+            for (Materials material : new Materials[] { Materials.Iron, Materials.Gold }) {
+                wildcardPlans.add(provider.getProxy().getCrafting().beginCraftingJob(player.worldObj,
+                    provider.getProxy().getGrid(), provider.getActionSource(),
+                    AEItemStack.create(GTOreDictUnificator.get(OrePrefixes.ingot, material, 1)), null));
+            }
+        }
+    }
+
+    private void setupWildcardPatterns(World world) {
+        ItemStack mold = ItemList.Shape_Mold_Plate.get(0);
+        for (int kind = 0; kind < 2; kind++) {
+            RecipeMap<?> map = kind == 0 ? RecipeMaps.extruderRecipes : RecipeMaps.fluidSolidifierRecipes;
+            for (Materials material : new Materials[] { Materials.Iron, Materials.Gold }) {
+                register(map, new ItemStack[] { GTOreDictUnificator.get(OrePrefixes.dust, material, 1), mold.copy() },
+                    22, kind == 0 ? null : new FluidStack(FluidRegistry.WATER, 37),
+                    GTOreDictUnificator.get(OrePrefixes.ingot, material, 1));
+            }
+            ItemStack wildcard = GTNGItemList.WildcardPattern.get(1);
+            WildcardPatternGenerator.markAsWildcard(wildcard);
+            List<IWildcardIOComponent> inputs = new ArrayList<>(
+                Arrays.asList(new PrefixIOComponent(OrePrefixes.dust, 1), new SimpleIOComponent(mold, 1),
+                    new SimpleIOComponent(GTUtility.getIntegratedCircuit(22), 1)));
+            if (kind == 1) inputs.add(new SimpleIOComponent(
+                GTUtility.getFluidDisplayStack(new FluidStack(FluidRegistry.WATER, 37), true), 37));
+            WildcardModelState.setInputs(wildcard, inputs);
+            WildcardModelState.setOutputs(wildcard,
+                Collections.singletonList(new PrefixIOComponent(OrePrefixes.ingot, 1)));
+            WildcardModelState.setFilters(wildcard,
+                Collections.singletonList(new StringFilterComponent("^(Iron|Gold)$", true)));
+            require(WildcardPatternGenerator.generateAllDetails(wildcard, world).size() == 2,
+                "fixed circuit wildcard expands two real material branches");
+            wildcardPatterns[kind] = wildcard;
+            wildcardOriginals[kind] = wildcard.copy();
+            (kind == 0 ? itemInterface : fluidInterface).getInterfaceDuality().getPatterns()
+                .setInventorySlotContents(kind == 0 ? 3 : 2, wildcard);
+        }
+    }
+
+    private void inspectWildcardPatterns(EntityPlayerMP player) throws Exception {
+        for (int kind = 0; kind < 2; kind++) {
+            TileInterface host = kind == 0 ? itemInterface : fluidInterface;
+            DualityInterface provider = host.getInterfaceDuality();
+            provider.updateCraftingList();
+            int branch = 0;
+            for (Materials material : new Materials[] { Materials.Iron, Materials.Gold }) {
+                ItemStack output = GTOreDictUnificator.get(OrePrefixes.ingot, material, 1);
+                ICraftingPatternDetails details = find(provider, output, 22);
+                wildcardDetails[kind][branch++] = details;
+                require(details.getCondensedAEInputs().length == kind + 1,
+                    "single-block wildcard indexes only its consumed dust and optional native fluid");
+                for (IAEStack<?> input : details.getAEInputs()) {
+                    require(
+                        !CircuitPatternCodec.isCircuit(input)
+                            && !CircuitPatternCodec.isMold(input, new ItemStack[] { ItemList.Shape_Mold_Plate.get(1) }),
+                        "single-block wildcard does not request fixed circuit or reusable mold");
+                }
+                ICraftingPatternDetails restored = CircuitPatternCodec.decode(details.getPattern().copy(),
+                    player.worldObj);
+                require(details.equals(restored) && details.hashCode() == restored.hashCode(),
+                    "single-block wildcard runtime identity survives CPU redecoding");
+                if (
+                    kind == 1
+                ) require(
+                    details.getPattern().getItem()
+                        == AEApi.instance().definitions().items().encodedUltimatePattern().maybeStack(1).get().getItem()
+                        && Arrays.stream(details.getAEInputs()).anyMatch(
+                            input -> input instanceof IAEFluidStack fluid && fluid.getFluid() == FluidRegistry.WATER
+                                && fluid.getStackSize() == 37),
+                    "fluid wildcard publishes Ultimate pattern with exact native water");
+                require(
+                    provider.getProxy().getStorage().getItemInventory().injectItems(
+                        AEItemStack.create(GTOreDictUnificator.get(OrePrefixes.dust, material, 16)),
+                        Actionable.MODULATE, provider.getActionSource()) == null,
+                    "wildcard consumed dust is available without tools");
+            }
+            provider.craftingList = null;
+            provider.updateCraftingList();
+            require(find(provider, GTOreDictUnificator.get(OrePrefixes.ingot, Materials.Iron, 1), 22)
+                == wildcardDetails[kind][0], "unchanged interface reuses normalized wildcard details");
+            host.setOrientation(ForgeDirection.UP, ForgeDirection.EAST);
+            provider.updateCraftingList();
+            ICraftingPatternDetails physical = find(provider,
+                GTOreDictUnificator.get(OrePrefixes.ingot, Materials.Iron, 1), -1);
+            require(CircuitPatternCodec.circuit(physical) == 22,
+                "turning away from supported machine restores fixed circuit to wildcard demands");
+            host.setOrientation(ForgeDirection.UP, ForgeDirection.SOUTH);
+            provider.updateCraftingList();
+            require(find(provider, GTOreDictUnificator.get(OrePrefixes.ingot, Materials.Iron, 1), 22)
+                .getCondensedAEInputs().length == kind + 1, "turning back removes wildcard tool demands again");
+            require(ItemStack.areItemStacksEqual(wildcardOriginals[kind], wildcardPatterns[kind]),
+                "wildcard indexing leaves physical fixed tool configuration unchanged");
+        }
+    }
+
+    private void checkWildcardPlans() throws Exception {
+        for (Future<ICraftingJob> pending : wildcardPlans) {
+            ICraftingJob job = pending.get();
+            require(!job.isSimulation(), "wildcard crafting plan requires no physical fixed tool");
+            var plan = AEApi.instance().storage().createAEStackList();
+            job.populatePlan(plan);
+            for (IAEStack<?> stack : plan) require(
+                !CircuitPatternCodec.isCircuit(stack)
+                    && !CircuitPatternCodec.isMold(stack, new ItemStack[] { ItemList.Shape_Mold_Plate.get(1) }),
+                "native AE wildcard plan excludes fixed circuit and reusable mold");
+        }
+    }
+
+    private void checkWildcardSingleBlocks(World world) throws Exception {
+        for (int kind = 0; kind < 2; kind++) for (ICraftingPatternDetails details : wildcardDetails[kind]) {
+            BaseMetaTileEntity tile = kind == 0 ? itemTile : fluidTile;
+            DualityInterface provider = (kind == 0 ? itemInterface : fluidInterface).getInterfaceDuality();
+            require(provider.pushPattern(CircuitPatternCodec.decode(details.getPattern().copy(), world),
+                wildcardBatch(details)), "interface pushes wildcard CPU batch without its fixed tools");
+            MTEBasicMachine machine = (MTEBasicMachine) tile.getMetaTileEntity();
+            require(
+                machine.getStackInSlot(machine.getCircuitSlot()).getItemDamage() == 22
+                    && VirtualMachineMolds.get(machine).isItemEqual(ItemList.Shape_Mold_Plate.get(1)),
+                "wildcard delivery sets fixed virtual circuit and mold");
+            consume(tile, details.getCondensedOutputs()[0].getItemStack());
+        }
+    }
+
+    private static MEInventoryCrafting wildcardBatch(ICraftingPatternDetails details) {
+        return table(Arrays.stream(details.getCondensedAEInputs()).map(IAEStack::copy).toArray(IAEStack<?>[]::new));
     }
 
     private static void supply(DualityInterface provider, boolean fluid) throws Exception {
@@ -245,7 +399,8 @@ public final class AutomaticCircuitPatternChecks {
                 Actionable.MODULATE, source) == null,
             "QA native water is available in ME");
         for (ItemStack tool : new ItemStack[] { ItemList.Shape_Extruder_Plate.get(1), ItemList.Shape_Mold_Plate.get(1),
-            ItemList.Shape_Extruder_Rod.get(1), GTUtility.getIntegratedCircuit(1), GTUtility.getIntegratedCircuit(21) })
+            ItemList.Shape_Extruder_Rod.get(1), GTUtility.getIntegratedCircuit(1), GTUtility.getIntegratedCircuit(21),
+            GTUtility.getIntegratedCircuit(22) })
             require(storage.getItemInventory().extractItems(AEItemStack.create(tool).setStackSize(1),
                 Actionable.SIMULATE, source) == null, "QA network contains no physical tool");
     }
@@ -253,7 +408,8 @@ public final class AutomaticCircuitPatternChecks {
     private void checkPlans() throws Exception {
         for (int i = 0; i < plans.size(); i++) {
             ICraftingJob job = plans.get(i).get();
-            require(job.isSimulation() == (i == 3), "only the physically consumed mold produces missing materials");
+            require(job.isSimulation() == (i == 3),
+                "only the physically consumed mold produces missing materials, plan " + i);
             var plan = AEApi.instance().storage().createAEStackList();
             job.populatePlan(plan);
             boolean consumed = false;
@@ -327,6 +483,13 @@ public final class AutomaticCircuitPatternChecks {
             ItemStack.areItemStacksEqual(firstOriginal, hatch.getStackInSlot(0))
                 && ItemStack.areItemStacksEqual(fluidOriginal, hatch.getStackInSlot(1)),
             "the same physical patterns move to the circuit buffer without re-encoding");
+        for (int kind = 0; kind < 2; kind++) {
+            (kind == 0 ? itemInterface : fluidInterface).getInterfaceDuality().getPatterns()
+                .setInventorySlotContents(kind == 0 ? 3 : 2, null);
+            hatch.setInventorySlotContents(kind + 2, wildcardPatterns[kind]);
+            require(ItemStack.areItemStacksEqual(wildcardOriginals[kind], hatch.getStackInSlot(kind + 2)),
+                "same physical fixed-tool wildcard migrates without re-encoding");
+        }
     }
 
     private void checkMigrated(World world) throws Exception {
@@ -349,6 +512,30 @@ public final class AutomaticCircuitPatternChecks {
                 .setInputItems(slot.getItemInputs()).setInputFluids(slot.getFluidInputs());
             require(logic.process().wasSuccessful() && slot.isEmpty(),
                 "native multiblock processing consumes migrated materials and preserves virtual tools");
+        }
+    }
+
+    private void checkWildcardMigrated(World world) throws Exception {
+        for (int kind = 0; kind < 2; kind++) {
+            var slot = find(hatch, wildcardPatterns[kind]);
+            for (ICraftingPatternDetails details : wildcardDetails[kind]) {
+                require(((CraftingGridCache) hatch.getProxy().getCrafting()).getMediums(details).contains(hatch),
+                    "migrated physical wildcard offers original single-block CPU branch");
+                require(
+                    hatch.pushPattern(CircuitPatternCodec.decode(details.getPattern().copy(), world),
+                        wildcardBatch(details)) && slot.getPatternDetails().equals(details),
+                    "migrated wildcard receives tool-free CPU batch with unchanged identity");
+                RecipeMap<?> map = kind == 0 ? RecipeMaps.extruderRecipes : RecipeMaps.fluidSolidifierRecipes;
+                ProcessingLogic logic = new ProcessingLogic().setRecipeMapSupplier(() -> map)
+                    .setMachine(
+                        (IVoidable) GregTechAPI.METATILEENTITIES[GTNGItemList.AssemblerMatrix.get(1).getItemDamage()])
+                    .setVoidProtection(false, false).setAvailableVoltage(128).setAvailableAmperage(1).setMaxParallel(1)
+                    .setInputItems(slot.getItemInputs()).setInputFluids(slot.getFluidInputs());
+                require(logic.process().wasSuccessful() && slot.isEmpty(),
+                    "migrated wildcard processes both material branches using virtual tools");
+            }
+            require(ItemStack.areItemStacksEqual(wildcardOriginals[kind], hatch.getStackInSlot(kind + 2)),
+                "wildcard execution preserves original fixed circuit and mold configuration");
         }
     }
 

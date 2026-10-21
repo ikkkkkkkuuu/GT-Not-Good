@@ -23,9 +23,7 @@ $env:JAVA_TOOL_OPTIONS='-Djdk.net.unixdomain.tmpdir=C:/Windows/Temp'
 2026-09-26 已完成实际客户端渲染验证：英文默认缩放（实际 3 倍）10 个阶段，中文 2 倍缩放 16 个阶段。
 两轮均输出 `LDLIB_CONTROLS_QA_PASS`，共 26 张截图已逐张检查。
 
-项目的 `docs/testing/rts-lifecycle.md` 记录了用户要求在桌面 2 运行图形测试客户端，
-不在当前任务栏暴露窗口。先安排测试桌面，或者取得本次当前桌面运行的明确许可。
-用户在本任务中明确要求“开始直接测试”，已授权本轮直接启动。此参数不会隐藏或移动窗口。
+测试客户端须遵循项目 `AGENTS.md`：保持静音、透明、鼠标穿透并隐藏任务栏按钮。
 
 ```powershell
 .\gradlew.bat -I scripts/ldlib-controls-qa.init.gradle runClient -PldlibVisibleQa=true --no-configuration-cache

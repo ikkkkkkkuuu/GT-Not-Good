@@ -1,0 +1,78 @@
+gradle.beforeProject { project ->
+    if (project == gradle.rootProject) {
+        project.layout.buildDirectory.set(project.file('.gradle/wireless-interface-target-qa-build'))
+    }
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev('Railcraft') as String)
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr.parentFile.mkdirs()
+        def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+        connection.connectTimeout = 30000
+        connection.readTimeout = 30000
+        connection.inputStream.withCloseable { input -> efr.withOutputStream { it << input } }
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/WirelessInterfaceTargetClientChecks.java'))
+    }
+    root.spotless.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/wirelessfrequency/WirelessInterfaceView.java',
+            'src/main/java/com/xyp/gtnotgood/common/wirelessfrequency/WirelessMachineGroups.java',
+            'scripts/qa/WirelessInterfaceTargetClientChecks.java'
+    }
+    def mainSnapshot = root.layout.buildDirectory.dir('wireless-interface-target-runtime/main')
+    def testSnapshot = root.layout.buildDirectory.dir('wireless-interface-target-runtime/test')
+    def copyMain = root.tasks.register('snapshotWirelessInterfaceTargetMain', Sync) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        into mainSnapshot
+    }
+    def copyTest = root.tasks.register('snapshotWirelessInterfaceTargetTest', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/WirelessInterfaceTargetClientChecks*.class'
+        into testSnapshot
+    }
+    def output = root.file('build/wireless-interface-target-qa')
+    def result = new File(output, 'result.txt')
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn copyMain, copyTest
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(mainSnapshot, testSnapshot)
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir new File(output, 'client')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.wirelessInterfaceTarget.qa', 'true'
+        systemProperty 'gtng.wirelessInterfaceTarget.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '740'
+        notCompatibleWithConfigurationCache('Focused wireless interface target checks')
+        doFirst {
+            workingDir.mkdirs()
+            output.mkdirs()
+            java.nio.file.Files.deleteIfExists(result.toPath())
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nrenderDistance:4\n' +
+                    'soundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', workingDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('Wireless interface target checks failed; inspect ' + output)
+            }
+        }
+    }
+}

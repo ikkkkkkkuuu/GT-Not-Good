@@ -14,7 +14,6 @@ import com.xyp.gtnotgood.utils.enums.ModList;
 public class Config {
 
     private static final String CATEGORY_CLIENT = "Client";
-    private static final String CATEGORY_RTS = "RTS_Building";
     private static final String CATEGORY_CUT_CORNERS = "CutCorners";
     private static final String CATEGORY_CROPSNH = "CropsNH";
     private static final String CATEGORY_FORESTRY = "Forestry";
@@ -37,8 +36,6 @@ public class Config {
     private static File configDirectory;
 
     public static String greeting = "Hello from GT-Not-Good";
-    /** Opt-in while the staged RTS port is under development; server authorization remains mandatory. */
-    public static boolean enableRTSBuilding = false;
     /** Replaces the client window/taskbar icon after startup; never synchronized from a server. */
     public static boolean useEdgeWindowIcon = false;
     /** Hides this client's Windows taskbar button after its window opens. */
@@ -155,10 +152,6 @@ public class Config {
         Config.configDirectory = configDirectory;
 
         greeting = configuration.getString("greeting", Configuration.CATEGORY_GENERAL, greeting, "How shall I greet?");
-        configuration.addCustomCategoryComment(CATEGORY_RTS,
-            "官方 RTS Building 集成。启用后默认按 G 进入；详细选项位于 config/rts_building。");
-        enableRTSBuilding = configuration.getBoolean("enableRTSBuilding", CATEGORY_RTS, false,
-            "加载内置官方 RTS 功能；更改后需重启游戏和服务器。集成验证阶段默认关闭。");
         configuration.addCustomCategoryComment(CATEGORY_CLIENT, "仅影响本机客户端的显示设置。");
         useEdgeWindowIcon = configuration
             .get(CATEGORY_CLIENT, "useEdgeWindowIcon", false,

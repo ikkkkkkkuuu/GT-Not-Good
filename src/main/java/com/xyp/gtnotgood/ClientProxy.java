@@ -20,6 +20,7 @@ import com.xyp.gtnotgood.client.gui.wildcard.WildcardPreviewCommand;
 import com.xyp.gtnotgood.client.mebridge.MEWirelessNodeRenderer;
 import com.xyp.gtnotgood.client.mestock.StockModelRenderer;
 import com.xyp.gtnotgood.client.nei.FactoryRecipeImport;
+import com.xyp.gtnotgood.client.nei.WildcardRecipeImport;
 import com.xyp.gtnotgood.client.network.NetworkBlockRenderer;
 import com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer;
 import com.xyp.gtnotgood.client.packaged.WirelessConnectorRenderer;
@@ -184,6 +185,7 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new WirelessConnectorRenderer());
         MinecraftForge.EVENT_BUS.register(WirelessWorldHighlight.INSTANCE);
         MinecraftForge.EVENT_BUS.register(new FactoryRecipeImport());
+        MinecraftForge.EVENT_BUS.register(new WildcardRecipeImport());
         MinecraftForge.EVENT_BUS.register(WirelessMonitorHud.INSTANCE);
         FMLCommonHandler.instance().bus().register(WirelessMonitorHud.INSTANCE);
     }

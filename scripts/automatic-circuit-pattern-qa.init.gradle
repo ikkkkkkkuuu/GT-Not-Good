@@ -33,6 +33,7 @@ gradle.projectsEvaluated {
             'src/main/java/com/xyp/gtnotgood/config/Config.java',
             'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/AutomaticCircuitInterfaceMixin.java',
             'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/AutomaticCircuitInterfaceTileMixin.java',
+            'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/DualityInterfaceMixin.java',
             'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
             'scripts/qa/AutomaticCircuitPatternChecks.java'
     }

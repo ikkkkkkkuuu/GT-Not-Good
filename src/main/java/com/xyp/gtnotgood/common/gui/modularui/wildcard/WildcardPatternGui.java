@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
@@ -25,12 +26,14 @@ import com.cleanroommc.modularui.value.LongValue;
 import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.PageButton;
 import com.cleanroommc.modularui.widgets.PagedWidget;
+import com.cleanroommc.modularui.widgets.ScrollingTextWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -42,6 +45,7 @@ import com.xyp.gtnotgood.common.items.wildcard.model.WildcardComponentCodec;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardExpansion;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardMaterials;
 import com.xyp.gtnotgood.common.items.wildcard.model.WildcardModelState;
+import com.xyp.gtnotgood.common.items.wildcard.model.WildcardRecipeTemplate;
 import com.xyp.gtnotgood.common.items.wildcard.model.filter.PropertyFilterComponent;
 import com.xyp.gtnotgood.common.items.wildcard.model.filter.StringFilterComponent;
 import com.xyp.gtnotgood.common.items.wildcard.model.filter.SubTagFilterComponent;
@@ -101,7 +105,10 @@ public class WildcardPatternGui {
     private StringSyncValue configSync;
 
     private WildcardIndexPage previewPage;
+    private ListWidget<IWidget, ?> inputCards;
+    private ListWidget<IWidget, ?> outputCards;
     private ListWidget<IWidget, ?> filterCards;
+    private final PagedWidget.Controller controller = new PagedWidget.Controller();
 
     public WildcardPatternGui(int slotIndex) {
         this.slotIndex = slotIndex;
@@ -116,8 +123,7 @@ public class WildcardPatternGui {
         this.configSync = new StringSyncValue(this::serializeConfig, cfg -> applyConfigOnServer(data, cfg));
         this.configSync.allowC2S();
         syncManager.syncValue("wildcardConfig", this.configSync);
-
-        PagedWidget.Controller controller = new PagedWidget.Controller();
+        syncManager.syncValue("wildcardImport", new RecipeImportHandler(this));
 
         Flow tabs = Flow.column().pos(0, 24).size(24, 180)
             .child(tabButton(controller, 0, new ItemDrawable(iconStack())))
@@ -147,7 +153,12 @@ public class WildcardPatternGui {
                 // #tr gui.wildcardpattern.reference_title
                 // # Wildcard Pattern Configuration
                 // # zh_CN 通配符样板配置
-                IKey.lang("gui.wildcardpattern.reference_title").asWidget().pos(64, 4).size(117, 10))
+                IKey.lang("gui.wildcardpattern.reference_title").asWidget().pos(64, 4).size(117, 10)
+                    .tooltipBuilder(tooltip -> tooltip.addLine(
+                        // #tr gui.wildcardpattern.nei_hint
+                        // # Use NEI + to import a recipe, then save
+                        // # zh_CN 点击 NEI 配方的＋导入，调整后保存
+                        IKey.lang("gui.wildcardpattern.nei_hint"))))
             .child(pages).child(tabs).child(inventory);
         pages.onPageChange(page -> {
             int offset = page == 0 ? 100 : 0;
@@ -211,6 +222,8 @@ public class WildcardPatternGui {
     private IWidget buildIOPage(boolean input) {
         List<IWildcardIOComponent> list = input ? inputs : outputs;
         ListWidget<IWidget, ?> cards = new ListWidget<>().pos(0, 3).size(156, 150);
+        if (input) inputCards = cards;
+        else outputCards = cards;
         rebuildIOCards(cards, list);
         return new ParentWidget<>().size(158, 180).child(cards).child(
             // #tr gui.wildcardpattern.single
@@ -282,8 +295,9 @@ public class WildcardPatternGui {
         WildcardDropWidget drop = new WildcardDropWidget(component::getStack,
             stack -> component.setStack(normalizeFixedStack(stack)));
         return new ParentWidget<>().size(136, 25).child(drop.pos(3, 3))
-            .child(IKey.dynamic(() -> component.getStack() == null ? "" : safeName(component.getStack()))
-                .color(0xFFFFFFFF).shadow(true).asWidget().pos(25, 7).size(43, 10))
+            .child(new ScrollingTextWidget(
+                IKey.dynamic(() -> component.getStack() == null ? "" : safeName(component.getStack())))
+                    .color(0xFFFFFFFF).shadow(true).pos(25, 7).size(43, 10))
             .child(IKey.str("x").color(0xFFFFFFFF).shadow(true).asWidget().pos(70, 7).size(8, 10))
             .child(referenceField().pos(80, 5).size(50, 15)
                 .value(new LongValue.Dynamic(component::getAmount, component::setAmount))
@@ -586,6 +600,40 @@ public class WildcardPatternGui {
         inputs.addAll(WildcardModelState.getInputs(backingStack));
         outputs.addAll(WildcardModelState.getOutputs(backingStack));
         filters.addAll(WildcardModelState.getFilters(backingStack));
+    }
+
+    public static final class RecipeImportHandler extends SyncHandler<RecipeImportHandler> {
+
+        private final WildcardPatternGui gui;
+
+        private RecipeImportHandler(WildcardPatternGui gui) {
+            this.gui = gui;
+        }
+
+        public boolean importRecipe(List<ItemStack> inputs, List<ItemStack> outputs) {
+            if (!isValid() || !getSyncManager().isClient()) return false;
+            WildcardRecipeTemplate template;
+            try {
+                template = WildcardRecipeTemplate.create(inputs, outputs);
+            } catch (IllegalArgumentException ignored) {
+                return false;
+            }
+            gui.inputs.clear();
+            gui.inputs.addAll(template.getInputs());
+            gui.outputs.clear();
+            gui.outputs.addAll(template.getOutputs());
+            gui.rebuildIOCards(gui.inputCards, gui.inputs);
+            gui.rebuildIOCards(gui.outputCards, gui.outputs);
+            gui.previewPage.refresh(WildcardExpansion.expand(gui.inputs, gui.outputs, gui.filters));
+            gui.controller.setPage(1);
+            return true;
+        }
+
+        @Override
+        public void readOnClient(int id, PacketBuffer buf) {}
+
+        @Override
+        public void readOnServer(int id, PacketBuffer buf) {}
     }
 
 }

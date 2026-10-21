@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import com.xyp.gtnotgood.common.compat.AutomaticMachineCircuit;
+import com.xyp.gtnotgood.common.machines.hatch.me.CircuitPatternCodec;
 
 import appeng.api.implementations.ICraftingPatternItem;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
@@ -60,6 +61,7 @@ public final class PatternSorter {
                 if (details != null) {
                     if (details.isCraftable()) status = CRAFTING;
                     else {
+                        details = CircuitPatternCodec.runtime(stack.copy(), world);
                         List<int[]> configurations = AutomaticMachineCircuit.patternConfigurations(map, details);
                         status = configurations.isEmpty() ? UNMATCHED : configurations.size() > 1 ? AMBIGUOUS : MATCHED;
                         if (status == MATCHED) {

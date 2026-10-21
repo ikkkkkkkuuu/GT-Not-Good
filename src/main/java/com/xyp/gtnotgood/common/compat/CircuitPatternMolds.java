@@ -23,6 +23,7 @@ import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.RecipeMapBackend;
 import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTRecipe;
+import gregtech.api.util.GTRecipe.RecipeItemInput;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.ItemIntegratedCircuit;
 
@@ -123,14 +124,7 @@ public final class CircuitPatternMolds {
                     if (batches <= 0) continue;
                     List<ItemStack> nonConsumed = new ArrayList<>();
                     for (ItemStack mold : encodedMolds) {
-                        boolean required = false;
-                        boolean consumed = false;
-                        for (ItemStack input : recipe.mInputs) {
-                            if (input == null || !sameItem(input, mold)) continue;
-                            if (input.stackSize == 0) required = true;
-                            else if (input.stackSize > 0) consumed = true;
-                        }
-                        if (required && !consumed) nonConsumed.add(mold);
+                        if (isNonConsumed(recipe, mold)) nonConsumed.add(mold);
                     }
                     ItemStack[] supplied = copy(items.toArray(new ItemStack[0]));
                     for (ItemStack item : supplied) {
@@ -150,6 +144,16 @@ public final class CircuitPatternMolds {
             }
         }
         return commonMolds == null ? new ItemStack[0] : copy(commonMolds.toArray(new ItemStack[0]));
+    }
+
+    static boolean isNonConsumed(GTRecipe recipe, ItemStack mold) {
+        boolean required = false;
+        for (RecipeItemInput input : recipe.getCachedCombinedItemInputs()) {
+            if (!input.matchesRecipe(GTOreDictUnificator.getAssociation(mold), mold)) continue;
+            if (input.inputAmount > 0) return false;
+            if (input.inputAmount == 0) required = true;
+        }
+        return required;
     }
 
     private static long outputBatches(GTRecipe recipe, Map<Ingredient, Long> encoded) {

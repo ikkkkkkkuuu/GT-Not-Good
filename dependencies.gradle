@@ -62,7 +62,6 @@ dependencies {
     // Exercise the real synthetic aspect item without loading a Forge client.
     testRuntimeOnly(elytraModpackVersion.gtnhdev("AspectRecipeIndex") as String) { transitive = false }
     // Angelica's RFB plugin uses these before GTNHLib's shaded stubs are visible on Java 17.
-    // The RTS QA runner adds this test-only artifact to the launcher classpath; release dependencies are unchanged.
     testRuntimeOnly("xyz.wagyourtail.jvmdowngrader:jvmdowngrader-java-api:2.0.1:downgraded-8") { transitive = false }
     // Opt-in manual playground: AE essentia storage and real TC4 infusion supply.
     testImplementation(elytraModpackVersion.gtnhdev("ThaumicEnergistics") as String) { transitive = false }

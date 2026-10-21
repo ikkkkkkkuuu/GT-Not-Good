@@ -4,7 +4,6 @@ import net.minecraftforge.common.MinecraftForge;
 
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.gtnewhorizon.gtnhlib.chat.ChatComponentCustomRegistry;
-import com.rtsbuilding.rtsbuilding.RtsbuildingMod;
 import com.xyp.gtnotgood.ae2thing.AE2Thing;
 import com.xyp.gtnotgood.commandtree.CommandTreeBootstrap;
 import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceGuiFactory;
@@ -64,7 +63,6 @@ public class CommonProxy {
         ChatComponentCustomRegistry.register(ChatComponentInterfaceNameSuffix::new);
         Config.synchronizeConfiguration(event.getSuggestedConfigurationFile());
         MainConfig.ensureLoaded();
-        if (Config.enableRTSBuilding) RtsbuildingMod.INSTANCE.preInit(event);
 
         GTNotGood.channel = NetworkRegistry.INSTANCE.newSimpleChannel(GTNotGood.MODID);
         NetworkHandler.registerAllMessage();
@@ -99,7 +97,6 @@ public class CommonProxy {
 
     public void init(FMLInitializationEvent event) {
         MachineLoader.registerCropsNHMachines();
-        if (RtsbuildingMod.INSTANCE.isInitialized()) RtsbuildingMod.INSTANCE.init(event);
         GuiManager.registerFactory(AdvancedIOGuiFactory.INSTANCE);
         GuiManager.registerFactory(StockIOGuiFactory.INSTANCE);
         GuiManager.registerFactory(LargeInterfaceGuiFactory.INSTANCE);

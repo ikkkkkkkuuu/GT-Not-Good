@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -16,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.xyp.gtnotgood.common.blocks.largeinterface.LargeInterfaceHost;
+import com.xyp.gtnotgood.common.compat.AutomaticMachineCircuit;
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternCache;
 import com.xyp.gtnotgood.common.items.wildcard.WildcardPatternGenerator;
 
@@ -23,6 +25,7 @@ import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.helpers.DualityInterface;
 import appeng.helpers.IInterfaceHost;
 import appeng.tile.inventory.AppEngInternalInventory;
+import gregtech.api.recipe.RecipeMap;
 
 @Mixin(value = DualityInterface.class, remap = false)
 public abstract class DualityInterfaceMixin {
@@ -30,6 +33,9 @@ public abstract class DualityInterfaceMixin {
     /** Per-slot ownership prevents mutable AE2 priorities from leaking between identical configurations. */
     @Unique
     private final Map<Integer, WildcardPatternCache<List<ICraftingPatternDetails>>> wildcardpattern$caches = new HashMap<>();
+
+    @Unique
+    private List<RecipeMap<?>> wildcardpattern$recipeMaps;
 
     @Shadow
     private AppEngInternalInventory patterns;
@@ -52,9 +58,17 @@ public abstract class DualityInterfaceMixin {
         }
 
         World world = this.iHost.getTileEntity().getWorldObj();
+        List<RecipeMap<?>> recipeMaps = AutomaticMachineCircuit.interfaceRecipeMaps(this.iHost);
+        if (!Objects.equals(this.wildcardpattern$recipeMaps, recipeMaps)) {
+            this.wildcardpattern$recipeMaps = recipeMaps;
+            this.wildcardpattern$caches.clear();
+        }
         List<ICraftingPatternDetails> detailsList = this.wildcardpattern$caches
-            .computeIfAbsent(slot, ignored -> new WildcardPatternCache<>())
-            .get(stack, world, () -> WildcardPatternGenerator.generateAllDetails(stack, world));
+            .computeIfAbsent(slot, ignored -> new WildcardPatternCache<>()).get(stack, world, () -> {
+                List<ICraftingPatternDetails> expanded = WildcardPatternGenerator.generateAllDetails(stack, world);
+                expanded.replaceAll(details -> AutomaticMachineCircuit.interfacePattern(details, this.iHost));
+                return expanded;
+            });
         if (this.craftingList == null) {
             this.craftingList = new LinkedList<>();
         }

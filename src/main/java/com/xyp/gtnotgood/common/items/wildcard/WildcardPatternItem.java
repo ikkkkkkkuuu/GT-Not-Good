@@ -124,8 +124,8 @@ public class WildcardPatternItem extends ItemEncodedPattern implements IGuiHolde
         lines.add(StatCollector.translateToLocal("tooltip.wildcardpattern.desc_axis"));
 
         // #tr tooltip.wildcardpattern.usage
-        // # Right-click to configure material filters and inputs/outputs.
-        // # zh_CN 右键设置材料过滤条件与输入输出。
+        // # Right-click to configure; use NEI + to import a recipe, then save.
+        // # zh_CN 右键配置，可点击 NEI 配方的＋自动填写，调整后保存。
         lines.add(StatCollector.translateToLocal("tooltip.wildcardpattern.usage"));
 
         // #tr tooltip.wildcardpattern.desc_io

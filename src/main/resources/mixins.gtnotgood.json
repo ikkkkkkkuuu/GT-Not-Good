@@ -11,8 +11,6 @@
     "tcautores.GuiResearchBrowserMixin",
     "tcautores.GuiResearchTableMixin",
     "tcautores.NetHandlerPlayClientMixin",
-    "early.rts.ForgeHooksRemoteContainerMixin",
-    "early.rts.ChestMenuMixin",
     "early.wirelessfrequency.MixinWirelessTileData"
   ],
   "client": [
@@ -22,10 +20,7 @@
     "early.commandtree.GuiChatMixin",
     "early.commandtree.GuiTextFieldMixin",
     "early.commandtree.NetHandlerPlayClientMixin",
-    "early.texteffect.angelica.MixinFontBatchTextEffects",
-    "early.rts.GuiScreenOverlayInputMixin",
-    "early.rts.BlockRenderDispatcherMixin",
-    "early.rts.BlockEntityRenderDispatcherMixin"
+    "early.texteffect.angelica.MixinFontBatchTextEffects"
   ],
   "server": []
 }

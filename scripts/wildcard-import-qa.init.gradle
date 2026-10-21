@@ -1,0 +1,53 @@
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Prepare the existing factory QA Et Futurum runtime first')
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def qaClasses = root.layout.buildDirectory.dir('wildcard-import-qa/test-classes')
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(qaClasses)
+        setSource(root.files('scripts/qa/WildcardImportClientChecks.java'))
+    }
+    root.spotless.java {
+        target 'scripts/qa/WildcardImportClientChecks.java'
+    }
+    def runtimeJar = root.tasks.register('jarWildcardImportQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        from root.sourceSets.main.output
+        archiveFileName = 'wildcard-import-qa-main.jar'
+        destinationDirectory = root.layout.buildDirectory.dir('wildcard-import-qa')
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn runtimeJar, root.tasks.named('testClasses')
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(runtimeJar.flatMap { it.archiveFile }, qaClasses)
+        workingDir root.file('run/wildcard-import-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.wildcardImport.qa', 'true'
+        systemProperty 'gtng.wildcardImport.qa.output', root.file('build/wildcard-import-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in native wildcard NEI import QA')
+        doFirst {
+            root.file('build/wildcard-import-qa').mkdirs()
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(root.file('build/wildcard-import-qa/result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(root.file('build/wildcard-import-qa/window-helper.log')).start()
+            }
+        }
+        doLast {
+            def result = root.file('build/wildcard-import-qa/result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('Wildcard import QA failed; inspect WILDCARD_IMPORT_QA in the client log')
+            }
+        }
+    }
+}

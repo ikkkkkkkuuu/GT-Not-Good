@@ -312,8 +312,12 @@ public final class AutomaticMachineCircuit {
                 .items(VirtualMachineMolds.append(recipeInputs, selected.mold)).fluids(combinedFluid)
                 .specialSlot(machine.getStackInSlot(machine.getSpecialSlotIndex())).voltage(GTValues.V[machine.mTier])
                 .find();
-            if (!sameRecipe(selected, describe(runnable))) return reportRejection(tile, pattern, aeTable,
-                "final-lookup-mismatch: " + recipeDescription(runnable), candidates);
+            Match runnableMatch = describe(runnable);
+            if (
+                runnableMatch == null || !matchesConfiguration(pattern, runnableMatch)
+                    || !sameRecipe(selected, runnableMatch)
+            ) return reportRejection(tile, pattern, aeTable, "final-lookup-mismatch: " + recipeDescription(runnable),
+                candidates);
             committed = staged.clone();
         } finally {
             System.arraycopy(original, 0, machine.mInventory, 0, original.length);
@@ -520,10 +524,12 @@ public final class AutomaticMachineCircuit {
         if (tag.hasKey("gtngPatternMolds")) {
             if (!tag.hasKey("gtngPatternMolds", Constants.NBT.TAG_LIST)) return false;
             NBTTagList molds = tag.getTagList("gtngPatternMolds", Constants.NBT.TAG_COMPOUND);
-            if (
-                molds.tagCount() != 1 || match.mold == null
-                    || !sameCircuit(match.mold, ItemStack.loadItemStackFromNBT(molds.getCompoundTagAt(0)))
-            ) return false;
+            if (molds.tagCount() != 1 || match.mold == null) return false;
+            ItemStack mold = ItemStack.loadItemStackFromNBT(molds.getCompoundTagAt(0));
+            if (VirtualMachineMolds.indexOf(mold) < 0 || !CircuitPatternMolds.isNonConsumed(match.recipe, mold))
+                return false;
+            match.mold = mold.copy();
+            match.mold.stackSize = 0;
         }
         return true;
     }
