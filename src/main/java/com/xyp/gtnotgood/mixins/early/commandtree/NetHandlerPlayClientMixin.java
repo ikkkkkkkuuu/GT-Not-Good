@@ -6,15 +6,9 @@ import com.xyp.gtnotgood.commandtree.client.ClientSuggestionProvider;
 import com.xyp.gtnotgood.commandtree.client.ClientCommandTree;
 import com.xyp.gtnotgood.commandtree.client.ISuggestionProvider;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.CommandDispatcher;
-import com.xyp.gtnotgood.commandtree.shadow.brigadier.arguments.StringArgumentType;
-import com.xyp.gtnotgood.commandtree.shadow.brigadier.builder.LiteralArgumentBuilder;
-import com.xyp.gtnotgood.commandtree.shadow.brigadier.builder.RequiredArgumentBuilder;
-import com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion.Suggestion;
-import com.xyp.gtnotgood.commandtree.util.SuggestionProviders;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraft.network.play.server.S19PacketEntityStatus;
 import net.minecraft.network.play.server.S3APacketTabComplete;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,8 +30,6 @@ public class NetHandlerPlayClientMixin implements NetHandlerPlayClientExtras {
    private ClientSuggestionProvider brigo$suggestionsProvider;
    @Unique
    private CommandDispatcher<ISuggestionProvider> brigo$commands = new CommandDispatcher<ISuggestionProvider>();
-   @Unique
-   private boolean brigo$entityStatusReceived = false;
 
    @Inject(method = "<init>", at = @At("RETURN"))
    private void onInit(CallbackInfo ci) {
@@ -47,29 +39,6 @@ public class NetHandlerPlayClientMixin implements NetHandlerPlayClientExtras {
    @Inject(method = "handleTabComplete", at = @At("TAIL"))
    private void handleTabComplete(S3APacketTabComplete packetIn, CallbackInfo ci) {
       this.brigo$suggestionsProvider.completeCustomSuggestions(packetIn.func_149630_c());
-   }
-
-   @Inject(method = "handleEntityStatus", at = @At("TAIL"))
-   private void handleEntityStatus(S19PacketEntityStatus packetIn, CallbackInfo ci) {
-      if (this.brigo$commands.getRoot().getChildren().isEmpty() && !this.brigo$entityStatusReceived) {
-         this.brigo$entityStatusReceived = true;
-         this.brigo$suggestionsProvider()
-            .getSuggestionsFromServer()
-            .thenAccept(
-               commands -> {
-                  for (Suggestion suggestion : commands.getList()) {
-                     this.brigo$commands
-                        .register(
-                           LiteralArgumentBuilder.<ISuggestionProvider>literal(suggestion.getText().substring(1))
-                              .then(
-                                 RequiredArgumentBuilder.<ISuggestionProvider, String>argument("params", StringArgumentType.greedyString())
-                                    .suggests(SuggestionProviders.ASK_SERVER)
-                              )
-                        );
-                  }
-               }
-            );
-      }
    }
 
    @Unique

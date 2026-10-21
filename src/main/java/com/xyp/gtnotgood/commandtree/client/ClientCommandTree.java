@@ -9,6 +9,9 @@ import com.xyp.gtnotgood.commandtree.shadow.brigadier.CommandDispatcher;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.arguments.StringArgumentType;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.builder.LiteralArgumentBuilder;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.builder.RequiredArgumentBuilder;
+import com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion.Suggestion;
+import com.xyp.gtnotgood.commandtree.shadow.brigadier.suggestion.Suggestions;
+import com.xyp.gtnotgood.commandtree.util.SuggestionProviders;
 
 /** Adds Forge client commands to the suggestions sent by the server. */
 public final class ClientCommandTree {
@@ -36,6 +39,19 @@ public final class ClientCommandTree {
             }
             dispatcher.register(LiteralArgumentBuilder.<ISuggestionProvider>literal(name).then(RequiredArgumentBuilder
                 .<ISuggestionProvider, String>argument("params", StringArgumentType.greedyString())));
+        }
+    }
+
+    /** Supplements the login tree after permissions change, preserving detailed command definitions. */
+    public static void mergeServer(CommandDispatcher<ISuggestionProvider> dispatcher, Suggestions commands) {
+        for (Suggestion suggestion : commands.getList()) {
+            String name = suggestion.getText();
+            if (name.startsWith("/")) name = name.substring(1);
+            if (name.isEmpty() || dispatcher.getRoot().getChild(name) != null) continue;
+            dispatcher.register(LiteralArgumentBuilder.<ISuggestionProvider>literal(name)
+                .then(RequiredArgumentBuilder
+                    .<ISuggestionProvider, String>argument("params", StringArgumentType.greedyString())
+                    .suggests(SuggestionProviders.ASK_SERVER)));
         }
     }
 }

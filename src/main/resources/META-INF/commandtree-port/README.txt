@@ -16,5 +16,6 @@ project network channel and mod lifecycle; adapted Mixins to GTNH mappings;
 restricted custom text rendering to chat; filtered commands by permission;
 matched vanilla tab-completion responses to requests; added packet size checks.
 Forge client commands are merged into the received tree for local suggestions.
+Available server command names refresh when chat opens, including after OP grants.
 The upstream standalone mod entry point, tinylog, service loader, and separate
 network registration were removed.

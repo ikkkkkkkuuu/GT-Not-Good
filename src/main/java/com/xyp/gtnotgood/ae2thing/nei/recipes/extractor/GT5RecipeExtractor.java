@@ -12,6 +12,7 @@ import com.xyp.gtnotgood.ae2thing.nei.object.IRecipeExtractor;
 import com.xyp.gtnotgood.ae2thing.nei.object.OrderStack;
 
 import codechicken.nei.PositionedStack;
+import codechicken.nei.recipe.StackInfo;
 import gregtech.api.enums.ItemList;
 import gregtech.common.items.ItemFluidDisplay;
 
@@ -56,6 +57,10 @@ public class GT5RecipeExtractor implements IRecipeExtractor {
     public static Object getFluidFromDisplay(PositionedStack stack) {
         if (stack != null && stack.items.length > 0) {
             ItemStack item = stack.items[0].copy();
+            if (StackInfo.isFluidDisplayItem(item)) {
+                FluidStack fluid = StackInfo.getFluid(item);
+                return fluid == null ? null : fluid.copy();
+            }
             if (item.getItem() instanceof ItemFluidDisplay) {
                 if (item.getTagCompound() != null) {
                     Fluid fluid = FluidRegistry.getFluid(item.getItemDamage());

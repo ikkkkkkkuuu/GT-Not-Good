@@ -210,7 +210,8 @@ public class Config {
             CATEGORY_GREGTECH, true, "开启后,砖高炉控制器各面支持自动输入原料和输出产物;关闭恢复原版手动上下料。默认开启,修改后重启游戏生效。");
 
         enableAutomaticMachineCircuit = configuration.getBoolean("enableAutomaticMachineCircuit", CATEGORY_GREGTECH,
-            true, "ME接口和流体接口自动选择相邻GT单方块机器的虚拟电路。样板不写电路;同配方可续料,换电路须加工结束且输入清空;整批须装得下,歧义则等待。关闭恢复普通投料。");
+            true, "ME接口和流体接口自动选择相邻GT单方块机器的虚拟电路和模具。样板中的编程电路与不消耗模具不计入合成需求,原样板可移入电路样板总成;耗材模具仍须供应。"
+                + "同配方可续料,超量输入暂存;换配置须加工结束且输入清空,电路歧义则等待。关闭恢复普通投料。");
 
         requireCleanroom = configuration.getBoolean("requireCleanroom", CATEGORY_GREGTECH, false,
             "是否要求配方满足超净间条件。默认关闭,所有使用GT超净间判定的配方免除超净间要求及洁净度损失;开启恢复原版判定。");

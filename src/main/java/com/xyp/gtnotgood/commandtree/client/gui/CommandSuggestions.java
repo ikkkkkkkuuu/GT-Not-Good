@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.xyp.gtnotgood.commandtree.accessor.GuiTextFieldExtras;
 import com.xyp.gtnotgood.commandtree.accessor.NetHandlerPlayClientExtras;
+import com.xyp.gtnotgood.commandtree.client.ClientCommandTree;
 import com.xyp.gtnotgood.commandtree.client.ISuggestionProvider;
 import com.xyp.gtnotgood.commandtree.client.renderer.Rect2i;
 import com.xyp.gtnotgood.commandtree.shadow.brigadier.CommandDispatcher;
@@ -83,6 +84,18 @@ public class CommandSuggestions {
       if (!allow) {
          this.suggestions = null;
       }
+   }
+
+   public void refreshCommands() {
+      if (this.minecraft.thePlayer == null || this.minecraft.thePlayer.sendQueue == null) return;
+      NetHandlerPlayClientExtras connection = (NetHandlerPlayClientExtras)this.minecraft.thePlayer.sendQueue;
+      connection.brigo$suggestionsProvider().getSuggestionsFromServer().thenAccept(commands -> {
+         if (this.minecraft.currentScreen != this.screen || this.minecraft.thePlayer == null
+             || this.minecraft.thePlayer.sendQueue != connection) return;
+         ClientCommandTree.mergeServer(connection.brigo$commands(), commands);
+         this.currentParse = null;
+         this.updateCommandInfo();
+      });
    }
 
    public boolean handleKeyPress(int keyCode) {

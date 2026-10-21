@@ -2,9 +2,11 @@ package com.xyp.gtnotgood.qa;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -26,10 +28,17 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
 import com.xyp.gtnotgood.common.machines.multiblock.SingularityDataHub;
+import com.xyp.gtnotgood.common.wirelessfrequency.IWirelessLinkView;
+import com.xyp.gtnotgood.common.wirelessfrequency.WirelessChannelManager.Address;
+import com.xyp.gtnotgood.common.wirelessfrequency.WirelessHatchOwner;
+import com.xyp.gtnotgood.common.wirelessfrequency.WirelessInterfaceView;
+import com.xyp.gtnotgood.common.wirelessfrequency.WirelessMachineGroups;
+import com.xyp.gtnotgood.common.wirelessfrequency.WirelessNetworkStatistics;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.GTNGMachineID;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
+import appeng.api.networking.IGridNode;
 import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -124,6 +133,7 @@ public final class VaultAppearanceClientChecks {
                     }
                     require(machine.mCountCasing == 10 && machine.portHatch == port && port.controller == machine,
                         "3x2x2 vault forms with exactly ten Eddington walls and one bound vault port");
+                    checkWirelessGrouping(true, "formed vault");
                     require(!base.isActive(), "disabled formed vault displays its idle controller");
                     initialReady = true;
                     captureRequested = 1;
@@ -157,6 +167,7 @@ public final class VaultAppearanceClientChecks {
                     require(machine.locked && !base.isActive(),
                         "broken structure stops and locks the vault after " + (serverTicks - stageTick) + " ticks");
                     require(port.controller == null, "broken structure unbinds the existing vault port");
+                    checkWirelessGrouping(false, "broken vault");
                     require(machine.injectItems(new ItemStack(Items.iron_ingot), false) == 0,
                         "unformed vault refuses further storage insertion");
                     requireStored("breaking the appearance casing preserves stored contents");
@@ -171,6 +182,7 @@ public final class VaultAppearanceClientChecks {
                     }
                     require(port.controller == machine && machine.portHatch == port,
                         "restored structure rebinds the same vault port");
+                    checkWirelessGrouping(true, "restored vault");
                     requireStored("restoring the casing retains the stored items and fluids");
                     base.enableWorking();
                     advance(8);
@@ -268,6 +280,35 @@ public final class VaultAppearanceClientChecks {
                 && machine.extractFluids(AEFluidStack.create(new FluidStack(FluidRegistry.WATER, 512)), true) == 512,
             "formed vault extracts items and fluids after its casing change");
         requireStored("shared storage accounting remains correct after extraction");
+    }
+
+    private void checkWirelessGrouping(boolean grouped, String state) throws Exception {
+        var owners = ((WirelessHatchOwner) port).wirelessFrequency$getControllers();
+        require(grouped ? owners.size() == 1 && owners.contains(machine) : owners.isEmpty(),
+            state + " exposes the current vault port owner");
+        IGridNode node = port.getActionableNode();
+        require(node != null, state + " retains its real AE node");
+        var members = Collections.singleton(node);
+        Address address = new Address(portBase.getWorldObj().provider.dimensionId, portBase.xCoord, portBase.yCoord,
+            portBase.zCoord, ForgeDirection.UNKNOWN);
+        IWirelessLinkView link = new IWirelessLinkView.ClusterView(address, node, Collections.emptyMap(), false, false,
+            "active", 1, WirelessNetworkStatistics.measure(members, false), members);
+        Method group = WirelessMachineGroups.class.getDeclaredMethod("group", List.class, WirelessInterfaceView.class);
+        group.setAccessible(true);
+        List<?> rows = (List<?>) group.invoke(null, Collections.singletonList(link), new WirelessInterfaceView());
+        require(rows.size() == 1, state + " produces one wireless frequency row");
+        Object row = rows.get(0);
+        Method rowMachine = row.getClass().getDeclaredMethod("machine");
+        Method rowTarget = row.getClass().getDeclaredMethod("target");
+        rowMachine.setAccessible(true);
+        rowTarget.setAccessible(true);
+        require(rowMachine.invoke(row) == (grouped ? machine : null),
+            state + " groups the port only under its current vault");
+        Address expected = grouped
+            ? new Address(base.getWorldObj().provider.dimensionId, base.xCoord, base.yCoord, base.zCoord,
+                ForgeDirection.UNKNOWN)
+            : address;
+        require(expected.equals(rowTarget.invoke(row)), state + " targets the correct controller or standalone port");
     }
 
     private void requireStored(String description) {

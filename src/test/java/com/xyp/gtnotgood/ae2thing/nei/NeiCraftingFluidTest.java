@@ -59,9 +59,9 @@ public class NeiCraftingFluidTest {
     public void ordinaryItemsAndFilledContainersRemainItemRequests() {
         assertNull(NeiCraftingFluid.getFluid(null));
         assertNull(NeiCraftingFluid.getFluid(new ItemStack(new Item())));
-        ItemFluidContainer container = new ItemFluidContainer(1000);
+        ItemFluidContainer container = new ItemFluidContainer(0).setCapacity(1000);
         ItemStack filled = new ItemStack(container);
-        container.fill(filled, new FluidStack(FluidRegistry.WATER, 1000), true);
+        assertEquals(1000, container.fill(filled, new FluidStack(FluidRegistry.WATER, 1000), true));
         assertNull(NeiCraftingFluid.getFluid(filled));
     }
 }

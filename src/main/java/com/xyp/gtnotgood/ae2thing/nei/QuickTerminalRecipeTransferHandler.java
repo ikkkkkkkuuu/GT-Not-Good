@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.input.Keyboard;
@@ -38,6 +39,7 @@ import codechicken.nei.PositionedStack;
 import codechicken.nei.api.IOverlayHandler;
 import codechicken.nei.recipe.GuiOverlayButton;
 import codechicken.nei.recipe.IRecipeHandler;
+import codechicken.nei.recipe.StackInfo;
 import gregtech.common.items.ItemFluidDisplay;
 import gregtech.common.items.ItemIntegratedCircuit;
 
@@ -300,8 +302,17 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
 
         // Filled cells, buckets, and other real containers are item ingredients.
         // Only NEI's synthetic fluid representations belong in an AE fluid slot.
-        IAEStack<?> fluid = isFluidDisplay(item) ? Util.getAEFluidFromItem(item) : null;
-        if (fluid != null) return fluid;
+        if (isFluidDisplay(item)) {
+            IAEStack<?> fluid = Util.getAEFluidFromItem(item);
+            if (fluid != null) {
+                if (StackInfo.isFluidDisplayItem(item)) {
+                    // NEI's display count can exceed FluidStack's int amount.
+                    NBTTagCompound display = StackInfo.itemStackToNBT(item);
+                    if (display != null && display.hasKey("Count")) fluid.setStackSize(display.getLong("Count"));
+                }
+                return fluid;
+            }
+        }
 
         for (IAEStackType<?> type : AEStackTypeRegistry.getSortedTypes()) {
             if ("item".equals(type.getId()) || "fluid".equals(type.getId())) continue;
@@ -312,7 +323,8 @@ public final class QuickTerminalRecipeTransferHandler implements IOverlayHandler
     }
 
     private static boolean isFluidDisplay(ItemStack stack) {
-        return stack.getItem() instanceof ItemFluidDisplay || stack.getItem() instanceof ItemFluidDrop
+        return StackInfo.isFluidDisplayItem(stack) || stack.getItem() instanceof ItemFluidDisplay
+            || stack.getItem() instanceof ItemFluidDrop
             || stack.getItem() instanceof ItemFluidPacket;
     }
 }

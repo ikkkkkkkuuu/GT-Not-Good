@@ -22,8 +22,15 @@ gradle.projectsEvaluated {
         destinationDirectory.set(qaClasses)
         setSource(root.files('scripts/qa/AutomaticCircuitPatternChecks.java'))
     }
+    def runtimeClasses = root.layout.buildDirectory.dir('automatic-circuit-pattern-qa/runtime')
+    def snapshot = root.tasks.register('snapshotAutomaticCircuitPatternQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from qaClasses
+        into runtimeClasses
+    }
     root.extensions.findByName('spotless')?.java {
         target 'src/main/java/com/xyp/gtnotgood/common/compat/AutomaticMachineCircuit.java',
+            'src/main/java/com/xyp/gtnotgood/config/Config.java',
             'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/AutomaticCircuitInterfaceMixin.java',
             'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/AutomaticCircuitInterfaceTileMixin.java',
             'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
@@ -31,8 +38,8 @@ gradle.projectsEvaluated {
     }
     root.tasks.named('runClient17').configure {
         javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
-        dependsOn root.tasks.named('testClasses')
-        classpath += root.files(qaClasses)
+        dependsOn snapshot
+        classpath += root.files(runtimeClasses)
         classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
         workingDir root.file('run/automatic-circuit-pattern-qa')
         systemProperty 'gtng.factory.qa', 'true'
@@ -44,7 +51,8 @@ gradle.projectsEvaluated {
             workingDir.mkdirs()
             root.file('build/automatic-circuit-pattern-qa').mkdirs()
             java.nio.file.Files.deleteIfExists(new File(workingDir, 'result.txt').toPath())
-            new File(workingDir, 'options.txt').setText('lang:en_US\npauseOnLostFocus:false\n', 'UTF-8')
+            new File(workingDir, 'options.txt').setText(
+                'lang:en_US\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
             if (System.getProperty('os.name').startsWith('Windows')) {
                 new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
                     '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,

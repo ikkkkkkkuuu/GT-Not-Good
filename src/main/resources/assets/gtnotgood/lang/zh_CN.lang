@@ -1630,6 +1630,7 @@ gui.mestock.style_full=终端高度：全高
 gtng.chemical.recipe.refining_tier=力场约束线圈等级：%s
 gtnotgood.message.interface_teleport.no_safe_location=未在该接口旁找到安全的落脚位置。
 gtnotgood.message.interface_teleport.dimension_unavailable=接口所在维度当前不可用。
+gtnotgood.wireless.gui.personal_world=私人维度
 gui.example.key=Chinese text
 tile.flux_logistics_plug.name=通量物流插头
 tile.flux_plug.name=通量插头

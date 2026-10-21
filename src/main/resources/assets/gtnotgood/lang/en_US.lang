@@ -1630,6 +1630,7 @@ gui.mestock.style_full=Terminal height: full
 gtng.chemical.recipe.refining_tier=Field Restriction Coil Tier: %s
 gtnotgood.message.interface_teleport.no_safe_location=No safe standing space was found beside this interface.
 gtnotgood.message.interface_teleport.dimension_unavailable=The interface dimension is currently unavailable.
+gtnotgood.wireless.gui.personal_world=Personal World
 gui.example.key=English text
 tile.flux_logistics_plug.name=Flux Logistics Plug
 tile.flux_plug.name=Flux Plug

@@ -28,6 +28,8 @@ ae 两个接口对单方块机器下单 直接会在推料之前修改单方块�
 
 本mod还对单方块机器添加了自己的虚拟模具槽 处于电路槽上方 可参与配方合成
 
+普通 ME 接口和流体接口直连受支持的 GT 电力单方块时，加工样板可保留编程电路和不消耗的模具，AE 合成计划只索取消耗材料；实际作为耗材的模具仍须供应。同张样板后期可直接移入电路样板总成，无需重新编码。详见[使用说明](docs/automatic-machine-circuit.md)。
+
 虚拟模具列表新增 GGFab 的八种一次性工具铸件：锉、扳手、撬棍、剪线钳、锻造锤、软锤、螺丝刀和锯子。
 单方块机器和超级样板输入总成均可在虚拟模具选择器中使用。
 
@@ -44,16 +46,24 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
 |  2.9.0-RC-1  |     1.1.6     |         1.6.2          | [![1.6.2](https://img.shields.io/badge/release-1.6.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.2) |         ✔️         |
-|  2.9.0-RC-2  |     1.6.3     |         1.6.3          | [![1.6.3](https://img.shields.io/badge/release-1.6.3-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.3) |         ✔️         |
+|  2.9.0-RC-2  |     1.6.3     |         1.6.4          | [![1.6.4](https://img.shields.io/badge/release-1.6.4-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.4) |         ✔️         |
 
 当前版本面向 GTNH 2.9.0-RC-2；RC1 请使用 1.6.2。
 
-最新版本：[1.6.3 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.3)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.3/gtnotgood-1.6.3.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.3/gtnotgood-1.6.3-sources.jar)。
+最新版本：[1.6.4 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.4)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.4/gtnotgood-1.6.4.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.4/gtnotgood-1.6.4-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.6.3。
+1.3.4 因启动错误已撤回，请更新到 1.6.4。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.6.4 更新
+
+- 修复无线二合一接口终端从 RC2 的 NEI 导入流体配方时，将流体展示项误当作物品编码的问题；保留流体种类、数量和附加数据，真实桶、单元仍作为物品材料处理。
+- 含流体的加工配方使用终极编码样板，支持普通导入、Shift 编码和替代配方；此前已编码错误的样板需要重新导入并编码。
+- 打开聊天时刷新当前可用的服务端命令，修复登录后获得 OP 权限时 `/bq_admin edit` 等命令标红或缺少补全的问题，同时保留已有详细语法与参数提示。
+- 修复奇点数据枢纽成型后保险库端口的外壳纹理和控制器图标，并将无线频率卡中的私人维度名称正确显示为“私人维度”。
+- 完善自动电路与虚拟模具的使用说明和配置说明，明确不消耗工具的样板需求及既有样板迁移方式。
 
 ### 1.6.3 更新
 

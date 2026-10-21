@@ -861,6 +861,8 @@ public class SingularityDataHub extends GTNGMultiBlockBase<SingularityDataHub>
             final IMetaTileEntity aMetaTileEntity = aTileEntity.getMetaTileEntity();
             if (aMetaTileEntity instanceof VaultPortHatch vaultPortHatch) {
                 if (portHatch != null) return false;
+                vaultPortHatch.updateTexture(aBaseCasingIndex);
+                vaultPortHatch.updateCraftingIcon(getMachineCraftingIcon());
                 portHatch = vaultPortHatch;
                 return true;
             }

@@ -38,6 +38,7 @@ public class GuiChatMixin extends GuiScreen {
       CommandSuggestions.CommandSuggestionsConfig config = new CommandSuggestions.CommandSuggestionsConfig(false, false, 1, 10, true, -805306368);
       this.brigo$commandSuggestions = new CommandSuggestions(this.mc, this, this.inputField, this.fontRendererObj, config);
       this.brigo$commandSuggestions.updateCommandInfo();
+      this.brigo$commandSuggestions.refreshCommands();
       this.brigo$lastText = this.inputField.getText();
    }
 

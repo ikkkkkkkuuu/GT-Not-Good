@@ -51,11 +51,12 @@ gradle.projectsEvaluated {
                 'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java'
         }
     }
-    root.tasks.named('runClient').configure {
+    root.tasks.matching { it.name in ['runClient', 'runClient17', 'runClient21', 'runClient25'] }.configureEach {
         dependsOn root.tasks.named('testClasses')
         classpath += root.files(root.layout.buildDirectory.dir('terminal-scroll-qa/test-classes'))
         workingDir root.file('run/terminal-scroll-check')
         systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.qa.workspace', root.projectDir.absolutePath
         systemProperty 'gtng.terminalScroll.qa', 'true'
         // Optional third-party sound downloads must not stall the isolated recipe checks indefinitely.
         systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
@@ -67,7 +68,7 @@ gradle.projectsEvaluated {
             root.file('build/terminal-scroll-qa').mkdirs()
 
             workingDir.mkdirs()
-            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\n', 'UTF-8')
+            new File(workingDir, 'options.txt').setText('lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\n', 'UTF-8')
             java.nio.file.Files.deleteIfExists(root.file('build/terminal-scroll-qa/result.txt').toPath())
             if (System.getProperty('os.name').startsWith('Windows')) {
                 new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',

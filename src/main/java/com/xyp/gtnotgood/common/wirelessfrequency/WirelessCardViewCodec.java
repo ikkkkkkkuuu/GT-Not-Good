@@ -10,6 +10,7 @@ import java.util.Objects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.DimensionManager;
 
 import galacticgreg.api.enums.DimensionDef;
@@ -45,8 +46,12 @@ public class WirelessCardViewCodec {
         for (Object key : dimensions.func_150296_c()) {
             String id = (String) key;
             String name = dimensions.getString(id);
-            if (name.equals("Personal World " + id)) name = "personalworld";
-            if (!name.isEmpty()) dimensions.setString(id, DimensionHelper.getDimLocalizedName(name));
+            if (name.equals("Personal World " + id) || name.equals("personalworld")) {
+                // #tr gtnotgood.wireless.gui.personal_world
+                // # Personal World
+                // # zh_CN 私人维度
+                dimensions.setString(id, StatCollector.translateToLocal("gtnotgood.wireless.gui.personal_world"));
+            } else if (!name.isEmpty()) dimensions.setString(id, DimensionHelper.getDimLocalizedName(name));
         }
         localizePosition(data, "source", dimensions);
         localizePosition(data, "groupPosition", dimensions);
