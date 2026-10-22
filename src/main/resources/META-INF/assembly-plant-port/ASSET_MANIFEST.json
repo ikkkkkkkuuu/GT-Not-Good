@@ -1,0 +1,590 @@
+{
+  "formatVersion": 1,
+  "component": "Mage Assembler and Superconducting Electromagnetic Factory",
+  "fixedGregTechTexturePage": 123,
+  "blockRegistryIds": [
+    "gtnotgood:assembly_plant_casing",
+    "gtnotgood:assembly_plant_glass"
+  ],
+  "variants": {
+    "0": "AdvancedAssemblyLineUnit",
+    "1": "SpacetimeAssemblyLineUnit",
+    "2": "LaminatedGlass",
+    "3": "FilterCasing",
+    "4": "PtfePipeCasing",
+    "5": "TemperedGlass",
+    "6": "MolybdenumDisilicideCoil",
+    "7": "ElectrolyticCell",
+    "8": "AdvancedAssemblyLineUnit, client active appearance",
+    "14": "MolybdenumDisilicideCoil, client active appearance",
+    "15": "ElectrolyticCell, client active appearance"
+  },
+  "activeCoilMechanism": "GT5-Unofficial native activeCoils/GTCoilTracker with IBlockWithActiveOffset=8. Server metadata remains inactive. Original GTCEu/GTL ActiveBlock animations and emissive layers are rendered with native GT textures; no custom world scan or modern shader.",
+  "energySupply": "Standard GT energy and exotic hatches, including native wireless energy hatches; no controller-owned wireless-network mode or direct energy-account debit.",
+  "officialPack": {
+    "version": "1.4.5.3",
+    "curseForgeFileId": 9238465,
+    "archiveSha256": "1c732d6b124732c3e3aede97f353910fc31873d9e26074891b2ca69dbcdee23b",
+    "license": "CC-BY-NC-SA-4.0",
+    "licenseSource": "Root LICENSE in the actual official archive."
+  },
+  "originalAssets": [
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/advanced_assembly_line_unit.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/advanced_assembly_line_unit.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "2c50e25063e3d5416e68841c8c721ee831d978e72b6e7cfd4110430b1ca3ed88",
+      "destinationSha256": "2c50e25063e3d5416e68841c8c721ee831d978e72b6e7cfd4110430b1ca3ed88"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/spacetime_assembly_line_unit.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/spacetime_assembly_line_unit.png",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "7c18a9b6f7053c6f13467c57b0ddea0b15f4a9a8cb1c048a93193e9dfef15737",
+      "destinationSha256": "7c18a9b6f7053c6f13467c57b0ddea0b15f4a9a8cb1c048a93193e9dfef15737"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/cleanroom/filter_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/filter_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "f6b89cfce8725d1d538d2ae1f23a5fafaf445c45c4ff960cc4a2bdbeb500d938",
+      "destinationSha256": "f6b89cfce8725d1d538d2ae1f23a5fafaf445c45c4ff960cc4a2bdbeb500d938"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/cleanroom/filter_casing.png.mcmeta",
+      "destination": "META-INF/assembly-plant-port/source-metadata/filter_casing.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "20af61cdba10e3e725b51514ad05fc71e22aafea88889e63f4259b5e288934b4",
+      "destinationSha256": "20af61cdba10e3e725b51514ad05fc71e22aafea88889e63f4259b5e288934b4"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/cleanroom/filter_casing_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/source_ctm/filter_casing_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "3b2fa32c14179f01487909b210852ef388ffae0c138c5d5dfc9e60a856bb781f",
+      "destinationSha256": "3b2fa32c14179f01487909b210852ef388ffae0c138c5d5dfc9e60a856bb781f"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/laminated_glass.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/laminated_glass.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "3dffcfdc590b6e945a0f2c4e0486ef31e773a5248b5dc8734c433661b64eef05",
+      "destinationSha256": "3dffcfdc590b6e945a0f2c4e0486ef31e773a5248b5dc8734c433661b64eef05"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/laminated_glass.png.mcmeta",
+      "destination": "META-INF/assembly-plant-port/source-metadata/laminated_glass.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "20b6e3af2746c8d328798919b81bd966cd280521d2afcb6649ffdd23aa3d8bdf",
+      "destinationSha256": "20b6e3af2746c8d328798919b81bd966cd280521d2afcb6649ffdd23aa3d8bdf"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/laminated_glass_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/source_ctm/laminated_glass_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "c5204794149175a118d8a5092c7dbfe67dd83774322a9b75f26e827a4fa05561",
+      "destinationSha256": "c5204794149175a118d8a5092c7dbfe67dd83774322a9b75f26e827a4fa05561"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/tempered_glass.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/tempered_glass.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "a955c5f7be3d0b175c1ba863c3e87b2dc50dcf4f67f36ab6ec17804ee2a9f4f6",
+      "destinationSha256": "a955c5f7be3d0b175c1ba863c3e87b2dc50dcf4f67f36ab6ec17804ee2a9f4f6"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/tempered_glass.png.mcmeta",
+      "destination": "META-INF/assembly-plant-port/source-metadata/tempered_glass.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "2751dde5158a11e0c626f661463858d58cfa70639a8c5aeaa4942f6f31b7a80a",
+      "destinationSha256": "2751dde5158a11e0c626f661463858d58cfa70639a8c5aeaa4942f6f31b7a80a"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/tempered_glass_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/source_ctm/tempered_glass_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "91243f008a2308572d922e1d6cfdf5e21b44e26958fb439adba5791ff2a3c435",
+      "destinationSha256": "91243f008a2308572d922e1d6cfdf5e21b44e26958fb439adba5791ff2a3c435"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/pipe/machine_casing_pipe_polytetrafluoroethylene.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/ptfe_pipe_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "67d6757bc7ce292b8304ae9c963b38ca8f798d3a815b140f3e607118923efa65",
+      "destinationSha256": "67d6757bc7ce292b8304ae9c963b38ca8f798d3a815b140f3e607118923efa65"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/coils/machine_coil_molybdenum_disilicide.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/molybdenum_disilicide_coil.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "49ad0a08226ec0a71544a74a45a980c339340fbec1b1688abfd7e554fc58f00c",
+      "destinationSha256": "49ad0a08226ec0a71544a74a45a980c339340fbec1b1688abfd7e554fc58f00c"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/coils/machine_coil_molybdenum_disilicide.png.mcmeta",
+      "destination": "META-INF/assembly-plant-port/source-metadata/molybdenum_disilicide_coil.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "1f8eb5fe9cad94eddd09cdf2363ece1eebc595be1e42d63393e960c556c8199f",
+      "destinationSha256": "1f8eb5fe9cad94eddd09cdf2363ece1eebc595be1e42d63393e960c556c8199f"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/coils/machine_coil_molybdenum_disilicide_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/source_ctm/molybdenum_disilicide_coil_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "1cd9f4483fc6c97b0310c32bd6504a43ccb2aa767608cb663d040d51f3efdb09",
+      "destinationSha256": "1cd9f4483fc6c97b0310c32bd6504a43ccb2aa767608cb663d040d51f3efdb09"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/coils/machine_coil_molybdenum_disilicide_bloom.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/molybdenum_disilicide_coil_bloom.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "a041da67c6646db71425096d6087d003cb98a0f7d3a15c28bf285c6410b14ce5",
+      "destinationSha256": "a041da67c6646db71425096d6087d003cb98a0f7d3a15c28bf285c6410b14ce5"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/coils/machine_coil_molybdenum_disilicide_bloom.png.mcmeta",
+      "destination": "META-INF/assembly-plant-port/source-metadata/molybdenum_disilicide_coil_bloom.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "dd81efdec56fefe2cc20a045d2e23ff26cbb7a66982df41eeacfc5148d8f0909",
+      "destinationSha256": "dd81efdec56fefe2cc20a045d2e23ff26cbb7a66982df41eeacfc5148d8f0909"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/coils/machine_coil_molybdenum_disilicide_bloom_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/source_ctm/molybdenum_disilicide_coil_bloom_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "d25b0c50a0541b87d635de9c455bb92cc2ed188ffcd0023988eb4e42e4238bd1",
+      "destinationSha256": "d25b0c50a0541b87d635de9c455bb92cc2ed188ffcd0023988eb4e42e4238bd1"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/coils/machine_coil_molybdenum_disilicide_bloom_ctm.png.mcmeta",
+      "destination": "META-INF/assembly-plant-port/source-metadata/molybdenum_disilicide_coil_bloom_ctm.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "281a27aad941eed764b2e10671c29fa532f91ec2bf4e870fe95667b3e2435722",
+      "destinationSha256": "281a27aad941eed764b2e10671c29fa532f91ec2bf4e870fe95667b3e2435722"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/unique/electrolytic_cell.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/electrolytic_cell.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "2aba36eda54cc536a3c363af9756c72d0db74137b7425c1eb3c501ebe692ae92",
+      "destinationSha256": "2aba36eda54cc536a3c363af9756c72d0db74137b7425c1eb3c501ebe692ae92"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/unique/electrolytic_cell_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/electrolytic_cell_active.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "4dc25856378faddf40b1c3c44ad3bc4d06e69a481eb86738c4099112e87bd390",
+      "destinationSha256": "4dc25856378faddf40b1c3c44ad3bc4d06e69a481eb86738c4099112e87bd390"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/unique/electrolytic_cell_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/electrolytic_cell_active.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "3f1154a76896c4171d9c066e2d1187252a3c34ac62677374e8a8dd80f90d395b",
+      "destinationSha256": "3f1154a76896c4171d9c066e2d1187252a3c34ac62677374e8a8dd80f90d395b"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/mechanic/machine_casing_assembly_line_bloom.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/advanced_assembly_line_unit_bloom.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "4e6359b3323264039e073f89beae48a979590a66b69137306180c893e18c35ac",
+      "destinationSha256": "4e6359b3323264039e073f89beae48a979590a66b69137306180c893e18c35ac"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/mechanic/machine_casing_assembly_line_bloom.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/advanced_assembly_line_unit_bloom.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "708dea15787a520b1fe121deb0988fad715f6b22329fda9e6cf1ab4f05b297f3",
+      "destinationSha256": "708dea15787a520b1fe121deb0988fad715f6b22329fda9e6cf1ab4f05b297f3"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/gcym/large_assembler/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/controller_front.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "d822fd6bdb33a5af84c3849827c629ff9c049aa34593a6a3788bb4f4d09c16c3",
+      "destinationSha256": "d822fd6bdb33a5af84c3849827c629ff9c049aa34593a6a3788bb4f4d09c16c3"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/gcym/large_assembler/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/controller_front_active.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "efeffcb35ecc91250dbca3dd7803bf376f04f2bbfc69c0067eabd9105abb96b5",
+      "destinationSha256": "efeffcb35ecc91250dbca3dd7803bf376f04f2bbfc69c0067eabd9105abb96b5"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/gcym/large_assembler/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/controller_front_active.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "9290d0968f9777942810ebeaf23fa7326090038da5e1bf8f606e7e9a0b6aea4b",
+      "destinationSha256": "9290d0968f9777942810ebeaf23fa7326090038da5e1bf8f606e7e9a0b6aea4b"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/gcym/large_assembler/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/controller_front_glow.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "d38166ba86583b65b5a34895daa9e00e16f258a3fe5cea7da31022a487c5a900",
+      "destinationSha256": "d38166ba86583b65b5a34895daa9e00e16f258a3fe5cea7da31022a487c5a900"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/gcym/large_assembler/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/controller_front_active_glow.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "94a31fa1073d2f179b3497660c1847a1e1c81003e7fc343f8aef3531113ae1b6",
+      "destinationSha256": "94a31fa1073d2f179b3497660c1847a1e1c81003e7fc343f8aef3531113ae1b6"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/gcym/large_assembler/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/assemblyplant/controller_front_active_glow.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "9290d0968f9777942810ebeaf23fa7326090038da5e1bf8f606e7e9a0b6aea4b",
+      "destinationSha256": "9290d0968f9777942810ebeaf23fa7326090038da5e1bf8f606e7e9a0b6aea4b"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/models/block/variant/advanced_assembly_line_unit.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtlcore/gtlcore/models/block/variant/advanced_assembly_line_unit.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "a4fc0aaaeb822ffc5e932f13090c3154d65b772d4b052e91b53f7ca4e82affae",
+      "destinationSha256": "a4fc0aaaeb822ffc5e932f13090c3154d65b772d4b052e91b53f7ca4e82affae"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/models/block/variant/advanced_assembly_line_unit_active.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtlcore/gtlcore/models/block/variant/advanced_assembly_line_unit_active.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "761ab923a4b97bed9f543cb5e233ffc9a7448c40d36ac88f1f57838e2cb2ad08",
+      "destinationSha256": "761ab923a4b97bed9f543cb5e233ffc9a7448c40d36ac88f1f57838e2cb2ad08"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/generated/resources/assets/gtceu/blockstates/electrolytic_cell.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtceu/gtceu/blockstates/electrolytic_cell.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "1b328a311cc7f65b591cae4f1bc748b5e9d2419ee4a475abd1bbdb3080b9218f",
+      "destinationSha256": "1b328a311cc7f65b591cae4f1bc748b5e9d2419ee4a475abd1bbdb3080b9218f"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/generated/resources/assets/gtceu/blockstates/molybdenum_disilicide_coil_block.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtceu/gtceu/blockstates/molybdenum_disilicide_coil_block.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "6ac56e36ec17d73b1c5d43722ccfdaf0ded47e6773fff5138458c60c93202d68",
+      "destinationSha256": "6ac56e36ec17d73b1c5d43722ccfdaf0ded47e6773fff5138458c60c93202d68"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/generated/resources/assets/gtceu/models/block/filter_casing.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtceu/gtceu/models/block/filter_casing.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "5312f24bb9acca33ae557ce3a292a88d3fc186479511b0d05e37dcd064b7aef6",
+      "destinationSha256": "5312f24bb9acca33ae557ce3a292a88d3fc186479511b0d05e37dcd064b7aef6"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/generated/resources/assets/gtceu/models/block/laminated_glass.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtceu/gtceu/models/block/laminated_glass.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "a5e881bb16d766202e00a82e0869dc324a61288003c866a85e8c28761f87a593",
+      "destinationSha256": "a5e881bb16d766202e00a82e0869dc324a61288003c866a85e8c28761f87a593"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/generated/resources/assets/gtceu/models/block/ptfe_pipe_casing.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtceu/gtceu/models/block/ptfe_pipe_casing.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "52fa0a3958320c11d408aa698828cb73a4fcdc82f6226a74b50ef1fbffe96847",
+      "destinationSha256": "52fa0a3958320c11d408aa698828cb73a4fcdc82f6226a74b50ef1fbffe96847"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/generated/resources/assets/gtceu/models/block/tempered_glass.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtceu/gtceu/models/block/tempered_glass.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "a924a8dece2a69c1eb3a6f65e6e26db1a9b49da8c5297d685eba38ebfa26fb0d",
+      "destinationSha256": "a924a8dece2a69c1eb3a6f65e6e26db1a9b49da8c5297d685eba38ebfa26fb0d"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/models/block/variant/electrolytic_cell.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtceu/gtceu/models/block/variant/electrolytic_cell.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "89ec9f6f172f22be58583afd2a1ffdc6352a994368e8d4ca00d241bd18ec9162",
+      "destinationSha256": "89ec9f6f172f22be58583afd2a1ffdc6352a994368e8d4ca00d241bd18ec9162"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/models/block/variant/electrolytic_cell_active.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtceu/gtceu/models/block/variant/electrolytic_cell_active.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "11c081f200a815d47f8fb1a1260bc933fc0c072d8a9eec866a435497f387235d",
+      "destinationSha256": "11c081f200a815d47f8fb1a1260bc933fc0c072d8a9eec866a435497f387235d"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/models/block/variant/molybdenum_disilicide_coil_block.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtceu/gtceu/models/block/variant/molybdenum_disilicide_coil_block.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "15a78d1d06e439d48af8fcfd0e4caa19b415433669795f4a2a5bb6d6f86c81ed",
+      "destinationSha256": "15a78d1d06e439d48af8fcfd0e4caa19b415433669795f4a2a5bb6d6f86c81ed"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/models/block/variant/molybdenum_disilicide_coil_block_active.json",
+      "destination": "META-INF/assembly-plant-port/source-models/gtceu/gtceu/models/block/variant/molybdenum_disilicide_coil_block_active.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "78a26bf8c661e225609e8ac29b87ad62947ef7cbb15f7ef822ea00eacea520ef",
+      "destinationSha256": "78a26bf8c661e225609e8ac29b87ad62947ef7cbb15f7ef822ea00eacea520ef"
+    }
+  ],
+  "reusedVariants": [
+    {
+      "variant": "FieldExtruderCasing.Iridium",
+      "sourceManifest": "META-INF/field-extruder-port/ASSET_MANIFEST.json"
+    },
+    {
+      "variant": "ParticleColliderCasing.Lafium / AcceleratedPipeline",
+      "sourceManifest": "META-INF/particle-collider-port/ASSET_MANIFEST.json"
+    },
+    {
+      "variant": "DimensionalFocusCasing.ImprovedSuperconductor",
+      "sourceManifest": "META-INF/dimensional-focus-port/ASSET_MANIFEST.json",
+      "modifications": "Existing block gains IBlockWithActiveOffset=8; original textures and metadata are unchanged."
+    }
+  ],
+  "referencedControllerOverlay": {
+    "destinationRoot": "assets/gtnotgood/textures/blocks/fieldextruder/",
+    "sourceManifest": "META-INF/field-extruder-port/ASSET_MANIFEST.json",
+    "names": [
+      "controller_front.png",
+      "controller_front_active.png",
+      "controller_front_glow.png",
+      "controller_front_active_glow.png",
+      "controller_front_glow.png.mcmeta",
+      "controller_front_active_glow.png.mcmeta"
+    ]
+  },
+  "derivedConnectedTexturesManifest": "META-INF/assembly-plant-port/CTM_MANIFEST.json",
+  "derivedConnectedTexturesRoot": "assets/gtnotgood/textures/blocks/assemblyplant",
+  "derivedConnectedTexturesLicense": "LGPL-3.0",
+  "offlineLayoutSource": {
+    "source": "https://github.com/Low-Drag-MC/LDLib-MultiLoader",
+    "revision": "1d4e4390ae58d16038845c651e122185c29f334b",
+    "sourcePaths": [
+      "common/src/main/java/com/lowdragmc/lowdraglib/client/model/custommodel/Connections.java",
+      "common/src/main/java/com/lowdragmc/lowdraglib/client/bakedpipeline/Submap.java"
+    ],
+    "license": "GPL-3.0",
+    "generator": "reference/assembly-plant-port/generate-connected-textures.py"
+  },
+  "codeRecords": [
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/java/org/gtlcore/gtlcore/common/data/machines/structure/MultiBlockMachineAStructureA.java",
+      "sourceConstant": "MAGE_ASSEMBLER",
+      "sourceSha256": "2d4d465c63fcb2473ebc352c0f9673415136529136576e1e1be47a76909028ec",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/MageAssemblerStructure.java",
+      "license": "LGPL-3.0-only",
+      "modifications": "Original geometry preserved by lossless slice grouping, controller substitution and StructureLib coordinate conversion.",
+      "reference": "reference/ASSEMBLY_ELECTROMAGNETIC_STRUCTURES.md"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/java/org/gtlcore/gtlcore/common/data/machines/structure/MultiBlockMachineAStructureC.java",
+      "sourceConstant": "SUPERCONDUCTING_ELECTROMAGNETISM",
+      "sourceSha256": "45a9712ce533ac8627362e5ba8d80d976065bb94812b911210d0d1c059f7f5b4",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/SuperconductingElectromagneticStructure.java",
+      "license": "LGPL-3.0-only",
+      "modifications": "Original geometry preserved by lossless slice grouping, controller substitution and StructureLib coordinate conversion.",
+      "reference": "reference/ASSEMBLY_ELECTROMAGNETIC_STRUCTURES.md"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/server_scripts/gtceu.js",
+      "sourceLineRanges": [
+        "2170-2194",
+        "3110-3118",
+        "11998-12017"
+      ],
+      "sourceSha256": "15b5c81812cdd02a800ff05767df5e84ab3e50c642f1111d5ea2c18acfdfeba4",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/machine/MageAssemblerRecipes.java",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Native GTNH controller ingredients and advanced/spacetime assembly line unit recipes; progression mapped to installed native materials.",
+      "reference": "reference/assembly-plant-port/RECIPE_ADAPTATION.md"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/server_scripts/gtceu.js",
+      "sourceLineRanges": [
+        "2248-2269",
+        "17211-17215"
+      ],
+      "sourceSha256": "15b5c81812cdd02a800ff05767df5e84ab3e50c642f1111d5ea2c18acfdfeba4",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/machine/SuperconductingElectromagneticRecipes.java",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Native GTNH controller and air-to-nitric-oxide lightning recipe; preserves source quantities and voltage stages.",
+      "reference": "reference/assembly-plant-port/RECIPE_ADAPTATION.md"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/java/org/gtlcore/gtlcore/data/recipe/Misc.java",
+      "sourceLineRanges": [
+        "192-198"
+      ],
+      "sourceSha256": "87f35c68442d7622ba737c547031ff835c87c6872a3d3bdf984801a9419c4d7e",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/machine/LightningProcessorRecipes.java",
+      "license": "LGPL-3.0-only",
+      "modifications": "Ender pearl lightning-processing recipe mapped to native GTNH materials and power units.",
+      "reference": "reference/assembly-plant-port/RECIPE_ADAPTATION.md"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/java/com/gregtechceu/gtceu/data/recipe/misc/GCyMRecipes.java",
+      "sourceLineRanges": [
+        "209-223"
+      ],
+      "sourceSha256": "547c226b065bcbb1b5bc8e356094a4485d4d82620abe36c429a96eaf821b9975",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/machine/AssemblyPlantCasingRecipes.java",
+      "license": "LGPL-3.0-only",
+      "modifications": "Electrolytic-cell and molybdenum-disilicide coil recipes mapped to native GTNH ingredients; native equivalent blocks convert to preserved-visual variants.",
+      "reference": "reference/assembly-plant-port/RECIPE_ADAPTATION.md"
+    }
+  ],
+  "licenseRecords": [
+    {
+      "destination": "META-INF/assembly-plant-port/LICENSE-GregTech-Leisure-CC-BY-NC-SA-4.0.txt",
+      "sha256": "616cfe2a42f376776d08de3c361320e0e10d27388495d331d586540d05a59f8e"
+    },
+    {
+      "destination": "META-INF/assembly-plant-port/LICENSE-GTCEu-LGPL-3.0.txt",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "destination": "META-INF/assembly-plant-port/LICENSE-GTLCore-LGPL-3.0.txt",
+      "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+    },
+    {
+      "destination": "META-INF/assembly-plant-port/LICENSE-LDLib-GPL-3.0.txt",
+      "sha256": "fdfa87e04c2ce5c64a5edfc39aa874a6b04d795fa863089780969342ea8c8534"
+    }
+  ]
+}

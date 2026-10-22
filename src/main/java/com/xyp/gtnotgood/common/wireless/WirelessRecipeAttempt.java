@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.common.machines.hatch.CrossRecipeWirelessEnergyHatch;
+import com.xyp.gtnotgood.common.machines.processing.ModularProcessingLogic;
 import com.xyp.gtnotgood.mixins.late.gregtech.wireless.WirelessProcessingAccess;
 
 import gregtech.api.logic.ProcessingLogic;
@@ -79,6 +80,7 @@ public final class WirelessRecipeAttempt {
 
     /** Returns null outside this scheduler so every unrelated machine retains its original ProcessingLogic. */
     public static CheckRecipeResult intercept(ProcessingLogic logic) {
+        if (logic instanceof ModularProcessingLogic modular && modular.isPreparingModuleRecipe()) return null;
         WirelessRecipeAttempt attempt = current();
         if (
             attempt == null

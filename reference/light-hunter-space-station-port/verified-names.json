@@ -1,0 +1,50 @@
+{
+  "reference\\light-hunter-space-station-port\\upstream\\gtceu\\src\\generated\\resources\\assets\\gtceu\\lang\\en_us.json": {
+    "block.gtceu.advanced_computer_casing": "Advanced Computer Casing",
+    "block.gtceu.computer_heat_vent": "Computer Heat Vent",
+    "block.gtceu.high_power_casing": "High Power Casing",
+    "block.gtceu.uhv_machine_casing": "UHV Machine Casing",
+    "block.gtceu.uhv_ultimate_battery": "UHV Ultimate Capacitor",
+    "block.gtceu.uiv_machine_casing": "UIV Machine Casing",
+    "block.gtceu.uxv_machine_casing": "UXV Machine Casing"
+  },
+  "reference\\light-hunter-space-station-port\\upstream\\gtceu\\src\\main\\resources\\assets\\gtceu\\lang\\zh_cn.json": {
+    "block.gtceu.advanced_computer_casing": "高级计算机外壳",
+    "block.gtceu.computer_heat_vent": "计算机散热口",
+    "block.gtceu.high_power_casing": "高能机器外壳",
+    "block.gtceu.uhv_machine_casing": "§4UHV§r机械方块",
+    "block.gtceu.uhv_ultimate_battery": "§4UHV§r终极电池",
+    "block.gtceu.uiv_machine_casing": "§2UIV§r机械方块",
+    "block.gtceu.uxv_machine_casing": "§eUXV§r机械方块"
+  },
+  "reference\\light-hunter-space-station-port\\upstream\\gtlcore\\src\\main\\resources\\assets\\gtlcore\\lang\\en_us.json": {
+    "block.gtlcore.dragon_strength_tritanium_casing": "Dragon Strength Tritanium Machine Casing",
+    "block.gtlcore.echo_casing": "Echo Reinforced Machine Casing",
+    "block.gtlcore.fusion_casing_mk5": "Fusion Machine Casing MK-V",
+    "block.gtlcore.hyper_core": "Hyper Core",
+    "block.gtlcore.super_computation_component": "Super Computation Component",
+    "block.gtlcore.ultimate_stellar_containment_casing": "Ultimate Stellar Containment Casing",
+    "block.gtlcore.uxv_hermetic_casing": "Hermetic Machine Casing XII"
+  },
+  "reference\\light-hunter-space-station-port\\upstream\\gtlcore\\src\\main\\resources\\assets\\gtlcore\\lang\\zh_cn.json": {
+    "block.gtlcore.dragon_strength_tritanium_casing": "龙之力量三钛合金机械方块",
+    "block.gtlcore.echo_casing": "回响强化机械方块",
+    "block.gtlcore.fusion_casing_mk5": "聚变机械方块 MK-V",
+    "block.gtlcore.hyper_core": "超能核心",
+    "block.gtlcore.super_computation_component": "超级计算机组件",
+    "block.gtlcore.ultimate_stellar_containment_casing": "终极恒星热力容器",
+    "block.gtlcore.uxv_hermetic_casing": "密封机械方块 XII"
+  },
+  ".minecraft/kubejs/assets/kubejs/lang/en_us.json": {
+    "block.kubejs.force_field_glass": "Force Field Glass",
+    "block.kubejs.module_connector": "Module Connector",
+    "block.kubejs.neutronium_pipe_casing": "Neutronium Pipe Casing",
+    "block.kubejs.restraint_device": "Restraint Device"
+  },
+  ".minecraft/kubejs/assets/kubejs/lang/zh_cn.json": {
+    "block.kubejs.force_field_glass": "力场玻璃",
+    "block.kubejs.module_connector": "太空电梯模块连接器",
+    "block.kubejs.neutronium_pipe_casing": "中子素管道方块",
+    "block.kubejs.restraint_device": "力场约束装置"
+  }
+}

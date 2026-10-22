@@ -1,0 +1,246 @@
+{
+  "formatVersion": 1,
+  "originalAssets": [
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/dimensionally_transcendent_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/dimensionally_transcendent_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "934717770330f613b00aafb77275b8248d6e395350d5528d0a9801f116385028",
+      "destinationSha256": "934717770330f613b00aafb77275b8248d6e395350d5528d0a9801f116385028"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/dimensionally_transcendent_casing.png.mcmeta",
+      "destination": "META-INF/dimensional-focus-port/source-metadata/dimensionally_transcendent_casing.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "4daefc99104170c849cab23f29a006e5ff200daeeeedf78f54309494b1a5b937",
+      "destinationSha256": "4daefc99104170c849cab23f29a006e5ff200daeeeedf78f54309494b1a5b937"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/dimensionally_transcendent_casing_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/source_ctm/dimensionally_transcendent_casing_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "bcb4cb9e301f5d7d7a7d143360cda5a973d31aa81023082dfdca9dea632ec875",
+      "destinationSha256": "bcb4cb9e301f5d7d7a7d143360cda5a973d31aa81023082dfdca9dea632ec875"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/dimension_injection_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/dimension_injection_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "2b9714c9e7f9e8aee9398d718bcf218dd02ecd98c6b1c1c895c7356026ece5fb",
+      "destinationSha256": "2b9714c9e7f9e8aee9398d718bcf218dd02ecd98c6b1c1c895c7356026ece5fb"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/dimension_injection_casing.png.mcmeta",
+      "destination": "META-INF/dimensional-focus-port/source-metadata/dimension_injection_casing.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "adb14d3c214763e01bf41fa56998793241d73467dc210a567a9bc0c16a1fbf79",
+      "destinationSha256": "adb14d3c214763e01bf41fa56998793241d73467dc210a567a9bc0c16a1fbf79"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/dimension_injection_casing_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/source_ctm/dimension_injection_casing_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "7be6fbe113bef6f2fab955c52c31880fe513c6f76b8a4c7c9e7cf41a4b1a2799",
+      "destinationSha256": "7be6fbe113bef6f2fab955c52c31880fe513c6f76b8a4c7c9e7cf41a4b1a2799"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/improved_superconductor_coil.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/improved_superconductor_coil.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "6e1cb743524e091ec6081bc52681f023dc6bccec4966b02a112b2806b558c1f6",
+      "destinationSha256": "6e1cb743524e091ec6081bc52681f023dc6bccec4966b02a112b2806b558c1f6"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/improved_superconductor_coil.png.mcmeta",
+      "destination": "META-INF/dimensional-focus-port/source-metadata/improved_superconductor_coil.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "e596440a7953a236fd3c40bd09f704d28e090a660a7c54626ac705b22b56a2d3",
+      "destinationSha256": "e596440a7953a236fd3c40bd09f704d28e090a660a7c54626ac705b22b56a2d3"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/improved_superconductor_coil_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/source_ctm/improved_superconductor_coil_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "bce827ba1cb270de381a167ab440c964a9a50a47dbac9aa61f965bb32af409b1",
+      "destinationSha256": "bce827ba1cb270de381a167ab440c964a9a50a47dbac9aa61f965bb32af409b1"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/improved_superconductor_coil_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/improved_superconductor_coil_active.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "af54a046419ff7fee1218923b3323041737c573e8d009046accce8a73f865ff8",
+      "destinationSha256": "af54a046419ff7fee1218923b3323041737c573e8d009046accce8a73f865ff8"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/improved_superconductor_coil_active.png.mcmeta",
+      "destination": "META-INF/dimensional-focus-port/source-metadata/improved_superconductor_coil_active.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "032259dcd8fd3e358fd8e7dd4f150b4bdca5ac889bbf7b4d373322658f6bebd8",
+      "destinationSha256": "032259dcd8fd3e358fd8e7dd4f150b4bdca5ac889bbf7b4d373322658f6bebd8"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/improved_superconductor_coil_active_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/source_ctm/improved_superconductor_coil_active_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "b667c35b3b9c1ddb9a57672c53d3ce0bb1c2162da94ff1d4c2e2eabe5b119101",
+      "destinationSha256": "b667c35b3b9c1ddb9a57672c53d3ce0bb1c2162da94ff1d4c2e2eabe5b119101"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/improved_superconductor_coil_active_ctm.png.mcmeta",
+      "destination": "META-INF/dimensional-focus-port/source-metadata/improved_superconductor_coil_active_ctm.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "d9addead58bda82224db4406d06a1ba0ac8b9366e97fb7035dc50c5e50d0a17f",
+      "destinationSha256": "d9addead58bda82224db4406d06a1ba0ac8b9366e97fb7035dc50c5e50d0a17f"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/fusion_glass.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/fusion_glass.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "cbb80e845b549a836407ae0e2351bbd257c0a8ba3c269b585acc0352e7c32a8c",
+      "destinationSha256": "cbb80e845b549a836407ae0e2351bbd257c0a8ba3c269b585acc0352e7c32a8c"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/fusion_glass.png.mcmeta",
+      "destination": "META-INF/dimensional-focus-port/source-metadata/fusion_glass.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "2d7d41ecbbc9282b36e5fb196c6c8d5684758e496961c090ff6f771535086a0a",
+      "destinationSha256": "2d7d41ecbbc9282b36e5fb196c6c8d5684758e496961c090ff6f771535086a0a"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/fusion_glass_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/source_ctm/fusion_glass_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "9f3b474c274efee726c324ea86d8787d7305d165b50b5c07b29a0938f0f3c9f8",
+      "destinationSha256": "9f3b474c274efee726c324ea86d8787d7305d165b50b5c07b29a0938f0f3c9f8"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/gcym/laser_safe_engraving_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/laser_safe_engraving_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "394ac5e86efc2ba4210e1586462c798a9dbf18d49d987dc103820009c5fa973a",
+      "destinationSha256": "394ac5e86efc2ba4210e1586462c798a9dbf18d49d987dc103820009c5fa973a"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/gcym/laser_safe_engraving_casing.png.mcmeta",
+      "destination": "META-INF/dimensional-focus-port/source-metadata/laser_safe_engraving_casing.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "1df8283d97a8f44a31826655325e75371c2ee44d6912116ecfbb6e6fd08800ba",
+      "destinationSha256": "1df8283d97a8f44a31826655325e75371c2ee44d6912116ecfbb6e6fd08800ba"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/gcym/laser_safe_engraving_casing_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/source_ctm/laser_safe_engraving_casing_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "60bd7b4f6095629040f4aa10c90ce5a1c05a542400f336e5e28560cc5439fe9c",
+      "destinationSha256": "60bd7b4f6095629040f4aa10c90ce5a1c05a542400f336e5e28560cc5439fe9c"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "LICENSE",
+      "destination": "META-INF/dimensional-focus-port/LICENSE-GTLCore-LGPL-3.0.txt",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "destinationSha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "LICENSE",
+      "destination": "META-INF/dimensional-focus-port/LICENSE-GTCEu-LGPL-3.0.txt",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "destinationSha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/molecular_coil.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/molecular_coil.png",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "384ae888e4660e1882a56ee9e77a3a5caf3525b22f7a04f908c2e11b41dc03fc",
+      "destinationSha256": "384ae888e4660e1882a56ee9e77a3a5caf3525b22f7a04f908c2e11b41dc03fc"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/molecular_coil_top.png",
+      "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/molecular_coil_top.png",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "6433652873eb0bf09d83d4f2d3d277374288835c437778d5f0304c91f73b32cb",
+      "destinationSha256": "6433652873eb0bf09d83d4f2d3d277374288835c437778d5f0304c91f73b32cb"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": "LICENSE",
+      "destination": "META-INF/dimensional-focus-port/LICENSE-GTL-pack-CC-BY-NC-SA-4.0.txt",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "616cfe2a42f376776d08de3c361320e0e10d27388495d331d586540d05a59f8e",
+      "destinationSha256": "616cfe2a42f376776d08de3c361320e0e10d27388495d331d586540d05a59f8e"
+    }
+  ],
+  "officialPackSha256": "1c732d6b124732c3e3aede97f353910fc31873d9e26074891b2ca69dbcdee23b"
+}

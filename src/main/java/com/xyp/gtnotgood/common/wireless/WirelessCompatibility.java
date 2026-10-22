@@ -14,6 +14,8 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import com.xyp.gtnotgood.GTNotGood;
+import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGModularMachineBase;
+import com.xyp.gtnotgood.common.machines.processing.ModularProcessingLogic;
 
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.logic.ProcessingLogic;
@@ -59,6 +61,7 @@ public final class WirelessCompatibility {
     private WirelessCompatibility() {}
 
     public static boolean supports(MTEMultiBlockBase machine, ProcessingLogic logic) {
+        if (machine instanceof GTNGModularMachineBase<?>) return logic instanceof ModularProcessingLogic;
         return logic != null && CONTROLLER_SUPPORT.get(machine.getClass()) && LOGIC_SUPPORT.get(logic.getClass());
     }
 

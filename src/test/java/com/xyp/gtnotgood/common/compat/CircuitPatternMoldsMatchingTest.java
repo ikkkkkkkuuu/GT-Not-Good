@@ -6,14 +6,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.xyp.gtnotgood.utils.HeadlessItemRegistry;
 
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTRecipe.RecipeItemInput;
@@ -25,18 +25,11 @@ public class CircuitPatternMoldsMatchingTest {
     private static final Item ALTERNATIVE = new Item();
     private static final Item OTHER_COLOR = new Item();
     private static Unsafe unsafe;
-    private static Item originalFeather;
 
     @BeforeClass
     public static void initializeNativeMatching() throws Exception {
         unsafe = (Unsafe) field(Unsafe.class, "theUnsafe").get(null);
-        originalFeather = Items.feather;
-        if (originalFeather == null) setFeather(new Item());
-    }
-
-    @AfterClass
-    public static void restoreVanillaItem() throws Exception {
-        if (originalFeather == null) setFeather(null);
+        HeadlessItemRegistry.bootstrap();
     }
 
     @Test
@@ -97,11 +90,6 @@ public class CircuitPatternMoldsMatchingTest {
         field(GTRecipe.class, "inputsAtCacheTime").set(recipe, recipe.mInputs);
         field(GTRecipe.class, "mergedInputCache").set(recipe, inputs);
         return recipe;
-    }
-
-    private static void setFeather(Item item) throws Exception {
-        Field feather = field(Items.class, "feather");
-        unsafe.putObject(unsafe.staticFieldBase(feather), unsafe.staticFieldOffset(feather), item);
     }
 
     private static Field field(Class<?> type, String name) throws Exception {

@@ -1,0 +1,1244 @@
+{
+  "format": 1,
+  "raw_sources": [
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "LICENSE",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/LICENSE",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/LICENSE",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/accelerator_electromagnetic_coil_constraint_casing_uhv.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/accelerator_electromagnetic_coil_constraint_casing_uhv.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/accelerator_electromagnetic_coil_constraint_casing_uhv.json",
+      "sha256": "eda67d3f7ff843d3963da0b58d97112c23c54638043c4a911a7f4848e8708604",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/accelerator_electromagnetic_coil_constraint_casing_uhv_active.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/accelerator_electromagnetic_coil_constraint_casing_uhv_active.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/accelerator_electromagnetic_coil_constraint_casing_uhv_active.json",
+      "sha256": "4abe5f5bb24941105d5c670380b637bb726de0a51f34c3f787f40650db2ecaad",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/amprosium_gearbox.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/amprosium_gearbox.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/amprosium_gearbox.json",
+      "sha256": "ae0057581cd2a40803749e96351636ea4d710f56d70cfa1e216f56b54a75c26e",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/amprosium_pipe_casing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/amprosium_pipe_casing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/amprosium_pipe_casing.json",
+      "sha256": "106cea34434ecefd2dbf951609ae5598b57372c8597baa374e5a4b6f95087989",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/bioactive_mechanical_casing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/bioactive_mechanical_casing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/bioactive_mechanical_casing.json",
+      "sha256": "bd6a25be90ea08439aff9a2c02cdc83f3601baae2b309340356413d58d477e1b",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/dimensional_bridge_casing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/dimensional_bridge_casing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/dimensional_bridge_casing.json",
+      "sha256": "e2a584ff63ae298597ba63cb3bace862c4a4692e704b60eec6448e2ca56cce21",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/enhance_hyper_mechanical_casing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/enhance_hyper_mechanical_casing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/enhance_hyper_mechanical_casing.json",
+      "sha256": "ccdad6331c641f8212fdb8dd2370c5566d2880c7be1b68d0339bb59fbf7f1262",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/extreme_density_casing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/extreme_density_casing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/extreme_density_casing.json",
+      "sha256": "a903f873908b011dd25909914356e881ef1761a3957470fc20c586ea3206a030",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/fusion_casing_mk4.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/fusion_casing_mk4.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/fusion_casing_mk4.json",
+      "sha256": "f0afe730f9bf8b7fe411542a439072073cab3832c129300fb3c65961fc755dd2",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/gravity_stabilization_casing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/gravity_stabilization_casing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/gravity_stabilization_casing.json",
+      "sha256": "bf043334ec6d822978c11609af44e73d3cfbb3dd11df9d513b408da90c776949",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/high_pressure_pipe_casing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/high_pressure_pipe_casing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/high_pressure_pipe_casing.json",
+      "sha256": "da0b3012270554ada20e8b37dc5b137d9199765536a5c7dc3df46b531bc51cee",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/high_strength_support_spindle.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/high_strength_support_spindle.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/high_strength_support_spindle.json",
+      "sha256": "4208f7937477f77898db323fdd0da02bf59e6720c60b7af581d8490200108ced",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/industrial_frameless_glass.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/industrial_frameless_glass.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/industrial_frameless_glass.json",
+      "sha256": "8bd3be54449edccbdfeb65f47825f983db3c67b32d7cdcdf5cd32a6556002c29",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/oil_gas_transportation_pipe_casing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/oil_gas_transportation_pipe_casing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/oil_gas_transportation_pipe_casing.json",
+      "sha256": "eeab383e03c310af17d1ce15e2ee8a9ab411f2562df2e679a1d44263a82626fb",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/plasma_heater_casing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/plasma_heater_casing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/plasma_heater_casing.json",
+      "sha256": "56f59f14188de842da1c45a26ba84aa55e0abf5d7f1a1e2e71d713d2045e4d05",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/pps_corrosion_resistant_mechanical_housing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/pps_corrosion_resistant_mechanical_housing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/pps_corrosion_resistant_mechanical_housing.json",
+      "sha256": "5ba4dc93b337a4bb8530cef9a7c70828173296a34bf055aca48dd48ea85dec77",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/pressure_containment_casing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/pressure_containment_casing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/pressure_containment_casing.json",
+      "sha256": "c442e7c7826998a6caccb69f12aa297752c85319e671852a505d15820ce99b62",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/quantum_glass.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/quantum_glass.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/quantum_glass.json",
+      "sha256": "8a03b355271632940e5f5731b1682349d9dd845cc2f22cff4c38b812b020fe36",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/radiation_absorbent_casing.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/radiation_absorbent_casing.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/radiation_absorbent_casing.json",
+      "sha256": "6cb50f2cb67af4ec8d2015b3deb6f2667c823a0eb3d0a3971b3086be209a58f7",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/shielded_accelerator.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/shielded_accelerator.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/shielded_accelerator.json",
+      "sha256": "5255dcf98bbbbaadc04fc0087fe5ee34fa4fc609042a1ee46c02fa73e0075d48",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/generated/resources/assets/gtocore/models/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/generated/resources/assets/gtocore/models/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/generated/resources/assets/gtocore/models/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block.json",
+      "sha256": "90d292beb4d8c195d9dd4d4d7ff58c355ce716be132a7f6c3920375c0033b51d",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/client/renderer/fx/AbstractFX.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/fx/AbstractFX.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/client/renderer/fx/AbstractFX.java",
+      "sha256": "f602a92826cd3799429945730ab792e694ebd1568bc65cfa25545481f0020a16",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/client/renderer/fx/BlackHole.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/fx/BlackHole.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/client/renderer/fx/BlackHole.java",
+      "sha256": "0c13f707c5cae3f42eb4120bc604a8afe742853f762c8dd5b73dddfd90639e52",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/client/renderer/fx/FXManager.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/fx/FXManager.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/client/renderer/fx/FXManager.java",
+      "sha256": "df05ea866ea800af4195bd3d4cd8a3d9b9103cf2d95007a3d172060c49845acb",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/client/renderer/fx/ScreenSpaceMeshRenderer.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/fx/ScreenSpaceMeshRenderer.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/client/renderer/fx/ScreenSpaceMeshRenderer.java",
+      "sha256": "a99f15648d004a5b21fda5aedcef6991f024f345eac7a3d410ca2ac07049d472",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/client/renderer/fx/ScreenSpaceProjection.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/fx/ScreenSpaceProjection.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/client/renderer/fx/ScreenSpaceProjection.java",
+      "sha256": "e2bdfee7d186aae686b8211097a1c0cc83b9d303e44b845f052a2004ac2aa1d5",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/client/renderer/fx/ScreenSpaceSceneCapture.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/fx/ScreenSpaceSceneCapture.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/client/renderer/fx/ScreenSpaceSceneCapture.java",
+      "sha256": "c1d22ada4090eaa5bf750747909617af47b147bbf2e0d8d7552b81ccbbd7bb52",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/client/renderer/GTORenderTypes.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/GTORenderTypes.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/client/renderer/GTORenderTypes.java",
+      "sha256": "6936d8927df050a7f841252689bd503f26d0c2be5a3ed80c75e62f1206f51ab3",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/client/renderer/machine/KerrNewmanHomogenizerRenderer.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/machine/KerrNewmanHomogenizerRenderer.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/client/renderer/machine/KerrNewmanHomogenizerRenderer.java",
+      "sha256": "26c59a91e4db3a26576b26b113da6af5f15d39335352f8721567476642ab1d8c",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/client/renderer/RenderHelper.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/RenderHelper.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/client/renderer/RenderHelper.java",
+      "sha256": "aed3f97a3038990c2cdabfe51bf0db05c4b615b051e3de3b5fd691f820e78c1f",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/common/data/GTOBlocks.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/common/data/GTOBlocks.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/common/data/GTOBlocks.java",
+      "sha256": "74c7443b986ed3a65a50cbe36331774ffa57d9e7e1b6d05fc07d43c800a447cd",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/common/data/machines/MultiBlockH.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/common/data/machines/MultiBlockH.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/common/data/machines/MultiBlockH.java",
+      "sha256": "ee4576c9e7b424bc8aa27002b31c1084f25f00b6db95adc710565d155c8b576d",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/common/machine/multiblock/electric/KerrNewmanHomogenizer.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/common/machine/multiblock/electric/KerrNewmanHomogenizer.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/common/machine/multiblock/electric/KerrNewmanHomogenizer.java",
+      "sha256": "83f80bf8c3204ef4c0064513c34245f93cf4b49e99455b746f4c8dbb644f231b",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/data/recipe/classified/ArcFurnace.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/data/recipe/classified/ArcFurnace.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/data/recipe/classified/ArcFurnace.java",
+      "sha256": "68d310baef9d8c530bbfc97aa9bae21067a5d7fd1fdc9a90ee57ee175e9a1f95",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/data/recipe/classified/Assembler.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/data/recipe/classified/Assembler.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/data/recipe/classified/Assembler.java",
+      "sha256": "9da2f4d75437919b91d4be2b06556c9dacfa997e563022ae2382a741767f41c4",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/data/recipe/classified/AssemblerA.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/data/recipe/classified/AssemblerA.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/data/recipe/classified/AssemblerA.java",
+      "sha256": "3a5880e61b32d24bea3f989a58d983c6ae69855e51b78abd54c88fb941633963",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/data/recipe/classified/AssemblyLine.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/data/recipe/classified/AssemblyLine.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/data/recipe/classified/AssemblyLine.java",
+      "sha256": "cef671ab14e9a0e90684c8b4e9a10f3661575ed66c074cca30b0f3cecce612ff",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/data/recipe/classified/PrecisionAssembler.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/data/recipe/classified/PrecisionAssembler.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/data/recipe/classified/PrecisionAssembler.java",
+      "sha256": "27a7e7867910ee7228005d215d22bfa804fa74bb54a1328aa9729f1579a60dfa",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/data/recipe/classified/Vanilla.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/data/recipe/classified/Vanilla.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/data/recipe/classified/Vanilla.java",
+      "sha256": "ce57637710052ab94651e8d218277c9cb001a64a30ec6e6aeda049b4089bb9c8",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/java/com/gtocore/data/recipe/Temporary.java",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/data/recipe/Temporary.java",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/java/com/gtocore/data/recipe/Temporary.java",
+      "sha256": "d6c572a48dc16aebdd00ab961cd04f4ed13ec49dcf96e344ad93a01ac3b49808",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/models/block/variant/advanced_compressed_fusion_coil.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/models/block/variant/advanced_compressed_fusion_coil.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/models/block/variant/advanced_compressed_fusion_coil.json",
+      "sha256": "538bd810b031131229b21b16594963d846c155134f0992d252c57d02a5829dfe",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/models/block/variant/advanced_compressed_fusion_coil_active.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/models/block/variant/advanced_compressed_fusion_coil_active.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/models/block/variant/advanced_compressed_fusion_coil_active.json",
+      "sha256": "b73722045edbd06f43f7e2794c062d0357f45649b0edc30d8f5715105d1470ab",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/models/block/variant/advanced_fusion_coil.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/models/block/variant/advanced_fusion_coil.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/models/block/variant/advanced_fusion_coil.json",
+      "sha256": "538bd810b031131229b21b16594963d846c155134f0992d252c57d02a5829dfe",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/models/block/variant/advanced_fusion_coil_active.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/models/block/variant/advanced_fusion_coil_active.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/models/block/variant/advanced_fusion_coil_active.json",
+      "sha256": "b73722045edbd06f43f7e2794c062d0357f45649b0edc30d8f5715105d1470ab",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/shaders/core/black_hole_event_horizon.fsh",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/shaders/core/black_hole_event_horizon.fsh",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/shaders/core/black_hole_event_horizon.fsh",
+      "sha256": "5b7aca88d2590344e1bcab103f975cb414eaba7079e7f6238ea9fd53fcbe5b03",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/shaders/core/black_hole_event_horizon.json",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/shaders/core/black_hole_event_horizon.json",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/shaders/core/black_hole_event_horizon.json",
+      "sha256": "7a41af959d75de4321f563cef9a2d57021a23ff220c5b0dc96c827abd840748d",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/shaders/core/black_hole_event_horizon.vsh",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/shaders/core/black_hole_event_horizon.vsh",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/shaders/core/black_hole_event_horizon.vsh",
+      "sha256": "ea3940f88f8fa633813539140d05c9b78ec93bd824cf577b93b3fc1603f5796d",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/advanced_compressed_fusion_coil.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/advanced_compressed_fusion_coil.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/advanced_compressed_fusion_coil.png",
+      "sha256": "2fbd998001d33179a40dbc6cfbb71ee8b8151e2ba81d4d92334b76e3ca955a5e",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv.png",
+      "sha256": "c18f6012cdef10dcf53eebc41acace351508c5c9664de1390149b5815aeba434",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv.png.mcmeta",
+      "sha256": "29343c7b22b31522528baf4c8e26e27fdc490d5037914ed1b7da2a7186efdce1",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom.png",
+      "sha256": "f36aef0454b3d20492d33c233ffe106680e4dd4a572902af6fbe082bc7ba73f0",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom.png.mcmeta",
+      "sha256": "980dc6526980f2dc3b4d4f6868825fe4bcc98ef008f4e1ede5ba9ab5a5918c77",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom_ctm.png",
+      "sha256": "53b2dfb7eddbc3f469f80e3721d0c250fc81ab8e724b5f0afd2b16ebc66b02ad",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom_ctm.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom_ctm.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_bloom_ctm.png.mcmeta",
+      "sha256": "6e1d065aa0a336952dc07152c076df64e3846d6f3fe0a7041fa5aa32dfd24115",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/accelerator/accelerator_electromagnetic_coil_constraint_casing_uhv_ctm.png",
+      "sha256": "e44b1b7c36c7f196c3ebd5aa17dfa90cdf8b7913e1d2b1877367e8d97bd401d2",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing.png",
+      "sha256": "946e2564806398b0c7aa1e2cf4a25a4f809bbd73cabd592c6e0d008df6d1d874",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing.png.mcmeta",
+      "sha256": "f17273f189afdb93c38db6a47950d65c1c47fa6fc7a233090081071e59c01534",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing_ctm.png",
+      "sha256": "23ebbbdb444ef88a2d33dd4fcd514092b4debe525ca8f98f94ddb36b08221904",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing_ctm.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing_ctm.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/bioactive_mechanical_casing_ctm.png.mcmeta",
+      "sha256": "8f676688ac1c6f46ecc884f91ee61cfebf1a198487fdf260c59d27b0e213ddb2",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/enhance_hyper_mechanical_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/enhance_hyper_mechanical_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/enhance_hyper_mechanical_casing.png",
+      "sha256": "78d1d38ba67c554fc2f8acd2a7ab3bfb6da98f717edf64b4dda669a9db1d9237",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/enhance_hyper_mechanical_casing.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/enhance_hyper_mechanical_casing.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/enhance_hyper_mechanical_casing.png.mcmeta",
+      "sha256": "699ce944823dd66e07a174ba5c3980fd3c920dfc764f384f14fb9cf92d3d1823",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/enhance_hyper_mechanical_casing_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/enhance_hyper_mechanical_casing_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/enhance_hyper_mechanical_casing_ctm.png",
+      "sha256": "b991a392b5b09c3bbb5bc215d320765f95b32944dbdf28ba83badf8b7ee7368e",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/fusion/fusion_casing_mk4.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/fusion/fusion_casing_mk4.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/fusion/fusion_casing_mk4.png",
+      "sha256": "649cdbc816238f7d3af34b870c5f19b5f0b49085a06842255d2af50b3589e202",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/fusion/fusion_casing_mk4.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/fusion/fusion_casing_mk4.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/fusion/fusion_casing_mk4.png.mcmeta",
+      "sha256": "891025a8c02199b5f1d97dc42a66f617cc400e0990b2941572311cb6171933bd",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/fusion/fusion_casing_mk4_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/fusion/fusion_casing_mk4_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/fusion/fusion_casing_mk4_ctm.png",
+      "sha256": "64c783d3481a7b4ed8b0c3f74311f5fca3c020b156f905c9270fc2bb1e8b228b",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/high_pressure_pipe_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/high_pressure_pipe_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/high_pressure_pipe_casing.png",
+      "sha256": "4ab384af0b470c9e11f4725c7eabacacb5313c96e4f4b45de454b4875abd2d5e",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/high_pressure_pipe_casing.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/high_pressure_pipe_casing.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/high_pressure_pipe_casing.png.mcmeta",
+      "sha256": "64156cb8d0ce59974f55ff13294118829a22cf6d1aa9598bb03ea8932ceb209f",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/high_pressure_pipe_casing_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/high_pressure_pipe_casing_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/high_pressure_pipe_casing_ctm.png",
+      "sha256": "5003d8c6e5ad56f07bada751c2f4dce9757e4e93450d1e22b2acbba22e2ff68a",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/high_strength_support_spindle.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/high_strength_support_spindle.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/high_strength_support_spindle.png",
+      "sha256": "fd1870f86fd0540a2b0f262d9f60c5994b6490b9cb7b7eaa6b82ed1db80a775a",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/high_strength_support_spindle.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/high_strength_support_spindle.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/high_strength_support_spindle.png.mcmeta",
+      "sha256": "0ffa10c485bf9506b162f3749cb24b482ea1f712452615341f4c5b2fe1b7eee0",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/high_strength_support_spindle_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/high_strength_support_spindle_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/high_strength_support_spindle_ctm.png",
+      "sha256": "2bff24c60bc1da06c00e8b5c92bba481b272dc2636ff377e7161f8863586fb28",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/oil_gas_transportation_pipe_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/oil_gas_transportation_pipe_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/oil_gas_transportation_pipe_casing.png",
+      "sha256": "cfd95ad915e8c529010f99c63d064bd4067df280c596ae25444eb640318ea235",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/oil_gas_transportation_pipe_casing.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/oil_gas_transportation_pipe_casing.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/oil_gas_transportation_pipe_casing.png.mcmeta",
+      "sha256": "2e361c9ed64fb7d09e088defac9827997862b22869765d198c7d056bd860e015",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/oil_gas_transportation_pipe_casing_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/oil_gas_transportation_pipe_casing_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/oil_gas_transportation_pipe_casing_ctm.png",
+      "sha256": "ec005b6222a46bdab4a33e3b7876d995a6a2a3961a5f59be0088d92049e6d5e3",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/pressure_containment_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/pressure_containment_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/pressure_containment_casing.png",
+      "sha256": "825a3659098e7fa4fad34b47e4507b422bc03119d6dfbc342bc0b3f86b4ed79a",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/pressure_containment_casing.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/pressure_containment_casing.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/pressure_containment_casing.png.mcmeta",
+      "sha256": "d1f05e568368dc06365ee87815b79cf59d3e4493d7b32521815ee293dbf3dbf0",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/pressure_containment_casing_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/pressure_containment_casing_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/pressure_containment_casing_ctm.png",
+      "sha256": "54b99a27ad7920882033263bd458a84b78e30516f7e2198b819ce84ac8a9a9d7",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/quantum_glass.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/quantum_glass.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/quantum_glass.png",
+      "sha256": "53fc8c291caa1a62bee4e35577fbf9d0eeefce0c6269fd0302c37a447a3ee720",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/quantum_glass.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/quantum_glass.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/quantum_glass.png.mcmeta",
+      "sha256": "20dd7c2a1ee9e3a0fd8742de9c8f3a82119d768950c6bd598f4f0c633d33d7d6",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/casings/quantum_glass_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/casings/quantum_glass_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/casings/quantum_glass_ctm.png",
+      "sha256": "8d6644d8f7934f8ed68b081339851f99f4c136afcaad52149fc50bdf75d8bf35",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing.png",
+      "sha256": "f93b35808dba2cda1fe0de84bc39265e291369e743b69f07d0ceeaf4d774294a",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing.png.mcmeta",
+      "sha256": "006342f0b8b44f12ccbebc3b004ba55104cca4703ea537ece117e504a810b511",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom.png",
+      "sha256": "9afee96fec23ad038ac6998557a437f002c79e3252c4287f30c27fc6e1a87253",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom.png.mcmeta",
+      "sha256": "ed3d29fbbfbe0c745b80e3588c34e0b296f470f1993e2a5437a8713aa8a4eed7",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom_ctm.png",
+      "sha256": "52ad18aa0e994be53376f30f6c1d1ccc0e0f221c033da71b3fb5dc79c48ce3c2",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom_ctm.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom_ctm.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_bloom_ctm.png.mcmeta",
+      "sha256": "862e79d29373b45168b579c628f2370bdc8c14841660c7f3d703cd99dfd6d053",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_ctm.png",
+      "sha256": "691b3ef13b9bf04808fa27d8e0e641788535cc75531b1eac909a33c06816caf9",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_ctm.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_ctm.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/dimensional_bridge_casing_ctm.png.mcmeta",
+      "sha256": "6dbdac93b3b28e8ce4ac983327dd4c75499f84bebd12985d677669bf75e8e457",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/extreme_density_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/extreme_density_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/extreme_density_casing.png",
+      "sha256": "a4e5b2e10be7d0a512c6b1b6130a32456d6e3e2adfc593eef7f34f101dcadd96",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/fusion_coil_bloom.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/fusion_coil_bloom.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/fusion_coil_bloom.png",
+      "sha256": "426b5f791bf1d26904bbd5463a12c8637a15909cee884a6af1fdd2d6948b67b7",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/fusion_coil_bloom.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/fusion_coil_bloom.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/fusion_coil_bloom.png.mcmeta",
+      "sha256": "ede19122e4624bb8b3fdfe48c11e8a23a742cdf6be4018e2d33c429723c8c09b",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/gravity_stabilization_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/gravity_stabilization_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/gravity_stabilization_casing.png",
+      "sha256": "b8758fbb6059b0812dff8ebad8dbafdd716c858ee26271b9aea9708012888dab",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/industrial_frameless_glass.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/industrial_frameless_glass.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/industrial_frameless_glass.png",
+      "sha256": "5ea51e823ef69bb89cdd1b5615620d22858f7cad4cb5cf3dfd29d67f849b7f9d",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/neutronium_active_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/neutronium_active_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/neutronium_active_casing.png",
+      "sha256": "860f2fbca990f2317dcc3a1101452bec8dd2805e008080fd875be831c6e3455c",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/neutronium_active_casing.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/neutronium_active_casing.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/neutronium_active_casing.png.mcmeta",
+      "sha256": "d947e6371a5bb46ab733722fac72f7aae2832fc94ecc8a1ab55c3e1471cbf4f4",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/neutronium_gearbox.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/neutronium_gearbox.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/neutronium_gearbox.png",
+      "sha256": "e636689dabd8ef3cb3574e101ffcf80390fcbcbc0a9dbcc9b2db84f1a487435d",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/neutronium_pipe_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/neutronium_pipe_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/neutronium_pipe_casing.png",
+      "sha256": "8ba71df7628c943349ab6d70019d169767dfa5bb7ccdb3f6208c9abd8119d9a4",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/plasma_heater_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/plasma_heater_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/plasma_heater_casing.png",
+      "sha256": "d7ecd6ec92481742b1c181b885f5c99e8ce9b9e52ec4a15431c9c34786516c89",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/plasma_heater_casing.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/plasma_heater_casing.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/plasma_heater_casing.png.mcmeta",
+      "sha256": "b2a7cac9b10d88c0091b4a90f8d4ac34b0726772b7f0a43df42f25c73f27b06d",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/plasma_heater_casing_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/plasma_heater_casing_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/plasma_heater_casing_ctm.png",
+      "sha256": "3d5ad6dbdfd17a73d495ac55c196d804e500d6a0e021a3c3b75c0f0e8cfc4172",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/plasma_heater_casing_ctm.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/plasma_heater_casing_ctm.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/plasma_heater_casing_ctm.png.mcmeta",
+      "sha256": "bf5e26d4f483849f1a38006952602d2ba024868efc4726699c68798186207b54",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/pps_corrosion_resistant_mechanical_housing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/pps_corrosion_resistant_mechanical_housing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/pps_corrosion_resistant_mechanical_housing.png",
+      "sha256": "213cb462f62cc40b00e9b5109d1bcc17b90c3291f9e2dc7ac1d03530a2e53d2c",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/pps_corrosion_resistant_mechanical_housing.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/pps_corrosion_resistant_mechanical_housing.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/pps_corrosion_resistant_mechanical_housing.png.mcmeta",
+      "sha256": "fa80d2e8b76755bb0a0225aba8901360b0edc1268cdea47c0eb4c63b97fd35ef",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/pps_corrosion_resistant_mechanical_housing_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/pps_corrosion_resistant_mechanical_housing_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/pps_corrosion_resistant_mechanical_housing_ctm.png",
+      "sha256": "f5be05784a1568c58309343bf6917ef4f8ec5e0b8bdb6bdf2bd8afbcc2c8864f",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/radiation_absorbent_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/radiation_absorbent_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/radiation_absorbent_casing.png",
+      "sha256": "28b87ca9bda9a0d2b98bf28861a3bd8e4b7500f0d3640e5163b47211699b824f",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/radiation_absorbent_casing.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/radiation_absorbent_casing.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/radiation_absorbent_casing.png.mcmeta",
+      "sha256": "ffe309ec54362c153c7ab853f33026f9e5a9a448e94b680a14c6e30f163c31cf",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/radiation_absorbent_casing_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/radiation_absorbent_casing_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/radiation_absorbent_casing_ctm.png",
+      "sha256": "0adb7f64b7b4257c49461c9fb27dece438f1a3af7a41774bd81a8214b7cd988e",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/shielded_accelerator.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/shielded_accelerator.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/shielded_accelerator.png",
+      "sha256": "556502be72bfb4ee49ae0f8adcc700299d3e0c6f3ba54af7981f8ab363593969",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/shielded_accelerator.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/shielded_accelerator.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/shielded_accelerator.png.mcmeta",
+      "sha256": "919aa6ef5d3ba12418f9676dab8f26e289e8a38d84bba2f955b98e1d62ea16fc",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/shielded_accelerator_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/shielded_accelerator_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/shielded_accelerator_ctm.png",
+      "sha256": "7a8c77cd35084ad4d5a400f5e82e2c7ed1e21a063f2238d9c9b416b343026b1d",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block.png",
+      "sha256": "57beba36c75aaaf6742caf755cf2c69437f4ad0be8172c7f2f05bfc8dba3b610",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block.png.mcmeta",
+      "sha256": "30ae51983badbd20249d44523cfa40b0d8289391943ea5fe03077ceb9cec0f62",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/assets/gtocore/textures/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/assets/gtocore/textures/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gto/src/main/resources/assets/gtocore/textures/block/zirconia_ceramic_high_strength_bending_resistance_mechanical_block_ctm.png",
+      "sha256": "b97746dd8b22a43c57af61cca2bdaca93850586a50b750d6564dbf833e84b407",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GregTech-Modern",
+      "commit": "30cfd9fb3de3faee38cab6b36c5ba171ed82ba48",
+      "source_path": "LICENSE",
+      "url": "https://github.com/GregTech-Odyssey/GregTech-Modern/blob/30cfd9fb3de3faee38cab6b36c5ba171ed82ba48/LICENSE",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gtm/LICENSE",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GregTech-Modern",
+      "commit": "30cfd9fb3de3faee38cab6b36c5ba171ed82ba48",
+      "source_path": "src/main/resources/assets/gtceu/textures/block/casings/gcym/atomic_casing.png",
+      "url": "https://github.com/GregTech-Odyssey/GregTech-Modern/blob/30cfd9fb3de3faee38cab6b36c5ba171ed82ba48/src/main/resources/assets/gtceu/textures/block/casings/gcym/atomic_casing.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gtm/src/main/resources/assets/gtceu/textures/block/casings/gcym/atomic_casing.png",
+      "sha256": "fe68fbe7ea8cc474eb1cc822601ff990de0c72be3013887f3890d5a652061ab9",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GregTech-Modern",
+      "commit": "30cfd9fb3de3faee38cab6b36c5ba171ed82ba48",
+      "source_path": "src/main/resources/assets/gtceu/textures/block/casings/gcym/atomic_casing.png.mcmeta",
+      "url": "https://github.com/GregTech-Odyssey/GregTech-Modern/blob/30cfd9fb3de3faee38cab6b36c5ba171ed82ba48/src/main/resources/assets/gtceu/textures/block/casings/gcym/atomic_casing.png.mcmeta",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gtm/src/main/resources/assets/gtceu/textures/block/casings/gcym/atomic_casing.png.mcmeta",
+      "sha256": "b9ee8563f7f76c7ead91e426527990c90f1d3ea84c490ef6ca8fb88e0a77ec72",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GregTech-Modern",
+      "commit": "30cfd9fb3de3faee38cab6b36c5ba171ed82ba48",
+      "source_path": "src/main/resources/assets/gtceu/textures/block/casings/gcym/atomic_casing_ctm.png",
+      "url": "https://github.com/GregTech-Odyssey/GregTech-Modern/blob/30cfd9fb3de3faee38cab6b36c5ba171ed82ba48/src/main/resources/assets/gtceu/textures/block/casings/gcym/atomic_casing_ctm.png",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/gtm/src/main/resources/assets/gtceu/textures/block/casings/gcym/atomic_casing_ctm.png",
+      "sha256": "8879ebbf051afb9fc917671b760f50613a05cdcc1c6f0064c80615a5d9731f85",
+      "modification": "None; byte-identical raw reference, excluded from compilation and resources."
+    },
+    {
+      "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+      "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "source_path": "src/main/resources/pattern/kerr_newman_homogenizer.mbs",
+      "url": "https://github.com/GregTech-Odyssey/GTOCore/blob/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/resources/pattern/kerr_newman_homogenizer.mbs",
+      "license": "LGPL-3.0-only",
+      "reference_destination": "reference/kerr-newman-port/upstream/pattern/kerr_newman_homogenizer.mbs",
+      "sha256": "1e97839453a7d5e31e1460c14a4ca217ff5214b7ed7949ebbd8e7d2a3c176dde",
+      "modification": "None; exact original compressed structure."
+    }
+  ],
+  "reference_excluded_from_build": true,
+  "packaged_licenses": [
+    {
+      "destination": "src/main/resources/META-INF/kerr-newman-port/LICENSE-GTOCore-LGPL-3.0.txt",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "license": "LGPL-3.0-only",
+      "modification": "Byte-identical upstream license; GNU GPL text also supplies the terms incorporated by LGPLv3.",
+      "source_paths": []
+    },
+    {
+      "destination": "src/main/resources/META-INF/kerr-newman-port/LICENSE-GregTech-Modern-LGPL-3.0.txt",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "license": "LGPL-3.0-only",
+      "modification": "Byte-identical upstream license; GNU GPL text also supplies the terms incorporated by LGPLv3.",
+      "source_paths": []
+    },
+    {
+      "destination": "src/main/resources/META-INF/kerr-newman-port/LICENSE-LDLib-GPL-3.0.txt",
+      "sha256": "fdfa87e04c2ce5c64a5edfc39aa874a6b04d795fa863089780969342ea8c8534",
+      "license": "GPL-3.0-only",
+      "modification": "Byte-identical upstream license; GNU GPL text also supplies the terms incorporated by LGPLv3.",
+      "source_paths": []
+    }
+  ],
+  "rebuild_scripts": [
+    {
+      "destination": "reference/kerr-newman-port/import-assets.py",
+      "sha256": "a710eb92153330d2ff842223ca1bd591668d55326899429d8f9209c2314e784d",
+      "license": "GPL-3.0-only",
+      "modification": "Pinned asset importer and animation-aware wrapper around the existing GPL CTM layout generator.",
+      "source_paths": []
+    },
+    {
+      "destination": "reference/kerr-newman-port/refresh-manifests.py",
+      "sha256": "cec32846b0c334f42421c38aa54d5d48199a1c97cf867c325b461574037b4272",
+      "license": "MIT",
+      "modification": "Independent source/asset/structure verification and provenance manifest writer.",
+      "source_paths": []
+    }
+  ],
+  "gtm_reference_note": "GTO declares GTCEu 26.7.3. The Atomic Casing artwork is pinned to its owning fork's 30cfd9fb source snapshot; no claim of byte identity with the unavailable 26.7.3 source artifact is made.",
+  "ctm_generator": {
+    "destination": "reference/field-extruder-port/generate-connected-textures.py",
+    "sha256": "8ea7285a9775a888f837727e47540db43646d31374ffd70ee6210f6820e82f7f",
+    "license": "GPL-3.0-only",
+    "upstream": "https://github.com/Low-Drag-MC/LDLib-MultiLoader/tree/1d4e4390ae58d16038845c651e122185c29f334b",
+    "methods": "Connections.fillSubmaps / Submap.uvs",
+    "modification": "Existing offline quarter-tile layout implementation reused; not runtime LDLib code."
+  }
+}

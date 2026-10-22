@@ -20,11 +20,17 @@ import com.xyp.gtnotgood.common.recipe.gtnotgood.PackagedRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.PatternSorterRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.PetrochemicalRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.WoodDistillationRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.AssemblyPlantCasingRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.BasicIndustrialApiaryRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.CrossRecipeWirelessEnergyHatchRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.DimensionalFocusRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.FieldExtruderRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.HeartOfTheUniverseRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.IntegratedChemicalPlantRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.KerrNewmanCasingRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.KerrNewmanHomogenizerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeBeeBreederRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCombProcessorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeCropBreederRecipes;
@@ -34,16 +40,22 @@ import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeTransmutationMachineRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeVoidDrillerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeVoidMinerRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.LightHunterSpaceStationRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.LightningProcessorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEBridgeRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEContainerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MEDataAccessRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.MageAssemblerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MaxCapacityMEOutputRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MechanicalUserRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.ModularHatchRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.NetworkRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SeedConverterRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SingularityDataHubRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.StockIOInterfaceRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SuperCraftingInputRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.SuperParticleColliderRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.SuperconductingElectromagneticRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.WebScreenRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.WildcardPatternRecipes;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -58,6 +70,14 @@ public class RecipeLoader {
 
     /** Waits for external fluid and dimension-display registrations. */
     public static void loadPostInitRecipes() {
+        HeartOfTheUniverseRecipes.loadPostInitRecipes();
+        LightHunterSpaceStationRecipes.loadPostInitRecipes();
+        SuperParticleColliderRecipes.loadPostInitRecipes();
+        MageAssemblerRecipes.loadPostInitRecipes();
+        SuperconductingElectromagneticRecipes.loadPostInitRecipes();
+        KerrNewmanHomogenizerRecipes.loadPostInitRecipes();
+        KerrNewmanCasingRecipes.loadPostInitRecipes();
+        ModularHatchRecipes.loadRecipes();
         CentrifugeRecipes.loadRecipes();
         LargeChemicalReactorRecipes.loadRecipes();
         LargeIndustrialFarmRecipes.loadRecipes();
@@ -68,6 +88,8 @@ public class RecipeLoader {
     }
 
     public static void loadRecipes() {
+        HeartOfTheUniverseRecipes.loadRecipes();
+        LightHunterSpaceStationRecipes.loadRecipes();
         GameRegistry.addShapelessRecipe(GTNGItemList.UniversalFluidPump.get(1), ItemList.Pump_LV.get(1),
             ItemList.Electric_Pump_LV.get(1));
         if (ModList.Forestry.isModLoaded()) {
@@ -92,6 +114,13 @@ public class RecipeLoader {
         WebScreenRecipes.loadRecipes();
         FluxConnectorRecipes.loadRecipes();
         IntegratedProductionFactoryRecipes.loadRecipes();
+        FieldExtruderRecipes.loadRecipes();
+        DimensionalFocusRecipes.loadRecipes();
+        SuperParticleColliderRecipes.loadRecipes();
+        MageAssemblerRecipes.loadRecipes();
+        AssemblyPlantCasingRecipes.loadRecipes();
+        LightningProcessorRecipes.loadRecipes();
+        SuperconductingElectromagneticRecipes.loadRecipes();
         AssemblerRecipes.loadRecipes();
         CrossRecipeWirelessEnergyHatchRecipes.loadRecipes();
         BenderRecipes.loadRecipes();

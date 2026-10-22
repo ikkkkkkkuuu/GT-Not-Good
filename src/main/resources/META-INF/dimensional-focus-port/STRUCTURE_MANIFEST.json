@@ -1,0 +1,13 @@
+{
+  "formatVersion": 1,
+  "source": "https://github.com/GNSW/GTLCore",
+  "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+  "sourcePath": "src/main/java/org/gtlcore/gtlcore/common/data/machines/structure/MultiBlockMachineAStructureE.java",
+  "sourceField": "DIMENSIONAL_FOCUS_ENGRAVING_ARRAY",
+  "license": "LGPL-3.0",
+  "destination": "assets/gtnotgood/structures/dimensional_focus_engraving_array.shape.gz",
+  "destinationSha256": "a4fbfd49c308e3e1cc83b50c447c754a02a787911d67df7c34482a97a3efa3b4",
+  "canonicalSourceRowsSha256": "e56898976e4517d82f1bb02b17fb6038bb4ce97235f602dedb65f8351245910b",
+  "dimensions": [89, 89, 89],
+  "modifications": "Extracted all source rows in aisle/row order, LF terminated, gzip compressed; no positions or symbols changed. Runtime Java transforms BACK/UP/RIGHT axes to StructureLib and maps the controller to ~."
+}

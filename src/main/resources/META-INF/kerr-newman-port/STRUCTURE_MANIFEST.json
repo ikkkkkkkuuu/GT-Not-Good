@@ -1,0 +1,90 @@
+{
+  "format": 1,
+  "repository": "https://github.com/GregTech-Odyssey/GTOCore",
+  "commit": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+  "license": "LGPL-3.0-only",
+  "source_path": "src/main/resources/pattern/kerr_newman_homogenizer.mbs",
+  "source_sha256": "1e97839453a7d5e31e1460c14a4ca217ff5214b7ed7949ebbd8e7d2a3c176dde",
+  "compressed_bytes": 9446,
+  "uncompressed_bytes": 254073,
+  "native_dimensions": [
+    83,
+    36,
+    83
+  ],
+  "native_axes": [
+    "LEFT",
+    "UP",
+    "FRONT"
+  ],
+  "native_controller_aisle_row_column": [
+    75,
+    23,
+    41
+  ],
+  "structurelib_controller_offset_xyz": [
+    41,
+    12,
+    7
+  ],
+  "source_canonical_rows_sha256": "74f42886b775152571cd79824b5144e7907b2fc3a9aa69680f20f7ef0d86eec3",
+  "source_character_counts": {
+    " ": 232366,
+    "A": 512,
+    "B": 1200,
+    "C": 2220,
+    "D": 668,
+    "E": 2016,
+    "F": 272,
+    "G": 112,
+    "H": 56,
+    "I": 172,
+    "J": 288,
+    "K": 418,
+    "L": 386,
+    "M": 187,
+    "N": 1136,
+    "O": 110,
+    "P": 468,
+    "Q": 224,
+    "R": 104,
+    "S": 544,
+    "T": 512,
+    "U": 320,
+    "V": 10,
+    "W": 64,
+    "X": 608,
+    "Y": 256,
+    "Z": 168,
+    "[": 896,
+    "\\": 472,
+    "]": 528,
+    "^": 566,
+    "_": 102,
+    "`": 32,
+    "a": 10,
+    "b": 1
+  },
+  "character_mapping": "See README.md; exact MultiBlockH.java KERR_NEWMAN_HOMOGENIZER registration.",
+  "adaptations": [
+    {
+      "destination": "src/main/resources/assets/gtnotgood/structures/kerr_newman_homogenizer.mbs",
+      "sha256": "1e97839453a7d5e31e1460c14a4ca217ff5214b7ed7949ebbd8e7d2a3c176dde",
+      "license": "LGPL-3.0-only",
+      "modification": "None; byte-identical native MBS resource.",
+      "source_paths": [
+        "src/main/resources/pattern/kerr_newman_homogenizer.mbs"
+      ]
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/KerrNewmanHomogenizerStructure.java",
+      "sha256": "e613cb05bbb9a0afeac28ee3ab7ded7e7762d0dbf8abf48593f6f5c38dbeb4f2",
+      "license": "LGPL-3.0-only",
+      "modification": "Read original gzip/varint/modified-UTF MBS. result[35-row][82-aisle] preserves LEFT/UP/FRONT orientation; only controller b becomes StructureLib ~. All spaces remain any predicates.",
+      "source_paths": [
+        "src/main/resources/pattern/kerr_newman_homogenizer.mbs"
+      ]
+    }
+  ],
+  "tests": "KerrNewmanHomogenizerStructureTest verifies every inverse coordinate using the canonical SHA256, all counts, binary identity, offset and defensive copies."
+}

@@ -1,0 +1,63 @@
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr.parentFile.mkdirs()
+        def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+        connection.connectTimeout = 30000
+        connection.readTimeout = 30000
+        def pending = new File(efr.parentFile, efr.name + '.pending')
+        connection.inputStream.withCloseable { input -> pending.withOutputStream { it << input } }
+        java.nio.file.Files.move(pending.toPath(), efr.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/AssemblyPlantClientChecks.java'))
+    }
+    def qaClasses = root.tasks.register('isolateAssemblyPlantQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/AssemblyPlantClientChecks*.class'
+        into root.layout.buildDirectory.dir('assembly-plant-qa/classes')
+    }
+    root.spotless.java {
+        target 'scripts/qa/AssemblyPlantClientChecks.java'
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir('assembly-plant-qa/classes'))
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir root.file('run/assembly-plant-qa')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.assemblyPlant.qa', 'true'
+        systemProperty 'gtng.assemblyPlant.output', root.file('build/assembly-plant-qa').absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('Isolated assembly plant client checks')
+        args '--width', '1280', '--height', '900'
+        doFirst {
+            workingDir.mkdirs()
+            root.file('build/assembly-plant-qa').mkdirs()
+            java.nio.file.Files.deleteIfExists(root.file('build/assembly-plant-qa/result.txt').toPath())
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            def qaConfig = new File(workingDir, 'config/GTNOTGOOD/gtnotgood.cfg')
+            qaConfig.parentFile.mkdirs()
+            qaConfig.setText('cutcorners {\n    I:mode=0\n}\n', 'UTF-8')
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(root.file('build/assembly-plant-qa/window-helper.log')).start()
+        }
+        doLast {
+            def result = root.file('build/assembly-plant-qa/result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) throw new GradleException('Assembly plant QA failed')
+        }
+    }
+}

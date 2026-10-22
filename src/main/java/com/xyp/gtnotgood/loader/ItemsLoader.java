@@ -14,8 +14,10 @@ import com.xyp.gtnotgood.common.items.GTNGItem;
 import com.xyp.gtnotgood.common.items.advancedio.ItemAdvancedIOBus;
 import com.xyp.gtnotgood.common.items.compass.StructureCompassItem;
 import com.xyp.gtnotgood.common.items.electrode.IronElectrode;
+import com.xyp.gtnotgood.common.items.fuel.HeartFuelItems;
 import com.xyp.gtnotgood.common.items.fuel.IronFuelRod;
 import com.xyp.gtnotgood.common.items.largeinterface.ItemLargeInterface;
+import com.xyp.gtnotgood.common.items.lighthunter.LightHunterItems;
 import com.xyp.gtnotgood.common.items.mebridge.ItemMEWirelessTransceiver;
 import com.xyp.gtnotgood.common.items.mechanicaluser.ItemUserSpeedUpgrade;
 import com.xyp.gtnotgood.common.items.packaged.ItemPackagedCore;
@@ -60,6 +62,8 @@ public final class ItemsLoader {
         registerWirelessFrequencyCard();
         registerWildcardPattern();
         registerFuelRods();
+        HeartFuelItems.init();
+        LightHunterItems.init();
         registerItem(new IronElectrode(), "iron_electrode", GTNGItemList.IronElectrode);
         registerTools();
     }

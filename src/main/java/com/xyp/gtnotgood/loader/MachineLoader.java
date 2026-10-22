@@ -18,6 +18,7 @@ import com.xyp.gtnotgood.common.machines.hatch.CrossRecipeWirelessEnergyHatch;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputME;
 import com.xyp.gtnotgood.common.machines.hatch.SuperMTEHatchCraftingInputSlave;
 import com.xyp.gtnotgood.common.machines.hatch.VaultPortHatch;
+import com.xyp.gtnotgood.common.machines.hatch.lighthunter.SatelliteThreadModifierHatch;
 import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternBuffer;
 import com.xyp.gtnotgood.common.machines.hatch.me.CircuitMEPatternMirror;
 import com.xyp.gtnotgood.common.machines.hatch.me.MEDataAccessHatch;
@@ -38,9 +39,18 @@ import com.xyp.gtnotgood.common.machines.multiblock.LargeOreProcessor;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeTransmutationMachine;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidDriller;
 import com.xyp.gtnotgood.common.machines.multiblock.LargeVoidMiner;
+import com.xyp.gtnotgood.common.machines.multiblock.LightHunterSpaceStation;
+import com.xyp.gtnotgood.common.machines.multiblock.NexusSatelliteFactory;
 import com.xyp.gtnotgood.common.machines.multiblock.PrecisionAssembler;
 import com.xyp.gtnotgood.common.machines.multiblock.QuantumComputer;
 import com.xyp.gtnotgood.common.machines.multiblock.SingularityDataHub;
+import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.DimensionalFocusEngravingArray;
+import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.FieldExtruderFactory;
+import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.HeartOfTheUniverse;
+import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.KerrNewmanHomogenizer;
+import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.MageAssembler;
+import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.SuperParticleCollider;
+import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.SuperconductingElectromagneticFactory;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.GTNGMachineID;
 import com.xyp.gtnotgood.utils.enums.ModList;
@@ -56,6 +66,21 @@ public class MachineLoader {
     }
 
     public static void registerMachines() {
+        GTNGItemList.SatelliteThreadModifierHatch.set(new SatelliteThreadModifierHatch(
+            GTNGMachineID.SatelliteThreadModifierHatch.id, "SatelliteThreadModifierHatch"));
+        GTNGItemList.LightHunterSpaceStation
+            .set(new LightHunterSpaceStation(GTNGMachineID.LightHunterSpaceStation.id, "LightHunterSpaceStation", ""));
+        GTNGItemList.NexusSatelliteFactoryMkI.set(
+            new NexusSatelliteFactory(GTNGMachineID.NexusSatelliteFactoryMkI.id, "NexusSatelliteFactoryMkI", "", 0));
+        GTNGItemList.NexusSatelliteFactoryMkII.set(
+            new NexusSatelliteFactory(GTNGMachineID.NexusSatelliteFactoryMkII.id, "NexusSatelliteFactoryMkII", "", 1));
+        GTNGItemList.NexusSatelliteFactoryMkIII.set(new NexusSatelliteFactory(
+            GTNGMachineID.NexusSatelliteFactoryMkIII.id, "NexusSatelliteFactoryMkIII", "", 2));
+        GTNGItemList.NexusSatelliteFactoryMkIV.set(
+            new NexusSatelliteFactory(GTNGMachineID.NexusSatelliteFactoryMkIV.id, "NexusSatelliteFactoryMkIV", "", 3));
+        GTNGItemList.HeartOfTheUniverse
+            .set(new HeartOfTheUniverse(GTNGMachineID.HeartOfTheUniverse.id, "HeartOfTheUniverse", ""));
+        addItemTooltip(GTNGItemList.HeartOfTheUniverse.get(1), AnimatedText.GT_NOT_GOOD);
         // #tr gtng.chemical.name
         // # Integrated Chemical Plant
         // # zh_CN 集成化工厂
@@ -123,6 +148,35 @@ public class MachineLoader {
         GTNGItemList.PrecisionAssembler.set(new PrecisionAssembler(GTNGMachineID.PrecisionAssembler.id,
             "PrecisionAssembler", StatCollector.translateToLocal("gtng.PrecisionAssembler.name")));
         addItemTooltip(GTNGItemList.PrecisionAssembler.get(1), AnimatedText.GT_NOT_GOOD);
+
+        // #tr gtng.field_extruder.name
+        // # Field Extruder Factory
+        // # zh_CN 力场压模工厂
+        GTNGItemList.FieldExtruderFactory.set(new FieldExtruderFactory(GTNGMachineID.FieldExtruderFactory.id,
+            "FieldExtruderFactory", StatCollector.translateToLocal("gtng.field_extruder.name")));
+        addItemTooltip(GTNGItemList.FieldExtruderFactory.get(1), AnimatedText.GT_NOT_GOOD);
+
+        // #tr gtng.dimensional_focus.name
+        // # Dimensional Focus Engraving Array
+        // # zh_CN 维度聚焦激光蚀刻阵列
+        GTNGItemList.DimensionalFocusEngravingArray
+            .set(new DimensionalFocusEngravingArray(GTNGMachineID.DimensionalFocusEngravingArray.id,
+                "DimensionalFocusEngravingArray", StatCollector.translateToLocal("gtng.dimensional_focus.name")));
+        addItemTooltip(GTNGItemList.DimensionalFocusEngravingArray.get(1), AnimatedText.GT_NOT_GOOD);
+        // #tr gtng.particle_collider.name
+        // # Super Particle Collider
+        // # zh_CN 超级粒子对撞机
+        GTNGItemList.SuperParticleCollider.set(new SuperParticleCollider(GTNGMachineID.SuperParticleCollider.id,
+            "SuperParticleCollider", StatCollector.translateToLocal("gtng.particle_collider.name")));
+        addItemTooltip(GTNGItemList.SuperParticleCollider.get(1), AnimatedText.GT_NOT_GOOD);
+        GTNGItemList.MageAssembler.set(new MageAssembler(GTNGMachineID.MageAssembler.id, "MageAssembler", ""));
+        addItemTooltip(GTNGItemList.MageAssembler.get(1), AnimatedText.GT_NOT_GOOD);
+        GTNGItemList.SuperconductingElectromagneticFactory.set(new SuperconductingElectromagneticFactory(
+            GTNGMachineID.SuperconductingElectromagneticFactory.id, "SuperconductingElectromagneticFactory", ""));
+        addItemTooltip(GTNGItemList.SuperconductingElectromagneticFactory.get(1), AnimatedText.GT_NOT_GOOD);
+        GTNGItemList.KerrNewmanHomogenizer
+            .set(new KerrNewmanHomogenizer(GTNGMachineID.KerrNewmanHomogenizer.id, "KerrNewmanHomogenizer", ""));
+        addItemTooltip(GTNGItemList.KerrNewmanHomogenizer.get(1), AnimatedText.GT_NOT_GOOD);
         GTNGItemList.IntegratedProductionFactory.set(new IntegratedProductionFactory(
             GTNGMachineID.IntegratedProductionFactory.id, "IntegratedProductionFactory", FactoryText.Name.text()));
         addItemTooltip(GTNGItemList.IntegratedProductionFactory.get(1), AnimatedText.GT_NOT_GOOD);
@@ -358,5 +412,6 @@ public class MachineLoader {
         registerMachines();
         registerbasicMachine();
         WirelessHatchLoader.register();
+        ModularHatchLoader.register();
     }
 }

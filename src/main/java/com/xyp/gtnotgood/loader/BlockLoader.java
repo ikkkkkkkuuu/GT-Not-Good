@@ -5,7 +5,10 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.xyp.gtnotgood.GTNotGood;
+import com.xyp.gtnotgood.common.blocks.assemblyplant.AssemblyPlantBlocks;
 import com.xyp.gtnotgood.common.blocks.beekeeping.WorkingApiaryRegistration;
+import com.xyp.gtnotgood.common.blocks.dimensionalfocus.DimensionalFocusBlocks;
+import com.xyp.gtnotgood.common.blocks.fieldextruder.FieldExtruderBlocks;
 import com.xyp.gtnotgood.common.blocks.flux.BlockFluxConnector;
 import com.xyp.gtnotgood.common.blocks.flux.BlockFluxLogistics;
 import com.xyp.gtnotgood.common.blocks.flux.FluxChunkLoading;
@@ -14,8 +17,11 @@ import com.xyp.gtnotgood.common.blocks.flux.ItemBlockFluxConnector;
 import com.xyp.gtnotgood.common.blocks.flux.TileFluxLogistics;
 import com.xyp.gtnotgood.common.blocks.flux.TileFluxPlug;
 import com.xyp.gtnotgood.common.blocks.flux.TileFluxPoint;
+import com.xyp.gtnotgood.common.blocks.heart.HeartBlocks;
+import com.xyp.gtnotgood.common.blocks.kerrnewman.KerrNewmanBlocks;
 import com.xyp.gtnotgood.common.blocks.largeinterface.BlockLargeInterface;
 import com.xyp.gtnotgood.common.blocks.largeinterface.TileLargeInterface;
+import com.xyp.gtnotgood.common.blocks.lighthunter.LightHunterBlocks;
 import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeReceiver;
 import com.xyp.gtnotgood.common.blocks.mebridge.BlockMEBridgeSender;
 import com.xyp.gtnotgood.common.blocks.mebridge.ItemBlockMEBridge;
@@ -32,6 +38,7 @@ import com.xyp.gtnotgood.common.blocks.network.TileNetworkNode;
 import com.xyp.gtnotgood.common.blocks.packaged.BlockPackagedProvider;
 import com.xyp.gtnotgood.common.blocks.packaged.PackagedServerActions;
 import com.xyp.gtnotgood.common.blocks.packaged.TilePackagedProvider;
+import com.xyp.gtnotgood.common.blocks.particlecollider.ParticleColliderBlocks;
 import com.xyp.gtnotgood.common.blocks.stellar.StellarBlocks;
 import com.xyp.gtnotgood.common.blocks.stockio.BlockStockIOInterface;
 import com.xyp.gtnotgood.common.blocks.stockio.TileStockIOInterface;
@@ -94,6 +101,13 @@ public final class BlockLoader {
      */
     public static void registry() {
         StellarBlocks.register();
+        KerrNewmanBlocks.register();
+        HeartBlocks.register();
+        FieldExtruderBlocks.register();
+        DimensionalFocusBlocks.register();
+        ParticleColliderBlocks.register();
+        AssemblyPlantBlocks.register();
+        LightHunterBlocks.register();
         if (ModList.Forestry.isModLoaded()) {
             WorkingApiaryRegistration.register();
         }

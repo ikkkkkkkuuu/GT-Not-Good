@@ -1,0 +1,214 @@
+{
+  "formatVersion": 1,
+  "component": "Field Extruder Factory visual assets",
+  "officialPack": {
+    "version": "1.4.5.3",
+    "curseForgeFileId": 9238465,
+    "archiveSha256": "1c732d6b124732c3e3aede97f353910fc31873d9e26074891b2ca69dbcdee23b",
+    "license": "CC-BY-NC-SA-4.0",
+    "licenseSource": "LICENSE inside the actual official archive; the CurseForge metadata label is not used for the packaged assets."
+  },
+  "originalAssets": [
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/iridium_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/iridium_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "fa6549f1c28be2efca09a9e8d9d078b417a4982f505425a39a606fe1c2fd0c73",
+      "destinationSha256": "fa6549f1c28be2efca09a9e8d9d078b417a4982f505425a39a606fe1c2fd0c73"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/iridium_casing_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/source_ctm/iridium_casing_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "1d8fa884fa9ef9c09272724bf7819e4782e83dd3d63dcde6fcaa83d423ec7c1d",
+      "destinationSha256": "1d8fa884fa9ef9c09272724bf7819e4782e83dd3d63dcde6fcaa83d423ec7c1d"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/iridium_casing.png.mcmeta",
+      "destination": "META-INF/field-extruder-port/source-metadata/iridium_casing.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "f587c0d6d24bb9829dbf27dad65553b05e57c49421e10715909838573f23ae6c",
+      "destinationSha256": "f587c0d6d24bb9829dbf27dad65553b05e57c49421e10715909838573f23ae6c"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/hyper_mechanical_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/hyper_mechanical_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "783c4f8d75340212017d9c2418faa2dfa747834afb17bb93723dde27473fead1",
+      "destinationSha256": "783c4f8d75340212017d9c2418faa2dfa747834afb17bb93723dde27473fead1"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/hyper_mechanical_casing_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/source_ctm/hyper_mechanical_casing_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "526f36ff9d0b973c7c0398c5917e72a3c4b4e3c44b8e829707b018786cc0db37",
+      "destinationSha256": "526f36ff9d0b973c7c0398c5917e72a3c4b4e3c44b8e829707b018786cc0db37"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/hyper_mechanical_casing.png.mcmeta",
+      "destination": "META-INF/field-extruder-port/source-metadata/hyper_mechanical_casing.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "f132b140b7394b0c261fc8feea69bd187ae2676ee3d3ac385359db9474f18882",
+      "destinationSha256": "f132b140b7394b0c261fc8feea69bd187ae2676ee3d3ac385359db9474f18882"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/molecular_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/molecular_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "09f093c0827fc82f85e3883a1d4c320900927a55374fef2c2460078956023538",
+      "destinationSha256": "09f093c0827fc82f85e3883a1d4c320900927a55374fef2c2460078956023538"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/cleanroom_glass.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/cleanroom_glass.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "147c5635789044d3f0be49b512bf4da27a47e15e358793f0a04a99ff761060e0",
+      "destinationSha256": "147c5635789044d3f0be49b512bf4da27a47e15e358793f0a04a99ff761060e0"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/cleanroom_glass_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/source_ctm/cleanroom_glass_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "cb75dedc4bb4a2cefb4b7c13bda4612a5c7be7df1c6b90be1d26a7f5c2dab446",
+      "destinationSha256": "cb75dedc4bb4a2cefb4b7c13bda4612a5c7be7df1c6b90be1d26a7f5c2dab446"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/transparent/cleanroom_glass.png.mcmeta",
+      "destination": "META-INF/field-extruder-port/source-metadata/cleanroom_glass.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "ee3773de9cea9f6985f52c909df0608af723f9962c80643c2067e868c1b50c3a",
+      "destinationSha256": "ee3773de9cea9f6985f52c909df0608af723f9962c80643c2067e868c1b50c3a"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/fusion_reactor/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "825af63ad86835ea1cd81c16008ef566c2f84bed025b3960324b9d02bda01ba8",
+      "destinationSha256": "825af63ad86835ea1cd81c16008ef566c2f84bed025b3960324b9d02bda01ba8"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/fusion_reactor/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front_active.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "825af63ad86835ea1cd81c16008ef566c2f84bed025b3960324b9d02bda01ba8",
+      "destinationSha256": "825af63ad86835ea1cd81c16008ef566c2f84bed025b3960324b9d02bda01ba8"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/fusion_reactor/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front_glow.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "9c7a82167b3544ced4b2d9d45f6724b27ab1c49fe46fffe01c18c955d8e118b2",
+      "destinationSha256": "9c7a82167b3544ced4b2d9d45f6724b27ab1c49fe46fffe01c18c955d8e118b2"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/fusion_reactor/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front_glow.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "5c669e75699b5c3ba581b8b57becfe8ebcddca080b89cafe1d473d618df03707",
+      "destinationSha256": "5c669e75699b5c3ba581b8b57becfe8ebcddca080b89cafe1d473d618df03707"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/fusion_reactor/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front_active_glow.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "9c7a82167b3544ced4b2d9d45f6724b27ab1c49fe46fffe01c18c955d8e118b2",
+      "destinationSha256": "9c7a82167b3544ced4b2d9d45f6724b27ab1c49fe46fffe01c18c955d8e118b2"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/fusion_reactor/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front_active_glow.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "5c669e75699b5c3ba581b8b57becfe8ebcddca080b89cafe1d473d618df03707",
+      "destinationSha256": "5c669e75699b5c3ba581b8b57becfe8ebcddca080b89cafe1d473d618df03707"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/hollow_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/hollow_casing.png",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "6cff6faa0262b71f5612a15866e0e4c5e0a63525bb9510980f05112b30b37f8e",
+      "destinationSha256": "6cff6faa0262b71f5612a15866e0e4c5e0a63525bb9510980f05112b30b37f8e"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/containment_field_generator.png",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/containment_field_generator.png",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "ef0c44bb92b0b4b69efc31f7eb0cf0cd4fe601a4c0dc9eb507a071e7dd1f8ff9",
+      "destinationSha256": "ef0c44bb92b0b4b69efc31f7eb0cf0cd4fe601a4c0dc9eb507a071e7dd1f8ff9"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/containment_field_generator.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/containment_field_generator.png.mcmeta",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "4a9cfaec6e2e42ce26c15369ac9f04e18425ac77f92ab0aefa4cfffe0c58a860",
+      "destinationSha256": "4a9cfaec6e2e42ce26c15369ac9f04e18425ac77f92ab0aefa4cfffe0c58a860"
+    }
+  ],
+  "layoutReference": {
+    "repository": "https://github.com/Low-Drag-MC/LDLib-MultiLoader",
+    "revision": "1d4e4390ae58d16038845c651e122185c29f334b",
+    "files": [
+      "common/src/main/java/com/lowdragmc/lowdraglib/client/model/custommodel/Connections.java",
+      "common/src/main/java/com/lowdragmc/lowdraglib/client/bakedpipeline/Submap.java"
+    ],
+    "license": "GPL-3.0",
+    "generator": "reference/field-extruder-port/generate-connected-textures.py"
+  },
+  "derivedConnectedTexturesManifest": "CTM_MANIFEST.json"
+}

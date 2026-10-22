@@ -1,0 +1,1412 @@
+[
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/0.png",
+    "mask": 0,
+    "sha256": "4501bc1dbf8fac1e9446d0ee5aebb9dfa3b586d5b9941f418e83810576a2201f"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/1.png",
+    "mask": 1,
+    "sha256": "431cccbd37fcad17a7294373d19afde940a357732603b326f601374f01288c88"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/2.png",
+    "mask": 2,
+    "sha256": "22dcd5178d6810531c4836f2ffd9acdc4feb2a51c59e6c61d33ef6e05068e8a0"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/3.png",
+    "mask": 3,
+    "sha256": "5cc1a1b60c7ee8c74e0cd9a1e8359fc5d1b47412c9ca311cc7377d93de2e7a31"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/4.png",
+    "mask": 4,
+    "sha256": "f810a09c344fc6930c508d99e5b8dc89e0e4bfceec0f18fe130a6827a445bc8f"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/5.png",
+    "mask": 5,
+    "sha256": "f250d09103e50dba3da092342aec663ca861d1ab1c25c900589de6d5b5c929c2"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/6.png",
+    "mask": 6,
+    "sha256": "afb5bced928da6095514b69044f4a9ed079c6e0b1b76ad2db2c4d0481eb8710d"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/7.png",
+    "mask": 7,
+    "sha256": "85c69df0cad07936211dd2523b470aa8a59cf7f59f24a969ad0f52422a232587"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/8.png",
+    "mask": 8,
+    "sha256": "7a3c9556b2368fe31671e887d33674e3ca4891eece0b9a3a6bd56bf38b01c3f0"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/9.png",
+    "mask": 9,
+    "sha256": "6e253efea213a0a483a58eb5e70208193c6b35375bef38d664273c43024e4deb"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/10.png",
+    "mask": 10,
+    "sha256": "c737689775351db1feee40110a46402e96006a0b0237dbf1894f38cfb98e9d9a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/11.png",
+    "mask": 11,
+    "sha256": "3c7c50e32723394ba9921fda728e5d2573dea6e83e845f91be1491fc8b0b4973"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/12.png",
+    "mask": 12,
+    "sha256": "d8ad4759b0bcb97ab2b856caf96ffb52c22f867007980348503ba3e9deb4cd76"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/13.png",
+    "mask": 13,
+    "sha256": "a9224f40197ae7377b3a751c22f7c865030a56e4c84ec3c6dfc31b72ccff4a2a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/14.png",
+    "mask": 14,
+    "sha256": "a22bbb63ae3d4984e7b609fa001bc236ea1f4802c6a8fa8eab8b3d5a312521d5"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/15.png",
+    "mask": 15,
+    "sha256": "d428566cf766093f9ece2073d543771b09fdf9c6a75915fef95dad5e72e329b0"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/21.png",
+    "mask": 21,
+    "sha256": "b1c87a4438ff27382f3c07f9bd91358ab324c078a619252a598bc6db8a69a3b5"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/23.png",
+    "mask": 23,
+    "sha256": "05214998b21dbb7b40f7ba134cdbdd2a283e3b391d725ceb554c3844d748135a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/29.png",
+    "mask": 29,
+    "sha256": "08807890384e5a5e8f515bc1a3cb0946b0e261f9d3a271abd47aee416a64f4b5"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/31.png",
+    "mask": 31,
+    "sha256": "98faad09471156c1956663974f1aef9297c991dbcbdf89100bcf1620a623112a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/38.png",
+    "mask": 38,
+    "sha256": "fc2f46bbfd90ffe62237c2318ae587902003242c69d15655e2da2bc00443c9be"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/39.png",
+    "mask": 39,
+    "sha256": "e27fd0fc5cb4874468a8900096b68cd6aacac7430e4bb6e0cdfeebb134b08ee8"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/46.png",
+    "mask": 46,
+    "sha256": "e13ec791ecb4beb734ecbcf67642cdc5dd27d8bb0ea522377028330bce82d93c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/47.png",
+    "mask": 47,
+    "sha256": "0749af9c46da7d54da9524196e354dd24de435ea2479292ee1927c5f417b08d9"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/55.png",
+    "mask": 55,
+    "sha256": "1a15850c761e65c9f456f65604438467f65b388d675663cfdea8db7854e9155d"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/63.png",
+    "mask": 63,
+    "sha256": "514be5cbcebabf829da493c294b4325cc9de1dad1f0a3a6a5f57f8cdcbdbb579"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/73.png",
+    "mask": 73,
+    "sha256": "e1e63556ca22785dfdc7efabb823e00622a87cca94776564d9e1063105f6167c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/75.png",
+    "mask": 75,
+    "sha256": "839ea49adff2ebe1b100aff0c54baa23a6c5cd11a2880506c8996487747b6e27"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/77.png",
+    "mask": 77,
+    "sha256": "f632e304dcb1311aec384170d1eeb4c9b4288c3ddace770453169f7a99f3b8ab"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/79.png",
+    "mask": 79,
+    "sha256": "e5563e7a68680dd01898e2171c116ae23eb37911b89611acd4ce9b1245a8942b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/93.png",
+    "mask": 93,
+    "sha256": "2345b311c27e6232e5fbb9ff5806c3931895f3e9b5394e213531dd4e6e9764f1"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/95.png",
+    "mask": 95,
+    "sha256": "1ec432be1fcc5b0e33474ace83fd540748f13a6f4692e14d922dc8460ab54530"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/111.png",
+    "mask": 111,
+    "sha256": "603904dc320c3155dc3b6a4f3a22a1e305e0c8a3590a7fe4cd2e61b6c1c69e0c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/127.png",
+    "mask": 127,
+    "sha256": "53429a2e732cb18b450f930b208721099ffdd67fdf5bbd32a7ca41c9e80790c5"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/138.png",
+    "mask": 138,
+    "sha256": "a28f50e2ac0ea2637dd644bdbf90e415dd632fc0938760862df2c407bd3c6e60"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/139.png",
+    "mask": 139,
+    "sha256": "c133cf58b8e66068e587c9f6c4cc8b97dbe6ace6401f8f172f9f35f96d66ce19"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/142.png",
+    "mask": 142,
+    "sha256": "86d65a3467c50055bbf37ea774e6d9f337ad6b9a89008fec34894a948d206c9a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/143.png",
+    "mask": 143,
+    "sha256": "fcbe960088546fefa4ebbb175b5d4fcbcc2e1b6138edc0590cb5f23d8f299663"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/159.png",
+    "mask": 159,
+    "sha256": "de293187d5509c1cab6da154b66aff43d6624e56f2a6d191a9eaa4910e93f05f"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/174.png",
+    "mask": 174,
+    "sha256": "bcea935bd6a77b5c270944af16a67b5201ced974555b7dc93c8462d446a4bea7"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/175.png",
+    "mask": 175,
+    "sha256": "90da5b2ead2d3906748c535c37cdee579bb1911caf991dd6e3d1d2d7edc556d5"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/191.png",
+    "mask": 191,
+    "sha256": "33ce66be8f754b95b7d08231f414cead84e42b1f822feb00535553986906c8c1"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/203.png",
+    "mask": 203,
+    "sha256": "648962d61d5cd51ea30572019e27f3485052bd737857cc283dea860abe5221e9"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/207.png",
+    "mask": 207,
+    "sha256": "860d6302bc3f5e1c6cbdf09aa02b8419d174179a0c9dba44aecc21ab62254372"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/223.png",
+    "mask": 223,
+    "sha256": "825e1aa77b6db8e2ad3bf79cb78bb17613928bd1f75124f04bac8c04c12c3a37"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/239.png",
+    "mask": 239,
+    "sha256": "62973a19d33b810017147a087fa75e42550ac29e8b5b962206a48210dbbe2c78"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimensionally_transcendent_casing/255.png",
+    "mask": 255,
+    "sha256": "c1e71f02d03b8d30ce22af403da2a4c022f92a8aeff250e65c6d895bbc212961"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/0.png",
+    "mask": 0,
+    "sha256": "d9290295f47842bd010826687dc3ebeb98665737196e8170d8bfe89162cc9dce"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/1.png",
+    "mask": 1,
+    "sha256": "796645e73511227f9d8b5d54bb56b2283a257ba9b2d8926f4663f2d3423864fc"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/2.png",
+    "mask": 2,
+    "sha256": "d88d6db51d2600815b1c3c831bedc5f7b76d6c7b80b0eeed5dc67ad4c248b7dc"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/3.png",
+    "mask": 3,
+    "sha256": "dec580702d70c3999a509dc21f9ae1612c62fa37263b1f4f6995e81ae0175e31"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/4.png",
+    "mask": 4,
+    "sha256": "28ac54d31bd27323c28b9c876082e30d6a9475a0959b697389a3017adc6fa4ba"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/5.png",
+    "mask": 5,
+    "sha256": "a7aedf7af56f3a1f27e183dae7377d506d91fc6827c99e0f23cd8559792d570c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/6.png",
+    "mask": 6,
+    "sha256": "8ccf018b5b6c7cd36b9f0217443044555ffe026a08027dd03c4725fea39359a6"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/7.png",
+    "mask": 7,
+    "sha256": "b9d28f23fe755bd09ca4fac5b0686fb0fdede50a9340e06bcd1633aa36e48f08"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/8.png",
+    "mask": 8,
+    "sha256": "bc2261785b10c1c4d85083469cf47fd20cf8a9c553b7e8724a33389fbd7ad55b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/9.png",
+    "mask": 9,
+    "sha256": "dbc825c36cebaba52105544e4d14ed72674a566ebee04da0c74c8c2c9c0b42ed"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/10.png",
+    "mask": 10,
+    "sha256": "e1816ff622e136259b59583fd3d2cd5f3ab6b5523ae7e3eb81ba50c065f21430"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/11.png",
+    "mask": 11,
+    "sha256": "46aa670f592f46be8544566b152b7ad3355fb145223601bac90400d90500bc7b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/12.png",
+    "mask": 12,
+    "sha256": "92f76e459b75aab99fe2759a6fa5578189d52828a14cf60ccf21df990e456d40"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/13.png",
+    "mask": 13,
+    "sha256": "99e606b1340eca65df4e99cf7eb3dad4c3eeed224f8d8d2b32234dd829d1030b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/14.png",
+    "mask": 14,
+    "sha256": "a89498834b0f737e9e7d7bdfdbc17321b49303acb47d95529f31657c135a5ba0"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/15.png",
+    "mask": 15,
+    "sha256": "955b19912cd9ae9d08df43892312c829062c30c5757954f0e397ecb2711287bf"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/21.png",
+    "mask": 21,
+    "sha256": "bf68afcbaf01f017772d4dccd29a5d70ef1d740ac652c52238e549e41cc6eea7"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/23.png",
+    "mask": 23,
+    "sha256": "40fefff903eab0cb174f2cc6552e9b851bc0e314797ce8afbb2b91126ef0b0d5"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/29.png",
+    "mask": 29,
+    "sha256": "81c14cdd907c4727435496cddf4834ed2b28ab59c6f62bdb4a5cb819a01ef71b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/31.png",
+    "mask": 31,
+    "sha256": "8ec7ba2930053faf8c0c91953896a0c9d8459c1f49b7086a26c46e295c00a75b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/38.png",
+    "mask": 38,
+    "sha256": "270660c48b7ce47196ad5aed26ae5cf1cc30049ebfc178b2de3321056d01a3ed"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/39.png",
+    "mask": 39,
+    "sha256": "838f9de18c0178ffe083aeed7c2e421c3ddc628bb91c46f130289268803fed7d"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/46.png",
+    "mask": 46,
+    "sha256": "c56bac04db261c9dbd77a29cae12e5f2fd2798cb6ee6dacf293147212fefb5f8"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/47.png",
+    "mask": 47,
+    "sha256": "51ab0ca8c86296873d64b85071ea21b05f2bd5985185dea58d0d02d69a36cb24"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/55.png",
+    "mask": 55,
+    "sha256": "2dee5c11e7f3f2ac4e1e41fcdeffd01fa1cf57fe9b267c1c135f8f1bd141f651"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/63.png",
+    "mask": 63,
+    "sha256": "c88e47bac7bcb10656870b4cd63f9f7b3cc1412d13491b88aa285ee3d31297c3"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/73.png",
+    "mask": 73,
+    "sha256": "c159656b3cc7f53da508213b7ebae0901f3534a526ac48fd3f5f12f568dbd556"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/75.png",
+    "mask": 75,
+    "sha256": "672f34cc37716eaddf06bfa096f2de3687d6fd24b2af75a99bad3cfb875e5b5b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/77.png",
+    "mask": 77,
+    "sha256": "83231dcaa0f1a4c98bd06830d74afbbc185c723774cc5ba6c4e99772657d195b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/79.png",
+    "mask": 79,
+    "sha256": "9271a6af4a20416583a48198987d0bc743f1e0fe28baf05e33e2a42c5e241c28"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/93.png",
+    "mask": 93,
+    "sha256": "cad40e595966fa72463bdf33c97072f5bff6e324e494b66be65ca6f19f2dbe86"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/95.png",
+    "mask": 95,
+    "sha256": "250436e67b04a394c153dca7619046c2341ec306f180331be4157ad7930eb4bc"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/111.png",
+    "mask": 111,
+    "sha256": "4109eb6df0f1577266f075159cf826c808336d13ca748318ed970630fc8fd342"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/127.png",
+    "mask": 127,
+    "sha256": "a78543052ee18624f75fddfd308fb7cb99d5da0d38791f3bd7b58295cf546c1e"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/138.png",
+    "mask": 138,
+    "sha256": "db5971b4f2f38d9c3570448869dd6cd2fb92d9c053bb459c6b3332d9472e1a92"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/139.png",
+    "mask": 139,
+    "sha256": "84e1128eff3d6ce41c8e7b6790c286f51d9b38d74d93d6a0e28c23cf2ca9c98e"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/142.png",
+    "mask": 142,
+    "sha256": "a9f1b63613f0f831612f063a38b4826010a81d6c5f0d2d08d352416c1dd15bd8"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/143.png",
+    "mask": 143,
+    "sha256": "4ab578fba854b6035bd189367c48283fbd4a1783477a5f4a344f087aa9358294"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/159.png",
+    "mask": 159,
+    "sha256": "045114c9bdf521bf4eb3e72107c6b0b9d27d116b41e32804a61f79756b3379bc"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/174.png",
+    "mask": 174,
+    "sha256": "9de94ec02beb0e4d59a8d37a7f9d4e7219b5d875e18798608ebe27debdc28baa"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/175.png",
+    "mask": 175,
+    "sha256": "af2ed8aff52d8e324a0fcc2daacc8b23c9f9360c86a7b3d49a048a437ea6bc12"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/191.png",
+    "mask": 191,
+    "sha256": "5111c91260d2d968524f1c9d26de577c8a2ac6c27acd8b54c3dcbda1942e31aa"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/203.png",
+    "mask": 203,
+    "sha256": "040bf4a475eecf9703de1c0574527c6b6bc4d99b2c54ff422b64b0470ec5544b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/207.png",
+    "mask": 207,
+    "sha256": "a919cab375b2958fa69bd08ffeeecd7a4c0f407f138b872358226c6a579867d3"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/223.png",
+    "mask": 223,
+    "sha256": "fcaf8f251594982fa0f410ff61641f676053a2c27547f3135bcd419e368e61a2"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/239.png",
+    "mask": 239,
+    "sha256": "51c58b9fd7126b251bbc8bfc546f0316886e8ec310cad00e4beabbcf9f549076"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/dimension_injection_casing/255.png",
+    "mask": 255,
+    "sha256": "964e49defe2997d5fea6fb13829114a59b0600dd5cb09a487208fae1abbe8a4e"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/0.png",
+    "mask": 0,
+    "sha256": "a1f48fdf8ceae8d6c2ef86cd611e9288d1a242adca9208d1fc2e427e249df4be"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/1.png",
+    "mask": 1,
+    "sha256": "c915e3e81a2449b5726b39110811831a9b31994269b45ed11a857ae1e06b652f"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/2.png",
+    "mask": 2,
+    "sha256": "60c408d875ec10bfd2f890f6bf0271bc6d5e33d3491d26bccfa5a45ddc47143e"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/3.png",
+    "mask": 3,
+    "sha256": "e46ed022abc72e151ef521b95a7d931c38ad97311ed3465603414e8232584d87"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/4.png",
+    "mask": 4,
+    "sha256": "d7dad537be08d4365ff74f5b27a1ae93e0f43608632a1d9765c103c74a1e1103"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/5.png",
+    "mask": 5,
+    "sha256": "2033881cd0bda431f37323f26063638e95321604e605753aafe60b67ecf1c974"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/6.png",
+    "mask": 6,
+    "sha256": "8b6de3575a5490689b480ffd3cdf42b0e5052626c276691251e6bafc509916fe"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/7.png",
+    "mask": 7,
+    "sha256": "d5c1a1e61db8c991c913751e780fc1fb4eacafd12fdd7b315d9e37edb658a7b1"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/8.png",
+    "mask": 8,
+    "sha256": "5caa701ca4b40055e25cbfa7ffd93e8ba9ea1473f12923a6e32d086ffbf997af"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/9.png",
+    "mask": 9,
+    "sha256": "b2be58bf2757b8ab398a3454109505467674345f65ca14a0f26211e389e3bd01"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/10.png",
+    "mask": 10,
+    "sha256": "809b75fa5a3168ef3fc9a07159cf0934f7b552cc37248df1366841653a5c1b42"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/11.png",
+    "mask": 11,
+    "sha256": "dd872bda436eed205820053aa267738cb79084587b77b1c0a662696713348001"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/12.png",
+    "mask": 12,
+    "sha256": "df6f57e164f6b1f77444f9627146ce2f3370975d898041b9fb5c82e985f0180b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/13.png",
+    "mask": 13,
+    "sha256": "2f9d9c396c43f2ddda3059026dfec8bebb050ca39614821655f87e47e8ea1885"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/14.png",
+    "mask": 14,
+    "sha256": "613ff414b700afeacdd3563a567ad499a0506f05b5d5bd2d502e90da01187a0a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/15.png",
+    "mask": 15,
+    "sha256": "d0211f5309d8ec906620439b5ac1a84e6899fe31fdc0b273ed772d97c57a498c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/21.png",
+    "mask": 21,
+    "sha256": "22afcdef75bcfd2aca734f744616f54fc8b0f139712dbc264892b2a8135111cf"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/23.png",
+    "mask": 23,
+    "sha256": "c0acee0796601c3abbffff0f9b275d9c6247c841b5d32ede5ed596758dc86790"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/29.png",
+    "mask": 29,
+    "sha256": "1b2bc9325f6a8529795aafbf74dd9e30d3c8380cafb5630f109ef404b0f25a76"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/31.png",
+    "mask": 31,
+    "sha256": "722e538c274b01216eea33df3d7239bfe0602566e6ff9c687910149ef3f7285c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/38.png",
+    "mask": 38,
+    "sha256": "5d54f32b194747b9f2388f8a03a7568ffaca8a2cc722932f805192bbd1bf9c28"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/39.png",
+    "mask": 39,
+    "sha256": "5186ba41657f1e0b584d098727ab9867d37ca1b53d4387bd279afa95b03b532a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/46.png",
+    "mask": 46,
+    "sha256": "37af59933145863830ed0b02f29a224ea0abba333f52c00be0422843eecaec9f"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/47.png",
+    "mask": 47,
+    "sha256": "4a0f7ddf7655735d8803b5ac1ea22e2298c155935151cbdfc3ad6287d21027cb"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/55.png",
+    "mask": 55,
+    "sha256": "0cfa5f5cb42a6c16f061208c1f18833a514485ab45c54dfacf9c015dd69be59b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/63.png",
+    "mask": 63,
+    "sha256": "03b5df9876f78def154e303b513f2aa0b5fe416d62e0b6811584a78da55937c3"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/73.png",
+    "mask": 73,
+    "sha256": "c145c9cbd8531702cb1497e7990ee70f7a48c9e4601f2aa2faf7cf6ba4474f66"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/75.png",
+    "mask": 75,
+    "sha256": "543681ca1c1af00dda0e6b6c96b22a1db1f007de29d5cb7056fa6876b614f653"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/77.png",
+    "mask": 77,
+    "sha256": "8e422c2417ad41715c851e7f0021e872d81e28e4ba18cc1b56b014b50e1209dd"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/79.png",
+    "mask": 79,
+    "sha256": "15bb38c5a6a1c8f2a4bea126303f72afe4b2560cba2db9ec9fef9361cabfdcdd"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/93.png",
+    "mask": 93,
+    "sha256": "dfa29d3b1a1f5a59edef7aeddaa6139a849f619c5f616af692931b832bdfc3aa"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/95.png",
+    "mask": 95,
+    "sha256": "6aba402b2f09e13b609b9484dd9fadea7d72de3f43db9598725c637d854ff31c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/111.png",
+    "mask": 111,
+    "sha256": "9f869d5687f356eaebc2c6a074df5c1966e659de5d3c08bfb759bde45bdbc7c2"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/127.png",
+    "mask": 127,
+    "sha256": "8c2f23cf3f5ce8458c74ab36b25bb5fb232065c812805e9f7944d31e140fe6a5"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/138.png",
+    "mask": 138,
+    "sha256": "abd556274a2dcceb8760386c17325fd926427133a695de2a0ed0d9f06f0a083a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/139.png",
+    "mask": 139,
+    "sha256": "a3608358cb080c433471e7d46b795e76692379e159e1ec22f3c2baa9690a8f0e"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/142.png",
+    "mask": 142,
+    "sha256": "184a1d253e9b352046304c68e4fdbd3b27586f0d9364746d95a86e343aabbdd0"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/143.png",
+    "mask": 143,
+    "sha256": "506847f5baf279015a5767d302affe56d7f506fc83c9918a5ae7b1d450188041"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/159.png",
+    "mask": 159,
+    "sha256": "eb878cd28d6e8624186387a59f31edbc407515ee8b7ea120cec4d2dbc74181a6"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/174.png",
+    "mask": 174,
+    "sha256": "aa668b472571684166e0f257c207ea47dcfaed204173c4a2b61d20ee8f79034c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/175.png",
+    "mask": 175,
+    "sha256": "fde57507312425dd4c64e227a304c57bb30e6ccdb7e0fc5fcdc897cc2f879f05"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/191.png",
+    "mask": 191,
+    "sha256": "ec3777500230154badd53e448353ed3b5cd1cf99249bf77366956169c9fe4bb8"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/203.png",
+    "mask": 203,
+    "sha256": "5fcfda3b3eef4b29262ef9104e8133cb8d498b3188895eaf86c5d60f5cad0b7b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/207.png",
+    "mask": 207,
+    "sha256": "46c936d88cda20fa0075ba0b64e739e586edd203435ddb8cea709663cabfaa7d"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/223.png",
+    "mask": 223,
+    "sha256": "eac79843b694a6f0d7bd75a5fa30a85cb51039d88c53666870f7f5716e55b046"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/239.png",
+    "mask": 239,
+    "sha256": "438ee074da95fe72fbf4518497efa98e26e95c6e488fe7f3fac9c926e21f06d7"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil/255.png",
+    "mask": 255,
+    "sha256": "23b4c5299287001cc1540e729fdf390ee0a864991e34eb97e8cc05ddf52e0bb3"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/0.png",
+    "mask": 0,
+    "sha256": "8b16779458927c0416340e5a994b55163ced73419bf9bd8f444f3b1ed6d063a8"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/1.png",
+    "mask": 1,
+    "sha256": "c12674a6a303c001d293a3e8bf0f4d4dee6c5240db4c59f9048b06244e4892d7"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/2.png",
+    "mask": 2,
+    "sha256": "663118af506c7f19bb738c76fab1ee7ce4b6420fa957cc3c167f32387c6a94ef"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/3.png",
+    "mask": 3,
+    "sha256": "485ab2341d5161bc196e8bf0e6326a9d2472d2ebd115217284e77770f2f062d5"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/4.png",
+    "mask": 4,
+    "sha256": "85af88a6bc2747a9041a5f100806ef06b1b87dfdf6c50bbe6325853c66cdd51f"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/5.png",
+    "mask": 5,
+    "sha256": "a6f75d4926256b84915c875a932dbf06f6c9939d6c269b7d601482988861a43e"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/6.png",
+    "mask": 6,
+    "sha256": "90fc230b309401eeaf4dd9d56a702002cb9f43a0205a460e5e6a4ccb6b9f77b3"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/7.png",
+    "mask": 7,
+    "sha256": "8f510beb5b1101d3657ddc09cc551c40aef0aba405efa528f2bb9d164953d56b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/8.png",
+    "mask": 8,
+    "sha256": "86cbd612f50c112523061df176c2a64e2e53ff1906717578bddb650a2d91110b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/9.png",
+    "mask": 9,
+    "sha256": "0d2f6ef85dd86db7a293e6ae27605d6cbc04a67e4b5d6f101c6be05daeb16057"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/10.png",
+    "mask": 10,
+    "sha256": "337e743be51f4b5ad82f3bc83d2331095e3637a9eed73c4c4edd34b288d42679"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/11.png",
+    "mask": 11,
+    "sha256": "75f7d738fc192892846d099357f2933769e0248830d256b495659f8b9e0daaa3"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/12.png",
+    "mask": 12,
+    "sha256": "e198d4e3db25a61609d057358d49d3eea963aadb627805b7ad7bf214035d31ef"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/13.png",
+    "mask": 13,
+    "sha256": "5fc181444c2770ab237e0c3e530b648681ccc29a8ba7c92e56e32d8d738745c2"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/14.png",
+    "mask": 14,
+    "sha256": "c392965d25b02980bc5424872fc116c32a0740da783b50a5b6a6aedb9b51bf67"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/15.png",
+    "mask": 15,
+    "sha256": "20433ac7b177b2515a0b02afd4319f525f6a6230564cc59df5f6dfc624647a05"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/21.png",
+    "mask": 21,
+    "sha256": "6ade2a70b0f2cefcca56ebcb783f097c8316164aa1d9ae2732a98307677dd716"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/23.png",
+    "mask": 23,
+    "sha256": "d12e878a0efc2673c4ec3994b7c0961e3bb8ea3a6bd98a16fa2f4175a1ee68ba"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/29.png",
+    "mask": 29,
+    "sha256": "9ce02738b3ca07672700d1bb2d7a6222229e99ebda0bef37df7437c6a6df67a9"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/31.png",
+    "mask": 31,
+    "sha256": "2d402f6668c958fac23839b634f7678b62f61d54f63317834704b8642de8b0ee"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/38.png",
+    "mask": 38,
+    "sha256": "d93561c89777ecf5b1079336627045e1a438d0380ff35b11505bcd087cf1d9f2"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/39.png",
+    "mask": 39,
+    "sha256": "84a3abc8147c72a99036e4ea2e74ad6cb704c09d7b8709f6ccf857b9aa2d3cd1"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/46.png",
+    "mask": 46,
+    "sha256": "c3c914b0a8a769aadf6ec97fbf354b12462e2f51789c94b792f281bee2bf8f6c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/47.png",
+    "mask": 47,
+    "sha256": "e84920dd082b2d8c9c3a7c055170a95ae8cf4997e56ba7d3bba8164f60a6c719"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/55.png",
+    "mask": 55,
+    "sha256": "2dff35701096f158f56fcda56bd7fcd8e1a2149158fe705e718774c76cc33bac"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/63.png",
+    "mask": 63,
+    "sha256": "139b845217a78f5d3bf5c4c0bd580c0f4f0530cfbc6fb4b0178d57e01818e079"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/73.png",
+    "mask": 73,
+    "sha256": "b0e1be52cc643108b67627bcecdd00512616e60af5956deaffddcd21fe5d5c75"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/75.png",
+    "mask": 75,
+    "sha256": "3b221f8afed24dd5e59338c839798a4ee4629f0d04d7289fc789f9d10c710a6a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/77.png",
+    "mask": 77,
+    "sha256": "90e1c65f0296ff2fab3fafaf059e89fc558b03713711cdb667101c8d359af497"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/79.png",
+    "mask": 79,
+    "sha256": "e30bab3e674c7d50a33a107173b3ac7553daf9e86cecd22c9689e1d7dffc11a6"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/93.png",
+    "mask": 93,
+    "sha256": "2fda28864cf324ea37ea544feb3f0f2ebd617e973b31072e35233597704dadfb"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/95.png",
+    "mask": 95,
+    "sha256": "43fe51dc4df3d10c9b94daf9c2e433cc5dc1d78156e91517e5ab2f2beba8c567"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/111.png",
+    "mask": 111,
+    "sha256": "dd51fe465e07e7c6f41ce4be631b9e1d79b927988e5329e4ebca15c2cb8c0823"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/127.png",
+    "mask": 127,
+    "sha256": "b58de3dc1946bed3921c5e17e36205c22716e48c0f4e818bc7c4beac918c95a0"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/138.png",
+    "mask": 138,
+    "sha256": "75537290a81155c63ee94d860ee153d881720bc289ad3d0f140430daaed21331"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/139.png",
+    "mask": 139,
+    "sha256": "1e6bdc32ef0b4f055b82dabaa81d767534d7ad8a18b0f42158df84be2d6f4858"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/142.png",
+    "mask": 142,
+    "sha256": "2eb5a6f645663e35c12fe46d70c413c684ede9552b4d621942faed107866ebae"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/143.png",
+    "mask": 143,
+    "sha256": "b9e6e9acb27038f28d56654ab3e2b114055f1c03676c09ac4f6089f7a816f2ce"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/159.png",
+    "mask": 159,
+    "sha256": "18946d4f886a13135b585bbcfeb9d9f66cc462ded203d8343ef3da36d6dc1ded"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/174.png",
+    "mask": 174,
+    "sha256": "8a7d440950f0e407df6aaf1732b24c9f6dc60484ba98a692d1f4581817818795"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/175.png",
+    "mask": 175,
+    "sha256": "62028bcc426e62bad9b4ccab549d534a01d9a7546d44ee554066ac3c91928e98"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/191.png",
+    "mask": 191,
+    "sha256": "d51316afec03b0d2916a80f4f4e12f14d33547153a3fe7a751fbf846a94b601c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/203.png",
+    "mask": 203,
+    "sha256": "653cad55e6cf044a60ee37740e9befd593b0f83d127a6fa393a13f1213effa5a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/207.png",
+    "mask": 207,
+    "sha256": "c5d52b1b43b0f2280c5298b775ad1e87b9d22ea0d940dbb67357acfb9e2cb60f"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/223.png",
+    "mask": 223,
+    "sha256": "1c13d631a26428c97bec464ebbc370c3ebbc39fc278ec19eef209e34189b2af0"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/239.png",
+    "mask": 239,
+    "sha256": "020b6d631d61ef83ac3f0f81cae66b65f185290fe2a89379720205957222009b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/improved_superconductor_coil_active/255.png",
+    "mask": 255,
+    "sha256": "eb7334302cf99b8d99f9baa61eb8486e6f57f26a24d476fb311d4c0b8ad346c4"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/0.png",
+    "mask": 0,
+    "sha256": "277b887e942a5aae10f383b98674d75b81a9ed39509251071f15f35038244992"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/1.png",
+    "mask": 1,
+    "sha256": "85e76d4f8edd3985e880b7e4501e7b77cc040481564ac40ec44ab2049f873bd8"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/2.png",
+    "mask": 2,
+    "sha256": "ca9816edc01192161d20f108b83b63f0546ca5d3e56250a0a0e78859add17b3e"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/3.png",
+    "mask": 3,
+    "sha256": "2abdcf239ccda815bb6e0373eef4bb20b51dbdb9e420221c12e62b26f4d7b253"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/4.png",
+    "mask": 4,
+    "sha256": "0984fbe52a6c7ccf66c977a7bc095f7627202a241aef8cc58910db06dd9bc464"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/5.png",
+    "mask": 5,
+    "sha256": "81ef0a30d8b2b6f955c96b0f672d101477b79dc6b62001af8e2bc86e8764f4f9"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/6.png",
+    "mask": 6,
+    "sha256": "d7ad94e56397cecd1754a1a89746209002b3abe6954d02bde57899cc00f5d630"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/7.png",
+    "mask": 7,
+    "sha256": "face7767339f03b0fc3c75c0edf45e23b0e863fe2549b4838561ce3b40967d5d"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/8.png",
+    "mask": 8,
+    "sha256": "2197c3988c0d5570f09f39f19f485c60253770adb2d9012f161c4cace1306a19"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/9.png",
+    "mask": 9,
+    "sha256": "92a13a7f609854b9de0d09b30ff09a45687c7671cc5b11338226b907aadfeb15"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/10.png",
+    "mask": 10,
+    "sha256": "c6f8ad15fb6a25dbbacf2c0ffe80766bd9a3fc4d074edd00e56501e16fbb3f98"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/11.png",
+    "mask": 11,
+    "sha256": "a2b7cffc8d22c94acfc03e0c501a28d1467f1b98dfd54b674f45defc18dc2b6d"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/12.png",
+    "mask": 12,
+    "sha256": "4621cbfa0cf926c75a788f01d888101ce97bd029ecbfefb27970a394b5e712cd"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/13.png",
+    "mask": 13,
+    "sha256": "95d79f00c4baf6f9ecc0e260880f12c8a82c2a142a324b6546010f2e6b42dd50"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/14.png",
+    "mask": 14,
+    "sha256": "26804e43fa7aef6e6415daaa5622d644cf2e31b4230abb6510b5807d230bf109"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/15.png",
+    "mask": 15,
+    "sha256": "0eb6bd414f725ba0377644a6b5f82608be7663ac4fbe2d314f7672a45448ca60"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/21.png",
+    "mask": 21,
+    "sha256": "eac89630cd843af56be0ca4c15ebd9ab4285369e0ccf14fd2764c62768c3dcef"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/23.png",
+    "mask": 23,
+    "sha256": "d7d0e64cb7c8b57d5e7ea39769a97c027f1f8c71c529cf59b958d51fe36f8d1b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/29.png",
+    "mask": 29,
+    "sha256": "ba494f082382c20ee5ec44e7501cf15c494de89dfd97503c782dd67eefa8c985"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/31.png",
+    "mask": 31,
+    "sha256": "98316f21177e41f6e8321964a694eb600198ce1112cdd34fb2026bd37c733181"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/38.png",
+    "mask": 38,
+    "sha256": "eafc8440463bbf7c1db78c49ea89b74abdc35ce2771fcb8240ee3b96bda0f6b6"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/39.png",
+    "mask": 39,
+    "sha256": "5e065cdac8888924dd371cde12c36f69fb517dfa7d69f16247521a9a91c5f9de"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/46.png",
+    "mask": 46,
+    "sha256": "94570386c43480d7837876ae3c9d639b6fdd1f397d0948606a5e7cc87fe1650a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/47.png",
+    "mask": 47,
+    "sha256": "70176db52d23596a2bada271ed095c6eb83dd2dded472166049a5421fc9482f9"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/55.png",
+    "mask": 55,
+    "sha256": "9ba9078061c864cf177de20051e30618c0be52b889a7c35c6ba6ec290ac6504c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/63.png",
+    "mask": 63,
+    "sha256": "5ef3632312d45afde16d7bd675717d3413f80c489fb25cec1ae6567408ea1b30"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/73.png",
+    "mask": 73,
+    "sha256": "ea5f633aaf66f1a8475fe26aae4760f7baccbe31ba27086b465b29766bb7f0f6"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/75.png",
+    "mask": 75,
+    "sha256": "792bc00514552a55371d51cc09c544bddc84775e16ecf47bcee752e407c48e75"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/77.png",
+    "mask": 77,
+    "sha256": "69304be08d9cdbdbddd52cc5b04aa45a7f46821463b20ed81fde1bc567f058cf"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/79.png",
+    "mask": 79,
+    "sha256": "0c7355fbbfc000a4afb0301da80391596b2ccf8b70b95e65c066ca501ef90cf1"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/93.png",
+    "mask": 93,
+    "sha256": "739e437d43fd44ce86ea69180c57a4d4952db60ad7e3cd7512c9634446e3d6c8"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/95.png",
+    "mask": 95,
+    "sha256": "ebe742b276f9e75e8b4d3060914ba066ba27ac614de2f7b15527e117638d7015"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/111.png",
+    "mask": 111,
+    "sha256": "ea654f4776a01f36a96db4d12055225912c869da34f96a2f2241b037cb97faa8"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/127.png",
+    "mask": 127,
+    "sha256": "91be42a92455ec466f17381f35df2c92f073a18f546ae9a4ea0a4d9dcabd08d1"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/138.png",
+    "mask": 138,
+    "sha256": "8d6d64ee4abb296d4eb3c5f349877255f21e6e9454296099e992df7eeeb2aa18"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/139.png",
+    "mask": 139,
+    "sha256": "7f3e35552410c4da4f0825d1999ab095da8fc76c49124a57853035b90a02fcdb"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/142.png",
+    "mask": 142,
+    "sha256": "0988b5508edc30e6d951e417f24b7b5fa65247cc172f4374e5371985bdaa2fed"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/143.png",
+    "mask": 143,
+    "sha256": "f540ac3f3c744b422ce8122b6b3fa807a49f28720c586d5bab5024776521ecb9"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/159.png",
+    "mask": 159,
+    "sha256": "92e3954bdf7714c7f0b486f97726f76cf2923d7a9d6884098f8c46317d25c859"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/174.png",
+    "mask": 174,
+    "sha256": "b208f0f2a0a94a4a407499d92fbc66a2b6a53fc14d2046bc97c9a87aaaa3eea2"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/175.png",
+    "mask": 175,
+    "sha256": "480e53d1db6cc95413955230ceef70bcfbb9b13e16ec5eb6018036edf6dddeff"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/191.png",
+    "mask": 191,
+    "sha256": "a7bc4643b2e2ce4a0d3f00ae3f76ff980573b8ff0238fc606eede1dec7178564"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/203.png",
+    "mask": 203,
+    "sha256": "e248d3618b466fc60038d5608b9ba55a4787cc17bdd8329157add7586b0964b4"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/207.png",
+    "mask": 207,
+    "sha256": "207e5a05213159c29ce70adc6bde604b5e9c576e652ee0c6102f7c388e9ae78b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/223.png",
+    "mask": 223,
+    "sha256": "c4ea632595984d035391e52e66084a551dcc1f13cd440c3e53868d1fef2e9bb2"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/239.png",
+    "mask": 239,
+    "sha256": "b9dfd2ac4200483bd0797bfb99e2c0c0f41726d9adceba39028f893f5cc8a734"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/fusion_glass/255.png",
+    "mask": 255,
+    "sha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/0.png",
+    "mask": 0,
+    "sha256": "3546af0376862549e3c3b78cf27c4e49d6fb5cfc043697e7a8e8b731d6d68fa3"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/1.png",
+    "mask": 1,
+    "sha256": "9986f3770a73a7fbc513330f85384d4cf88592bd793e6ff6956a1ab82c655ebb"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/2.png",
+    "mask": 2,
+    "sha256": "ce9d0c77a9b82389984fc51384816f653ba15bbe3e365bd3d094630159fd3242"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/3.png",
+    "mask": 3,
+    "sha256": "6e2eee4945a7424fdd03e7f70fad11e628e42098b46068a90aaf9c97f6daebc6"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/4.png",
+    "mask": 4,
+    "sha256": "c012f8590ff7636e10877fcdaa83c9979e659a0508a11f7406238677337f87bb"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/5.png",
+    "mask": 5,
+    "sha256": "d5d8045c4917c24bf712ebf6ad6dd2efe73819ed10f921ad68225d1130fdb1c0"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/6.png",
+    "mask": 6,
+    "sha256": "3f220912005ce84653f6b5b7fa220043daa8df066dd14d1c2e44211fe5ed29ae"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/7.png",
+    "mask": 7,
+    "sha256": "50f2e45c2e458aa1e30c4c6d16f594f2afb5bf2803c33a60747039826c89729a"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/8.png",
+    "mask": 8,
+    "sha256": "c360b0914f21e98bf3a07b83cb3c9351b4f73e48fa55e4aaa1470e24cb3aa4f0"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/9.png",
+    "mask": 9,
+    "sha256": "baa2c36ec67d6cd1b542fc3a5fa60a5737002166168b1885c0024f4220510ca7"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/10.png",
+    "mask": 10,
+    "sha256": "52801846f6d47b3b8acdef3bc94d9397646cd4aa5536594a9bda8fb64a01eea8"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/11.png",
+    "mask": 11,
+    "sha256": "2e7f298e4eccfc7b6a1fe9b020a733e7dda242b7e85fd8c3ed3bcc9e924eef23"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/12.png",
+    "mask": 12,
+    "sha256": "9b0ea8b94b68df934ae8118802503095076ca10256a4c4af5364ee15a9800adb"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/13.png",
+    "mask": 13,
+    "sha256": "e49d74d02eae14a5d39a10f292121f23879cbe2cf15a4e9822bb94f4027fdfcc"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/14.png",
+    "mask": 14,
+    "sha256": "74205709bbf5bb4020e14070c35cbcf80a408bd58a2b7d7d3ca4b97afb5cecaf"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/15.png",
+    "mask": 15,
+    "sha256": "ded1a2dcdd320af8498e474fd14da5782c8259d39d57c9ae74fb259a3107c416"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/21.png",
+    "mask": 21,
+    "sha256": "48df0e24e7ba451c72f37b036622d846a8293266e795adf12737b491466027ae"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/23.png",
+    "mask": 23,
+    "sha256": "72f76f982302966e149e541a8b3d2e935474b8fec4a32deee7e4d46dfb5c676b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/29.png",
+    "mask": 29,
+    "sha256": "1435adb0128d9b9f7d8c5d8b7048ab03a43540174cefb1ea409c4d5a1c575cad"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/31.png",
+    "mask": 31,
+    "sha256": "6f013b0585172a9e6b0c01163a09c3303566c54d19bc0c76b988c2ec75584c83"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/38.png",
+    "mask": 38,
+    "sha256": "591d31c2e517924913d7355545849a654dcbbb3ea4a3fb46666d9d09fc60df01"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/39.png",
+    "mask": 39,
+    "sha256": "f0fe1383330a2eeaccfe3fd3ffe8caebcfbbfe64941168f5d1b529a2611de9e3"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/46.png",
+    "mask": 46,
+    "sha256": "be8146be9e4b468201cd65d47cbba926b0e1ae980ba0e836d89296e3eb633f58"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/47.png",
+    "mask": 47,
+    "sha256": "1eb74c9c5bdba0a66fff418c8fcfbe796d5f7fe12932d7226be3045df2c06ed1"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/55.png",
+    "mask": 55,
+    "sha256": "f80d7d601a749ffc11f5fb3efc04dda3c9086ee1a3149b96571c74ae7b941fa2"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/63.png",
+    "mask": 63,
+    "sha256": "2c37afa041aa71f1e24865a6cf7e21ab3b1f02a0986660ef5b4b630d652626a4"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/73.png",
+    "mask": 73,
+    "sha256": "d86e00e37fd22429ecaf5066d1a313a7956bd3e7e639f2b77fe9e726a1b28491"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/75.png",
+    "mask": 75,
+    "sha256": "861f923e478709484510bf8c88250c1ffa141fd6049c24596afdcb3432241d20"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/77.png",
+    "mask": 77,
+    "sha256": "80e82ba9063b2f4e164d0e76acffae8b0ae69770c594134d7a15df7f6b0fdc2e"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/79.png",
+    "mask": 79,
+    "sha256": "d276bf88d46f7763c6ab645876b268384ae7445a92b4dea29ab7483bb814a5f0"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/93.png",
+    "mask": 93,
+    "sha256": "c11ee89e524b6994b344fbd93c6f03f028f5fab129ec892f6a89c5c60a359e70"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/95.png",
+    "mask": 95,
+    "sha256": "9bed67f20ff585848d6b67ab8f3460d3e21b4aadf2af05cbd3db88e919b2a3dc"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/111.png",
+    "mask": 111,
+    "sha256": "68a79ac96725138411f1cede6ecddabcbe75e5342c0dac931e7686057a8a0f1f"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/127.png",
+    "mask": 127,
+    "sha256": "441808dd2cef563927dadb79a89738e2cc0bbbde48d6cb58d31faabaf0c38c73"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/138.png",
+    "mask": 138,
+    "sha256": "51040bc862dc6b058b2d029317b6f5d0756a36c20e97c4fc72007ef4ccdacb25"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/139.png",
+    "mask": 139,
+    "sha256": "c3bc448daaea0438797a730f2d733f1beb4aac1f215711e30f99c590dce90827"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/142.png",
+    "mask": 142,
+    "sha256": "68c77cae12232fb5d65abe3e8b756bc37ce501fec4723ba713066db089276ed2"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/143.png",
+    "mask": 143,
+    "sha256": "7216e520ab00e793e5bf874cd2eaee7e5bd6ee4eef165497a9763eda21a45acd"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/159.png",
+    "mask": 159,
+    "sha256": "f599f6ec7fc7ea2d7ce3287f9e0cce9fdca43cc07a616b282b7c6da87608e802"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/174.png",
+    "mask": 174,
+    "sha256": "9178875b4e39c61e8e6ce2e51441476acbe3314a3a88c133d091aa41a585f277"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/175.png",
+    "mask": 175,
+    "sha256": "08d94edbb70b198361a4b73c9f76a322494faef70ea21101acb51f013d0d2a2b"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/191.png",
+    "mask": 191,
+    "sha256": "135ddcf4171b4c99102030767f56c6ad6ce00ca42031f98cc04abbd38334b273"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/203.png",
+    "mask": 203,
+    "sha256": "ce652af1629b8314360b4444e1a7e3a1e97c9725d8d9cc8ce1b5c1a673abc255"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/207.png",
+    "mask": 207,
+    "sha256": "a98b59ac4d514573b9b945969bdd597f229fbfbc1186be2d88f8250c6e5fa196"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/223.png",
+    "mask": 223,
+    "sha256": "23044b9d61b3606c410c15bcd0200c9ff5817afc02552d09ec16d92af8adc6d7"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/239.png",
+    "mask": 239,
+    "sha256": "20ee673d58f7a26f5502fc00f83b81309817c51c174f43ffcf1d54b64be9157c"
+  },
+  {
+    "destination": "assets/gtnotgood/textures/blocks/dimensionalfocus/ctm/laser_safe_engraving_casing/255.png",
+    "mask": 255,
+    "sha256": "a13794012edf8523dffe14701d6481f7599ad97576413b06225449997d737ba3"
+  }
+]

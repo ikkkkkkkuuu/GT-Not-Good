@@ -90,7 +90,7 @@ public abstract class CrossRecipeGuiMixin {
         StringSyncValue energy = manager.findSyncHandler("gtngWirelessEU", StringSyncValue.class);
         DynamicLinkedSyncHandler<?> outputs = manager.findSyncHandler("gtngWirelessOutputWidget",
             DynamicLinkedSyncHandler.class);
-        cir.setReturnValue(Flow.column().fullWidth().coverChildrenHeight(0)
+        cir.setReturnValue(Flow.column().fullWidth().coverChildrenHeight(0).collapseDisabledChild()
             .crossAxisAlignment(Alignment.CrossAxis.START).child(cir.getReturnValue()).child(IKey.dynamic(() -> {
                 // #tr gtng.cross_wireless.eu
                 // # Current consumption: %s EU/t (wireless)

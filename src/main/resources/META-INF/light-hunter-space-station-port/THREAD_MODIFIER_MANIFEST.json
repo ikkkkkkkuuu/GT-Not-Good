@@ -1,0 +1,70 @@
+{
+  "formatVersion": 1,
+  "repository": "Dragonators/GTLAdditions",
+  "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+  "license": "GPL-3.0-only",
+  "assets": [
+    {
+      "sourcePath": "src/main/resources/assets/gtladditions/textures/block/overlay/machine/thread_modifier_hatch.png",
+      "destination": "assets/gtnotgood/textures/blocks/lighthunter/thread_modifier_hatch.png",
+      "license": "GPL-3.0-only",
+      "sourceSha256": "7435d8f4b82a80da9646910848a3057c513b11bec0536bedaf8ac5aac4aa6600",
+      "destinationSha256": "7435d8f4b82a80da9646910848a3057c513b11bec0536bedaf8ac5aac4aa6600",
+      "modifications": "Copied byte-for-byte; original north plane emissivity 15 uses native GTNH extFacing glow overlay."
+    },
+    {
+      "sourcePath": "src/main/resources/assets/gtladditions/textures/block/overlay/machine/thread_modifier_hatch.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/lighthunter/thread_modifier_hatch.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "sourceSha256": "66e1651113d176ac9915799dad1407007694876376ffeb124b4e6d5845892e25",
+      "destinationSha256": "66e1651113d176ac9915799dad1407007694876376ffeb124b4e6d5845892e25",
+      "modifications": "Copied byte-for-byte; original north plane emissivity 15 uses native GTNH extFacing glow overlay."
+    }
+  ],
+  "adaptedClass": "com.xyp.gtnotgood.common.machines.hatch.lighthunter.SatelliteThreadModifierHatch",
+  "modifications": "GTCEu/LDLib part and single-slot GUI rewritten for GTNH MTEHatch/MUI2. Retains ordinary-array-only 64-item storage, nonconsumption, nonsharing, removal drops and additional threads n*64*m. Uses original default m=2 for satellite factories; GTNH has no GTLCore global durationMultiplier configuration. Runtime ownership requires the same formed factory and live tile identities. Native MTE inventory handles persistence and drops. Original create_casing hull is reused from HeartCasing.CreateCasing.",
+  "sourceReferences": [
+    {
+      "sourcePath": "src/main/java/com/gtladd/gtladditions/common/machine/multiblock/part/ThreadPartMachine.kt",
+      "sha256": "99b9e2866b3cb139937929dbffec2cea86e62c98a3a33c019d919bc429da6a94",
+      "gitBlobSha1": "ceef671e192c9c2e1ae2a8d1bcd559512c6f1bea",
+      "referencePath": "upstream/gtladditions/src/main/java/com/gtladd/gtladditions/common/machine/multiblock/part/ThreadPartMachine.kt"
+    },
+    {
+      "sourcePath": "src/main/java/com/gtladd/gtladditions/utils/ThreadMultiplierStrategy.kt",
+      "sha256": "157e6abf7f3fd0fc2105b5883741193b77d32bb2b0e0887740909a040c02f2c9",
+      "gitBlobSha1": "cbd18e76ae08f2dd95fb571957705be1a6d782c5",
+      "referencePath": "upstream/gtladditions/src/main/java/com/gtladd/gtladditions/utils/ThreadMultiplierStrategy.kt"
+    },
+    {
+      "sourcePath": "src/main/java/com/gtladd/gtladditions/common/machine/GTLAddMachines.kt",
+      "sha256": "a776e8855f5993820d13138ad3046df3a5120092de6b00398150253568f208d0",
+      "gitBlobSha1": "92d85db845effb757dd4acbdafa75d65903782ec",
+      "referencePath": "upstream/gtladditions/src/main/java/com/gtladd/gtladditions/common/machine/GTLAddMachines.kt"
+    },
+    {
+      "sourcePath": "src/main/java/com/gtladd/gtladditions/data/recipes/PartMachine.kt",
+      "sha256": "0c36d3a27f2bb84d02976506d91fb257b3834e2ed31983582ec24b5b9285eb0f",
+      "gitBlobSha1": "bb11f2fbc05d92188f4a427f5f7b142ed9a20c60",
+      "referencePath": "upstream/gtladditions/src/main/java/com/gtladd/gtladditions/data/recipes/PartMachine.kt"
+    },
+    {
+      "sourcePath": "src/main/resources/assets/gtladditions/models/block/machine/part/thread_modifier_hatch.json",
+      "sha256": "0bed20e63bf57e60897546705d08855fa1b648fe740c7044e0b6349227c8c0d6",
+      "gitBlobSha1": "5bd90b0fe0d420bdd1ae4dddd5c2178136e9a8e7",
+      "referencePath": "upstream/gtladditions/src/main/resources/assets/gtladditions/models/block/machine/part/thread_modifier_hatch.json"
+    }
+  ],
+  "defaultMultiplierEvidence": {
+    "repository": "GNSW/GTLCore",
+    "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+    "sourcePath": "src/main/java/org/gtlcore/gtlcore/config/ConfigHolder.java",
+    "durationMultiplier": 1,
+    "satelliteDefinitionMultiplier": 2,
+    "sourceSha256": "92199ebe6c8d4dc0959f4341338ea24991cb4aaa3a9cfd279c239dd4b79ef7a4"
+  },
+  "adaptedSource": {
+    "destination": "src/main/java/com/xyp/gtnotgood/common/machines/hatch/lighthunter/SatelliteThreadModifierHatch.java",
+    "sha256": "7e9d0443a705b1294c4f981482d4b58c2c9306579b4a148b9c609a4ec1e60018"
+  }
+}

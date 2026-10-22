@@ -1,0 +1,103 @@
+{
+  "formatVersion": 1,
+  "component": "Heart of the Universe ordinary fuel items and acquisition recipes",
+  "upstream": {
+    "repository": "https://github.com/Dragonators/GTLAdditions",
+    "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "license": "GPL-3.0-only"
+  },
+  "officialPack": {
+    "version": "1.4.5.3",
+    "curseForgeFileId": 9238465,
+    "archiveSha256": "1c732d6b124732c3e3aede97f353910fc31873d9e26074891b2ca69dbcdee23b",
+    "license": "CC-BY-NC-SA-4.0",
+    "licenseSource": "LICENSE inside the actual archive"
+  },
+  "originalAssets": [
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtladditions/textures/item/strange_annihilation_fuel_rod.png",
+      "destination": "assets/gtnotgood/textures/items/heart/strange_annihilation_fuel_rod.png",
+      "license": "GPL-3.0-only",
+      "modifications": "None; copied byte-for-byte. Modern item/generated model becomes a native 1.7.10 icon.",
+      "sourceSha256": "060cec887e5fdcfa0c8a25c6778b831b1b0e87dd8c9cae45a750942248eb37b2",
+      "destinationSha256": "060cec887e5fdcfa0c8a25c6778b831b1b0e87dd8c9cae45a750942248eb37b2"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtladditions/textures/item/black_hole_seed.png",
+      "destination": "assets/gtnotgood/textures/items/heart/black_hole_seed.png",
+      "license": "GPL-3.0-only",
+      "modifications": "None; copied byte-for-byte. Modern item/generated model becomes a native 1.7.10 icon.",
+      "sourceSha256": "e18a607548cacae812de3f0de17a70c28be48f82b748cb470d37b607f6445510",
+      "destinationSha256": "e18a607548cacae812de3f0de17a70c28be48f82b748cb470d37b607f6445510"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtladditions/textures/item/black_hole_seed.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/items/heart/black_hole_seed.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "None; copied byte-for-byte. Modern item/generated model becomes a native 1.7.10 icon.",
+      "sourceSha256": "728856b94fe2eab0ce9a874d8a0722d52bfcdc237c25e4ba8f78ab2f0a14f93f",
+      "destinationSha256": "728856b94fe2eab0ce9a874d8a0722d52bfcdc237c25e4ba8f78ab2f0a14f93f"
+    },
+    {
+      "source": "GregTech Leisure official modpack",
+      "revision": "1.4.5.3 / CurseForge file 9238465",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/item/annihilation_constrainer.png",
+      "destination": "assets/gtnotgood/textures/items/heart/annihilation_constrainer.png",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "None; copied byte-for-byte. Modern item/generated model becomes a native 1.7.10 icon.",
+      "sourceSha256": "12b0a8bd05dccc90124bf727e76dbdbea73877782bfbe8debad06bdda957a3eb",
+      "destinationSha256": "12b0a8bd05dccc90124bf727e76dbdbea73877782bfbe8debad06bdda957a3eb"
+    }
+  ],
+  "references": [
+    {
+      "reference": "reference/heart-of-the-universe-port/items-upstream/GTLAddItems.kt",
+      "sha256": "0257823e6f24679ecbb919c89b9f781b628cdb0a9f1814b6cff1cd09d49996e5",
+      "packaged": false
+    },
+    {
+      "reference": "reference/heart-of-the-universe-port/items-upstream/Misc.kt",
+      "sha256": "eb5314c596dd2bc907ee02a2fba29ae1a72ad0d8bec3f3b811c24723b97c7075",
+      "packaged": false
+    },
+    {
+      "reference": "reference/heart-of-the-universe-port/items-upstream/GenesisEngine.kt",
+      "sha256": "9849b63b734157cb84997a9f4fcfee391246dd68ea886c2ed2782d6101bcecd1",
+      "packaged": false
+    },
+    {
+      "reference": "reference/heart-of-the-universe-port/items-upstream/NewMultiBlockMachineController.kt",
+      "sha256": "ef5a3e8f507fd9ecfb7ef70d3a492581cf5205abe21334f991813cb10a01cc43",
+      "packaged": false
+    },
+    {
+      "reference": "reference/heart-of-the-universe-port/items-upstream/strange_annihilation_fuel_rod.model.json",
+      "sha256": "3d1779312725382f7c0c9991857cb55c8e5d7c40d69ca1985fad99dd0f9178cf",
+      "packaged": false
+    },
+    {
+      "reference": "reference/heart-of-the-universe-port/items-upstream/black_hole_seed.model.json",
+      "sha256": "1abe3d256720bf31ff15041a284252c36e3ead2b2c13c3e80f9c2fad4571f1b6",
+      "packaged": false
+    }
+  ],
+  "adaptedSources": [
+    {
+      "source": "src/main/java/com/gtladd/gtladditions/data/recipes/Misc.kt:168-206; NewMultiBlockMachineController.kt:1005-1034; newmachinerecipe/GenesisEngine.kt",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/machine/HeartOfTheUniverseRecipes.java",
+      "license": "GPL-3.0-only",
+      "modifications": "Mapped unavailable GTL/KubeJS items to verified native GTNH materials and machines; runnable zero-EU fuel recipe uses native matching and input transactions while the controller manages generated energy and upkeep; native assembly-line research replaces modern station research; at the user's request, the controller uses 14 item inputs and 4 fluid inputs, with 16384000 mB native UU-Matter as the fourth fluid instead of filled cells; this custom balance uses 256 times the native 64000 mB UXV energy hatch cost in GT5-Unofficial 5.09.54.205 ResearchStationAssemblyLine.java:294-297, is not an official MAX standard, and does not preserve the upstream absolute 921600000000 mB cost; original source files and hashes are unchanged; casing equivalents and all mappings in reference/heart-of-the-universe-port/ITEMS.md."
+    }
+  ],
+  "licenses": [
+    "META-INF/heart-of-the-universe-port/ITEMS_LICENSE_GTLADDITIONS_GPL-3.0.txt",
+    "META-INF/heart-of-the-universe-port/ITEMS_LICENSE_GTL_PACK_CC-BY-NC-SA-4.0.txt"
+  ],
+  "generalMitGrantApplies": false
+}

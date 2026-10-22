@@ -1,5 +1,39 @@
 # AE2LT faithful port audit
 
+## TST 模块化仓室 — 2026-10-22
+
+- 来源：Nxer/Twist-Space-Technology-Mod，固定提交
+  `f59f874694906144e205a3451dfd665c701eca97`，根目录及资源目录许可 GPL-3.0。
+  改编代码和原贴图保留 GPL-3.0-only，不属于项目通用 MIT 许可。
+- 目标：`common/machines/hatch/modular/`、`common/recipe/machine/ModularHatchRecipes.java`、
+  `assets/gtnotgood/textures/blocks/modular/`。40 个参数仓、3 个超频仓、3 个执行核心，
+  保留 TST 并行、速度、能耗默认参数、原始等级和原贴图动画；动态参数迁至 MUI2、服务端校验、NBT 保存。
+  超频倍率按用户要求定制，非 TST 原始倍率：低速无损仓耗时÷4、EU/t×4，
+  无损仓耗时÷8、EU/t×4，奇点无损仓耗时÷8、EU/t×2。
+  执行进度和产物由控制器保存，仓室仅保存配置；普通、高级、完美核心保留原供电种类。
+- `GTNGModularMachineBase` 与 `common/machines/processing/` 接入六台 GTL/GTO 移植机器，默认有损超频 2/4，
+  全部参数仓及执行核心均可安装；主机内置执行核心，附加核心增加独立任务。
+  保留各机研究、算力、线圈和速度机制；拆下或禁用核心时暂停原任务。
+  输入在副本上结算，联合预检原生 ME 库存及 AE 电量后再提交；任务进度、预付电量和待输出仅存于控制器。
+  普通、特殊能源仓不设额外数量上限，仍须至少一个能源仓并满足结构舱位要求。
+  输入功率安全合计，配方电压按最高单仓计算，避免多只低压仓累加电压造成越级。
+- 六台模块化加工机器及宇宙之心无需维护仓，不产生维修故障或维修效率惩罚。
+  七台控制器统一放在 `common/machines/multiblock/modularmachine/`，基类和结构定义保留各自子包。
+  结构保留已有维护仓的可选兼容，但不自动建造维护仓；旧存档及遗留加工任务恢复满维修效率。
+- 四十五个配方保持原生 GTNH 原料、用量、耗时和电压；奇点超频仓把 TST 英雄之证替换为
+  完美执行核心，迁至标准 GT 装配线并增加 192 小时、30 EU/t 扫描，其余大宗材料和 64 天工时不变。
+  完整配方映射见 `reference/tst-modular-port/RECIPE_ADAPTATION.md`。
+- 共存适配：本模组 41 条组装机模块配方使用非消耗 19 号电路，普通执行核心研究自家静态并行仓 T1。
+  同装时仅给 TST 原来没有电路的低速超频配方补 18 号，以免其子集输入及缓存抢占本模组配方。
+  可选加载顺序及配方副本替换不引入 TST 编译依赖，材料、流体、工艺时间及电压保持不变。
+  同时移除 TST 免研究池自动复制的本模组五种模块配方，防止执行核心再次抢配方、跳过研究或截断大宗用量；
+  保留双方原生装配线及 TST 自己的免研究配方。
+- 默认开发运行依赖补齐 NHC 及其集成依赖，为普通、高级执行核心和低速无损超频仓提供真实高能量流电路。
+  GTNH 外仍保留可选集成行为：缺少该物品时仅跳过这三项原料依赖配方。
+- 12 张 PNG 与 9 个动画元数据文件逐字节保留，来源、目标、修改及哈希见
+  `META-INF/tst-modular-port/ASSET_MANIFEST.json`；原许可证与改编说明一并打包。
+  参考检出仅位于 `build/reference-tst`，不参与编译或资源打包。
+
 ## Beyond the Stars decorative blocks — 2026-10-16
 
 - Source: https://github.com/v3rysp3d/GTNH-Beyond-the-Stars, user-supplied sibling
@@ -1047,3 +1081,217 @@ Reference checkouts remain outside build inputs.
 - Expanded GUI keeps native controls and upgrade interactions; no textures are copied.
   Extracted reference sources stay in ignored `build/basic-apiary-reference/`, outside
   compilation and resource packaging.
+
+## Field Extruder Factory visual assets — 2026-10-21
+
+- GTLCore `6443c848264fb15c90cf50e031f146522616a8b9`, LGPL-3.0: original iridium,
+  hyper mechanical and molecular casing PNGs and two LDLib CTM atlases.
+- GTCEu Modern tag `1.20.1-1.4.4`, commit `e3844ba943e2388c0856617ae4f8b473a0ae1b64`,
+  LGPL-3.0: original cleanroom glass, CTM atlas and fusion reactor controller overlays/animation.
+- Official GregTech Leisure `1.4.5.3`, CurseForge file `9238465`, archive SHA-256
+  `1c732d6b124732c3e3aede97f353910fc31873d9e26074891b2ca69dbcdee23b`:
+  hollow casing and containment field generator PNGs/animation. The actual archive's root
+  license is CC BY-NC-SA 4.0; these assets retain that license and are excluded from MIT.
+- Destinations: `assets/gtnotgood/textures/blocks/fieldextruder/`,
+  `common/blocks/fieldextruder/` and `client/fieldextruder/`. The independently implemented
+  GT/Forge block renderer supports connected glass/casings and the controller/hatch casing background.
+  Original assets remain byte-for-byte unchanged; LDLib metadata is kept under the provenance directory.
+- `reference/field-extruder-port/generate-connected-textures.py` losslessly composes 141 16×16 tiles
+  from the three original 32×32 atlases. Layout reference: LDLib-MultiLoader
+  `1d4e4390ae58d16038845c651e122185c29f334b`, `Connections.fillSubmaps` / `Submap.uvs`, GPL-3.0.
+  No modern renderer, shader or bloom code is compiled or packaged. Reference checkouts stay outside source sets.
+- Exact source/destination/revision/license/hash records, original LDLib metadata and all applicable license texts:
+  `META-INF/field-extruder-port/`. Further source and regeneration notes: `reference/field-extruder-port/README.md`.
+
+## 力场压模工厂 — 2026-10-21
+
+- 结构与行为参考：GNSW/GTLCore `6443c848264fb15c90cf50e031f146522616a8b9`。
+  `MultiBlockMachineAStructureC.FIELD_EXTRUDER_FACTORY` 保留完整 15×9×63 数据和空格 any 语义，
+  仅压缩重复切片并转换前后顺序及 StructureLib 层布局；结构 Java 保留 LGPL-3.0 和上游 TST 结构署名。
+- 本地控制器保留 GT5 原生压模／压缩两种配方图，按用户要求使用通用 `GTNGModularMachineBase`
+  与 `ModularProcessingLogic`。每个核心独立处理一种配方的并行任务，并行上限接受并行模块调整；
+  输入提交、功率校验、输出保护和任务保存沿用其他模块化机器的通用处理，非消耗输入遵守原生配方定义。
+  已移除专属混合配方批次、64 倍批量、总耗电折算耗时和最低 20 tick 算法。
+- 生存配方参考官方 GTL 1.4.5.3 整包 `gtceu.js`，实际包内许可 CC BY-NC-SA 4.0。
+  控制器保留 UEV 装配线与 UIV 电路，结构件保留 LuV／UV 等级；材料及原生研究接口映射详见打包 NOTICE。
+- 完整源路径、许可证、目标与修改记录：`src/main/resources/META-INF/field-extruder-port/NOTICE.md`。
+  视觉源文件与派生 CTM 哈希清单沿用上节记录；参考源码和离线生成器不参与编译。
+
+## 维度聚焦激光蚀刻阵列 — 2026-10-21
+
+- 结构与行为参考 GNSW/GTLCore `6443c848264fb15c90cf50e031f146522616a8b9`，LGPL-3.0。
+  完整保留 89×89×89 坐标和空格语义；原结构以 gzip 保存，加载时转换为 StructureLib 坐标。
+- 保留 GTLCore 超维度、维度注入、超导线圈及 GTCEu `e3844ba943e2388c0856617ae4f8b473a0ae1b64`
+  聚变玻璃、激光蚀刻机械方块的原始 PNG、连纹与运行贴图，均为 LGPL-3.0。
+  分子线圈原图来自官方 GTL 1.4.5.3 归档，实际包内许可证为 CC BY-NC-SA 4.0。
+- 目标：`common/blocks/dimensionalfocus/`、`assets/gtnotgood/textures/blocks/dimensionalfocus/`、
+  `assets/gtnotgood/structures/dimensional_focus_engraving_array.shape.gz`。
+  282 张连纹为原图象限的无损组合；Java 渲染适配 Forge/GT5，超导线圈使用元数据同步运行外观。
+  复用力场压模工厂的遏制场发生器与同源聚变控制器面板。
+- GTNH 适配：原生激光配方、光刻胶、1/5 耗时、4 倍功耗、线圈并行及完美超频。
+  高阶配方由原生扫描仪制作产物研究盘，使用数据访问仓和 TecTech 算力包；算力不足时暂停。
+  控制器没有无线模式。控制器与六种结构件提供生存配方，保留 UEV/UIV 门槛。
+- 来源、修订、许可证、修改、目标及原图/连纹哈希见 `META-INF/dimensional-focus-port/`；
+  参考检出与离线生成器不参与编译或资源打包，外部资产不属于项目通用 MIT 许可。
+
+## 维度聚焦阵列中央动态渲染 — 2026-10-21
+
+- 来源：GregTech-Odyssey/GTOCore `3121e23241e7f6ccd2e6a8dbd5655962de63ed9a` 的
+  `DimensionalFocusEngravingArrayRenderer` 与 `RenderHelper.renderCylinder`，LGPL-3.0。
+  该后续实现不在最初采用的 GTLCore 快照中；仅移植同名机器的中央渲染。
+- 原样保留六向光柱、0.5 格半径、8 格长度、十边截面与 360 个顶点的三角带顺序。
+  核心位于控制器后方 22 格、下方 18 格，按线圈材质色以 100 tick 周期向白色脉动。
+- 顶点与混合状态参考上游 GTCEu 分支；颜色量化与二次缓动参考实际依赖的 LDLib 1.0.50。
+  本地适配文件 `client/render/DimensionalFocusCoreGeometry.java` 与
+  `DimensionalFocusCoreRenderer.java` 保留 GPL-3.0-only 许可，不并入项目通用 MIT 许可。
+- 使用 GT5 原生 `IMTERenderer` 和机器数据流同步工作状态、线圈及动画相位；
+  核心渲染包围盒覆盖完整光柱，避免控制器在画面外时被错误剔除。
+  客户端以世界总时间外推同步相位，兼容 GTNH 停止客户端方块 tick 的优化。
+  可选 Bloom 通过已有 GTNHLib 后处理接口实现，不引入现代 Shimmer 或额外贴图。
+- 原始参考、修订、许可证、源文件及目标文件哈希见 `META-INF/dimensional-focus-port/RENDER_MANIFEST.json`；
+  修改与来源说明见同目录 `RENDER_NOTICE.md`，参考源码存于 `reference/dimensional-focus-port/render-upstream/`，
+  不参与编译或资源打包。
+
+## 超级粒子对撞机 — 2026-10-21
+
+- 结构来源：[GNSW/GTLCore](https://github.com/GNSW/GTLCore/tree/6443c848264fb15c90cf50e031f146522616a8b9)
+  `MultiBlockMachineAStructureA.SUPER_PARTICLE_COLLIDER`，LGPL-3.0-only。
+  完整保留 47×7×47 坐标、空格 any 语义与 TST 结构署名；仅无损合并切片并转换 StructureLib 坐标。
+  上游重复定义 `d` 后实际采用加速管道，因此保留 560 管道，不新增聚合核心。
+- GTLCore 同一修订提供路菲恩机械方块原图与连纹；GTCEu Modern
+  `e3844ba943e2388c0856617ae4f8b473a0ae1b64` 提供超导线圈原图、活动发光层、连纹与模型，均保留 LGPL-3.0。
+  加速管道原图来自官方 GregTech Leisure 1.4.5.3，CurseForge 文件 9238465，
+  归档 SHA-256 `1c732d6b124732c3e3aede97f353910fc31873d9e26074891b2ca69dbcdee23b`。
+  该归档实际根许可证为 CC BY-NC-SA 4.0；复用力场压模工厂的同源聚变控制器面板。
+- 目标：`common/blocks/particlecollider/`、`client/particlecollider/`、
+  `assets/gtnotgood/textures/blocks/particlecollider/` 与
+  `common/machines/multiblock/structure/SuperParticleColliderStructure.java`。
+  原始资源不改字节，141 张连纹由原图象限无损组合；离线布局参考 LDLib-MultiLoader
+  `1d4e4390ae58d16038845c651e122185c29f334b`，生成器保留 GPL-3.0。
+  方块材质页固定 124；超导线圈使用 GT5 原生 `activeCoils` / `GTCoilTracker` 与发光材质，
+  服务器元数据 2、客户端活动外观 10，不移植现代渲染器或 Shimmer 后处理。
+- `SuperParticleColliderRecipes.java` 改编官方归档 `gtceu.js` 的 2700–2709、10408–10421、
+  8016–8039 行，保留 CC BY-NC-SA 4.0。控制器与结构件映射 GTNH 原生材料，保留五条有完整原生终点的
+  元素碰撞配方，省略无法闭合的材料与反物质支线；原生超导线圈可 1:1 转换为保留上游外观的新线圈。
+- 精确来源、修订、许可证、目标、修改及原始/派生资源哈希：`META-INF/particle-collider-port/`。
+  结构核对见 `reference/SUPER_PARTICLE_COLLIDER_STRUCTURE.md`，配方映射见
+  `reference/particle-collider-port/RECIPE_ADAPTATION.md`。外部素材与改编源码不属于项目通用 MIT 许可；
+  参考检出、上游原始模型和离线生成器不参与源码编译。
+
+## 巨型组装厂与超导电磁工厂 — 2026-10-21
+
+- 结构来源：GNSW/GTLCore `6443c848264fb15c90cf50e031f146522616a8b9`，LGPL-3.0-only。
+  `MAGE_ASSEMBLER` 保留 9×10×33 坐标与 GTNH 结构署名；`SUPERCONDUCTING_ELECTROMAGNETISM`
+  保留 15×21×15 坐标，仅无损合并切片并转换 StructureLib 坐标。结构证据见
+  `reference/ASSEMBLY_ELECTROMAGNETIC_STRUCTURES.md`。
+- 原材质：GTLCore 同修订进阶装配线控制外壳；GTCEu Modern
+  `e3844ba943e2388c0856617ae4f8b473a0ae1b64` 的层压/钢化玻璃、过滤机械方块、PTFE 管道方块、
+  二硅化钼线圈、电解槽、装配单元发光动画和大型组装机控制器面板，均保留 LGPL-3.0。
+  超时空装配单元原图来自官方 GTL 1.4.5.3，CurseForge 文件 9238465，实际包内许可 CC BY-NC-SA 4.0，
+  归档 SHA-256 `1c732d6b124732c3e3aede97f353910fc31873d9e26074891b2ca69dbcdee23b`。
+- 目标：`common/blocks/assemblyplant/`、`client/assemblyplant/`、
+  `assets/gtnotgood/textures/blocks/assemblyplant/`。复用既有铱外壳、路菲恩机械方块、加速管道、
+  改良型超导线圈与聚变控制器面板，原物品元数据和资源路径不变；新材质页固定 123。
+  新增八种原视觉结构件，三种新活跃方块及复用改良线圈使用 GT5 原生 activeCoils/GTCoilTracker。
+  原始文件不改字节；235 张连纹由五组原图象限无损组合。离线布局参考 LDLib-MultiLoader
+  `1d4e4390ae58d16038845c651e122185c29f334b`，生成器保留 GPL-3.0，不移植现代渲染器或 Shimmer。
+- 生存配方：`MageAssemblerRecipes`、`SuperconductingElectromagneticRecipes` 改编官方整包
+  `gtceu.js`，保留 CC BY-NC-SA 4.0；`AssemblyPlantCasingRecipes` 改编同 pin GTCEu GCyM 配方，
+  `LightningProcessorRecipes` 改编同 pin GTLCore 末影珍珠闪电处理配方，分别保留 LGPL-3.0-only。
+  原料与原生 GTNH 阶段对应，兼容标准 GT 能源仓和特殊能源仓，包括原生无线能源仓；
+  控制器不提供独立无线电网模式，也不直接从拥有者的能源账户扣费。
+- 完整来源、修订、许可证、目标、修改和原始/派生资源哈希见 `META-INF/assembly-plant-port/`。
+  配方映射见 `reference/assembly-plant-port/RECIPE_ADAPTATION.md`；外部素材与改编源码不属于项目通用 MIT
+  许可，参考检出、上游原始模型和离线生成器不参与源码编译。
+
+## 克尔-纽曼均质仪 — 2026-10-21
+
+- 来源：GregTech-Odyssey/GTOCore `3121e23241e7f6ccd2e6a8dbd5655962de63ed9a`，LGPL-3.0-only。
+  原始压缩结构逐字节保留，83×36×83、15,638 个固定构件（含控制器）；空间沿用 any 语义。
+  23 种新构件保留原纹理、连纹和运行发光层，复用已有同源构件，材质页固定 122。
+- 中央黑洞保留 2.5/4.5 格半径、60 tick 展开和收缩、0.12 强度的真实背景折射。
+  使用 GT5 IMTERenderer、GTNHLib 后处理与 GLSL 1.20，独立尾动画覆盖停机、失效和拆除。
+  原球面网格仅修正三角形绕序，兼容前表面和深度测试；所有渲染类位于 `client/render`。
+- 加工接入 GTNH 原生搅拌配方、能源仓、功率面板和电压限制。
+  按用户指定采用 6000% 速度（耗时除以 60）与完美超频（每级耗电乘以 4、耗时除以 4），
+  tooltip 使用 GTNH 原生性能辅助方法；这属于本地平衡设定，不冒充上游原始倍率。
+  原 GTOLib 26.7.4 基类实现为闭源 native，无法核实的参数明确记录为兼容选择。
+  控制器保留九路物品数量、三路各 1000 mB、800 tick 与 2,097,152 EU/t；
+  专属材料、研究与无尘条件的原生适配逐项记于 `RECIPE_ADAPTATION.md`。
+- 完整来源、修订、许可证、修改、目标及哈希见 `META-INF/kerr-newman-port/`；
+  外部素材和改编代码不属于项目通用 MIT 许可，参考源与离线生成器不参与编译或资源打包。
+
+## 宇宙之心 — 2026-10-22
+
+- 主参考：[Dragonators/GTLAdditions](https://github.com/Dragonators/GTLAdditions/tree/34fb152886164c56a07fc9d1b10e056f0c22b7ab)
+  `34fb152886164c56a07fc9d1b10e056f0c22b7ab`，GPL-3.0。结构取自
+  `scripts/structure_sources/multiblock/annihilate_generator.json`，控制器定义为 `HeartOfTheUniverse`。
+  完整保留原版 121×112×109 外形、37,144 个非空位置（含控制器）及空格 any 语义；
+  原 JSON/GTLASB3 保存作参考，运行资源仅转换为 GZIP MBS 编码。
+  原坐标 `(column,row,aisle)` 转为 `shape[111-row][108-aisle][column]`，宽度不镜像；
+  控制器原位置 `(62,23,93)` 对应 StructureLib 偏移 `(62,88,15)`。
+- 新结构方块位于 `common/blocks/heart/`，固定材质页 121。GTLCore
+  `6443c848264fb15c90cf50e031f146522616a8b9` 提供引力场约束、铼强化聚能玻璃、维度连接、
+  创造机械方块与 `sps_casing` 原图，LGPL-3.0；时间锚定场外壳保留上游对 `sps_casing` 的引用。
+  141 张 CTM 由原图象限无损组合，布局算法沿用 LDLib-MultiLoader
+  `1d4e4390ae58d16038845c651e122185c29f334b`，GPL-3.0。
+  超能机械方块、聚变玻璃和维度注入机械方块复用已有同源移植材质。
+- 湮灭核心、维度稳定方块、戴森磁体及湮灭约束器原图来自官方 GregTech Leisure 1.4.5.3，
+  CurseForge 文件 9238465，归档 SHA-256
+  `1c732d6b124732c3e3aede97f353910fc31873d9e26074891b2ca69dbcdee23b`。
+  归档实际根许可为 CC BY-NC-SA 4.0；保留原动画、磁体侧面/顶底区别及核心亮度。
+  控制器底色使用 GTCEu Modern `e3844ba943e2388c0856617ae4f8b473a0ae1b64` 的高功率外壳，LGPL-3.0；
+  正面/工作发光层来自 GTLCore，顶面来自 GTLAdditions 的 `cosmos_simulation` 覆盖资源，分别保留 LGPL/GPL。
+  燃料棒与黑洞种子采用 GTLAdditions 原图，种子保留四帧动画。
+- 黑洞、吸积盘、心跳体积效果和模糊合成参考同 pin 的 `client/render/machine/heart/`、
+  `shaders/core/gtladditions_heart_*` 与 `shaders/include/heart_volume_common.glsl`，GPL-3.0-only。
+  GLSL 适配 1.20，保留原 200 步体积积分与七 pass 合成，使用 GT5 `IMTERenderer`、GTNHLib 后处理、FBO 和现有世界深度；
+  不编译现代 GTCEu 渲染接口或 Oculus 桥接。局部 `(0,-36,39)` 在 SOUTH 朝向映射为
+  世界 `(0,+36,-39)`，处于原结构中央空腔；保留 384 格视距与完整特效边界。
+  基础 GL 状态保存与 GTNHLib 接入参考项目既有克尔-纽曼适配（LGPL-3.0-only），沿用其来源记录；
+  黑洞视觉与 shader 仍取自上述 GTLAdditions 快照。
+- 每套燃料实际消耗一根奇异湮灭燃料棒和一个黑洞种子，保留原版总能量
+  `Long.MAX_VALUE × 81920` EU，以及 60% 概率产出 64 个湮灭约束器。
+  GTNH 原生配方、研究和材料映射见 `reference/heart-of-the-universe-port/ITEMS.md`；
+  不虚构现代材料注册项。控制器按用户要求移除 UU 单元，改用第 4 项原生 UU 流体，物品输入为 14 项。
+  UU 用量重平衡为 16384000 mB（16384 桶），参考 GT5 5.09.54.205 的 UXV 能源仓 64000 mB ×256；
+  这是本模组定制值，不是官方 MAX 标准，不保留上游 921600000000 mB 的绝对成本。原始源和哈希不变。
+- 本地模块化发电分支使用 `GTNGModularGeneratorBase` 和 `GenerationWork`，
+  内置普通核心，附加核心独立燃烧并共享输入；普通核心分摊并行额度，高级/完美核心独立执行。
+  基础释放时间按用户要求设为普通 1200 tick（60 秒）、高级 300 tick（15 秒）、完美 1 tick，秒数按 20 TPS 计。
+  速度/超频模块只缩短释放窗口，最低 1 tick；发电超频倍率仍为 4/8/16，普通核心对应 300/150/75 tick，
+  不增加每套燃料总能量。能耗模块仅降低基础 64A LuV（2,097,152 EU/t）维持耗电，
+  运行中每台机器每 tick 支付一次。实际发电以 BigInteger 分步记入主机所有者的 GT 无线能源网；
+  无电、停机或核心移除时暂停，燃料提交状态、已释放进度、剩余能量及产物由主机 NBT 保存。
+- 目标包括 `HeartOfTheUniverse.java`、`common/machines/multiblock/structure/HeartOfTheUniverseStructure.java`、
+  `common/blocks/heart/`、
+  `common/items/fuel/HeartFuelItems.java`、`client/render/HeartBlackHole*`、`assets/gtnotgood/shaders/heart/` 及对应素材目录。
+  原始文件、来源、修订、许可、目标、修改和哈希见 `reference/heart-of-the-universe-port/`
+  与 `META-INF/heart-of-the-universe-port/`。外部素材及 GPL 改编源码不属于项目通用 MIT 许可；
+  参考检出、原始现代模型和离线生成器不参与编译或资源打包。验证计划见 `docs/testing/heart-of-the-universe.md`。
+
+## 猎光号空间站 — 2026-10-22
+
+- 主参考 Dragonators/GTLAdditions `34fb152886164c56a07fc9d1b10e056f0c22b7ab`，GPL-3.0。
+  用户选择保留原主站与四类卫星工厂机制；不接入本模组参数模块和执行核心。
+- 保留主站 73×73×189、卫星工厂 5×21×13 原结构全部坐标和空格语义、20 个连接位。
+  四向叠放校验每座工厂共享主站 770 个壳体位置，控制器需朝向站轴，连接器无错位或材质冲突。
+- 主站按原电路 1、800 tick、UXV 536,870,912 EU/t 运行。工厂独立供电、独立 I/O；
+  原配方合为一批，累计原总能耗，默认最短 20 tick。
+  主站最多 1 个非激光能源仓；工厂最多 2 个非激光能源仓和 1 个激光仓。
+  GTNH 普通/多安分支统一计数；无线仓保留其原生能源类型，不把全部 ExoticEnergy 当成激光。
+  工厂按各仓电压×额定工作安数之和处理配方和批次，不丢弃多安输入。
+  依据固定 GTLCore `6443c848264fb15c90cf50e031f146522616a8b9` 的
+  `mixin/gtm/api/misc/EnergyContainerListMixin.java:48–61` 和
+  `mixin/gtm/fix/WorkableElectricMultiblockMachineMixin.java:72–82`；
+  Git blob 分别为 `42d6d76a1856f7545f6467dbe114e36e9a7fd661`、`566296a5e795ed5c1f6f0b5b402a0eafafeb28ab`。
+  基础 128 线程分摊 `Integer.MAX_VALUE×128` 并行配额；主站安装 64 星阵后解除该配额。
+  原生 ME 提交前复核合计库存及 AE 能量，失败不保留未确认批次；精确产出账本和进度持久化。
+- 原星阵动画、原恒星/空间 OBJ、13 个行星、倾斜轨道和 GLSL 双层光束均保留。
+  GTCEu、GTLCore 与官方 GTL 整包提供的材质分别按其 LGPL/GPL/CC BY-NC-SA 4.0 原许可记录。
+  原 PNG、动画、CTM 派生及固定源 Git blob 验证见清单；不以重绘资源替换原图。
+- GTNH 原生材料和获取方适配、未移植奥术星图导致压缩星阵无本地新增产出、
+  蒸发映射化学脱水及岩石粉碎流体成本等差异见 `reference/light-hunter-port/ITEMS_RECIPES.md`。
+  结构及渲染源/修订/许可/目标/修改/哈希见 `reference/light-hunter-space-station-port/` 与对应 META-INF 清单。
+  外部素材及改编源码不属于项目通用 MIT 许可；参考检出和生成器不参与编译或打包。
+- 验证计划与运行命令见 `docs/testing/light-hunter-space-station.md`。

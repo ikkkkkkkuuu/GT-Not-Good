@@ -12,6 +12,7 @@ def replaceColors = { String text ->
 }
 
 apply from: 'scripts/translation-format.gradle'
+apply from: 'scripts/runtime-classpath.gradle'
 def translationFormats = project.ext.translationFormatValidator
 
 afterEvaluate {

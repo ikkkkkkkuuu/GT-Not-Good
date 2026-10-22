@@ -1,0 +1,415 @@
+package com.gtladd.gtladditions.data.recipes
+
+import appeng.core.definitions.AEBlocks
+import com.gregtechceu.gtceu.api.GTValues.*
+import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper
+import com.gregtechceu.gtceu.api.data.tag.TagPrefix.*
+import com.gregtechceu.gtceu.api.fluids.store.FluidStorageKeys
+import com.gregtechceu.gtceu.api.machine.multiblock.CleanroomType
+import com.gregtechceu.gtceu.api.recipe.ResearchRecipeBuilder.StationRecipeBuilder
+import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient
+import com.gregtechceu.gtceu.common.data.GTItems.*
+import com.gregtechceu.gtceu.common.data.GTMachines
+import com.gregtechceu.gtceu.common.data.GTMaterials.*
+import com.gregtechceu.gtceu.common.data.GTRecipeTypes.ASSEMBLER_RECIPES
+import com.gregtechceu.gtceu.common.data.GTRecipeTypes.ASSEMBLY_LINE_RECIPES
+import com.gregtechceu.gtceu.data.recipe.CustomTags
+import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper
+import com.gtladd.gtladditions.GTLAdditions.Companion.id
+import com.gtladd.gtladditions.common.items.GTLAddItems
+import com.gtladd.gtladditions.common.machine.GTLAddMachines
+import com.hepdd.gtmthings.data.WirelessMachines
+import com.lowdragmc.lowdraglib.side.fluid.FluidStack
+import net.minecraft.data.recipes.FinishedRecipe
+import org.gtlcore.gtlcore.api.data.tag.GTLTagPrefix.nanoswarm
+import org.gtlcore.gtlcore.common.data.GTLBlocks.DEGENERATE_RHENIUM_CONSTRAINED_CASING
+import org.gtlcore.gtlcore.common.data.GTLBlocks.QFT_COIL
+import org.gtlcore.gtlcore.common.data.GTLBlocks.SPACETIMEBENDINGCORE
+import org.gtlcore.gtlcore.common.data.GTLItems.*
+import org.gtlcore.gtlcore.common.data.GTLMachines
+import org.gtlcore.gtlcore.common.data.GTLMachines.GTAEMachines.ME_EXTENDED_EXPORT_BUFFER
+import org.gtlcore.gtlcore.common.data.GTLMaterials.*
+import org.gtlcore.gtlcore.common.data.GTLRecipeTypes.PRECISION_ASSEMBLER_RECIPES
+import org.gtlcore.gtlcore.common.data.GTLRecipeTypes.SUPRACHRONAL_ASSEMBLY_LINE_RECIPES
+import org.gtlcore.gtlcore.common.data.machines.MultiBlockMachineA.A_MASS_FABRICATOR
+import org.gtlcore.gtlcore.common.data.machines.MultiBlockMachineA.INTEGRATED_ORE_PROCESSOR
+import org.gtlcore.gtlcore.utils.Registries.getFluid
+import org.gtlcore.gtlcore.utils.Registries.getItemStack
+import java.util.function.Consumer
+
+object PartMachine {
+    fun init(provider: Consumer<FinishedRecipe?>) {
+        ASSEMBLER_RECIPES.recipeBuilder(id("huge_steam_hatch"))
+            .inputItems(GTLMachines.LARGE_STEAM_HATCH, 4)
+            .inputItems(CustomTags.IV_CIRCUITS, 4)
+            .inputItems(ELECTRIC_PUMP_EV, 4)
+            .inputItems(ELECTRIC_PUMP_HV, 4)
+            .inputItems(ELECTRIC_PUMP_MV, 4)
+            .inputItems(FIELD_GENERATOR_EV, 4)
+            .inputItems(gear, HSSG, 4)
+            .inputItems(getItemStack("ad_astra:desh_plate", 4))
+            .inputFluids(SolderingAlloy.getFluid(1296))
+            .outputItems(GTLAddMachines.HUGE_STEAM_HATCH)
+            .EUt(VA[EV].toLong()).duration(1200)
+            .cleanroom(CleanroomType.CLEANROOM).save(provider)
+        ASSEMBLY_LINE_RECIPES.recipeBuilder(id("op_hatch"))
+            .inputItems(GTMachines.HULL[UV])
+            .inputItems(getItemStack("kubejs:grating_lithography_mask", 8))
+            .inputItems(CustomTags.UEV_CIRCUITS, 4)
+            .inputItems(SENSOR_UV, 2)
+            .inputItems(EMITTER_UV, 16)
+            .inputItems(getItemStack("gtceu:advanced_item_detector_cover", 16))
+            .inputItems(getItemStack("gtceu:advanced_fluid_detector_cover", 12))
+            .inputItems(wireFine, EnrichedNaquadahTriniumEuropiumDuranide, 12)
+            .inputItems(nanoswarm, Carbon, 64)
+            .inputItems(nanoswarm, Carbon, 64)
+            .inputItems(RAD_AWAY_PILL, 64)
+            .inputItems(PARACETAMOL_PILL, 64)
+            .inputFluids(Photoresist.getFluid(4000))
+            .inputFluids(Tritanium.getFluid(1440))
+            .outputItems(GTLAddMachines.ORE_PROCESSOR_HATCH)
+            .EUt(VA[LuV].toLong()).duration(300)
+            .stationResearch { b: StationRecipeBuilder? ->
+                b!!.researchStack(INTEGRATED_ORE_PROCESSOR.asStack())
+                    .dataStack(TOOL_DATA_ORB.asStack())
+                    .EUt(VA[ZPM]).CWUt(128)
+            }
+            .save(provider)
+        VanillaRecipeHelper.addShapedRecipe(
+            provider,
+            true,
+            id("vientiane_transcription_node"),
+            GTLAddMachines.VIENTIANE_TRANSCRIPTION_NODE.asStack(),
+            "ADA",
+            "CBC",
+            "EFE",
+            'A',
+            CustomTags.MAX_CIRCUITS,
+            'B',
+            FLUID_REGULATOR_MAX,
+            'C',
+            ChemicalHelper.get(wireFine, Shirabon),
+            'D',
+            GTMachines.HULL[14].asStack(),
+            'E',
+            EMITTER_MAX.asStack(),
+            'F',
+            GTLMachines.HEAT_SENSOR.asStack()
+        )
+        ASSEMBLY_LINE_RECIPES.recipeBuilder(id("transmutation_bus"))
+            .inputItems(GTMachines.HULL[UIV])
+            .inputItems(GTLMachines.BLOCK_BUS.asStack(8))
+            .inputItems(ME_EXTENDED_EXPORT_BUFFER.asStack(8))
+            .inputItems(AEBlocks.CHEST.stack(8))
+            .inputItems(CustomTags.UXV_CIRCUITS, 8)
+            .inputItems(ROBOT_ARM_UXV, 16)
+            .inputItems(FIELD_GENERATOR_UXV, 2)
+            .inputItems(gear, AstralTitanium, 8)
+            .inputItems(gear, CelestialTungsten, 8)
+            .inputItems(getItemStack("kubejs:wyvern_core", 16))
+            .inputFluids(Legendarium.getFluid(FluidStorageKeys.PLASMA, 5760))
+            .inputFluids(SuperMutatedLivingSolder.getFluid(1440))
+            .inputFluids(MetastableHassium.getFluid(FluidStorageKeys.LIQUID, 1152))
+            .inputFluids(MetastableOganesson.getFluid(1152))
+            .outputItems(GTLAddMachines.ME_BLOCK_CONVERSATION)
+            .EUt(VA[UIV].toLong())
+            .duration(4000)
+            .stationResearch { b: StationRecipeBuilder? ->
+                b!!.researchStack(GTLMachines.BLOCK_BUS.asStack())
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[UXV]).CWUt(2048)
+            }
+            .save(provider)
+        ASSEMBLY_LINE_RECIPES.recipeBuilder(id("super_parallel_hatch"))
+            .inputItems(getItemStack("gtceu:iv_parallel_hatch", 64))
+            .inputItems(getItemStack("gtceu:luv_parallel_hatch", 64))
+            .inputItems(getItemStack("gtceu:zpm_parallel_hatch", 64))
+            .inputItems(getItemStack("gtceu:uv_parallel_hatch", 64))
+            .inputItems(getItemStack("gtceu:uhv_parallel_hatch", 64))
+            .inputItems(getItemStack("gtceu:uev_parallel_hatch", 64))
+            .inputItems(getItemStack("gtceu:uiv_parallel_hatch", 64))
+            .inputItems(getItemStack("gtceu:uxv_parallel_hatch", 64))
+            .inputItems(getItemStack("gtceu:opv_parallel_hatch", 64))
+            .inputItems(getItemStack("gtceu:max_parallel_hatch", 64))
+            .inputItems(getItemStack("avaritia:endest_pearl", 64))
+            .inputItems(getItemStack("kubejs:chaotic_energy_core", 16))
+            .inputItems(getItemStack("kubejs:create_ultimate_battery", 16))
+            .inputItems(CustomTags.MAX_CIRCUITS, 16)
+            .inputItems(getItemStack("gtceu:create_computation", 4))
+            .inputItems(getItemStack("minecraft:repeating_command_block", 4))
+            .inputFluids(SpaceTime.getFluid(6553600))
+            .inputFluids(TranscendentMetal.getFluid(6553600))
+            .inputFluids(WhiteDwarfMatter.getFluid(65536000))
+            .inputFluids(BlackDwarfMatter.getFluid(65536000))
+            .outputItems(GTLAddMachines.SUPER_PARALLEL_HATCH)
+            .EUt(VA[UIV].toLong()).duration(5120)
+            .stationResearch { b: StationRecipeBuilder? ->
+                b!!.researchStack(getItemStack("gtceu:max_parallel_hatch"))
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[MAX]).CWUt(67108864, 2147483647)
+            }
+            .save(provider)
+        SUPRACHRONAL_ASSEMBLY_LINE_RECIPES.recipeBuilder(id("me_super_pattern_buffer"))
+            .inputItems(getItemStack("gtlcore:spacetimebendingcore", 64))
+            .inputItems(getItemStack("kubejs:proto_matter", 64))
+            .inputItems(EXTREMELY_ULTIMATE_BATTERY, 16)
+            .inputItems(CustomTags.UXV_CIRCUITS, 16)
+            .inputItems(getItemStack("gtceu:me_extend_pattern_buffer", 16))
+            .inputItems(getItemStack("gtceu:me_dual_hatch_stock_part_machine", 16))
+            .inputItems(EMITTER_UXV, 8)
+            .inputItems(getItemStack("kubejs:cosmic_processing_core", 4))
+            .inputItems(getItemStack("kubejs:photocoated_hassium_wafer", 64))
+            .inputItems(getItemStack("kubejs:photocoated_hassium_wafer", 64))
+            .inputItems(getItemStack("gtceu:fine_legendarium_wire", 64))
+            .inputItems(getItemStack("gtceu:fine_legendarium_wire", 64))
+            .inputItems(getItemStack("gtceu:fine_legendarium_wire", 64))
+            .inputItems(getItemStack("gtceu:fine_legendarium_wire", 64))
+            .inputItems(getItemStack("gtceu:fine_legendarium_wire", 64))
+            .inputItems(getItemStack("gtceu:fine_legendarium_wire", 64))
+            .inputFluids(UUMatter.getFluid(32000))
+            .inputFluids(LiquidStarlight.getFluid(32000))
+            .inputFluids(SuperheavyHAlloy.getFluid(16000))
+            .inputFluids(SuperheavyLAlloy.getFluid(16000))
+            .outputItems(GTLAddMachines.ME_SUPER_PATTERN_BUFFER)
+            .EUt(VA[UIV].toLong()).duration(5120)
+            .stationResearch { b: StationRecipeBuilder? ->
+                b!!.researchStack(getItemStack("gtceu:me_pattern_buffer_proxy"))
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[UXV]).CWUt(640)
+            }
+            .save(provider)
+        SUPRACHRONAL_ASSEMBLY_LINE_RECIPES.recipeBuilder(id("me_super_pattern_buffer_proxy"))
+            .inputItems(getItemStack("gtlcore:spacetimecontinuumripper", 16))
+            .inputItems(SENSOR_UXV, 16)
+            .inputItems(ROBOT_ARM_UXV, 16)
+            .inputItems(CONVEYOR_MODULE_UXV, 16)
+            .inputItems(getItemStack("gtceu:me_dual_hatch_stock_part_machine", 4))
+            .inputItems(CustomTags.UXV_CIRCUITS, 4)
+            .inputItems(getItemStack("kubejs:entangled_singularity", 64))
+            .inputItems(getItemStack("ae2:quantum_ring", 64))
+            .inputItems(getItemStack("ae2:quantum_link", 32))
+            .inputItems(getItemStack("gtceu:fine_legendarium_wire", 64))
+            .inputItems(getItemStack("gtceu:fine_legendarium_wire", 64))
+            .inputItems(getItemStack("gtceu:fine_legendarium_wire", 64))
+            .inputItems(getItemStack("gtceu:fine_legendarium_wire", 64))
+            .inputFluids(UUMatter.getFluid(32000))
+            .inputFluids(LiquidStarlight.getFluid(32000))
+            .inputFluids(SuperheavyHAlloy.getFluid(16000))
+            .inputFluids(SuperheavyLAlloy.getFluid(16000))
+            .outputItems(GTLAddMachines.ME_SUPER_PATTERN_BUFFER_PROXY)
+            .EUt(VA[UIV].toLong()).duration(5120)
+            .stationResearch { b: StationRecipeBuilder? ->
+                b!!.researchStack(getItemStack("gtladditions:me_super_pattern_buffer"))
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[UXV]).CWUt(640)
+            }
+            .save(provider)
+        PRECISION_ASSEMBLER_RECIPES.recipeBuilder(id("me_super_extended_export_buffer"))
+            .inputItems(ME_EXTENDED_EXPORT_BUFFER, 8)
+            .inputItems(DEGENERATE_RHENIUM_CONSTRAINED_CASING, 8)
+            .inputItems(getItemStack("kubejs:lepton_trap_crystal", 64))
+            .inputItems(getItemStack("kubejs:scintillator_crystal", 16))
+            .inputFluids(Legendarium.getFluid(1440))
+            .inputFluids(GradePurifiedWater16.getFluid(576))
+            .inputFluids(UUMatter.getFluid(576))
+            .inputFluids(HeavyLeptonMixture.getFluid(576))
+            .outputItems(GTLAddMachines.ME_SUPER_EXTENDED_EXPORT_BUFFER)
+            .EUt(VA[UIV].toLong())
+            .duration(200)
+            .save(provider)
+        SUPRACHRONAL_ASSEMBLY_LINE_RECIPES.recipeBuilder(id("wireless_energy_network_input_terminal"))
+            .inputItems(GTLAddMachines.WIRELESS_LASER_INPUT_HATCH_67108864A[MAX]!!, 16)
+            .inputItems(QFT_COIL, 64)
+            .inputItems(MEGA_ULTIMATE_BATTERY, 64)
+            .inputItems(A_MASS_FABRICATOR, 24)
+            .inputItems(SPACETIMEBENDINGCORE, 64)
+            .inputItems(wireGtHex, SpaceTime, 64)
+            .inputItems(wireGtHex, Eternity, 32)
+            .inputItems(plateDouble, MagnetohydrodynamicallyConstrainedStarMatter, 16)
+            .inputItems(getItemStack("kubejs:suprachronal_mainframe_complex", 16))
+            .inputItems(getItemStack("kubejs:hypercube", 64))
+            .inputFluids(SuperMutatedLivingSolder.getFluid(132710400))
+            .inputFluids(ExcitedDtsc.getFluid(128000000))
+            .inputFluids(Infinity.getFluid(46080000))
+            .outputItems(GTLAddMachines.Wireless_Energy_Network_INPUT_Terminal)
+            .EUt(VA[MAX].toLong()).duration(2400)
+            .stationResearch { b: StationRecipeBuilder? ->
+                b!!.researchStack(GTLAddMachines.WIRELESS_LASER_INPUT_HATCH_67108864A[MAX]!!.asStack())
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[MAX]).CWUt(67108864, 2147483647)
+            }
+            .save(provider)
+        SUPRACHRONAL_ASSEMBLY_LINE_RECIPES.recipeBuilder(id("wireless_energy_network_output_terminal"))
+            .inputItems(GTLAddMachines.WIRELESS_LASER_OUTPUT_HATCH_67108863A[MAX]!!, 16)
+            .inputItems(QFT_COIL, 64)
+            .inputItems(MEGA_ULTIMATE_BATTERY, 64)
+            .inputItems(A_MASS_FABRICATOR, 24)
+            .inputItems(SPACETIMEBENDINGCORE, 64)
+            .inputItems(wireGtHex, SpaceTime, 64)
+            .inputItems(wireGtHex, Eternity, 32)
+            .inputItems(plateDouble, MagnetohydrodynamicallyConstrainedStarMatter, 16)
+            .inputItems(getItemStack("kubejs:suprachronal_mainframe_complex", 16))
+            .inputItems(getItemStack("kubejs:hypercube", 64))
+            .inputFluids(SuperMutatedLivingSolder.getFluid(132710400))
+            .inputFluids(ExcitedDtsc.getFluid(128000000))
+            .inputFluids(Infinity.getFluid(46080000))
+            .outputItems(GTLAddMachines.Wireless_Energy_Network_OUTPUT_Terminal)
+            .EUt(VA[MAX].toLong()).duration(2400)
+            .stationResearch { b: StationRecipeBuilder? ->
+                b!!.researchStack(GTLAddMachines.WIRELESS_LASER_OUTPUT_HATCH_67108863A[MAX]!!.asStack())
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[MAX]).CWUt(67108864, 2147483647)
+            }
+            .save(provider)
+        SUPRACHRONAL_ASSEMBLY_LINE_RECIPES.recipeBuilder(id("thread_modifier_hatch"))
+            .inputItems(getItemStack("kubejs:giga_chad", 4096))
+            .inputItems(GTLAddMachines.SUPER_PARALLEL_HATCH, 4)
+            .inputItems(FIELD_GENERATOR_MAX, 4096)
+            .inputItems(frameGt, Eternity, 6144)
+            .inputItems(nanoswarm, CosmicNeutronium, 8192)
+            .inputItems(nanoswarm, Eternity, 8192)
+            .inputItems(nanoswarm, BlackDwarfMatter, 8192)
+            .inputItems(nanoswarm, WhiteDwarfMatter, 8192)
+            .inputItems(GTLAddItems.SPACETIME_LENS, 4096)
+            .inputItems(CustomTags.UXV_CIRCUITS, 131072)
+            .inputFluids(Radox.getFluid(589000000))
+            .inputFluids(TemporalFluid.getFluid(46080000))
+            .inputFluids(Shirabon.getFluid(92160000))
+            .inputFluids(CosmicElement.getFluid(18874368000))
+            .outputItems(GTLAddMachines.THREAD_MODIFIER_HATCH)
+            .EUt(VA[MAX].toLong()).duration(12000)
+            .stationResearch { b: StationRecipeBuilder? ->
+                b!!.researchStack(GTLAddMachines.SUPER_PARALLEL_HATCH.asStack())
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[MAX]).CWUt(67108864, 2147483647)
+            }
+            .save(provider)
+        SUPRACHRONAL_ASSEMBLY_LINE_RECIPES.recipeBuilder(id("infinity_input_dual_hatch"))
+            .inputItems(getItemStack("gtmthings:uhv_huge_dual_hatch", 64))
+            .inputItems(getItemStack("gtmthings:uev_huge_dual_hatch", 64))
+            .inputItems(getItemStack("gtmthings:uiv_huge_dual_hatch", 64))
+            .inputItems(getItemStack("gtmthings:uxv_huge_dual_hatch", 64))
+            .inputItems(getItemStack("gtmthings:opv_huge_dual_hatch", 64))
+            .inputItems(GTLAddMachines.SUPER_INPUT_DUAL_HATCH, 16)
+            .inputItems(INFINITE_CELL_COMPONENT, 16)
+            .inputItems(CustomTags.OpV_CIRCUITS, 4)
+            .inputItems(getItemStack("kubejs:nuclear_star", 8))
+            .inputItems(getItemStack("kubejs:quantumchromodynamic_protective_plating", 6))
+            .inputItems(getItemStack("kubejs:stabilized_wormhole_generator", 2))
+            .inputFluids(Periodicium.getFluid(5760))
+            .inputFluids(Radox.getFluid(5760))
+            .inputFluids(CosmicNeutronium.getFluid(5760))
+            .inputFluids(Infinity.getFluid(2560))
+            .outputItems(GTLAddMachines.INFINITY_INPUT_DUAL_HATCH)
+            .EUt(VA[OpV].toLong()).duration(5120)
+            .stationResearch { b: StationRecipeBuilder? ->
+                b!!.researchStack(GTLAddMachines.SUPER_INPUT_DUAL_HATCH.asStack())
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[OpV]).CWUt(1280)
+            }
+            .save(provider)
+        ASSEMBLY_LINE_RECIPES.recipeBuilder(id("cloud_computation_monitor"))
+            .inputItems(GTMachines.HULL[UIV])
+            .inputItems(
+                getItemStack("gtceu:computer_monitor_cover", 16),
+                getItemStack("kubejs:warped_ender_pearl", 64)
+            )
+            .inputItems(ULTIMATE_TERMINAL)
+            .inputItems(CustomTags.UIV_CIRCUITS, 8)
+            .inputItems(foil, Neutronium, 64)
+            .inputFluids(MutatedLivingSolder.getFluid(5760))
+            .inputFluids(FluidIngredient.of(FluidStack.create(getFluid("kubejs:gelid_cryotheum"), 2880)))
+            .outputItems(GTLAddMachines.CLOUD_COMPUTATION_MONITOR)
+            .EUt(VA[UEV].toLong())
+            .duration(600)
+            .stationResearch { builder ->
+                builder.researchStack(WirelessMachines.WIRELESS_ENERGY_MONITOR.asStack())
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[UV])
+                    .CWUt(256)
+            }
+            .save(provider)
+        ASSEMBLY_LINE_RECIPES.recipeBuilder(id("cloud_computation_transmitter_hatch"))
+            .inputItems(GTMachines.HULL[UIV])
+            .inputItems(WirelessMachines.WIRELESS_COMPUTATION_HATCH_TRANSMITTER)
+            .inputItems(CustomTags.UEV_CIRCUITS, 2)
+            .inputItems(SENSOR_UEV, 4)
+            .inputItems(HIGHLY_INSULATING_FOIL, 8)
+            .inputFluids(MutatedLivingSolder.getFluid(5760))
+            .inputFluids(Zylon.getFluid(1008))
+            .inputFluids(CaliforniumCyclopentadienide.getFluid(4000))
+            .outputItems(GTLAddMachines.CLOUD_COMPUTATION_HATCH_TRANSMITTER)
+            .EUt(VA[UHV].toLong())
+            .duration(300)
+            .stationResearch { builder ->
+                builder.researchStack(WirelessMachines.WIRELESS_COMPUTATION_HATCH_TRANSMITTER.asStack())
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[UV])
+                    .CWUt(256)
+            }
+            .save(provider)
+        ASSEMBLY_LINE_RECIPES.recipeBuilder(id("cloud_computation_receiver_hatch"))
+            .inputItems(GTMachines.HULL[UIV])
+            .inputItems(WirelessMachines.WIRELESS_COMPUTATION_HATCH_RECEIVER)
+            .inputItems(CustomTags.UEV_CIRCUITS, 2)
+            .inputItems(EMITTER_UEV, 4)
+            .inputItems(HIGHLY_INSULATING_FOIL, 8)
+            .inputFluids(MutatedLivingSolder.getFluid(5760))
+            .inputFluids(Zylon.getFluid(1008))
+            .inputFluids(CaliforniumCyclopentadienide.getFluid(4000))
+            .outputItems(GTLAddMachines.CLOUD_COMPUTATION_HATCH_RECEIVER)
+            .EUt(VA[UHV].toLong())
+            .duration(300)
+            .stationResearch { builder ->
+                builder.researchStack(WirelessMachines.WIRELESS_COMPUTATION_HATCH_RECEIVER.asStack())
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[UV])
+                    .CWUt(256)
+            }
+            .save(provider)
+        ASSEMBLY_LINE_RECIPES.recipeBuilder(id("cloud_data_hatch"))
+            .inputItems(GTMachines.HULL[UIV])
+            .inputItems(GTLMachines.WIRELESS_DATA_HATCH_RECEIVER)
+            .inputItems(CustomTags.UEV_CIRCUITS, 2)
+            .inputItems(EMITTER_UEV, 4)
+            .inputItems(HIGHLY_INSULATING_FOIL, 8)
+            .inputFluids(MutatedLivingSolder.getFluid(5760))
+            .inputFluids(Zylon.getFluid(1008))
+            .inputFluids(CaliforniumCyclopentadienide.getFluid(4000))
+            .outputItems(GTLAddMachines.CLOUD_DATA_HATCH)
+            .EUt(VA[UHV].toLong())
+            .duration(300)
+            .stationResearch { builder ->
+                builder.researchStack(GTLMachines.WIRELESS_DATA_HATCH_RECEIVER.asStack())
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[UV])
+                    .CWUt(256)
+            }
+            .save(provider)
+        ASSEMBLY_LINE_RECIPES.recipeBuilder(id("cloud_data_machine"))
+            .inputItems(GTMachines.HULL[UIV])
+            .inputItems(com.gregtechceu.gtceu.common.data.machines.GTResearchMachines.DATA_BANK)
+            .inputItems(GTLMachines.WIRELESS_DATA_HATCH_TRANSMITTER)
+            .inputItems(com.gregtechceu.gtceu.common.data.machines.GTResearchMachines.ADVANCED_DATA_ACCESS_HATCH, 5)
+            .inputItems(TOOL_DATA_MODULE)
+            .inputItems(CustomTags.UEV_CIRCUITS, 4)
+            .inputItems(HIGHLY_INSULATING_FOIL, 64)
+            .inputItems(foil, Ruridit, 64)
+            .inputItems(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 64)
+            .inputFluids(MutatedLivingSolder.getFluid(5760))
+            .inputFluids(Zylon.getFluid(4032))
+            .inputFluids(FluidIngredient.of(FluidStack.create(getFluid("kubejs:gelid_cryotheum"), 2880)))
+            .outputItems(GTLAddMachines.CLOUD_DATA_MACHINE)
+            .EUt(VA[UEV].toLong())
+            .duration(600)
+            .stationResearch { builder ->
+                builder.researchStack(
+                    com.gregtechceu.gtceu.common.data.machines.GTResearchMachines.ADVANCED_DATA_ACCESS_HATCH.asStack()
+                )
+                    .dataStack(TOOL_DATA_MODULE.asStack())
+                    .EUt(VA[UV])
+                    .CWUt(256)
+            }
+            .save(provider)
+    }
+}

@@ -40,6 +40,7 @@ def elytraModpackVersion = project.extensions.getByName("elytraModpackVersion")
 
 dependencies {
     compileOnly(elytraModpackVersion.gtnhdev("Railcraft") as String) { transitive = false }
+    runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("Railcraft") as String) { transitive = false }
     // NEI's fluid handler reflects GregTech tool interfaces during headless tests.
     testRuntimeOnly(elytraModpackVersion.gtnhdev("Railcraft") as String) { transitive = false }
     testRuntimeOnly(elytraModpackVersion.gtnhdev("BuildCraft") as String) { transitive = false }
@@ -87,6 +88,9 @@ dependencies {
     // the dev classpath that is a NoClassDefFoundError in postInit. Present in the real pack, so dev-only.
     devOnlyNonPublishable(elytraModpackVersion.gtnhdev("BetterBuildersWands") as String)
     compileOnlyApi(elytraModpackVersion.gtnhdev("NewHorizonsCoreMod") as String)
+    // NHC supplies recipe inputs in runClient; Yamcl provides its required YAMCore mod.
+    runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("NewHorizonsCoreMod") as String) { transitive = false }
+    runtimeOnlyNonPublishable(elytraModpackVersion.gtnhdev("Yamcl") as String) { transitive = false }
     devOnlyNonPublishable(elytraModpackVersion.gtnhdev("BlockRenderer6343") as String)
 
 

@@ -1,6 +1,7 @@
 package com.xyp.gtnotgood.loader;
 
 import com.xyp.gtnotgood.client.nei.ChemicalPlantFrontend;
+import com.xyp.gtnotgood.client.nei.HeartGenerationFrontend;
 import com.xyp.gtnotgood.client.nei.TransmutationFrontend;
 import com.xyp.gtnotgood.common.recipe.SeedConversionBackend;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -18,6 +19,45 @@ import gregtech.nei.formatter.HeatingCoilSpecialValueFormatter;
  * handlers all reference the same object instead of constructing duplicate maps.
  */
 public final class GTNGRecipeMaps {
+
+    public static final RecipeMap<RecipeMapBackend> LightHunterRockBreakingRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.light_hunter_rock_breaking
+        // # Satellite Rock Breaking
+        // # zh_CN 卫星岩石粉碎
+        .of("recipe.gtnotgood.light_hunter_rock_breaking").maxIO(2, 1, 2, 0).progressBar(GTUITextures.PROGRESSBAR_ARROW)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.NexusSatelliteFactoryMkII.get(1))).build();
+
+    public static final RecipeMap<RecipeMapBackend> HeartGenerationRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.heart_generation
+        // # Genesis Generation
+        // # zh_CN 创世发电
+        .of("recipe.gtnotgood.heart_generation").maxIO(2, 1, 0, 0).progressBar(GTUITextures.PROGRESSBAR_ARROW)
+        .frontend(HeartGenerationFrontend::new).neiHandlerInfo(builder -> builder
+            .setDisplayStack(GTNGItemList.HeartOfTheUniverse.get(1)).setHeight(202).setMaxRecipesPerPage(1))
+        .build();
+
+    public static final RecipeMap<RecipeMapBackend> LightningProcessorRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.lightning_processor
+        // # Lightning Processing
+        // # zh_CN 闪电处理
+        .of("recipe.gtnotgood.lightning_processor").maxIO(6, 1, 6, 1)
+        .progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.SuperconductingElectromagneticFactory.get(1)))
+        .build();
+
+    public static final RecipeMap<RecipeMapBackend> DimensionalFocusRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.dimensional_focus
+        // # Dimensional Focus Engraving
+        // # zh_CN 维度聚焦激光蚀刻
+        .of("recipe.gtnotgood.dimensional_focus").maxIO(4, 4, 3, 0).progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.DimensionalFocusEngravingArray.get(1))).build();
+
+    public static final RecipeMap<RecipeMapBackend> SuperParticleColliderRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.particle_collider
+        // # Particle Collision
+        // # zh_CN 粒子对撞
+        .of("recipe.gtnotgood.particle_collider").maxIO(0, 0, 2, 1).progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.SuperParticleCollider.get(1))).build();
 
     public static final RecipeMap<SeedConversionBackend> SeedConversionRecipes = RecipeMapBuilder
         // #tr recipe.gtnotgood.seedConversion

@@ -1,0 +1,176 @@
+{
+  "repository": "https://github.com/Nxer/Twist-Space-Technology-Mod",
+  "revision": "f59f874694906144e205a3451dfd665c701eca97",
+  "license": "GPL-3.0-only",
+  "attribution": "Twist Space Technology contributors, including Nxer",
+  "assets": [
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_ControlCore_Adv_off.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_ControlCore_Adv_off.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "bff3703dca09c7f3fddd4746ffd3bc59a476408d45d3ddbec82d5c5541189e0d",
+      "destination_sha256": "bff3703dca09c7f3fddd4746ffd3bc59a476408d45d3ddbec82d5c5541189e0d"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_ControlCore_Adv_on.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_ControlCore_Adv_on.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "67c15abb7ca7a604b5e8ec0c1f528ee4a8046d25a6b64366d6db15a9cbe4cba3",
+      "destination_sha256": "67c15abb7ca7a604b5e8ec0c1f528ee4a8046d25a6b64366d6db15a9cbe4cba3"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_ControlCore_Adv_on.png.mcmeta",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_ControlCore_Adv_on.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc",
+      "destination_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_ControlCore_Per_off.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_ControlCore_Per_off.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "61d1444121104794070b8dfe26c44451f18be584d56e36043f14eec696e917be",
+      "destination_sha256": "61d1444121104794070b8dfe26c44451f18be584d56e36043f14eec696e917be"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_ControlCore_Per_on.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_ControlCore_Per_on.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "fdae696e16dc7c12a0dbd87d615f0dd1ec2bf1bdf36fa24105a6a33a58abcf54",
+      "destination_sha256": "fdae696e16dc7c12a0dbd87d615f0dd1ec2bf1bdf36fa24105a6a33a58abcf54"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_ControlCore_Per_on.png.mcmeta",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_ControlCore_Per_on.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc",
+      "destination_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_ControlCore_Pri_off.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_ControlCore_Pri_off.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "3254f00c5a8049e1fc285981069dc634bad9b8588aac4f0912fd11492f37cbd3",
+      "destination_sha256": "3254f00c5a8049e1fc285981069dc634bad9b8588aac4f0912fd11492f37cbd3"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_ControlCore_Pri_on.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_ControlCore_Pri_on.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "e7744ee29707ce996ea0a2b91a20241e332e6dd8ffdba5a14269963c00b4cef5",
+      "destination_sha256": "e7744ee29707ce996ea0a2b91a20241e332e6dd8ffdba5a14269963c00b4cef5"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_ControlCore_Pri_on.png.mcmeta",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_ControlCore_Pri_on.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc",
+      "destination_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_OverClockController_Adv.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_OverClockController_Adv.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "2a9be339fa65740f962c13cd2efa083c224eaa011aab672167e8afa157c2bc50",
+      "destination_sha256": "2a9be339fa65740f962c13cd2efa083c224eaa011aab672167e8afa157c2bc50"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_OverClockController_Adv.png.mcmeta",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_OverClockController_Adv.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "baeb8697754e734b883dfab35ebd0b1d700f5510cc63c2f0e197919f27da5413",
+      "destination_sha256": "baeb8697754e734b883dfab35ebd0b1d700f5510cc63c2f0e197919f27da5413"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_OverClockController_Per.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_OverClockController_Per.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "78a820efa3fe3d1c08875f450fb378bdbd2fc1adc5bdb55acc1ad4ecb109f9db",
+      "destination_sha256": "78a820efa3fe3d1c08875f450fb378bdbd2fc1adc5bdb55acc1ad4ecb109f9db"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_OverClockController_Per.png.mcmeta",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_OverClockController_Per.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "ba09a4a80120753866514efa45fcddf44bb7d6737d7073dc23c4008bc5994f61",
+      "destination_sha256": "ba09a4a80120753866514efa45fcddf44bb7d6737d7073dc23c4008bc5994f61"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_OverClockController_Pri.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_OverClockController_Pri.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "feac4e6b8ba5208608829d030b22436424900190ea0015a03ef313dca0a02eca",
+      "destination_sha256": "feac4e6b8ba5208608829d030b22436424900190ea0015a03ef313dca0a02eca"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_OverClockController_Pri.png.mcmeta",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_OverClockController_Pri.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "b0af8d4a59ea4f036f4f5b83191b3976a4e5cb493d62e16b2026f290a7477ba8",
+      "destination_sha256": "b0af8d4a59ea4f036f4f5b83191b3976a4e5cb493d62e16b2026f290a7477ba8"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_ParallelController.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_ParallelController.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "a511a6942137c1f9ba64dabd329f3e2d72bbfb08cb8cc7f27bb1361f99068a7b",
+      "destination_sha256": "a511a6942137c1f9ba64dabd329f3e2d72bbfb08cb8cc7f27bb1361f99068a7b"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_ParallelController.png.mcmeta",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_ParallelController.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc",
+      "destination_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_PowerController.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_PowerController.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "2ddc6b15478b858c56342acebc5147282f18fe7489c04ef9fcaed1a0e63a8550",
+      "destination_sha256": "2ddc6b15478b858c56342acebc5147282f18fe7489c04ef9fcaed1a0e63a8550"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_PowerController.png.mcmeta",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_PowerController.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc",
+      "destination_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_SpeedController.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_SpeedController.png",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "d221687d04620390c94326d0f7825dba827468e43864e8917bb825eafe31c640",
+      "destination_sha256": "d221687d04620390c94326d0f7825dba827468e43864e8917bb825eafe31c640"
+    },
+    {
+      "source": "src/main/resources/assets/gtnhcommunitymod/textures/blocks/ModularHatchOverlay/OVERLAY_SpeedController.png.mcmeta",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/modular/OVERLAY_SpeedController.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "Resource namespace and directory only; file bytes unchanged.",
+      "source_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc",
+      "destination_sha256": "f00b4a27b6337e2fff045570af39980c442a91565f67eaa5560436782accb6dc"
+    }
+  ]
+}

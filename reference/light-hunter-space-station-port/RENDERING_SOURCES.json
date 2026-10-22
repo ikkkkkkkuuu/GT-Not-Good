@@ -1,0 +1,552 @@
+[
+  {
+    "id": "Dragonators/GTLAdditions:LICENSE",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "LICENSE",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/LICENSE",
+    "git_blob_sha1": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7",
+    "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:README.md",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "README.md",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/README.md",
+    "git_blob_sha1": "984443a77865ee79f331f93d660331388837d4c7",
+    "sha256": "0d19e07efdf88cef19d7cb2f3a6b411296d45571be66681a6a614949c28b3fc2",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "GregTechCEu/GregTech-Modern:LICENSE",
+    "repository": "GregTechCEu/GregTech-Modern",
+    "commit": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+    "path": "LICENSE",
+    "url": "https://github.com/GregTechCEu/GregTech-Modern/blob/e3844ba943e2388c0856617ae4f8b473a0ae1b64/LICENSE",
+    "git_blob_sha1": "65c5ca88a67c30becee01c5a8816d964b03862f9",
+    "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+    "license": "LGPL-3.0"
+  },
+  {
+    "id": "GregTechCEu/GregTech-Modern:README.md",
+    "repository": "GregTechCEu/GregTech-Modern",
+    "commit": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+    "path": "README.md",
+    "url": "https://github.com/GregTechCEu/GregTech-Modern/blob/e3844ba943e2388c0856617ae4f8b473a0ae1b64/README.md",
+    "git_blob_sha1": "feb68c2f6b20cde355ac3ac3f1a463868d5e9f0c",
+    "sha256": "2698dd31027899abaa6ffb4bf73bcf78827be0d3337a0319ad4a6ffbc1b1e2ec",
+    "license": "LGPL-3.0"
+  },
+  {
+    "id": "GregTechCEu/GregTech-Modern:src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+    "repository": "GregTechCEu/GregTech-Modern",
+    "commit": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+    "path": "src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+    "url": "https://github.com/GregTechCEu/GregTech-Modern/blob/e3844ba943e2388c0856617ae4f8b473a0ae1b64/src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+    "git_blob_sha1": "0338050f0c15711ebada6e2e98b104741f555086",
+    "sha256": "9b09f04becb6d0aae58ccc044e769d6bb14ed1dbf72cf905bc4cfc531564c652",
+    "license": "LGPL-3.0"
+  },
+  {
+    "id": "GregTechCEu/GregTech-Modern:src/main/resources/assets/gtceu/textures/block/dim_markers/overworld/west.png",
+    "repository": "GregTechCEu/GregTech-Modern",
+    "commit": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+    "path": "src/main/resources/assets/gtceu/textures/block/dim_markers/overworld/west.png",
+    "url": "https://github.com/GregTechCEu/GregTech-Modern/blob/e3844ba943e2388c0856617ae4f8b473a0ae1b64/src/main/resources/assets/gtceu/textures/block/dim_markers/overworld/west.png",
+    "git_blob_sha1": "4c2182926ca46e2ccbc1541ac581eb3151cdc312",
+    "sha256": "d0b95838f03843ecbd64b3135c6680010352272d58f41fbfc96339db2a3306e6",
+    "license": "LGPL-3.0"
+  },
+  {
+    "id": "GregTechCEu/GregTech-Modern:src/main/resources/assets/gtceu/textures/block/dim_markers/the_end/west.png",
+    "repository": "GregTechCEu/GregTech-Modern",
+    "commit": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+    "path": "src/main/resources/assets/gtceu/textures/block/dim_markers/the_end/west.png",
+    "url": "https://github.com/GregTechCEu/GregTech-Modern/blob/e3844ba943e2388c0856617ae4f8b473a0ae1b64/src/main/resources/assets/gtceu/textures/block/dim_markers/the_end/west.png",
+    "git_blob_sha1": "df9ce0c3ce406278f94aa351176d2b84242a948e",
+    "sha256": "6bf37c1bea559628cf85318ed87cbb9927dcf84e38854def0e37d8fdc6c3387a",
+    "license": "LGPL-3.0"
+  },
+  {
+    "id": "GregTechCEu/GregTech-Modern:src/main/resources/assets/gtceu/textures/block/dim_markers/the_nether/west.png",
+    "repository": "GregTechCEu/GregTech-Modern",
+    "commit": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+    "path": "src/main/resources/assets/gtceu/textures/block/dim_markers/the_nether/west.png",
+    "url": "https://github.com/GregTechCEu/GregTech-Modern/blob/e3844ba943e2388c0856617ae4f8b473a0ae1b64/src/main/resources/assets/gtceu/textures/block/dim_markers/the_nether/west.png",
+    "git_blob_sha1": "4a976ce376a4089c237814e1156a2e819f22d42f",
+    "sha256": "cfbba74e9f14665acbf6e66d8ced35e421d5924321caa9bbe82ae8b1e8458199",
+    "license": "LGPL-3.0"
+  },
+  {
+    "id": "GNSW/GTLCore:LICENSE",
+    "repository": "GNSW/GTLCore",
+    "commit": "6443c848264fb15c90cf50e031f146522616a8b9",
+    "path": "LICENSE",
+    "url": "https://github.com/GNSW/GTLCore/blob/6443c848264fb15c90cf50e031f146522616a8b9/LICENSE",
+    "git_blob_sha1": "0a041280bd00a9d068f503b8ee7ce35214bd24a1",
+    "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+    "license": "LGPL-3.0"
+  },
+  {
+    "id": "GNSW/GTLCore:src/main/resources/assets/gtlcore/models/obj/space.mtl",
+    "repository": "GNSW/GTLCore",
+    "commit": "6443c848264fb15c90cf50e031f146522616a8b9",
+    "path": "src/main/resources/assets/gtlcore/models/obj/space.mtl",
+    "url": "https://github.com/GNSW/GTLCore/blob/6443c848264fb15c90cf50e031f146522616a8b9/src/main/resources/assets/gtlcore/models/obj/space.mtl",
+    "git_blob_sha1": "ee8321810ea1a35df17a555e592503d7fc648d21",
+    "sha256": "ca31a62d452af1f99bc891318a64b9a8bb343a9f30159cb18a6e7a3462ab503d",
+    "license": "LGPL-3.0"
+  },
+  {
+    "id": "GNSW/GTLCore:src/main/resources/assets/gtlcore/models/obj/space.obj",
+    "repository": "GNSW/GTLCore",
+    "commit": "6443c848264fb15c90cf50e031f146522616a8b9",
+    "path": "src/main/resources/assets/gtlcore/models/obj/space.obj",
+    "url": "https://github.com/GNSW/GTLCore/blob/6443c848264fb15c90cf50e031f146522616a8b9/src/main/resources/assets/gtlcore/models/obj/space.obj",
+    "git_blob_sha1": "a25e82060feb17f17d67f36b81338a691a148ee4",
+    "sha256": "257d866d58c6a006d866b67e8c89398ca711c00d57e606ba93b5d4124af65dcd",
+    "license": "LGPL-3.0"
+  },
+  {
+    "id": "GNSW/GTLCore:src/main/resources/assets/gtlcore/models/obj/star.mtl",
+    "repository": "GNSW/GTLCore",
+    "commit": "6443c848264fb15c90cf50e031f146522616a8b9",
+    "path": "src/main/resources/assets/gtlcore/models/obj/star.mtl",
+    "url": "https://github.com/GNSW/GTLCore/blob/6443c848264fb15c90cf50e031f146522616a8b9/src/main/resources/assets/gtlcore/models/obj/star.mtl",
+    "git_blob_sha1": "ee8321810ea1a35df17a555e592503d7fc648d21",
+    "sha256": "ca31a62d452af1f99bc891318a64b9a8bb343a9f30159cb18a6e7a3462ab503d",
+    "license": "LGPL-3.0"
+  },
+  {
+    "id": "GNSW/GTLCore:src/main/resources/assets/gtlcore/models/obj/star.obj",
+    "repository": "GNSW/GTLCore",
+    "commit": "6443c848264fb15c90cf50e031f146522616a8b9",
+    "path": "src/main/resources/assets/gtlcore/models/obj/star.obj",
+    "url": "https://github.com/GNSW/GTLCore/blob/6443c848264fb15c90cf50e031f146522616a8b9/src/main/resources/assets/gtlcore/models/obj/star.obj",
+    "git_blob_sha1": "14eb3257c9e316d0002f0ca8a4e4c92317cebf1e",
+    "sha256": "714b91cac51614b6f9a44d025fcf8390e8da7bb6df31c9c4d3d31d2bafed2b08",
+    "license": "LGPL-3.0"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/java/com/gtladd/gtladditions/client/render/machine/LightHunterSpaceStationRenderer.kt",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/LightHunterSpaceStationRenderer.kt",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/LightHunterSpaceStationRenderer.kt",
+    "git_blob_sha1": "213e60c5a597ec3c3563c2ce17ddf19fc1fea0ca",
+    "sha256": "d2358ced6e040bfe0c0be716609d7ad3536d7757226f6857f88a94562a917b26",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/java/com/gtladd/gtladditions/client/render/machine/antichrist/AntichristBeamRenderer.kt",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/antichrist/AntichristBeamRenderer.kt",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/antichrist/AntichristBeamRenderer.kt",
+    "git_blob_sha1": "02caaa17dfcfea8366813b4ea6147b798bbf9e32",
+    "sha256": "a16a50892fb16eb450c99d615bee1e8c136bd9de425df2312cd04cf3a2b3ad8e",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/java/com/gtladd/gtladditions/client/render/machine/deferred/DeferredMachineRenderer.kt",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/deferred/DeferredMachineRenderer.kt",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/deferred/DeferredMachineRenderer.kt",
+    "git_blob_sha1": "14d6897c9552124fa7a9dc2f6252f1085aabfd34",
+    "sha256": "70869930ba6c59cdc272ae5bd64cfbd1a7b504555f662bf215bbe4229b3dd73b",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/java/com/gtladd/gtladditions/client/render/machine/deferred/DeferredOculusCompat.kt",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/deferred/DeferredOculusCompat.kt",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/deferred/DeferredOculusCompat.kt",
+    "git_blob_sha1": "be4073bcd85e7364d27d73441300f7b64c103f0d",
+    "sha256": "c27aaf9ae79b28af8edf058d82dbbd6a349b4c2e4b6fb13cf1cfa8acb2ea8e1a",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/java/com/gtladd/gtladditions/client/render/machine/lighthunter/LightHunterSpaceStationBeamRenderer.kt",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/lighthunter/LightHunterSpaceStationBeamRenderer.kt",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/lighthunter/LightHunterSpaceStationBeamRenderer.kt",
+    "git_blob_sha1": "d07eea77eabe9f8b9a827e761505a29fbb908932",
+    "sha256": "8e6965b190b04df0c654d5466429e7044f0ab949305ce475ea41dd8439e6d183",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/java/com/gtladd/gtladditions/common/data/CircularMotionParams.kt",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/java/com/gtladd/gtladditions/common/data/CircularMotionParams.kt",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/common/data/CircularMotionParams.kt",
+    "git_blob_sha1": "5f5cc2abdfa1e3541de8ffd6102e07f95dca0dba",
+    "sha256": "d2afdeb09c53c4bf2b1f707ba488abc70bf4378b3428c91808a8b9842b1764af",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/java/com/gtladd/gtladditions/common/data/RotationParams.kt",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/java/com/gtladd/gtladditions/common/data/RotationParams.kt",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/common/data/RotationParams.kt",
+    "git_blob_sha1": "899ee8dd4d1614ee12043da762aca4f39cc51164",
+    "sha256": "7e80d30b337e3d054c32cc60838ead1ad2414f367eb23bc242ffc8c28944ad62",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/java/com/gtladd/gtladditions/utils/CommonUtils.kt",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/java/com/gtladd/gtladditions/utils/CommonUtils.kt",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/utils/CommonUtils.kt",
+    "git_blob_sha1": "b72251ffcb1d605954b5e65f47b75daa51898380",
+    "sha256": "b57e2c7fd2bf08d7624f0e85435c28fdfe0dbe2e0c33bca518014a4ce824f5c6",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/java/com/gtladd/gtladditions/utils/Constants.kt",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/java/com/gtladd/gtladditions/utils/Constants.kt",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/utils/Constants.kt",
+    "git_blob_sha1": "6a4cc6771e2b67df3a2233ad0223218c65f735dd",
+    "sha256": "84871870c6aff00a2034a2134bd6b41e9cbfff2687d70f021994b611f184d8a1",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/java/com/gtladd/gtladditions/utils/RenderUtils.kt",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/java/com/gtladd/gtladditions/utils/RenderUtils.kt",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/utils/RenderUtils.kt",
+    "git_blob_sha1": "c7a5375ed6ca6231ff97fbb3b25181ea7f007169",
+    "sha256": "26915cbae3bdbc56c6d1a85c59b49b29c17e714c7fc95fa1d6955fb6a1994aa8",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/multiblock/light_hunter_space_station/space.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/multiblock/light_hunter_space_station/space.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/multiblock/light_hunter_space_station/space.json",
+    "git_blob_sha1": "e3388695db7be8bc5290d8aabba4211f9b47bf08",
+    "sha256": "ceece6db969ad7114c55cc464acfbc0fcb3161e004be1f541aa250386893f5df",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/multiblock/light_hunter_space_station/star_layer_1.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/multiblock/light_hunter_space_station/star_layer_1.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/multiblock/light_hunter_space_station/star_layer_1.json",
+    "git_blob_sha1": "7bed4e57b65184ae9eaa301591de5581593af2fc",
+    "sha256": "da4248c7a50a017955d564901f314aae20f62ed7c6622e10e77dd5e3fadffb43",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/ceres.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/ceres.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/ceres.json",
+    "git_blob_sha1": "dc8edfaaf2c0d84b13a838ec1b24c94943febea3",
+    "sha256": "57ed9af5905da70c39caae9858a59c21fb1dc07cd8fac1ecb0c891a5046b9949",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/enceladus.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/enceladus.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/enceladus.json",
+    "git_blob_sha1": "2036e74c3c9c445909b1c842a2208e4e546a5217",
+    "sha256": "12264012df08dfd48ebfeb045dcc91a86be3f8a655540906ae1f1fb5db47d3bf",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/ganymede.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/ganymede.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/ganymede.json",
+    "git_blob_sha1": "ef25831d949bfa0b908d03c5536169233892156d",
+    "sha256": "bbdb5181214f03df014fed525be396ec39b0ea07c4377b34180e851eabb61ad0",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/io.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/io.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/io.json",
+    "git_blob_sha1": "07e25c50285daa6cb2cdedd67ea4123781c1180f",
+    "sha256": "9b9ba19848b5781199d999af450af33ed0744d77f65ac9541a3137baf1820fd6",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/mars.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/mars.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/mars.json",
+    "git_blob_sha1": "f63f3ae5e611b0838d3137acebd9a9921a31adda",
+    "sha256": "4761eda1f49de14b2371d32a7bc7b9b79e30310627bc2dd81c04555b8d4ae6f2",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/mercury.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/mercury.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/mercury.json",
+    "git_blob_sha1": "389451ef7679efb9ed2cee41bb37e7882dcbb3dd",
+    "sha256": "ea9dff2a4668d2a1cd1312b358f7c3212ee945fbd443c6a01d046f991e88d8b5",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/moon.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/moon.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/moon.json",
+    "git_blob_sha1": "19208825456e66f1e728b4a47ad5122191e30f97",
+    "sha256": "50a4924230ead7ef9baf9867e46bc28e73638d5e999fd7ed07e5cf4b30c46f87",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/overworld.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/overworld.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/overworld.json",
+    "git_blob_sha1": "466b4251565f595fcf1a2e2bc1b9c91830f0bb04",
+    "sha256": "82360d318cbd6db5b393c31fbcfc815f5cdb8cf4bc8dd88d4c06e5f5e40f4848",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/pluto.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/pluto.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/pluto.json",
+    "git_blob_sha1": "17de233734f4b645dc782419e60dd779bc5ca799",
+    "sha256": "e8941c3027895c3d22f22fa0131176e83bb44b897057843510e8ea933c93bad8",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/the_end.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/the_end.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/the_end.json",
+    "git_blob_sha1": "af3dabcc1ffd7c7644471655ee446302be7dedc6",
+    "sha256": "74c7e37a219fdf817282d1135bc09c99e59c2522ccbed2006517d43a7c81e437",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/the_nether.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/the_nether.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/the_nether.json",
+    "git_blob_sha1": "ee7981bb5dec796f01c129da73582e7bae5a7cde",
+    "sha256": "db746eb177e9591abce10c3a4e8ad3b69083eb16405046a5ccaa86a353fee368",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/titan.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/titan.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/titan.json",
+    "git_blob_sha1": "57b3a1a84b5e6af7d38d3e61ba834bc60867cf21",
+    "sha256": "6b6b49aa94a43eb0e8eea162d5dc6773fe6859ac1e65c68523df947b8761f4f4",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/models/obj/planets/venus.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/models/obj/planets/venus.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/models/obj/planets/venus.json",
+    "git_blob_sha1": "d95fdba2b53cbd120888715da25b8db101fca671",
+    "sha256": "b3895005133aac76b9d99094cf2e844f8c11aae924a574820428f3d811e14bc9",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/shaders/core/gtladditions_antichrist_beam.fsh",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/shaders/core/gtladditions_antichrist_beam.fsh",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/shaders/core/gtladditions_antichrist_beam.fsh",
+    "git_blob_sha1": "79ab2a0ef565142ea17717d8d26fc907f89ae559",
+    "sha256": "40ed937eb344c18787d30252a1c829892a8db62ec85157a2d669aeee92c68b36",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/shaders/core/gtladditions_antichrist_beam.json",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/shaders/core/gtladditions_antichrist_beam.json",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/shaders/core/gtladditions_antichrist_beam.json",
+    "git_blob_sha1": "be0a4062c1546276e252a238f50fc69c20f1066a",
+    "sha256": "485dc56b0d7dbcc4d5b3b874f509ee0fb73c1e225e1e26d26ca0d18216b3747d",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/shaders/core/gtladditions_antichrist_beam.vsh",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/shaders/core/gtladditions_antichrist_beam.vsh",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/shaders/core/gtladditions_antichrist_beam.vsh",
+    "git_blob_sha1": "97677503cbabaa09a51a059747bcb3704a041e17",
+    "sha256": "fbe095eb17a280bff1e3bdcfeb07431c9dc1cccec23facf3f3cf3341ec8a720c",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/multiblock/forge_of_antichrist/space_layer.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/multiblock/forge_of_antichrist/space_layer.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/multiblock/forge_of_antichrist/space_layer.png",
+    "git_blob_sha1": "7a327d91261cad22e3e86333cd035518330b0806",
+    "sha256": "ec28e645863d55d4c0513a07fc846eaf06fc4f4b2246e4a6b10535f990309360",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/multiblock/light_hunter_space_station/star_layer_1.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/multiblock/light_hunter_space_station/star_layer_1.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/multiblock/light_hunter_space_station/star_layer_1.png",
+    "git_blob_sha1": "0bde0ac9f2ec37debd8d40f47cdf6666f2882650",
+    "sha256": "38015514598f8e8ce6c58d55067061601927ea02eaab1f6cf18643fb33c18bee",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/ceresstone.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/ceresstone.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/ceresstone.png",
+    "git_blob_sha1": "13d6c70cf1db5c6beddb5fb6ce4cd58a085cdacf",
+    "sha256": "36ae70147429e6b340dafe76cef2d7f05dc29ad5f03cdc6a30a82c122469cec8",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/enceladusstone.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/enceladusstone.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/enceladusstone.png",
+    "git_blob_sha1": "c788d4347c3ee65380b9e03c9fe14e59a83c8606",
+    "sha256": "70dc69865fef2804e2f47f2e0b5acc5a324d009224d99a1abcff3f0fc9085002",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/ganymedestone.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/ganymedestone.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/ganymedestone.png",
+    "git_blob_sha1": "b15cc1eee308743d23be4d58f8ba4de4fd40e4ed",
+    "sha256": "9025909d71bea96a07591ddea343f3f7af2cec3d4dd9284c4c155789346be982",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/halo_tex1.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/halo_tex1.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/halo_tex1.png",
+    "git_blob_sha1": "bfd810f83d13e1afd5c7e9e35d875037e601a5ba",
+    "sha256": "26d408a3ae5b9aba1ade62a9a02a1be5d45d329def73de89f71506affccd9b99",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/heartofuniverse.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/heartofuniverse.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/heartofuniverse.png",
+    "git_blob_sha1": "26883621c47e35853ef21ee3a316981a0c9b33a1",
+    "sha256": "ca2a5379da66420a41bbac76b16ffcb83e8829390da799e79eb7bfcc214b4b11",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/iostone.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/iostone.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/iostone.png",
+    "git_blob_sha1": "0df51cb42eda76955e48c86cddf2c504252aeddb",
+    "sha256": "5403e5d70d09086e7b3591baec99090d29ec80ccbc9f0d236e136cfd2359e7b3",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/marsstone.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/marsstone.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/marsstone.png",
+    "git_blob_sha1": "26eec41bc4bd9c22cb6b1a876ce56d075a7bdc2f",
+    "sha256": "c1eacc3deab8d2451ce29ec8efa2858c4395b0311d32e0780af47eabcb4f0dc8",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/mercurystone.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/mercurystone.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/mercurystone.png",
+    "git_blob_sha1": "c2f44257df988eddb092183b7de752156bbe6c8d",
+    "sha256": "24056cef91fe8defa01798efbd8d9c5a07554ca2203cac7dd3adea4022f59e1c",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/moonstone.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/moonstone.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/moonstone.png",
+    "git_blob_sha1": "701873c114ac606e2527b50f779cde937b177c47",
+    "sha256": "060749e238a73183290ab6c2a307bf14b91f2ee4e009029f6f655975e9396476",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/plutostone.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/plutostone.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/plutostone.png",
+    "git_blob_sha1": "3d5f467bc9540dff3b001dda26d8f486745a8e0b",
+    "sha256": "78609cac6b00e84442dd11509ae9f48549c861b0853bd402148d8da21c0e9d83",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/titanstone.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/titanstone.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/titanstone.png",
+    "git_blob_sha1": "b62e0e6272e28f6ae09e44b14ecbb2eae7138817",
+    "sha256": "7e687cdcfcad563b2678c1e88309c80fe0fae4d304d03a8c13e4850ca0a65291",
+    "license": "GPL-3.0-only"
+  },
+  {
+    "id": "Dragonators/GTLAdditions:src/main/resources/assets/gtladditions/textures/block/obj/venusstone.png",
+    "repository": "Dragonators/GTLAdditions",
+    "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "path": "src/main/resources/assets/gtladditions/textures/block/obj/venusstone.png",
+    "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/textures/block/obj/venusstone.png",
+    "git_blob_sha1": "a325c5708718a6c8d96c131c01f4b56bb2b78c50",
+    "sha256": "3f763bb80809934609ad740d0f6525632e0b0d3643a73eb0c85b4935de7d9556",
+    "license": "GPL-3.0-only"
+  }
+]

@@ -46,16 +46,28 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
 |  2.9.0-RC-1  |     1.1.6     |         1.6.2          | [![1.6.2](https://img.shields.io/badge/release-1.6.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.2) |         ✔️         |
-|  2.9.0-RC-2  |     1.6.3     |         1.6.5          | [![1.6.5](https://img.shields.io/badge/release-1.6.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.5) |         ✔️         |
+|  2.9.0-RC-2  |     1.6.3     |         1.6.6          | [![1.6.6](https://img.shields.io/badge/release-1.6.6-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.6) |         ✔️         |
 
 当前版本面向 GTNH 2.9.0-RC-2；RC1 请使用 1.6.2。
 
-最新版本：[1.6.5 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.5)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.5/gtnotgood-1.6.5.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.5/gtnotgood-1.6.5-sources.jar)。
+最新版本：[1.6.6 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.6)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.6/gtnotgood-1.6.6.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.6/gtnotgood-1.6.6-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.6.5。
+1.3.4 因启动错误已撤回，请更新到 1.6.6。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.6.6 更新
+
+- 新增力场压模工厂、维度聚焦激光蚀刻阵列、克尔-纽曼均质仪、超级粒子对撞机、巨型组装厂和超导电磁工厂，保留移植结构、材质及运行特效，并提供控制器和结构件生存配方。
+- 新增 46 种模块仓，包含超频、速度、能耗、并行参数仓及三类执行核心；16 种动态仓支持 GUI 调参。主机内置普通核心，附加核心独立加工；高级和完美加工核心使用仓主无线账户预付电量，余额不足不扣料。
+- 六台加工机器默认耗时减半、EU/t 乘四，可用超频模块覆盖；取消能源仓数量上限，保留实际功率和最高单仓电压门槛。六台机器及宇宙之心免维护，兼容旧维护仓与维修存档。
+- 新增宇宙之心及燃料链，每组燃料约发电 7.56×10²³ EU；普通／高级／完美核心基础释放时间为 60 秒／15 秒／1 tick，基础维持耗电 64A LuV，断电暂停，加速不增加燃料总能量。控制器使用 16,384 桶原生 UU 流体，发电 NEI 说明支持双语折行。
+- 新增猎光号空间站、四类枢纽卫星工厂和线程修正仓，支持 20 个连接位、64 星阵、原生配方合批及恒星特效；修正各类能源仓的功率统计与类型识别。压缩星阵所需奥术星图未移植，没有新增压缩星阵产出配方。
+- 模块化 GUI 分核心显示独立进度、物品／流体数量和产率，刷新时保留滚动位置；暂停和等待输出时产率归零。大批量产物以大整数合计、分次输出并保存进度，避免溢出与重复结算。
+- 完善 TST 模块配方共存，区分电路、保留扫描研究与动态升级成本，避免串方和本模组模块被复制到免研究配方池；无线多安培能源仓显示名称简化为“无线能源仓”。
+
+模块机制与验证范围见[模块化机器检查](docs/testing/modular-machines.md)，猎光号运行规则见[空间站说明](docs/testing/light-hunter-space-station.md)。
 
 ### 1.6.5 更新
 

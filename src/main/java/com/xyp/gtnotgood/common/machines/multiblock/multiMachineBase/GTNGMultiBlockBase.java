@@ -3,11 +3,13 @@ package com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.base.GTNGModernMultiBlockBaseGui;
 
 import gregtech.api.logic.ProcessingLogic;
 import gregtech.api.metatileentity.implementations.MTEExtendedPowerMultiBlockBase;
+import gregtech.api.util.MultiblockTooltipBuilder;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 
 /**
@@ -26,6 +28,15 @@ public abstract class GTNGMultiBlockBase<T extends GTNGMultiBlockBase<T>> extend
 
     protected GTNGMultiBlockBase(String aName) {
         super(aName);
+    }
+
+    protected final MultiblockTooltipBuilder addModularMachineType(MultiblockTooltipBuilder tooltip,
+        String recipeMapNames) {
+        // #tr gtng.modular.tooltip.machine_type
+        // # Modular Machine: {\\YELLOW}%s{\\RESET}
+        // # zh_CN 模块化机器：{\\YELLOW}%s{\\RESET}
+        String type = StatCollector.translateToLocalFormatted("gtng.modular.tooltip.machine_type", recipeMapNames);
+        return tooltip.addInfo(type);
     }
 
     /**

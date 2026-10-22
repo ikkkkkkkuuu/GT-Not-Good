@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -32,6 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.xyp.gtnotgood.utils.HeadlessBlockRegistry;
+import com.xyp.gtnotgood.utils.HeadlessItemRegistry;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.FMLInjectionData;
@@ -57,7 +57,6 @@ public class LargeChemicalReactorRecipesTest {
     private static final Fluid OXYGEN = new Fluid("large_chemical_reactor_test_oxygen");
     private static final Fluid HYDROGEN_PEROXIDE = new Fluid("large_chemical_reactor_test_hydrogen_peroxide");
     private static Unsafe unsafe;
-    private static Item originalFeather;
     private static File originalMinecraftHome;
     private static Side originalLogSide;
     private static GTProxy originalProxy;
@@ -80,8 +79,7 @@ public class LargeChemicalReactorRecipesTest {
         originalLogSide = (Side) logSide.get(null);
         if (originalLogSide == null) logSide.set(null, Side.SERVER);
         HeadlessBlockRegistry.bootstrap();
-        originalFeather = Items.feather;
-        if (originalFeather == null) setFeather(new Item());
+        HeadlessItemRegistry.bootstrap();
         Method register = Item.itemRegistry.getClass().getDeclaredMethod("addObjectRaw", int.class, String.class,
             Object.class);
         register.setAccessible(true);
@@ -106,16 +104,10 @@ public class LargeChemicalReactorRecipesTest {
     }
 
     @AfterClass
-    public static void restoreVanillaItem() throws Exception {
-        if (originalFeather == null) setFeather(null);
+    public static void restoreEnvironment() throws Exception {
         GTMod.proxy = originalProxy;
         field(FMLInjectionData.class, "minecraftHome").set(null, originalMinecraftHome);
         field(FMLRelaunchLog.class, "side").set(null, originalLogSide);
-    }
-
-    private static void setFeather(Item value) throws Exception {
-        Field feather = field(Items.class, "feather");
-        unsafe.putObject(unsafe.staticFieldBase(feather), unsafe.staticFieldOffset(feather), value);
     }
 
     @Test

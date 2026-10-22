@@ -1,0 +1,258 @@
+{
+  "formatVersion": 1,
+  "component": "Super Particle Collider",
+  "fixedGregTechTexturePage": 124,
+  "blockRegistryId": "gtnotgood:particle_collider_casing",
+  "variants": {
+    "0": "Lafium mechanical casing",
+    "1": "Accelerated pipeline",
+    "2": "Superconducting coil, inactive",
+    "10": "Superconducting coil, client active appearance"
+  },
+  "activeCoilMechanism": "GT5-Unofficial native activeCoils/GTCoilTracker with IBlockWithActiveOffset=8. Server metadata remains 2; native synchronized client metadata is 10 while the machine works. No custom per-tick world scan or server metadata toggling.",
+  "officialPack": {
+    "version": "1.4.5.3",
+    "curseForgeFileId": 9238465,
+    "archiveSha256": "1c732d6b124732c3e3aede97f353910fc31873d9e26074891b2ca69dbcdee23b",
+    "license": "CC-BY-NC-SA-4.0",
+    "licenseSource": "Root LICENSE in the actual official archive."
+  },
+  "originalAssets": [
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/lafium_mechanical_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/particlecollider/lafium_mechanical_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "23c2aaaa23b41042cd682f31e92c707b1411637ac241829ca4e24d4443eb1363",
+      "destinationSha256": "23c2aaaa23b41042cd682f31e92c707b1411637ac241829ca4e24d4443eb1363"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/lafium_mechanical_casing_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/particlecollider/source_ctm/lafium_mechanical_casing_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "20b2ebed864277e5f319fe9a0108c0e0e5a933ee232b89dd28dce3f1d39f7246",
+      "destinationSha256": "20b2ebed864277e5f319fe9a0108c0e0e5a933ee232b89dd28dce3f1d39f7246"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/lafium_mechanical_casing.png.mcmeta",
+      "destination": "META-INF/particle-collider-port/source-metadata/lafium_mechanical_casing.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "aa3e6994a88d80a655b233665ca26cd903d68bc4cfdd15399f05e92b974e779b",
+      "destinationSha256": "aa3e6994a88d80a655b233665ca26cd903d68bc4cfdd15399f05e92b974e779b"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/accelerated_pipeline.png",
+      "destination": "assets/gtnotgood/textures/blocks/particlecollider/accelerated_pipeline.png",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "f2ec2f9e337af767914d8eb4a3899e70f555d04fc201290750214670f283fd4b",
+      "destinationSha256": "f2ec2f9e337af767914d8eb4a3899e70f555d04fc201290750214670f283fd4b"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/fusion/superconducting_coil.png",
+      "destination": "assets/gtnotgood/textures/blocks/particlecollider/superconducting_coil.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "4373575d41ec8fab184845fd9c2c5fb4d4bc63d52b1491b93f46b0c845be976c",
+      "destinationSha256": "4373575d41ec8fab184845fd9c2c5fb4d4bc63d52b1491b93f46b0c845be976c"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/fusion/superconducting_coil_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/particlecollider/source_ctm/superconducting_coil_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "225cfefd07e1b69a30b37e3d2d77e43c9f804222bcc81478efd8f176c99cb5ed",
+      "destinationSha256": "225cfefd07e1b69a30b37e3d2d77e43c9f804222bcc81478efd8f176c99cb5ed"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/fusion/superconducting_coil.png.mcmeta",
+      "destination": "META-INF/particle-collider-port/source-metadata/superconducting_coil.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "1e0d8bef93eb2bf6573ca8a31ace79be353c64cb4122bc3d24b21b79472a2694",
+      "destinationSha256": "1e0d8bef93eb2bf6573ca8a31ace79be353c64cb4122bc3d24b21b79472a2694"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/fusion/superconducting_coil_bloom.png",
+      "destination": "assets/gtnotgood/textures/blocks/particlecollider/superconducting_coil_bloom.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "a18466f58c7708da079c546751d4c508a72794d8b282a92c81ffe326c2d43d30",
+      "destinationSha256": "a18466f58c7708da079c546751d4c508a72794d8b282a92c81ffe326c2d43d30"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/fusion/superconducting_coil_bloom.png.mcmeta",
+      "destination": "META-INF/particle-collider-port/source-metadata/superconducting_coil_bloom.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "e5506a7d02fe2fa97f7ab8d498deae1cfd15011349c9cf27cfc9e8382f88e83c",
+      "destinationSha256": "e5506a7d02fe2fa97f7ab8d498deae1cfd15011349c9cf27cfc9e8382f88e83c"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/coils/machine_coil_superconductor_bloom_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/particlecollider/source_ctm/machine_coil_superconductor_bloom_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "cc68f6ec0c62dd0d82a20546c9b6fa5baa3f6136c9c310c7513281122f6f9b60",
+      "destinationSha256": "cc68f6ec0c62dd0d82a20546c9b6fa5baa3f6136c9c310c7513281122f6f9b60"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/coils/machine_coil_superconductor_bloom_ctm.png.mcmeta",
+      "destination": "META-INF/particle-collider-port/source-metadata/machine_coil_superconductor_bloom_ctm.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "281a27aad941eed764b2e10671c29fa532f91ec2bf4e870fe95667b3e2435722",
+      "destinationSha256": "281a27aad941eed764b2e10671c29fa532f91ec2bf4e870fe95667b3e2435722"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/generated/resources/assets/gtceu/models/block/superconducting_coil.json",
+      "destination": "META-INF/particle-collider-port/source-models/superconducting_coil.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "24cea2109dbf64de15bff3b443affdc8e95e66b468f41e6d648ee47d86ce058c",
+      "destinationSha256": "24cea2109dbf64de15bff3b443affdc8e95e66b468f41e6d648ee47d86ce058c"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/generated/resources/assets/gtceu/models/block/superconducting_coil_active.json",
+      "destination": "META-INF/particle-collider-port/source-models/superconducting_coil_active.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "895a4cdf605bbd71bb8e0946438c45062babaee955ebe06b6203d1bb2f8f898f",
+      "destinationSha256": "895a4cdf605bbd71bb8e0946438c45062babaee955ebe06b6203d1bb2f8f898f"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/generated/resources/assets/gtceu/blockstates/superconducting_coil.json",
+      "destination": "META-INF/particle-collider-port/source-models/superconducting_coil.blockstate.json",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "sourceSha256": "db6a43ddde0ac34fa5b03db6c3cc4fa8000b83572a72199f40e1e3057e7adbaa",
+      "destinationSha256": "db6a43ddde0ac34fa5b03db6c3cc4fa8000b83572a72199f40e1e3057e7adbaa"
+    }
+  ],
+  "referencedAssets": [
+    {
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front.png",
+      "sha256": "825af63ad86835ea1cd81c16008ef566c2f84bed025b3960324b9d02bda01ba8",
+      "license": "LGPL-3.0",
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourceRecord": "META-INF/field-extruder-port/ASSET_MANIFEST.json",
+      "usage": "Existing byte-identical fusion reactor controller overlay; referenced, not copied."
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front_active.png",
+      "sha256": "825af63ad86835ea1cd81c16008ef566c2f84bed025b3960324b9d02bda01ba8",
+      "license": "LGPL-3.0",
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourceRecord": "META-INF/field-extruder-port/ASSET_MANIFEST.json",
+      "usage": "Existing byte-identical fusion reactor controller overlay; referenced, not copied."
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front_glow.png",
+      "sha256": "9c7a82167b3544ced4b2d9d45f6724b27ab1c49fe46fffe01c18c955d8e118b2",
+      "license": "LGPL-3.0",
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourceRecord": "META-INF/field-extruder-port/ASSET_MANIFEST.json",
+      "usage": "Existing byte-identical fusion reactor controller overlay; referenced, not copied."
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front_glow.png.mcmeta",
+      "sha256": "5c669e75699b5c3ba581b8b57becfe8ebcddca080b89cafe1d473d618df03707",
+      "license": "LGPL-3.0",
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourceRecord": "META-INF/field-extruder-port/ASSET_MANIFEST.json",
+      "usage": "Existing byte-identical fusion reactor controller overlay; referenced, not copied."
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front_active_glow.png",
+      "sha256": "9c7a82167b3544ced4b2d9d45f6724b27ab1c49fe46fffe01c18c955d8e118b2",
+      "license": "LGPL-3.0",
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourceRecord": "META-INF/field-extruder-port/ASSET_MANIFEST.json",
+      "usage": "Existing byte-identical fusion reactor controller overlay; referenced, not copied."
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/fieldextruder/controller_front_active_glow.png.mcmeta",
+      "sha256": "5c669e75699b5c3ba581b8b57becfe8ebcddca080b89cafe1d473d618df03707",
+      "license": "LGPL-3.0",
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourceRecord": "META-INF/field-extruder-port/ASSET_MANIFEST.json",
+      "usage": "Existing byte-identical fusion reactor controller overlay; referenced, not copied."
+    }
+  ],
+  "derivedConnectedTexturesManifest": "CTM_MANIFEST.json",
+  "layoutReference": {
+    "repository": "https://github.com/Low-Drag-MC/LDLib-MultiLoader",
+    "revision": "1d4e4390ae58d16038845c651e122185c29f334b",
+    "license": "GPL-3.0",
+    "files": [
+      "common/src/main/java/com/lowdragmc/lowdraglib/client/model/custommodel/Connections.java",
+      "common/src/main/java/com/lowdragmc/lowdraglib/client/bakedpipeline/Submap.java"
+    ],
+    "generator": "reference/particle-collider-port/generate-connected-textures.py"
+  },
+  "codeRecords": [
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/java/org/gtlcore/gtlcore/common/data/machines/structure/MultiBlockMachineAStructureA.java",
+      "sourceSha256": "2d4d465c63fcb2473ebc352c0f9673415136529136576e1e1be47a76909028ec",
+      "sourceGeometrySha256": "bab9591197189fdddfa6ecf6b490286468be6dc0494f2bde0ebcbf4426b186d5",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/SuperParticleColliderStructure.java",
+      "license": "LGPL-3.0-only",
+      "modifications": "Lossless slice grouping, reversed depth order, controller a to ~, horizontal layers for StructureLib.transpose. Effective repeated d predicate remains accelerated pipeline; no aggregation cores added.",
+      "reference": "reference/SUPER_PARTICLE_COLLIDER_STRUCTURE.md"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/server_scripts/gtceu.js",
+      "sourceSha256": "15b5c81812cdd02a800ff05767df5e84ab3e50c642f1111d5ea2c18acfdfeba4",
+      "sourceLines": [
+        "2700-2709",
+        "10408-10421",
+        "8016-8039"
+      ],
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/machine/SuperParticleColliderRecipes.java",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Adapts controller and casing recipes to verified native GTNH materials; retains five complete native elemental conversions; omits unsupported endpoints and the antimatter branch.",
+      "reference": "reference/particle-collider-port/RECIPE_ADAPTATION.md"
+    }
+  ],
+  "derivedConnectedTexturesRoot": "assets/gtnotgood/textures/blocks/particlecollider"
+}

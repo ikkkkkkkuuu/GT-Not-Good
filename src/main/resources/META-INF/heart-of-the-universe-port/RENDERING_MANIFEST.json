@@ -1,0 +1,231 @@
+{
+  "format": 1,
+  "repository": "Dragonators/GTLAdditions",
+  "commit": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+  "license": "GPL-3.0-only",
+  "license_file": "LICENSE-GTLAdditions.txt",
+  "source_files": [
+    {
+      "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/HeartOfTheUniverseRenderer.kt",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/HeartOfTheUniverseRenderer.kt",
+      "git_blob_sha1": "c93ed7e896d43e5805cc7f4c250e00b883fdf92e",
+      "sha256": "691dc8b8057f1533ddcead5def81b91c9a8b3646c0612afed1692b9f0912a353",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleRenderer.kt",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleRenderer.kt",
+      "git_blob_sha1": "831fd33c8d4a6dbcb410d2d059611f0221c794c7",
+      "sha256": "0c391a435291d145fb99f12b5113cd7d96df13156661355db75e98f1ab5d9c6d",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleCompositeRenderer.kt",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleCompositeRenderer.kt",
+      "git_blob_sha1": "7cc03c6c11c31e76c48d4a6df222e08cd98f3515",
+      "sha256": "6875d8d7aa372597eb169a7f8bf4df5736096caf20d50e02b89a8850dd7b6f3d",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleFramebuffer.kt",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleFramebuffer.kt",
+      "git_blob_sha1": "f1e71507df9bedac2d61016fae1000c42a5025fd",
+      "sha256": "22ea7f0fff4d6ba2f1adb6de707d63161713f9f68a458eb45b0f32982f2328a2",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHolePostTargets.kt",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHolePostTargets.kt",
+      "git_blob_sha1": "a53c16e877b51e23623b21e016a4719e61219e97",
+      "sha256": "2de1215ec5c98eadda8cc831131c9e407794daf9bda8553aaa706a62eb2d69b5",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleQuadBuffers.kt",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleQuadBuffers.kt",
+      "git_blob_sha1": "093e78f0866b6f306c29ceceaa170923d21cc01d",
+      "sha256": "72a6ebec037ec71967529ea32bcf192889ee1c610cf571f93e45f78967dc539e",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleRenderProfile.kt",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleRenderProfile.kt",
+      "git_blob_sha1": "b867621343bda7b8b3d8edd38261c506afc480d3",
+      "sha256": "635f4c4f85cba21c03af17e399f3ab85a0228ef9c5560f46239c1b8ddc3b2105",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleShaders.kt",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleShaders.kt",
+      "git_blob_sha1": "f23a6530caedd4b5334c9b04f86020104cb31b8a",
+      "sha256": "3bfc3b1149ce613539e9f11ede7ff4c94e3e8084b1d99ecc0ca3cdbac8af9f79",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartDeferredRenderer.kt",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartDeferredRenderer.kt",
+      "git_blob_sha1": "81ba6a76200d8297dfde7ef294c2930c31a2587a",
+      "sha256": "de70bb6c1230e4ed29697ef779299cf0c151ad05ba8dc2e90cfe8f3567a1439f",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_black_hole.vsh",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_black_hole.vsh",
+      "git_blob_sha1": "a840b2f2dcda84347fcbf41d4b5afdcdaecc20db",
+      "sha256": "d7d02829ef106cca24d730a3b87cf5cfc019c05fe998d1361c65a286e075738a",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_black_hole.fsh",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_black_hole.fsh",
+      "git_blob_sha1": "4b407d0db607b23dab82c3e8020e0e2157330848",
+      "sha256": "7899b2a0974f730688c1a0f8bb9305086c04afa5e1c68ebf9cd51012d8a67394",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_post.vsh",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_post.vsh",
+      "git_blob_sha1": "2f12e1f80e5cf67287812e0d665f80ca89541ee3",
+      "sha256": "e225e2608e0826fe978b714ca57e4e66d6d7be3b42f2907fb7fc8c3714b93255",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_blur.fsh",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_blur.fsh",
+      "git_blob_sha1": "05413f7d25f06da7786e9f9977fe6aa43ec63cda",
+      "sha256": "6ab96a9166fa4df252bc91bab9088c6b1094da2977e0484633d27d425ffad3c8",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_composite.fsh",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_composite.fsh",
+      "git_blob_sha1": "01fe4553aca5ba41cf787a4f18defeed5a1b2588",
+      "sha256": "331d4c8d65b6ba640e2b9615467c87640afc0e47d73c4f624392b3ba2bd6bf0c",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "path": "src/main/resources/assets/gtladditions/shaders/include/heart_volume_common.glsl",
+      "url": "https://github.com/Dragonators/GTLAdditions/blob/34fb152886164c56a07fc9d1b10e056f0c22b7ab/src/main/resources/assets/gtladditions/shaders/include/heart_volume_common.glsl",
+      "git_blob_sha1": "7a882e02e6d54da1af88bea6a8eb73d93607ac4a",
+      "sha256": "1350ffc703bda0198d7ee4a603e2277d14fb2974b4632a2e15699e36c01ab446",
+      "license": "GPL-3.0-only"
+    }
+  ],
+  "outputs": [
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/render/HeartBlackHoleRenderer.java",
+      "sha256": "4f889915fe9fde5f784866561a2d6f1da114a0446a5a1fdbc41da68adbf75822",
+      "license": "GPL-3.0-only",
+      "modification": "Kotlin rendering/profile/targets/mesh logic ported to Java, GTNHLib and Minecraft 1.7.10; seeded rotations, volume bounds, shared scene depth and seven-pass composition retained.",
+      "sources": [
+        "src/main/java/com/gtladd/gtladditions/client/render/machine/HeartOfTheUniverseRenderer.kt",
+        "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleRenderer.kt",
+        "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleCompositeRenderer.kt",
+        "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleShaders.kt",
+        "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartDeferredRenderer.kt"
+      ]
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/render/HeartBlackHoleTargets.java",
+      "sha256": "2228b780b9bb74ef688319138b030f4678975bf1651c9824e904f66d23eabd89",
+      "license": "GPL-3.0-only",
+      "modification": "Kotlin rendering/profile/targets/mesh logic ported to Java, GTNHLib and Minecraft 1.7.10; seeded rotations, volume bounds, shared scene depth and seven-pass composition retained.",
+      "sources": [
+        "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleFramebuffer.kt",
+        "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHolePostTargets.kt"
+      ]
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/render/HeartBlackHoleMath.java",
+      "sha256": "8bbf8c13fbd3bec11627ed16ac48a7ad476666981d0e20ca99bc27219609e17b",
+      "license": "GPL-3.0-only",
+      "modification": "Kotlin rendering/profile/targets/mesh logic ported to Java, GTNHLib and Minecraft 1.7.10; seeded rotations, volume bounds, shared scene depth and seven-pass composition retained.",
+      "sources": [
+        "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleRenderProfile.kt",
+        "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleRenderer.kt",
+        "src/main/java/com/gtladd/gtladditions/client/render/machine/heart/HeartBlackHoleQuadBuffers.kt"
+      ]
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/heart/black_hole.fsh",
+      "sha256": "1c9599627634ac4df2478db9961b95705444b6b7a006e8a190e655dc54814ae6",
+      "license": "GPL-3.0-only",
+      "modification": "GLSL 150 interfaces adapted to GLSL 120 fixed-function vertex/varying/output bindings; common include inlined in volume stages; curved-ray, disk, starfield, heartbeat, Gaussian blur and composite mathematics retained.",
+      "sources": [
+        "src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_black_hole.fsh",
+        "src/main/resources/assets/gtladditions/shaders/include/heart_volume_common.glsl"
+      ]
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/heart/black_hole.vsh",
+      "sha256": "ae2e41eb62d545374ce268cecbcb1be76f9840a65b1671380c3cc5ef54efb98f",
+      "license": "GPL-3.0-only",
+      "modification": "GLSL 150 interfaces adapted to GLSL 120 fixed-function vertex/varying/output bindings; common include inlined in volume stages; curved-ray, disk, starfield, heartbeat, Gaussian blur and composite mathematics retained.",
+      "sources": [
+        "src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_black_hole.vsh",
+        "src/main/resources/assets/gtladditions/shaders/include/heart_volume_common.glsl"
+      ]
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/heart/blur.fsh",
+      "sha256": "c01fb049b3a874355862b2bf6fca6ca1e4be6ae6be338b8b387cc42e55ca470b",
+      "license": "GPL-3.0-only",
+      "modification": "GLSL 150 interfaces adapted to GLSL 120 fixed-function vertex/varying/output bindings; common include inlined in volume stages; curved-ray, disk, starfield, heartbeat, Gaussian blur and composite mathematics retained.",
+      "sources": [
+        "src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_blur.fsh"
+      ]
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/heart/composite.fsh",
+      "sha256": "0903c690b623a2a54cb99e2dead663e769dbff5502f1031ba9bf24ba72dd9b76",
+      "license": "GPL-3.0-only",
+      "modification": "GLSL 150 interfaces adapted to GLSL 120 fixed-function vertex/varying/output bindings; common include inlined in volume stages; curved-ray, disk, starfield, heartbeat, Gaussian blur and composite mathematics retained.",
+      "sources": [
+        "src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_composite.fsh"
+      ]
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/heart/heart_volume_common.glsl",
+      "sha256": "0ab64d4669fd6d8023b8d229d70f28477864e65a07a867a9df977c89ed9e3ed1",
+      "license": "GPL-3.0-only",
+      "modification": "SPDX header added and LF line endings retained; public GLSL functions preserved and also inlined into both volume shader stages.",
+      "sources": [
+        "src/main/resources/assets/gtladditions/shaders/include/heart_volume_common.glsl"
+      ]
+    },
+    {
+      "destination": "src/main/resources/assets/gtnotgood/shaders/heart/post.vsh",
+      "sha256": "7f485e7ad2abb3869f8a1f54839148f498b3ba5fe1bb9bc5d4edf7f28547eed6",
+      "license": "GPL-3.0-only",
+      "modification": "GLSL 150 interfaces adapted to GLSL 120 fixed-function vertex/varying/output bindings; common include inlined in volume stages; curved-ray, disk, starfield, heartbeat, Gaussian blur and composite mathematics retained.",
+      "sources": [
+        "src/main/resources/assets/gtladditions/shaders/core/gtladditions_heart_post.vsh"
+      ]
+    }
+  ],
+  "local_integration_basis": {
+    "path": "src/main/java/com/xyp/gtnotgood/client/render/KerrNewmanBlackHoleRenderer.java",
+    "sha256": "ec27d1362b55509c0de12be96c808550c2a4e584bd5251f0ae8840b0439b57f1",
+    "license": "LGPL-3.0-only",
+    "scope": "Existing project GL state capture/restore and GTNHLib framebuffer/shader integration patterns; no Kerr-Newman visual or refraction shader copied."
+  },
+  "upstream_reference_note": "Upstream profile/shader comments reference Radiant Event Horizon default rotation parameters and projected proportions. References retained; no claim that all algorithms originated in GTLAdditions.",
+  "preserved": [
+    "200-step curved-ray integration",
+    "Temperature/noise/Doppler accretion disk",
+    "Procedural rotating starfield and photon ring",
+    "Heartbeat volume edge and bounded seeded rotation",
+    "24x48 sphere mesh, 29-block black-hole/disk radius",
+    "Scene depth/stencil attachment sharing without world depth writes",
+    "Full-size effect and mask targets",
+    "Quarter-size separable Gaussian blur",
+    "Premultiplied-alpha composition, seven rendering passes"
+  ],
+  "compatibility_changes": [
+    "Modern ShaderInstance/PoseStack/RenderTarget APIs replaced by GTNHLib ShaderProgram/CustomFramebuffer and OpenGL",
+    "Oculus/Iris direct pipeline bridges replaced by GTNHLib world-last deferred rendering against current framebuffer",
+    "GLSL 150 inputs/outputs converted to GLSL 120 compatibility bindings; common source inlined",
+    "Actual eye/third-person origin derived from modelview inverse"
+  ],
+  "reference_checkouts_packaged": false
+}

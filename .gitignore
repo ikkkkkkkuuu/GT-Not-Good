@@ -1,4 +1,6 @@
 .gradle
+__pycache__/
+*.pyc
 .settings
 /.idea/
 /.vscode/

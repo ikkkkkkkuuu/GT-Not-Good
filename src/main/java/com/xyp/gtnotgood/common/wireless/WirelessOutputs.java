@@ -2,8 +2,10 @@ package com.xyp.gtnotgood.common.wireless;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,6 +47,47 @@ public final class WirelessOutputs {
 
     public static WirelessOutputs forRecipe(GTRecipe recipe) {
         return forRecipe(recipe, recipe.mOutputs.length, recipe.mFluidOutputs.length);
+    }
+
+    public static WirelessOutputs combine(List<WirelessOutputs> batches) {
+        List<ItemStack> items = new ArrayList<>();
+        List<FluidStack> fluids = new ArrayList<>();
+        for (WirelessOutputs batch : batches) {
+            Collections.addAll(items, batch.items);
+            Collections.addAll(fluids, batch.fluids);
+        }
+        WirelessOutputs result = new WirelessOutputs(items.toArray(new ItemStack[0]),
+            fluids.toArray(new FluidStack[0]));
+        int itemIndex = 0, fluidIndex = 0;
+        for (WirelessOutputs batch : batches) {
+            for (BigInteger amount : batch.itemAmounts) result.itemAmounts[itemIndex++] = amount;
+            for (BigInteger amount : batch.fluidAmounts) result.fluidAmounts[fluidIndex++] = amount;
+        }
+        return result;
+    }
+
+    public boolean canFlush(MTEMultiBlockBase machine) {
+        ItemEjectionHelper itemHelper = new ItemEjectionHelper(machine.getOutputBusses(), machine.protectsExcessItem());
+        FluidEjectionHelper fluidHelper = new FluidEjectionHelper(machine.getOutputHatches(),
+            machine.protectsExcessFluid());
+        BigInteger maximum = BigInteger.valueOf(Integer.MAX_VALUE);
+        for (int i = 0; i < items.length; i++) {
+            BigInteger remaining = itemAmounts[i];
+            while (remaining.signum() > 0) {
+                int amount = remaining.min(maximum).intValueExact();
+                if (itemHelper.ejectItems(Collections.singletonList(items[i]), amount) != amount) return false;
+                remaining = remaining.subtract(BigInteger.valueOf(amount));
+            }
+        }
+        for (int i = 0; i < fluids.length; i++) {
+            BigInteger remaining = fluidAmounts[i];
+            while (remaining.signum() > 0) {
+                int amount = remaining.min(maximum).intValueExact();
+                if (fluidHelper.ejectFluids(Collections.singletonList(fluids[i]), amount) != amount) return false;
+                remaining = remaining.subtract(BigInteger.valueOf(amount));
+            }
+        }
+        return true;
     }
 
     public static WirelessOutputs forRecipe(GTRecipe recipe, int itemLimit, int fluidLimit) {
@@ -160,6 +203,7 @@ public final class WirelessOutputs {
                 itemAmounts[i] = itemAmounts[i].subtract(BigInteger.valueOf(itemSlice[i]));
             for (int i = 0; i < fluids.length; i++)
                 fluidAmounts[i] = fluidAmounts[i].subtract(BigInteger.valueOf(fluidSlice[i]));
+            machine.markDirty();
         }
         return true;
     }

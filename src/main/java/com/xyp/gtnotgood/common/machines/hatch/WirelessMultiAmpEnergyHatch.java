@@ -36,8 +36,8 @@ public final class WirelessMultiAmpEnergyHatch extends MTEHatchWirelessMulti {
 
     public static String formatName(int tier, int amperes) {
         // #tr gtng.wireless.laser.input.name
-        // # %1$s %2$sA Wireless Multi-Amp Energy Hatch
-        // # zh_CN %2$s安%1$s无线多安培能源仓
+        // # %1$s %2$sA Wireless Energy Hatch
+        // # zh_CN %2$s安%1$s无线能源仓
         return StatCollector.translateToLocalFormatted("gtng.wireless.laser.input.name", GTValues.VN[tier],
             NumberFormatUtil.formatNumber(amperes));
     }

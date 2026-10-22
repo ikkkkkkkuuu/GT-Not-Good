@@ -1,0 +1,108 @@
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr.parentFile.mkdirs()
+        def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+        connection.connectTimeout = 30000
+        connection.readTimeout = 30000
+        def pending = new File(efr.parentFile, efr.name + '.pending')
+        connection.inputStream.withCloseable { input -> pending.withOutputStream { it << input } }
+        java.nio.file.Files.move(pending.toPath(), efr.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def tstCoexistence = root.findProperty('modularTstCoexistence')?.toString()?.toBoolean() ?: false
+    def outputGuiOnly = root.findProperty('modularOutputGuiOnly')?.toString()?.toBoolean() ?: false
+    def maintenanceOnly = root.findProperty('modularMaintenanceOnly')?.toString()?.toBoolean() ?: false
+    def qaDirectory = tstCoexistence ? 'modular-machine-tst-qa' : outputGuiOnly ? 'modular-output-gui-qa' : maintenanceOnly ? 'modular-maintenance-qa' : 'modular-machine-qa'
+    def qaOutput = root.file("build/${qaDirectory}")
+    if (tstCoexistence) {
+        def tstJar = root.findProperty('tstQaJar')
+        if (tstJar) root.dependencies.add('runtimeOnlyNonPublishable', root.files(tstJar))
+        else root.dependencies.add('runtimeOnlyNonPublishable', 'com.github.Nxer:Twist-Space-Technology-Mod:0.8.0-RC2.3:dev') {
+            transitive = false
+        }
+    }
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    if (tstCoexistence) {
+        ['Electro-Magic-Tools', 'supersolarpanels'].each {
+            root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String) { transitive = false }
+        }
+        root.dependencies.add('runtimeOnlyNonPublishable', root.dependencies.rfg.deobf('curse.maven:advsolar-362768:2885953'))
+    }
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    ['NewHorizonsCoreMod', 'Yamcl', 'Eternal-Singularity', 'Universal-Singularities',
+        'MagicBees', 'WitcheryExtras', 'twilightforest', 'Natura', 'Hodgepodge'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String) { transitive = false }
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.dependencies.rfg.deobf('curse.maven:witchery-69673:2234410'))
+    root.dependencies.add('runtimeOnlyNonPublishable', root.dependencies.rfg.deobf('curse.maven:BiomesOPlenty-220318:2499612'))
+    def sources = root.files(
+        'scripts/qa/ModularMachineClientChecks.java',
+        'scripts/qa/AssemblyPlantClientChecks.java',
+        'scripts/qa/DimensionalFocusClientChecks.java',
+        'scripts/qa/FieldExtruderClientChecks.java',
+        'scripts/qa/KerrNewmanClientChecks.java',
+        'scripts/qa/SuperParticleColliderClientChecks.java')
+    root.tasks.named('compileTestJava').configure { setSource(sources) }
+    def qaClasses = root.tasks.register('isolateModularMachineQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/ModularMachineClientChecks*.class'
+        include '**/AssemblyPlantClientChecks*.class'
+        include '**/DimensionalFocusClientChecks*.class'
+        include '**/FieldExtruderClientChecks*.class'
+        include '**/KerrNewmanClientChecks*.class'
+        include '**/SuperParticleColliderClientChecks*.class'
+        into root.layout.buildDirectory.dir('modular-machine-qa/classes')
+    }
+    root.spotless.java { target sources }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir('modular-machine-qa/classes'))
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir root.file("run/${qaDirectory}")
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.modularMachine.qa', 'true'
+        systemProperty 'gtng.modularMachine.tooltipOnly', root.findProperty('modularTooltipOnly')?.toString() ?: 'false'
+        systemProperty 'gtng.modularMachine.outputGuiOnly', outputGuiOnly.toString()
+        systemProperty 'gtng.modularMachine.tstCoexistence', tstCoexistence.toString()
+        systemProperty 'gtng.modularMachine.maintenanceOnly', maintenanceOnly.toString()
+        systemProperty 'gtng.modularMachine.output', qaOutput.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('Isolated modular machine client checks')
+        args '--width', '1280', '--height', '900'
+        doFirst {
+            workingDir.mkdirs()
+            qaOutput.mkdirs()
+            java.nio.file.Files.deleteIfExists(new File(qaOutput, 'result.txt').toPath())
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            def qaConfig = new File(workingDir, 'config/GTNOTGOOD/gtnotgood.cfg')
+            qaConfig.parentFile.mkdirs()
+            qaConfig.setText('cutcorners {\n    I:mode=0\n}\n', 'UTF-8')
+            if (tstCoexistence) {
+                new File(workingDir, 'config/TwistSpaceTechnology.cfg').setText(
+                    'enablemodularizedmachinesystem {\n    B:ModularizedMachineStuffs=true\n}\n', 'UTF-8')
+            }
+            def dreamCoreConfig = new File(workingDir, 'config/DreamCoreMod.properties')
+            def dreamCoreProperties = new Properties()
+            if (dreamCoreConfig.exists()) dreamCoreConfig.withInputStream { dreamCoreProperties.load(it) }
+            dreamCoreProperties.setProperty('showConfirmExitWindow', 'false')
+            dreamCoreConfig.withOutputStream { dreamCoreProperties.store(it, 'Isolated modular machine QA') }
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(new File(qaOutput, 'window-helper.log')).start()
+        }
+        doLast {
+            def result = new File(qaOutput, 'result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) throw new GradleException('Modular machine QA failed')
+        }
+    }
+}

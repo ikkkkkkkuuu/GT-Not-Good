@@ -1,0 +1,707 @@
+[
+  {
+    "destination": "ctm/lafium_mechanical_casing/0.png",
+    "mask": 0,
+    "sha256": "10f7f1b4325feaee6c233d57aaa1564e40d08b9b083014a7b8457596d7e51c66"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/1.png",
+    "mask": 1,
+    "sha256": "e38e788e6ef7016ea316df9be090962f353a231af014c511fe4b069af4059cf3"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/2.png",
+    "mask": 2,
+    "sha256": "56a469af70ff96ae75f2be94989717807af0f93531e3a5d68bd04b7b34db09d8"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/3.png",
+    "mask": 3,
+    "sha256": "31cd13a130f0ff52f4cfd35ecea6e0c153b18f5b8adf827cb64c64ae4327d13b"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/4.png",
+    "mask": 4,
+    "sha256": "00adf270b8293c340b7043f1e54f8e3878b52c68161c53d376ebc476bc38f1da"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/5.png",
+    "mask": 5,
+    "sha256": "0f4e8e97352080f5b9c5d116a4327a00cb85b88b3d26ebfbc8d428b3fb4748ef"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/6.png",
+    "mask": 6,
+    "sha256": "881c20c76dd6e0d475a01f12d1605f37980b49d0ac8107296e75b9b91163c438"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/7.png",
+    "mask": 7,
+    "sha256": "720518fc744b8c96946fcbf0b742e8dac81a2ae468193be7ce070efd45eb4828"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/8.png",
+    "mask": 8,
+    "sha256": "7ec2785549aeec25af6e2e371b6b3100284e128cd4ae5a3ef97c24a6b50eea51"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/9.png",
+    "mask": 9,
+    "sha256": "f6c67595c13771fcc0021d964f44ba34dd7d7d3e5268d26d73e0b1a6f2af84b7"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/10.png",
+    "mask": 10,
+    "sha256": "29d3d4c718bbab43b180ff5a8b43ecff7c64bbd00be4f1814b271ef1af51c172"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/11.png",
+    "mask": 11,
+    "sha256": "41674907e71b8b8732f63c5aaa4c69772d1e52453903a498753e281a1bd031bf"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/12.png",
+    "mask": 12,
+    "sha256": "a8c6de16bf17081f65b02b313d23f30f1bc9927359e8ce33466fe32fdbd16906"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/13.png",
+    "mask": 13,
+    "sha256": "f7607ac28ebe14d94658b843d0d4b415793f4c46e9cb797efc8f58cedae0969f"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/14.png",
+    "mask": 14,
+    "sha256": "1bf0b8d9bf6816873f12f2dd220efeccea44305a17534a5da179a35c7381a356"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/15.png",
+    "mask": 15,
+    "sha256": "da04c1ba6fae0652b79a13685b30e45fd702f07a48663df1c34d0925d9f20caf"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/21.png",
+    "mask": 21,
+    "sha256": "790b97ce55b55d6eb4ebbe74b2e0ee675632f0634c3a996d7580f144a5538a5e"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/23.png",
+    "mask": 23,
+    "sha256": "84d6d1a7a4dd1daba4212e46fe908a0d3c74b8d54936a447a8f072e0a362243c"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/29.png",
+    "mask": 29,
+    "sha256": "50d4d41a73d4ca0dcc246bcf5709fa3bc13b926093eb071d30794e36a8341176"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/31.png",
+    "mask": 31,
+    "sha256": "efab94e70f3214b0a93a943c90f65f537bacff4a697f7d4273f3748bb7650cf1"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/38.png",
+    "mask": 38,
+    "sha256": "843d085f3ba7921c3c6f51f8efb72e9ff299619771d489fe0bfdea3c9c712930"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/39.png",
+    "mask": 39,
+    "sha256": "b54a3741a1881c7e1526ed741bcfe1c8a0f7626cc860b0de25c3289604ea489e"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/46.png",
+    "mask": 46,
+    "sha256": "8e95a55e076535b66a9ab00188684e440885c4983ac8db5b32f0c101c61a0652"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/47.png",
+    "mask": 47,
+    "sha256": "4eb9585c983244719edb926f6d674a0bd10a721ddce42217f35833657412f80a"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/55.png",
+    "mask": 55,
+    "sha256": "46c88af2025318ff36f15fb27764e321995732f0e79732ae6f237e6dd41edaf3"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/63.png",
+    "mask": 63,
+    "sha256": "98e84b61fba6e1cd6d7562ccfe75cb460fe2827034d8ed678fcf1a618d5a2925"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/73.png",
+    "mask": 73,
+    "sha256": "5750b317de6683f857706121632f7294c5d65ec34f8c0798b3ac8adb92f419e1"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/75.png",
+    "mask": 75,
+    "sha256": "8a90ac60c0cb9de111ff42ba998b71b9bea6eedbd4316265c3226fc348c4f795"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/77.png",
+    "mask": 77,
+    "sha256": "21920be91b96dbf411459ac38fdbc91c9f99c9acb44b4ffa6ac540ff72315e39"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/79.png",
+    "mask": 79,
+    "sha256": "cac7ccacf0f04b9b9b61d56075f4631cc86c46c6d6a7d7f4d9d565ff42048dba"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/93.png",
+    "mask": 93,
+    "sha256": "8048a1ed919a035924ab0045c19ca5e28e5ca9420109329b7097d6b81d9a943b"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/95.png",
+    "mask": 95,
+    "sha256": "07b25bd783c452b7f8e16c7bc9dafeff75b0857f740151306b341ae4690f2c1a"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/111.png",
+    "mask": 111,
+    "sha256": "bd5dd03789028aaf4bde3dd22bb53b4f05e20fd5a9cfd0ea9cdf80deddce0a10"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/127.png",
+    "mask": 127,
+    "sha256": "cdfd0da91d57939296eabe381113d02828790e76e653d4699edb36436cbd8351"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/138.png",
+    "mask": 138,
+    "sha256": "4000f215a2f05af8036be7e1c85644946a7eeb977e9a9996790c7f5472016b9a"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/139.png",
+    "mask": 139,
+    "sha256": "8817d5f514d65328f86e3ae5eb10bd07f772852ec153a04972325e60ef015ef1"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/142.png",
+    "mask": 142,
+    "sha256": "6e6259628d6a170395d8bb3b89eb54baf7e402ab37a3569024119d9474659a7f"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/143.png",
+    "mask": 143,
+    "sha256": "af479c575771ef2497d47cf433c35fb6a865e6a1cdca0c174b577c3dd50fa7fb"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/159.png",
+    "mask": 159,
+    "sha256": "86ff346524fe1d96327f714cd8fb9009b2dae7f9c6b5f8870ac7463cdb69233c"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/174.png",
+    "mask": 174,
+    "sha256": "cd7ebe3bf0888b55fb89bf7ba2743e0f2b5829355d41ab2aadb81dae5292a07b"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/175.png",
+    "mask": 175,
+    "sha256": "7e0dcfeb99ec06f82971317aa9ae24b92a430bd0d78a2fb40b0cc1b2a9889536"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/191.png",
+    "mask": 191,
+    "sha256": "8066ec258e9376bf2a1bfcd2620f0c3cad8d921100c66fc5acdfc0c82fec45d5"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/203.png",
+    "mask": 203,
+    "sha256": "eca940f563aeb12a69c48f1a53a46b2f0cd3cbe3b2163a14e0460aadc9ab8bd3"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/207.png",
+    "mask": 207,
+    "sha256": "91572aa3c3be0dcdaec169f18b4b9b16c955fe2963ccf6bfef874cbfaf10d178"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/223.png",
+    "mask": 223,
+    "sha256": "addfb4c610e8adc1bbd76f76ba2891238f9852e101248ff5775dba887bf70399"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/239.png",
+    "mask": 239,
+    "sha256": "5f435a14adf64987100b14e8f4a8f87b5799c2f2308e4f835e8e1c1c9905faf3"
+  },
+  {
+    "destination": "ctm/lafium_mechanical_casing/255.png",
+    "mask": 255,
+    "sha256": "d98e0a0df669220733dd53a84f09d5a96f5857defee3dd9b403b0da2bdff411d"
+  },
+  {
+    "destination": "ctm/superconducting_coil/0.png",
+    "mask": 0,
+    "sha256": "12c191aaab4e03ea11e4f31568736e1afae861b9f7f174492938b9cff1fabe5a"
+  },
+  {
+    "destination": "ctm/superconducting_coil/1.png",
+    "mask": 1,
+    "sha256": "bdfa97af080dd0af3f011f94c30f0b704150949bdd2b10ba73dff6ea7eeb1d40"
+  },
+  {
+    "destination": "ctm/superconducting_coil/2.png",
+    "mask": 2,
+    "sha256": "921487d328298b0887735b6746e1066ec7f7eb5ccae53a94fb906219e7949a6c"
+  },
+  {
+    "destination": "ctm/superconducting_coil/3.png",
+    "mask": 3,
+    "sha256": "fb561b2b9bcc694998772c28b05afdefb3e2721d9748abf6e3d61bd79f2fa189"
+  },
+  {
+    "destination": "ctm/superconducting_coil/4.png",
+    "mask": 4,
+    "sha256": "8cc1e9e5180e8fa047618eb689afe734152031b58ddf8cd78cedede0f5315405"
+  },
+  {
+    "destination": "ctm/superconducting_coil/5.png",
+    "mask": 5,
+    "sha256": "97838189dfca19fc8a73ea2dfdf1fb7c23aaddf0349d03727e147ef4767ce2b5"
+  },
+  {
+    "destination": "ctm/superconducting_coil/6.png",
+    "mask": 6,
+    "sha256": "bebc5b58dbcefcf9a192d11d333c04d84a8c1ba5846c7500fda194c0188c7da7"
+  },
+  {
+    "destination": "ctm/superconducting_coil/7.png",
+    "mask": 7,
+    "sha256": "133a82d54c995441177ec70b6637eb073cec7f310e4b717ecf95996dbcbf1afc"
+  },
+  {
+    "destination": "ctm/superconducting_coil/8.png",
+    "mask": 8,
+    "sha256": "b84876451f50d09b5801cbc24d7f94e9b3c07563deb89067696a2d1da609d369"
+  },
+  {
+    "destination": "ctm/superconducting_coil/9.png",
+    "mask": 9,
+    "sha256": "85e2e4753824baa5453b1bb98237101294ca4d483f18f8211340cf0bf2527659"
+  },
+  {
+    "destination": "ctm/superconducting_coil/10.png",
+    "mask": 10,
+    "sha256": "6a9af7520fbaff8b4701aafc97e9e6b72e14778c96f9d1564d61565cd5e2f9b7"
+  },
+  {
+    "destination": "ctm/superconducting_coil/11.png",
+    "mask": 11,
+    "sha256": "810885b8f9a475d0e163dae70e4321fe68cf7e78905d812f03c9fcb4d3cd994e"
+  },
+  {
+    "destination": "ctm/superconducting_coil/12.png",
+    "mask": 12,
+    "sha256": "dc0ce2099d0d8798b5e31e417b5e06d391accd53e1f5f06c8d27fe3e939e311e"
+  },
+  {
+    "destination": "ctm/superconducting_coil/13.png",
+    "mask": 13,
+    "sha256": "15e624890b7c86dc40f068088fb677eeb12969c13d6bcae33f7422ebcd612b26"
+  },
+  {
+    "destination": "ctm/superconducting_coil/14.png",
+    "mask": 14,
+    "sha256": "c460ad0ca7a3163b9caf8c7d64ece718e0b7949778562a81f1263b9e58f10857"
+  },
+  {
+    "destination": "ctm/superconducting_coil/15.png",
+    "mask": 15,
+    "sha256": "80bf623c689bfcdf7c766e10f5aaab383e36397fe247a225d7e7ee7b183bb941"
+  },
+  {
+    "destination": "ctm/superconducting_coil/21.png",
+    "mask": 21,
+    "sha256": "0e9596038fe0b57d212b25a1c1015aae5708a067bb9fa4700ebc352d9197b5fd"
+  },
+  {
+    "destination": "ctm/superconducting_coil/23.png",
+    "mask": 23,
+    "sha256": "fc843907fcdd4b3f6eeb54434b1843e77af17ca81a8182a816bdb4c305b26430"
+  },
+  {
+    "destination": "ctm/superconducting_coil/29.png",
+    "mask": 29,
+    "sha256": "144317b0491e80199b4a1147b670c668489c56ed27216db0fb26db94547f3767"
+  },
+  {
+    "destination": "ctm/superconducting_coil/31.png",
+    "mask": 31,
+    "sha256": "8232585b7e6ef172b6a4691f5259df0cb8af0d36f63e901198b2d2fa6d838bf0"
+  },
+  {
+    "destination": "ctm/superconducting_coil/38.png",
+    "mask": 38,
+    "sha256": "7d8ef1ab0511589dbd0490c1c7d2d25cb4700db5de1aa680a3b72a1891248b74"
+  },
+  {
+    "destination": "ctm/superconducting_coil/39.png",
+    "mask": 39,
+    "sha256": "b34a76909cfa5f92868036ba2a831aae448ec0803e3b37168e41a826f4ed4fc0"
+  },
+  {
+    "destination": "ctm/superconducting_coil/46.png",
+    "mask": 46,
+    "sha256": "6006f8e814d790e5b29320da652fe810e44bf418a05b0da5819c5211e705f2de"
+  },
+  {
+    "destination": "ctm/superconducting_coil/47.png",
+    "mask": 47,
+    "sha256": "ded1977eccace8b57a5db656e398720cfc6c7cea446ac2002f9612a5fa25ae66"
+  },
+  {
+    "destination": "ctm/superconducting_coil/55.png",
+    "mask": 55,
+    "sha256": "c6b472797eb3c94cc9e95dca0b3388fc75deda06079784f4867911f56f6bd129"
+  },
+  {
+    "destination": "ctm/superconducting_coil/63.png",
+    "mask": 63,
+    "sha256": "38698e0e4403fd22a807536d73a98a9fef85974bbd332b57690db49a156b7aaf"
+  },
+  {
+    "destination": "ctm/superconducting_coil/73.png",
+    "mask": 73,
+    "sha256": "ba4213d74aa115a3cce3814fa71b05b2673733691f6b7fb21fc7c6e704ee68fa"
+  },
+  {
+    "destination": "ctm/superconducting_coil/75.png",
+    "mask": 75,
+    "sha256": "5498801d820d5bcb3a85917e1daf87174a7afcf522ad18cf0aa3366c700dc0ba"
+  },
+  {
+    "destination": "ctm/superconducting_coil/77.png",
+    "mask": 77,
+    "sha256": "0770fe9c1cca576f621c25eb8af5ce931b70ef88b18de2a7119e2ec97d91af6f"
+  },
+  {
+    "destination": "ctm/superconducting_coil/79.png",
+    "mask": 79,
+    "sha256": "8625f83d0e1ea5d696a871602fd2e93838bfcdafa3fb21c3909a622bad902fb5"
+  },
+  {
+    "destination": "ctm/superconducting_coil/93.png",
+    "mask": 93,
+    "sha256": "7868870c58d87c92744af594a1ad2454c894f919731685dfe20b2048b2ab00fe"
+  },
+  {
+    "destination": "ctm/superconducting_coil/95.png",
+    "mask": 95,
+    "sha256": "b20f77abbcd90befaa678cec6ffefdf9b75474078a9560d3b310ec1239972b10"
+  },
+  {
+    "destination": "ctm/superconducting_coil/111.png",
+    "mask": 111,
+    "sha256": "c8dd4c61ca8843f8db0c7fbd787c8b96910171cfda4901883801a110615436cc"
+  },
+  {
+    "destination": "ctm/superconducting_coil/127.png",
+    "mask": 127,
+    "sha256": "911715b2319177acd780069ce14d1fd63bcd7c3eb3f280f8f78025cdd743b8f1"
+  },
+  {
+    "destination": "ctm/superconducting_coil/138.png",
+    "mask": 138,
+    "sha256": "6d10c2cd38d66f079a724f1d96833c4d522cb48ce8ff41b8eafa40b1c0a0fbf7"
+  },
+  {
+    "destination": "ctm/superconducting_coil/139.png",
+    "mask": 139,
+    "sha256": "f9b35eeddde5c4709473200cac51375ed0445460085c745286a5598705c7a477"
+  },
+  {
+    "destination": "ctm/superconducting_coil/142.png",
+    "mask": 142,
+    "sha256": "e9da4d085cd145640f929fe37596bba9148cc50ec974eaa4933ebe9de00a05fe"
+  },
+  {
+    "destination": "ctm/superconducting_coil/143.png",
+    "mask": 143,
+    "sha256": "0ff43a321cd76d5208d5059060a4fb1e626b8209506b0943d6346e9369a8d81d"
+  },
+  {
+    "destination": "ctm/superconducting_coil/159.png",
+    "mask": 159,
+    "sha256": "09e1036001dec615998c60ab80fdfed0232d39ea1f31097988c0c01b0cef1456"
+  },
+  {
+    "destination": "ctm/superconducting_coil/174.png",
+    "mask": 174,
+    "sha256": "a003017eb4f1cf4ebb6768a83bb3bc74cb14b6b4fd25e2af91085b3d49f0b4f4"
+  },
+  {
+    "destination": "ctm/superconducting_coil/175.png",
+    "mask": 175,
+    "sha256": "fe123352a923067f0c94edf0302a874f182c533b8f07c3cfd765df92f37348a9"
+  },
+  {
+    "destination": "ctm/superconducting_coil/191.png",
+    "mask": 191,
+    "sha256": "1ededdaf9f167ae95624f6d62be88134fceb11c52e78402589f53d988efd74f2"
+  },
+  {
+    "destination": "ctm/superconducting_coil/203.png",
+    "mask": 203,
+    "sha256": "ee8b877985aba8a41461672edd7337bec8528d3fe6c028a763ca95f061b79c36"
+  },
+  {
+    "destination": "ctm/superconducting_coil/207.png",
+    "mask": 207,
+    "sha256": "76e438ceae7ebcc59369d1de022956ee24bf26ba16d646dbc2e40c1d453da22f"
+  },
+  {
+    "destination": "ctm/superconducting_coil/223.png",
+    "mask": 223,
+    "sha256": "8f9572f61f97b0869ef92d322127724f559f693e3bfbc6a85171380804834dc5"
+  },
+  {
+    "destination": "ctm/superconducting_coil/239.png",
+    "mask": 239,
+    "sha256": "1301bf8a9d744f542efab590e88b2b6cfda927ed731d1a1277c16f43b6f02a9e"
+  },
+  {
+    "destination": "ctm/superconducting_coil/255.png",
+    "mask": 255,
+    "sha256": "36a919234eebebc4d91c98ab4546927acb786f2343fac96ed0c452e214345baf"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/0.png",
+    "mask": 0,
+    "sha256": "a5876c52e90167dad0026a3df59cd6f02ac8b908ec7ea7cca210aca86068778c"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/1.png",
+    "mask": 1,
+    "sha256": "4a71bbdbe38e88283c84ec4a897f541542e0adfdd347c8775352c88c7b0d23da"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/2.png",
+    "mask": 2,
+    "sha256": "6b30399666500c2297f23ba454e0c2479ab52a490f828adb62942e7c5ce1cf89"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/3.png",
+    "mask": 3,
+    "sha256": "57bee67945f1def854c9f3324260696010ee97d3baf34b144918bdfd94123fcd"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/4.png",
+    "mask": 4,
+    "sha256": "5ff1ba3030fc252de52cd0221f7ed57f1ca5d8c758b2653862664fb8bee11511"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/5.png",
+    "mask": 5,
+    "sha256": "ac3395f934ab408a9fac5370a147693a6b51b1e6e29b307f8158c6a04d5cd266"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/6.png",
+    "mask": 6,
+    "sha256": "8e48664076a3da497657eb78a0854db740f7913ce8f1be9df81341afcf5f2122"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/7.png",
+    "mask": 7,
+    "sha256": "bb05a24432ac418af96899fcdf67f1378315b36beffc4e24605ed803b7b7b77c"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/8.png",
+    "mask": 8,
+    "sha256": "6d4429afaa49000d06922b1f65340bf0cd601f12b2df06f8cca8e6829d12f96b"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/9.png",
+    "mask": 9,
+    "sha256": "9625a5a66f56e651c2c6cd5ff8d319fde39e90d476136c745a0bfd2b7a6c6e94"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/10.png",
+    "mask": 10,
+    "sha256": "ea9842a7d4f412db9475f2e5139eb84e63bbca16e97dbc9052d0d6a4ec306e6a"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/11.png",
+    "mask": 11,
+    "sha256": "91dce2a58e25e592eed8e401ac5a39b909aa6cd6a70629b99603d9e50a81ef8e"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/12.png",
+    "mask": 12,
+    "sha256": "7b3dde5064b3c9af3c92b64aae71cdce8d2fe8c8eda9bb76328c51ee4108e11e"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/13.png",
+    "mask": 13,
+    "sha256": "bcfdf605739474cc9f8ef3ea0262e365fc9cbb58b79575ef75ce65761e30671c"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/14.png",
+    "mask": 14,
+    "sha256": "8126d8dfb6d0afef5fd31a170f9143caa203f13c2d0bc7ceb2ec55d1dc345801"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/15.png",
+    "mask": 15,
+    "sha256": "cf0e75a74003f0f353defc7e442c3e72b06e3683182aa387f2ab6d662a3e2506"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/21.png",
+    "mask": 21,
+    "sha256": "2b7641d8b28e0dcde134bb29be8e6738c383a5650b9ecc0bcc5428f14e1f0d3b"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/23.png",
+    "mask": 23,
+    "sha256": "b4ce0ced99d323981c408fff81722c988c332319880b605724c5a81ecfcaebbc"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/29.png",
+    "mask": 29,
+    "sha256": "ef11477ae6c13ffafa466580421393962b99e0d1417e6fccff29405d09489929"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/31.png",
+    "mask": 31,
+    "sha256": "74fde31aa6a658ea45f7b23a8d551c062265ed7f816c6653fb348d20b32250d4"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/38.png",
+    "mask": 38,
+    "sha256": "4c443d54b48830d5680acd1863f12577099e6752474c8299d4b9446154e64e39"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/39.png",
+    "mask": 39,
+    "sha256": "86b64e4ed6aedb64a2d3034c6c46dc0f687eefb6353880d861dd3896e690555e"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/46.png",
+    "mask": 46,
+    "sha256": "14f6e16c39b13c044462c1bdcbfa82d271c30e4a1096fa700d338370f003b7cd"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/47.png",
+    "mask": 47,
+    "sha256": "a751abd5298acb72627917293a2ea82534df4a8fae8fd00d3f268a690f19de7d"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/55.png",
+    "mask": 55,
+    "sha256": "a1c059f81fcb41b237fc34edb57469229eaac7a45dfc71b64ff557e20688c445"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/63.png",
+    "mask": 63,
+    "sha256": "46f5b24eff22a63a138ede3d40acc3c46264be8d1074f90a877db282b383b982"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/73.png",
+    "mask": 73,
+    "sha256": "1acb13f25976ae30ce6f77435c7fd246f10c0f9c14c22a29a02eb722b5e14094"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/75.png",
+    "mask": 75,
+    "sha256": "232a62be8c779976e57343c209232c1cd6cb4a68a5146addfad422ab51d4c24e"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/77.png",
+    "mask": 77,
+    "sha256": "e015b26bf3def383168d55e89e64062b8bf9fe269e9a5bf97aa4bd4fb096ffc5"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/79.png",
+    "mask": 79,
+    "sha256": "998289383ab9faf2902911b3b3450c0e4d8d42334dd85355141cf10eb62e556e"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/93.png",
+    "mask": 93,
+    "sha256": "a6aff0a858dca892bdbc25efa13072ada4ea39b8103aac962bbfeda7dfa0c28c"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/95.png",
+    "mask": 95,
+    "sha256": "7da4dd8783b0168cf6409ffdffafdfe2f264e404891204f62fa20532c6aae43a"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/111.png",
+    "mask": 111,
+    "sha256": "85f56a58e2181da3f9734b00da1914f47b3d8a0cf4b83ed447c9ad83cad1bde1"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/127.png",
+    "mask": 127,
+    "sha256": "1f87e51c487e8fc3a7ed494b332cefc888352d3509c0a7c9925343e57f1d7b97"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/138.png",
+    "mask": 138,
+    "sha256": "be2330214854bbe5cb9e17bb5672fe7733c0300331246278a0765ef41f46f08c"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/139.png",
+    "mask": 139,
+    "sha256": "66d8eac285a6cee66ffda2b03d44021ca4f0e4acb670634dfa8879f13788dc53"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/142.png",
+    "mask": 142,
+    "sha256": "dc29d55fbccb92798056a6c1260a983b644f3cc2d02825e23ca194006822de4b"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/143.png",
+    "mask": 143,
+    "sha256": "c841a258b3a65ae50508423800e41d7a55b941c8cf6b23c1698779fdad84dcab"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/159.png",
+    "mask": 159,
+    "sha256": "bde85085d09d084c5bf9c05b80922f7195bd987b638d1257cc1a0e443d13f8fe"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/174.png",
+    "mask": 174,
+    "sha256": "9b53c16eca2453373fec208bd56baddff26f39777b8f5393d61d26595350a705"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/175.png",
+    "mask": 175,
+    "sha256": "581805f7263672384c0aab8803803fa939d64279f13f718b066491440ce93ebb"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/191.png",
+    "mask": 191,
+    "sha256": "2ae188463486e939f93f9d72e18e9a428f30fdb49e29c3136d70983bf70ecf93"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/203.png",
+    "mask": 203,
+    "sha256": "2d19b5bf9c55cff829256a853d5cb9e054a42b412eafcc3d49b1caa3e703b2fe"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/207.png",
+    "mask": 207,
+    "sha256": "6d8c790f555c59ca28cdfd2e3c051fe19135b139890fb5ec682b5baa5c185d45"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/223.png",
+    "mask": 223,
+    "sha256": "3deee705196586ce8cd4465e1800672d47b49c10f9a1c138f63f6236bfea86b1"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/239.png",
+    "mask": 239,
+    "sha256": "bef6144b956b128e6dbb6fa4093ba98bde85cc67e64bb3bcb01e8c218ac5ce42"
+  },
+  {
+    "destination": "ctm/superconducting_coil_bloom/255.png",
+    "mask": 255,
+    "sha256": "e3dcbaa8dc92419cb56f01584685d6b377c5d2ba847eea279b815768003bb750"
+  }
+]

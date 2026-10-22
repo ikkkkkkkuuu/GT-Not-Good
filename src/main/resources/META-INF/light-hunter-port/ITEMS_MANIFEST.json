@@ -1,0 +1,197 @@
+{
+  "formatVersion": 1,
+  "component": "Light Hunter Space Station Astral Array items, acquisition recipes and batch rules",
+  "upstream": {
+    "repository": "https://github.com/Dragonators/GTLAdditions",
+    "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+    "license": "GPL-3.0-only"
+  },
+  "originalAssets": [
+    {
+      "sourcePath": "src/main/resources/assets/gtladditions/textures/item/astral_array.png",
+      "destination": "assets/gtnotgood/textures/items/lighthunter/astral_array.png",
+      "license": "GPL-3.0-only",
+      "modifications": "None; copied byte-for-byte. Generated item model is represented by a native 1.7.10 item icon.",
+      "sourceSha256": "51c69a2d15ec27339f07eaf8175fafa665a05a1abb418b7f0b5923aeed32809e",
+      "destinationSha256": "51c69a2d15ec27339f07eaf8175fafa665a05a1abb418b7f0b5923aeed32809e"
+    },
+    {
+      "sourcePath": "src/main/resources/assets/gtladditions/textures/item/astral_array.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/items/lighthunter/astral_array.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "None; copied byte-for-byte. Generated item model is represented by a native 1.7.10 item icon.",
+      "sourceSha256": "8ec147b373aa21e7d3639246eef81e83d9c64e6377cb8e7d67be2b38c882046b",
+      "destinationSha256": "8ec147b373aa21e7d3639246eef81e83d9c64e6377cb8e7d67be2b38c882046b"
+    },
+    {
+      "sourcePath": "src/main/resources/assets/gtladditions/textures/item/compressed_astral_array.png",
+      "destination": "assets/gtnotgood/textures/items/lighthunter/compressed_astral_array.png",
+      "license": "GPL-3.0-only",
+      "modifications": "None; copied byte-for-byte. Generated item model is represented by a native 1.7.10 item icon.",
+      "sourceSha256": "ff8b6988c6be25b450712c3ce42a2a7c34d522c5ff26f6f7a33675de2e7a8f81",
+      "destinationSha256": "ff8b6988c6be25b450712c3ce42a2a7c34d522c5ff26f6f7a33675de2e7a8f81"
+    },
+    {
+      "sourcePath": "src/main/resources/assets/gtladditions/textures/item/compressed_astral_array.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/items/lighthunter/compressed_astral_array.png.mcmeta",
+      "license": "GPL-3.0-only",
+      "modifications": "None; copied byte-for-byte. Generated item model is represented by a native 1.7.10 item icon.",
+      "sourceSha256": "9b53d9769418604cb936e1e76b0a8264741f7229dcc4674d5343d484925b1c4b",
+      "destinationSha256": "9b53d9769418604cb936e1e76b0a8264741f7229dcc4674d5343d484925b1c4b"
+    }
+  ],
+  "references": [
+    {
+      "reference": "reference/light-hunter-port/items-upstream/ArcanicAstrograph.kt",
+      "sha256": "be8763cef0b667ddd3b8eeccc404b96266aa8c59b9a5c84c17f19c872544cc8f",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/astral_array.json",
+      "sha256": "4bc9d635bbfab6e8930cc2ebab97136a72d118720e1b12a25284197b87666ebc",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/astral_array.png",
+      "sha256": "51c69a2d15ec27339f07eaf8175fafa665a05a1abb418b7f0b5923aeed32809e",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/astral_array.png.mcmeta",
+      "sha256": "8ec147b373aa21e7d3639246eef81e83d9c64e6377cb8e7d67be2b38c882046b",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/AstralArrayBehavior.kt",
+      "sha256": "07b2c73fac7974d2839288330b6b144d54c80f45b25f3f8bc72854a2e2013363",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/AstralArrayCompressionTrait.kt",
+      "sha256": "ca97b896fb640439d8cf291a559d3c633f2920dd73944759c3fdc90ac9268695",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/compressed_astral_array.json",
+      "sha256": "0563b5f719ddea9fa74cfbe07fb807e0e0151aafa89bc02675ced72740548d01",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/compressed_astral_array.png",
+      "sha256": "ff8b6988c6be25b450712c3ce42a2a7c34d522c5ff26f6f7a33675de2e7a8f81",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/compressed_astral_array.png.mcmeta",
+      "sha256": "9b53d9769418604cb936e1e76b0a8264741f7229dcc4674d5343d484925b1c4b",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/GTLAddItems.kt",
+      "sha256": "0257823e6f24679ecbb919c89b9f781b628cdb0a9f1814b6cff1cd09d49996e5",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/GTLAddMultipleRecipesLogic.kt",
+      "sha256": "ddbe04e58284500bca84a435ea44379bc1d4d5ea763df191206f276211c211b6",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/GTLAddWorkableElectricMultipleRecipesMachine.kt",
+      "sha256": "c916e72aa33fe9276f9e4ba840f1d22e2e37e490f722cff2c182181f94a07164",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/IAstralArrayInteractionMachine.kt",
+      "sha256": "fbd04b82c54e515bb45170d6ec42e21d1b304ae0f359825af951b29ae27ab971",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/InterStellar.kt",
+      "sha256": "9e6f6fd5ac332b4abf5cadea858b50d875c3e7276c80e15fcbc1acb4de785219",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/LICENSE",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/LightHunterSpaceStationModuleBase.kt",
+      "sha256": "fb8f085579902b15c3ebc9e0c4870f06a2de83daf791122343e7ce90f8133697",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/Misc.kt",
+      "sha256": "eb5314c596dd2bc907ee02a2fba29ae1a72ad0d8bec3f3b811c24723b97c7075",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/NewMultiBlockMachineController.kt",
+      "sha256": "ef5a3e8f507fd9ecfb7ef70d3a492581cf5205abe21334f991813cb10a01cc43",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/ParallelData.kt",
+      "sha256": "02f4829a08c4244784128a29271933868fa9088cf8c800bb0181a603f6e1456d",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/PartMachine.kt",
+      "sha256": "0c36d3a27f2bb84d02976506d91fb257b3834e2ed31983582ec24b5b9285eb0f",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/RecipeCalculationHelper.kt",
+      "sha256": "0cfafbfd1272de2f87f619ebb0f7a5ffb989ed56d281edb9650032056102cc99",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/ThreadMultiplierStrategy.kt",
+      "sha256": "157e6abf7f3fd0fc2105b5883741193b77d32bb2b0e0887740909a040c02f2c9",
+      "packaged": false
+    },
+    {
+      "reference": "reference/light-hunter-port/items-upstream/ThreadPartMachine.kt",
+      "sha256": "99b9e2866b3cb139937929dbffec2cea86e62c98a3a33c019d919bc429da6a94",
+      "packaged": false
+    }
+  ],
+  "adaptedSources": [
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/common/items/lighthunter/LightHunterItems.java",
+      "sourcePaths": [
+        "src/main/java/com/gtladd/gtladditions/common/items/GTLAddItems.kt",
+        "src/main/java/com/gtladd/gtladditions/common/items/behavior/AstralArrayBehavior.kt",
+        "src/main/java/com/gtladd/gtladditions/api/machine/IAstralArrayInteractionMachine.kt"
+      ],
+      "modifications": "Rewritten with Forge 1.7.10 GTNGItem, native GT tile lookup, server-side installation and bilingual tooltip keys.",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/machine/LightHunterSpaceStationRecipes.java",
+      "sourcePaths": [
+        "src/main/java/com/gtladd/gtladditions/data/recipes/NewMultiBlockMachineController.kt",
+        "src/main/java/com/gtladd/gtladditions/data/recipes/Misc.kt",
+        "src/main/java/com/gtladd/gtladditions/data/recipes/PartMachine.kt"
+      ],
+      "modifications": "Adapted to GTNH native assembly-line recipes, 19 obtainable casings and existing endgame materials. The station retains 1600000 mB UU-Matter, each factory 16000 mB; the ordinary array retains the original material counts. Existing two-frame Kerr bridge casing converts 1:1 to the distinct four-frame station bridge casing. Native evaporation uses non-cell dehydrator recipes, and three rock-breaking recipes explicitly consume water/lava. No replacement compressed-array production process is added. Detailed mappings are recorded in reference/light-hunter-port/ITEMS_RECIPES.md. Optional native thread modifier hatch recipe retains all original item counts, uses obtainable native endgame components, and rebalances all four mapped fluid quantities to 1/64 (9203125 mB RadoxPolymer, 720000 mB SpaceTime, 1440000 mB Hypogen, 294912000 mB CosmicNeutronium) instead of creating fluid containers. The 1/64 fluid balance does not retain upstream absolute fluid costs.",
+      "license": "GPL-3.0-only"
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/machine/LightHunterRecipeRules.java",
+      "sourcePaths": [
+        "src/main/java/com/gtladd/gtladditions/api/machine/logic/GTLAddMultipleRecipesLogic.kt",
+        "src/main/java/com/gtladd/gtladditions/utils/RecipeCalculationHelper.kt",
+        "src/main/java/com/gtladd/gtladditions/common/machine/multiblock/part/ThreadPartMachine.kt",
+        "src/main/java/com/gtladd/gtladditions/utils/ThreadMultiplierStrategy.kt"
+      ],
+      "modifications": "Extracted fixed station/thread/array constants, fair batch allocation, and normal aggregate energy rates; array allocation avoids the 64-bit bitmap edge case, and batch duration overflow is rejected. The optional hatch uses the default native machine multiplier two and accepts at most 64 ordinary arrays, each providing 128 additional threads. Thread/quota helpers use bounded arithmetic.",
+      "license": "GPL-3.0-only"
+    }
+  ],
+  "licenses": [
+    "META-INF/light-hunter-port/ITEMS_LICENSE.GPL-3.0.txt"
+  ],
+  "generalMitGrantApplies": false
+}

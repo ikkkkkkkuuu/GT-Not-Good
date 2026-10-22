@@ -42,3 +42,33 @@
 *.[pP][sS]1             text eol=crlf
 
 *[aA][uU][tT][oO][gG][eE][nN][eE][rR][aA][tT][eE][dD]* binary
+
+# Preserve source and asset bytes recorded by the port manifests.
+reference/assembly-plant-port/** -text
+reference/dimensional-focus-port/** -text
+reference/field-extruder-port/** -text
+reference/heart-of-the-universe-port/** -text
+reference/kerr-newman-port/** -text
+reference/light-hunter-port/** -text
+reference/light-hunter-space-station-port/** -text
+reference/particle-collider-port/** -text
+reference/tst-modular-port/** -text
+src/main/resources/META-INF/assembly-plant-port/** -text
+src/main/resources/META-INF/dimensional-focus-port/** -text
+src/main/resources/META-INF/field-extruder-port/** -text
+src/main/resources/META-INF/heart-of-the-universe-port/** -text
+src/main/resources/META-INF/kerr-newman-port/** -text
+src/main/resources/META-INF/light-hunter-port/** -text
+src/main/resources/META-INF/light-hunter-space-station-port/** -text
+src/main/resources/META-INF/particle-collider-port/** -text
+src/main/resources/META-INF/tst-modular-port/** -text
+src/main/resources/assets/gtnotgood/textures/blocks/assemblyplant/**/*.mcmeta -text
+src/main/resources/assets/gtnotgood/textures/blocks/dimensionalfocus/**/*.mcmeta -text
+src/main/resources/assets/gtnotgood/textures/blocks/fieldextruder/**/*.mcmeta -text
+src/main/resources/assets/gtnotgood/textures/blocks/heart/**/*.mcmeta -text
+src/main/resources/assets/gtnotgood/textures/blocks/kerrnewman/**/*.mcmeta -text
+src/main/resources/assets/gtnotgood/textures/blocks/lighthunter/**/*.mcmeta -text
+src/main/resources/assets/gtnotgood/textures/blocks/modular/**/*.mcmeta -text
+src/main/resources/assets/gtnotgood/textures/blocks/particlecollider/**/*.mcmeta -text
+src/main/resources/assets/gtnotgood/textures/items/heart/**/*.mcmeta -text
+src/main/resources/assets/gtnotgood/textures/items/lighthunter/**/*.mcmeta -text

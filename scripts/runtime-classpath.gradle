@@ -1,0 +1,79 @@
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
+import java.util.zip.CRC32
+import java.util.zip.ZipFile
+
+def sha256 = { File archive ->
+    def digest = MessageDigest.getInstance('SHA-256')
+    archive.withInputStream { input ->
+        def buffer = new byte[65536]
+        int count
+        while ((count = input.read(buffer)) != -1) digest.update(buffer, 0, count)
+    }
+    digest.digest().encodeHex().toString()
+}
+
+def verifyArchive = { File archive ->
+    new ZipFile(archive).withCloseable { zip ->
+        if (zip.size() == 0) throw new IOException('Empty runtime JAR: ' + archive)
+        def buffer = new byte[65536]
+        zip.entries().each { entry ->
+            if (entry.isDirectory()) return
+            def crc = new CRC32()
+            long length = 0
+            zip.getInputStream(entry).withCloseable { input ->
+                int count
+                while ((count = input.read(buffer)) != -1) {
+                    crc.update(buffer, 0, count)
+                    length += count
+                }
+            }
+            if (length != entry.size || crc.value != entry.crc)
+                throw new IOException('Invalid runtime JAR entry: ' + archive + '!/' + entry.name)
+        }
+    }
+}
+
+def stableCopy = { File source, File destination ->
+    IOException failure = null
+    for (int attempt = 0; attempt < 3; attempt++) {
+        try {
+            def before = sha256(source)
+            Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            verifyArchive(destination)
+            def copied = sha256(destination)
+            if (before != copied || copied != sha256(source))
+                throw new IOException('Runtime JAR changed during copying: ' + source)
+            return
+        } catch (IOException invalid) {
+            failure = invalid
+            if (attempt < 2) Thread.sleep(100)
+        }
+    }
+    throw new GradleException('Cannot snapshot runtime JAR; finish the concurrent build and retry: ' + source, failure)
+}
+
+def libraries = layout.buildDirectory.dir('libs')
+def snapshots = file('run/.runtime-classpath')
+tasks.withType(JavaExec).configureEach { launch ->
+    if (!(launch.name ==~ /run(Client|Server)([0-9]+)?/)) return
+    launch.notCompatibleWithConfigurationCache('Freezes mutable project JARs immediately before launching Minecraft')
+    launch.doFirst {
+        def libraryPath = libraries.get().asFile.canonicalFile
+        def original = launch.classpath.files.toList()
+        def candidates = original.findAll { it.name.endsWith('.jar') && it.canonicalFile.parentFile == libraryPath }
+        if (candidates.empty) return
+        def directory = new File(snapshots, launch.name + '/' + UUID.randomUUID())
+        if (!directory.mkdirs() && !directory.isDirectory())
+            throw new GradleException('Cannot create runtime classpath directory: ' + directory)
+        def replacements = [:]
+        candidates.each { source ->
+            def destination = new File(directory, source.name)
+            stableCopy(source, destination)
+            replacements[source] = destination
+            logger.lifecycle('Runtime classpath snapshot: ' + source + ' -> ' + destination)
+        }
+        launch.setClasspath(files(original.collect { replacements[it] ?: it }))
+    }
+}

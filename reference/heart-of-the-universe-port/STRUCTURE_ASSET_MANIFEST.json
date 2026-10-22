@@ -1,0 +1,1578 @@
+{
+  "formatVersion": 1,
+  "officialPackSha256": "1c732d6b124732c3e3aede97f353910fc31873d9e26074891b2ca69dbcdee23b",
+  "originalAssets": [
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/graviton_field_constraint_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/graviton_field_constraint_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "cb60df399b04859b5032f8e5ca1174d6877e04e080220c4bba3a6383a9692a0f",
+      "destinationSha256": "cb60df399b04859b5032f8e5ca1174d6877e04e080220c4bba3a6383a9692a0f"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/graviton_field_constraint_casing.png.mcmeta",
+      "destination": "META-INF/heart-of-the-universe-port/source-metadata/graviton_field_constraint_casing.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "c9fea6c50548ad7d7768b9b4c84550a63e9c460477d67269cfdbe4d5f5fb79cb",
+      "destinationSha256": "c9fea6c50548ad7d7768b9b4c84550a63e9c460477d67269cfdbe4d5f5fb79cb"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/graviton_field_constraint_casing_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/source_ctm/graviton_field_constraint_casing_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "1ab2de0b952fe47efd88bb2c24c03e1e05e475c8ee6c25aae76550e7b8797011",
+      "destinationSha256": "1ab2de0b952fe47efd88bb2c24c03e1e05e475c8ee6c25aae76550e7b8797011"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/rhenium_reinforced_energy_glass.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/rhenium_reinforced_energy_glass.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "3e5b2e0118fdcb89a7a25989af29da7d554598c62103439623d4d4b874c431e8",
+      "destinationSha256": "3e5b2e0118fdcb89a7a25989af29da7d554598c62103439623d4d4b874c431e8"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/rhenium_reinforced_energy_glass.png.mcmeta",
+      "destination": "META-INF/heart-of-the-universe-port/source-metadata/rhenium_reinforced_energy_glass.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "a22f346faaa666b6f441593bcf9ef13ab1707046797d1d77268b8cdf37ad6363",
+      "destinationSha256": "a22f346faaa666b6f441593bcf9ef13ab1707046797d1d77268b8cdf37ad6363"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/rhenium_reinforced_energy_glass_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/source_ctm/rhenium_reinforced_energy_glass_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "4ed151d78579e8987aa5d6c261957a708801c6d6078bbe3ebf0c0b45c1a63981",
+      "destinationSha256": "4ed151d78579e8987aa5d6c261957a708801c6d6078bbe3ebf0c0b45c1a63981"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/sps_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/temporal_anchor_field_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "929c7cc24fac16a2eb14a26c9c7fa2aaf69ca1e7a6b063b08e5b5ed56ad20b42",
+      "destinationSha256": "929c7cc24fac16a2eb14a26c9c7fa2aaf69ca1e7a6b063b08e5b5ed56ad20b42"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/sps_casing.png.mcmeta",
+      "destination": "META-INF/heart-of-the-universe-port/source-metadata/temporal_anchor_field_casing.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "bef90560bd6e77f75c02e5917b3fb65cdcd04a4664227bab3ae7b495e3c74fb1",
+      "destinationSha256": "bef90560bd6e77f75c02e5917b3fb65cdcd04a4664227bab3ae7b495e3c74fb1"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/sps_casing_ctm.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/source_ctm/temporal_anchor_field_casing_ctm.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "0c779b3e6026a34c03b9615125032c2664f28286c46ec0daca69eaa876f766a7",
+      "destinationSha256": "0c779b3e6026a34c03b9615125032c2664f28286c46ec0daca69eaa876f766a7"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/dimension_connection_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/dimension_connection_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "0bcd3d1d6423a11532e62c272afa726a0fe196567c1c1b6fc4a816c4f329b1b8",
+      "destinationSha256": "0bcd3d1d6423a11532e62c272afa726a0fe196567c1c1b6fc4a816c4f329b1b8"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/create_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/create_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "1a432bfd8e99cbca3ecdd219080ee07d5711c24bf383c5d8a4e82759d954f06f",
+      "destinationSha256": "1a432bfd8e99cbca3ecdd219080ee07d5711c24bf383c5d8a4e82759d954f06f"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/controller_front.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "51df3f4f705ed3d7d7f594c5c8e991105b7b0ba6a0ae94cfc6b32760b6b2642f",
+      "destinationSha256": "51df3f4f705ed3d7d7f594c5c8e991105b7b0ba6a0ae94cfc6b32760b6b2642f"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/heart/controller_front.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca",
+      "destinationSha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/controller_front_active.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "4d8422df3ebb66b1ce93a83bc273c8a4e5aad3e67f943b4bd443790bfff08846",
+      "destinationSha256": "4d8422df3ebb66b1ce93a83bc273c8a4e5aad3e67f943b4bd443790bfff08846"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/heart/controller_front_active.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca",
+      "destinationSha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/controller_front_active_glow.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "4d8422df3ebb66b1ce93a83bc273c8a4e5aad3e67f943b4bd443790bfff08846",
+      "destinationSha256": "4d8422df3ebb66b1ce93a83bc273c8a4e5aad3e67f943b4bd443790bfff08846"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/heart/controller_front_active_glow.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "190fb98fefa93ebf6d5a130ee75e18dcbf1a0017ad12c8fffb9888cfdb6e2e7c",
+      "destinationSha256": "190fb98fefa93ebf6d5a130ee75e18dcbf1a0017ad12c8fffb9888cfdb6e2e7c"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/controller_top.png",
+      "license": "GPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "51df3f4f705ed3d7d7f594c5c8e991105b7b0ba6a0ae94cfc6b32760b6b2642f",
+      "destinationSha256": "51df3f4f705ed3d7d7f594c5c8e991105b7b0ba6a0ae94cfc6b32760b6b2642f"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/heart/controller_top.png.mcmeta",
+      "license": "GPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca",
+      "destinationSha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/controller_top_active.png",
+      "license": "GPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "4d8422df3ebb66b1ce93a83bc273c8a4e5aad3e67f943b4bd443790bfff08846",
+      "destinationSha256": "4d8422df3ebb66b1ce93a83bc273c8a4e5aad3e67f943b4bd443790bfff08846"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/heart/controller_top_active.png.mcmeta",
+      "license": "GPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca",
+      "destinationSha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/hpca/high_power_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/high_power_casing.png",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "afe520a01bff4eea1600d5b2e00c210714d829f8ef2ad4dda27f37e9ba245d04",
+      "destinationSha256": "afe520a01bff4eea1600d5b2e00c210714d829f8ef2ad4dda27f37e9ba245d04"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/hpca/high_power_casing.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/heart/high_power_casing.png.mcmeta",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "8304f2b23ff14cc8edf0e0b449caa224caf0f6e26dba7fdf3c418b6317ef11fd",
+      "destinationSha256": "8304f2b23ff14cc8edf0e0b449caa224caf0f6e26dba7fdf3c418b6317ef11fd"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "LICENSE",
+      "destination": "META-INF/heart-of-the-universe-port/LICENSE-GTLCore.txt",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "destinationSha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "LICENSE",
+      "destination": "META-INF/heart-of-the-universe-port/LICENSE-GTLAdditions.txt",
+      "license": "GPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "destinationSha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "LICENSE",
+      "destination": "META-INF/heart-of-the-universe-port/LICENSE-GregTech-Modern.txt",
+      "license": "LGPL-3.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "destinationSha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "scripts/structure_sources/multiblock/annihilate_generator.json",
+      "destination": "assets/gtnotgood/structures/heart_of_the_universe.mbs",
+      "license": "GPL-3.0",
+      "modifications": "Factory aisles encoded as GZIP MBS varints and UTF rows; all coordinates/symbols unchanged.",
+      "sourceSha256": "8fae08e28429fa14f723c01d045c793357cabee5323874e42163af935d61f021",
+      "destinationSha256": "d5de2d3170a7575604657c8cb30c513c8b29d840be8ab74180ecd45c7a421fca",
+      "uncompressedAislesSha256": "0a008d25ee66ea91af814df4f9148c1cb7fe5827266ef696330f46499f742373"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/annihilate_core.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/annihilate_core.png",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "a3d194d82bb0f36da510b582b840527c766330048b366c0e37c3ea61aea46786",
+      "destinationSha256": "a3d194d82bb0f36da510b582b840527c766330048b366c0e37c3ea61aea46786"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/dimensional_stability_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/dimensional_stability_casing.png",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "1d7bd8d97f976ecaa7bad311a8c0371d102c0648c14bbefa88f3d6989490664f",
+      "destinationSha256": "1d7bd8d97f976ecaa7bad311a8c0371d102c0648c14bbefa88f3d6989490664f"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/dimensional_stability_casing.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/heart/dimensional_stability_casing.png.mcmeta",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "6e56dbb6fe462bc43250da64863c3d6dd30180a68af5a4a630f6ab095e4c2f73",
+      "destinationSha256": "6e56dbb6fe462bc43250da64863c3d6dd30180a68af5a4a630f6ab095e4c2f73"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/dyson_deployment_magnet.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/dyson_deployment_magnet.png",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "556958221a3e33f4c951dfa551c0d9259008e3ce300d47c00a6ede4f4b97046d",
+      "destinationSha256": "556958221a3e33f4c951dfa551c0d9259008e3ce300d47c00a6ede4f4b97046d"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": ".minecraft/kubejs/assets/kubejs/textures/block/dyson_deployment_magnet_side.png",
+      "destination": "assets/gtnotgood/textures/blocks/heart/dyson_deployment_magnet_side.png",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "b7569da43811e06e3a586a6799117cdef6ddc8acf4f3e364a96eb8e194c54fa4",
+      "destinationSha256": "b7569da43811e06e3a586a6799117cdef6ddc8acf4f3e364a96eb8e194c54fa4"
+    },
+    {
+      "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
+      "revision": "1.4.5.3",
+      "sourcePath": "LICENSE",
+      "destination": "META-INF/heart-of-the-universe-port/LICENSE-GTL-pack-CC-BY-NC-SA-4.0.txt",
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Copied byte-for-byte.",
+      "sourceSha256": "616cfe2a42f376776d08de3c361320e0e10d27388495d331d586540d05a59f8e",
+      "destinationSha256": "616cfe2a42f376776d08de3c361320e0e10d27388495d331d586540d05a59f8e"
+    }
+  ],
+  "derivedConnectedTextures": [
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/0.png",
+      "mask": 0,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "280673f0d8e2123d2dbd074182e4464100508ee6d4dff86f277f8aaf608ce965"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/1.png",
+      "mask": 1,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "737c07c04b58589d9c0b7f1e5ce9c04fb68af5dbe749e46127ea72bbbedd3bf8"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/2.png",
+      "mask": 2,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b4d3a4376ef7d19e2d26392aba62638f446190fc1fea8cfcb2b1b071674761e2"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/3.png",
+      "mask": 3,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b7cb1ac4fa0a3c05c4197135cad40e008d2f5af50404f6263487d1d45f03f8d0"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/4.png",
+      "mask": 4,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "8afb9e44a09095244d726d6ca136e246afed5c16ec3bfeb22ebf68c18c519465"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/5.png",
+      "mask": 5,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "ce6e1ca80a0df7da3ad8f756ae5bb6ed7b1ffaf3d33593fc12d0c79e3fe537a5"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/6.png",
+      "mask": 6,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "298cc7e11d828a0cd2413c5df4a872f16454e6ad4e8c342a4a428548e851fe77"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/7.png",
+      "mask": 7,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "cc9288c8ce394baef6c52af849c453922e5c2a1b55acb1303d16aef845a992fb"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/8.png",
+      "mask": 8,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "1ba50af5ef7493d4701627117ac393dc39f6c73df133d382a2e8ab726ee438bb"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/9.png",
+      "mask": 9,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "a987433adfda212586a254de98c4ba463487a1bec592ff75df7cd01d5fc21dad"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/10.png",
+      "mask": 10,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "726dc2705b58c27155f0fb9ea1c0f76da65de5ec428e9a3ffda1c9d0e99a8e9e"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/11.png",
+      "mask": 11,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "3a8da7fe8c4809bde83e50bc373d7a84922b7e79a09d294e745e5acbeb76bcf8"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/12.png",
+      "mask": 12,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "be5f13042c61e59189931b3249cbdcd65051fdfabc3cf11aff76f4c19bf86f9a"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/13.png",
+      "mask": 13,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "0c3fafd71383d35c34d2150979de449823dcfa52f92566f55a67d4a976b535c0"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/14.png",
+      "mask": 14,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "3cce7a9a100bccb6db3b4c1f651331b85987e57da395a5456e205b01feef19c1"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/15.png",
+      "mask": 15,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b186629631db08e06808d5b57011afb9863db3b47e3b8da0739203d0a8b6ae01"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/21.png",
+      "mask": 21,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "cdc1e6f66240bfe0665adee8c29963209d9ddce8b967cb91268cfaf143f5faf3"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/23.png",
+      "mask": 23,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "3ce246392270480cb6de8f66cdad7be3f0908da3138086a70a6932093260d34b"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/29.png",
+      "mask": 29,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b67b988494535eb09cdae00e8b3f2262b0e182f0a30d76e365678e1973b31375"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/31.png",
+      "mask": 31,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "ff34f6489e8e009f21d42f502069b9b34bf24ab35e4421a1dba12fcc5ae6e890"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/38.png",
+      "mask": 38,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "f3b391830e7ac4bf34683d750d8f977a64ad86afa27556abaf960b8a3730daf9"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/39.png",
+      "mask": 39,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "75ba92cf7e7daa7abe44614bfc166973245d5eb58bf155451cb002b1fb1b1e6e"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/46.png",
+      "mask": 46,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "e9fa7d27e2a71f3b72d6047c69758c888a41f612e75ef9984b36fd9253118594"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/47.png",
+      "mask": 47,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "ca56b4c5a77510a0f0963a26ac232aa42e110e26acc7433dac0fd0a929dee792"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/55.png",
+      "mask": 55,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "6c89a6a2d3f73fb1d8f0123765e0aacd05340d2cb51da062729abd98e9d8e89e"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/63.png",
+      "mask": 63,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "4b97a27bd6aa02532cd3347053847a0727dd78778254b1cc5c030d1ad874f88e"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/73.png",
+      "mask": 73,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "98b3d11920ba8d7ae1d2ba32db8fb71f152836d7e8167b2deb110cc45b1bfaa6"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/75.png",
+      "mask": 75,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "2f01121f0982ddf338177d225abbdfff80a29c6f6da57fe322f5fbe6bdbee28c"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/77.png",
+      "mask": 77,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "19d74617f0a44b656acbd140bd211dfbc3976bc1463581867650ac902002e249"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/79.png",
+      "mask": 79,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "cdc438d3068f91643903728a3ad36f7cc818b175527284ae11c1f39ce1a3cd2a"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/93.png",
+      "mask": 93,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "9f42b88883558de3bdad80799ec8597938c4fdef0b980243af18c297d72e385f"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/95.png",
+      "mask": 95,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "ae94af48fd3b1446683782a42593f7e35c6aa6316bf4915ab58a13d04ae4d8f8"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/111.png",
+      "mask": 111,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "c5b8ad1cf94c6559ee33818004074ce9b1e9e754f1554955241965446b62a05e"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/127.png",
+      "mask": 127,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "d81e64951845966998625a31fec91c9c103d36f4e918f7ed9ec360e974563b22"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/138.png",
+      "mask": 138,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "8df6602ea0f25e9e332a686deb7dd27a5ccb8e202e022d92f7722d0df48b5525"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/139.png",
+      "mask": 139,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "5d68153b18efc6ddd321fe2cdd2bf3e67dea9f9e3516101519eb99fc5e9c8f61"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/142.png",
+      "mask": 142,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "8a24f327d809835f1ee24e23ae79ebac68050b4fcc71cb0fbc980eb30c711ba2"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/143.png",
+      "mask": 143,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "9bb941ed367b422865bd6fa4f9db58d6acbf249733c470e1db59a250b77892e1"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/159.png",
+      "mask": 159,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "f68335dba06722ae890b6bbdf2d4eb3bf9abb563cd0748ae8b31890530f1e67d"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/174.png",
+      "mask": 174,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "fee052c1fdfcbea51130b5647289452a3233ed608bb1dc1630cfaaa98f4b936e"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/175.png",
+      "mask": 175,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "326aee670be52dbf67321060d8035deeb8a29b1002ab443a5804e332476a981a"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/191.png",
+      "mask": 191,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "cffcbb4137d8b762d8b1c138301c0c39e31e2704eb8b93684de46d37de8f81f6"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/203.png",
+      "mask": 203,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "51d140d4f1b6ca4adec8d1f383b0c421c7d099197d524a64b48fef4d63ba24ba"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/207.png",
+      "mask": 207,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "2d6d46dacfa7b06dcd9e33eca447eb3ef3ed55ba52024b1d3cd971f12a98dc9f"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/223.png",
+      "mask": 223,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b3ea0a18746b280c13ce523acdafd34dcef117f4b45e0bf478b4defd110b6d6b"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/239.png",
+      "mask": 239,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "e0fc4eaf9d30e001c994c51dd1258239ebe6e17f29d70a49a1a731df988c09d9"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/graviton_field_constraint_casing/255.png",
+      "mask": 255,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "1154297fdc62fd4dc71b9407f62fd069209b5435f902e51b5028c9b9f10b6872"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/0.png",
+      "mask": 0,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "5cb4fff6da05bd6ac4e5d4156d6f94b16ac1f27923e30c3102d03895067bac62"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/1.png",
+      "mask": 1,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "8003e833fbc4f96ce3ebf1bd485a8ec00cba452f7543dbd81c5cc3c7353f51f5"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/2.png",
+      "mask": 2,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b5bbe829488410c481aa51cfba580d190a4d37184e6ea2852cc05fa92d13b76b"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/3.png",
+      "mask": 3,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "4e9ed308a4dae544a7de73c6a417699dec2d6a283b4e2d5746f37706fa679053"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/4.png",
+      "mask": 4,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "004bd9bb9766e6612e8b9dfa862090330492ca4ece4d559d84e1ba02d77256ac"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/5.png",
+      "mask": 5,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "deaba4a2a74f5b2db9d65acb9161af69969e8b1f366962f1cc400aad60ed95bf"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/6.png",
+      "mask": 6,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "752e2e5a25131260877532d3f6915da3eafaefea2313dd5b7a6ba5720904dd08"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/7.png",
+      "mask": 7,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "4f55d4cbd5d40af31f4acd483339f72fec39e1d5c24040e589b4c01922e72f87"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/8.png",
+      "mask": 8,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b21123a974b7cb45e380e43fc78385a363ba0e60cd65fec2862ddcfc9c58490c"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/9.png",
+      "mask": 9,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "d9e1f3658b9f385851689dca78ad58de07b97b0d440d18e00036397c095bc107"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/10.png",
+      "mask": 10,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "ffead51cfb041f4f6f2a0fcdf2aac2ebf3e2508f3dd30508ee60df9e47046d30"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/11.png",
+      "mask": 11,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "3f7eccd0dad3f9da9ca621d94938d01d73134759b60fcf36b259c5e5095f3d7f"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/12.png",
+      "mask": 12,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "877b9c6bb3a8e852629b560e9bd72bbb7f1c786fa9a13a0feba61e85a74ee67e"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/13.png",
+      "mask": 13,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "2727350f79259f4796ffb7c1544f077d6e539a08b162c651b4b49915f9f48859"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/14.png",
+      "mask": 14,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "eddcccc99d0a18eeb64ec50240224f9e21b3b369308ad0a08f228237f7053845"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/15.png",
+      "mask": 15,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "bde4bd3838068aa5aeb45babb2cd38ac66c6e03e89f79773f9802e5b8b28bb53"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/21.png",
+      "mask": 21,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "f0b4648d2c70ec628786c7681fdac939e95d4aca38c325402913a02d998f2632"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/23.png",
+      "mask": 23,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "f82964ce29e0bfabe82f7ebd1bbe967bad29638eddfb501229b54c35b396f467"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/29.png",
+      "mask": 29,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "c55d89fdbb42bf5e2080606fe6b225392fdcf903429fc63dac7c51a341e1dcc1"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/31.png",
+      "mask": 31,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "98b50fff26944bde26a3f671dc61f67f6191854ea0e2beedd697102e1728879f"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/38.png",
+      "mask": 38,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "c6e05321fe06a53bb66e00229dc1185e185ff58325537d37d239b975a86b43cf"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/39.png",
+      "mask": 39,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "f5ad685ec457c3b7137bb995ce2d91ba1452020040b1e10748608edceb2a8b2b"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/46.png",
+      "mask": 46,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "5d6464535ab292876ed2ef79fcc2c7a00b380f3bb85566b0af98bdc34fe9781f"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/47.png",
+      "mask": 47,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b10fba0d13844afee701e06d91fbc7bef6ac533eac1295a67cb19524e76d9884"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/55.png",
+      "mask": 55,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "095ac9259a22b9a682ceccbb9b3cb2b64cd68fe97cc75f45868cad1b8cf41ade"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/63.png",
+      "mask": 63,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "152ce4cf851036d37fe638cade1c1f7efcfb231b242dbd67c8009f46c62e43a9"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/73.png",
+      "mask": 73,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "5041cb11017dd01180fc0bd965ee662ace3b46c835a92c2d2af01e6b6c07292b"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/75.png",
+      "mask": 75,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "7f3576490ef9fe9037f0f14f7f056ad3d85ddb4b90fe487b6469f709d9427228"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/77.png",
+      "mask": 77,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "29ddd87d3b351a268d7544fad636a7b9d588a4bf97324bb685746eade5e77d8b"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/79.png",
+      "mask": 79,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "e5fee1196e0eaa62036fa896c97daecd1e42fddca6633934cb5186e6900e3b0b"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/93.png",
+      "mask": 93,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "57539a5e36ebba3766f714d4f269c93a7ad4f37102d00f81c9ff539f701ab825"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/95.png",
+      "mask": 95,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "32efa936a4a61d76dfb2822c063532ce0355a2d5c4eac9024489c57ce8902602"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/111.png",
+      "mask": 111,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "7034187e12fb7ae105587533a8e1441e38605effa997eeeb143babd3ed83045d"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/127.png",
+      "mask": 127,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "8a0df8d33a4f1dec17a18d44f2b69675b1ad0691f3024ef69a78aac0bf0eb576"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/138.png",
+      "mask": 138,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b4dd0cc2fe0825482f1e96930438858c909f30d06a9846ccc9af6c38a4469ff5"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/139.png",
+      "mask": 139,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "c1fa2eecafecba18d9522412b4c04da3a480558f20ba054c71a0d5ee6bd671e5"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/142.png",
+      "mask": 142,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "d3351dffdb1387b3101f13d290ba45a80bd435ff95e14c21c332cf863bbf5370"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/143.png",
+      "mask": 143,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b97916778da34b303ffe6cd8f94ee3043fef36d75516774406b7d914ca85ed65"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/159.png",
+      "mask": 159,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "df87d16faef5500b264399186b56e01a616897ec9d21b11775715c45fd724e12"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/174.png",
+      "mask": 174,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "aae882972bd33d1bd43b64d1037f38fb6a5e9de8d5af6c60de02838770083128"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/175.png",
+      "mask": 175,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "bec9a570e6f3d0396f9943993a52cf723950f97a345cc201a06436f80d8bc4a0"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/191.png",
+      "mask": 191,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "664196fdb6506b40b0909f7651679a2b6adeee9107e73f8ae9ea6e2f1d3c823a"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/203.png",
+      "mask": 203,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "bfa592b40925a7b439480011bae34c82d31d8d7b81feeecdda2458218561e400"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/207.png",
+      "mask": 207,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "45c54a8190671ee57a48071f56cc7693b21b819e37866eaa9ff475f8226035bf"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/223.png",
+      "mask": 223,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "df611b1af9935d2c42cb007828ea33f0d0e3ef5f2b324591c2a2313e3e962c5f"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/239.png",
+      "mask": 239,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "69880b9beb69ce3bfd6761fdf3ec51ecd269cad50e81ed677bbde1bedde6827b"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/rhenium_reinforced_energy_glass/255.png",
+      "mask": 255,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/0.png",
+      "mask": 0,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "14fc82139d36d3d528af893f3a3d2d129c956a8195d6a0b3c3bd8a88334c40bf"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/1.png",
+      "mask": 1,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "7619272929b04315e47b4e970fce700a98f9959e83c1f9af54541fe29c9cb60c"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/2.png",
+      "mask": 2,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "da4ce55384bcd85b6491df9381a76f2de38034144938122d09c36eb08ddab3ec"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/3.png",
+      "mask": 3,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "cb5879c08d95195bca883c7ddba018dca6475d24b3771cfa71122ab9b4c63537"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/4.png",
+      "mask": 4,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "a85401d26698499b10c34e0636f32d82caf449a7171d3ad5d6c4b5a5404ddd78"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/5.png",
+      "mask": 5,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "627fd84d2fbac2988ab445b8b70f5f6a06e00fdc589cad105c86680686e545b6"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/6.png",
+      "mask": 6,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "e2b8aefb85f64bffd85206cab3a2d6e3c40ec3409872f43b5931dca08d16ba4f"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/7.png",
+      "mask": 7,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "152524c483ec2f829440ce087519389486ae01c350464e6228e3ce7daf923032"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/8.png",
+      "mask": 8,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "c53099d41741b813e037ad0129ef9082b3fc52eef23fa4f4fc2268057adffd8f"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/9.png",
+      "mask": 9,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "4a5b545d4e2ed3501a2092522c071c5f39ff25022942fa4a4102c9e1ad97bd6f"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/10.png",
+      "mask": 10,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "ad37e7c436a124e0b322cb30508f3cf49b3157cf8f68c5f1721eee6783fca069"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/11.png",
+      "mask": 11,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "63559ee5a0c7a61df52618c36f9d26d285a9df059a090e43650200e0965f8eeb"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/12.png",
+      "mask": 12,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "a4052c3438bff966c91901f72c3968b7b6f9c56247ea5f59e4871be87fa712c6"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/13.png",
+      "mask": 13,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "cf134ba480ff823ae6d3f6cc909d374923ee7b071fba0d262f6744c94e1ca2c8"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/14.png",
+      "mask": 14,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "2649e5935549cb89253005c12bf3272f6ad9c7ccbdea7f9245adf837870af77e"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/15.png",
+      "mask": 15,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "090f916f2af6204b261fb7897cdff6df758e7ebfbd388b864978e3141c4f4958"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/21.png",
+      "mask": 21,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "4dd91100d4e8240357c3431bf0901a754116b9a1b270d2c0680b47a5070635aa"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/23.png",
+      "mask": 23,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "f27921e4ebe7c4c98432d69cc193f3dee2aa5833a07147a77e5ee7980180b1da"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/29.png",
+      "mask": 29,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "45f4b7b02ef2e1a839eff804c2e729fa5e5887c4eea1ca3c6845fa6bbe57aa14"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/31.png",
+      "mask": 31,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "12858d9e6985705398f331850593b94b0ef9e6b12f8e9346d305cd07ad736eed"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/38.png",
+      "mask": 38,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "a663ffbd0cb9387a38dcb3e8dbc77a0e2b33372b49b71c19064569fe13bee200"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/39.png",
+      "mask": 39,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b985ef9eb9bfa1775c6cafbf6b2b4a4873940eb37c053aa7dff2edceb3348c24"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/46.png",
+      "mask": 46,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "98a69c7a325f6f049f274214429caf5e088a6a89804f7ee9b4c66fc6dc434e6d"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/47.png",
+      "mask": 47,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "806fca6cb80deb3988baedd16c18786f747ebf77e0255b0599a36c83257fd98e"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/55.png",
+      "mask": 55,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "8276492e0f886b9d91e5e68624323c1e9adee6f031c35e917cfbf3854511bebc"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/63.png",
+      "mask": 63,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "70cfbf5d67f8e3b68e01cb901e1906d16116ea10c4b06fc282f0fbc56228da2f"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/73.png",
+      "mask": 73,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "1831d9facad296de652cb7447ea0196d68e53671d044770402195aaf2474abd5"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/75.png",
+      "mask": 75,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "204fc37cbe3cd0758ba7f069e7f8db59d38b455497b29c429efbe951c2c36ded"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/77.png",
+      "mask": 77,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "9aebd871c71030352491036b69d79284cb048cb96a0716e6138c9b19b2af2f66"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/79.png",
+      "mask": 79,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "d186a5b07948365669241e145c913df2242611028614c13123aae72f13b2ed16"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/93.png",
+      "mask": 93,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "68867a558e451187d07a5c29b986f40736069827f11827e1ced4fa867724a84d"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/95.png",
+      "mask": 95,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "82dbf2852277a14578ca7908c633de8461b3369975ed24d65e21e402fa396afa"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/111.png",
+      "mask": 111,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "ddf927c78bcb1a78979608efe2adbfbce1947b685ecfcf66e96d59ca2bf539ee"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/127.png",
+      "mask": 127,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "a18956e08150783530f3e7acbc4de620e02013cf43b1b89174dc906c892adb4f"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/138.png",
+      "mask": 138,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "74f7260042517ee5fce5c7feda355979bb7b3214549af3a630789cf9e6f6deb7"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/139.png",
+      "mask": 139,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "8ef8917710527981b9d3fc04073b3445dd316af0cb604e83eaa7d6602f9ca72d"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/142.png",
+      "mask": 142,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "249c8dc693ca2d8d06af0c3e079e8741cb619dece4bff29815c9a215ceb01360"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/143.png",
+      "mask": 143,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "c76d7a4b1d3c517ceb08829ce36e8c031dba377f9729155f8e18c720ffd71890"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/159.png",
+      "mask": 159,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "1bbe2cd8cdbec9824be565185f075eec53191afe0c5a486c87beed41aac5805c"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/174.png",
+      "mask": 174,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "079e7f14b21b0247b49d053a68ebf544161bb074f183398ad43a164ce5f58fe0"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/175.png",
+      "mask": 175,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "eb7137d5ab07f113629292c0c2cf93f8c4cfb7e75b88d247d8d91a2763eb4af8"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/191.png",
+      "mask": 191,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "bb459c3f1ebf15224a17f7605c92556b819d011043b177b07aa6c0737b6daed4"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/203.png",
+      "mask": 203,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "b7f153784f759f7bc3c026d03f640b2077b0fe24a68223cfefc0ede1f82979a8"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/207.png",
+      "mask": 207,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "6639d2dadee9e4f923436b34a508c28f34cc59abb318c732b354c6c3b773965a"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/223.png",
+      "mask": 223,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "e305ac98aa07ccf9b8ef40b013a432501541772e0c705f1bc6b91c2fde40fe37"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/239.png",
+      "mask": 239,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "555121bf86563c147397bd4b56f9ad4c339bcdb40f8c09c144286bc9af30d6e8"
+    },
+    {
+      "destination": "assets/gtnotgood/textures/blocks/heart/ctm/temporal_anchor_field_casing/255.png",
+      "mask": 255,
+      "license": "LGPL-3.0",
+      "modifications": "Lossless original LDLib quarter-tile composition.",
+      "sha256": "395b1f726d08a6ce40224638152be84a89ba3596e8f530c8b80c5cdca781533b"
+    }
+  ],
+  "sourceReferences": [
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "LICENSE",
+      "referencePath": "upstream/gtladditions/LICENSE",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "scripts/structure_sources/multiblock/annihilate_generator.json",
+      "referencePath": "upstream/gtladditions/scripts/structure_sources/multiblock/annihilate_generator.json",
+      "sha256": "8fae08e28429fa14f723c01d045c793357cabee5323874e42163af935d61f021"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/generated/resources/assets/gtladditions/models/block/temporal_anchor_field_casing.json",
+      "referencePath": "upstream/gtladditions/src/generated/resources/assets/gtladditions/models/block/temporal_anchor_field_casing.json",
+      "sha256": "a8820a58ae2d139b09bc11bd0309f2c9ae586166e19bfc5fafc5e0038bca2d7b"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/java/com/gtladd/gtladditions/common/machine/multiblock/MultiBlockMachine.kt",
+      "referencePath": "upstream/gtladditions/src/main/java/com/gtladd/gtladditions/common/machine/multiblock/MultiBlockMachine.kt",
+      "sha256": "4dd431a70e2074571e4d93e8782892334bda4c5916782e4e07797e9d59294656"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top.png",
+      "referencePath": "upstream/gtladditions/src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top.png",
+      "sha256": "51df3f4f705ed3d7d7f594c5c8e991105b7b0ba6a0ae94cfc6b32760b6b2642f"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top.png.mcmeta",
+      "referencePath": "upstream/gtladditions/src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top.png.mcmeta",
+      "sha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top_active.png",
+      "referencePath": "upstream/gtladditions/src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top_active.png",
+      "sha256": "4d8422df3ebb66b1ce93a83bc273c8a4e5aad3e67f943b4bd443790bfff08846"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top_active.png.mcmeta",
+      "referencePath": "upstream/gtladditions/src/main/resources/assets/gtceu/textures/block/multiblock/top/cosmos_simulation/overlay_top_active.png.mcmeta",
+      "sha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca"
+    },
+    {
+      "source": "https://github.com/Dragonators/GTLAdditions",
+      "revision": "34fb152886164c56a07fc9d1b10e056f0c22b7ab",
+      "sourcePath": "src/main/resources/assets/gtladditions/structures/multiblock/annihilate_generator.bin",
+      "referencePath": "upstream/gtladditions/src/main/resources/assets/gtladditions/structures/multiblock/annihilate_generator.bin",
+      "sha256": "005725c4293f972bfcbf9349c4ad7c3b040284f01573dfc79f295b44945dfe42"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "LICENSE",
+      "referencePath": "upstream/gtlcore/LICENSE",
+      "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/generated/resources/assets/gtlcore/models/block/create_casing.json",
+      "referencePath": "upstream/gtlcore/src/generated/resources/assets/gtlcore/models/block/create_casing.json",
+      "sha256": "b2b2b65efc6b94901b714e8467e5056f8fc1eb8af1b1f1f82c13be48b54df986"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/generated/resources/assets/gtlcore/models/block/dimension_connection_casing.json",
+      "referencePath": "upstream/gtlcore/src/generated/resources/assets/gtlcore/models/block/dimension_connection_casing.json",
+      "sha256": "11758c50efc97823fe375b0341d0533f14aa52fda9f3df83f3dfb49df25f7754"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/generated/resources/assets/gtlcore/models/block/graviton_field_constraint_casing.json",
+      "referencePath": "upstream/gtlcore/src/generated/resources/assets/gtlcore/models/block/graviton_field_constraint_casing.json",
+      "sha256": "02bb1dffaae696ad27f59212ffee2eef4eef267443060897d2a403b8d433732e"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/generated/resources/assets/gtlcore/models/block/rhenium_reinforced_energy_glass.json",
+      "referencePath": "upstream/gtlcore/src/generated/resources/assets/gtlcore/models/block/rhenium_reinforced_energy_glass.json",
+      "sha256": "6a616ec03511781ecc9a68b9f17227a890f75e6ad04381fd746e4c8856ce56ca"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/generated/resources/assets/gtlcore/models/block/sps_casing.json",
+      "referencePath": "upstream/gtlcore/src/generated/resources/assets/gtlcore/models/block/sps_casing.json",
+      "sha256": "a8820a58ae2d139b09bc11bd0309f2c9ae586166e19bfc5fafc5e0038bca2d7b"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front.png",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front.png",
+      "sha256": "51df3f4f705ed3d7d7f594c5c8e991105b7b0ba6a0ae94cfc6b32760b6b2642f"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front.png.mcmeta",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front.png.mcmeta",
+      "sha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active.png",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active.png",
+      "sha256": "4d8422df3ebb66b1ce93a83bc273c8a4e5aad3e67f943b4bd443790bfff08846"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active.png.mcmeta",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active.png.mcmeta",
+      "sha256": "22aa82a0030eddfaa15ce5d26608c39ec42e6b5afe96fd12384b4729fec322ca"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active_emissive.png",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active_emissive.png",
+      "sha256": "4d8422df3ebb66b1ce93a83bc273c8a4e5aad3e67f943b4bd443790bfff08846"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active_emissive.png.mcmeta",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active_emissive.png.mcmeta",
+      "sha256": "190fb98fefa93ebf6d5a130ee75e18dcbf1a0017ad12c8fffb9888cfdb6e2e7c"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/graviton_field_constraint_casing.png",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtlcore/textures/block/casings/graviton_field_constraint_casing.png",
+      "sha256": "cb60df399b04859b5032f8e5ca1174d6877e04e080220c4bba3a6383a9692a0f"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/graviton_field_constraint_casing.png.mcmeta",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtlcore/textures/block/casings/graviton_field_constraint_casing.png.mcmeta",
+      "sha256": "c9fea6c50548ad7d7768b9b4c84550a63e9c460477d67269cfdbe4d5f5fb79cb"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/graviton_field_constraint_casing_ctm.png",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtlcore/textures/block/casings/graviton_field_constraint_casing_ctm.png",
+      "sha256": "1ab2de0b952fe47efd88bb2c24c03e1e05e475c8ee6c25aae76550e7b8797011"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/rhenium_reinforced_energy_glass.png",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtlcore/textures/block/casings/rhenium_reinforced_energy_glass.png",
+      "sha256": "3e5b2e0118fdcb89a7a25989af29da7d554598c62103439623d4d4b874c431e8"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/rhenium_reinforced_energy_glass.png.mcmeta",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtlcore/textures/block/casings/rhenium_reinforced_energy_glass.png.mcmeta",
+      "sha256": "a22f346faaa666b6f441593bcf9ef13ab1707046797d1d77268b8cdf37ad6363"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/rhenium_reinforced_energy_glass_ctm.png",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtlcore/textures/block/casings/rhenium_reinforced_energy_glass_ctm.png",
+      "sha256": "4ed151d78579e8987aa5d6c261957a708801c6d6078bbe3ebf0c0b45c1a63981"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/sps_casing.png",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtlcore/textures/block/casings/sps_casing.png",
+      "sha256": "929c7cc24fac16a2eb14a26c9c7fa2aaf69ca1e7a6b063b08e5b5ed56ad20b42"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/sps_casing.png.mcmeta",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtlcore/textures/block/casings/sps_casing.png.mcmeta",
+      "sha256": "bef90560bd6e77f75c02e5917b3fb65cdcd04a4664227bab3ae7b495e3c74fb1"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/casings/sps_casing_ctm.png",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtlcore/textures/block/casings/sps_casing_ctm.png",
+      "sha256": "0c779b3e6026a34c03b9615125032c2664f28286c46ec0daca69eaa876f766a7"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/create_casing.png",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtlcore/textures/block/create_casing.png",
+      "sha256": "1a432bfd8e99cbca3ecdd219080ee07d5711c24bf383c5d8a4e82759d954f06f"
+    },
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/resources/assets/gtlcore/textures/block/dimension_connection_casing.png",
+      "referencePath": "upstream/gtlcore/src/main/resources/assets/gtlcore/textures/block/dimension_connection_casing.png",
+      "sha256": "0bcd3d1d6423a11532e62c272afa726a0fe196567c1c1b6fc4a816c4f329b1b8"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "LICENSE",
+      "referencePath": "upstream/gtceu/LICENSE",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/hpca/high_power_casing.png",
+      "referencePath": "upstream/gtceu/src/main/resources/assets/gtceu/textures/block/casings/hpca/high_power_casing.png",
+      "sha256": "afe520a01bff4eea1600d5b2e00c210714d829f8ef2ad4dda27f37e9ba245d04"
+    },
+    {
+      "source": "https://github.com/GregTechCEu/GregTech-Modern",
+      "revision": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+      "sourcePath": "src/main/resources/assets/gtceu/textures/block/casings/hpca/high_power_casing.png.mcmeta",
+      "referencePath": "upstream/gtceu/src/main/resources/assets/gtceu/textures/block/casings/hpca/high_power_casing.png.mcmeta",
+      "sha256": "8304f2b23ff14cc8edf0e0b449caa224caf0f6e26dba7fdf3c418b6317ef11fd"
+    }
+  ],
+  "reusedAssets": {
+    "C": "FieldExtruderCasing.HyperMechanical",
+    "F": "DimensionalFocusCasing.FusionGlass",
+    "S": "DimensionalFocusCasing.DimensionInjection"
+  }
+}

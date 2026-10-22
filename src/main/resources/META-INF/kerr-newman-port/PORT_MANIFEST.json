@@ -1,0 +1,133 @@
+{
+  "format": 1,
+  "block_registration": {
+    "method": "KerrNewmanBlocks.register",
+    "texture_page": 122,
+    "registry_ids": [
+      "kerr_newman_casing",
+      "kerr_newman_casing_2",
+      "kerr_newman_glass"
+    ],
+    "variants": 23,
+    "active_bit": 8,
+    "active_metadata": {
+      "AcceleratorCoilUhv": 11,
+      "AdvancedFusionCoil": 12
+    }
+  },
+  "native_machine": {
+    "destination": "src/main/java/com/xyp/gtnotgood/common/machines/multiblock/modularmachine/KerrNewmanHomogenizer.java",
+    "sha256": "50d9b122d475455b7dc8babb3b6e0aae5da0f79f9cb9301f06b2ea5ed7c256bd",
+    "license": "LGPL-3.0-only",
+    "modification": "Native GTNH mixer ProcessingLogic and StructureLib integration around the separately licensed original MBS geometry. User-selected balance: fixed 6000% speed (duration divided by 60) and perfect overclocking (four times EU/t and duration divided by four per overclock). Preserve native energy/voltage protection and power-panel parallel control. These rates are local balance choices, not reconstructed closed GTOLib internals. Replace modern hatch predicates/client state with native equivalents; preserve source block mapping and black-hole location. Reuse existing Field Extruder fusion-reactor controller overlays with their existing attribution.",
+    "source_paths": [
+      "src/main/java/com/gtocore/common/data/machines/MultiBlockH.java",
+      "src/main/java/com/gtocore/common/machine/multiblock/electric/KerrNewmanHomogenizer.java"
+    ]
+  },
+  "native_adapters": [
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/common/blocks/kerrnewman/BlockKerrNewmanCasing.java",
+      "sha256": "422edae00080a613c67544a3a2809bc6f9f1d28548b9877d75b37a8db2ace44f",
+      "license": "MIT",
+      "modification": "Independent GTNH 1.7.10 block/item/StructureLib/CTM adapter. Original upstream art remains LGPL; native renderer supplies separately lit emissive overlays for the two active coils.",
+      "source_paths": []
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/common/blocks/kerrnewman/ItemBlockKerrNewmanCasing.java",
+      "sha256": "8e63f99bd945db355730222de144071eed8af4b2dd9dbd08f48a0baf081bad8c",
+      "license": "MIT",
+      "modification": "Independent GTNH 1.7.10 block/item/StructureLib/CTM adapter. Original upstream art remains LGPL; native renderer supplies separately lit emissive overlays for the two active coils.",
+      "source_paths": []
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/common/blocks/kerrnewman/KerrNewmanBlocks.java",
+      "sha256": "d7ca689d61ddd7c4183f3edd2dca447f49a2bc7d3aedb827b3233e7b4240e67e",
+      "license": "MIT",
+      "modification": "Independent GTNH 1.7.10 block/item/StructureLib/CTM adapter. Original upstream art remains LGPL; native renderer supplies separately lit emissive overlays for the two active coils.",
+      "source_paths": []
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/common/blocks/kerrnewman/KerrNewmanCasing.java",
+      "sha256": "ddecebbbbc7394d0aa24e3aafced6d54441cdd836343f52fa8c48abe53d9145b",
+      "license": "MIT",
+      "modification": "Independent GTNH 1.7.10 block/item/StructureLib/CTM adapter. Original upstream art remains LGPL; native renderer supplies separately lit emissive overlays for the two active coils.",
+      "source_paths": []
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/render/KerrNewmanConnectedTexture.java",
+      "sha256": "97ccfbe093cafa534e8e88cade1a112f87997ea7629e03eb59da09ece5adc947",
+      "license": "MIT",
+      "modification": "Independent GTNH 1.7.10 block/item/StructureLib/CTM adapter. Original upstream art remains LGPL; native renderer supplies separately lit emissive overlays for the two active coils.",
+      "source_paths": []
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/render/KerrNewmanGlowTexture.java",
+      "sha256": "4de3b4168b7838af791045e13e5a1c2ab33300e6c806fcec21cb1011f363b61f",
+      "license": "MIT",
+      "modification": "Independent GTNH 1.7.10 block/item/StructureLib/CTM adapter. Original upstream art remains LGPL; native renderer supplies separately lit emissive overlays for the two active coils.",
+      "source_paths": []
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/render/KerrNewmanConnectedIcons.java",
+      "sha256": "7f66e4d1aa8c81c059382ee7e60efa00e00a1bfdf27aaee1df3af591b82b45b0",
+      "license": "MIT",
+      "modification": "Independent GTNH 1.7.10 block/item/StructureLib/CTM adapter. Original upstream art remains LGPL; native renderer supplies separately lit emissive overlays for the two active coils.",
+      "source_paths": []
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/render/KerrNewmanConnections.java",
+      "sha256": "ff969d2b462e564935f75af6a5a1dfaba818e457a8ceceaae17a5e145f0a454e",
+      "license": "MIT",
+      "modification": "Independent GTNH 1.7.10 block/item/StructureLib/CTM adapter. Original upstream art remains LGPL; native renderer supplies separately lit emissive overlays for the two active coils.",
+      "source_paths": []
+    }
+  ],
+  "recipe_adaptations": [
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/machine/KerrNewmanCasingRecipes.java",
+      "sha256": "1357fbe22c7e52a4c5a067607a467fb82879dd4931e46719900de42ae73674ca",
+      "license": "LGPL-3.0-only",
+      "modification": "Adapt pinned recipe costs to native GTNH recipe maps, native available materials and stack limits; see packaged NOTICE.md and RECIPE_ADAPTATION.md for all substitutions and explicitly omitted unsupported room gates. No modern machine APIs are compiled.",
+      "source_paths": [
+        "src/main/java/com/gtocore/data/recipe/classified/Assembler.java",
+        "src/main/java/com/gtocore/data/recipe/classified/AssemblerA.java",
+        "src/main/java/com/gtocore/data/recipe/classified/AssemblyLine.java",
+        "src/main/java/com/gtocore/data/recipe/classified/Vanilla.java",
+        "src/main/java/com/gtocore/data/recipe/classified/ArcFurnace.java",
+        "src/main/java/com/gtocore/data/recipe/classified/PrecisionAssembler.java",
+        "src/main/java/com/gtocore/data/recipe/Temporary.java"
+      ]
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/machine/KerrNewmanHomogenizerRecipes.java",
+      "sha256": "22b2246cf722e4d959ec0fb20acc703e1c08d0812e3d43b9ba69b55d7eb6bbc1",
+      "license": "LGPL-3.0-only",
+      "modification": "Adapt pinned recipe costs to native GTNH recipe maps, native available materials and stack limits; see packaged NOTICE.md and RECIPE_ADAPTATION.md for all substitutions and explicitly omitted unsupported room gates. No modern machine APIs are compiled.",
+      "source_paths": [
+        "src/main/java/com/gtocore/data/recipe/classified/Assembler.java",
+        "src/main/java/com/gtocore/data/recipe/classified/AssemblerA.java",
+        "src/main/java/com/gtocore/data/recipe/classified/AssemblyLine.java",
+        "src/main/java/com/gtocore/data/recipe/classified/Vanilla.java",
+        "src/main/java/com/gtocore/data/recipe/classified/ArcFurnace.java",
+        "src/main/java/com/gtocore/data/recipe/classified/PrecisionAssembler.java",
+        "src/main/java/com/gtocore/data/recipe/Temporary.java"
+      ]
+    }
+  ],
+  "recipe_audit": {
+    "destination": "src/main/resources/META-INF/kerr-newman-port/RECIPE_ADAPTATION.md",
+    "sha256": "6a7536863534187abbf6781d728dd734e6b950af59249f855201e3ec9caa7a88",
+    "license": "MIT",
+    "modification": "Preserve cumulative controller audit and closed-GTOLib boundary; document all native casing material/form/recipe-facility substitutions.",
+    "source_paths": [
+      "src/main/java/com/gtocore/data/recipe/classified/Assembler.java",
+      "src/main/java/com/gtocore/data/recipe/classified/AssemblerA.java",
+      "src/main/java/com/gtocore/data/recipe/classified/AssemblyLine.java",
+      "src/main/java/com/gtocore/data/recipe/classified/Vanilla.java",
+      "src/main/java/com/gtocore/data/recipe/classified/ArcFurnace.java",
+      "src/main/java/com/gtocore/data/recipe/classified/PrecisionAssembler.java",
+      "src/main/java/com/gtocore/data/recipe/Temporary.java"
+    ]
+  }
+}

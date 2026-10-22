@@ -5,6 +5,7 @@ Java 主代码位于 `src/main/java/com/xyp/gtnotgood`。文件目录必须与 `
 ```text
 com/xyp/gtnotgood/
 ├─ client/                 客户端渲染、HUD、输入和界面
+│  └─ render/              渲染器与配套几何计算类
 ├─ common/
 │  ├─ blocks/              Forge 方块、TileEntity 和配套功能逻辑
 │  │  ├─ beekeeping/
@@ -34,6 +35,10 @@ com/xyp/gtnotgood/
 │  │  ├─ mestock/
 │  │  └─ stockio/
 │  ├─ machines/            GregTech 单方块机器、多方块和舱室
+│  │  └─ multiblock/       多方块机器控制器
+│  │     ├─ multiMachineBase/ 多方块机器基类
+│  │     ├─ modularmachine/ 模块化多方块机器控制器
+│  │     └─ structure/     独立结构定义与形状数据加载
 │  ├─ network/             网络消息、处理器及消息注册
 │  ├─ gui/                 通用 GUI 基础、纹理和组件
 │  ├─ recipe/              配方定义
@@ -52,6 +57,12 @@ com/xyp/gtnotgood/
 - `Part` 实现放在 `common.parts.<功能>`。同一功能共享的配置、库存观察和调度逻辑留在该功能子包。
 - 网络消息放在 `common.network` 或其功能子包。`common.blocks.network` 专指可编程网络的方块系统。
 - 配方定义放在 `common.recipe`；通用注册入口放在 `loader`。
+- 普通多方块机器控制器放在 `common.machines.multiblock`，模块化机器控制器放在其 `modularmachine` 子包。
+  基类保留在 `multiMachineBase`，独立结构定义、形状数据加载类放在 `structure`。
+- 模块化机器使用 `GTNGModularMachineBase`；模块仓放在 `common.machines.hatch.modular`，调度与输入预检放在
+  `common.machines.processing`。任务和产物只由控制器持久化。
+- 模块化发电机使用 `GTNGModularGeneratorBase`，复用模块仓与输入事务；`GenerationWork` 保存燃料、剩余发电量和待输出产物。
+- 客户端渲染器及配套几何计算类统一放在扁平包 `client.render`；HUD、输入和界面继续按功能放在 `client` 下。
 - TileEntity 与 GUI、适配器存在紧密的包内访问关系时，保留同一功能子包；客户端专用渲染、HUD 等继续放在 `client`。
 - Mixin 配置 JSON 的 `package` 及其子包是保留命名空间，只放带 `@Mixin` 的顶层类型和 JSON 声明的配置插件。普通运行时辅助类按职责和功能放在保留前缀外的 `common.*` 等包中，例如槽位组件放在 `common.gui.slots`；即使没有列入 Mixin 配置，也不能放进保留包，否则正常类加载会被 Mixin 拒绝。
 - 测试文件在 `src/test/java` 镜像被测功能的包结构；`scripts/qa` 中独立测试夹具保持脚本入口位置。

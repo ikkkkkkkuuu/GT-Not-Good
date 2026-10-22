@@ -1,0 +1,626 @@
+{
+  "uhv_machine_casing": [
+    {
+      "name": "casings_voltage_uhv_bottom",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uhv_top",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uhv_side",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uhv_side",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uhv_side",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uhv_side",
+      "connected": false
+    }
+  ],
+  "uiv_machine_casing": [
+    {
+      "name": "casings_voltage_uiv_bottom",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uiv_top",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uiv_side",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uiv_side",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uiv_side",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uiv_side",
+      "connected": false
+    }
+  ],
+  "uxv_machine_casing": [
+    {
+      "name": "casings_voltage_uxv_bottom",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uxv_top",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uxv_side",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uxv_side",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uxv_side",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uxv_side",
+      "connected": false
+    }
+  ],
+  "computer_heat_vent": [
+    {
+      "name": "casings_hpca_computer_heat_vent_top_bot",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_computer_heat_vent_top_bot",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_computer_heat_vent_side",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_computer_heat_vent_side",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_computer_heat_vent_side",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_computer_heat_vent_side",
+      "connected": true
+    }
+  ],
+  "super_computation_component": [
+    {
+      "name": "casings_hpca_damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "casings_hpca_damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "casings_hpca_damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "casings_hpca_damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "casings_hpca_damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "casings_hpca_damaged_advanced_hpca_component_side",
+      "connected": false
+    }
+  ],
+  "ultimate_stellar_containment_casing": [
+    {
+      "name": "stellar_containment_casing",
+      "connected": true
+    },
+    {
+      "name": "stellar_containment_casing",
+      "connected": true
+    },
+    {
+      "name": "stellar_containment_casing",
+      "connected": true
+    },
+    {
+      "name": "stellar_containment_casing",
+      "connected": true
+    },
+    {
+      "name": "stellar_containment_casing",
+      "connected": true
+    },
+    {
+      "name": "stellar_containment_casing",
+      "connected": true
+    }
+  ],
+  "dragon_strength_tritanium_casing": [
+    {
+      "name": "casings_extreme_strength_tritanium_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_extreme_strength_tritanium_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_extreme_strength_tritanium_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_extreme_strength_tritanium_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_extreme_strength_tritanium_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_extreme_strength_tritanium_casing",
+      "connected": true
+    }
+  ],
+  "high_power_casing": [
+    {
+      "name": "casings_hpca_high_power_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_high_power_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_high_power_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_high_power_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_high_power_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_high_power_casing",
+      "connected": true
+    }
+  ],
+  "uhv_ultimate_battery": [
+    {
+      "name": "casings_battery_uhv_ultimate_top",
+      "connected": false
+    },
+    {
+      "name": "casings_battery_uhv_ultimate_top",
+      "connected": false
+    },
+    {
+      "name": "casings_battery_uhv_ultimate_side",
+      "connected": false
+    },
+    {
+      "name": "casings_battery_uhv_ultimate_side",
+      "connected": false
+    },
+    {
+      "name": "casings_battery_uhv_ultimate_side",
+      "connected": false
+    },
+    {
+      "name": "casings_battery_uhv_ultimate_side",
+      "connected": false
+    }
+  ],
+  "advanced_computer_casing": [
+    {
+      "name": "casings_hpca_advanced_computer_casing_bottom",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_advanced_computer_casing_top",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_advanced_computer_casing_front",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_advanced_computer_casing_back",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_advanced_computer_casing_side",
+      "connected": true
+    },
+    {
+      "name": "casings_hpca_advanced_computer_casing_side",
+      "connected": true
+    }
+  ],
+  "echo_casing": [
+    {
+      "name": "casings_echo_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_echo_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_echo_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_echo_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_echo_casing",
+      "connected": true
+    },
+    {
+      "name": "casings_echo_casing",
+      "connected": true
+    }
+  ],
+  "hyper_core": [
+    {
+      "name": "hyper_core",
+      "connected": false
+    },
+    {
+      "name": "hyper_core",
+      "connected": false
+    },
+    {
+      "name": "hyper_core",
+      "connected": false
+    },
+    {
+      "name": "hyper_core",
+      "connected": false
+    },
+    {
+      "name": "hyper_core",
+      "connected": false
+    },
+    {
+      "name": "hyper_core",
+      "connected": false
+    }
+  ],
+  "fusion_casing_mk5": [
+    {
+      "name": "casings_fusion_fusion_casing_mk5",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_mk5",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_mk5",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_mk5",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_mk5",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_mk5",
+      "connected": true
+    }
+  ],
+  "fusion_casing_mk4": [
+    {
+      "name": "casings_fusion_fusion_casing_mk4",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_mk4",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_mk4",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_mk4",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_mk4",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_mk4",
+      "connected": true
+    }
+  ],
+  "uxv_hermetic_casing": [
+    {
+      "name": "casings_voltage_uxv_bottom",
+      "connected": false
+    },
+    {
+      "name": "casings_voltage_uxv_top",
+      "connected": false
+    },
+    {
+      "name": "uxv_hermetic_side",
+      "connected": false
+    },
+    {
+      "name": "uxv_hermetic_side",
+      "connected": false
+    },
+    {
+      "name": "uxv_hermetic_side",
+      "connected": false
+    },
+    {
+      "name": "uxv_hermetic_side",
+      "connected": false
+    }
+  ],
+  "module_connector": [
+    {
+      "name": "module_connector",
+      "connected": false
+    },
+    {
+      "name": "module_connector",
+      "connected": false
+    },
+    {
+      "name": "module_connector",
+      "connected": false
+    },
+    {
+      "name": "module_connector",
+      "connected": false
+    },
+    {
+      "name": "module_connector",
+      "connected": false
+    },
+    {
+      "name": "module_connector",
+      "connected": false
+    }
+  ],
+  "neutronium_pipe_casing": [
+    {
+      "name": "neutronium_pipe_casing",
+      "connected": false
+    },
+    {
+      "name": "neutronium_pipe_casing",
+      "connected": false
+    },
+    {
+      "name": "neutronium_pipe_casing",
+      "connected": false
+    },
+    {
+      "name": "neutronium_pipe_casing",
+      "connected": false
+    },
+    {
+      "name": "neutronium_pipe_casing",
+      "connected": false
+    },
+    {
+      "name": "neutronium_pipe_casing",
+      "connected": false
+    }
+  ],
+  "restraint_device": [
+    {
+      "name": "restraint_device",
+      "connected": false
+    },
+    {
+      "name": "restraint_device",
+      "connected": false
+    },
+    {
+      "name": "restraint_device",
+      "connected": false
+    },
+    {
+      "name": "restraint_device",
+      "connected": false
+    },
+    {
+      "name": "restraint_device",
+      "connected": false
+    },
+    {
+      "name": "restraint_device",
+      "connected": false
+    }
+  ],
+  "force_field_glass": [
+    {
+      "name": "force_field_glass",
+      "connected": false
+    },
+    {
+      "name": "force_field_glass",
+      "connected": false
+    },
+    {
+      "name": "force_field_glass",
+      "connected": false
+    },
+    {
+      "name": "force_field_glass",
+      "connected": false
+    },
+    {
+      "name": "force_field_glass",
+      "connected": false
+    },
+    {
+      "name": "force_field_glass",
+      "connected": false
+    }
+  ],
+  "dimensional_bridge_casing": [
+    {
+      "name": "dimensional_bridge_casing",
+      "connected": false
+    },
+    {
+      "name": "dimensional_bridge_casing",
+      "connected": false
+    },
+    {
+      "name": "dimensional_bridge_casing",
+      "connected": false
+    },
+    {
+      "name": "dimensional_bridge_casing",
+      "connected": false
+    },
+    {
+      "name": "dimensional_bridge_casing",
+      "connected": false
+    },
+    {
+      "name": "dimensional_bridge_casing",
+      "connected": false
+    }
+  ],
+  "hyper_core_glow": [
+    {
+      "name": "hyper_core_bloom",
+      "connected": false
+    },
+    {
+      "name": "hyper_core_bloom",
+      "connected": false
+    },
+    {
+      "name": "hyper_core_bloom",
+      "connected": false
+    },
+    {
+      "name": "hyper_core_bloom",
+      "connected": false
+    },
+    {
+      "name": "hyper_core_bloom",
+      "connected": false
+    },
+    {
+      "name": "hyper_core_bloom",
+      "connected": false
+    }
+  ],
+  "super_computation_component_active": [
+    {
+      "name": "damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "damaged_advanced_hpca_component_side",
+      "connected": false
+    }
+  ],
+  "super_computation_component_glow": [
+    {
+      "name": "gtlbloom_masks_damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "gtlbloom_masks_damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "gtlbloom_masks_damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "gtlbloom_masks_damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "gtlbloom_masks_damaged_advanced_hpca_component_side",
+      "connected": false
+    },
+    {
+      "name": "gtlbloom_masks_damaged_advanced_hpca_component_side",
+      "connected": false
+    }
+  ],
+  "fusion_casing_mk5_glow": [
+    {
+      "name": "casings_fusion_fusion_casing_bloom",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_bloom",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_bloom",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_bloom",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_bloom",
+      "connected": true
+    },
+    {
+      "name": "casings_fusion_fusion_casing_bloom",
+      "connected": true
+    }
+  ]
+}

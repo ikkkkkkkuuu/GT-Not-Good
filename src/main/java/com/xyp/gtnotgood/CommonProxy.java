@@ -29,8 +29,11 @@ import com.xyp.gtnotgood.common.recipe.gregtech.WirelessEnergyCoverRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.CombProcessingRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.TransmutationRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.DimensionalFocusFluids;
+import com.xyp.gtnotgood.common.recipe.machine.DimensionalFocusRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.EasyWirelessRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.ModularHatchRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SeedConverterRecipes;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessAutoConnect;
@@ -71,6 +74,7 @@ public class CommonProxy {
         FMLCommonHandler.instance().bus().register(new ServerConfigService());
 
         ItemsLoader.registry();
+        DimensionalFocusFluids.init();
         MinecraftForge.EVENT_BUS.register(StructureSearch.INSTANCE);
         FMLCommonHandler.instance().bus().register(StructureSearch.INSTANCE);
         BlockLoader.registry();
@@ -128,6 +132,8 @@ public class CommonProxy {
         OreProcessingRecipes.loadExternalOreRecipes();
         CombProcessingRecipes.loadRecipes();
         TransmutationRecipes.load();
+        DimensionalFocusRecipes.importNativeRecipes();
+        ModularHatchRecipes.applyTstCompatibility();
     }
 
     public void serverStarting(FMLServerStartingEvent event) {}

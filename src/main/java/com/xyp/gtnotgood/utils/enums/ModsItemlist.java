@@ -647,6 +647,8 @@ public enum ModsItemlist {
 
     // 电路装配线
     CircuitAssemblyLine(Mods.GregTech.ID, "gt.blockmachines", MetaTileEntityIDs.CircuitAssemblyLine.ID),
+    // 低速无损超频控制器模块
+    TstLowSpeedPerfectOverclockController(Mods.GregTech.ID, "gt.blockmachines", 18840),
     // 铱合金锭
     IridiumAlloyIngot(Mods.GregTech.ID, "gt.metaitem.01", 32480),
 
@@ -829,6 +831,8 @@ public enum ModsItemlist {
     // 漆黑世界
     DimensionDeepDark(Mods.NEIOrePlugin.ID, "blockDimensionDisplay_DD"),
 
+    // 高能量流电路
+    HighEnergyFlowCircuit(Mods.NewHorizonsCoreMod.ID, "HighEnergyFlowCircuit"),
     // 强化玻璃透镜
     ReinforcedGlassLens(Mods.NewHorizonsCoreMod.ID, "ReinforcedGlassLense"),
     // 神秘水晶透镜

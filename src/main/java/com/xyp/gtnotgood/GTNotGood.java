@@ -37,6 +37,8 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
     name = GTNotGood.NAME,
     guiFactory = "com.xyp.gtnotgood.client.config.GTNGConfigGuiFactory",
     dependencies = "after:" + ModList.ModIds.GT_NOT_LEISURE
+        + ";after:"
+        + ModList.ModIds.TWIST_SPACE_TECHNOLOGY
         + ";after:AWWayofTime;"
         + "required-after:Avaritia;"
         + "after:BloodArsenal;"

@@ -6,11 +6,15 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
+
+import gregtech.api.metatileentity.implementations.gui.ItemDisplayKey;
 
 /** Read-only display snapshots. Native output and EU fields remain owned by recipe execution. */
 public final class WirelessRecipeDisplay {
@@ -20,27 +24,46 @@ public final class WirelessRecipeDisplay {
     static List<NBTTagCompound> rows(List<WirelessWork> tasks, int limit) {
         List<NBTTagCompound> rows = new ArrayList<>();
         for (WirelessWork task : tasks) {
-            WirelessOutputs outputs = task.outputs;
-            for (int i = 0; i < outputs.items.length && rows.size() < limit; i++) {
-                if (outputs.items[i] == null || outputs.itemAmounts[i].signum() <= 0) continue;
-                NBTTagCompound row = row(task, outputs.itemAmounts[i]);
-                row.setTag("item", outputs.items[i].writeToNBT(new NBTTagCompound()));
-                rows.add(row);
-            }
-            for (int i = 0; i < outputs.fluids.length && rows.size() < limit; i++) {
-                if (outputs.fluids[i] == null || outputs.fluidAmounts[i].signum() <= 0) continue;
-                NBTTagCompound row = row(task, outputs.fluidAmounts[i]);
-                row.setTag("fluid", outputs.fluids[i].writeToNBT(new NBTTagCompound()));
-                rows.add(row);
-            }
+            appendRows(rows, task.outputs, task.finished() ? 0 : task.duration, limit);
         }
         return rows;
     }
 
-    private static NBTTagCompound row(WirelessWork task, BigInteger amount) {
+    public static void appendRows(List<NBTTagCompound> rows, WirelessOutputs outputs, int ticks, int limit) {
+        if (rows.size() >= limit) return;
+        Map<ItemDisplayKey, BigInteger> itemAmounts = new LinkedHashMap<>();
+        for (int i = 0; i < outputs.items.length; i++) {
+            if (outputs.items[i] == null || outputs.itemAmounts[i].signum() <= 0) continue;
+            ItemStack item = outputs.items[i];
+            itemAmounts.merge(new ItemDisplayKey(item.getItem(), item.getItemDamage(), item.getTagCompound()),
+                outputs.itemAmounts[i], BigInteger::add);
+        }
+        for (Map.Entry<ItemDisplayKey, BigInteger> entry : itemAmounts.entrySet()) {
+            if (rows.size() >= limit) return;
+            ItemDisplayKey key = entry.getKey();
+            ItemStack item = new ItemStack(key.item(), 1, key.damage());
+            item.setTagCompound(key.nbt());
+            NBTTagCompound row = row(ticks, entry.getValue());
+            row.setTag("item", item.writeToNBT(new NBTTagCompound()).copy());
+            rows.add(row);
+        }
+        Map<FluidStack, BigInteger> fluidAmounts = new LinkedHashMap<>();
+        for (int i = 0; i < outputs.fluids.length; i++) {
+            if (outputs.fluids[i] == null || outputs.fluidAmounts[i].signum() <= 0) continue;
+            fluidAmounts.merge(outputs.fluids[i], outputs.fluidAmounts[i], BigInteger::add);
+        }
+        for (Map.Entry<FluidStack, BigInteger> entry : fluidAmounts.entrySet()) {
+            if (rows.size() >= limit) return;
+            NBTTagCompound row = row(ticks, entry.getValue());
+            row.setTag("fluid", entry.getKey().writeToNBT(new NBTTagCompound()).copy());
+            rows.add(row);
+        }
+    }
+
+    private static NBTTagCompound row(int ticks, BigInteger amount) {
         NBTTagCompound row = new NBTTagCompound();
         row.setString("amount", amount.toString());
-        row.setInteger("ticks", task.finished() ? 0 : task.duration);
+        row.setInteger("ticks", ticks);
         return row;
     }
 

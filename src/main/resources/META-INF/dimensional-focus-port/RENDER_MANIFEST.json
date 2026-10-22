@@ -1,0 +1,212 @@
+{
+  "formatVersion": 1,
+  "component": "Dimensional Focus Engraving Array dynamic core renderer",
+  "rawSources": [
+    {
+      "source": "https://github.com/GregTech-Odyssey/GTOCore",
+      "revision": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "sourcePath": "src/main/java/com/gtocore/client/renderer/machine/DimensionalFocusEngravingArrayRenderer.java",
+      "rawUrl": "https://raw.githubusercontent.com/GregTech-Odyssey/GTOCore/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/machine/DimensionalFocusEngravingArrayRenderer.java",
+      "license": "LGPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/gto/src/main/java/com/gtocore/client/renderer/machine/DimensionalFocusEngravingArrayRenderer.java",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "c4878b2348f81ece4e46c5fae3d492325be50e0ae5116cedf762c7fc17dfc533"
+    },
+    {
+      "source": "https://github.com/GregTech-Odyssey/GTOCore",
+      "revision": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "sourcePath": "src/main/java/com/gtocore/client/renderer/RenderHelper.java",
+      "rawUrl": "https://raw.githubusercontent.com/GregTech-Odyssey/GTOCore/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/RenderHelper.java",
+      "license": "LGPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/gto/src/main/java/com/gtocore/client/renderer/RenderHelper.java",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "aed3f97a3038990c2cdabfe51bf0db05c4b615b051e3de3b5fd691f820e78c1f"
+    },
+    {
+      "source": "https://github.com/GregTech-Odyssey/GTOCore",
+      "revision": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "sourcePath": "gradle.properties",
+      "rawUrl": "https://raw.githubusercontent.com/GregTech-Odyssey/GTOCore/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/gradle.properties",
+      "license": "LGPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/gto/gradle.properties",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "0df30adee4fbf75f7d661c041f337cc698290328be1aa899ec8a576e5f71d7bd"
+    },
+    {
+      "source": "https://github.com/GregTech-Odyssey/GTOCore",
+      "revision": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "sourcePath": "dependencies.gradle",
+      "rawUrl": "https://raw.githubusercontent.com/GregTech-Odyssey/GTOCore/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/dependencies.gradle",
+      "license": "LGPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/gto/dependencies.gradle",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "3036ad2bb8d2ef498958fd6d2caca720d403c80fdaa59560417bd7f2594985a6"
+    },
+    {
+      "source": "https://github.com/GregTech-Odyssey/GTOCore",
+      "revision": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+      "sourcePath": "LICENSE",
+      "rawUrl": "https://raw.githubusercontent.com/GregTech-Odyssey/GTOCore/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/LICENSE",
+      "license": "LGPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/gto/LICENSE",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "packagedLicenseDestination": "META-INF/dimensional-focus-port/LICENSE-GTOCore-LGPL-3.0.txt"
+    },
+    {
+      "source": "https://github.com/GregTech-Odyssey/GregTech-Modern",
+      "revision": "30cfd9fb3de3faee38cab6b36c5ba171ed82ba48",
+      "sourcePath": "src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+      "rawUrl": "https://raw.githubusercontent.com/GregTech-Odyssey/GregTech-Modern/30cfd9fb3de3faee38cab6b36c5ba171ed82ba48/src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+      "license": "LGPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/gtceu-current/src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "92e5248dcde89ad6972e62711693bd7b93b43bee56bab6bb1d8fd949bf6486b5"
+    },
+    {
+      "source": "https://github.com/GregTech-Odyssey/GregTech-Modern",
+      "revision": "30cfd9fb3de3faee38cab6b36c5ba171ed82ba48",
+      "sourcePath": "LICENSE",
+      "rawUrl": "https://raw.githubusercontent.com/GregTech-Odyssey/GregTech-Modern/30cfd9fb3de3faee38cab6b36c5ba171ed82ba48/LICENSE",
+      "license": "LGPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/gtceu-current/LICENSE",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "packagedLicenseDestination": "META-INF/dimensional-focus-port/LICENSE-GTO-GTCEu-LGPL-3.0.txt"
+    },
+    {
+      "source": "https://github.com/GregTech-Odyssey/GregTech-Modern",
+      "revision": "d228b2929332f4a52313cfb798e4780c7c1b3013",
+      "sourcePath": "src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+      "rawUrl": "https://raw.githubusercontent.com/GregTech-Odyssey/GregTech-Modern/d228b2929332f4a52313cfb798e4780c7c1b3013/src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+      "license": "LGPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/gtceu/src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "3a57594a155aeb820d3abb85ee40209d490291602ea98f9f91f82f7c150ba024"
+    },
+    {
+      "source": "https://github.com/GregTech-Odyssey/GregTech-Modern",
+      "revision": "d228b2929332f4a52313cfb798e4780c7c1b3013",
+      "sourcePath": "LICENSE",
+      "rawUrl": "https://raw.githubusercontent.com/GregTech-Odyssey/GregTech-Modern/d228b2929332f4a52313cfb798e4780c7c1b3013/LICENSE",
+      "license": "LGPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/gtceu/LICENSE",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "packagedLicenseDestination": "META-INF/dimensional-focus-port/LICENSE-GTO-GTCEu-LGPL-3.0.txt"
+    },
+    {
+      "source": "https://github.com/Low-Drag-MC/LDLib-MultiLoader",
+      "revision": "5d68947b2fa1db7fdaadf36922973adbd1a2a183",
+      "sourcePath": "common/src/main/java/com/lowdragmc/lowdraglib/utils/ColorUtils.java",
+      "rawUrl": "https://raw.githubusercontent.com/Low-Drag-MC/LDLib-MultiLoader/5d68947b2fa1db7fdaadf36922973adbd1a2a183/common/src/main/java/com/lowdragmc/lowdraglib/utils/ColorUtils.java",
+      "license": "GPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/ldlib/common/src/main/java/com/lowdragmc/lowdraglib/utils/ColorUtils.java",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "974c428670a8e16da10baadfa12ecce8f9aa49291a38a6dc254dc2c3b27d770c"
+    },
+    {
+      "source": "https://github.com/Low-Drag-MC/LDLib-MultiLoader",
+      "revision": "5d68947b2fa1db7fdaadf36922973adbd1a2a183",
+      "sourcePath": "common/src/main/java/com/lowdragmc/lowdraglib/utils/interpolate/Eases.java",
+      "rawUrl": "https://raw.githubusercontent.com/Low-Drag-MC/LDLib-MultiLoader/5d68947b2fa1db7fdaadf36922973adbd1a2a183/common/src/main/java/com/lowdragmc/lowdraglib/utils/interpolate/Eases.java",
+      "license": "GPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/ldlib/common/src/main/java/com/lowdragmc/lowdraglib/utils/interpolate/Eases.java",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "b1b56fe569ce0740830fc5562c057a89b88ec6c957e02551d1f848c6b9819f25"
+    },
+    {
+      "source": "https://github.com/Low-Drag-MC/LDLib-MultiLoader",
+      "revision": "5d68947b2fa1db7fdaadf36922973adbd1a2a183",
+      "sourcePath": "common/src/main/java/com/lowdragmc/lowdraglib/utils/interpolate/IEase.java",
+      "rawUrl": "https://raw.githubusercontent.com/Low-Drag-MC/LDLib-MultiLoader/5d68947b2fa1db7fdaadf36922973adbd1a2a183/common/src/main/java/com/lowdragmc/lowdraglib/utils/interpolate/IEase.java",
+      "license": "GPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/ldlib/common/src/main/java/com/lowdragmc/lowdraglib/utils/interpolate/IEase.java",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "60f6cff05008da5892b53d3b684e9fa22a8c7d061b390ef6020c45fa94fc0f4d"
+    },
+    {
+      "source": "https://github.com/Low-Drag-MC/LDLib-MultiLoader",
+      "revision": "5d68947b2fa1db7fdaadf36922973adbd1a2a183",
+      "sourcePath": "gradle.properties",
+      "rawUrl": "https://raw.githubusercontent.com/Low-Drag-MC/LDLib-MultiLoader/5d68947b2fa1db7fdaadf36922973adbd1a2a183/gradle.properties",
+      "license": "GPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/ldlib/gradle.properties",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "34015e67d9d6f4b3bb54e989fff0c656db93d7afc6460de5d7322cbe9a0ab4ef"
+    },
+    {
+      "source": "https://github.com/Low-Drag-MC/LDLib-MultiLoader",
+      "revision": "5d68947b2fa1db7fdaadf36922973adbd1a2a183",
+      "sourcePath": "LICENSE",
+      "rawUrl": "https://raw.githubusercontent.com/Low-Drag-MC/LDLib-MultiLoader/5d68947b2fa1db7fdaadf36922973adbd1a2a183/LICENSE",
+      "license": "GPL-3.0",
+      "referenceDestination": "reference/dimensional-focus-port/render-upstream/ldlib/LICENSE",
+      "modifications": "None; raw reference copied byte-for-byte and excluded from compilation and resource packaging.",
+      "sha256": "fdfa87e04c2ce5c64a5edfc39aa874a6b04d795fa863089780969342ea8c8534",
+      "packagedLicenseDestination": "META-INF/dimensional-focus-port/LICENSE-LDLib-render-GPL-3.0.txt"
+    }
+  ],
+  "dependencyEvidence": {
+    "gtoCoreRevision": "3121e23241e7f6ccd2e6a8dbd5655962de63ed9a",
+    "declaredGtceuDependency": "com.gregtechceu.gtceu:gtceu-1.20.1-forge-1.20.1:26.7.3",
+    "gtceuReferenceRevision": "30cfd9fb3de3faee38cab6b36c5ba171ed82ba48",
+    "gtceuReferenceNote": "Pinned owning-fork source used by the local renderer. The LIGHT_RING/getLightRing state excerpt is identical to the 2026-07-03 d228b292 snapshot. This is a source-method reference; no claim of byte identity with the unavailable Maven 26.7.3 source JAR is made.",
+    "gtceuCorroborationRevision": "d228b2929332f4a52313cfb798e4780c7c1b3013",
+    "actualLdlibDependency": "curse.maven:ldlib-626676:7809449",
+    "actualLdlibVersion": "1.0.50",
+    "ldlibVersionEvidence": "https://www.curseforge.com/minecraft/mc-mods/ldlib/files/7809449",
+    "unusedLdlibProperty": "gradle.properties declares ldlib_version=1.0.48, but dependencies.gradle uses file 7809449 instead."
+  },
+  "artworkRequired": false,
+  "renderState": {
+    "format": "POSITION_COLOR",
+    "primitive": "TRIANGLE_STRIP",
+    "culling": false,
+    "shader": "Minecraft built-in POSITION_COLOR_SHADER",
+    "transparency": "TRANSLUCENT_TRANSPARENCY",
+    "texture": null,
+    "customShader": null,
+    "normalizedStateExcerptSha256": "2b173c1a55a883b379442513f4bfef610973597c86324357607b5994fb858430",
+    "depthTest": "LEQUAL (default composite state)",
+    "writeMask": "COLOR_DEPTH_WRITE (default composite state)"
+  },
+  "geometry": {
+    "cylinders": 6,
+    "radius": 0.5,
+    "height": 8.0,
+    "sides": 10,
+    "controllerRelativeCenter": "(0.5, -17.5, 0.5) plus 22 blocks inward along front-facing axis",
+    "pulse": "0.1 + (abs((abs(offsetTimer % 100) + partialTicks) - 50) / 50)^2; blend coil ARGB toward white with upper-clamped integer channels."
+  },
+  "adaptations": [
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/render/DimensionalFocusCoreGeometry.java",
+      "license": "GPL-3.0-only",
+      "modifications": "Preserve cylinder radius/height/sides, all six cumulative rotations, the 360-vertex TRIANGLE_STRIP stream, quadratic pulse and LDLib ARGB rounding/clamping; replace PoseStack/JOML with local arithmetic and Minecraft 1.7.10 MathHelper.",
+      "destinationSha256": "e427b41cca6d4e9cff64e989234bcaf6c615d849754795913f2c41a7ade2bac6",
+      "sources": [
+        "https://raw.githubusercontent.com/GregTech-Odyssey/GTOCore/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/machine/DimensionalFocusEngravingArrayRenderer.java",
+        "https://raw.githubusercontent.com/GregTech-Odyssey/GTOCore/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/RenderHelper.java",
+        "https://raw.githubusercontent.com/GregTech-Odyssey/GregTech-Modern/30cfd9fb3de3faee38cab6b36c5ba171ed82ba48/src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+        "https://raw.githubusercontent.com/GregTech-Odyssey/GregTech-Modern/d228b2929332f4a52313cfb798e4780c7c1b3013/src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+        "https://raw.githubusercontent.com/Low-Drag-MC/LDLib-MultiLoader/5d68947b2fa1db7fdaadf36922973adbd1a2a183/common/src/main/java/com/lowdragmc/lowdraglib/utils/ColorUtils.java",
+        "https://raw.githubusercontent.com/Low-Drag-MC/LDLib-MultiLoader/5d68947b2fa1db7fdaadf36922973adbd1a2a183/common/src/main/java/com/lowdragmc/lowdraglib/utils/interpolate/Eases.java"
+      ]
+    },
+    {
+      "destination": "src/main/java/com/xyp/gtnotgood/client/render/DimensionalFocusCoreRenderer.java",
+      "license": "GPL-3.0-only",
+      "modifications": "Replace modern WorkableCasingMachineRenderer/PoseStack/MultiBufferSource with a client-side Forge 1.7.10 world render hook, native OpenGL triangle strip rendering and local controller state. Use installed GTNHLib for the optional native bloom path; preserve the upstream untextured fallback.",
+      "destinationSha256": "67f6c6c490b6b2c8b3e766ac8877ecbce1da707540eb088274ee617946499587",
+      "sources": [
+        "https://raw.githubusercontent.com/GregTech-Odyssey/GTOCore/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/machine/DimensionalFocusEngravingArrayRenderer.java",
+        "https://raw.githubusercontent.com/GregTech-Odyssey/GTOCore/3121e23241e7f6ccd2e6a8dbd5655962de63ed9a/src/main/java/com/gtocore/client/renderer/RenderHelper.java",
+        "https://raw.githubusercontent.com/GregTech-Odyssey/GregTech-Modern/30cfd9fb3de3faee38cab6b36c5ba171ed82ba48/src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+        "https://raw.githubusercontent.com/GregTech-Odyssey/GregTech-Modern/d228b2929332f4a52313cfb798e4780c7c1b3013/src/main/java/com/gregtechceu/gtceu/client/renderer/GTRenderTypes.java",
+        "https://raw.githubusercontent.com/Low-Drag-MC/LDLib-MultiLoader/5d68947b2fa1db7fdaadf36922973adbd1a2a183/common/src/main/java/com/lowdragmc/lowdraglib/utils/ColorUtils.java",
+        "https://raw.githubusercontent.com/Low-Drag-MC/LDLib-MultiLoader/5d68947b2fa1db7fdaadf36922973adbd1a2a183/common/src/main/java/com/lowdragmc/lowdraglib/utils/interpolate/Eases.java"
+      ]
+    }
+  ]
+}

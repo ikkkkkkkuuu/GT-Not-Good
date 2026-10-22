@@ -2,40 +2,199 @@ package com.xyp.gtnotgood.common.gui.modularui.multiblock.base;
 
 import static gregtech.api.metatileentity.BaseTileEntity.TOOLTIP_DELAY;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
+import net.minecraftforge.fluids.FluidStack;
+
 import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.DynamicLinkedSyncHandler;
+import com.cleanroommc.modularui.value.sync.GenericListSyncHandler;
+import com.cleanroommc.modularui.value.sync.GenericSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.DynamicSyncedWidget;
+import com.cleanroommc.modularui.widgets.FluidDisplayWidget;
+import com.cleanroommc.modularui.widgets.ItemDisplayWidget;
+import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.xyp.gtnotgood.common.gui.modularui.GTNGGuiTextures;
+import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGModularMachineBase;
+import com.xyp.gtnotgood.common.machines.processing.ModuleWorkDisplay;
+import com.xyp.gtnotgood.common.wireless.WirelessRecipeDisplay;
 
 import gregtech.api.metatileentity.implementations.MTEMultiBlockBase;
+import gregtech.api.modularui2.GTWidgetThemes;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 
-/**
- * Applies GT Not Good's modern GUI textures to the standard GregTech multiblock panel.
- * <p>
- * The class keeps GregTech's existing multiblock GUI behavior and only wraps the visual surfaces: background panels,
- * button textures, overlays, slot backgrounds, and the logo. State changes still flow through the upstream
- * {@link MTEMultiBlockBaseGui} implementation, preserving its server/client synchronization rules.
- *
- * @param <T> concrete GregTech multiblock type displayed by this GUI
- */
 public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MTEMultiBlockBaseGui<T> {
 
     public GTNGModernMultiBlockBaseGui(T multiblock) {
         super(multiblock);
+    }
+
+    @Override
+    protected void registerSyncValues(PanelSyncManager syncManager) {
+        super.registerSyncValues(syncManager);
+        if (!(multiblock instanceof GTNGModularMachineBase<?>modular)) return;
+        GenericSyncValue<NBTTagCompound, ?> progress = GenericSyncValue.builder(NBTTagCompound.class)
+            .getter(modular::getDisplayedModuleProgress).deserializer(PacketBuffer::readNBTTagCompoundFromBuffer)
+            .serializer(PacketBuffer::writeNBTTagCompoundToBuffer).equals(Objects::equals)
+            .copy(value -> (NBTTagCompound) value.copy()).build();
+        syncManager.syncValue("gtngModuleProgress", progress);
+        GenericListSyncHandler<NBTTagCompound> tasks = new GenericListSyncHandler<>(
+            () -> modular.getDisplayedModuleTasks(128), ignored -> {}, PacketBuffer::readNBTTagCompoundFromBuffer,
+            PacketBuffer::writeNBTTagCompoundToBuffer, Objects::equals, value -> (NBTTagCompound) value.copy());
+        syncManager.syncValue("gtngModuleTasks", tasks);
+        syncManager.syncValue("gtngModuleTaskWidget",
+            new DynamicLinkedSyncHandler<>(tasks).widgetProvider((sync, value) -> {
+                Flow column = Flow.column().coverChildrenHeight(0).crossAxisAlignment(Alignment.CrossAxis.START);
+                for (NBTTagCompound task : value.getValue()) column.child(createModuleTaskGroup(task, progress));
+                return column;
+            }));
+    }
+
+    @Override
+    protected ListWidget<IWidget, ?> createTerminalTextWidget(PanelSyncManager syncManager, ModularPanel parent) {
+        ListWidget<IWidget, ?> terminal = super.createTerminalTextWidget(syncManager, parent);
+        if (multiblock instanceof GTNGModularMachineBase<?>) {
+            terminal.name("gtngModuleTerminal");
+            DynamicLinkedSyncHandler<?> tasks = syncManager.findSyncHandler("gtngModuleTaskWidget",
+                DynamicLinkedSyncHandler.class);
+            terminal.child(new DynamicSyncedWidget<>().syncHandler(tasks).fullWidth().coverChildrenHeight(0));
+        }
+        return terminal;
+    }
+
+    private IWidget createModuleTaskGroup(NBTTagCompound task, GenericSyncValue<NBTTagCompound, ?> progress) {
+        String core = task.getString("core");
+        int duration = task.getInteger("duration");
+        Flow group = Flow.column().name("gtngModuleTask:" + core).fullWidth().coverChildrenHeight(0)
+            .crossAxisAlignment(Alignment.CrossAxis.START).marginBottom(4)
+            .child(new TextWidget<>(IKey.str(EnumChatFormatting.GOLD + moduleTaskName(task))).height(9).scale(0.8f));
+        String[] position = core.split(":");
+        if (position.length == 4) group.tooltip(t -> {
+            // #tr gtng.modular.gui.position
+            // # Position: %s, %s, %s
+            // # zh_CN 位置：%s, %s, %s
+            t.addLine(StatCollector.translateToLocalFormatted("gtng.modular.gui.position", position[1], position[2],
+                position[3]));
+        });
+        if (duration > 0) {
+            group.child(new TextWidget<>(
+                IKey.dynamic(() -> ModuleWorkDisplay.progress(progress.getValue().getInteger(core), duration)))
+                    .name("gtngModuleProgress:" + core).fullWidth().marginBottom(2));
+        } else {
+            // #tr gtng.modular.gui.idle
+            // # Idle
+            // # zh_CN 空闲
+            group.child(
+                IKey.lang("gtng.modular.gui.idle").color(Color.WHITE.main).asWidget().fullWidth().marginBottom(2));
+        }
+        if (task.getBoolean("paused")) {
+            group.child(IKey.lang("gtng.module.core.paused").asWidget().fullWidth().marginBottom(2));
+        } else if (task.getBoolean("finished")) {
+            // #tr gtng.modular.gui.waiting_output
+            // # Waiting for output space
+            // # zh_CN 等待输出空间
+            group.child(IKey.lang("gtng.modular.gui.waiting_output").color(Color.YELLOW.main).asWidget().fullWidth()
+                .marginBottom(2));
+        }
+        NBTTagList outputs = task.getTagList("outputs", 10);
+        List<NBTTagCompound> rows = new ArrayList<>();
+        for (int i = 0; i < outputs.tagCount(); i++) rows.add(outputs.getCompoundTagAt(i));
+        rows.sort((first, second) -> {
+            int kind = Boolean.compare(first.hasKey("fluid"), second.hasKey("fluid"));
+            if (kind != 0) return kind;
+            int amount = new BigInteger(second.getString("amount"))
+                .compareTo(new BigInteger(first.getString("amount")));
+            if (amount != 0) return amount;
+            int name = WirelessRecipeDisplay.name(first).compareTo(WirelessRecipeDisplay.name(second));
+            return first.hasKey("fluid") ? -name : name;
+        });
+        for (NBTTagCompound row : rows) group.child(createModuleOutputRow(row));
+        return group;
+    }
+
+    private String moduleTaskName(NBTTagCompound task) {
+        String core = task.getString("core");
+        if (core.equals("controller")) {
+            // #tr gtng.modular.gui.controller
+            // # Controller
+            // # zh_CN 主机
+            return StatCollector.translateToLocal("gtng.modular.gui.controller");
+        }
+        if (core.startsWith("wireless:")) {
+            // #tr gtng.modular.gui.wireless
+            // # Controller wireless task %s
+            // # zh_CN 主机无线任务 %s
+            return StatCollector.translateToLocalFormatted("gtng.modular.gui.wireless", core.substring(9));
+        }
+        String type = switch (task.getString("type")) {
+            // #tr gtng.modular.gui.advanced
+            // # Advanced
+            // # zh_CN 高级
+            case "Advanced" -> StatCollector.translateToLocal("gtng.modular.gui.advanced");
+            // #tr gtng.modular.gui.perfect
+            // # Perfect
+            // # zh_CN 完美
+            case "Perfect" -> StatCollector.translateToLocal("gtng.modular.gui.perfect");
+            // #tr gtng.modular.gui.normal
+            // # Normal
+            // # zh_CN 普通
+            default -> StatCollector.translateToLocal("gtng.modular.gui.normal");
+        };
+        // #tr gtng.modular.gui.core
+        // # Core %s (%s)
+        // # zh_CN 附加核心 %s（%s）
+        return StatCollector.translateToLocalFormatted("gtng.modular.gui.core", task.getInteger("index"), type);
+    }
+
+    protected IWidget createModuleOutputRow(NBTTagCompound row) {
+        IWidget icon;
+        if (row.hasKey("item")) {
+            ItemStack item = ItemStack.loadItemStackFromNBT(row.getCompoundTag("item"));
+            icon = new ItemDisplayWidget().item(item).displayAmount(false).disableThemeBackground(true)
+                .disableHoverThemeBackground(true).widgetTheme(GTWidgetThemes.BACKGROUND_TERMINAL).size(14)
+                .marginRight(2);
+        } else {
+            FluidStack fluid = FluidStack.loadFluidStackFromNBT(row.getCompoundTag("fluid"));
+            icon = new FluidDisplayWidget().value(fluid).displayAmount(false).disableThemeBackground(true)
+                .disableHoverThemeBackground(true).widgetTheme(GTWidgetThemes.BACKGROUND_TERMINAL).size(14)
+                .marginRight(2);
+        }
+        String name = WirelessRecipeDisplay.name(row);
+        return Flow.row().widthRel(0.85f).height(15).child(icon)
+            .child(Flow.column().name("gtngRecipeOutputText").coverChildren(0)
+                .crossAxisAlignment(Alignment.CrossAxis.START)
+                .child(new TextWidget<>(IKey.str(EnumChatFormatting.AQUA + name)).height(8).scale(0.75f)
+                    .textAlign(Alignment.CenterLeft))
+                .child(new TextWidget<>(IKey.str(RecipeOutputFormatting.amountLine(row))).height(6).scale(0.6f)
+                    .textAlign(Alignment.CenterLeft))
+                .tooltip(t -> t.addLine(RecipeOutputFormatting.tooltip(row))));
     }
 
     @Override

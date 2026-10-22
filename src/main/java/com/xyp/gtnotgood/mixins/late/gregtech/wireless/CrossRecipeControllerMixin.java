@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGModularMachineBase;
 import com.xyp.gtnotgood.common.wireless.WirelessCompatibility;
 import com.xyp.gtnotgood.common.wireless.WirelessControllerAccess;
 import com.xyp.gtnotgood.common.wireless.WirelessRecipeAttempt;
@@ -74,6 +75,7 @@ public abstract class CrossRecipeControllerMixin implements WirelessControllerAc
     @Inject(method = "checkRecipe()Z", at = @At("HEAD"), cancellable = true, require = 1)
     private void gtng$requireScheduler(CallbackInfoReturnable<Boolean> cir) {
         MTEMultiBlockBase machine = (MTEMultiBlockBase) (Object) this;
+        if (machine instanceof GTNGModularMachineBase<?>) return;
         if (WirelessRecipeAttempt.current() == null && WirelessRecipeScheduler.find(machine) != null) {
             machine.setCheckRecipeResult(CheckRecipeResultRegistry.NO_RECIPE);
             cir.setReturnValue(false);
@@ -118,6 +120,7 @@ public abstract class CrossRecipeControllerMixin implements WirelessControllerAc
     @Inject(method = "getWailaNBTData", at = @At("RETURN"), require = 1)
     private void gtng$hud(EntityPlayerMP player, TileEntity tile, NBTTagCompound tag, World world, int x, int y, int z,
         CallbackInfo ci) {
+        if ((Object) this instanceof GTNGModularMachineBase<?>) return;
         if (gtng$wireless.size() == 0 && WirelessRecipeScheduler.find((MTEMultiBlockBase) (Object) this) == null)
             return;
         tag.setInteger("gtngCrossCount", gtng$wireless.size());

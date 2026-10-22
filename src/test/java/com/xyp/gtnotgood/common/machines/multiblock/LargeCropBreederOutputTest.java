@@ -16,11 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,6 +31,8 @@ import org.objectweb.asm.commons.SimpleRemapper;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import com.xyp.gtnotgood.utils.HeadlessItemRegistry;
+
 import gregtech.api.enums.OutputBusType;
 import gregtech.api.enums.VoidingMode;
 import gregtech.api.interfaces.IOutputBus;
@@ -44,7 +44,6 @@ import gregtech.api.recipe.check.CheckRecipeResult;
 import gregtech.api.recipe.check.CheckRecipeResultRegistry;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.VoidProtectionHelper;
-import sun.misc.Unsafe;
 
 public class LargeCropBreederOutputTest {
 
@@ -52,20 +51,12 @@ public class LargeCropBreederOutputTest {
     private static Method prepare;
     private static Method running;
     private static Method settle;
-    private static Unsafe unsafe;
-    private static Field featherField;
-    private static Item originalFeather;
     private Controller controller;
     private Item seed;
 
     @BeforeClass
     public static void loadProductionOutput() throws Exception {
-        Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
-        unsafeField.setAccessible(true);
-        unsafe = (Unsafe) unsafeField.get(null);
-        featherField = Items.class.getDeclaredField("feather");
-        originalFeather = Items.feather;
-        if (originalFeather == null) setFeather(new Item());
+        HeadlessItemRegistry.bootstrap();
         String source = "com/xyp/gtnotgood/common/machines/multiblock/LargeCropBreeder";
         String fixture = source + "OutputFixture";
         ClassNode node = new ClassNode();
@@ -106,15 +97,6 @@ public class LargeCropBreederOutputTest {
         running = fixtureClass.getMethod("onRunningTick", ItemStack.class);
         settle = fixtureClass.getDeclaredMethod("settleActiveOperation");
         settle.setAccessible(true);
-    }
-
-    @AfterClass
-    public static void restoreVanillaItem() {
-        if (featherField != null && originalFeather == null) setFeather(null);
-    }
-
-    private static void setFeather(Item item) {
-        unsafe.putObject(unsafe.staticFieldBase(featherField), unsafe.staticFieldOffset(featherField), item);
     }
 
     @Before
