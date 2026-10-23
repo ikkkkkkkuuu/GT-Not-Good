@@ -1,13 +1,16 @@
 # 当前开发进度
 
-## 1.6.7 发布与多方块 IDE 诊断（2026-10-23，进行中）
+## 1.6.7 发布与多方块 IDE 诊断（2026-10-23，已发布，IDE 待验证修复）
 
-- 目标：执行用户“提交并更新”的完整授权，同时检查所有多方块的 IVoidable 抽象方法误报。最新已发布版本 1.6.6，HEAD c70251eb；本次目标版本 1.6.7，覆盖此前全部有效未发布改动。
-- IDE 证据：固定 GT5 5.09.54.205 源码及 javap 的基础/17/21/25 视图均确认 MTEMultiBlockBase 提供 canDumpItemToME 与 canDumpFluidToME 的具体实现；QuantumComputer 经 GTNGMultiBlockBase 继承。IDE 项目默认 17、SDK zulu-25，但外部导入模型的 main 已为 JDK_25、依赖版本正确，不能把默认级别差异当成唯一根因。已告知改项目默认为 25 并重新加载 Gradle；未添加冗余实现，也未声称已观察到红线消失。
-- 发布准备：GitHub 最新 release 与写权限已确认；忽略堆转储 *.hprof，保留原诊断文件。Java 文档补充 IDEA 同步与验证边界。等大型熔炉当前透明叠层 QA 收尾后，完成集成检查、中文说明、README、提交/推送/tag/release 与资产核验；这些步骤尚未写成完成。
-- 后续诊断：用户确认改为 25 并重新加载 Gradle 后仍标红；主模块 138 个库扫描未发现重复 GT5 类，具体方法为 ACC_PUBLIC、有 Code 实现。已建议使用 JetBrains Repair IDE 重新扫描索引；尚未收到修复后的结果，根因未最终定位，不将 IDE 问题写成已修复。
-- 集成检查：大型熔炉透明叠层已完成并行 QA；完整当前工作区 spotlessApply build networkRegression 退出 0、27s，日志 .gradle/java-migration/release-build.log。705 项单元测试无失败（1 项既有跳过）、12 项网络回归通过；Checkstyle、Spotless 和 JAR 打包通过，结构检查 1583 Java / 3381 imports / 161 mixins / 179 reserved / 364 QA paths 通过。README 和 .changelogs/1.6.7.md 已覆盖全部九类有效变化；未把历史中已撤销的灰色边框、三模式/研究检查写入最终说明。
-- 暂存审计：新增动画元数据的 Windows CRLF 被既有策略报为尾空白，其他新移植文件则会被 Git 规范化而改变清单哈希。补齐新移植目录的 -text 与 mcmeta 的 cr-at-eol 规则，并重新暂存；逐个比对原始 blob，所有新来源/资产记录字节保持一致，仅普通说明和生成 lang 保留原有 LF 规范化。git diff --cached --check 通过，堆转储、缓存、日志和凭据未纳入提交。源资源本身未改动。
+- 目标与结果：用户“提交并更新”授权已执行；基线 1.6.6 / c70251eb，发布提交 3b491cfcdb5101f7c528c4e1c9604f5b249f7b34，main 与标签 1.6.7 已原子推送。Release https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.7 已公开，标题与中文正文覆盖全部九类有效变化，README 下载链接已更新。
+- 集成验证：发布前 release-build.log 退出 0、27s；标签状态下 release-tag-build.log 再次执行 spotlessApply build networkRegression 退出 0、33s。705 项单元测试无失败（1 项既有跳过）、12 项网络回归通过；Checkstyle、Spotless、打包及结构检查 1583 Java / 3381 imports / 161 mixins / 179 reserved / 364 QA paths 通过。GitHub Build/Test 39950405532 与 Release 39950406159 均成功。
+- 资产与链接：普通、dev、sources 三份 1.6.7 JAR 已发布；删除本次 CI 误上传的 predowngrade / dev-preshadow 中间产物。Release 页面、README 普通 JAR 和 sources 下载链接均 HTTP 200，长度分别为 31,943,149 与 24,678,762 字节。GitHub 返回普通 JAR SHA-256 f18b3d06b56b101a83489fdcb62d05b269067804da0e77f7ec36727bacb9e9f9，元数据保存在 .gradle/java-migration/final-release.json。
+- 本地产物审计：1,556 项移植资源在工作区、Git 标签与游戏/dev JAR 中逐项哈希一致；ZIP、版本元数据、多版本字节码、refmap、来源清单和 sources 内容通过。未包含标签之后新增的资源。报告 .gradle/java-migration/release-audit.json；不把不同平台本地构建的整体哈希冒认为 CI 资产哈希。
+- Git 字节保护：补齐新移植目录的 -text 与动画元数据 cr-at-eol，避免 CRLF 规范化改变来源清单哈希；原始 blob 核对及暂存空白检查通过。*.hprof 已忽略，原堆转储保留；缓存、日志、凭据未提交。
+- IDE 已确认事实：用户改为项目级别 25、重新导入后仍标红，主模块 138 个库没有重复 GT5。固定 GT5 的源码及 javap 基础/17/21/25 视图均确认 MTEMultiBlockBase 具体实现两个 canDump 方法，QuantumComputer 正常继承；未补重复方法或改为抽象类。
+- IDE 主要线索：截图中 GTUtility.ItemId 也标红；GT5 的外部类最高在 Java 21 目录，ItemId / FluidId 在 Java 17 目录。本机 IDEA 2025.3.1.1 的 ClsFileImpl$1.findInnerClass 仅查询同目录内部类，与 JetBrains 当前源码一致，指向多版本 JAR 嵌套类解析问题。详情见 docs/development/java.md；生成的扁平 Java 25 诊断副本仅在忽略目录，未应用到 IDE 或实际依赖。
+- GTNL 对照：本地 dev-290 使用相同 GT5 5.09.54.205 缓存 JAR、相同 Java 25 / JVM Downgrader 路线及同类继承和 ItemId 用法。GTNL 的插件/Gradle 较新，但未发现针对该解析问题的处理；用户回答不知道 GTNL 编辑器是否无红线，不能把它当作已确认的差异。
+- 剩余与边界：发布流程完成；IDE 红线尚未验证消除，不能把构建、运行成功写成编辑器已修复。保留其他聊天在发布后新增的 machine-front-overlays 工作，不并入已发布标签，不擅自升级依赖。
 
 ## 全项目静态审查与 GTNL 目录对照（2026-10-23，已完成）
 

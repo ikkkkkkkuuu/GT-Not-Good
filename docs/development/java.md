@@ -34,7 +34,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/Invoke-Gradle.ps
 - 项目 SDK 选择 JDK 25，项目语言级别选择 25（非 Preview）。改动构建配置后，在 Gradle 面板重新加载所有项目，等待导入与索引完成；构建和测试委托给 Gradle，确保执行降级与打包任务。
 - 主源码与测试模块应使用 Java 25；原版 Minecraft、启动器等辅助模块保留插件给定的级别，不要强制把所有模块改成 25。项目默认级别与模块级别可以不同。
 - 若所有多方块都提示未实现 `IVoidable.canDumpItemToME(List<ItemId>)`，先检查依赖与索引。固定 GT5 5.09.54.205 的 `MTEMultiBlockBase` 已实现该方法及流体对应方法，GTNG 基类会继承；已核对源码、基础 JAR 和各多版本视图的签名，无需逐台添加重复方法或将控制器改成抽象类。
-- 本机排查时，项目默认仍为 17，但主模块已为 25、GT5 依赖正确，因此默认级别差异不能单独证明误报根因。若重新导入后仍显示错误，可使用 IDEA 的 Repair IDE 重新扫描/索引，再检查跳转到的父类；Gradle 编译通过不等于已经验证 IDE 红线消失。
+- 本机已把项目默认级别改为 25 并重新加载 Gradle，用户确认仍标红；主模块 138 个库未发现重复 GT5 类。截图中 `GTUtility.ItemId` 自身也无法解析，因此不能再仅以语言级别或缓存解释。
+- GT5 的 `GTUtility` 外部类最高位于 Java 21 目录，`ItemId` / `FluidId` 内部类最高位于 Java 17 目录。JVM 可以逐类选择版本；本机 IDEA 2025.3.1.1 的 `ClsFileImpl$1.findInnerClass` 字节码却只在外部类所在目录查找内部类文件，与 [JetBrains 源码](https://github.com/JetBrains/intellij-community/blob/master/java/java-psi-impl/src/com/intellij/psi/impl/compiled/ClsFileImpl.java#L625)一致。这是目前对嵌套类型解析失败及继承方法连锁误报的主要解释；尚未在 IDE 中验证修复。
+- 本地 GTNL dev-290 使用同一个 GT5 5.09.54.205 缓存 JAR，同样继承该多方块基类并引用 `GTUtility.ItemId`。它的 GTNHGradle / Gradle 版本较新，但未发现专门处理上述内部类问题的逻辑；用户没有确认 GTNL 在 IDEA 中无红线，不能据此归因于本项目代码。
+- 已在忽略目录 `.gradle/idea-libraries/` 生成 Java 25 逐类选择后的扁平 GT5 诊断副本，核对 19,505 项内容与原 JAR 对应条目一致；仅供后续验证 IDE 解析。未替换 Gradle 依赖、IDE 库或发布产物，不把生成副本写成 IDE 已修复。
 
 IDE 导入设置参考 [JetBrains Gradle 文档](https://www.jetbrains.com/help/idea/gradle.html)。发布 JAR 的 Java 8 基础兼容由 JVM Downgrader 保持，与 IDE 源码语言级别分别配置。
 
