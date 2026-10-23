@@ -1,13 +1,27 @@
 # 当前开发进度
 
-## 1.6.9 提交与发布（2026-10-24，发布准备中）
+## 工业中枢塔 24 模块结构示意图（2026-10-24，已完成）
+
+- 用户要求：先画主机 31×31 和 24 个模块位置，查看整体效果。沿用双层、每面三位、模块 7×7×9 与暂定高度 31，没有新增玩法或改动已确认的维持费。
+- 交付：当前聊天可视化目录中的 industrial-tower-24-layout.html，立体骨架示意配两层完整俯视图；下层 01–12、上层 13–24，标明主机 31×31、暂定高 31、外挂后 49×49 和下层主控制器。支持四个视角切换、点选/下拉定位，按两层着色；编号映射已写回设计初稿。
+- 验证：读取实际绘图数据核对 24 个唯一编号、所有模块与主机及彼此无包围盒重叠。使用捆绑 Node/Playwright 和独立 headless Chrome 检查桌面与 360px 窄屏；模块定位和视角切换通过，页面异常 0，无水平溢出或 SVG 文字越界。已查看明暗主题及窄屏图片；预览包装器窄屏整图截图受到 iframe 裁切，上层改为单独定位截图，确认 13–24 全部可见，未误称该整图截图完整。
+- 工具尝试：首次预览覆盖需要 --force，Playwright 缺少自带浏览器；改用已核实安装路径启动独立无头 Chrome 完成验证，没有操作用户浏览器会话。证据和检查脚本在 C:/Users/Administrator/.codex/visualizations/2026/10/23/01a16952-c8ef-75f1-964a-c11f9ae9f283/。
+- 状态：本轮结构位置示意已完成；几何为占位设计，不宣称逐格材料清单、实际成型或游戏材质已完成。后续按用户对整体效果的反馈调整，再确定模块种类及精细蓝图；保留并行任务的代码/QA/发布改动，本轮未构建、提交或发布。
+
+## 1.6.9 提交与发布（2026-10-24，已完成）
 
 - 授权与范围：用户“提交并更新”授权完整发布；基线 main / origin/main 3a29b242，上次公开标签 1.6.8。汇总穿梭机图纸固定原料内存修复、十三条对撞机元素配方、对应 QA 与诊断文档，以及工业中枢塔 24 模块设计初稿；设计初稿不冒充游戏功能。
 - 准备：README 当前版本、对应下载链接及中文说明已更新到 1.6.9，保留历史版本说明。发布正文放 .gradle/release-1.6.9/release-notes.md；生产构建配置与依赖版本未变。
 - 发布前验证：scripts/dev/Invoke-Gradle.ps1，隔离输出 D:/CodexTools/GTNGRelease-1.6.9，完整 spotlessApply build networkRegression --offline 退出 0、30s，日志 .gradle/release-1.6.9/build.log。结构检查通过（1586 Java / 3414 imports / 161 mixins / 179 reserved / 385 QA paths）。功能实机证据沿用下方已完成任务，不把历史测试记成本轮重跑。
 - 测试与审计：705 项单测零失败/错误、1 项既有跳过，12 项网络回归通过；audit-index.json 核对 8138 项资源/来源文件、基础与多版本字节码、refmap、无 QA 类、无已撤回索引/Mixin 类及图纸修复分支，普通/dev JAR 通过。
 - 重复构建：build-repeat.log 在 downgradeMainClasses 出现 HashMap Node/TreeNode ClassCastException；原样重试 build-retry.log 退出 0、3s，37 UP-TO-DATE、configuration cache reused。保留失败日志，未将第三方工具的偶发异常描述成已修复。
-- 剩余：提交并推送 main 和 1.6.9，验证标签产物；等待 CI、确认中文 Release 与正式资产，再验证下载内容和 README 链接。当前尚未声称推送或发布完成。
+- 提交与标签：发布提交 f47e75328dc62dbc120a6153a5dc9e71de413d3e，main 和 1.6.9 已原子推送并通过远端 SHA 核对。首次 Schannel TLS 握手失败，单次命令使用 OpenSSL 后成功，未修改全局 Git 配置。
+- 标签验证：tag-build.log 退出 0、32s，完整构建与测试通过；重复 tag-build-repeat.log 退出 0、1s，38 UP-TO-DATE、configuration cache reused。audit-tag.json 核对精确 1.6.9 普通/dev/sources JAR、资源与标签一致，包含固定图纸分支，没有 QA 或已撤回索引类。
+- 云端发布：Build and test 39985833840、Release tagged build 39985833152 均 completed/success；云端服务端与资产检查通过。https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.9 已公开，中文标题/正文覆盖全部累计有效改动，已设为最新版本。删除 CI 自动上传的 predowngrade/dev-preshadow 中间包，保留普通/dev/sources 三份正式资产。
+- 链接：发布页和三个资产 HEAD 均 HTTP 200，资产大小与 GitHub 元数据一致；标签中的 README 当前链接与实际发布页、游戏包和源码包一致。
+- 实际下载：普通游戏 JAR 为 32,237,127 字节，SHA-256 c351d317ec563e6abcf6c7476b0c5c41dc86efaa2689f6f11f8a38df9497421b，与 GitHub digest 一致。ZIP、1.6.9 版本、Multi-Release、图纸修复分支、无 QA/已撤回索引类及 7,826 项纹理/动画/结构/来源文件与标签逐字节核对通过，报告 .gradle/release-1.6.9/download-verification.json。
+- 下载尝试：本机慢连接导致原 120s 超时反复从头下载，仅结束本次校验脚本及其 curl 子进程后改用断点续传，最终 HTTP 206 / curl 退出 0；verify-download-final.log 退出 0。失败/中断日志保留，不将链接可访问代替内容核验。
+- 状态：代码提交、推送、标签、两项 GitHub 工作流、中文 Release、正式资产、README 链接和实际下载核验全部完成，无剩余发布必做项。本次补记以文档提交保存，不移动发布标签；未替换用户客户端或服务器文件。
 
 ## 加载 99% 配方索引内存溢出（2026-10-24，固定图纸原料并验证完成）
 
