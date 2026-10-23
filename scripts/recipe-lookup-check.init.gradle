@@ -1,0 +1,11 @@
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(project.file(project.findProperty('recipeLookupBuildDirectory') ?: 'build/recipe-lookup-isolated'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.spotless.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/recipe/machine/TentacleAssemblyRecipes.java',
+            'scripts/qa/TentacleRecipeClientChecks.java'
+    }
+}

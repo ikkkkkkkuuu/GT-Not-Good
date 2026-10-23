@@ -1,5 +1,64 @@
 # 当前开发进度
 
+## 1.6.9 提交与发布（2026-10-24，发布准备中）
+
+- 授权与范围：用户“提交并更新”授权完整发布；基线 main / origin/main 3a29b242，上次公开标签 1.6.8。汇总穿梭机图纸固定原料内存修复、十三条对撞机元素配方、对应 QA 与诊断文档，以及工业中枢塔 24 模块设计初稿；设计初稿不冒充游戏功能。
+- 准备：README 当前版本、对应下载链接及中文说明已更新到 1.6.9，保留历史版本说明。发布正文放 .gradle/release-1.6.9/release-notes.md；生产构建配置与依赖版本未变。
+- 发布前验证：scripts/dev/Invoke-Gradle.ps1，隔离输出 D:/CodexTools/GTNGRelease-1.6.9，完整 spotlessApply build networkRegression --offline 退出 0、30s，日志 .gradle/release-1.6.9/build.log。结构检查通过（1586 Java / 3414 imports / 161 mixins / 179 reserved / 385 QA paths）。功能实机证据沿用下方已完成任务，不把历史测试记成本轮重跑。
+- 测试与审计：705 项单测零失败/错误、1 项既有跳过，12 项网络回归通过；audit-index.json 核对 8138 项资源/来源文件、基础与多版本字节码、refmap、无 QA 类、无已撤回索引/Mixin 类及图纸修复分支，普通/dev JAR 通过。
+- 重复构建：build-repeat.log 在 downgradeMainClasses 出现 HashMap Node/TreeNode ClassCastException；原样重试 build-retry.log 退出 0、3s，37 UP-TO-DATE、configuration cache reused。保留失败日志，未将第三方工具的偶发异常描述成已修复。
+- 剩余：提交并推送 main 和 1.6.9，验证标签产物；等待 CI、确认中文 Release 与正式资产，再验证下载内容和 README 链接。当前尚未声称推送或发布完成。
+
+## 加载 99% 配方索引内存溢出（2026-10-24，固定图纸原料并验证完成）
+
+- 用户现象：客户端加载到 99% 内存瞬间上涨并卡死；后续授权只读检查正在运行的完整服务器。服务器 6 GiB 堆接近全满、Full GC 持续，用户控制台明确出现 OutOfMemoryError。基线 HEAD 3a29b242，保留已有对撞机配方和并行文档修改，不提交或发布。
+- 根因：GTNG 的 TentacleAssemblyRecipes 导入原生装配线多选原料，触发固定 GT5 查询树的笛卡尔积展开。明确异常配方为 Shuttle Schematic（GalacticraftAmunRa:item.schematic），NHCore 2.9.84 ScriptAmunRa 的六类多母岩矿石输入，在完整实例中生成 20²×22⁴×2⁵=2,998,476,800 条索引路径。不是此前 nether_fungus 缺失报错导致。
+- 现场证据：PID 76220 直方图中 93,069,983 个 GTRecipeLookupBranch、104,290,108 个 Node，合计约 5.10 GiB。只读诊断、原附件、提取源码和日志放 .gradle/memory-diagnosis；源码和范围详见 docs/testing/recipe-lookup-memory.md。Serena Java Broken pipe，按规则使用 rg/固定源码。
+- 最终实现：用户明确要求直接固定穿梭机图纸原料，已改为 TentacleAssemblyRecipes.convert 识别 AmunRa 的已有图纸物品，仅对该导入副本保留原生默认 mInputs、清空替代原料数组。数量、流体、产物、时间、电压不变；原生装配线配方和其他导入配方保持原样。此前通用紧凑索引方案已撤回，新增 RecipeAlternativeIndex、RecipeLookupAlternativesMixin、对应单测及 loader 注册均删除，最终没有 Mixin 改动。
+- 构建：隔离 D:/CodexTools/GTNGMemory-20261023/build 与 project-cache，scripts/recipe-lookup-check.init.gradle；spotlessApply compileJava processResources spotlessCheck assemble --offline，shuttle-fixed-build.log 退出 0、31s；同命令 repeat 退出 0、3s；warm 退出 0、998ms、31 UP-TO-DATE、configuration cache reused。构建插件离线 manifest 请求通过已有同哈希固定版本本机缓存解决，未升级依赖。
+- 服务端：复制用户整合包 mods/config/scripts/libraries 到独立 server，不复制用户世界；仅替换隔离副本 JAR。最终固定原料版本 PID 58104，Java 25、最大堆 6 GiB，30.02s 完成启动，采样已用堆约 1.81 GiB，Done/保存/退出 0。两类树节点直方图约 175.10 MiB；-all 含待回收对象，不宣称精确保留堆或长期性能基准。最终 qa-server-* 日志在 .gradle/memory-diagnosis；旧紧凑索引结果单独存入 superseded-compact-index。
+- 客户端：最终 scripts/recipe-lookup-qa.init.gradle、shuttle-fixed-client.log 退出 0、1m18s，result.txt 为 PASS；448 条原生装配线默认输入/数量/产物/时间/电压及 reInit、两模式实际加工、低级/UIV、乱序/缺料保护、缓存、NBT 恢复、原生 ME 流体样板精确产出通过。开发客户端没有 AmunRa，图纸加载内存行为由完整服务端验证。静音隐藏 QA 客户端及独立服务端均已退出；第三方警告和中间失败日志保留。
+- 收尾：结构检查 1586 Java / 3414 imports / 161 mixins / 179 reserved / 385 QA paths，通过 diff --check；jar-audit.json 确认普通 JAR 无 QA 类、无已删除索引/Mixin 类，修改类基础字节码为 52。普通 JAR SHA-256 C5D11F4E427AB79BA37FC1E5A8AC11DE18B8E1B173B3B59CB44C2BD28FF1309A。
+- 状态：最终按用户要求固定图纸配方，源码修复、完整服务器启动和客户端加工回归完成。用户原实例未替换文件，未提交/发布；不将用户部署、图纸实际全流程加工或所有替代原料逐项穷举列为已完成。细节见 docs/testing/recipe-lookup-memory.md。
+
+## 工业中枢塔扩为 24 模块（2026-10-23，布局初稿修订完成）
+
+- 用户追加要求：主机能挂 24 个模块，允许本体扩大为宽 31 × 深 31；原先八接口/15×15 主机建议被本条取代。高度仍建议 31，模块种类、等级参数及精确材料未新增确认。
+- 文档：更新 docs/development/modular-industrial-tower-design.md，采用两层、四方向、每面三接口，共 24 位；每面三个 7 格宽模块之间各留 3 格通道，两端各留 2 格余量。切向中心 -10/0/10，模块径向深度仍暂定 9，含外挂模块外包围为 49×31×49，主机本体为 31×31×31。扩大的内部采用中央井和镂空构架，加入双层环廊、走线空间与 GUI 槽位定位说明。
+- 保留规则：主机无线维持费固定 1024 EU/t，各模块自接能源仓、独立加工、默认无损超频；24 是总挂载数，允许同型重复和不同 MK 混装。未把模块数量增加改成额外维持收费。
+- 证据：坐标脚本确认 24 个独立端口、所有模块与主机及彼此均无包围盒重叠；总范围 49×31×49，单侧 31 格算术正确，主机控制器前方三格宽通道没有模块占位遮挡。只验证空间预留，不宣称逐格结构、楼梯净高、材料计数或真实游戏成型已经完成。
+- 状态与剩余：本轮设计尺寸和挂载布局修改完成，原初稿八接口核对仅保留为历史。后续按模块种类完成逐格结构、环廊通行及加工实现；保留其他任务的配方/QA 改动，本轮仅修改两份设计/进度文档，未构建、提交或发布。
+
+## 类太空电梯主机与独立模块设计（2026-10-23，初稿完成）
+
+- 用户已确认：主机 HV 解锁、较大结构、不处理配方，每服务端 tick 从无线电网直接支付 1024 EU 维持费；模块各自接能源仓、独立处理配方，按 MK 等级获得速度与并行加成，默认全部无损超频。本轮只定主机及等级规则，模块种类后定。
+- 初版历史：docs/development/modular-industrial-tower-design.md 起初建议主机 15×31×15、四向双层八接口，总范围 33×31×33；此布局已被上方 24 接口修订取代。建议 MKI/MKII/MKIII 对应 HV/EV/IV、速度 1.5×/2×/3×、并行上限 4/8/16。级别映射与具体加成均为提议，不能记作用户已确认；原文第三个 MKII 暂按 MKIII 理解。
+- 规则建议：主机忙闲均固定维持费，主机停机令模块暂停；模块自持输入、输出、能源、任务及 NBT，允许混装与同型重复。写明逐 tick 单次扣款、供电限制、满输出、卸载及恢复不重复耗料/产出的实现要求，未冒认现有基类已支持新暂停协议。
+- 核对：当前 GTNGMultiBlockBase 默认完美超频；固定 GT5 5.09.54.205 ProcessingLogic 为 4:4、HV 电压 512，WirelessNetworkManager 团队扣款不足返回 false。已读完整项目规则、多方块 Skill 和目录规范；Serena 初始化/激活成功，未执行语义健康测试。既有粒子对撞机工作保留。
+- 验证：坐标脚本确认八个模块占位彼此及与主机均不重叠，总尺寸为 33×31×33；速度算例和维持费算术核对通过。git diff --check 退出 0，仅有进度文件 CRLF 将规范化为 LF 的提示；未构建或运行游戏，不把包围盒核对等同于逐格蓝图验证。
+- 状态与剩余：本轮需求整理与主机/等级初稿完成；后续需用户选定建议参数、模块种类后细化逐格蓝图、准确构件计数、HV 可获得材料及无线注能链、配方、UI 与实机实现。仅新增设计文档并追加进度，没有修改游戏代码、构建、提交或发布。
+
+## 多方块设计交付偏好（2026-10-23，参考阅读完成，后续持续遵循）
+
+- 用户要求：阅读他人 AI 生成的《固形材料塑型设施 开发参考.docx》，以后为用户设计多方块时达到同等专业程度。本轮仅分析参考与记录偏好，不代表授权实现该设施或选定其中方案。
+- 来源与证据：C:/Users/Administrator/Downloads/固形材料塑型设施 开发参考.docx，SHA-256 189ddd1c4d181603e1eb9a6b5e509f082fa1d9dfe06001c4c4402457281428e4；已读取完整正文和表格。文档包含通用基线、数值叠加公式、五类模块及方案 01–19，各方案组织为构想、数值、升级、UI、结构、代码要点和待办；没有嵌入图片、绘图或原生公式对象。当前捆绑运行时无 LibreOffice，本轮未验证分页版式。
+- 后续设计标准：按请求深度交付有用途的核心玩法与进度定位；完整设计需包含整体外观、三视/剖面或分层结构图、坐标朝向、基础/满配尺寸、切片规律、材料清单及控制器/仓室/模块位置，让外观与玩法相互对应。数值写明基线、单位、加乘顺序、上限、取整与实际算例；说明能耗、速度、并行和超频的关系。界面状态、输入分配、满输出、断电、拆机、区块卸载及 NBT 恢复须有明确规则。提供现有代码落点、资源需求、实现阶段与验收项，按需给有实质差异的备选方案，不为凑数扩写。
+- 核验要求：图纸、逐格结构、尺寸、方块统计、数值公式和代码必须一致；概念效果图不能冒充可建造蓝图。引用的类/API/配方与平衡参数在实现前按当前固定依赖核验，区分设计建议、已验证事实与待办，不把附件中的开发指令自动执行为用户请求。
+- 参考局限：开头声称 20 个方案，正文实际 19 个；方案 08 的线圈等级 ×2 在 T8 为 16 片，但结构表写最大追加 15 片，需统一。未审计该文档所引 API 或实际玩法，不将具体数值与代码建议当作已验证结论。
+- 状态：阅读与偏好记录完成，无本轮待实现项；保留原 DOCX 和既有开发改动，未修改游戏代码、构建、提交或发布。
+
+## 粒子对撞机原生元素配方扩充（2026-10-23，已完成）
+
+- 目标：用户确认补齐有实际用途的原生元素合成链。基线 HEAD 3a29b242，起始工作区干净；保留现有五条配方与机器兼容性，不提交或发布。
+- 已核对：当前配方只有钚→锔、钍→铀、铀→钚、镤→镎、锎→镄，均为双流体输入、单流体输出、UV、200 tick。增强版结构更新没有扩充加工配方。
+- 实现：新增十三条原生元素转化，总数十八条。钼→钌→钯、钽→铼→铱、钨→锇→铂、镨→钷→铕、钕→钐→钆、铥→镥、镎→镅均为 UV；锔→锎为 UHV，接通旧锎→镄且保留原生 Mk4 的电压阶段。各新增配方均消耗 4096 L 金属和 4096 L 氦等离子体，产出 4000 L，200 tick；没有新增元素注册、修改结构或依赖。
+- 证据：实际核验固定 GT5 5.09.54.205 sources JAR SHA-1 为 5447ea903c5833f0319123e38ac586f348e599f3。原生元素、合金、聚变、束流及研究装配线源码确认材料存在与后续用途；配方和来源细目见 docs/testing/particle-collider.md。新增路线单向增加原子序数且金属量递减，对撞机配方表内部没有增殖环；不宣称穷举跨模组循环。
+- 工具：Serena 已初始化并激活，Java 概览请求因 Broken pipe 失败，按仓库规则回退 rg/固定源码。
+- 构建：使用 scripts/dev/Invoke-Gradle.ps1、scripts/particle-collider-check.init.gradle，隔离输出 D:/CodexTools/GTNGColliderRecipes-20261023/build，缓存为同目录 project-cache；spotlessApply compileJava processResources spotlessCheck assemble --offline 退出 0、38s。相同任务 repeat 退出 0、4s（期间文档改变 Git 输出，配置缓存重建）；warm 退出 0、7s，29 UP-TO-DATE，configuration cache reused。日志 .gradle/collider-recipes/build.log、build-repeat.log、build-warm.log。
+- 实机：叠加 scripts/particle-collider-qa.init.gradle，输出切为 qa-build，运行 spotlessApply runClient25 --offline --no-configuration-cache；.gradle/collider-recipes/client.log 退出 0、2m19s，particle-collider-qa/result.txt 为 PASS。十八条逐条核对注册、实际双流体扣除、待输出产物、电压、时长及后续配方；UV 拒绝锔→锎且不耗料，换 UHV 后保留输入正常加工。原生 Ultimate Encoded Pattern、并行、超频、低压/缺料/满输出保护、四方向完整结构、启停/破坏修复及运行中 NBT 恢复均通过。
+- 收尾：结构检查通过（1586 Java / 3413 imports / 161 mixins / 179 reserved / 384 QA paths），git diff --check 通过；普通 JAR 含配方类且没有 QA 类，记录 .gradle/collider-recipes/jar-check.json。静音隐藏 QA 进程 86508 已退出；日志中的其他模组启动警告及 AE2 CSV Export 退出异常保留，不把本轮描述为无警告。没有重跑全部单测或独立服务端。
+- 状态：用户要求的原生元素配方扩充完成，无剩余必做项；仅四个配方/QA/文档文件变动，未提交、发布或替换用户游戏实例。
+
 ## 1.6.8 提交与发布（2026-10-23，已完成）
 
 - 授权与基线：用户“提交并更新”授权完整发布；上次公开版本 1.6.7，起始 main / origin/main 为 75f45720。本次汇总原生结构件统一、增强版对撞机、十级并行仓材质、16 套透明面板资源及 IDEA 文档改动；对应开发任务均已完成。
@@ -447,3 +506,30 @@
 - 最终实机：.gradle/parallel-hatch-appearance-client-final.log 退出 0、1m40s、34 项任务，result.txt 为 PASS；十级分别核对真实图集、待机/运行/发光层、六方向机壳、世界实例及资源重载。已查看 parallel-hatches-world.png，外壳和各色正面与用户目标相符；物品、GUI 同步/Waila、结构、并行倍率/NBT、双配方批处理/输出安全/断电、NEI 全部回归通过。
 - 收尾：parallel-hatch-appearance-build.log / repeat.log 编译、资源、Spotless 均退出 0（20 秒 / 1 秒）；重复轮 20 项 UP-TO-DATE、configuration cache reused。结构检查通过（1583 Java、3381 imports、161 mixins、364 QA 路径），git diff --check 通过。过程中共享仓库其他任务推进 HEAD，未回退其改动；运行快照为 db917afcc8。
 - 状态：外观修正完成，无剩余实现项。截图 D:/CodexTools/GTNGLargeFurnace/build/large-furnace-qa/screenshots/parallel-hatches-world.png、parallel-hatches-reloaded.png；本任务 QA 客户端已退出，未操作用户游戏窗口，未自行提交或发布。
+
+## C 盘再次耗尽及 run 目录盘点（2026-10-23）
+
+- 用户反馈再次无空间并询问 run 是否积压无用文件。本轮仅检查，未新增删除或移动。C 盘开始仅约 0.51 GiB 可用，随后约 0.40 GiB；Git 状态已复核。
+- 对比第二轮：用户 Temp 由约 4.33 增至 7.44 GiB（增加约 3.11 GiB），Gradle 由约 13.81 增至 14.92 GiB（增加约 1.11 GiB）；此前第二轮约 8.8 GiB 候选未获执行，不能当成已释放。NVIDIA 仍约 4.09 GiB。QQ/微信附件没有恢复到清理前体量。以上不能解释全部磁盘变化。
+- run 实测约 14.15 GiB、143,610 个文件；其中 74 个额外测试实例目录合计 10.70 GiB，主 client 约 1.22 GiB、natives 约 0.06 GiB、.runtime-classpath 约 2.17 GiB。production-startup-qa 1.76、web-screen-check 1.09、web-screen-dedicated-check 0.82、me-stock-server-qa 0.69 GiB。日志/崩溃报告共约 1.76 GiB，已包含在总量内，不能重复相加。
+- 确认机制：scripts/runtime-classpath.gradle 在每次 runClient/Server 启动前生成 UUID 子目录和独立 JAR 快照，当前脚本没有清理逻辑，因此会累计。未修改脚本或构建配置。老 QA 目录包含测试存档、配置、模组副本与证据，不能直接整目录盲删；建议归档 D 盘，清理快照前核对在用文件。
+- 证据清单：D:/CodexTools/DiskCleanup-20261023/run-inventory.csv。已完整阅读 project-rules、gtng-build Skill、tooling；未运行构建/QA、结束用户进程或操作用户客户端。
+- 状态：run 盘点和快照积累原因已确认；run 清理/归档、快照保留机制或后续输出位置调整均未实施。仍需按用户选定范围继续，不能宣称 C 盘已恢复。
+
+
+### 历史 QA 可删除，执行被拦截（2026-10-23）
+
+- 用户质疑归档必要性，倾向删除历史 QA。已澄清归档只为留排查证据，并非必须；拟删除仅限前次清单中的 74 个额外 QA 目录，约 10.70 GiB，保留 run/client、natives、.runtime-classpath。
+- 逐目录核对：均无重解析链接、无当前 Java 命令行直接引用、最近写入均在昨日或更早；排查清单 qa-deletion-review.csv 已保存 D:/CodexTools/DiskCleanup-20261023。
+- 删除命令在创建进程前仍被自动审批拒绝（blocked by policy），未删除目录，未绕过拦截。
+- 已生成固定 74 个目录名的脚本 D:/CodexTools/DiskCleanup-20261023/清理历史QA目录.ps1，通过 PowerShell 语法解析但未执行；脚本执行前会再次核对绝对路径、链接、近期写入和进程引用，并生成实际结果报告。
+- 剩余：用户明确执行该清单后再尝试运行脚本；删除未完成，不宣称释放空间。
+
+
+### 74 个历史 QA 目录删除完成（2026-10-23）
+
+- 用户明确指令开始删除后，重新读取固定清单脚本并核对 Git 状态，再直接运行 D:/CodexTools/DiskCleanup-20261023/清理历史QA目录.ps1，本次执行成功，退出码 0。
+- 实际删除全部 74 个历史 QA 目录，约 10.70 GiB 文件内容；未完成目录 0。脚本测得 C 盘可用空间净增加 10.763 GiB，从约 0.215 GiB 增至 10.978 GiB；结束复测约 10.956 GiB。
+- 删除后逐项复核：报告中 74 个路径全部不存在；run/client、其中 saves/config、natives 和 .runtime-classpath 均存在并保留。未新增删除运行快照、个人资料、显卡缓存或其他第二轮候选。未结束进程、启动游戏或改动构建逻辑。
+- 证据：D:/CodexTools/DiskCleanup-20261023/qa-cleanup-20261023-232921.json，记录逐目录路径、状态、删除前字节数及磁盘空间。原盘点清单和脚本保留 D 盘。
+- 状态：本次历史 QA 删除任务完成，无待删除历史 QA 项。临时目录增长与运行快照缺少清理机制仍是此前诊断结论，本次未实施对应修改；旧拦截记录仅为历史。其他任务的源代码和文档改动保持原状。

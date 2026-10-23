@@ -6,12 +6,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
+import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 
 import bartworks.API.recipe.BartWorksRecipeMaps;
 import gregtech.api.GregTechAPI;
+import gregtech.api.enums.Mods;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTRecipe.GTRecipe_WithAlt;
 import gregtech.api.util.GTRecipe.RecipeAssemblyLine;
+import gregtech.api.util.GTUtility;
 
 public final class TentacleAssemblyRecipes {
 
@@ -46,10 +49,16 @@ public final class TentacleAssemblyRecipes {
         if (source.mEUt <= 0 || source.mDuration <= 0 || source.mOutput == null || source.mInputs.length == 0)
             return null;
         ItemStack[] items = copyItems(source.mInputs);
+        // Expanding the Shuttle's six ore-variant groups creates billions of lookup paths.
+        boolean fixedInputs = Mods.GalacticraftAmunRa.isModLoaded()
+            && GTUtility.areStacksEqual(source.mOutput, ModsItemlist.ShuttleSchematic.get(1), true);
         ItemStack[][] alternatives = new ItemStack[items.length][];
         for (int i = 0; i < alternatives.length; i++) {
-            if (source.mOreDictAlt != null && i < source.mOreDictAlt.length && source.mOreDictAlt[i] != null)
-                alternatives[i] = copyItems(source.mOreDictAlt[i]);
+            if (
+                !fixedInputs && source.mOreDictAlt != null
+                    && i < source.mOreDictAlt.length
+                    && source.mOreDictAlt[i] != null
+            ) alternatives[i] = copyItems(source.mOreDictAlt[i]);
         }
         FluidStack[] fluids = new FluidStack[source.mFluidInputs.length];
         for (int i = 0; i < fluids.length; i++)

@@ -46,18 +46,26 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
 |  2.9.0-RC-1  |     1.1.6     |         1.6.2          | [![1.6.2](https://img.shields.io/badge/release-1.6.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.2) |         ✔️         |
-|  2.9.0-RC-2  |     1.6.3     |         1.6.8          | [![1.6.8](https://img.shields.io/badge/release-1.6.8-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.8) |         ✔️         |
+|  2.9.0-RC-2  |     1.6.3     |         1.6.9          | [![1.6.9](https://img.shields.io/badge/release-1.6.9-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.9) |         ✔️         |
 
 当前版本面向 GTNH 2.9.0-RC-2；RC1 请使用 1.6.2。
 
 从源码开发和构建使用 **JDK 25**。项目采用 JVM Downgrader，生成 Java 8 基础字节码及面向 Java 17/21/25 的多版本 JAR，运行时由 GTNHLib 提供兼容 API。构建与验证方式见 [Java 开发说明](docs/development/java.md)。
 
-最新版本：[1.6.8 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.8)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.8/gtnotgood-1.6.8.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.8/gtnotgood-1.6.8-sources.jar)。
+最新版本：[1.6.9 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.9)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.9/gtnotgood-1.6.9.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.9/gtnotgood-1.6.9-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.6.8。
+1.3.4 因启动错误已撤回，请更新到 1.6.9。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.6.9 更新
+
+- 修复奈亚拉托提普之触导入穿梭机图纸时，加载接近 99% 内存激增、卡死或溢出的问题。该机器中的图纸配方固定使用原生默认原料，取消替代原料组合；用量、流体、产物、耗时和电压不变，原生装配线和其他配方保持原样。本次修复不新增 Mixin。
+- 超级粒子对撞机新增十三条元素转化，总数达到十八条：钼→钌→钯、钽→铼→铱、钨→锇→铂、镨→钷→铕、钕→钐→钆、铥→镥、镎→镅，以及 UHV 的锔→锎。其余新增路线为 UV，每步消耗 4096 L 金属和 4096 L 氦等离子体，产出 4000 L 金属，基础耗时 10 秒。
+- 补充完整整合包启动内存诊断、装配线导入和对撞机十八条配方的实机回归记录；新增工业中枢塔 24 模块设计初稿，仅为设计文档，尚未加入游戏。
+
+修复范围和验证见[配方内存说明](docs/testing/recipe-lookup-memory.md)及[对撞机说明](docs/testing/particle-collider.md)。
 
 ### 1.6.8 更新
 

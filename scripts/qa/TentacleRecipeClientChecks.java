@@ -172,6 +172,7 @@ public final class TentacleRecipeClientChecks {
             "all native tiers imported once");
         report.append("Single assembly NEI category contains all ").append(nativeCount)
             .append(" native assembly recipes, with no separate UIV map.\n");
+        verifyImportedAlternatives();
         assembly = GTNGRecipeMaps.TentacleAssemblyRecipes.getAllRecipes().stream()
             .filter(recipe -> usable(recipe) && recipe.mEUt <= TierEU.RECIPE_UV
 
@@ -446,6 +447,28 @@ public final class TentacleRecipeClientChecks {
 
     private static int itemCount(ItemStack[] stacks) {
         return Arrays.stream(stacks).filter(stack -> stack != null).mapToInt(stack -> stack.stackSize).sum();
+    }
+
+    private void verifyImportedAlternatives() {
+        int checked = 0;
+        for (RecipeAssemblyLine source : RecipeAssemblyLine.sAssemblylineRecipes) {
+            GTRecipe.GTRecipe_WithAlt converted = (GTRecipe.GTRecipe_WithAlt) TentacleAssemblyRecipes.convert(source);
+            if (converted == null) continue;
+            for (int slot = 0; slot < source.mInputs.length; slot++) {
+                require(ItemStack.areItemStacksEqual(source.mInputs[slot], converted.mInputs[slot]),
+                    "native representative item and quantity are preserved");
+            }
+            require(converted.mDuration == source.mDuration && converted.mEUt == source.mEUt,
+                "native recipe time and voltage are preserved");
+            require(ItemStack.areItemStacksEqual(source.mOutput, converted.mOutputs[0]), "native output is preserved");
+            checked++;
+        }
+        int count = GTNGRecipeMaps.TentacleAssemblyRecipes.getAllRecipes().size();
+        GTNGRecipeMaps.TentacleAssemblyRecipes.getBackend().reInit();
+        require(GTNGRecipeMaps.TentacleAssemblyRecipes.getAllRecipes().size() == count,
+            "recipe reinitialization preserves all imported recipes");
+        report.append("Native representative inputs, quantities, outputs, time, voltage and reInit preserved for ")
+            .append(checked).append(" imported recipes.\n");
     }
 
     private static File output() {

@@ -71,13 +71,33 @@ public final class SuperParticleColliderRecipes {
         collision(Materials.Uranium.getMolten(4096), Materials.Plutonium.getMolten(4000));
         collision(elements.PROTACTINIUM.getFluidStack(4096), elements.NEPTUNIUM.getFluidStack(4000));
         collision(elements.CALIFORNIUM.getFluidStack(4096), elements.FERMIUM.getFluidStack(4000));
+
+        collision(Materials.Molybdenum.getMolten(4096), elements.RUTHENIUM.getFluidStack(4000));
+        collision(elements.RUTHENIUM.getFluidStack(4096), Materials.Palladium.getMolten(4000));
+        collision(Materials.Tantalum.getMolten(4096), elements.RHENIUM.getFluidStack(4000));
+        collision(elements.RHENIUM.getFluidStack(4096), Materials.Iridium.getMolten(4000));
+        collision(Materials.Tungsten.getMolten(4096), Materials.Osmium.getMolten(4000));
+        collision(Materials.Osmium.getMolten(4096), Materials.Platinum.getMolten(4000));
+
+        collision(Materials.Praseodymium.getMolten(4096), Materials.Promethium.getMolten(4000));
+        collision(Materials.Promethium.getMolten(4096), Materials.Europium.getMolten(4000));
+        collision(Materials.Neodymium.getMolten(4096), Materials.Samarium.getMolten(4000));
+        collision(Materials.Samarium.getMolten(4096), Materials.Gadolinium.getMolten(4000));
+        collision(Materials.Thulium.getMolten(4096), Materials.Lutetium.getMolten(4000));
+
+        collision(elements.NEPTUNIUM.getFluidStack(4096), Materials.Americium.getMolten(4000));
+        collision(elements.CURIUM.getFluidStack(4096), elements.CALIFORNIUM.getFluidStack(4000), TierEU.RECIPE_UHV);
     }
 
     private static void collision(FluidStack input, FluidStack output) {
+        collision(input, output, TierEU.RECIPE_UV);
+    }
+
+    private static void collision(FluidStack input, FluidStack output, long eut) {
         GTRecipeBuilder.builder()
             .fluidInputs(Objects.requireNonNull(input, "Missing native collision input"),
                 Objects.requireNonNull(Materials.Helium.getPlasma(4096), "Missing helium plasma"))
-            .fluidOutputs(Objects.requireNonNull(output, "Missing native collision output")).duration(200)
-            .eut(TierEU.RECIPE_UV).addTo(GTNGRecipeMaps.SuperParticleColliderRecipes);
+            .fluidOutputs(Objects.requireNonNull(output, "Missing native collision output")).duration(200).eut(eut)
+            .addTo(GTNGRecipeMaps.SuperParticleColliderRecipes);
     }
 }

@@ -453,14 +453,27 @@ public final class SuperParticleColliderClientChecks {
         MaterialsElements elements = MaterialsElements.getInstance();
         FluidStack[] inputs = { Materials.Plutonium.getMolten(4096), Materials.Thorium.getMolten(4096),
             Materials.Uranium.getMolten(4096), elements.PROTACTINIUM.getFluidStack(4096),
-            elements.CALIFORNIUM.getFluidStack(4096) };
+            elements.CALIFORNIUM.getFluidStack(4096), Materials.Molybdenum.getMolten(4096),
+            elements.RUTHENIUM.getFluidStack(4096), Materials.Tantalum.getMolten(4096),
+            elements.RHENIUM.getFluidStack(4096), Materials.Tungsten.getMolten(4096), Materials.Osmium.getMolten(4096),
+            Materials.Praseodymium.getMolten(4096), Materials.Promethium.getMolten(4096),
+            Materials.Neodymium.getMolten(4096), Materials.Samarium.getMolten(4096), Materials.Thulium.getMolten(4096),
+            elements.NEPTUNIUM.getFluidStack(4096), elements.CURIUM.getFluidStack(4096) };
         FluidStack[] outputs = { elements.CURIUM.getFluidStack(4000), Materials.Uranium.getMolten(4000),
             Materials.Plutonium.getMolten(4000), elements.NEPTUNIUM.getFluidStack(4000),
-            elements.FERMIUM.getFluidStack(4000) };
-        require(map().getAllRecipes().size() == 5, "Exactly five native element transmutations are registered");
-        recipes = new GTRecipe[5];
+            elements.FERMIUM.getFluidStack(4000), elements.RUTHENIUM.getFluidStack(4000),
+            Materials.Palladium.getMolten(4000), elements.RHENIUM.getFluidStack(4000),
+            Materials.Iridium.getMolten(4000), Materials.Osmium.getMolten(4000), Materials.Platinum.getMolten(4000),
+            Materials.Promethium.getMolten(4000), Materials.Europium.getMolten(4000),
+            Materials.Samarium.getMolten(4000), Materials.Gadolinium.getMolten(4000),
+            Materials.Lutetium.getMolten(4000), Materials.Americium.getMolten(4000),
+            elements.CALIFORNIUM.getFluidStack(4000) };
+        require(map().getAllRecipes().size() == 18, "Exactly eighteen native element transmutations are registered");
+        recipes = new GTRecipe[inputs.length];
         for (int index = 0; index < recipes.length; index++) {
             FluidStack input = inputs[index], output = outputs[index];
+            boolean needsUhv = output.isFluidEqual(elements.CALIFORNIUM.getFluidStack(4000));
+            long eut = needsUhv ? TierEU.RECIPE_UHV : TierEU.RECIPE_UV;
             List<GTRecipe> matches = map().getAllRecipes().stream()
                 .filter(recipe -> recipe.mFluidInputs.length == 2 && recipe.mFluidOutputs.length == 1
                     && recipe.mFluidInputs[0].isFluidEqual(input)
@@ -471,28 +484,41 @@ public final class SuperParticleColliderClientChecks {
             require(
                 recipe.mInputs.length == 0 && recipe.mOutputs.length == 0
                     && recipe.mDuration == 200
-                    && recipe.mEUt == TierEU.RECIPE_UV
+                    && recipe.mEUt == eut
                     && recipe.mFluidInputs[0].amount == 4096
                     && recipe.mFluidInputs[1].isFluidEqual(Materials.Helium.getPlasma(4096))
                     && recipe.mFluidInputs[1].amount == 4096
                     && recipe.mFluidOutputs[0].amount == 4000,
-                "Exact native fluids, UV voltage and 200-tick duration for collision " + index);
+                "Exact native fluids, required voltage and 200-tick duration for collision " + index);
             boolean downstream = RecipeMap.ALL_RECIPE_MAPS.values().stream().filter(other -> other != map())
                 .flatMap(other -> other.getAllRecipes().stream()).anyMatch(other -> other.mFluidInputs != null && Arrays
                     .stream(other.mFluidInputs).anyMatch(fluid -> fluid != null && fluid.isFluidEqual(output)));
             require(downstream, "Native product has an existing downstream recipe: " + output.getLocalizedName());
             resetProcessing();
             seed(recipe, 1);
+            if (needsUhv) {
+                require(!machine.checkProcessing().wasSuccessful() && inputAmount(0) == 4096
+                    && inputAmount(1) == 4096
+                    && pendingOutput(output) == 0, "UV cannot produce californium or consume its inputs");
+                setEnergy(ItemList.Hatch_Energy_UHV);
+                verifyStructure();
+            }
             require(machine.checkProcessing().wasSuccessful(), "Real registered collision processes " + index);
             require(
                 inputAmount(0) == 0 && inputAmount(1) == 0
                     && pendingOutput(output) == 4000
                     && scheduledDuration() == 200
-                    && scheduledEut() == -TierEU.RECIPE_UV,
+                    && scheduledEut() == -eut,
                 "Collision consumes both exact inputs and schedules exact output/power/time " + index);
+            report.append(input.getLocalizedName()).append(" -> ").append(output.getLocalizedName())
+                .append(needsUhv ? " (UHV)\n" : " (UV)\n");
         }
-        report.append("All five registered native element recipes consume 4096 L of each input and schedule ")
-            .append("4000 L at UV/200 ticks; every product has an existing downstream use.\n");
+        resetProcessing();
+        setEnergy(ItemList.Hatch_Energy_UV);
+        verifyStructure();
+        report.append("All eighteen native element recipes consume 4096 L of each input and schedule ")
+            .append("4000 L in 200 ticks; californium requires UHV, all others UV. ")
+            .append("Every product has an existing downstream recipe.\n");
     }
 
     private void verifyParallelAndOverclock() {

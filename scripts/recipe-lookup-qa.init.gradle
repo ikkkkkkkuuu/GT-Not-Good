@@ -1,0 +1,82 @@
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(project.file(project.findProperty('recipeLookupBuildDirectory') ?: 'build/memory-tentacle-isolated'))
+}
+gradle.projectsEvaluated {
+    def root=gradle.rootProject
+    def mainClasses=root.layout.buildDirectory.dir('memory-tentacle-qa/main-classes')
+    root.sourceSets.main.output.classesDirs.setFrom(root.files(mainClasses).builtBy(root.tasks.named('compileJava')))
+    root.tasks.named('compileJava').configure { destinationDirectory.set(mainClasses) }
+
+    def output = root.layout.buildDirectory.dir('memory-tentacle-qa').get().asFile
+    def testClasses = root.files(new File(output, 'test-classes')).builtBy(root.tasks.named('compileTestJava'))
+    root.sourceSets.test.output.classesDirs.setFrom(testClasses)
+    def modern = root.findProperty('enableModernJavaSyntax') == 'jvmDowngrader'
+    def qaRuntimeClasses = modern
+        ? root.files(root.tasks.named('downgradeTestClasses').map { it.outputCollection })
+        : testClasses
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Prepare the existing factory QA Et Futurum runtime first')
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex', 'ProjectRed'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(new File(output, 'test-classes'))
+        setSource(root.files('scripts/qa/TentacleRecipeClientChecks.java'))
+    }
+    root.tasks.named('runClient25').configure {
+        dependsOn root.tasks.named('testClasses')
+        if (modern) dependsOn root.tasks.named('downgradeTestClasses')
+        classpath -= root.sourceSets.test.output
+        classpath += qaRuntimeClasses
+        workingDir new File(output, 'run')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.tentacle.workspace', root.projectDir.absolutePath
+        systemProperty 'gtng.tentacle.qa', 'true'
+        systemProperty 'gtng.tentacle.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) })
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        maxHeapSize = '8G'
+        args '--width', '1600', '--height', '1000'
+        notCompatibleWithConfigurationCache('Opt-in real Recipe Lookup client checks')
+        doFirst {
+            def fixture = qaRuntimeClasses.asFileTree.matching {
+                include '**/TentacleRecipeClientChecks.class'
+            }.singleFile.bytes
+            if (((fixture[6] & 0xff) << 8 | (fixture[7] & 0xff)) > 52) {
+                throw new GradleException('Recipe Lookup QA fixtures must be downgraded to Java 8 before launch')
+            }
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(new File(output, 'result.txt').toPath())
+            def qaConfig = new File(workingDir, 'config/GTNOTGOOD/gtnotgood.cfg')
+            qaConfig.parentFile.mkdirs()
+            qaConfig.setText('cutcorners {\n    I:mode=0\n}\n', 'UTF-8')
+            def dreamConfig = new File(workingDir, 'config/DreamCoreMod.properties')
+            dreamConfig.parentFile.mkdirs()
+            def dreamProperties = new Properties()
+            if (dreamConfig.exists()) dreamConfig.withInputStream { dreamProperties.load(it) }
+            dreamProperties.setProperty('showConfirmExitWindow', 'false')
+            dreamConfig.withOutputStream { dreamProperties.store(it, 'Isolated Recipe Lookup QA') }
+            new File(workingDir, 'config/splash.properties').setText('enabled=false\n', 'UTF-8')
+
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            def result = new File(output, 'result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) {
+                throw new GradleException('Recipe Lookup QA failed; inspect result.txt')
+            }
+        }
+    }
+}
