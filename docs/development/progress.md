@@ -1,5 +1,38 @@
 # 当前开发进度
 
+## 1.6.8 提交与发布（2026-10-23，进行中）
+
+- 授权与基线：用户“提交并更新”授权完整发布；上次公开版本 1.6.7，当前 main / origin/main 为 75f45720。本次汇总原生结构件统一、增强版对撞机、十级并行仓材质、16 套透明面板资源及 IDEA 文档改动；对应开发任务均已完成。
+- 准备：README 当前版本和下载链接更新为 1.6.8，补齐全部有效改动的中文说明；保留旧版历史说明。为新来源目录补充原始字节保护，依赖与构建工具版本不变。
+- 发布前验证：隔离输出 D:/CodexTools/GTNGRelease-1.6.8，完整 spotlessApply build networkRegression 退出 0、32s；705 项单测无失败/错误、1 项既有跳过，12 项网络回归通过。格式化后相同任务再执行退出 0、6s；日志 .gradle/release-1.6.8/build.log / build-repeat.log。
+- 资源与静态检查：audit-index.json 核对 8138 项资源/来源文件与暂存内容、普通/dev JAR，源清单哈希、ZIP、Multi-Release、基础/多版本字节码、refmap 和无 QA 类均通过。沿用文本文件换行规范化，原始移植资产保持字节；为新增对撞机来源文件补齐 cr-at-eol 属性。结构检查通过（1586 Java / 3413 imports / 161 mixins / 179 reserved / 384 QA paths），暂存 diff --check 通过。
+- 剩余：提交并打标签，验证精确标签构建后推送；等待 GitHub CI 与 Release，核对中文说明、三份发布资产和 README 链接，更新最终记录。尚未宣称提交或发布完成。
+
+## 新增多方块原生结构件统一（2026-10-23，已完成）
+
+- 目标：全面核对移植多方块结构件，已有 GTNH 对应物时复用原生方块；没有对应物时保留自定义方块。基线 HEAD 75f45720，保留并行对撞机、并行仓和资源修改，不提交或发布。
+- 证据：固定 GT5 5.09.54.205 sources JAR（SHA-1 5447ea903c5833f0319123e38ac586f348e599f3）的 Casings、ItemList、方块注册和语言资源。Serena Java Broken pipe，按仓库规则回退 rg/源码。
+- 范围与结果：核对八组 88 个移植结构件变体，以及 Stellar 54 种结构外观、28 种装饰面板；38 个重复变体改用 33 种原生 block/meta，其余没有对应物的专用构件保留。完整映射、保留理由和复现命令见 docs/development/native-structure-casings.md；未来新增结构件优先原生的要求已写入长期规则。
+- 实现：结构提示/自动建造、物品别名、仓室材质及配方使用原生件。已发布旧注册 ID/meta 保留，旧结构和 NBT 仍接受；旧复制件从创造栏隐藏，移除生产配方，加入组装机 25 号电路 1:1 单向转换。实机发现自动逆向嬗变配方会重新生成旧件，已排除旧件回收输出并复测；没有新增结构件注册、修改依赖版本或迁移用户世界。
+- 生命周期修正：原生贴图解析必须延后到完整注册之后，保留并行对撞机任务加入的 DeferredTexture；旧方块自身仍注册旧贴图，不在贴图注册阶段读取尚未初始化的原生 ItemList。
+- 构建：.gradle/native-casing-audit/final-build.log 退出 0、26s，spotlessApply build 的编译、语言生成、Spotless、Checkstyle、完整单测和打包通过。705 项测试，0 失败/错误、1 项既有跳过；同命令 final-repeat.log 退出 0、1s，37 UP-TO-DATE，configuration cache reused。普通 JAR ZIP 完整，包含新生产类且没有 QA 夹具。
+- 实机：client-final.log 退出 0、BUILD SUCCESSFUL、1m15s；独立 Java 25 客户端报告 PASS，1190 项检查、38 项映射，覆盖注册身份、旧 NBT、创造栏、全配方输出扫描、转换配方、原生/旧件接受、错误方块拒绝、建造优先项、六面贴图及资源重载；猎光号/卫星工厂/宇宙之心全部符号映射和完整场驱动压模工厂四方向建造/成型/仓室/缺块/修复通过。已查看最终 native-casings-2.png，全部 38 个图标和名称正常显示。QA 位于 D:/CodexTools/GTNGNativeCasings-20261023/qa-build/native-casing-qa/，静音隐藏客户端已退出；日志保留退出阶段 Client Shutdown Thread 异常文本，不把退出线程无异常列为验证结论。
+- 静态检查：CheckProjectStructure.ps1 退出 0（1586 Java / 3413 imports / 161 mixins / 179 reserved types / 384 QA paths）；git -c core.whitespace=cr-at-eol diff --check 通过，遵循移植资源原始换行保护。失败阶段的盘符参数、导入缺失、过早贴图解析、自定义主菜单识别和逆向回收问题日志均保留，最终重跑通过。
+- 状态与边界：本轮统一工作完成，无剩余必做项；未提交或发布，保留全部并行改动。未重跑每台巨型机器的完整加工/能源流程或独立服务端，不将历史验证冒认为本轮覆盖。
+
+## 增强版超级粒子对撞机结构（2026-10-23，已完成）
+
+- 目标与来源：按用户截图和指定的 GregTech Leisure-增强版 实例修正结构；基线 HEAD 75f45720，未提交或发布，保留所有并行修改。旧版来自 GTLCore 47×7×47；截图实际为 GTL-Enhancedcore 3.8.0 的 197×83×209 镂空巨构，构件数量逐项匹配。
+- 固定证据：增强核心 JAR SHA-256 555a9514c4d2fd11a029c091ac053d5cf7c52fba62411f2f043e04454094f7aa，包内声明 LGPL-3.0；未确认源码提交。hollow/gtl/super_particle_collider.pattern.gz 原字节复制，压缩 SHA-256 129ead53fed01d9407e8d7a2c355005b2ee3e245610120878180a0e3b0a85eda，来源/许可/坐标详见 reference/SUPER_PARTICLE_COLLIDER_STRUCTURE.md 和 ENHANCED_STRUCTURE.json。
+- 实现：缓存压缩结构，校验尺寸、字符、控制器和总块数；只逆转深度、@ 转 ~，保留全部 any 空格。共 302625 个非空位置（含控制器），偏移 (93,41,0)，控制器离底层 41 格、24 个正面仓室位。既有小结构需重建，控制器 ID 与生产处理保持原有规则。
+- 构件：九类复用 GTNH 原生注册，路菲恩外壳和加速管道复用已有移植，无新增重复方块或贴图。玻璃最终沿用项目既有夹层玻璃对应关系 ChemicalGradeGlass；硅岩合金外壳采用原生 RadiantNaquadahAlloyCasing，对应物及外观差异明确记入来源表。已发布旧移植线圈保留注册/资源，通过电路 6 的 1:1 装配机配方转为原生线圈。
+- 集成修复：并行原生结构件改动在贴图注册阶段提前解析尚未注册的 FusionMachineCasingMKIV，导致 QA 启动失败；本任务仅将 NativeStructureCasings.texture 改为首次绘制时延迟解析，保留其余映射与并行工作。Serena Java Broken pipe，依仓库规则回退 rg 和固定源码。
+- 最终实机：.gradle/collider-structure-client-glass.log 退出 0、2m34s，result.txt 为 PASS。完整四方向搭建/成型、逐格原生 block/meta、十一类缺块拒绝与修复、中心 any、实际仓室、原生 ME 双流体订单、五条元素配方耗料/产出、真实模块仓并行、电压超频、缺料/低压/满输出保护均通过。客户端收到全部 302624 个非控制器构件；真实加工启停、损坏修复、运行中 NBT 恢复和继续推进通过。已查看最终远景、原生材质、GUI、中英文普通/Shift 提示，云层关闭仅作用于 QA。
+- 最终构建：同一隔离 build/cache，spotlessApply compileJava processResources spotlessCheck test --tests '*SuperParticleColliderStructureTest' assemble --offline；collider-structure-glass-build.log 退出 0、38s，3 项单测零失败/错误。相同命令 collider-structure-glass-repeat.log 退出 0、1s、35 UP-TO-DATE、configuration cache reused。命令及范围见 docs/testing/particle-collider.md。
+- 打包与检查：普通游戏/dev JAR 中结构 gzip 与原始源哈希完全一致，165 份对撞机纹理/元数据逐字节一致，14 份原始资产哈希、ZIP、Multi-Release、无 QA 类检查通过，报告 .gradle/collider-structure-jar-audit.json。结构检查通过（1586 Java / 3413 imports / 161 mixins / 179 reserved types / 384 QA paths），git diff --check 通过。
+- 尝试记录：保留 PowerShell 未引用 -P 路径、固定 ProjectRed 依赖首次离线缺缓存、旧 QA 整机构建覆盖仓室、测试 cutcorners 配置遗漏、旧加工缓存断言等失败日志；分别修正参数、补齐固定依赖、逐块恢复、还原 QA 配置、使用 ModuleWork 和真实模块仓。曾一次 CoFH 登录异常，原样重跑通过，未声称修复 CoFH；modular/visual 两次中间版本也完整 PASS，最终以 glass 日志为准。第三方启动警告和既有退出线程异常文本保留。
+- 状态：本次必做项全部完成，独立证据目录 D:/CodexTools/GTNGColliderStructure-20261023；QA Java 进程已退出，未操作用户正常客户端、修改参考实例、升级生产依赖或发布。未进行大型多人服务器性能基准，不将其列为已验证。
+
 ## 1.6.7 发布与多方块 IDE 诊断（2026-10-23，已完成）
 
 - 目标与结果：用户“提交并更新”授权已执行；基线 1.6.6 / c70251eb，发布提交 3b491cfcdb5101f7c528c4e1c9604f5b249f7b34，main 与标签 1.6.7 已原子推送。Release https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.7 已公开，标题与中文正文覆盖全部九类有效变化，README 下载链接已更新。
@@ -12,6 +45,7 @@
 - GTNL 对照：本地 dev-290 使用相同 GT5 5.09.54.205 缓存 JAR、相同 Java 25 / JVM Downgrader 路线及同类继承和 ItemId 用法。GTNL 的插件/Gradle 较新，但未发现针对该解析问题的处理；用户回答不知道 GTNL 编辑器是否无红线，不能把它当作已确认的差异。
 - 下载复核：实际下载 GitHub 的普通游戏 JAR，SHA-256 与上述 GitHub digest 完全一致；文件位于 .gradle/java-migration/http-assets。此前 gh 并行下载停滞，仅结束本任务核实过的下载进程后改用 HTTP，不影响其他进程。
 - IDE 最终结果：用户明确确认“降到17就行了”，截图和磁盘均为 SDK zulu-25、项目语言级别 17；红线消失。保留该设置及 Gradle 的 Java 25 / JVM Downgrader 配置，不再改造依赖导入、补机器方法或升级依赖。语言级别 17 绕开 GT5 外部类与内部类跨多版本目录的解析问题，未宣称修复 IDEA 本身；已纠正 Java 文档中统一设为 25 的建议。
+- 使用边界补充：用户询问能否继续用 Java 25 新语法/API；核对 JetBrains 语言级别与 SDK 文档、现有 Gradle 开关。实际语言级别 17 的模块不会正常接受更新语法，虽 Gradle 仍按 25 编译；SDK 25 提供新版 API，但目标旧 JVM 的可用性还取决于 JVM Downgrader 支持和测试。17 是 IDE 临时兼容方案，不代表完整 Java 25 编辑体验；本次仅说明边界，没有新增代码、测试或发布。
 - 状态：发布与本轮 IDE 排查完成，无剩余必做项。保留其他聊天在发布后新增的机器正面资源和并行控制仓工作，不并入已发布标签。收尾仅更新排查文档，未引入构建或游戏代码变化。
 
 ## 全项目静态审查与 GTNL 目录对照（2026-10-23，已完成）
@@ -386,3 +420,26 @@
 - 构建适配过程：第一轮旧自制主 JAR 与新默认开发 JAR 重复加载；仅结束已核实的本 QA PID 8428，移除旧自制主 JAR 加载，直接沿用标准降级开发 JAR 和项目启动前不可变快照，之后测试成功。首次失败日志 large-furnace-overlay-client.log 保留，不计为通过。
 - 收尾：large-furnace-overlay-build.log / overlay-repeat.log 两轮编译、资源、Spotless 成功；重复运行 20 项 UP-TO-DATE、configuration cache reused。结构检查通过（1583 Java、3381 imports、161 mixins、364 QA 路径），git diff --check 通过。未修改玩法、结构、注册 ID 或资源路径。
 - 状态：透明正面叠层完成，无剩余实现项；QA 客户端已退出，未操作用户客户端、提交或发布。最新实机图片仍在 D:/CodexTools/GTNGLargeFurnace/build/large-furnace-qa/screenshots/。
+
+
+## GTL 机器透明正面资源（2026-10-23，已完成）
+
+- 目标：按用户要求增加不同机器的透明正面资源，供独立机壳叠层复用。
+- 实现：从固定本地 Enhancedcore 3.8.0（4 套）与 GTLCore 1.2.3.2-fix4（12 套）拷贝 16 套原生透明图，合计 61 张 PNG、19 份 mcmeta、39,260 字节，包含原有发光、暂停和动画；存入 assets/gtnotgood/textures/blocks/parallel/fronts。全部源字节保留，16 种待机图哈希互异，筛除不透明整面图。
+- 来源：META-INF/machine-front-overlays 保存安装包版本/哈希、作者、mod 元数据中的 LGPL 第 3 版声明、源/目的路径、逐文件哈希及完整 LGPL/GPL 文本。源码提交未确认，不猜测。reference/UPSTREAM_PORT_NOTES.md 已补记。
+- 资源检查：.gradle/front-overlays-audit.json 记录所有 PNG 每帧透明像素数量及源哈希核对；16/32 方形帧、纵向排列、全部帧透明区域、有效动画索引/时长均通过。初次 PowerShell 检查把 JSON Int64 当对象误报中子态素压缩机索引；改用 ValueType 后通过，并用 Python 独立核对索引，没有修改正确的上游动画。
+- 构建：使用 scripts/dev/Invoke-Gradle.ps1、既有 large-furnace-qa.init.gradle、D:/CodexTools/GTNGLargeFurnace 的隔离 build/cache 执行 processResources --offline --console=plain；.gradle/front-overlays-resources.log 退出 0，21 秒。相同命令重复记录 front-overlays-resources-repeat.log，退出 0、1 秒、11 项 UP-TO-DATE、configuration cache reused。输出目录的 80 个资源与 4 个许可/清单文件逐字节匹配。git diff --check 通过。
+- 文档：docs/development/machine-front-overlays.md 列出路径、状态、动画、casing + front + glow 接法；相邻 HTML 提供原 PNG 的状态/动画叠层预览。已检查 16 张卡片、78 个本地引用和 JavaScript 语法；内置浏览器因 file 协议限制拒绝打开，未进行浏览器截图验证，也未绕过限制。
+- 状态：资源移植完成；本轮没有新增机器、绑定现有控制器、改动游戏 Java/ID/依赖或覆盖大型熔炉贴图，未做新机器实机验证。原游戏内容与其他任务改动保留，未启动 QA 客户端、提交或发布。
+
+
+## 并行控制仓上游外观补齐（2026-10-23，已完成）
+
+- 用户确认截图为目标，要求各等级外壳和正面均按图移植。基线 HEAD 3b491cfc；上轮未提交的 16 套面板库保留。
+- 已确认问题：原先只加载 mk1-4，并把后六级钳制到 mk4；漏掉发光/运行层，外壳沿用 GTNH 默认机壳。
+- 实现：补齐 GTCEu 1.4.4 十级顶/底/侧机壳、mk1-4 与 GTLCore 1.2.3.2-fix4 mk5-10 的待机/运行/发光层和 mcmeta。十级外观一一映射，GTNH UMV/UXV 对应上游 UXV/OpV；机壳在物品和结构内均保持源等级外观。保持旧资源路径、注册 ID、倍率和 NBT。
+- 资源：117 个并行仓/机壳文件（40 张正面、40 份正面 mcmeta、30 张机壳、7 份机壳 mcmeta）逐字节匹配源；mk1-9 四帧、mk10 八帧。UHV 机壳两帧、上游 OpV 八帧、MAX 侧面十帧及原显式帧序均保留。实际客户端快照 JAR 的全部 117 个哈希核对成功，来源和许可证记录已更新。
+- 初轮检查：parallel-hatch-appearance-client.log 退出 1，QA 捕获 UHV 机壳缺失图；当时少了七份机壳动画元数据。补齐后增强用例，逐面断言帧尺寸、动画元数据及帧数，首次失败不计为通过。
+- 最终实机：.gradle/parallel-hatch-appearance-client-final.log 退出 0、1m40s、34 项任务，result.txt 为 PASS；十级分别核对真实图集、待机/运行/发光层、六方向机壳、世界实例及资源重载。已查看 parallel-hatches-world.png，外壳和各色正面与用户目标相符；物品、GUI 同步/Waila、结构、并行倍率/NBT、双配方批处理/输出安全/断电、NEI 全部回归通过。
+- 收尾：parallel-hatch-appearance-build.log / repeat.log 编译、资源、Spotless 均退出 0（20 秒 / 1 秒）；重复轮 20 项 UP-TO-DATE、configuration cache reused。结构检查通过（1583 Java、3381 imports、161 mixins、364 QA 路径），git diff --check 通过。过程中共享仓库其他任务推进 HEAD，未回退其改动；运行快照为 db917afcc8。
+- 状态：外观修正完成，无剩余实现项。截图 D:/CodexTools/GTNGLargeFurnace/build/large-furnace-qa/screenshots/parallel-hatches-world.png、parallel-hatches-reloaded.png；本任务 QA 客户端已退出，未操作用户游戏窗口，未自行提交或发布。

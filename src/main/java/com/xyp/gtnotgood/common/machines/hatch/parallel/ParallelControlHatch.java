@@ -26,12 +26,25 @@ import gregtech.api.render.TextureFactory;
 @IMetaTileEntity.SkipGenerateDescription
 public final class ParallelControlHatch extends MTEHatch {
 
-    private static final IIconContainer[] OVERLAYS = new IIconContainer[4];
+    private static final String[] HULL_TIERS = { "iv", "luv", "zpm", "uv", "uhv", "uev", "uiv", "uxv", "opv", "max" };
+    private static final ITexture[][] HULLS = new ITexture[HULL_TIERS.length][3];
+    private static final ITexture[][] OVERLAYS = new ITexture[HULL_TIERS.length][4];
     static {
-        for (int i = 0; i < 4; i++) OVERLAYS[i] = Textures.BlockIcons.custom(ModList.GTNotGood.getResourceLocation(),
-            "parallel/hatch_" + (i + 1));
+        String[] faces = { "bottom", "top", "side" };
+        String[] states = { "", "_emissive", "_active", "_active_emissive" };
+        for (int i = 0; i < HULL_TIERS.length; i++) {
+            for (int face = 0; face < faces.length; face++)
+                HULLS[i][face] = texture("parallel/hulls/" + HULL_TIERS[i] + "/" + faces[face], false);
+            for (int state = 0; state < states.length; state++)
+                OVERLAYS[i][state] = texture("parallel/hatch_" + (i + 1) + states[state], state % 2 == 1);
+        }
     }
     private int parallel = 1;
+
+    private static ITexture texture(String path, boolean glow) {
+        IIconContainer icon = Textures.BlockIcons.custom(ModList.GTNotGood.getResourceLocation(), path);
+        return glow ? TextureFactory.builder().addIcon(icon).glow().build() : TextureFactory.of(icon);
+    }
 
     public ParallelControlHatch(int id, String name, int tier) {
         super(id, name, "", tier, 0, new String[0]);
@@ -98,12 +111,20 @@ public final class ParallelControlHatch extends MTEHatch {
 
     @Override
     public ITexture[] getTexturesActive(ITexture base) {
-        return getTexturesInactive(base);
+        return new ITexture[] { base, OVERLAYS[mTier - 5][2], OVERLAYS[mTier - 5][3] };
     }
 
     @Override
     public ITexture[] getTexturesInactive(ITexture base) {
-        return new ITexture[] { base, TextureFactory.of(OVERLAYS[Math.min(3, Math.max(0, mTier - 5))]) };
+        return new ITexture[] { base, OVERLAYS[mTier - 5][0], OVERLAYS[mTier - 5][1] };
+    }
+
+    @Override
+    public ITexture[] getTexture(IGregTechTileEntity tile, ForgeDirection side, ForgeDirection facing, int colorIndex,
+        boolean active, boolean redstone) {
+        ITexture casing = HULLS[mTier - 5][side == ForgeDirection.DOWN ? 0 : side == ForgeDirection.UP ? 1 : 2];
+        if (side != facing) return new ITexture[] { casing };
+        return active ? getTexturesActive(casing) : getTexturesInactive(casing);
     }
 
     @Override

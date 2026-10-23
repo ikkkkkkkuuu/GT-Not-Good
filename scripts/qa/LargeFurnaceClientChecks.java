@@ -58,9 +58,11 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import gregtech.api.GregTechAPI;
 import gregtech.api.enums.ItemList;
 import gregtech.api.enums.VoidingMode;
+import gregtech.api.interfaces.ITexture;
 import gregtech.api.metatileentity.BaseMetaTileEntity;
 import gregtech.api.metatileentity.implementations.MTEMultiBlockBase;
 import gregtech.api.util.shutdown.ShutDownReasonRegistry;
+import gregtech.common.render.GTRenderedTexture;
 import gregtech.common.render.IIconTexture;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -166,9 +168,9 @@ public final class LargeFurnaceClientChecks {
                 stage = 10;
             }
             if (stage == 11) {
-                for (int i = 0; i < ParallelMachineLoader.HATCHES.length; i++)
-                    place(player.worldObj, i - 5, 100, -12, ParallelMachineLoader.HATCHES[i].get(1));
-                player.playerNetServerHandler.setPlayerLocation(0, 100, -24, 0, 7);
+                for (int i = 0; i < ParallelMachineLoader.HATCHES.length; i++) place(player.worldObj, (i % 5 - 2) * 2,
+                    100 + i / 5 * 2, -12, ParallelMachineLoader.HATCHES[i].get(1));
+                player.playerNetServerHandler.setPlayerLocation(0.5, 103, -20, 0, 12);
                 stage = 12;
             }
             if (stage == 14) {
@@ -493,7 +495,7 @@ public final class LargeFurnaceClientChecks {
                 checkHatchTextures();
                 capture("parallel-hatches-reloaded");
                 report.append(
-                    "PASS all 10 hatch tiers: real animated atlas sprites, 4 frames, inventory/world rendering and resource reload.\n");
+                    "PASS all 10 hatch tiers: original hull faces, distinct front/active/emissive layers, mk1-9 four frames, mk10 eight frames, inventory/world rendering and resource reload.\n");
                 frames = 0;
                 stage = 14;
                 return;
@@ -607,19 +609,61 @@ public final class LargeFurnaceClientChecks {
         }
     }
 
-    private void checkHatchTextures() {
+    private void checkHatchTextures() throws Exception {
         Minecraft mc = Minecraft.getMinecraft();
+        String[] tiers = { "iv", "luv", "zpm", "uv", "uhv", "uev", "uiv", "uxv", "opv", "max" };
+        var glow = GTRenderedTexture.class.getDeclaredField("glow");
+        glow.setAccessible(true);
         for (int i = 0; i < ParallelMachineLoader.HATCHES.length; i++) {
             ParallelControlHatch hatch = (ParallelControlHatch) GregTechAPI.METATILEENTITIES[ParallelMachineLoader.HATCHES[i]
                 .get(1).getItemDamage()];
-            TextureAtlasSprite sprite = (TextureAtlasSprite) ((IIconTexture) hatch.getTexturesInactive(null)[1])
-                .getIcon(2, null);
-            String name = ModList.GTNotGood.getResourceLocation() + ":parallel/hatch_" + Math.min(4, i + 1);
-            require(sprite != null && sprite.getIconName().equals(name)
-                && mc.getTextureMapBlocks().getAtlasSprite(name) == sprite, "real hatch atlas sprite tier " + i);
-            require(sprite.hasAnimationMetadata() && sprite.getFrameCount() == 4
-                && sprite.getIconWidth() == 16
-                && sprite.getIconHeight() == 16, "four animated hatch frames tier " + i);
+            for (boolean active : new boolean[] { false, true }) {
+                ITexture[] textures = active ? hatch.getTexturesActive(null) : hatch.getTexturesInactive(null);
+                require(textures.length == 3, "separate casing, front and emissive layers tier " + i);
+                for (int layer = 1; layer <= 2; layer++) {
+                    TextureAtlasSprite sprite = (TextureAtlasSprite) ((IIconTexture) textures[layer]).getIcon(2, null);
+                    String name = ModList.GTNotGood.getResourceLocation() + ":parallel/hatch_"
+                        + (i + 1)
+                        + (active ? "_active" : "")
+                        + (layer == 2 ? "_emissive" : "");
+                    require(
+                        sprite.getIconName().equals(name) && mc.getTextureMapBlocks().getAtlasSprite(name) == sprite,
+                        "tier-specific hatch atlas sprite: " + name);
+                    require(sprite.hasAnimationMetadata() && sprite.getFrameCount() == (i == 9 ? 8 : 4)
+                        && sprite.getIconWidth() == 16
+                        && sprite.getIconHeight() == 16, "original hatch animation frame count: " + name);
+                    require(glow.getBoolean(textures[layer]) == (layer == 2), "fullbright only on emissive layer");
+                }
+            }
+            for (ForgeDirection facing : ForgeDirection.VALID_DIRECTIONS) {
+                for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+                    ITexture[] textures = hatch.getTexture(null, side, facing, -1, false, false);
+                    String face = side == ForgeDirection.DOWN ? "bottom" : side == ForgeDirection.UP ? "top" : "side";
+                    String name = ModList.GTNotGood.getResourceLocation() + ":parallel/hulls/" + tiers[i] + "/" + face;
+                    TextureAtlasSprite sprite = (TextureAtlasSprite) ((IIconTexture) textures[0])
+                        .getIcon(side.ordinal(), null);
+                    require(
+                        sprite.getIconName().equals(name) && mc.getTextureMapBlocks().getAtlasSprite(name) == sprite,
+                        "original tiered hull face: " + name);
+                    require(sprite.getIconWidth() == 16 && sprite.getIconHeight() == 16, "square hull frame: " + name);
+                    int hullFrames = i == 4 ? 2 : i == 8 ? 8 : i == 9 && face.equals("side") ? 10 : 0;
+                    require(sprite.hasAnimationMetadata() == (hullFrames > 0), "hull animation metadata: " + name);
+                    if (hullFrames > 0) require(sprite.getFrameCount() == hullFrames, "original hull frames: " + name);
+                    require(textures.length == (side == facing ? 3 : 1), "panel only on hatch front");
+                }
+            }
+            if (stage == 12 || stage == 13) {
+                BaseMetaTileEntity placed = (BaseMetaTileEntity) mc.theWorld.getTileEntity((i % 5 - 2) * 2,
+                    100 + i / 5 * 2, -12);
+                require(placed != null && placed.getMetaTileEntity() instanceof ParallelControlHatch,
+                    "real placed hatch tier " + i);
+                ITexture[] actual = placed.getMetaTileEntity().getTexture(placed, ForgeDirection.NORTH,
+                    ForgeDirection.NORTH, -1, false, false);
+                require(
+                    actual[0] == hatch.getTexture(null, ForgeDirection.NORTH, ForgeDirection.NORTH, -1, false, false)[0]
+                        && actual[1] == hatch.getTexturesInactive(null)[1],
+                    "world instance retains correct tier textures");
+            }
         }
     }
 

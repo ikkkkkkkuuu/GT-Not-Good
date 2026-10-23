@@ -110,7 +110,9 @@ public final class BlockParticleColliderCasing extends Block
     @SideOnly(Side.CLIENT)
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void getSubBlocks(Item item, CreativeTabs tab, List stacks) {
-        for (ParticleColliderCasing variant : ParticleColliderCasing.values()) stacks.add(variant.getStack(1));
+        for (ParticleColliderCasing variant : ParticleColliderCasing.values()) {
+            if (!variant.hasNativeCasing()) stacks.add(variant.getStack(1));
+        }
     }
 
     @Override
@@ -119,10 +121,10 @@ public final class BlockParticleColliderCasing extends Block
         ParticleColliderConnectedIcons.register(register);
         textures = new ITexture[16][][];
         for (ParticleColliderCasing variant : ParticleColliderCasing.values()) {
-            ITexture[] base = { variant.getTexture() };
+            ITexture[] base = { ParticleColliderBlocks.getTexture(variant) };
             textures[variant.getMetadata()] = new ITexture[][] { base, base, base, base, base, base };
         }
-        ITexture[] active = { ParticleColliderCasing.SuperconductingCoil.getTexture(),
+        ITexture[] active = { ParticleColliderBlocks.getTexture(ParticleColliderCasing.SuperconductingCoil),
             new ParticleColliderGlowTexture() };
         textures[ParticleColliderCasing.SuperconductingCoil.getMetadata()
             | ParticleColliderCasing.ACTIVE_BIT] = new ITexture[][] { active, active, active, active, active, active };

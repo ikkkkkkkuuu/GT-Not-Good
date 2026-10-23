@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 
 import com.xyp.gtnotgood.common.blocks.assemblyplant.AssemblyPlantCasing;
 
-import bartworks.common.loaders.ItemRegistry;
 import gregtech.api.casing.Casings;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
@@ -15,17 +14,12 @@ import gregtech.api.enums.TierEU;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.util.GTOreDictUnificator;
 import gregtech.api.util.GTRecipeBuilder;
-import gregtech.api.util.GTUtility;
 
 public final class AssemblyPlantCasingRecipes {
 
     private AssemblyPlantCasingRecipes() {}
 
     public static void loadRecipes() {
-        appearance(Casings.ChemicalGradeGlass.toStack(1), AssemblyPlantCasing.LaminatedGlass);
-        appearance(Casings.FilterMachineCasing.toStack(1), AssemblyPlantCasing.FilterCasing);
-        appearance(Casings.PTFEPipeCasing.toStack(1), AssemblyPlantCasing.PtfePipeCasing);
-        appearance(new ItemStack(ItemRegistry.bw_realglas, 1, 0), AssemblyPlantCasing.TemperedGlass);
 
         GTRecipeBuilder.builder()
             .itemInputs(stack(OrePrefixes.wireGt02, Materials.Platinum, 4),
@@ -40,11 +34,6 @@ public final class AssemblyPlantCasingRecipes {
             .fluidInputs(Objects.requireNonNull(Materials.TungstenSteel.getMolten(144), "Missing tungstensteel fluid"))
             .itemOutputs(AssemblyPlantCasing.MolybdenumDisilicideCoil.getStack(1)).duration(500).eut(TierEU.RECIPE_HV)
             .addTo(RecipeMaps.assemblerRecipes);
-    }
-
-    private static void appearance(ItemStack input, AssemblyPlantCasing output) {
-        GTRecipeBuilder.builder().itemInputs(Objects.requireNonNull(input), GTUtility.getIntegratedCircuit(24))
-            .itemOutputs(output.getStack(1)).duration(50).eut(16).addTo(RecipeMaps.assemblerRecipes);
     }
 
     private static ItemStack stack(OrePrefixes prefix, Materials material, long amount) {

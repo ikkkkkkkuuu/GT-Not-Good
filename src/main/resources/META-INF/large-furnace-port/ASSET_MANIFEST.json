@@ -11,6 +11,14 @@
     {
       "archive": "gtladditions-3.3.1Custom.jar",
       "sha256": "17f0979124f0295a0954100ccc2ec153bccec6f8371985d138be1f19b8f42501"
+    },
+    {
+      "archive": "gtlcore-1.2.3.2-fix4.jar",
+      "sha256": "c44b8212b8d3a210eabd36e3efaf7804e78e25fc44d45f7b0fb048453aaaf346",
+      "license": "LGPL-3.0",
+      "authors": "POWSDSSAG, EasterFG, Maple",
+      "licenseEvidence": "META-INF/mods.toml: license = \"LGPLv3.0\"",
+      "sourceCommit": null
     }
   ],
   "assets": [
@@ -32,27 +40,51 @@
     },
     {
       "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk1/overlay_front.png",
-      "destination": "assets\\gtnotgood\\textures\\blocks\\parallel\\hatch_1.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_1.png",
       "sha256": "7feef3b2cd651873e876bf04239d4d1bc2b197f3a0e18f8c66160906f6dcd1c9",
-      "license": "LGPL-3.0"
+      "license": "LGPL-3.0",
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "sourceSha256": "7feef3b2cd651873e876bf04239d4d1bc2b197f3a0e18f8c66160906f6dcd1c9",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
     },
     {
       "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk2/overlay_front.png",
-      "destination": "assets\\gtnotgood\\textures\\blocks\\parallel\\hatch_2.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_2.png",
       "sha256": "34ab75e24e862e8611a087266f53ab67e575578662358eee652cb4a627670521",
-      "license": "LGPL-3.0"
+      "license": "LGPL-3.0",
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "sourceSha256": "34ab75e24e862e8611a087266f53ab67e575578662358eee652cb4a627670521",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
     },
     {
       "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk3/overlay_front.png",
-      "destination": "assets\\gtnotgood\\textures\\blocks\\parallel\\hatch_3.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_3.png",
       "sha256": "224e4f1846ebbb408a26f0a53a754fd3ac207d345db6342391be9dfb6a2741eb",
-      "license": "LGPL-3.0"
+      "license": "LGPL-3.0",
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "sourceSha256": "224e4f1846ebbb408a26f0a53a754fd3ac207d345db6342391be9dfb6a2741eb",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
     },
     {
       "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk4/overlay_front.png",
-      "destination": "assets\\gtnotgood\\textures\\blocks\\parallel\\hatch_4.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_4.png",
       "sha256": "10f9c7c53a508f7a289cf46b68e5a1ff4d10f1a4b2869909d58fe119d8e9be6d",
-      "license": "LGPL-3.0"
+      "license": "LGPL-3.0",
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "sourceSha256": "10f9c7c53a508f7a289cf46b68e5a1ff4d10f1a4b2869909d58fe119d8e9be6d",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
     },
     {
       "source": "data/gtl_enhancedcore/structures/large_furnace.pattern.gz",
@@ -64,26 +96,1270 @@
       "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk1/overlay_front.png.mcmeta",
       "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_1.png.mcmeta",
       "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
-      "license": "LGPL-3.0"
+      "license": "LGPL-3.0",
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "modifications": "None; copied byte-for-byte."
     },
     {
       "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk2/overlay_front.png.mcmeta",
       "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_2.png.mcmeta",
       "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
-      "license": "LGPL-3.0"
+      "license": "LGPL-3.0",
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "modifications": "None; copied byte-for-byte."
     },
     {
       "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk3/overlay_front.png.mcmeta",
       "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_3.png.mcmeta",
       "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
-      "license": "LGPL-3.0"
+      "license": "LGPL-3.0",
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "modifications": "None; copied byte-for-byte."
     },
     {
       "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk4/overlay_front.png.mcmeta",
       "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_4.png.mcmeta",
       "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
-      "license": "LGPL-3.0"
+      "license": "LGPL-3.0",
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk1/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_1_active.png",
+      "sourceSha256": "97ec46fcfaed652f472a327cae7a3001045da6b9c4b75b725b738687eed10e33",
+      "sha256": "97ec46fcfaed652f472a327cae7a3001045da6b9c4b75b725b738687eed10e33",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk1/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_1_active.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk1/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_1_emissive.png",
+      "sourceSha256": "da13b7245e314a60d66b84e149a8284b884364a054fb183f73f884c5c984aa8b",
+      "sha256": "da13b7245e314a60d66b84e149a8284b884364a054fb183f73f884c5c984aa8b",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk1/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_1_emissive.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk1/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_1_active_emissive.png",
+      "sourceSha256": "20f0b2b720df8815db413b417390ab32e68fd28bda5d49b9888f6c03c5026939",
+      "sha256": "20f0b2b720df8815db413b417390ab32e68fd28bda5d49b9888f6c03c5026939",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk1/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_1_active_emissive.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk2/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_2_active.png",
+      "sourceSha256": "a9f670ed0f63c7e6157075e2874b79da73060960cc0bc0c3caa4e6d5b3ebddce",
+      "sha256": "a9f670ed0f63c7e6157075e2874b79da73060960cc0bc0c3caa4e6d5b3ebddce",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk2/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_2_active.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk2/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_2_emissive.png",
+      "sourceSha256": "483f00057f6860ccbd6b01bfda06f77ebbef7c33bc9d3a2cfe54d42e46f7edf8",
+      "sha256": "483f00057f6860ccbd6b01bfda06f77ebbef7c33bc9d3a2cfe54d42e46f7edf8",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk2/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_2_emissive.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk2/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_2_active_emissive.png",
+      "sourceSha256": "d407d8e0b1b661331c8f2bcddb59a6fd616887ce83e1e66cff50ce182d9eee98",
+      "sha256": "d407d8e0b1b661331c8f2bcddb59a6fd616887ce83e1e66cff50ce182d9eee98",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk2/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_2_active_emissive.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk3/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_3_active.png",
+      "sourceSha256": "1387933459c106c47c264f1e9eabf0748620e67fc2db54d3ec219aa12345b01b",
+      "sha256": "1387933459c106c47c264f1e9eabf0748620e67fc2db54d3ec219aa12345b01b",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk3/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_3_active.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk3/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_3_emissive.png",
+      "sourceSha256": "76c6815843fb40021f9816eb8aa54bd5a3252cf587f37f0a067663613dc268c1",
+      "sha256": "76c6815843fb40021f9816eb8aa54bd5a3252cf587f37f0a067663613dc268c1",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk3/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_3_emissive.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk3/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_3_active_emissive.png",
+      "sourceSha256": "65545217b8c94c24b13429939864d65eb59c45516a1929ff4c47adabcf6e7fa9",
+      "sha256": "65545217b8c94c24b13429939864d65eb59c45516a1929ff4c47adabcf6e7fa9",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk3/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_3_active_emissive.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk4/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_4_active.png",
+      "sourceSha256": "5c3661c8c9f97cabd58e7787ca7bac6f173555ae0de211637e4f15b649117a9c",
+      "sha256": "5c3661c8c9f97cabd58e7787ca7bac6f173555ae0de211637e4f15b649117a9c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk4/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_4_active.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk4/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_4_emissive.png",
+      "sourceSha256": "e4da4d2748b86683c92b402aa721e08fbc855f1213a171a0cbc41be6a7766843",
+      "sha256": "e4da4d2748b86683c92b402aa721e08fbc855f1213a171a0cbc41be6a7766843",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk4/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_4_emissive.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk4/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_4_active_emissive.png",
+      "sourceSha256": "cd205f4026b237e00a7f5a2d88327125585625e94b59d8aac43f7e4735e4c715",
+      "sha256": "cd205f4026b237e00a7f5a2d88327125585625e94b59d8aac43f7e4735e4c715",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk4/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_4_active_emissive.png.mcmeta",
+      "sourceSha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk5/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_5.png",
+      "sourceSha256": "82e135c2706d93b1ae6ac22f865536ee0499ce2bed22fbbbf216b8a315c3563a",
+      "sha256": "82e135c2706d93b1ae6ac22f865536ee0499ce2bed22fbbbf216b8a315c3563a",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk5/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_5.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk5/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_5_active.png",
+      "sourceSha256": "97a9aadccd9f8a1230f574bbad75dba1fc0a5e0a09df139c90bd7c640f7c2f23",
+      "sha256": "97a9aadccd9f8a1230f574bbad75dba1fc0a5e0a09df139c90bd7c640f7c2f23",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk5/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_5_active.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk5/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_5_emissive.png",
+      "sourceSha256": "5a4d7a826190f944ff151163468e85ef56b8377bbd5f6e858caa4db1961dbb59",
+      "sha256": "5a4d7a826190f944ff151163468e85ef56b8377bbd5f6e858caa4db1961dbb59",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk5/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_5_emissive.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk5/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_5_active_emissive.png",
+      "sourceSha256": "3b158ea6a70b7253b360f02debbb8c2745326548ffcd6c2d8706955f0bb00f37",
+      "sha256": "3b158ea6a70b7253b360f02debbb8c2745326548ffcd6c2d8706955f0bb00f37",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk5/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_5_active_emissive.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk6/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_6.png",
+      "sourceSha256": "e27177563bc9ca988f124b50f810e475a2325f85f023909c0a4e2b21eaa0ad46",
+      "sha256": "e27177563bc9ca988f124b50f810e475a2325f85f023909c0a4e2b21eaa0ad46",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk6/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_6.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk6/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_6_active.png",
+      "sourceSha256": "91825d703b01378b2825bf107731a3d62389fb0ce32223a936654f96b542e748",
+      "sha256": "91825d703b01378b2825bf107731a3d62389fb0ce32223a936654f96b542e748",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk6/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_6_active.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk6/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_6_emissive.png",
+      "sourceSha256": "e03e67e99a0cce765db346815275924f9c74511300d2fe398aff75cc989efffc",
+      "sha256": "e03e67e99a0cce765db346815275924f9c74511300d2fe398aff75cc989efffc",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk6/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_6_emissive.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk6/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_6_active_emissive.png",
+      "sourceSha256": "0f77df59cc4744c2f0bd0714c4499939c622a59b658baa45cc2a48309a3b970f",
+      "sha256": "0f77df59cc4744c2f0bd0714c4499939c622a59b658baa45cc2a48309a3b970f",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk6/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_6_active_emissive.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk7/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_7.png",
+      "sourceSha256": "63ad520ad9109df6a43f9f54a8e0a5363e986f4d64ee2ebe4e39f38627526d57",
+      "sha256": "63ad520ad9109df6a43f9f54a8e0a5363e986f4d64ee2ebe4e39f38627526d57",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk7/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_7.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk7/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_7_active.png",
+      "sourceSha256": "94a0528ca236a3a1c809a9341952eb3319c7b361f1886a74d6500aa554398b0f",
+      "sha256": "94a0528ca236a3a1c809a9341952eb3319c7b361f1886a74d6500aa554398b0f",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk7/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_7_active.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk7/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_7_emissive.png",
+      "sourceSha256": "740636797ad0fc6da2936eda3780ba27705250e6014d521261d8b5d72989dafe",
+      "sha256": "740636797ad0fc6da2936eda3780ba27705250e6014d521261d8b5d72989dafe",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk7/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_7_emissive.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk7/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_7_active_emissive.png",
+      "sourceSha256": "fcd9e18ecd2dbef1683b1da09be31f08a0359c79f0c392243507f0046148b504",
+      "sha256": "fcd9e18ecd2dbef1683b1da09be31f08a0359c79f0c392243507f0046148b504",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk7/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_7_active_emissive.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk8/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_8.png",
+      "sourceSha256": "1f38587d36af66a089d701fa06f0198513c162c99f0deeccff4720bad2dfe591",
+      "sha256": "1f38587d36af66a089d701fa06f0198513c162c99f0deeccff4720bad2dfe591",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk8/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_8.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk8/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_8_active.png",
+      "sourceSha256": "898b36388e15c5385a231fe3a24605aad0d98aaef6228c029cd9c73b19d5cb37",
+      "sha256": "898b36388e15c5385a231fe3a24605aad0d98aaef6228c029cd9c73b19d5cb37",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk8/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_8_active.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk8/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_8_emissive.png",
+      "sourceSha256": "d1d71034bb9f8b6cb1bdc13b66a57dea1db9ef6ab1fe6e313655d1e19c78b394",
+      "sha256": "d1d71034bb9f8b6cb1bdc13b66a57dea1db9ef6ab1fe6e313655d1e19c78b394",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk8/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_8_emissive.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk8/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_8_active_emissive.png",
+      "sourceSha256": "31cf38f08d4067797d89d5f4d0b443cda14b6e51688901552d44c3f79d8a550d",
+      "sha256": "31cf38f08d4067797d89d5f4d0b443cda14b6e51688901552d44c3f79d8a550d",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk8/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_8_active_emissive.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk9/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_9.png",
+      "sourceSha256": "cb75a1eef8a5dea4896823e92cfe2bbb9611fca26be4caf1544aa060e83b1671",
+      "sha256": "cb75a1eef8a5dea4896823e92cfe2bbb9611fca26be4caf1544aa060e83b1671",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk9/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_9.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk9/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_9_active.png",
+      "sourceSha256": "fdd1dfa5e7c9d2e8c6b4dd27ca6a442eb6ce8e68e10eec8f501aa98375ecad57",
+      "sha256": "fdd1dfa5e7c9d2e8c6b4dd27ca6a442eb6ce8e68e10eec8f501aa98375ecad57",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk9/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_9_active.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk9/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_9_emissive.png",
+      "sourceSha256": "a0e815d04c4fc40c5f44c689af77b8645f31aee09f8685f134696a342aae8c72",
+      "sha256": "a0e815d04c4fc40c5f44c689af77b8645f31aee09f8685f134696a342aae8c72",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk9/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_9_emissive.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk9/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_9_active_emissive.png",
+      "sourceSha256": "cd76f98f4a014e704efb464a95cc4e9195a174fe1d501763d9d468c4351ccd91",
+      "sha256": "cd76f98f4a014e704efb464a95cc4e9195a174fe1d501763d9d468c4351ccd91",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk9/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_9_active_emissive.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk10/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_10.png",
+      "sourceSha256": "bf8a9d41dd2493fd5a6c26ea21f68ad8b02b4e61353cbff6c75bb06724514fd3",
+      "sha256": "bf8a9d41dd2493fd5a6c26ea21f68ad8b02b4e61353cbff6c75bb06724514fd3",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 128,
+      "frameCount": 8
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk10/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_10.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk10/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_10_active.png",
+      "sourceSha256": "fde4918ef0e8a571afff237f3f1113b6fc4b36b110fee9a55119e0f084b341b7",
+      "sha256": "fde4918ef0e8a571afff237f3f1113b6fc4b36b110fee9a55119e0f084b341b7",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 128,
+      "frameCount": 8
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk10/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_10_active.png.mcmeta",
+      "sourceSha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "sha256": "f2e6dc80196c6dc10b50b367ffd6adea745a9fcfcc36c43bc57e55644ed8be2c",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk10/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_10_emissive.png",
+      "sourceSha256": "bc088695837a64294005652c7b0797b22a86113a8094e8e9c3e5c7623864766d",
+      "sha256": "bc088695837a64294005652c7b0797b22a86113a8094e8e9c3e5c7623864766d",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 128,
+      "frameCount": 8
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk10/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_10_emissive.png.mcmeta",
+      "sourceSha256": "57c618cf2f1317d56e92633b4a7ca14b8ee00b531bccf68925e861027c0fd26e",
+      "sha256": "57c618cf2f1317d56e92633b4a7ca14b8ee00b531bccf68925e861027c0fd26e",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk10/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_10_active_emissive.png",
+      "sourceSha256": "0bea36e1ee44999d9bee150ebf5b14e5f6ca09b9fd2e4514d89b047b9d1a898e",
+      "sha256": "0bea36e1ee44999d9bee150ebf5b14e5f6ca09b9fd2e4514d89b047b9d1a898e",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 128,
+      "frameCount": 8
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk10/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_10_active_emissive.png.mcmeta",
+      "sourceSha256": "57c618cf2f1317d56e92633b4a7ca14b8ee00b531bccf68925e861027c0fd26e",
+      "sha256": "57c618cf2f1317d56e92633b4a7ca14b8ee00b531bccf68925e861027c0fd26e",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/iv/bottom.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/iv/bottom.png",
+      "sourceSha256": "31de7e27a89bd8bfaa0137f373b358312b9275b501b689cd555a4ad33ee44256",
+      "sha256": "31de7e27a89bd8bfaa0137f373b358312b9275b501b689cd555a4ad33ee44256",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/iv/top.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/iv/top.png",
+      "sourceSha256": "31de7e27a89bd8bfaa0137f373b358312b9275b501b689cd555a4ad33ee44256",
+      "sha256": "31de7e27a89bd8bfaa0137f373b358312b9275b501b689cd555a4ad33ee44256",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/iv/side.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/iv/side.png",
+      "sourceSha256": "447da97ab9a260c5d832372453f9693ce8b9b4a1ff556a75dbb07ce32cfb43e8",
+      "sha256": "447da97ab9a260c5d832372453f9693ce8b9b4a1ff556a75dbb07ce32cfb43e8",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/luv/bottom.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/luv/bottom.png",
+      "sourceSha256": "05992f9741bb6ac830c9b3849ea0c293aeec8e0d80f7d2ee7e9072b764cd92ce",
+      "sha256": "05992f9741bb6ac830c9b3849ea0c293aeec8e0d80f7d2ee7e9072b764cd92ce",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/luv/top.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/luv/top.png",
+      "sourceSha256": "05992f9741bb6ac830c9b3849ea0c293aeec8e0d80f7d2ee7e9072b764cd92ce",
+      "sha256": "05992f9741bb6ac830c9b3849ea0c293aeec8e0d80f7d2ee7e9072b764cd92ce",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/luv/side.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/luv/side.png",
+      "sourceSha256": "05992f9741bb6ac830c9b3849ea0c293aeec8e0d80f7d2ee7e9072b764cd92ce",
+      "sha256": "05992f9741bb6ac830c9b3849ea0c293aeec8e0d80f7d2ee7e9072b764cd92ce",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/zpm/bottom.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/zpm/bottom.png",
+      "sourceSha256": "5d2636a1735d790dea563f94e080d90f19966fdf1cfc22d6276792fa07c1be13",
+      "sha256": "5d2636a1735d790dea563f94e080d90f19966fdf1cfc22d6276792fa07c1be13",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/zpm/top.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/zpm/top.png",
+      "sourceSha256": "7b70ff11cc2c415cf23857244555666782748d6051c72e36f082b9ee57900cac",
+      "sha256": "7b70ff11cc2c415cf23857244555666782748d6051c72e36f082b9ee57900cac",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/zpm/side.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/zpm/side.png",
+      "sourceSha256": "c83269d6826609bea6b20d2efec88d48acf3edd23fd7543fd0e39fa97ecdd511",
+      "sha256": "c83269d6826609bea6b20d2efec88d48acf3edd23fd7543fd0e39fa97ecdd511",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uv/bottom.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uv/bottom.png",
+      "sourceSha256": "9ba78e722bdbef5d0e867998c1818e04d5a5aee95a97687337b81cb37e40103f",
+      "sha256": "9ba78e722bdbef5d0e867998c1818e04d5a5aee95a97687337b81cb37e40103f",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uv/top.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uv/top.png",
+      "sourceSha256": "792fbb0918a798e6967d6146465d38448e11178d6fae17491abf070f6ead9b08",
+      "sha256": "792fbb0918a798e6967d6146465d38448e11178d6fae17491abf070f6ead9b08",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uv/side.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uv/side.png",
+      "sourceSha256": "ae4f36590ac59397887182c4eddc31269c97c8d8c93e3f4b42f762581c5a8723",
+      "sha256": "ae4f36590ac59397887182c4eddc31269c97c8d8c93e3f4b42f762581c5a8723",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uhv/bottom.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uhv/bottom.png",
+      "sourceSha256": "fd0321d1a57925f7fd1554688c71f428530d3ac82c55ebbb8315274e3b159798",
+      "sha256": "fd0321d1a57925f7fd1554688c71f428530d3ac82c55ebbb8315274e3b159798",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 32,
+      "frameCount": 2
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uhv/top.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uhv/top.png",
+      "sourceSha256": "40a0d1b3c016c53408d1c503c9e80fda608182a9ac106c24f22c25121478370a",
+      "sha256": "40a0d1b3c016c53408d1c503c9e80fda608182a9ac106c24f22c25121478370a",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 32,
+      "frameCount": 2
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uhv/side.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uhv/side.png",
+      "sourceSha256": "141c0fa75a9227decee8c192a92aef1bb798f6d32fb1391854f6e2ae9cea143f",
+      "sha256": "141c0fa75a9227decee8c192a92aef1bb798f6d32fb1391854f6e2ae9cea143f",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 32,
+      "frameCount": 2
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uev/bottom.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uev/bottom.png",
+      "sourceSha256": "1131d06b83d823d7ef328e2eaec853b0e167ba1645a99ab0e12f31ef3123be9f",
+      "sha256": "1131d06b83d823d7ef328e2eaec853b0e167ba1645a99ab0e12f31ef3123be9f",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uev/top.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uev/top.png",
+      "sourceSha256": "bdfa79f1e9efb2add4dbae85f11bc6e780a74f75b06a4db584e3fe6716413f30",
+      "sha256": "bdfa79f1e9efb2add4dbae85f11bc6e780a74f75b06a4db584e3fe6716413f30",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uev/side.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uev/side.png",
+      "sourceSha256": "a048384c3bc8e24be7d31b8aa09f470a9b6b783608ef590a01ef0fd9db2c26f5",
+      "sha256": "a048384c3bc8e24be7d31b8aa09f470a9b6b783608ef590a01ef0fd9db2c26f5",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uiv/bottom.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uiv/bottom.png",
+      "sourceSha256": "91cae63cc62caf0cb077a3b5dd2a3063756a19c4dee31d59ac9e3e7e4648c15e",
+      "sha256": "91cae63cc62caf0cb077a3b5dd2a3063756a19c4dee31d59ac9e3e7e4648c15e",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uiv/top.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uiv/top.png",
+      "sourceSha256": "5107918cd4d982a5d1d9a49f768bc9a0f4679546472f64d0e1b5ba32698d7484",
+      "sha256": "5107918cd4d982a5d1d9a49f768bc9a0f4679546472f64d0e1b5ba32698d7484",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uiv/side.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uiv/side.png",
+      "sourceSha256": "aee0570f4781de7dafedc495c2a9bb8cfa59dd9b4ade9dbbddee416544f2a787",
+      "sha256": "aee0570f4781de7dafedc495c2a9bb8cfa59dd9b4ade9dbbddee416544f2a787",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uxv/bottom.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uxv/bottom.png",
+      "sourceSha256": "bfe6b57bfe12a94db42b48b73dbe56baffaea83da935e096a2e01def82dfa148",
+      "sha256": "bfe6b57bfe12a94db42b48b73dbe56baffaea83da935e096a2e01def82dfa148",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uxv/top.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uxv/top.png",
+      "sourceSha256": "bc7ce80fe896549f4a2ec7cdd3a8df7d27cb1a55bf71d2ac9e1b069d5aaaeb66",
+      "sha256": "bc7ce80fe896549f4a2ec7cdd3a8df7d27cb1a55bf71d2ac9e1b069d5aaaeb66",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uxv/side.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uxv/side.png",
+      "sourceSha256": "1f0f22260ab0b8e51658a635253f5d202a8ecc0bbfec7a394585cb115c22202a",
+      "sha256": "1f0f22260ab0b8e51658a635253f5d202a8ecc0bbfec7a394585cb115c22202a",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/opv/bottom.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/opv/bottom.png",
+      "sourceSha256": "8d2d153d4fb6ca5ff0a2ccdfbe84aacdca7585963666c21de2f21730c25887fc",
+      "sha256": "8d2d153d4fb6ca5ff0a2ccdfbe84aacdca7585963666c21de2f21730c25887fc",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 128,
+      "frameCount": 8
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/opv/top.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/opv/top.png",
+      "sourceSha256": "9cc9f6b2c78d3aaa7630628eb94a163b6fb64b5b11124985d97f745dded940a1",
+      "sha256": "9cc9f6b2c78d3aaa7630628eb94a163b6fb64b5b11124985d97f745dded940a1",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 128,
+      "frameCount": 8
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/opv/side.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/opv/side.png",
+      "sourceSha256": "9d03e78e54f5cb64befb2d8c1f192a33aaed5a6407f0d219fe8129083b2eaa37",
+      "sha256": "9d03e78e54f5cb64befb2d8c1f192a33aaed5a6407f0d219fe8129083b2eaa37",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 128,
+      "frameCount": 8
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/max/bottom.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/max/bottom.png",
+      "sourceSha256": "f7764284a331e2713c7f9235f5e4e85584b15ee1ac849115e8bc691c3790a8f7",
+      "sha256": "f7764284a331e2713c7f9235f5e4e85584b15ee1ac849115e8bc691c3790a8f7",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/max/top.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/max/top.png",
+      "sourceSha256": "f7764284a331e2713c7f9235f5e4e85584b15ee1ac849115e8bc691c3790a8f7",
+      "sha256": "f7764284a331e2713c7f9235f5e4e85584b15ee1ac849115e8bc691c3790a8f7",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/max/side.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/max/side.png",
+      "sourceSha256": "0a658b429d4da7a371fdd248fa8abf16199c485d32b80aba33561e5f42abdcee",
+      "sha256": "0a658b429d4da7a371fdd248fa8abf16199c485d32b80aba33561e5f42abdcee",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 160,
+      "frameCount": 10
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uhv/bottom.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uhv/bottom.png.mcmeta",
+      "sourceSha256": "6726ef8bcba70f25a6d2f04357f8dfc67f873e9c82d86f8171eb59a858bde54e",
+      "sha256": "6726ef8bcba70f25a6d2f04357f8dfc67f873e9c82d86f8171eb59a858bde54e",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uhv/top.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uhv/top.png.mcmeta",
+      "sourceSha256": "6726ef8bcba70f25a6d2f04357f8dfc67f873e9c82d86f8171eb59a858bde54e",
+      "sha256": "6726ef8bcba70f25a6d2f04357f8dfc67f873e9c82d86f8171eb59a858bde54e",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/uhv/side.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/uhv/side.png.mcmeta",
+      "sourceSha256": "6726ef8bcba70f25a6d2f04357f8dfc67f873e9c82d86f8171eb59a858bde54e",
+      "sha256": "6726ef8bcba70f25a6d2f04357f8dfc67f873e9c82d86f8171eb59a858bde54e",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/opv/bottom.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/opv/bottom.png.mcmeta",
+      "sourceSha256": "908f834188b466a1e0b364c4aae40e49830b5276330dca58191b11318349ed71",
+      "sha256": "908f834188b466a1e0b364c4aae40e49830b5276330dca58191b11318349ed71",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/opv/top.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/opv/top.png.mcmeta",
+      "sourceSha256": "908f834188b466a1e0b364c4aae40e49830b5276330dca58191b11318349ed71",
+      "sha256": "908f834188b466a1e0b364c4aae40e49830b5276330dca58191b11318349ed71",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/opv/side.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/opv/side.png.mcmeta",
+      "sourceSha256": "908f834188b466a1e0b364c4aae40e49830b5276330dca58191b11318349ed71",
+      "sha256": "908f834188b466a1e0b364c4aae40e49830b5276330dca58191b11318349ed71",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtceu-1.20.1-1.4.4.jar",
+      "source": "assets/gtceu/textures/block/casings/voltage/max/side.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hulls/max/side.png.mcmeta",
+      "sourceSha256": "c79019c2e0a71cfd58ff4e4e819f2c3c3c35131203cf4251eaf40c6a3c9b0e2d",
+      "sha256": "c79019c2e0a71cfd58ff4e4e819f2c3c3c35131203cf4251eaf40c6a3c9b0e2d",
+      "license": "LGPL-3.0",
+      "modifications": "None; copied byte-for-byte."
     }
   ],
-  "modifications": "1.7.10 API adaptation. Original geometry reversed in Y/Z for StructureLib; native GTNH steel casing, steel blocks, Coke Oven Bricks (gt.blockcasings12:0), Firebricks (gt.blockcasings4:15), iron bars and lava. Furnace metal frames removed to expose the GTNH casing layer; hatch PNG and animation metadata bytes unchanged; no source commit established for installed archives."
+  "modifications": "1.7.10 API adaptation. Original geometry reversed in Y/Z for StructureLib; native GTNH steel casing, steel blocks, Coke Oven Bricks (gt.blockcasings12:0), Firebricks (gt.blockcasings4:15), iron bars and lava. Furnace metal frames removed to expose the GTNH casing layer; hatch PNG and animation metadata bytes unchanged; no source commit established for installed archives.",
+  "hatchTierMapping": [
+    {
+      "gtnhTier": "IV",
+      "sourceTier": "IV",
+      "mk": 1
+    },
+    {
+      "gtnhTier": "LuV",
+      "sourceTier": "LuV",
+      "mk": 2
+    },
+    {
+      "gtnhTier": "ZPM",
+      "sourceTier": "ZPM",
+      "mk": 3
+    },
+    {
+      "gtnhTier": "UV",
+      "sourceTier": "UV",
+      "mk": 4
+    },
+    {
+      "gtnhTier": "UHV",
+      "sourceTier": "UHV",
+      "mk": 5
+    },
+    {
+      "gtnhTier": "UEV",
+      "sourceTier": "UEV",
+      "mk": 6
+    },
+    {
+      "gtnhTier": "UIV",
+      "sourceTier": "UIV",
+      "mk": 7
+    },
+    {
+      "gtnhTier": "UMV",
+      "sourceTier": "UXV",
+      "mk": 8
+    },
+    {
+      "gtnhTier": "UXV",
+      "sourceTier": "OpV",
+      "mk": 9
+    },
+    {
+      "gtnhTier": "MAX",
+      "sourceTier": "MAX",
+      "mk": 10
+    }
+  ],
+  "hatchRendering": "All ten tiers use their original GTCEu top/bottom/side hulls in inventory and world, with matching GTCEu mk1-4 / GTLCore mk5-10 fronts and fullbright emissive layers. Idle/active layers retain four frames for mk1-9 and eight for mk10, at eight ticks per frame. Hull appearance remains tier-specific when installed in a structure."
 }

@@ -25,7 +25,7 @@ public final class AssemblyPlantBlocks {
         GameRegistry.registerBlock(casing, ItemBlockAssemblyPlantCasing.class, "assembly_plant_casing");
         GameRegistry.registerBlock(glass, ItemBlockAssemblyPlantCasing.class, "assembly_plant_glass");
         for (AssemblyPlantCasing variant : AssemblyPlantCasing.values()) {
-            variant.getItemContainer().set(variant.getStack(1));
+            variant.getItemContainer().set(variant.getLegacyStack(1));
             ITexture texture = new AssemblyPlantConnectedTexture(variant, false);
             textures[variant.ordinal()] = texture;
             Textures.BlockIcons.setCasingTextureForId(variant.getTextureId(), texture);

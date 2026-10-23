@@ -1,0 +1,16 @@
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(project.file(project.findProperty('colliderBuildDirectory') ?: 'build/collider-isolated'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.spotless.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/blocks/NativeStructureCasings.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/modularmachine/SuperParticleCollider.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/SuperParticleColliderStructure.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/SuperParticleColliderRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/ModsItemlist.java',
+            'src/test/java/com/xyp/gtnotgood/common/machines/multiblock/structure/SuperParticleColliderStructureTest.java',
+            'scripts/qa/SuperParticleColliderClientChecks.java'
+    }
+}

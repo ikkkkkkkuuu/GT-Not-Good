@@ -30,7 +30,7 @@ public final class TentacleBlocks {
         GTUtility.addTexturePage((byte) TEXTURE_PAGE);
         textureStart = TEXTURE_PAGE << 7;
         for (TentacleCasing variant : TentacleCasing.values()) {
-            variant.getItemContainer().set(variant.getStack(1));
+            variant.getItemContainer().set(variant.getLegacyStack(1));
             ITexture texture = new TentacleConnectedTexture(variant);
             textures[variant.ordinal()] = texture;
             Textures.BlockIcons.setCasingTextureForId(getTextureId(variant), texture);

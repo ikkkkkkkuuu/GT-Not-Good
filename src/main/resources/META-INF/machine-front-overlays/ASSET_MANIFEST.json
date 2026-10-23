@@ -1,0 +1,1064 @@
+{
+  "formatVersion": 1,
+  "description": "Original transparent front overlays from the installed GTL distribution; no machine registration or renderer changes.",
+  "sources": [
+    {
+      "archive": "GTL-Enhancedcore-3.8.0.jar",
+      "version": "3.8.0",
+      "sha256": "555a9514c4d2fd11a029c091ac053d5cf7c52fba62411f2f043e04454094f7aa",
+      "authors": "S_Fast",
+      "license": "LGPL-3.0",
+      "licenseEvidence": {
+        "path": "META-INF/mods.toml",
+        "declaration": "license = \"LGPL-3.0\""
+      },
+      "sourceCommit": null,
+      "sourceCommitNote": "Not established for this installed build."
+    },
+    {
+      "archive": "gtlcore-1.2.3.2-fix4.jar",
+      "version": "1.2.3.2-fix4",
+      "sha256": "c44b8212b8d3a210eabd36e3efaf7804e78e25fc44d45f7b0fb048453aaaf346",
+      "authors": "POWSDSSAG, EasterFG, Maple",
+      "license": "LGPL-3.0",
+      "licenseEvidence": {
+        "path": "META-INF/mods.toml",
+        "declaration": "license = \"LGPLv3.0\""
+      },
+      "sourceCommit": null,
+      "sourceCommitNote": "Not established for this installed build."
+    }
+  ],
+  "families": [
+    {
+      "id": "extreme_reactor",
+      "displayNameZh": "极限反应堆",
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "sourceDirectory": "assets/gtl_enhancedcore/textures/block/multiblock/extreme_reactor/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/extreme_reactor",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png",
+        "overlay_front_emissive.png",
+        "overlay_front_paused.png",
+        "overlay_front_paused_emissive.png"
+      ]
+    },
+    {
+      "id": "hydrothermal_leaching_complex",
+      "displayNameZh": "热压浸解联合体",
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "sourceDirectory": "assets/gtl_enhancedcore/textures/block/multiblock/hydrothermal_leaching_complex/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/hydrothermal_leaching_complex",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png",
+        "overlay_front_emissive.png",
+        "overlay_front_paused.png",
+        "overlay_front_paused_emissive.png"
+      ]
+    },
+    {
+      "id": "neutron_control_factory",
+      "displayNameZh": "中子控制工厂",
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "sourceDirectory": "assets/gtl_enhancedcore/textures/block/multiblock/neutron_control_factory/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/neutron_control_factory",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png",
+        "overlay_front_emissive.png"
+      ]
+    },
+    {
+      "id": "stellar_vortex",
+      "displayNameZh": "星璇号空间站",
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "sourceDirectory": "assets/gtl_enhancedcore/textures/block/multiblock/stellar_vortex/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/stellar_vortex",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png",
+        "overlay_front_emissive.png",
+        "overlay_front_paused.png",
+        "overlay_front_paused_emissive.png"
+      ]
+    },
+    {
+      "id": "dehydrator",
+      "displayNameZh": "脱水机",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/machines/dehydrator/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/dehydrator",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png"
+      ]
+    },
+    {
+      "id": "lightning_processor",
+      "displayNameZh": "闪电处理机",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/machines/lightning_processor/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/lightning_processor",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png"
+      ]
+    },
+    {
+      "id": "neutron_compressor",
+      "displayNameZh": "中子态素压缩机",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/machines/neutron_compressor/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/neutron_compressor",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png"
+      ]
+    },
+    {
+      "id": "world_data_scanner",
+      "displayNameZh": "世界信息扫描仪",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/machines/world_data_scanner/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/world_data_scanner",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png",
+        "overlay_front_emissive.png",
+        "overlay_front_paused.png",
+        "overlay_front_paused_emissive.png"
+      ]
+    },
+    {
+      "id": "cosmos_simulation",
+      "displayNameZh": "宇宙模拟",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/multiblock/cosmos_simulation/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/cosmos_simulation",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png"
+      ]
+    },
+    {
+      "id": "dimensionally_transcendent_plasma_forge",
+      "displayNameZh": "超维度等离子锻炉",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/multiblock/dimensionally_transcendent_plasma_forge/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/dimensionally_transcendent_plasma_forge",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png",
+        "overlay_front_emissive.png"
+      ]
+    },
+    {
+      "id": "steam_centrifuge",
+      "displayNameZh": "大型蒸汽离心机",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/multiblock/steam_centrifuge/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_centrifuge",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png"
+      ]
+    },
+    {
+      "id": "steam_circuit_assembler",
+      "displayNameZh": "大型蒸汽电路组装机",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/multiblock/steam_circuit_assembler/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_circuit_assembler",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png"
+      ]
+    },
+    {
+      "id": "steam_mixer",
+      "displayNameZh": "蒸汽搅拌机",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/multiblock/steam_mixer/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_mixer",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png"
+      ]
+    },
+    {
+      "id": "steam_ore_washer",
+      "displayNameZh": "蒸汽洗矿机",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/multiblock/steam_ore_washer/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_ore_washer",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png",
+        "overlay_front_emissive.png"
+      ]
+    },
+    {
+      "id": "steam_pressor",
+      "displayNameZh": "蒸汽挤压机",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/multiblock/steam_pressor/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_pressor",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png",
+        "overlay_front_emissive.png"
+      ]
+    },
+    {
+      "id": "steam_thermal_centrifuge",
+      "displayNameZh": "大型蒸汽热力离心机",
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "sourceDirectory": "assets/gtceu/textures/block/multiblock/steam_thermal_centrifuge/",
+      "destinationDirectory": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_thermal_centrifuge",
+      "states": [
+        "overlay_front.png",
+        "overlay_front_active.png",
+        "overlay_front_active_emissive.png",
+        "overlay_front_emissive.png"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/extreme_reactor/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/extreme_reactor/overlay_front.png",
+      "sourceSha256": "7bec9d30ff9c9bb660300696509bd667a50d4b08a012bdc1249e60deaed82e62",
+      "sha256": "7bec9d30ff9c9bb660300696509bd667a50d4b08a012bdc1249e60deaed82e62",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/extreme_reactor/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/extreme_reactor/overlay_front_active.png",
+      "sourceSha256": "cad276e5c64e99e1698647c433b31c45a5eb0fdc821b8718e31be96dbc588000",
+      "sha256": "cad276e5c64e99e1698647c433b31c45a5eb0fdc821b8718e31be96dbc588000",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/extreme_reactor/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/extreme_reactor/overlay_front_active.png.mcmeta",
+      "sourceSha256": "1d7ae913ba1be07e1cca18dd6b0e309a44693afccd26e8b84eeda884a1721e63",
+      "sha256": "1d7ae913ba1be07e1cca18dd6b0e309a44693afccd26e8b84eeda884a1721e63",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/extreme_reactor/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/extreme_reactor/overlay_front_active_emissive.png",
+      "sourceSha256": "98ab0d65721513a4bfb1bc61c2854c06547a918a4c5abebe2d74701dab8a8e11",
+      "sha256": "98ab0d65721513a4bfb1bc61c2854c06547a918a4c5abebe2d74701dab8a8e11",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/extreme_reactor/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/extreme_reactor/overlay_front_active_emissive.png.mcmeta",
+      "sourceSha256": "1d7ae913ba1be07e1cca18dd6b0e309a44693afccd26e8b84eeda884a1721e63",
+      "sha256": "1d7ae913ba1be07e1cca18dd6b0e309a44693afccd26e8b84eeda884a1721e63",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/extreme_reactor/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/extreme_reactor/overlay_front_emissive.png",
+      "sourceSha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320",
+      "sha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/extreme_reactor/overlay_front_paused.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/extreme_reactor/overlay_front_paused.png",
+      "sourceSha256": "cd9c85e3e5f18c6e5ae38ab4ec0e25093b6ff80611690de5e82785c1b16f7fa3",
+      "sha256": "cd9c85e3e5f18c6e5ae38ab4ec0e25093b6ff80611690de5e82785c1b16f7fa3",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/extreme_reactor/overlay_front_paused_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/extreme_reactor/overlay_front_paused_emissive.png",
+      "sourceSha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320",
+      "sha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/hydrothermal_leaching_complex/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/hydrothermal_leaching_complex/overlay_front.png",
+      "sourceSha256": "a37fe842bf915ca64b6016e9a58b3d2dc21ed823a7159efe27c2d2a7bf8936f4",
+      "sha256": "a37fe842bf915ca64b6016e9a58b3d2dc21ed823a7159efe27c2d2a7bf8936f4",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/hydrothermal_leaching_complex/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/hydrothermal_leaching_complex/overlay_front_active.png",
+      "sourceSha256": "4539dbdac408ff699f4b6171682e6cbdb3bd9949b1165640411f3bf1d54f30a5",
+      "sha256": "4539dbdac408ff699f4b6171682e6cbdb3bd9949b1165640411f3bf1d54f30a5",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/hydrothermal_leaching_complex/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/hydrothermal_leaching_complex/overlay_front_active.png.mcmeta",
+      "sourceSha256": "04236c50ebfb9df5069785c1ba181554a33e7b667c8357a04244772f9cf288d5",
+      "sha256": "04236c50ebfb9df5069785c1ba181554a33e7b667c8357a04244772f9cf288d5",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/hydrothermal_leaching_complex/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/hydrothermal_leaching_complex/overlay_front_active_emissive.png",
+      "sourceSha256": "3bd65ca1662ba2784a1e6eb736316369140830d60bd10536b52bf489a945dc73",
+      "sha256": "3bd65ca1662ba2784a1e6eb736316369140830d60bd10536b52bf489a945dc73",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/hydrothermal_leaching_complex/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/hydrothermal_leaching_complex/overlay_front_active_emissive.png.mcmeta",
+      "sourceSha256": "04236c50ebfb9df5069785c1ba181554a33e7b667c8357a04244772f9cf288d5",
+      "sha256": "04236c50ebfb9df5069785c1ba181554a33e7b667c8357a04244772f9cf288d5",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/hydrothermal_leaching_complex/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/hydrothermal_leaching_complex/overlay_front_emissive.png",
+      "sourceSha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320",
+      "sha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/hydrothermal_leaching_complex/overlay_front_paused.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/hydrothermal_leaching_complex/overlay_front_paused.png",
+      "sourceSha256": "4506852a8f940d924bc11c5bc6328a902a4d128877abf2af3693b1d03ec508a2",
+      "sha256": "4506852a8f940d924bc11c5bc6328a902a4d128877abf2af3693b1d03ec508a2",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/hydrothermal_leaching_complex/overlay_front_paused_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/hydrothermal_leaching_complex/overlay_front_paused_emissive.png",
+      "sourceSha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320",
+      "sha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/neutron_control_factory/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/neutron_control_factory/overlay_front.png",
+      "sourceSha256": "46da835c60e9f857184aec3a19369c411860f407a98d568017f7c0ff77a7b33e",
+      "sha256": "46da835c60e9f857184aec3a19369c411860f407a98d568017f7c0ff77a7b33e",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/neutron_control_factory/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/neutron_control_factory/overlay_front_active.png",
+      "sourceSha256": "46da835c60e9f857184aec3a19369c411860f407a98d568017f7c0ff77a7b33e",
+      "sha256": "46da835c60e9f857184aec3a19369c411860f407a98d568017f7c0ff77a7b33e",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/neutron_control_factory/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/neutron_control_factory/overlay_front_active_emissive.png",
+      "sourceSha256": "e63c51f9d77598569429162db71a96ad4f734db744fce214435a2cfd5d049781",
+      "sha256": "e63c51f9d77598569429162db71a96ad4f734db744fce214435a2cfd5d049781",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/neutron_control_factory/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/neutron_control_factory/overlay_front_active_emissive.png.mcmeta",
+      "sourceSha256": "5c669e75699b5c3ba581b8b57becfe8ebcddca080b89cafe1d473d618df03707",
+      "sha256": "5c669e75699b5c3ba581b8b57becfe8ebcddca080b89cafe1d473d618df03707",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/neutron_control_factory/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/neutron_control_factory/overlay_front_emissive.png",
+      "sourceSha256": "e63c51f9d77598569429162db71a96ad4f734db744fce214435a2cfd5d049781",
+      "sha256": "e63c51f9d77598569429162db71a96ad4f734db744fce214435a2cfd5d049781",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/neutron_control_factory/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/neutron_control_factory/overlay_front_emissive.png.mcmeta",
+      "sourceSha256": "5c669e75699b5c3ba581b8b57becfe8ebcddca080b89cafe1d473d618df03707",
+      "sha256": "5c669e75699b5c3ba581b8b57becfe8ebcddca080b89cafe1d473d618df03707",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/stellar_vortex/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/stellar_vortex/overlay_front.png",
+      "sourceSha256": "c12ff81f3469beac14bfce1c5e784e6c687e775a7f7ff946b86cdcfcf2147de5",
+      "sha256": "c12ff81f3469beac14bfce1c5e784e6c687e775a7f7ff946b86cdcfcf2147de5",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 32,
+      "height": 32,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/stellar_vortex/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/stellar_vortex/overlay_front_active.png",
+      "sourceSha256": "ae36aacfd4c91b49dee4a7be3fbfd8b51036b01acf5baa7f6ae9712c281a5a98",
+      "sha256": "ae36aacfd4c91b49dee4a7be3fbfd8b51036b01acf5baa7f6ae9712c281a5a98",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 32,
+      "height": 32,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/stellar_vortex/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/stellar_vortex/overlay_front_active_emissive.png",
+      "sourceSha256": "f263b6d2faf6204ad5265c4e808b45a0815898f579b2186bab12a129ba846c3f",
+      "sha256": "f263b6d2faf6204ad5265c4e808b45a0815898f579b2186bab12a129ba846c3f",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 32,
+      "height": 32,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/stellar_vortex/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/stellar_vortex/overlay_front_emissive.png",
+      "sourceSha256": "f263b6d2faf6204ad5265c4e808b45a0815898f579b2186bab12a129ba846c3f",
+      "sha256": "f263b6d2faf6204ad5265c4e808b45a0815898f579b2186bab12a129ba846c3f",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 32,
+      "height": 32,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/stellar_vortex/overlay_front_paused.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/stellar_vortex/overlay_front_paused.png",
+      "sourceSha256": "c12ff81f3469beac14bfce1c5e784e6c687e775a7f7ff946b86cdcfcf2147de5",
+      "sha256": "c12ff81f3469beac14bfce1c5e784e6c687e775a7f7ff946b86cdcfcf2147de5",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 32,
+      "height": 32,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "GTL-Enhancedcore-3.8.0.jar",
+      "source": "assets/gtl_enhancedcore/textures/block/multiblock/stellar_vortex/overlay_front_paused_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/stellar_vortex/overlay_front_paused_emissive.png",
+      "sourceSha256": "f263b6d2faf6204ad5265c4e808b45a0815898f579b2186bab12a129ba846c3f",
+      "sha256": "f263b6d2faf6204ad5265c4e808b45a0815898f579b2186bab12a129ba846c3f",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 32,
+      "height": 32,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/dehydrator/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/dehydrator/overlay_front.png",
+      "sourceSha256": "f7f51f4a9ebc9e484a54f8cc8af5637fb7f0dd26231b444e81f675d6d2e5c3a7",
+      "sha256": "f7f51f4a9ebc9e484a54f8cc8af5637fb7f0dd26231b444e81f675d6d2e5c3a7",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/dehydrator/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/dehydrator/overlay_front_active.png",
+      "sourceSha256": "3e083554b1b850441de854b855120a1e9255eb1565c03554348648606857e764",
+      "sha256": "3e083554b1b850441de854b855120a1e9255eb1565c03554348648606857e764",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/dehydrator/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/dehydrator/overlay_front_active_emissive.png",
+      "sourceSha256": "0ba81e73513a443ba30b2d3173cd7f3c880327fbe8375806cb07daea99c98a1f",
+      "sha256": "0ba81e73513a443ba30b2d3173cd7f3c880327fbe8375806cb07daea99c98a1f",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/lightning_processor/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/lightning_processor/overlay_front.png",
+      "sourceSha256": "780050686d30284f3bccdb921165a08c3fbdc204d943533271600c0dc8899a50",
+      "sha256": "780050686d30284f3bccdb921165a08c3fbdc204d943533271600c0dc8899a50",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/lightning_processor/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/lightning_processor/overlay_front_active.png",
+      "sourceSha256": "d8f3931c395006fffacb8345f2b30e47e2297c4d44db5c39f584218af2954c64",
+      "sha256": "d8f3931c395006fffacb8345f2b30e47e2297c4d44db5c39f584218af2954c64",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 128,
+      "frameCount": 8
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/lightning_processor/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/lightning_processor/overlay_front_active.png.mcmeta",
+      "sourceSha256": "90fb44a3511d279e0f59d80d82799e72ee6295ef29420184f76f218d4d3d653a",
+      "sha256": "90fb44a3511d279e0f59d80d82799e72ee6295ef29420184f76f218d4d3d653a",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/lightning_processor/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/lightning_processor/overlay_front_active_emissive.png",
+      "sourceSha256": "e59a4dd31b07660b7a69254a559d5f1b8bcac424fcacfe0162560acd1d82f525",
+      "sha256": "e59a4dd31b07660b7a69254a559d5f1b8bcac424fcacfe0162560acd1d82f525",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 128,
+      "frameCount": 8
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/lightning_processor/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/lightning_processor/overlay_front_active_emissive.png.mcmeta",
+      "sourceSha256": "6979eefb87d4ea8034ec2aef371a012a53831006bd6d7385abfdeb86f744f207",
+      "sha256": "6979eefb87d4ea8034ec2aef371a012a53831006bd6d7385abfdeb86f744f207",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/neutron_compressor/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/neutron_compressor/overlay_front.png",
+      "sourceSha256": "a23651be5f1f56276bc1452290df7352d26102400d0e47d59e8596d306c92812",
+      "sha256": "a23651be5f1f56276bc1452290df7352d26102400d0e47d59e8596d306c92812",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/neutron_compressor/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/neutron_compressor/overlay_front_active.png",
+      "sourceSha256": "2bbb1a3da5d850430ada451a2d0a57058abeee3476e7f1af4a68ae3cedeef2a6",
+      "sha256": "2bbb1a3da5d850430ada451a2d0a57058abeee3476e7f1af4a68ae3cedeef2a6",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/neutron_compressor/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/neutron_compressor/overlay_front_active.png.mcmeta",
+      "sourceSha256": "e6f1e075e2b2166adc79d10b81c41003ea246a0a42969913e9eb5c8d231913fe",
+      "sha256": "e6f1e075e2b2166adc79d10b81c41003ea246a0a42969913e9eb5c8d231913fe",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/world_data_scanner/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/world_data_scanner/overlay_front.png",
+      "sourceSha256": "1eaaec586436bef53384527ed8d601227366e46486289b7694c7710a24b09cea",
+      "sha256": "1eaaec586436bef53384527ed8d601227366e46486289b7694c7710a24b09cea",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/world_data_scanner/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/world_data_scanner/overlay_front_active.png",
+      "sourceSha256": "ebbc796faa67f6b475af3d68a371e3a6c04c80bf68ac4c3539004643fcba1226",
+      "sha256": "ebbc796faa67f6b475af3d68a371e3a6c04c80bf68ac4c3539004643fcba1226",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/world_data_scanner/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/world_data_scanner/overlay_front_active_emissive.png",
+      "sourceSha256": "d2d4998cdb7abeea7d4e856bb0400b6ebf8880a5e0c97dadd0796addbae4ad55",
+      "sha256": "d2d4998cdb7abeea7d4e856bb0400b6ebf8880a5e0c97dadd0796addbae4ad55",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/world_data_scanner/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/world_data_scanner/overlay_front_emissive.png",
+      "sourceSha256": "5b32588e0f322369dec2edf173323d6dc14fd89cd76264a5287beac90e5752e1",
+      "sha256": "5b32588e0f322369dec2edf173323d6dc14fd89cd76264a5287beac90e5752e1",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/world_data_scanner/overlay_front_paused.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/world_data_scanner/overlay_front_paused.png",
+      "sourceSha256": "07f2fb82371104344ece889637a305d781389c6f50a0b16b10fed2d2a88214a6",
+      "sha256": "07f2fb82371104344ece889637a305d781389c6f50a0b16b10fed2d2a88214a6",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/machines/world_data_scanner/overlay_front_paused_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/world_data_scanner/overlay_front_paused_emissive.png",
+      "sourceSha256": "910ba9b18ee77e58775497739022a45a88ab70a91882e07d4080d71e92cdedf8",
+      "sha256": "910ba9b18ee77e58775497739022a45a88ab70a91882e07d4080d71e92cdedf8",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/cosmos_simulation/overlay_front.png",
+      "sourceSha256": "51df3f4f705ed3d7d7f594c5c8e991105b7b0ba6a0ae94cfc6b32760b6b2642f",
+      "sha256": "51df3f4f705ed3d7d7f594c5c8e991105b7b0ba6a0ae94cfc6b32760b6b2642f",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 144,
+      "frameCount": 9
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/cosmos_simulation/overlay_front.png.mcmeta",
+      "sourceSha256": "00ab4e81d87c442e5720d6aa80ba1298ea28bb1aa38a9843050773a887e919eb",
+      "sha256": "00ab4e81d87c442e5720d6aa80ba1298ea28bb1aa38a9843050773a887e919eb",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/cosmos_simulation/overlay_front_active.png",
+      "sourceSha256": "4d8422df3ebb66b1ce93a83bc273c8a4e5aad3e67f943b4bd443790bfff08846",
+      "sha256": "4d8422df3ebb66b1ce93a83bc273c8a4e5aad3e67f943b4bd443790bfff08846",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 144,
+      "frameCount": 9
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/cosmos_simulation/overlay_front_active.png.mcmeta",
+      "sourceSha256": "00ab4e81d87c442e5720d6aa80ba1298ea28bb1aa38a9843050773a887e919eb",
+      "sha256": "00ab4e81d87c442e5720d6aa80ba1298ea28bb1aa38a9843050773a887e919eb",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/cosmos_simulation/overlay_front_active_emissive.png",
+      "sourceSha256": "60ceb281c6f75f4dfc151c1a3ba48223033116ffe659e74ba12f03ddfca5d6d2",
+      "sha256": "60ceb281c6f75f4dfc151c1a3ba48223033116ffe659e74ba12f03ddfca5d6d2",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 144,
+      "frameCount": 9
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/cosmos_simulation/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/cosmos_simulation/overlay_front_active_emissive.png.mcmeta",
+      "sourceSha256": "190fb98fefa93ebf6d5a130ee75e18dcbf1a0017ad12c8fffb9888cfdb6e2e7c",
+      "sha256": "190fb98fefa93ebf6d5a130ee75e18dcbf1a0017ad12c8fffb9888cfdb6e2e7c",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/dimensionally_transcendent_plasma_forge/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/dimensionally_transcendent_plasma_forge/overlay_front.png",
+      "sourceSha256": "825af63ad86835ea1cd81c16008ef566c2f84bed025b3960324b9d02bda01ba8",
+      "sha256": "825af63ad86835ea1cd81c16008ef566c2f84bed025b3960324b9d02bda01ba8",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/dimensionally_transcendent_plasma_forge/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/dimensionally_transcendent_plasma_forge/overlay_front_active.png",
+      "sourceSha256": "825af63ad86835ea1cd81c16008ef566c2f84bed025b3960324b9d02bda01ba8",
+      "sha256": "825af63ad86835ea1cd81c16008ef566c2f84bed025b3960324b9d02bda01ba8",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/dimensionally_transcendent_plasma_forge/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/dimensionally_transcendent_plasma_forge/overlay_front_active_emissive.png",
+      "sourceSha256": "9c7a82167b3544ced4b2d9d45f6724b27ab1c49fe46fffe01c18c955d8e118b2",
+      "sha256": "9c7a82167b3544ced4b2d9d45f6724b27ab1c49fe46fffe01c18c955d8e118b2",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/dimensionally_transcendent_plasma_forge/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/dimensionally_transcendent_plasma_forge/overlay_front_active_emissive.png.mcmeta",
+      "sourceSha256": "77999d8c1b855401dbddc98374ee2e36bc89b024b65dae69856b22af58ce694e",
+      "sha256": "77999d8c1b855401dbddc98374ee2e36bc89b024b65dae69856b22af58ce694e",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/dimensionally_transcendent_plasma_forge/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/dimensionally_transcendent_plasma_forge/overlay_front_emissive.png",
+      "sourceSha256": "9c7a82167b3544ced4b2d9d45f6724b27ab1c49fe46fffe01c18c955d8e118b2",
+      "sha256": "9c7a82167b3544ced4b2d9d45f6724b27ab1c49fe46fffe01c18c955d8e118b2",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 64,
+      "frameCount": 4
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/dimensionally_transcendent_plasma_forge/overlay_front_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/dimensionally_transcendent_plasma_forge/overlay_front_emissive.png.mcmeta",
+      "sourceSha256": "77999d8c1b855401dbddc98374ee2e36bc89b024b65dae69856b22af58ce694e",
+      "sha256": "77999d8c1b855401dbddc98374ee2e36bc89b024b65dae69856b22af58ce694e",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_centrifuge/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_centrifuge/overlay_front.png",
+      "sourceSha256": "37b83345c41c7dd49e8e22958f4b11f21da4e690e2ea2ce7acaa742a40440bdb",
+      "sha256": "37b83345c41c7dd49e8e22958f4b11f21da4e690e2ea2ce7acaa742a40440bdb",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_centrifuge/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_centrifuge/overlay_front_active.png",
+      "sourceSha256": "4bcdd1caeb5096b1d4156ff163c7746e3a7a49f528c7623ff71712add351630e",
+      "sha256": "4bcdd1caeb5096b1d4156ff163c7746e3a7a49f528c7623ff71712add351630e",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 512,
+      "frameCount": 32
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_centrifuge/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_centrifuge/overlay_front_active.png.mcmeta",
+      "sourceSha256": "7a1f94ad59e702385cd3e60db4d9a90eec3f816f0d3b023ea32ba8dddc7c85b6",
+      "sha256": "7a1f94ad59e702385cd3e60db4d9a90eec3f816f0d3b023ea32ba8dddc7c85b6",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_circuit_assembler/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_circuit_assembler/overlay_front.png",
+      "sourceSha256": "4f8665e70927d84389e6bde177c046c1c8c4a8ed4865960d3431a502dfa50903",
+      "sha256": "4f8665e70927d84389e6bde177c046c1c8c4a8ed4865960d3431a502dfa50903",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_circuit_assembler/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_circuit_assembler/overlay_front_active.png",
+      "sourceSha256": "11edf93f0fd690c5024bc4f1420177f519b41abeb174c11cff673329743e6855",
+      "sha256": "11edf93f0fd690c5024bc4f1420177f519b41abeb174c11cff673329743e6855",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 352,
+      "frameCount": 22
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_circuit_assembler/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_circuit_assembler/overlay_front_active.png.mcmeta",
+      "sourceSha256": "a0faff465597409794f2c0b6e07a8311c2b1aaf4f5cf1beee8eb619a83dfb96d",
+      "sha256": "a0faff465597409794f2c0b6e07a8311c2b1aaf4f5cf1beee8eb619a83dfb96d",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_mixer/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_mixer/overlay_front.png",
+      "sourceSha256": "06b88ddb0bb085c761796fe58d3a999761c286633f7b854fa13d60bbca1ba4ef",
+      "sha256": "06b88ddb0bb085c761796fe58d3a999761c286633f7b854fa13d60bbca1ba4ef",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_mixer/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_mixer/overlay_front_active.png",
+      "sourceSha256": "61f9f154fb0640d84603e2724c10b591a8e28c6e65923162bbda560886b2fb43",
+      "sha256": "61f9f154fb0640d84603e2724c10b591a8e28c6e65923162bbda560886b2fb43",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 112,
+      "frameCount": 7
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_mixer/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_mixer/overlay_front_active.png.mcmeta",
+      "sourceSha256": "58b1817b61ab89dd87379d16483c2909becb6a3310bd2526d837c44a80585b5d",
+      "sha256": "58b1817b61ab89dd87379d16483c2909becb6a3310bd2526d837c44a80585b5d",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_ore_washer/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_ore_washer/overlay_front.png",
+      "sourceSha256": "1018b46e4676cf33fd33dbf95b4fa57a085842a163e36ad5a3af946c2c04b750",
+      "sha256": "1018b46e4676cf33fd33dbf95b4fa57a085842a163e36ad5a3af946c2c04b750",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_ore_washer/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_ore_washer/overlay_front_active.png",
+      "sourceSha256": "264926e4c3a025f4005098bd7fdd0d85a1702bca40b4b5f4a358c85eab39ca5d",
+      "sha256": "264926e4c3a025f4005098bd7fdd0d85a1702bca40b4b5f4a358c85eab39ca5d",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_ore_washer/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_ore_washer/overlay_front_active_emissive.png",
+      "sourceSha256": "ac875c3f3981e70a0990904195090879142d8ec6f9e17a3d16e25edc70928ac0",
+      "sha256": "ac875c3f3981e70a0990904195090879142d8ec6f9e17a3d16e25edc70928ac0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_ore_washer/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_ore_washer/overlay_front_emissive.png",
+      "sourceSha256": "7cc66b7b035bd7389b36bfd9daabfcbcc7367038bbe76af7e87f7e14615ba539",
+      "sha256": "7cc66b7b035bd7389b36bfd9daabfcbcc7367038bbe76af7e87f7e14615ba539",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_pressor/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_pressor/overlay_front.png",
+      "sourceSha256": "93c1dc13f5546c97f8dee646d7bc7b408bdb35fc2bd42643ad52ccb7921ea893",
+      "sha256": "93c1dc13f5546c97f8dee646d7bc7b408bdb35fc2bd42643ad52ccb7921ea893",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_pressor/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_pressor/overlay_front_active.png",
+      "sourceSha256": "d568af9190e42ae7c701f481450e6a93bba9969d2541529517b0ecdf40402ef0",
+      "sha256": "d568af9190e42ae7c701f481450e6a93bba9969d2541529517b0ecdf40402ef0",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_pressor/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_pressor/overlay_front_active_emissive.png",
+      "sourceSha256": "ed1588a8d18a313745b63fce37217821ff0774c06c7001d0345001efd949e09d",
+      "sha256": "ed1588a8d18a313745b63fce37217821ff0774c06c7001d0345001efd949e09d",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_pressor/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_pressor/overlay_front_emissive.png",
+      "sourceSha256": "1674cbf7d0c86b635b29cc6a962c0388b7370fdd671c1e5616d13225ed4decb4",
+      "sha256": "1674cbf7d0c86b635b29cc6a962c0388b7370fdd671c1e5616d13225ed4decb4",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_thermal_centrifuge/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_thermal_centrifuge/overlay_front.png",
+      "sourceSha256": "0c1f9b0c80ce44dd383bfb2ddebeb8656da2cc2725095b4f2e386ff0e1d0d0f8",
+      "sha256": "0c1f9b0c80ce44dd383bfb2ddebeb8656da2cc2725095b4f2e386ff0e1d0d0f8",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_thermal_centrifuge/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_thermal_centrifuge/overlay_front_active.png",
+      "sourceSha256": "59b3bbf8ce1c1cf08757a03ab2eb41e2a34314ca68f424bc7aa545181c9a5117",
+      "sha256": "59b3bbf8ce1c1cf08757a03ab2eb41e2a34314ca68f424bc7aa545181c9a5117",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 512,
+      "frameCount": 32
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_thermal_centrifuge/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_thermal_centrifuge/overlay_front_active.png.mcmeta",
+      "sourceSha256": "7a1f94ad59e702385cd3e60db4d9a90eec3f816f0d3b023ea32ba8dddc7c85b6",
+      "sha256": "7a1f94ad59e702385cd3e60db4d9a90eec3f816f0d3b023ea32ba8dddc7c85b6",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_thermal_centrifuge/overlay_front_active_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_thermal_centrifuge/overlay_front_active_emissive.png",
+      "sourceSha256": "4709076f6b98b0b3c7756644080a0486b8cc4afffea2ee1e963fc3d271cfbbc1",
+      "sha256": "4709076f6b98b0b3c7756644080a0486b8cc4afffea2ee1e963fc3d271cfbbc1",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 512,
+      "frameCount": 32
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_thermal_centrifuge/overlay_front_active_emissive.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_thermal_centrifuge/overlay_front_active_emissive.png.mcmeta",
+      "sourceSha256": "7a1f94ad59e702385cd3e60db4d9a90eec3f816f0d3b023ea32ba8dddc7c85b6",
+      "sha256": "7a1f94ad59e702385cd3e60db4d9a90eec3f816f0d3b023ea32ba8dddc7c85b6",
+      "modifications": "None; copied byte-for-byte."
+    },
+    {
+      "sourceArchive": "gtlcore-1.2.3.2-fix4.jar",
+      "source": "assets/gtceu/textures/block/multiblock/steam_thermal_centrifuge/overlay_front_emissive.png",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/fronts/steam_thermal_centrifuge/overlay_front_emissive.png",
+      "sourceSha256": "dfd15d1cc7697a36fe706fe615cd41a6cc2d52a349e3cdd349b9fc09491d9c2a",
+      "sha256": "dfd15d1cc7697a36fe706fe615cd41a6cc2d52a349e3cdd349b9fc09491d9c2a",
+      "modifications": "None; copied byte-for-byte.",
+      "width": 16,
+      "height": 16,
+      "frameCount": 1
+    }
+  ]
+}

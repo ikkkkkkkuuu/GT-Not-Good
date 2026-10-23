@@ -133,6 +133,7 @@ public final class BlockDimensionalFocusCasing extends Block implements IHasInde
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void getSubBlocks(Item item, CreativeTabs tab, List stacks) {
         for (DimensionalFocusCasing variant : DimensionalFocusCasing.values()) {
+            if (variant.hasNativeCasing()) continue;
             if (variant.isGlass() == glass) stacks.add(variant.getStack(1));
         }
     }

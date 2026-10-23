@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -36,11 +38,21 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 public final class TransmutationRecipes {
 
     private static final Map<Item, List<ItemStack>> REGISTERED = new HashMap<>();
+    private static final Set<GTItemStack> EXCLUDED_RECOVERY_OUTPUTS = new HashSet<>();
     private static final TransmutationRecipes deferred = new TransmutationRecipes();
     private static boolean loaded;
     private static boolean scheduled;
 
     private TransmutationRecipes() {}
+
+    /** Keeps one-way item migrations from generating recipes that recreate the retired items. */
+    public static void excludeRecoveryOutput(ItemStack stack) {
+        EXCLUDED_RECOVERY_OUTPUTS.add(new GTItemStack(stack));
+    }
+
+    private static boolean isExcludedRecoveryOutput(ItemStack stack) {
+        return stack != null && EXCLUDED_RECOVERY_OUTPUTS.contains(new GTItemStack(stack));
+    }
 
     /** Waits for GTNL's first END tick recipe registration before reading its conversion table. */
     public static void load() {
@@ -77,6 +89,7 @@ public final class TransmutationRecipes {
                 if (
                     recipe.mInputs == null || recipe.mOutputs == null
                         || !ShimmerRecoveryRules.shouldDisassemble(recipe.mOutputs)
+                        || Arrays.stream(recipe.mInputs).anyMatch(TransmutationRecipes::isExcludedRecoveryOutput)
                 ) continue;
                 groups.computeIfAbsent(new GTItemStack(recipe.mOutputs[0]), key -> new ArrayList<>()).add(recipe);
             }
@@ -149,6 +162,7 @@ public final class TransmutationRecipes {
 
     static void register(ItemStack input, List<ItemStack> outputs, FluidStack[] fluidOutputs) {
         if (input == null || input.stackSize <= 0) return;
+        if (outputs.stream().anyMatch(TransmutationRecipes::isExcludedRecoveryOutput)) return;
         List<ItemStack> items = new ArrayList<>();
         for (ItemStack stack : outputs)
             if (GTUtility.isStackValid(stack) && stack.stackSize > 0) items.add(stack.copy());

@@ -1,5 +1,6 @@
 package com.xyp.gtnotgood.common.machines.multiblock.modularmachine;
 
+import static com.gtnewhorizon.structurelib.structure.StructureUtility.error;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofBlock;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofChain;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.transpose;
@@ -27,9 +28,12 @@ import com.xyp.gtnotgood.common.machines.multiblock.structure.SuperParticleColli
 import com.xyp.gtnotgood.common.machines.processing.ModularProcessingLogic;
 import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import gregtech.api.casing.Casings;
+import gregtech.api.enums.ItemList;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.SoundResource;
 import gregtech.api.enums.Textures;
@@ -97,7 +101,7 @@ public final class SuperParticleCollider extends GTNGModularMachineBase<SuperPar
         if (definition == null) {
             definition = StructureDefinition.<SuperParticleCollider>builder()
                 .addShape("main", transpose(SuperParticleColliderStructure.shape()))
-                .addElement('b',
+                .addElement('#',
                     ofChain(
                         GTStructureUtility.ofHatchAdder(SuperParticleCollider::addModularHatchToMachineList,
                             ParticleColliderCasing.Lafium.getTextureId(), 1),
@@ -106,12 +110,22 @@ public final class SuperParticleCollider extends GTNGModularMachineBase<SuperPar
                         buildHatchAdder(SuperParticleCollider.class)
                             .atLeast(InputHatch, OutputHatch, Energy.or(ExoticEnergy))
                             .casingIndex(ParticleColliderCasing.Lafium.getTextureId()).hint(1)
-                            .buildAndChain(ofBlock(ParticleColliderCasing.Lafium.getBlock(),
-                                ParticleColliderCasing.Lafium.getMetadata()))))
-                .addElement('c', ParticleColliderCasing.Lafium.asElement())
-                .addElement('d', ParticleColliderCasing.AcceleratedPipeline.asElement())
-                .addElement('e', GTStructureUtility.activeCoils(ParticleColliderCasing.SuperconductingCoil.asElement()))
-                .addElement('f', GTStructureUtility.ofFrame(Materials.NaquadahEnriched)).build();
+                            .buildAndChain(ParticleColliderCasing.Lafium.asElement())))
+                .addElement('A', ParticleColliderCasing.Lafium.asElement())
+                .addElement('B', GTStructureUtility.ofFrame(Materials.NaquadahEnriched))
+                .addElement('D', Casings.RadiantNaquadahAlloyCasing.asElement())
+                .addElement('E', Casings.SuperconductingCoilBlock.asElement())
+                .addElement('F', Casings.ChemicalGradeGlass.asElement())
+                .addElement('G',
+                    ModsItemlist.InvertedCyanLamp.getBlock() == null ? error()
+                        : ofBlock(ModsItemlist.InvertedCyanLamp.getBlock(), 25))
+                .addElement('I',
+                    ModsItemlist.InvertedOrangeLamp.getBlock() == null ? error()
+                        : ofBlock(ModsItemlist.InvertedOrangeLamp.getBlock(), 17))
+                .addElement('J', ParticleColliderCasing.AcceleratedPipeline.asElement())
+                .addElement('K', Casings.FusionMachineCasingMKII.asElement())
+                .addElement('L', Casings.ZPMMachineCasing.asElement())
+                .addElement('N', Casings.TungstensteelPipeCasing.asElement()).build();
         }
         return definition;
     }
@@ -193,19 +207,28 @@ public final class SuperParticleCollider extends GTNGModularMachineBase<SuperPar
         tt.beginStructureBlock(SuperParticleColliderStructure.WIDTH, SuperParticleColliderStructure.HEIGHT,
             SuperParticleColliderStructure.LENGTH, false)
             // #tr gtng.particle_collider.controller
-            // # Front center, fourth layer from the top
-            // # zh_CN 正面中央，自顶向下第 4 层
+            // # Front face, 41 blocks above the bottom; 93 blocks from the left edge
+            // # zh_CN 正面，距底层 41 格，距左边缘 93 格
             .addController(StatCollector.translateToLocal("gtng.particle_collider.controller"))
-            .addCasing("1777-1787", ParticleColliderCasing.Lafium.getStack(1).getDisplayName(), false)
-            .addCasing("560", ParticleColliderCasing.AcceleratedPipeline.getStack(1).getDisplayName(), false)
-            .addCasing("320", ParticleColliderCasing.SuperconductingCoil.getStack(1).getDisplayName(), false)
+            .addCasing("173483+", ParticleColliderCasing.Lafium.getStack(1).getDisplayName(), false)
+            .addCasing("19250", ParticleColliderCasing.AcceleratedPipeline.getStack(1).getDisplayName(), false)
+            .addCasing("45634", ItemList.Casing_Coil_Superconductor.get(1).getDisplayName(), false)
+            .addCasing("42995", ItemList.RadiantNaquadahAlloyCasing.get(1).getDisplayName(), false)
+            .addCasing("7774", Casings.ChemicalGradeGlass.toStack(1).getDisplayName(), false)
+            .addCasing("3244", ItemList.Casing_Fusion2.get(1).getDisplayName(), false)
+            .addCasing("1992", ItemList.Casing_ZPM.get(1).getDisplayName(), false)
+            .addCasing("654", ItemList.Casing_Pipe_TungstenSteel.get(1).getDisplayName(), false)
             // #tr gtng.particle_collider.frame
             // # Enriched Naquadah Frame Box
             // # zh_CN 富集硅岩框架
-            .addCasing("128", StatCollector.translateToLocal("gtng.particle_collider.frame"), false)
+            .addCasing("7556", StatCollector.translateToLocal("gtng.particle_collider.frame"), false)
+            // #tr gtng.particle_collider.lamps
+            // # Inverted Lamps (ProjectRed): 14 Cyan, 4 Orange
+            // # zh_CN 反转灯（红石计划）：青色 14 个，橙色 4 个
+            .addStructureInfo(StatCollector.translateToLocal("gtng.particle_collider.lamps"))
             // #tr gtng.particle_collider.hatch_location
-            // # Lafium Casings (hint 1)
-            // # zh_CN 路菲恩机械方块（提示点 1）
+            // # 24 front Lafium Casing positions (hint 1)
+            // # zh_CN 正面 24 个路菲恩机械方块位置（提示点 1）
             .addInputHatch("1+", StatCollector.translateToLocal("gtng.particle_collider.hatch_location"), 1)
             .addOutputHatch("1+", StatCollector.translateToLocal("gtng.particle_collider.hatch_location"), 1)
             .addEnergyHatch("1+", StatCollector.translateToLocal("gtng.particle_collider.hatch_location"), 1);

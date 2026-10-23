@@ -162,6 +162,7 @@ public final class BlockLightHunterCasing extends Block
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void getSubBlocks(Item item, CreativeTabs tab, List stacks) {
         for (LightHunterCasing variant : LightHunterCasing.values()) {
+            if (variant.hasNativeCasing()) continue;
             if (variant.getGroup() == group) stacks.add(variant.getStack(1));
         }
     }
@@ -192,7 +193,7 @@ public final class BlockLightHunterCasing extends Block
                     new LightHunterGlowTexture(variant) };
                 renderTextures[variant.getActiveMetadata()] = faces(textures);
             }
-            renderTextures[variant.getMetadata()] = faces(new ITexture[] { variant.getTexture() });
+            renderTextures[variant.getMetadata()] = faces(new ITexture[] { LightHunterBlocks.getTexture(variant) });
         }
     }
 

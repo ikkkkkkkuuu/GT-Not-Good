@@ -24,7 +24,7 @@ public final class FieldExtruderBlocks {
         GameRegistry.registerBlock(glass, ItemBlockFieldExtruderCasing.class, "field_extruder_glass");
         textureStart = reserveTexturePage();
         for (FieldExtruderCasing variant : FieldExtruderCasing.values()) {
-            variant.getItemContainer().set(variant.getStack(1));
+            variant.getItemContainer().set(variant.getLegacyStack(1));
             ITexture texture = new FieldExtruderConnectedTexture(variant);
             textures[variant.ordinal()] = texture;
             Textures.BlockIcons.setCasingTextureForId(getTextureId(variant), texture);

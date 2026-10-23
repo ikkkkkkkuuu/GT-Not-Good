@@ -40,8 +40,6 @@ public final class KerrNewmanCasingRecipes {
         assemble(KerrNewmanCasing.ZirconiaCeramicCasing, 200, 30,
             stack(OrePrefixes.frameGt, Materials.TungstenSteel, 1), Materials.RedSteel.getPlates(2),
             WerkstoffLoader.CubicZirconia.get(OrePrefixes.dust, 4));
-        assemble(KerrNewmanCasing.PressureContainmentCasing, 100, 120, Materials.StainlessSteel.getMolten(1152),
-            stack(OrePrefixes.frameGt, Materials.Polytetrafluoroethylene, 1), Materials.DamascusSteel.getPlates(2));
         assemble(KerrNewmanCasing.AmprosiumGearbox, 50, 16, Materials.Neutronium.getPlates(4),
             stack(OrePrefixes.gearGt, Materials.Neutronium, 2), stack(OrePrefixes.frameGt, Materials.Neutronium, 1),
             GTUtility.getIntegratedCircuit(4));
@@ -54,9 +52,6 @@ public final class KerrNewmanCasingRecipes {
         assemble(KerrNewmanCasing.GravityStabilizationCasing, 400, 480, Materials.Neutronium.getMolten(576),
             stack(OrePrefixes.frameGt, Materials.Neutronium, 1), ItemList.Gravistar.get(1),
             ItemList.Neutron_Reflector.get(2), MaterialsAlloy.TRINIUM_NAQUADAH_CARBON.getPlate(10));
-        assemble(KerrNewmanCasing.ShieldedAcceleratorCasing, 200, 120, MaterialsAlloy.HASTELLOY_N.getFluidStack(1296),
-            MaterialsAlloy.BABBIT_ALLOY.getPlate(2), WerkstoffLoader.Ruridit.get(OrePrefixes.plate, 8),
-            stack(OrePrefixes.foil, Materials.Neutronium, 8));
         assemble(KerrNewmanCasing.AmprosiumActiveCasing, 200, 480, Materials.Neutronium.getMolten(576),
             stack(OrePrefixes.frameGt, Materials.Neutronium, 1), stack(OrePrefixes.pipeMedium, Materials.Europium, 4),
             MaterialsAlloy.LAFIUM.getPlate(8), Materials.Neutronium.getPlates(8));
@@ -71,8 +66,6 @@ public final class KerrNewmanCasingRecipes {
         assemble(KerrNewmanCasing.PpsCorrosionResistantCasing, 50, 16,
             stack(OrePrefixes.frameGt, Materials.Polytetrafluoroethylene, 1),
             Materials.PolyphenyleneSulfide.getPlates(6), GTUtility.getIntegratedCircuit(6));
-        assemble(KerrNewmanCasing.QuantumGlass, 400, 524288, Materials.Trinium.getMolten(1000),
-            GTNGItemList.LaminatedGlass.get(1), GTNGItemList.MolecularCasing.get(1));
         assemble(KerrNewmanCasing.PlasmaHeaterCasing, 200, 120, Materials.Osmiridium.getMolten(288),
             stack(OrePrefixes.frameGt, Materials.Trinium, 1), ItemList.LuV_Coil.get(2),
             MaterialsElements.getInstance().RHENIUM.getPlate(2), stack(OrePrefixes.screw, Materials.Tungsten, 8),
@@ -102,28 +95,6 @@ public final class KerrNewmanCasingRecipes {
             .itemOutputs(KerrNewmanCasing.BioactiveCasing.getStack(1)).duration(200).eut(TierEU.RECIPE_UV)
             .specialValue(0).addTo(GoodGeneratorRecipeMaps.preciseAssemblerRecipes);
 
-        GTRecipeBuilder.builder()
-            .itemInputs(ItemList.Casing_Coil_Superconductor.get(1), ItemList.Field_Generator_LuV.get(2),
-                ItemList.Electric_Pump_IV.get(1), ItemList.Neutron_Reflector.get(4),
-                ItemList.Circuit_Masterquantumcomputer.get(1),
-                new Object[] { OrePrefixes.circuit.get(Materials.LuV), 4 },
-                stack(OrePrefixes.pipeMedium, Materials.Naquadah, 1), Materials.Duranium.getPlates(4))
-            .fluidInputs(Materials.YttriumBariumCuprate.getMolten(576))
-            .itemOutputs(KerrNewmanCasing.AdvancedFusionCoil.getStack(1)).duration(100).eut(491520).requiresCleanRoom()
-            .addTo(RecipeMaps.assemblerRecipes);
-        GTRecipeBuilder.builder()
-            .itemInputs(Casings.UHVMachineCasing.toStack(1), KerrNewmanCasing.AdvancedFusionCoil.getStack(1),
-                ItemList.UHV_Coil.get(2), ItemList.Circuit_Wetwarecomputer.get(2), ItemList.Field_Generator_UV.get(1),
-                MaterialsAlloy.ABYSSAL.getPlate(6))
-            .fluidInputs(Materials.Polybenzimidazole.getMolten(1152))
-            .itemOutputs(KerrNewmanCasing.FusionCasingMkIV.getStack(1)).duration(100).eut(1966080).requiresCleanRoom()
-            .addTo(RecipeMaps.assemblerRecipes);
-
-        appearance(Casings.DimensionalBridge.toStack(1), KerrNewmanCasing.DimensionalBridgeCasing);
-    }
-
-    private static void appearance(ItemStack input, KerrNewmanCasing output) {
-        assemble(output, 50, 16, input, GTUtility.getIntegratedCircuit(24));
     }
 
     private static void assemble(KerrNewmanCasing output, int duration, int eut, ItemStack... inputs) {

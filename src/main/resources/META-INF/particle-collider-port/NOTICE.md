@@ -4,13 +4,17 @@ The licensed sources and assets listed here are excluded from GT Not Good's gene
 
 ## Structure source
 
-`src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/SuperParticleColliderStructure.java` derives from
-GNSW/GTLCore's `MultiBlockMachineAStructureA.java`, `SUPER_PARTICLE_COLLIDER`, commit
-`6443c848264fb15c90cf50e031f146522616a8b9`, under LGPL-3.0-only. Its 47×7×47 geometry is preserved through
-lossless slice grouping, reversed depth order, controller `a` → `~` and StructureLib horizontal-layer conversion.
-The pinned `MultiBlockMachineA.java` maps `d` twice; the second mapping replaces the first, so the port uses
-560 accelerated pipelines and no aggregation cores. GTLCore credits the source structure to TST contributors.
-See `reference/SUPER_PARTICLE_COLLIDER_STRUCTURE.md` for source links and the canonical geometry hash.
+The current 197×83×209 hollow structure is copied byte for byte from the user's installed
+GTL-Enhancedcore 3.8.0 by S_Fast, artifact SHA-256
+`555a9514c4d2fd11a029c091ac053d5cf7c52fba62411f2f043e04454094f7aa`.
+The archive declares LGPL-3.0 in preserved ENHANCED-mods.toml; no source commit is claimed.
+ENHANCED_STRUCTURE.json records the source path, hashes, controller transform and native block mappings.
+The previous GTLCore 47×7×47 geometry is replaced, while its published blocks remain save-compatible.
+Native GTNH coils, chemical-grade glass, radiant naquadah-alloy casing, frames, fusion MK II casing,
+ZPM casing, tungstensteel pipe casing and ProjectRed lamps are referenced without copying assets.
+Lafium casings and acceleration pipelines reuse the licensed artwork below. Legacy active-coil
+assets remain for previously placed ported coils and are not used by the enhanced structure.
+See reference/SUPER_PARTICLE_COLLIDER_STRUCTURE.md for the coordinate and material audit.
 
 ## Recipe source
 
@@ -20,7 +24,7 @@ See `reference/SUPER_PARTICLE_COLLIDER_STRUCTURE.md` for source links and the ca
 The actual archive's root `LICENSE` is CC BY-NC-SA 4.0. The adapted recipe source retains this license.
 Source sections are lines 2700–2709, 10408–10421 and 8016–8039. Native GTNH material and fluid mappings preserve
 the controller progression and five complete elemental collision recipes; unsupported elemental endpoints and
-the antimatter branch are omitted. An existing GTNH superconducting coil converts 1:1 into the visual port.
+the antimatter branch are omitted. Previously ported superconducting coils now convert 1:1 back into the native GTNH coil.
 See `reference/particle-collider-port/RECIPE_ADAPTATION.md` for all mappings and omissions.
 
 ## Visual assets
@@ -41,7 +45,7 @@ Original files remain byte-for-byte unchanged. The three connected materials use
 losslessly from the original quarter tiles. Their derived PNGs retain the LGPL-3.0 license of their source artwork.
 The offline layout generator reuses the adapter for KilaBash / Low-Drag-MC's LDLib-MultiLoader,
 revision `1d4e4390ae58d16038845c651e122185c29f334b`, `Connections.fillSubmaps` / `Submap.uvs`, GPL-3.0.
-No modern renderer or shader is included. The active coil uses native GT5 `activeCoils` / `GTCoilTracker`
+No modern renderer or shader is included. The legacy ported active coil uses native GT5 `activeCoils` / `GTCoilTracker`
 synchronization and GT emissive rendering, with offset 8 (server metadata 2, client active appearance 10).
 The casing texture page is fixed at 124 and checked for conflicts on both sides. No custom world scan,
 server-side active-metadata toggling or Shimmer bloom post-processing is added.

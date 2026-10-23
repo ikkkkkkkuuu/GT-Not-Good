@@ -1,14 +1,14 @@
 package com.xyp.gtnotgood.common.blocks.particlecollider;
 
-import net.minecraft.item.ItemStack;
-
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
+import com.xyp.gtnotgood.common.blocks.NativeStructureCasings;
+import com.xyp.gtnotgood.common.blocks.StructureCasing;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import gregtech.api.interfaces.ITexture;
 
-public enum ParticleColliderCasing {
+public enum ParticleColliderCasing implements StructureCasing {
 
     Lafium(0, "lafium_mechanical_casing", true,
         // #tr tile.particle_collider_casing.lafium.name
@@ -67,19 +67,16 @@ public enum ParticleColliderCasing {
         return ParticleColliderBlocks.getBlock();
     }
 
-    public ItemStack getStack(int amount) {
-        return new ItemStack(getBlock(), amount, metadata);
-    }
-
     public int getTextureId() {
         return ParticleColliderBlocks.getTextureId(this);
     }
 
     public ITexture getTexture() {
+        if (hasNativeCasing()) return NativeStructureCasings.texture(this);
         return ParticleColliderBlocks.getTexture(this);
     }
 
-    public <T> IStructureElement<T> asElement() {
+    public <T> IStructureElement<T> legacyElement() {
         IStructureElement<T> inactive = StructureUtility.ofBlock(getBlock(), metadata);
         return this == SuperconductingCoil
             ? StructureUtility.ofChain(inactive, StructureUtility.ofBlock(getBlock(), metadata | ACTIVE_BIT))

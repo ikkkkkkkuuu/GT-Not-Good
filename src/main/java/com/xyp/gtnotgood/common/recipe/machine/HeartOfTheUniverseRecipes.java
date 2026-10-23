@@ -97,13 +97,7 @@ public final class HeartOfTheUniverseRecipes {
     }
 
     private static void casings() {
-        appearance(Casings.UltimateContainmentFieldGenerator.toStack(1), HeartCasing.GravitonFieldConstraintCasing);
         appearance(ItemRefer.AntimatterAnnihilationMatrix.get(1), HeartCasing.AnnihilateCore);
-        appearance(Casings.CosmicFabricShieldingCore.toStack(1), HeartCasing.DimensionalStabilityCasing);
-        appearance(Casings.SpacetimeAlteringCasing.toStack(1), HeartCasing.TemporalAnchorFieldCasing);
-        appearance(Casings.DimensionalBridgeGenerator.toStack(1), HeartCasing.DimensionConnectionCasing);
-        appearance(Casings.InfiniteSpacetimeEnergyBoundaryCasing.toStack(1), HeartCasing.CreateCasing);
-        appearance(ItemList.DysonSwarmDeploymentUnitMagnet.get(1), HeartCasing.DysonDeploymentMagnet);
         GTRecipeBuilder.builder()
             .itemInputs(GTNGItemList.FusionGlass.get(4), required(MaterialsElements.getInstance().RHENIUM.getPlate(16)),
                 stack(OrePrefixes.foil, Materials.TranscendentMetal, 16))

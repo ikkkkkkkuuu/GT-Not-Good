@@ -1,14 +1,14 @@
 package com.xyp.gtnotgood.common.blocks.heart;
 
-import net.minecraft.item.ItemStack;
-
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
+import com.xyp.gtnotgood.common.blocks.NativeStructureCasings;
+import com.xyp.gtnotgood.common.blocks.StructureCasing;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import gregtech.api.interfaces.ITexture;
 
-public enum HeartCasing {
+public enum HeartCasing implements StructureCasing {
 
     GravitonFieldConstraintCasing("graviton_field_constraint_casing", true,
         // #tr tile.heart_casing.graviton_field_constraint.name
@@ -92,19 +92,16 @@ public enum HeartCasing {
         return HeartBlocks.getBlock(isGlass());
     }
 
-    public ItemStack getStack(int amount) {
-        return new ItemStack(getBlock(), amount, getMetadata());
-    }
-
     public int getTextureId() {
         return HeartBlocks.getTextureId(this);
     }
 
     public ITexture getTexture() {
+        if (hasNativeCasing()) return NativeStructureCasings.texture(this);
         return HeartBlocks.getTexture(this);
     }
 
-    public <T> IStructureElement<T> asElement() {
+    public <T> IStructureElement<T> legacyElement() {
         return StructureUtility.ofBlock(getBlock(), getMetadata());
     }
 

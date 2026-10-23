@@ -184,18 +184,7 @@ public final class LightHunterSpaceStationRecipes {
     }
 
     private static void casings() {
-        appearance(GTNGItemList.FusionCasingMkIV.get(1), LightHunterCasing.FusionCasingMkIV);
-        appearance(Casings.UHVMachineCasing.toStack(1), LightHunterCasing.UhvMachineCasing);
-        appearance(ItemList.Hull_UIV.get(1), LightHunterCasing.UivMachineCasing);
-        appearance(ItemList.Hull_UXV.get(1), LightHunterCasing.UxvMachineCasing);
-        appearance(Casings.ComputerHeatVent.toStack(1), LightHunterCasing.ComputerHeatVent);
-        appearance(Casings.HighPowerCasing.toStack(1), LightHunterCasing.HighPowerCasing);
-        appearance(Casings.AdvancedComputerCasing.toStack(1), LightHunterCasing.AdvancedComputerCasing);
-        appearance(Casings.SingularityReinforcedStellarShieldingCasing.toStack(1),
-            LightHunterCasing.UltimateStellarContainmentCasing);
         appearance(ItemList.Energy_Cluster.get(1), LightHunterCasing.UhvUltimateBattery);
-        appearance(Casings.ForceFieldGlass.toStack(1), LightHunterCasing.ForceFieldGlass);
-        appearance(GTNGItemList.DimensionalBridgeCasing.get(1), LightHunterCasing.DimensionalBridgeCasing);
 
         GTRecipeBuilder.builder()
             .itemInputs(Casings.AdvancedComputerCasing.toStack(4), ItemList.Circuit_CosmicComputer.get(16),
@@ -240,11 +229,6 @@ public final class LightHunterSpaceStationRecipes {
                 stack(OrePrefixes.foil, Materials.Infinity, 16))
             .fluidInputs(fluid(Materials.TranscendentMetal.getMolten(576)))
             .itemOutputs(LightHunterCasing.FusionCasingMkV.getStack(4)).duration(1200).eut(TierEU.RECIPE_UXV)
-            .addTo(RecipeMaps.assemblerRecipes);
-        GTRecipeBuilder.builder()
-            .itemInputs(ItemList.Hull_UXV.get(1), stack(OrePrefixes.plate, Materials.ProtoHalkonite, 8))
-            .fluidInputs(fluid(Materials.RubberSilicone.getMolten(144)))
-            .itemOutputs(LightHunterCasing.UxvHermeticCasing.getStack(1)).duration(1200).eut(TierEU.RECIPE_UXV)
             .addTo(RecipeMaps.assemblerRecipes);
         GTRecipeBuilder.builder()
             .itemInputs(Casings.ContainmentFieldGenerator.toStack(4), stack(OrePrefixes.foil, Materials.SpaceTime, 8),

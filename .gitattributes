@@ -62,11 +62,13 @@ src/main/resources/META-INF/heart-of-the-universe-port/** -text
 src/main/resources/META-INF/kerr-newman-port/** -text
 src/main/resources/META-INF/light-hunter-port/** -text
 src/main/resources/META-INF/light-hunter-space-station-port/** -text
-src/main/resources/META-INF/particle-collider-port/** -text
+src/main/resources/META-INF/particle-collider-port/** -text whitespace=cr-at-eol
+src/main/resources/assets/gtnotgood/structures/super_particle_collider.pattern.gz binary
 src/main/resources/META-INF/tst-modular-port/** -text
 src/main/resources/META-INF/crystal-resonator-port/** -text whitespace=cr-at-eol
 src/main/resources/META-INF/fragment-world-collector-port/** -text whitespace=cr-at-eol
 src/main/resources/META-INF/large-furnace-port/** -text whitespace=cr-at-eol
+src/main/resources/META-INF/machine-front-overlays/** -text whitespace=cr-at-eol
 src/main/resources/META-INF/nyarlathoteps-tentacle-port/** -text whitespace=cr-at-eol
 src/main/resources/META-INF/quantum-crafting-port/** -text whitespace=cr-at-eol
 src/main/resources/META-INF/satellite-mode-port/** -text whitespace=cr-at-eol

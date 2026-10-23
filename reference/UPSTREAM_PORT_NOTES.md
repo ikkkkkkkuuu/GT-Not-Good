@@ -1409,3 +1409,40 @@ Reference checkouts remain outside build inputs.
 - 大型熔炉后续修正：通过独立 NEIGTNGConfig 为原生 smelting handler 注册控制器 catalyst，支持左侧机器列表及 U 用途查询；不能仅依赖禁用 NEI 注册的 furnaceRecipes 配方池。控制器继续使用原高版本面板，只将两张 16×16 图各 62 个低饱和青绿边框像素转为脱氧钢灰色；原图布局、透明度、指示灯逐像素保留，待机/运行一致。换色预览的重绘布局未打包，四张并行仓 PNG 和动画元数据保持原字节，源/产出哈希记入 manifest。
 
 - 用户确认采用原生分层方式后，进一步将上述两张正面的 62 个金属边框像素改为透明，取消固定灰色；底图继续由 LargeFurnace#getTexture 单独选用 GTNH casing 16。其余 194 个像素与原版逐像素一致，面板/指示灯保持原样，资源路径不变；清单保留最初源哈希并更新最终哈希。生成预览改动了布局，未作为最终素材使用。
+
+
+## GTL 透明正面资源库（2026-10-23）
+
+- 固定来源：GTL-Enhancedcore 3.8.0 与 GTLCore 1.2.3.2-fix4，安装包 META-INF/mods.toml 均声明 LGPL 第 3 版；源码提交尚未确认，以包 SHA-256 固定版本。
+- 选入 16 套待机、运行正面及原有暂停/发光层，目的目录 assets/gtnotgood/textures/blocks/parallel/fronts；只选择原生透明面板，不修改像素，不覆盖现有大型熔炉资源。
+- 全部 PNG 和 mcmeta 原字节保留。来源、作者、许可、源/产出哈希与尺寸见 META-INF/machine-front-overlays/ASSET_MANIFEST.json，附独立 NOTICE 和完整 LGPL/GPL 文本。
+- 1.7.10 接入：图标通过 Textures.BlockIcons.custom 注册，casing + front + 可选 glow 层由控制器明确选择；保留的新版 bloom 元数据不等于移植了新版泛光渲染。这里只移植资源，未注册对应机器或新增模组依赖。预览与使用说明见 docs/development/machine-front-overlays.md。
+
+
+### 并行控制仓完整外观修正（2026-10-23）
+
+- 用户确认提供的截图为目标，要求原上游等级机壳和正面。原先仅移植 mk1-4 且后六级复用 mk4；本次修正为十级一一对应，补全待机/运行/发光层及动画。
+- 依据固定 GTLCore 1.2.3.2-fix4 的 common/data/machines/GCyMMachines.PARALLEL_HATCH：tier 5–14，workableTieredHullRenderer 路径 parallel_hatch_mk(tier-4)；GTCEu 1.4.4 TieredHullMachineRenderer 选择 voltage/<tier> 的 bottom/top/side。对应反编译参考仅存 D:/CodexTools/GTNGLargeFurnace/reference/hatch-render，不进入构建。
+- mk1-4、30 张等级机壳来自 GTCEu；mk5-10 来自固定 GTLCore 包，LGPL 第 3 版。全部原字节拷贝，源/产出哈希和等级映射补入 large-furnace-port/ASSET_MANIFEST.json 与 NOTICE。mk1-9 四帧、mk10 八帧，统一 8 tick。
+- GTNH 适配为底图 + 正面 + glow；原十级注册 ID、NBT 和前四级资源路径保留，外观按用户要求在物品/世界中使用上游等级机壳。
+
+
+## 增强版超级粒子对撞机 — 2026-10-23
+
+- 用户实例 GTL-Enhancedcore 3.8.0，作者 S_Fast，JAR SHA-256 `555a9514c4d2fd11a029c091ac053d5cf7c52fba62411f2f043e04454094f7aa`；归档 LGPL-3.0，无已确定源码提交。
+- 原字节复制 hollow/gtl/super_particle_collider.pattern.gz，保留 197×83×209、302625 非空位置、24 仓室位及 41 格控制器高度，与截图匹配，替换普通 47×7×47 版本。
+- 九类构件采用 GTNH 原生对应物，路菲恩外壳/加速管道复用已有移植。无新增重复方块/贴图；已发布旧线圈保留 ID 并提供回收转换。
+- 来源/哈希/绑定/许可/适配见 META-INF/particle-collider-port/ENHANCED_STRUCTURE.json 和 reference/SUPER_PARTICLE_COLLIDER_STRUCTURE.md。结构资源不属于 MIT，沿用目录内 LGPL/GPL 全文。
+- 参考文件在 D:/CodexTools/GTNGColliderStructure-20261023/upstream，未加入编译/资源 source sets。验证与剩余项见进度和测试文档。
+
+
+## Native multiblock casing consolidation (2026-10-23)
+
+- Verified against GT5-Unofficial 5.09.54.205, commit a3e1e11241a814c9fa0dd0973d5699548428f689,
+  sources SHA-1 5447ea903c5833f0319123e38ac586f348e599f3 (LGPL-3.0-or-later).
+- 38 previously ported casing variants now resolve to existing native block stacks for construction, recipe inputs,
+  names and controller/hatch backgrounds. This overrides the earlier appearance-conversion recipe descriptions.
+- Published legacy block IDs, metadata and artwork remain for saved items/structures. Legacy-only production recipes
+  were removed; circuit 25 assembler recipes convert old stacks one-to-one to native equivalents.
+- No additional upstream implementation or artwork was copied. Existing asset manifests remain byte-accurate.
+  Full mappings, retained special casings and validation scope: docs/development/native-structure-casings.md.

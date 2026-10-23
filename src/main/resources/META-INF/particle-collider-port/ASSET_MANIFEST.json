@@ -9,7 +9,7 @@
     "2": "Superconducting coil, inactive",
     "10": "Superconducting coil, client active appearance"
   },
-  "activeCoilMechanism": "GT5-Unofficial native activeCoils/GTCoilTracker with IBlockWithActiveOffset=8. Server metadata remains 2; native synchronized client metadata is 10 while the machine works. No custom per-tick world scan or server metadata toggling.",
+  "activeCoilMechanism": "Legacy registered coils retain active metadata for save compatibility. The enhanced collider uses native GTNH coils without custom active metadata.",
   "officialPack": {
     "version": "1.4.5.3",
     "curseForgeFileId": 9238465,
@@ -228,17 +228,6 @@
   },
   "codeRecords": [
     {
-      "source": "https://github.com/GNSW/GTLCore",
-      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
-      "sourcePath": "src/main/java/org/gtlcore/gtlcore/common/data/machines/structure/MultiBlockMachineAStructureA.java",
-      "sourceSha256": "2d4d465c63fcb2473ebc352c0f9673415136529136576e1e1be47a76909028ec",
-      "sourceGeometrySha256": "bab9591197189fdddfa6ecf6b490286468be6dc0494f2bde0ebcbf4426b186d5",
-      "destination": "src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/SuperParticleColliderStructure.java",
-      "license": "LGPL-3.0-only",
-      "modifications": "Lossless slice grouping, reversed depth order, controller a to ~, horizontal layers for StructureLib.transpose. Effective repeated d predicate remains accelerated pipeline; no aggregation cores added.",
-      "reference": "reference/SUPER_PARTICLE_COLLIDER_STRUCTURE.md"
-    },
-    {
       "source": "https://www.curseforge.com/minecraft/modpacks/gregtech-leisure/files/9238465",
       "revision": "1.4.5.3",
       "sourcePath": ".minecraft/kubejs/server_scripts/gtceu.js",
@@ -254,5 +243,20 @@
       "reference": "reference/particle-collider-port/RECIPE_ADAPTATION.md"
     }
   ],
-  "derivedConnectedTexturesRoot": "assets/gtnotgood/textures/blocks/particlecollider"
+  "derivedConnectedTexturesRoot": "assets/gtnotgood/textures/blocks/particlecollider",
+  "enhancedStructureManifest": "ENHANCED_STRUCTURE.json",
+  "historicalCodeRecords": [
+    {
+      "source": "https://github.com/GNSW/GTLCore",
+      "revision": "6443c848264fb15c90cf50e031f146522616a8b9",
+      "sourcePath": "src/main/java/org/gtlcore/gtlcore/common/data/machines/structure/MultiBlockMachineAStructureA.java",
+      "sourceSha256": "2d4d465c63fcb2473ebc352c0f9673415136529136576e1e1be47a76909028ec",
+      "sourceGeometrySha256": "bab9591197189fdddfa6ecf6b490286468be6dc0494f2bde0ebcbf4426b186d5",
+      "license": "LGPL-3.0-only",
+      "modifications": "Lossless slice grouping, reversed depth order, controller a to ~, horizontal layers for StructureLib.transpose. Effective repeated d predicate remains accelerated pipeline; no aggregation cores added.",
+      "reference": "reference/SUPER_PARTICLE_COLLIDER_STRUCTURE.md",
+      "status": "Historical 47x7x47 geometry replaced; preserved for attribution.",
+      "formerDestination": "src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/SuperParticleColliderStructure.java"
+    }
+  ]
 }

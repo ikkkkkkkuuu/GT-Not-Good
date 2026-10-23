@@ -3,15 +3,15 @@ package com.xyp.gtnotgood.common.blocks.dimensionalfocus;
 import java.util.Arrays;
 import java.util.Collections;
 
-import net.minecraft.item.ItemStack;
-
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
+import com.xyp.gtnotgood.common.blocks.NativeStructureCasings;
+import com.xyp.gtnotgood.common.blocks.StructureCasing;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import gregtech.api.interfaces.ITexture;
 
-public enum DimensionalFocusCasing {
+public enum DimensionalFocusCasing implements StructureCasing {
 
     DimensionallyTranscendent("dimensionally_transcendent_casing", true,
         // #tr tile.dimensional_focus_casing.transcendent.name
@@ -85,19 +85,16 @@ public enum DimensionalFocusCasing {
         return DimensionalFocusBlocks.getBlock(isGlass());
     }
 
-    public ItemStack getStack(int amount) {
-        return new ItemStack(getBlock(), amount, getMetadata());
-    }
-
     public int getTextureId() {
         return DimensionalFocusBlocks.getTextureId(this);
     }
 
     public ITexture getTexture() {
+        if (hasNativeCasing()) return NativeStructureCasings.texture(this);
         return DimensionalFocusBlocks.getTexture(this);
     }
 
-    public <T> IStructureElement<T> asElement() {
+    public <T> IStructureElement<T> legacyElement() {
         if (
             this == ImprovedSuperconductor
         ) return StructureUtility.ofBlocksMap(

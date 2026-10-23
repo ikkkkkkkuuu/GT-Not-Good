@@ -35,13 +35,16 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.ModularUIConfig;
 import com.cleanroommc.modularui.screen.GuiContainerWrapper;
+import com.gtnewhorizon.structurelib.structure.StructureUtility;
 import com.xyp.gtnotgood.common.blocks.particlecollider.ParticleColliderCasing;
+import com.xyp.gtnotgood.common.machines.hatch.modular.ParameterModuleHatch;
 import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.SuperParticleCollider;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.SuperParticleColliderStructure;
 import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 import com.xyp.gtnotgood.utils.enums.GTNGMachineID;
 import com.xyp.gtnotgood.utils.enums.ModList;
+import com.xyp.gtnotgood.utils.enums.ModsItemlist;
 
 import appeng.api.AEApi;
 import appeng.api.implementations.ICraftingPatternItem;
@@ -57,6 +60,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import gregtech.api.GregTechAPI;
+import gregtech.api.casing.Casings;
 import gregtech.api.enums.ItemList;
 import gregtech.api.enums.Materials;
 import gregtech.api.enums.OrePrefixes;
@@ -71,7 +75,6 @@ import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
 import gregtech.api.util.shutdown.ShutDownReasonRegistry;
-import gregtech.common.data.GTCoilTracker;
 import gregtech.common.tileentities.machines.MTEHatchCraftingInputME;
 import gtPlusPlus.core.material.MaterialsElements;
 
@@ -89,9 +92,8 @@ public final class SuperParticleColliderClientChecks {
     private GTRecipe[] recipes;
     private boolean started;
     private volatile boolean checked, finished;
-    private volatile boolean observedActiveCoils, observedInactiveCoils;
     private volatile boolean completeClientStructure;
-    private volatile int clientStructureBlocks, clientActiveCoils, clientInactiveCoils, clientGeometryStableTicks;
+    private volatile int clientStructureBlocks, clientGeometryStableTicks;
     private volatile ClientBlock[] expectedClientBlocks;
     private RunningPhase runningPhase;
     private int phaseStartedTick;
@@ -121,8 +123,10 @@ public final class SuperParticleColliderClientChecks {
             mc.gameSettings.setSoundLevel(SoundCategory.MASTER, 0F);
             mc.gameSettings.setSoundLevel(SoundCategory.MUSIC, 0F);
             mc.gameSettings.limitFramerate = 60;
-            mc.gameSettings.renderDistanceChunks = 12;
-            if (mc.theWorld != null && expectedClientBlocks != null) observeClientStructure(mc);
+            mc.gameSettings.renderDistanceChunks = 32;
+            mc.gameSettings.clouds = false;
+            if (mc.theWorld != null && expectedClientBlocks != null && clientTicks % 20 == 0)
+                observeClientStructure(mc);
             if (!started && mc.theWorld == null && mc.currentScreen != null) {
                 started = true;
                 mc.launchIntegratedServer("particle-collider-qa-" + System.currentTimeMillis(), "Particle Collider QA",
@@ -146,8 +150,8 @@ public final class SuperParticleColliderClientChecks {
                     GTNGItemList.SuperParticleCollider.get(1).getItemDamage() == GTNGMachineID.SuperParticleCollider.id,
                     "Registered controller identity");
                 player.worldObj.setWorldTime(6000);
-                buildRig(player, 0, 12, 0, ForgeDirection.NORTH);
-                player.playerNetServerHandler.setPlayerLocation(0, 28, 23, 180, 70);
+                buildRig(player, 0, 80, 0, ForgeDirection.NORTH);
+                player.playerNetServerHandler.setPlayerLocation(5, 150, 90, 180, 70);
                 player.capabilities.isFlying = true;
                 player.sendPlayerAbilities();
             }
@@ -173,8 +177,8 @@ public final class SuperParticleColliderClientChecks {
                 int view = requestedView;
                 requestedView = -1;
                 player.closeScreen();
-                if (view == 0) player.playerNetServerHandler.setPlayerLocation(-50, 40, -26, -45.6F, 22);
-                else player.playerNetServerHandler.setPlayerLocation(-12, 19, -8, -45, 28);
+                if (view == 0) player.playerNetServerHandler.setPlayerLocation(-150, 190, -115, -35, 22);
+                else player.playerNetServerHandler.setPlayerLocation(-12, 87, -8, -45, 28);
                 player.capabilities.isFlying = true;
                 player.sendPlayerAbilities();
                 shownView = view;
@@ -182,7 +186,7 @@ public final class SuperParticleColliderClientChecks {
             if (requestedGui) {
                 requestedGui = false;
                 player.closeScreen();
-                player.playerNetServerHandler.setPlayerLocation(0, 13, -4, 0, 0);
+                player.playerNetServerHandler.setPlayerLocation(0, 81, -4, 0, 0);
                 machine.onRightclick(base, player);
                 openedGui = true;
             }
@@ -198,46 +202,35 @@ public final class SuperParticleColliderClientChecks {
     }
 
     private void advanceRunningChecks() {
-        require(serverTicks - phaseStartedTick <= 1200,
-            "Timed out in " + runningPhase
-                + "; client structure="
-                + clientStructureBlocks
-                + "/2799, active coils="
-                + clientActiveCoils
-                + ", inactive coils="
-                + clientInactiveCoils);
+        require(serverTicks - phaseStartedTick <= 2400,
+            "Timed out in " + runningPhase + "; client structure=" + clientStructureBlocks + "/302624");
         switch (runningPhase) {
             case WaitStructure -> {
-                if (!completeClientStructure || clientInactiveCoils != 320 || clientGeometryStableTicks < 20) return;
-                verifyCoils(false);
+                if (!completeClientStructure || clientGeometryStableTicks < 2) return;
                 startRunning();
                 beginPhase(RunningPhase.WaitActive);
             }
             case WaitActive -> {
-                if (!base.isActive() || machine.mProgresstime <= 0 || clientActiveCoils != 320) return;
-                verifyCoils(true);
+                if (!base.isActive() || machine.mProgresstime <= 0) return;
                 base.disableWorking();
                 machine.stopMachine(ShutDownReasonRegistry.NONE);
                 beginPhase(RunningPhase.WaitStopped);
             }
             case WaitStopped -> {
-                if (serverTicks <= phaseStartedTick || clientInactiveCoils != 320) return;
-                verifyCoils(false);
+                if (serverTicks <= phaseStartedTick) return;
                 startRunning();
                 beginPhase(RunningPhase.WaitRestarted);
             }
             case WaitRestarted -> {
-                if (!base.isActive() || clientActiveCoils != 320) return;
-                verifyCoils(true);
-                brokenCasing = firstPosition('c');
+                if (!base.isActive()) return;
+                brokenCasing = firstPosition('A');
                 base.getWorld().setBlockToAir(brokenCasing[0], brokenCasing[1], brokenCasing[2]);
                 require(!machine.checkStructure(true, base), "Running structure becomes invalid after removing casing");
                 base.disableWorking();
                 beginPhase(RunningPhase.WaitBroken);
             }
             case WaitBroken -> {
-                if (serverTicks <= phaseStartedTick || clientInactiveCoils != 320) return;
-                verifyCoils(false);
+                if (serverTicks <= phaseStartedTick) return;
                 base.getWorld().setBlock(brokenCasing[0], brokenCasing[1], brokenCasing[2],
                     ParticleColliderCasing.Lafium.getBlock(), ParticleColliderCasing.Lafium.getMetadata(), 3);
                 machine.stopMachine(ShutDownReasonRegistry.NONE);
@@ -245,21 +238,17 @@ public final class SuperParticleColliderClientChecks {
                 beginPhase(RunningPhase.WaitRepaired);
             }
             case WaitRepaired -> {
-                if (!completeClientStructure || !base.isActive() || clientActiveCoils != 320) return;
-                verifyCoils(true);
+                if (!completeClientStructure || !base.isActive()) return;
                 verifyPersistence();
                 beginPhase(RunningPhase.WaitReloadedProgress);
             }
             case WaitReloadedProgress -> {
                 if (
                     serverTicks - phaseStartedTick < 10 || machine.mProgresstime <= savedProgress
-                        || clientActiveCoils != 320
                         || !completeClientStructure
                 ) return;
-                verifyCoils(true);
-                report.append("The client receives all 2799 structure blocks before processing checks. Real server ")
-                    .append("ticks activate all 320 client coils; stop and broken-structure checks wait for complete ")
-                    .append("client deactivation. A running tile reload preserves and advances processing.\n");
+                report.append("The client receives all 302624 structure blocks. Real processing starts, stops, ")
+                    .append("recovers after structural damage, and resumes after running tile NBT reload.\n");
                 runningPhase = null;
                 checked = true;
                 requestedView = 0;
@@ -279,8 +268,8 @@ public final class SuperParticleColliderClientChecks {
 
     private void buildRig(EntityPlayerMP player, int x, int y, int z, ForgeDirection facing) {
         World world = player.worldObj;
-        for (int cx = (x - 64) >> 4; cx <= (x + 64) >> 4; cx++)
-            for (int cz = (z - 64) >> 4; cz <= (z + 64) >> 4; cz++) world.getChunkFromChunkCoords(cx, cz);
+        for (int cx = (x - 224) >> 4; cx <= (x + 224) >> 4; cx++)
+            for (int cz = (z - 224) >> 4; cz <= (z + 224) >> 4; cz++) world.getChunkFromChunkCoords(cx, cz);
         base = place(world, x, y, z, GTNGMachineID.SuperParticleCollider.id);
         base.setFrontFacing(facing);
         base.setOwnerName(player.getCommandSenderName());
@@ -300,6 +289,19 @@ public final class SuperParticleColliderClientChecks {
 
     private void verifyConstructedGeometry() {
         Map<Character, ItemStack> blocks = new HashMap<>();
+        Map<Character, ItemStack> expectedBlocks = new HashMap<>();
+        expectedBlocks.put('#', ParticleColliderCasing.Lafium.getStack(1));
+        expectedBlocks.put('A', ParticleColliderCasing.Lafium.getStack(1));
+        expectedBlocks.put('B', GTOreDictUnificator.get(OrePrefixes.frameGt, Materials.NaquadahEnriched, 1));
+        expectedBlocks.put('D', ItemList.RadiantNaquadahAlloyCasing.get(1));
+        expectedBlocks.put('E', ItemList.Casing_Coil_Superconductor.get(1));
+        expectedBlocks.put('F', Casings.ChemicalGradeGlass.toStack(1));
+        expectedBlocks.put('G', ModsItemlist.InvertedCyanLamp.get(1));
+        expectedBlocks.put('I', ModsItemlist.InvertedOrangeLamp.get(1));
+        expectedBlocks.put('J', ParticleColliderCasing.AcceleratedPipeline.getStack(1));
+        expectedBlocks.put('K', ItemList.Casing_Fusion2.get(1));
+        expectedBlocks.put('L', ItemList.Casing_ZPM.get(1));
+        expectedBlocks.put('N', ItemList.Casing_Pipe_TungstenSteel.get(1));
         int total = 0;
         for (int row = 0; row < shape.length; row++) for (int depth = 0; depth < shape[row].length; depth++) {
             for (int col = 0; col < shape[row][depth].length(); col++) {
@@ -308,14 +310,17 @@ public final class SuperParticleColliderClientChecks {
                 int[] pos = position(col, row, depth);
                 Block block = base.getWorld().getBlock(pos[0], pos[1], pos[2]);
                 require(block != Blocks.air, "Built required block " + symbol + " at " + Arrays.toString(pos));
-                ItemStack stack = new ItemStack(block, 1, base.getWorld().getBlockMetadata(pos[0], pos[1], pos[2]));
+                ItemStack stack = new ItemStack(block, 1,
+                    block.getDamageValue(base.getWorld(), pos[0], pos[1], pos[2]));
                 ItemStack expected = blocks.putIfAbsent(symbol, stack);
                 require(expected == null || GTUtility.areStacksEqual(stack, expected),
                     "Consistent constructed block for symbol " + symbol);
+                require(GTUtility.areStacksEqual(stack, expectedBlocks.get(symbol)),
+                    "Native block mapping for " + symbol + " at " + Arrays.toString(pos));
                 total++;
             }
         }
-        require(total == 2799 && blocks.size() == 5, "All 2799 upstream structure blocks are built");
+        require(total == 302624 && blocks.size() == 12, "All 302624 upstream structure blocks are built");
     }
 
     private void verifyStructure() {
@@ -324,7 +329,7 @@ public final class SuperParticleColliderClientChecks {
         machine.checkMachine(base, null, errors);
         require(errors.isEmpty(),
             "Structure: " + errors.stream().map(StructureError::getDisplayString).collect(Collectors.joining("; ")));
-        require(machine.checkStructure(true, base), "Physical controller forms the complete 47x7x47 structure");
+        require(machine.checkStructure(true, base), "Physical controller forms the complete 197x83x209 structure");
         require(
             machine.mInputHatches.size() == 2 && machine.mOutputHatches.size() == 1
                 && machine.mEnergyHatches.size() >= 1
@@ -337,10 +342,11 @@ public final class SuperParticleColliderClientChecks {
         SuperParticleCollider mainMachine = machine;
         for (ForgeDirection facing : new ForgeDirection[] { ForgeDirection.EAST, ForgeDirection.SOUTH,
             ForgeDirection.WEST }) {
-            buildRig(player, 192, 12, 192, facing);
+            buildRig(player, 640, 80, 640, facing);
             verifyStructure();
             for (int row = 0; row < shape.length; row++) for (int depth = 0; depth < shape[row].length; depth++) {
                 for (int col = 0; col < shape[row][depth].length(); col++) {
+                    if (shape[row][depth].charAt(col) == ' ') continue;
                     int[] pos = position(col, row, depth);
                     base.getWorld().setBlockToAir(pos[0], pos[1], pos[2]);
                 }
@@ -349,26 +355,27 @@ public final class SuperParticleColliderClientChecks {
         base = mainBase;
         machine = mainMachine;
         verifyStructure();
-        report.append("Original 47x7x47 geometry builds and forms in all four horizontal directions.\n");
+        report.append("Original 197x83x209 geometry builds and forms in all four horizontal directions.\n");
     }
 
     private void verifyRequiredBlocks() {
-        for (char symbol : new char[] { 'c', 'd', 'e', 'f' }) {
+        for (char symbol : new char[] { 'A', 'B', 'D', 'E', 'F', 'G', 'I', 'J', 'K', 'L', 'N' }) {
             int[] pos = firstPosition(symbol);
             World world = base.getWorld();
             Block block = world.getBlock(pos[0], pos[1], pos[2]);
-            int meta = world.getBlockMetadata(pos[0], pos[1], pos[2]);
+            int meta = block.getDamageValue(world, pos[0], pos[1], pos[2]);
             world.setBlockToAir(pos[0], pos[1], pos[2]);
             require(!machine.checkStructure(true, base), "Missing required block " + symbol + " invalidates structure");
-            world.setBlock(pos[0], pos[1], pos[2], block, meta, 3);
+            StructureUtility.ofBlock(block, meta).placeBlock(machine, world, pos[0], pos[1], pos[2],
+                new ItemStack(Items.diamond));
             verifyStructure();
         }
-        report.append("All four fixed material symbols reject missing blocks and recover after repair.\n");
+        report.append("All eleven fixed material symbols reject missing blocks and recover after repair.\n");
     }
 
     private void verifyUnconstrainedSpace() {
-        require(shape[3][23].charAt(23) == ' ', "Selected upstream any position in the ring center");
-        int[] pos = position(23, 3, 23);
+        require(shape[41][104].charAt(98) == ' ', "Selected upstream any position in the ring center");
+        int[] pos = position(98, 41, 104);
         base.getWorld().setBlock(pos[0], pos[1], pos[2], Blocks.stone, 0, 3);
         verifyStructure();
         base.getWorld().setBlockToAir(pos[0], pos[1], pos[2]);
@@ -377,7 +384,8 @@ public final class SuperParticleColliderClientChecks {
     }
 
     private void verifySurvivalRecipes() {
-        for (ParticleColliderCasing casing : ParticleColliderCasing.values()) {
+        for (ParticleColliderCasing casing : new ParticleColliderCasing[] { ParticleColliderCasing.Lafium,
+            ParticleColliderCasing.AcceleratedPipeline }) {
             List<GTRecipe> matches = RecipeMaps.assemblerRecipes.getAllRecipes().stream()
                 .filter(recipe -> Arrays.stream(recipe.mOutputs)
                     .anyMatch(output -> GTUtility.areStacksEqual(output, casing.getStack(1))))
@@ -404,6 +412,16 @@ public final class SuperParticleColliderClientChecks {
                         && recipe.mFluidInputs[0].amount == 288,
                     "Accelerated pipeline requires 288 L of soldering alloy");
         }
+        ItemStack legacyCoil = new ItemStack(ParticleColliderCasing.SuperconductingCoil.getBlock(), 1,
+            ParticleColliderCasing.SuperconductingCoil.getMetadata());
+        require(RecipeMaps.assemblerRecipes.getAllRecipes().stream()
+            .anyMatch(recipe -> recipe.mInputs.length == 2 && GTUtility.areStacksEqual(recipe.mInputs[0], legacyCoil)
+                && recipe.mOutputs.length == 1
+                && GTUtility.areStacksEqual(recipe.mOutputs[0], ItemList.Casing_Coil_Superconductor.get(1))
+                && recipe.mOutputs[0].stackSize == 1
+                && recipe.mDuration == 50
+                && recipe.mEUt == 16),
+            "Legacy ported coil converts one-for-one to native superconducting coil");
         List<GTRecipe.RecipeAssemblyLine> controllers = GTRecipe.RecipeAssemblyLine.sAssemblylineRecipes.stream()
             .filter(recipe -> GTUtility.areStacksEqual(recipe.mOutput, GTNGItemList.SuperParticleCollider.get(1)))
             .collect(Collectors.toList());
@@ -428,7 +446,7 @@ public final class SuperParticleColliderClientChecks {
         ItemStack uv = GTOreDictUnificator.get(OrePrefixes.circuit, Materials.UV, 32);
         require(uv != null && GTRecipe.RecipeAssemblyLine.getMatchedIngredientAmount(uv, controller.mInputs[7],
             controller.mOreDictAlt[7]) == 32, "Controller retains its 32 UV circuit prerequisite");
-        report.append("Three casings and the controller have complete, available native survival recipes.\n");
+        report.append("Two ported casings and the controller have complete, available native survival recipes.\n");
     }
 
     private void verifyNativeRecipes() {
@@ -469,8 +487,8 @@ public final class SuperParticleColliderClientChecks {
             require(
                 inputAmount(0) == 0 && inputAmount(1) == 0
                     && pendingOutput(output) == 4000
-                    && machine.mMaxProgresstime == 200
-                    && machine.lEUt == -TierEU.RECIPE_UV,
+                    && scheduledDuration() == 200
+                    && scheduledEut() == -TierEU.RECIPE_UV,
                 "Collision consumes both exact inputs and schedules exact output/power/time " + index);
         }
         report.append("All five registered native element recipes consume 4096 L of each input and schedule ")
@@ -478,6 +496,12 @@ public final class SuperParticleColliderClientChecks {
     }
 
     private void verifyParallelAndOverclock() {
+        int[] parallelPosition = position(95, 42, 0);
+        ParameterModuleHatch parallel = (ParameterModuleHatch) place(base.getWorld(), parallelPosition[0],
+            parallelPosition[1], parallelPosition[2], GTNGItemList.DynamicParallelControllerT1.get(1).getItemDamage())
+                .getMetaTileEntity();
+        parallel.setParameter(7);
+        verifyStructure();
         GTRecipe recipe = recipes[0];
         resetProcessing();
         machine.setPowerPanelMaxParallel(8);
@@ -486,8 +510,8 @@ public final class SuperParticleColliderClientChecks {
         require(
             pendingOutput(recipe.mFluidOutputs[0]) == 8000 && inputAmount(0) == 4096
                 && inputAmount(1) == 4096
-                && machine.mMaxProgresstime == 200
-                && machine.lEUt == -2L * TierEU.RECIPE_UV,
+                && scheduledDuration() == 200
+                && scheduledEut() == -2L * TierEU.RECIPE_UV,
             "Two-amp UV hatch limits three available recipes to two parallel operations");
         resetProcessing();
         machine.setPowerPanelMaxParallel(1);
@@ -495,8 +519,8 @@ public final class SuperParticleColliderClientChecks {
         verifyStructure();
         seed(recipe, 1);
         require(
-            machine.checkProcessing().wasSuccessful() && machine.mMaxProgresstime == 100
-                && machine.lEUt == -4L * TierEU.RECIPE_UV
+            machine.checkProcessing().wasSuccessful() && scheduledDuration() == 100
+                && scheduledEut() == -4L * TierEU.RECIPE_UV
                 && pendingOutput(recipe.mFluidOutputs[0]) == 4000,
             "One native non-perfect overclock halves time and quadruples EU/t");
         resetProcessing();
@@ -505,18 +529,21 @@ public final class SuperParticleColliderClientChecks {
         verifyStructure();
         seed(recipe, 1);
         require(
-            machine.checkProcessing().wasSuccessful() && machine.mMaxProgresstime == 200
-                && machine.lEUt == -TierEU.RECIPE_UV,
+            machine.checkProcessing().wasSuccessful() && scheduledDuration() == 200
+                && scheduledEut() == -TierEU.RECIPE_UV,
             "Additional amperage does not overclock a voltage-limited recipe");
         restoreCasing(22, 3, 0);
         verifyStructure();
         report.append("Native input power bounds parallels; voltage provides 4x EU/t, 2x speed overclocking, ")
             .append("and additional amperage never substitutes for voltage.\n");
+        resetProcessing();
+        restoreCasing(25, 4, 0);
+        verifyStructure();
     }
 
     private void verifyNativeMeBuffer() {
         resetProcessing();
-        int[] pos = position(21, 4, 0);
+        int[] pos = position(91, 42, 0);
         BaseMetaTileEntity bufferBase = place(base.getWorld(), pos[0], pos[1], pos[2],
             ItemList.Hatch_CraftingInput_Bus_ME.get(1).getItemDamage());
         MTEHatchCraftingInputME buffer = (MTEHatchCraftingInputME) bufferBase.getMetaTileEntity();
@@ -567,8 +594,8 @@ public final class SuperParticleColliderClientChecks {
         require(
             machine.checkProcessing().wasSuccessful() && inventory.isEmpty()
                 && pendingOutput(recipes[0].mFluidOutputs[0]) == 4000
-                && machine.mMaxProgresstime == 200
-                && machine.lEUt == -TierEU.RECIPE_UV,
+                && scheduledDuration() == 200
+                && scheduledEut() == -TierEU.RECIPE_UV,
             "Native dual-input processing commits both buffered fluids and schedules the exact collision output");
         NBTTagCompound consumed = new NBTTagCompound();
         buffer.saveNBTData(consumed);
@@ -656,26 +683,6 @@ public final class SuperParticleColliderClientChecks {
         base.enableWorking();
     }
 
-    private void verifyCoils(boolean active) {
-        int count = 0;
-        for (int row = 0; row < shape.length; row++) for (int depth = 0; depth < shape[row].length; depth++) {
-            for (int col = 0; col < shape[row][depth].length(); col++) {
-                if (shape[row][depth].charAt(col) != 'e') continue;
-                int[] pos = position(col, row, depth);
-                World world = base.getWorld();
-                require(
-                    world.getBlock(pos[0], pos[1], pos[2]) == ParticleColliderCasing.SuperconductingCoil.getBlock()
-                        && world.getBlockMetadata(pos[0], pos[1], pos[2])
-                            == ParticleColliderCasing.SuperconductingCoil.getMetadata()
-                        && GTCoilTracker.isCoilActive(world, pos[0], pos[1], pos[2]) == active,
-                    "Coil has native running state " + active + " at " + Arrays.toString(pos));
-                count++;
-            }
-        }
-        require(count == 320, "Every original superconducting coil is checked");
-        if (active) require(machine.mCoils.size() == 320, "Native controller tracks every superconducting coil");
-    }
-
     private void cacheClientStructure() {
         List<ClientBlock> blocks = new ArrayList<>();
         for (int row = 0; row < shape.length; row++) for (int depth = 0; depth < shape[row].length; depth++) {
@@ -685,47 +692,36 @@ public final class SuperParticleColliderClientChecks {
                 int[] pos = position(col, row, depth);
                 World world = base.getWorld();
                 blocks.add(new ClientBlock(pos[0], pos[1], pos[2], world.getBlock(pos[0], pos[1], pos[2]),
-                    world.getBlockMetadata(pos[0], pos[1], pos[2]), symbol == 'e'));
+                    world.getBlock(pos[0], pos[1], pos[2]).getDamageValue(world, pos[0], pos[1], pos[2])));
             }
         }
-        require(blocks.size() == 2799, "Expected client geometry contains every original structure block");
+        require(blocks.size() == 302624, "Expected client geometry contains every original structure block");
         expectedClientBlocks = blocks.toArray(new ClientBlock[0]);
     }
 
     private void observeClientStructure(Minecraft mc) {
-        int matched = 0, active = 0, inactive = 0;
+        int matched = 0;
         for (ClientBlock expected : expectedClientBlocks) {
             if (mc.theWorld.getBlock(expected.x, expected.y, expected.z) != expected.block) continue;
-            int meta = mc.theWorld.getBlockMetadata(expected.x, expected.y, expected.z);
-            if (expected.coil) {
-                if (meta == expected.metadata) inactive++;
-                if (meta == (expected.metadata | ParticleColliderCasing.ACTIVE_BIT)) active++;
-                meta &= ~ParticleColliderCasing.ACTIVE_BIT;
-            }
-            if (meta == expected.metadata) matched++;
+            if (expected.block.getDamageValue(mc.theWorld, expected.x, expected.y, expected.z) == expected.metadata)
+                matched++;
         }
         clientStructureBlocks = matched;
-        clientActiveCoils = active;
-        clientInactiveCoils = inactive;
-        completeClientStructure = matched == 2799 && active + inactive == 320;
+        completeClientStructure = matched == 302624;
         clientGeometryStableTicks = completeClientStructure ? clientGeometryStableTicks + 1 : 0;
-        if (active == 320) observedActiveCoils = true;
-        if (inactive == 320 && observedActiveCoils) observedInactiveCoils = true;
     }
 
     private static final class ClientBlock {
 
         private final int x, y, z, metadata;
         private final Block block;
-        private final boolean coil;
 
-        private ClientBlock(int x, int y, int z, Block block, int metadata, boolean coil) {
+        private ClientBlock(int x, int y, int z, Block block, int metadata) {
             this.x = x;
             this.y = y;
             this.z = z;
             this.block = block;
             this.metadata = metadata;
-            this.coil = coil;
         }
     }
 
@@ -749,6 +745,11 @@ public final class SuperParticleColliderClientChecks {
         machine.mOutputItems = null;
         machine.mOutputFluids = null;
         machine.lEUt = 0;
+        NBTTagCompound emptyWork = new NBTTagCompound();
+        machine.saveNBTData(emptyWork);
+        emptyWork.setTag("gtngModuleWork", new NBTTagList());
+        emptyWork.setBoolean("gtngModuleLegacyRun", false);
+        machine.loadNBTData(emptyWork);
         for (var hatch : machine.mInputHatches) hatch.mFluid = null;
         for (var hatch : machine.mOutputHatches) hatch.setFillableStack(null);
     }
@@ -767,9 +768,26 @@ public final class SuperParticleColliderClientChecks {
     }
 
     private int pendingOutput(FluidStack expected) {
-        return machine.mOutputFluids == null ? 0
-            : Arrays.stream(machine.mOutputFluids).filter(fluid -> fluid != null && fluid.isFluidEqual(expected))
-                .mapToInt(fluid -> fluid.amount).sum();
+        int amount = 0;
+        for (var work : machine.getModuleWorks()) {
+            NBTTagList fluids = work.outputs.save().getTagList("fluids", 10);
+            for (int i = 0; i < fluids.tagCount(); i++) {
+                NBTTagCompound tag = fluids.getCompoundTagAt(i);
+                FluidStack fluid = FluidStack.loadFluidStackFromNBT(tag);
+                if (fluid != null && fluid.isFluidEqual(expected))
+                    amount += Integer.parseInt(tag.getString("bigAmount"));
+            }
+        }
+        return amount;
+    }
+
+    private int scheduledDuration() {
+        return machine.getModuleWorks().isEmpty() ? 0 : machine.getModuleWorks().get(0).duration;
+    }
+
+    private long scheduledEut() {
+        return -machine.getModuleWorks().stream().filter(work -> work.controllerPower).mapToLong(work -> work.eut)
+            .sum();
     }
 
     private void setEnergy(ItemList hatch) {
@@ -777,12 +795,12 @@ public final class SuperParticleColliderClientChecks {
     }
 
     private void placeAt(int col, int row, int depth, ItemList hatch) {
-        int[] pos = position(col, row, depth);
+        int[] pos = position(col + 70, row + 38, depth);
         place(base.getWorld(), pos[0], pos[1], pos[2], hatch.get(1).getItemDamage());
     }
 
     private void restoreCasing(int col, int row, int depth) {
-        int[] pos = position(col, row, depth);
+        int[] pos = position(col + 70, row + 38, depth);
         base.getWorld().setBlock(pos[0], pos[1], pos[2], ParticleColliderCasing.Lafium.getBlock(),
             ParticleColliderCasing.Lafium.getMetadata(), 3);
     }
@@ -825,8 +843,7 @@ public final class SuperParticleColliderClientChecks {
             Minecraft mc = Minecraft.getMinecraft();
             require(++stageFrames <= 3600,
                 "Visual stage timeout; client structure=" + clientStructureBlocks
-                    + "/2799, active coils="
-                    + clientActiveCoils
+                    + "/302624"
                     + ", view="
                     + shownView
                     + ", camera="
@@ -849,26 +866,25 @@ public final class SuperParticleColliderClientChecks {
             }
             if (!openedGui) {
                 if (shownView != capturedView + 1 || requestedView >= 0) return;
-                double cameraX = shownView == 0 ? -50 : -12;
-                double cameraY = shownView == 0 ? 40 : 19;
-                double cameraZ = shownView == 0 ? -26 : -8;
+                double cameraX = shownView == 0 ? -150 : -12;
+                double cameraY = shownView == 0 ? 190 : 87;
+                double cameraZ = shownView == 0 ? -115 : -8;
                 boolean atCamera = mc.thePlayer != null && Math.abs(mc.thePlayer.posX - cameraX) < 1
                     && Math.abs(mc.thePlayer.boundingBox.minY - cameraY) < 3
                     && Math.abs(mc.thePlayer.posZ - cameraZ) < 1;
-                if (
-                    !atCamera || !completeClientStructure || clientGeometryStableTicks < 40 || clientActiveCoils != 320
-                ) {
+                if (!atCamera || !completeClientStructure || clientGeometryStableTicks < 3) {
                     frames = 0;
                     return;
                 }
                 if (warmedView != shownView) {
+                    mc.gameSettings.fovSetting = shownView == 0 ? 55F : 70F;
                     mc.renderGlobal.loadRenderers();
                     mc.gameSettings.hideGUI = true;
                     warmedView = shownView;
                     frames = 0;
                 }
                 if (++frames < 240) return;
-                capture(shownView == 0 ? "structure-overview" : "structure-active-textures");
+                capture(shownView == 0 ? "structure-overview" : "structure-native-textures");
                 capturedView = shownView;
                 frames = stageFrames = 0;
                 if (capturedView == 0) requestedView = 1;
@@ -908,7 +924,8 @@ public final class SuperParticleColliderClientChecks {
             + String.join("\n", tooltip.getStructureInformation());
         require(!text.contains("gtng.") && !text.contains("gt.mbtt.") && !text.contains("gt.blockmachines."),
             "All tooltip translations resolve: " + locale);
-        require(text.contains("47") && text.contains("7"), "Tooltip reports original structure dimensions: " + locale);
+        require(text.contains("197") && text.contains("83") && text.contains("209"),
+            "Tooltip reports original structure dimensions: " + locale);
         Files.write(new File(output(), "tooltip-" + locale + ".txt").toPath(), text.getBytes(StandardCharsets.UTF_8));
         return tooltip;
     }
@@ -956,8 +973,6 @@ public final class SuperParticleColliderClientChecks {
     }
 
     private void finish() throws Exception {
-        require(observedActiveCoils && observedInactiveCoils,
-            "Native network packets synchronize all 320 client coils into both running and stopped states");
         Files.write(new File(output(), "result.txt").toPath(), ("PASS\n" + report).getBytes(StandardCharsets.UTF_8));
         System.out.println("PARTICLE_COLLIDER_QA_PASS " + report);
         finished = true;

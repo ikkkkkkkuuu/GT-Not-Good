@@ -124,6 +124,7 @@ public final class BlockHeartCasing extends Block implements IHasIndexedTexture 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void getSubBlocks(Item item, CreativeTabs tab, List stacks) {
         for (HeartCasing variant : HeartCasing.values()) {
+            if (variant.hasNativeCasing()) continue;
             if (variant.isGlass() == glass) stacks.add(variant.getStack(1));
         }
     }

@@ -33,8 +33,8 @@
 32 个 UV 电路、16 块中子反射板与 8 块双重拉菲姆板。
 四种输入流体均保留 1152 mB：焊锡、镤、铀、镎。
 
-GTL 的原生超导线圈不是整合包脚本新配方。为保留它的外观并沿用 GTNH 已有造价，
-本地额外提供原生 `ItemList.Casing_Coil_Superconductor` 到移植线圈的 1:1 装配机转换，
+GTL 的原生超导线圈不是整合包脚本新配方。按用户要求优先复用 GTNH 已有结构件，
+现结构使用原生 `ItemList.Casing_Coil_Superconductor`；旧移植线圈可 1:1 转回原生线圈，
 电路 6、16 EU/t、50 tick；不生成材料或免费线圈。
 
 方块配方在 `loadRecipes()` 注册。控制器和碰撞配方在 `loadPostInitRecipes()` 注册，

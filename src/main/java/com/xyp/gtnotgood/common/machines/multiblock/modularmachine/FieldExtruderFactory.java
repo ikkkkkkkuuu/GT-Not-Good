@@ -1,6 +1,5 @@
 package com.xyp.gtnotgood.common.machines.multiblock.modularmachine;
 
-import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofBlock;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofChain;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.onElementPass;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.transpose;
@@ -106,24 +105,14 @@ public final class FieldExtruderFactory extends GTNGModularMachineBase<FieldExtr
                     GTStructureUtility.ofHatchAdder(FieldExtruderFactory::addMaintenanceToMachineList,
                         FieldExtruderCasing.Iridium.getTextureId(), 1),
                     buildHatchAdder(FieldExtruderFactory.class).atLeast(InputBus, OutputBus, Energy.or(ExoticEnergy))
-                        .casingIndex(FieldExtruderCasing.Iridium.getTextureId()).hint(1)
-                        .buildAndChain(onElementPass(machine -> machine.casingCount++,
-                            ofBlock(FieldExtruderCasing.Iridium.getBlock(),
-                                FieldExtruderCasing.Iridium.getMetadata())))))
-                .addElement('B',
-                    ofBlock(FieldExtruderCasing.HyperMechanical.getBlock(),
-                        FieldExtruderCasing.HyperMechanical.getMetadata()))
+                        .casingIndex(FieldExtruderCasing.Iridium.getTextureId()).hint(1).buildAndChain(
+                            onElementPass(machine -> machine.casingCount++, FieldExtruderCasing.Iridium.asElement()))))
+                .addElement('B', FieldExtruderCasing.HyperMechanical.asElement())
                 .addElement('C', GTStructureUtility.ofFrame(Materials.Naquadria))
-                .addElement('D',
-                    ofBlock(FieldExtruderCasing.Hollow.getBlock(), FieldExtruderCasing.Hollow.getMetadata()))
-                .addElement('E',
-                    ofBlock(FieldExtruderCasing.Molecular.getBlock(), FieldExtruderCasing.Molecular.getMetadata()))
-                .addElement('F',
-                    ofBlock(FieldExtruderCasing.ContainmentFieldGenerator.getBlock(),
-                        FieldExtruderCasing.ContainmentFieldGenerator.getMetadata()))
-                .addElement('G', ofBlock(FieldExtruderCasing.CleanroomGlass.getBlock(),
-                    FieldExtruderCasing.CleanroomGlass.getMetadata()))
-                .build();
+                .addElement('D', FieldExtruderCasing.Hollow.asElement())
+                .addElement('E', FieldExtruderCasing.Molecular.asElement())
+                .addElement('F', FieldExtruderCasing.ContainmentFieldGenerator.asElement())
+                .addElement('G', FieldExtruderCasing.CleanroomGlass.asElement()).build();
         }
         return definition;
     }

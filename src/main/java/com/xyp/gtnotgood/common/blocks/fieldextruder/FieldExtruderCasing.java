@@ -1,14 +1,14 @@
 package com.xyp.gtnotgood.common.blocks.fieldextruder;
 
-import net.minecraft.item.ItemStack;
-
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
+import com.xyp.gtnotgood.common.blocks.NativeStructureCasings;
+import com.xyp.gtnotgood.common.blocks.StructureCasing;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import gregtech.api.interfaces.ITexture;
 
-public enum FieldExtruderCasing {
+public enum FieldExtruderCasing implements StructureCasing {
 
     Iridium(0, "iridium_casing", true,
         // #tr tile.field_extruder_casing.iridium.name
@@ -84,19 +84,16 @@ public enum FieldExtruderCasing {
         return FieldExtruderBlocks.getBlock(isGlass());
     }
 
-    public ItemStack getStack(int amount) {
-        return new ItemStack(getBlock(), amount, metadata);
-    }
-
     public int getTextureId() {
         return FieldExtruderBlocks.getTextureId(this);
     }
 
     public ITexture getTexture() {
+        if (hasNativeCasing()) return NativeStructureCasings.texture(this);
         return FieldExtruderBlocks.getTexture(this);
     }
 
-    public <T> IStructureElement<T> asElement() {
+    public <T> IStructureElement<T> legacyElement() {
         return StructureUtility.ofBlock(getBlock(), metadata);
     }
 

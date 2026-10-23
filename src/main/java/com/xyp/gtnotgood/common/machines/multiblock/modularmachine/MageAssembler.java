@@ -1,6 +1,5 @@
 package com.xyp.gtnotgood.common.machines.multiblock.modularmachine;
 
-import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofBlock;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofChain;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.onElementPass;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.transpose;
@@ -108,8 +107,7 @@ public final class MageAssembler extends GTNGMultiModeMachineBase<MageAssembler>
                             .atLeast(InputBus, OutputBus, InputHatch, Energy.or(ExoticEnergy))
                             .casingIndex(FieldExtruderCasing.Iridium.getTextureId()).hint(1)
                             .buildAndChain(onElementPass(machine -> machine.casingCount++,
-                                ofBlock(FieldExtruderCasing.Iridium.getBlock(),
-                                    FieldExtruderCasing.Iridium.getMetadata())))))
+                                FieldExtruderCasing.Iridium.asElement()))))
                 .addElement('c', AssemblyPlantCasing.LaminatedGlass.asElement())
                 .addElement('d', AssemblyPlantCasing.FilterCasing.asElement())
                 .addElement('e', GTStructureUtility.ofFrame(MaterialsAlloy.HASTELLOY_N))

@@ -1,106 +1,72 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 package com.xyp.gtnotgood.common.machines.multiblock.structure;
 
-// GTLCore SUPER_PARTICLE_COLLIDER, 6443c848264fb15c90cf50e031f146522616a8b9.
-// Source and modifications: reference/SUPER_PARTICLE_COLLIDER_STRUCTURE.md.
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
+
+import com.xyp.gtnotgood.utils.enums.ModList;
+
+// GTL-Enhancedcore 3.8.0 hollow structure; META-INF/particle-collider-port/ENHANCED_STRUCTURE.json.
 public final class SuperParticleColliderStructure {
 
-    public static final int WIDTH = 47;
-    public static final int HEIGHT = 7;
-    public static final int LENGTH = 47;
-    public static final int OFFSET_X = 23;
-    public static final int OFFSET_Y = 3;
+    public static final int WIDTH = 197;
+    public static final int HEIGHT = 83;
+    public static final int LENGTH = 209;
+    public static final int OFFSET_X = 93;
+    public static final int OFFSET_Y = 41;
     public static final int OFFSET_Z = 0;
-
-    private static final String[][] SLICES = {
-        { "                                               ", "                                               ",
-            "                    fcccccf                    ", "                    fcccccf                    ",
-            "                    fcccccf                    ", "                                               ",
-            "                                               " },
-        { "                                               ", "                    fcccccf                    ",
-            "                   cceeeeecc                   ", "                   cceeeeecc                   ",
-            "                   cceeeeecc                   ", "                    fcccccf                    ",
-            "                                               " },
-        { "                    fcccccf                    ", "                   cceeeeecc                   ",
-            "                ccccceeeeeccccc                ", "                cccdddddddddccc                ",
-            "                ccccceeeeeccccc                ", "                   cceeeeecc                   ",
-            "                    fcccccf                    " },
-        { "                    fcccccf                    ", "                ccccceeeeeccccc                ",
-            "              cccccdddddddddccccc              ", "              ccdddddddddddddddcc              ",
-            "              cccccdddddddddccccc              ", "                ccccceeeeeccccc                ",
-            "                    fcccccf                    " },
-        { "                    fcccccf                    ", "              ccccccceeeeeccccccc              ",
-            "            ccccdddcceeeeeccdddcccc            ", "            ccdddddddddddddddddddcc            ",
-            "            ccccdddcceeeeeccdddcccc            ", "              ccccccceeeeeccccccc              ",
-            "                    fcccccf                    " },
-        { "                                               ", "            ccccccc fcccccf ccccccc            ",
-            "           cccddccccceeeeecccccddccc           ", "           cdddddddcceeeeeccdddddddc           ",
-            "           cccddccccceeeeecccccddccc           ", "            ccccccc fcccccf ccccccc            ",
-            "                                               " },
-        { "                                               ", "           ccccc               ccccc           ",
-            "          ccddccccc fcccccf cccccddcc          ", "          cdddddccc fcccccf cccdddddc          ",
-            "          ccddccccc fcccccf cccccddcc          ", "           ccccc               ccccc           ",
-            "                                               " },
-        { "                                               ", "          cccc                   cccc          ",
-            "         ccdcccc               ccccdcc         ", "         cddddcc               ccddddc         ",
-            "         ccdcccc               ccccdcc         ", "          cccc                   cccc          ",
-            "                                               " },
-        { "                                               ", "         ccc                       ccc         ",
-            "        ccdccc                   cccdcc        ", "        cdddcc                   ccdddc        ",
-            "        ccdccc                   cccdcc        ", "         ccc                       ccc         ",
-            "                                               " },
-        { "                                               ", "        ccc                         ccc        ",
-            "       ccdcc                       ccdcc       ", "       cdddc                       cdddc       ",
-            "       ccdcc                       ccdcc       ", "        ccc                         ccc        ",
-            "                                               " },
-        { "                                               ", "       ccc                           ccc       ",
-            "      ccdcc                         ccdcc      ", "      cdddc                         cdddc      ",
-            "      ccdcc                         ccdcc      ", "       ccc                           ccc       ",
-            "                                               " },
-        { "                                               ", "      ccc                             ccc      ",
-            "     ccdcc                           ccdcc     ", "     cdddc                           cdddc     ",
-            "     ccdcc                           ccdcc     ", "      ccc                             ccc      ",
-            "                                               " },
-        { "                                               ", "     ccc                               ccc     ",
-            "    ccdcc                             ccdcc    ", "    cdddc                             cdddc    ",
-            "    ccdcc                             ccdcc    ", "     ccc                               ccc     ",
-            "                                               " },
-        { "                                               ", "    ccc                                 ccc    ",
-            "   ccdcc                               ccdcc   ", "   cdddc                               cdddc   ",
-            "   ccdcc                               ccdcc   ", "    ccc                                 ccc    ",
-            "                                               " },
-        { "                                               ", "   ccc                                   ccc   ",
-            "  ccdcc                                 ccdcc  ", "  cdddc                                 cdddc  ",
-            "  ccdcc                                 ccdcc  ", "   ccc                                   ccc   ",
-            "                                               " },
-        { "                                               ", "  ccc                                     ccc  ",
-            " ccdcc                                   ccdcc ", " cdddc                                   cdddc ",
-            " ccdcc                                   ccdcc ", "  ccc                                     ccc  ",
-            "                                               " },
-        { "  fff                                     fff  ", " fcccf                                   fcccf ",
-            "fccdccf                                 fccdccf", "fcdddcf                                 fcdddcf",
-            "fccdccf                                 fccdccf", " fcccf                                   fcccf ",
-            "  fff                                     fff  " },
-        { "  ccc                                     ccc  ", " ceeec                                   ceeec ",
-            "ceedeec                                 ceedeec", "cedddec                                 cedddec",
-            "ceedeec                                 ceedeec", " ceeec                                   ceeec ",
-            "  ccc                                     ccc  " },
-        { "                                               ", "                                               ",
-            "                    fbbbbbf                    ", "                    fbb~bbf                    ",
-            "                    fbbbbbf                    ", "                                               ",
-            "                                               " } };
-    private static final int[] SLICE_ORDER = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 13, 13, 14, 14, 14, 15, 16,
-        17, 17, 17, 17, 17, 16, 15, 14, 14, 14, 13, 13, 12, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 18 };
+    public static final int BLOCK_COUNT = 302625;
+    public static final String RESOURCE = "/assets/" + ModList.ModIds.GT_NOT_GOOD
+        + "/structures/super_particle_collider.pattern.gz";
+    private static final String[][] SHAPE = loadShape();
 
     private SuperParticleColliderStructure() {}
 
-    /** Horizontal layers, front to back; pass to StructureUtility.transpose. Spaces remain unconstrained. */
+    /** Horizontal layers, top to bottom and front to back; spaces remain unconstrained. */
     public static String[][] shape() {
-        String[][] shape = new String[HEIGHT][LENGTH];
-        for (int depth = 0; depth < LENGTH; depth++) {
-            String[] slice = SLICES[SLICE_ORDER[LENGTH - depth - 1]];
-            for (int row = 0; row < HEIGHT; row++) shape[row][depth] = slice[row];
-        }
+        String[][] shape = new String[HEIGHT][];
+        for (int row = 0; row < HEIGHT; row++) shape[row] = SHAPE[row].clone();
         return shape;
+    }
+
+    private static String[][] loadShape() {
+        String[][] result = new String[HEIGHT][LENGTH];
+        try (InputStream stream = SuperParticleColliderStructure.class.getResourceAsStream(RESOURCE)) {
+            if (stream == null) throw new IOException("Missing collider structure: " + RESOURCE);
+            try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new GZIPInputStream(stream), StandardCharsets.US_ASCII))) {
+                if (!(WIDTH + " " + HEIGHT + " " + LENGTH).equals(reader.readLine()))
+                    throw new IOException("Invalid collider dimensions");
+                int blocks = 0;
+                int controllers = 0;
+                for (int aisle = 0; aisle < LENGTH; aisle++) {
+                    for (int row = 0; row < HEIGHT; row++) {
+                        String source = reader.readLine();
+                        if (source == null || source.length() != WIDTH)
+                            throw new IOException("Invalid collider row at " + aisle + ", " + row);
+                        for (int column = 0; column < WIDTH; column++) {
+                            char symbol = source.charAt(column);
+                            if (" @#ABDEFGIJKLN".indexOf(symbol) < 0)
+                                throw new IOException("Invalid collider symbol: " + symbol);
+                            if (symbol != ' ') blocks++;
+                            if (symbol == '@') controllers++;
+                        }
+                        result[row][LENGTH - aisle - 1] = source.replace('@', '~');
+                    }
+                }
+                if (
+                    reader.readLine() != null || blocks != BLOCK_COUNT
+                        || controllers != 1
+                        || result[OFFSET_Y][OFFSET_Z].charAt(OFFSET_X) != '~'
+                ) throw new IOException("Invalid collider geometry or controller");
+            }
+        } catch (IOException exception) {
+            throw new IllegalStateException("Cannot load collider structure", exception);
+        }
+        return result;
     }
 }

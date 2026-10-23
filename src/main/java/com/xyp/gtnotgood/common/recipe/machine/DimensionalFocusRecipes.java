@@ -44,9 +44,6 @@ public final class DimensionalFocusRecipes {
 
     public static void loadRecipes() {
         controller();
-        dimensionInjectionCasing();
-        dimensionallyTranscendentCasing();
-        molecularCoil();
         improvedSuperconductorCoil();
         laserSafeCasing();
         fusionGlass();
@@ -199,45 +196,6 @@ public final class DimensionalFocusRecipes {
                 MaterialsAlloy.PIKYONIUM.getFluidStack(4608), MaterialsAlloy.ABYSSAL.getFluidStack(4608))
             .itemOutputs(GTNGItemList.DimensionalFocusEngravingArray.get(1)).duration(1600).eut(TierEU.RECIPE_UEV)
             .addTo(AssemblyLine);
-    }
-
-    private static void dimensionInjectionCasing() {
-        GTRecipeBuilder.builder().metadata(RESEARCH_ITEM, Casings.FusionMachineCasingMKIII.toStack(1))
-            .metadata(SCANNING, new Scanning(2400, TierEU.RECIPE_UEV))
-            .itemInputs(Materials.Osmiridium.getPlates(6), Materials.Lead.getPlates(4),
-                GTOreDictUnificator.get(OrePrefixes.bolt, Materials.Adamantium, 12),
-                new Object[] { OrePrefixes.circuit.get(Materials.IV), 2 },
-                GTOreDictUnificator.get(OrePrefixes.wireGt01, Materials.SuperconductorUVBase, 2),
-                ItemList.Super_Tank_EV.get(1), ItemList.Super_Chest_EV.get(1))
-            .fluidInputs(Materials.Duranium.getMolten(200), Materials.VibrantAlloy.getMolten(288),
-                Materials.AstralSilver.getMolten(288), Materials.NaquadahEnriched.getMolten(288))
-            .itemOutputs(GTNGItemList.DimensionInjectionCasing.get(2)).duration(400).eut(TierEU.RECIPE_UEV)
-            .addTo(AssemblyLine);
-    }
-
-    private static void dimensionallyTranscendentCasing() {
-        GTRecipeBuilder.builder()
-            .itemInputs(GTOreDictUnificator.get(OrePrefixes.frameGt, Materials.Mithril, 1),
-                GTNGItemList.DimensionInjectionCasing.get(2), GTNGItemList.MolecularCasing.get(2),
-                ItemList.Quantum_Chest_IV.get(1), ItemList.Quantum_Tank_IV.get(1),
-                GTOreDictUnificator.get(OrePrefixes.bolt, Materials.Adamantium, 12),
-                GTOreDictUnificator.get(OrePrefixes.wireGt01, Materials.SuperconductorUVBase, 1),
-                Materials.Palladium.getPlates(6), Materials.Osmiridium.getPlates(6))
-            .fluidInputs(Materials.Duranium.getMolten(200))
-            .itemOutputs(GTNGItemList.DimensionallyTranscendentCasing.get(2)).duration(200).eut(TierEU.RECIPE_UIV)
-            .addTo(RecipeMaps.assemblerRecipes);
-    }
-
-    private static void molecularCoil() {
-        GTRecipeBuilder.builder().metadata(RESEARCH_ITEM, Casings.NaquadahCoilBlock.toStack(1))
-            .metadata(SCANNING, new Scanning(2400, TierEU.RECIPE_UV))
-            .itemInputs(GTNGItemList.HollowCasing.get(1), Casings.NaquadahCoilBlock.toStack(2),
-                Casings.FusionCoilBlock.toStack(2),
-                GTOreDictUnificator.get(OrePrefixes.wireFine, Materials.Europium, 64),
-                GTOreDictUnificator.get(OrePrefixes.foil, Materials.SuperconductorUVBase, 32))
-            .fluidInputs(Materials.BorosilicateGlass.getMolten(2304), Materials.RubberSilicone.getMolten(5760),
-                Materials.Platinum.getMolten(1296), MaterialsAlloy.STELLITE.getFluidStack(1296))
-            .itemOutputs(GTNGItemList.MolecularCoil.get(2)).duration(400).eut(TierEU.RECIPE_UV).addTo(AssemblyLine);
     }
 
     private static void improvedSuperconductorCoil() {

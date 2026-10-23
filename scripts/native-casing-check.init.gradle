@@ -1,0 +1,25 @@
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(project.file(project.findProperty('nativeCasingBuildDirectory') ?: 'build/native-casing-isolated'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.spotless.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/blocks/**/*.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/modularmachine/FieldExtruderFactory.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/modularmachine/MageAssembler.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/modularmachine/SuperconductingElectromagneticFactory.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/HeartOfTheUniverseStructure.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/LightHunterSpaceStationStructure.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/NexusSatelliteFactoryStructure.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/*CasingRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/gtnotgood/TransmutationRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/FieldExtruderRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/DimensionalFocusRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/HeartOfTheUniverseRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/LightHunterSpaceStationRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/NyarlathotepsTentacleRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',
+            'scripts/qa/NativeCasingClientChecks.java'
+    }
+}

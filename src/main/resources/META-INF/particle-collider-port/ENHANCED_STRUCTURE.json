@@ -1,0 +1,124 @@
+{
+  "formatVersion": 1,
+  "component": "Enhanced Super Particle Collider structure",
+  "sourceArtifact": "GTL-Enhancedcore-3.8.0.jar",
+  "sourceArtifactSha256": "555a9514c4d2fd11a029c091ac053d5cf7c52fba62411f2f043e04454094f7aa",
+  "author": "S_Fast",
+  "version": "3.8.0",
+  "revision": null,
+  "revisionNote": "Installed artifact pinned by hash; matching source commit not established.",
+  "license": "LGPL-3.0",
+  "licenseDeclaration": "ENHANCED-mods.toml",
+  "sourcePath": "data/gtl_enhancedcore/structures/hollow/gtl/super_particle_collider.pattern.gz",
+  "destination": "assets/gtnotgood/structures/super_particle_collider.pattern.gz",
+  "sourceSha256": "129ead53fed01d9407e8d7a2c355005b2ee3e245610120878180a0e3b0a85eda",
+  "destinationSha256": "129ead53fed01d9407e8d7a2c355005b2ee3e245610120878180a0e3b0a85eda",
+  "decompressedSha256": "01023570c9f99f8d7ac6c106347ff0b8d3066cf089371ec65a134c1aa6e37b96",
+  "size": [
+    197,
+    83,
+    209
+  ],
+  "sourceController": [
+    93,
+    41,
+    208
+  ],
+  "structureLibOffset": [
+    93,
+    41,
+    0
+  ],
+  "blockCountIncludingController": 302625,
+  "modifications": "Resource bytes unchanged. Reverse aisle order; @ becomes ~. Preserve any spaces and controller identity. Use native GTNH materials; reverse legacy coil conversion.",
+  "nativeVersions": {
+    "GT5-Unofficial": "5.09.54.205",
+    "ProjectRed": "4.12.47-GTNH"
+  },
+  "bindings": {
+    "A": {
+      "count": 173483,
+      "source": "gtlcore:lafium_mechanical_casing",
+      "destination": "ParticleColliderCasing.Lafium",
+      "notes": "Existing port; no native Lafium casing"
+    },
+    "B": {
+      "count": 7556,
+      "source": "gtceu:enriched_naquadah_frame",
+      "destination": "Materials.NaquadahEnriched frame",
+      "notes": "Native frame"
+    },
+    "D": {
+      "count": 42995,
+      "source": "gtlcore:naquadah_alloy_casing",
+      "destination": "ItemList.RadiantNaquadahAlloyCasing",
+      "notes": "Native naquadah-alloy casing counterpart"
+    },
+    "E": {
+      "count": 45634,
+      "source": "gtceu:superconducting_coil",
+      "destination": "ItemList.Casing_Coil_Superconductor",
+      "notes": "Native coil without custom glow state"
+    },
+    "F": {
+      "count": 7774,
+      "source": "gtceu:laminated_glass",
+      "destination": "Casings.ChemicalGradeGlass",
+      "notes": "Native chemical-grade glass; existing AssemblyPlant laminated-glass counterpart"
+    },
+    "G": {
+      "count": 14,
+      "source": "gtceu:cyan_lamp",
+      "destination": "ProjRed|Illumination:projectred.illumination.lamp:25",
+      "notes": "Native inverted cyan lamp"
+    },
+    "I": {
+      "count": 4,
+      "source": "gtceu:orange_lamp",
+      "destination": "ProjRed|Illumination:projectred.illumination.lamp:17",
+      "notes": "Native inverted orange lamp"
+    },
+    "J": {
+      "count": 19250,
+      "source": "kubejs:accelerated_pipeline",
+      "destination": "ParticleColliderCasing.AcceleratedPipeline",
+      "notes": "Existing port; no native acceleration pipeline"
+    },
+    "K": {
+      "count": 3244,
+      "source": "gtceu:fusion_casing_mk2",
+      "destination": "ItemList.Casing_Fusion2",
+      "notes": "Native fusion MK II casing"
+    },
+    "L": {
+      "count": 1992,
+      "source": "gtceu:zpm_machine_casing",
+      "destination": "ItemList.Casing_ZPM",
+      "notes": "Native ZPM casing"
+    },
+    "N": {
+      "count": 654,
+      "source": "gtceu:tungstensteel_pipe_casing",
+      "destination": "ItemList.Casing_Pipe_TungstenSteel",
+      "notes": "Native tungstensteel pipe casing"
+    },
+    "#": {
+      "count": 24,
+      "source": "Hatch or Lafium casing",
+      "destination": "Existing modular/maintenance/input/output/energy hatch chain",
+      "notes": "Original 5x5 front zone"
+    },
+    "@": {
+      "count": 1,
+      "source": "gtceu:super_particle_collider",
+      "destination": "Existing GTNG controller ID",
+      "notes": "Controller symbol becomes ~"
+    },
+    " ": {
+      "count": 3114734,
+      "source": "any",
+      "destination": "Unconstrained",
+      "notes": "No air requirement"
+    }
+  }
+}

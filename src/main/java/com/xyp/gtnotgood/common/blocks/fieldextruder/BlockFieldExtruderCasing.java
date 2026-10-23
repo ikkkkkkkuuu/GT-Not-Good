@@ -108,6 +108,7 @@ public final class BlockFieldExtruderCasing extends Block implements IHasIndexed
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void getSubBlocks(Item item, CreativeTabs tab, List stacks) {
         for (FieldExtruderCasing variant : FieldExtruderCasing.values()) {
+            if (variant.hasNativeCasing()) continue;
             if (variant.isGlass() == glass) stacks.add(variant.getStack(1));
         }
     }

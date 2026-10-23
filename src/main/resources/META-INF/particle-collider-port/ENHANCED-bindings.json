@@ -1,0 +1,165 @@
+{
+  "super_particle_collider": {
+    "namespace": "gtceu",
+    "originalSize": [
+      47,
+      7,
+      47
+    ],
+    "sourceSize": [
+      197,
+      83,
+      209
+    ],
+    "size": [
+      197,
+      83,
+      209
+    ],
+    "sourceController": [
+      93,
+      41,
+      208
+    ],
+    "sourceNormal": [
+      0,
+      0,
+      1
+    ],
+    "controllerPosition": [
+      93,
+      41,
+      208
+    ],
+    "bindings": {
+      " ": {
+        "mode": "any"
+      },
+      "@": {
+        "mode": "original",
+        "sample": [
+          46,
+          3,
+          23
+        ]
+      },
+      "#": {
+        "mode": "hatch",
+        "sample": [
+          46,
+          2,
+          21
+        ],
+        "block": "gtlcore:lafium_mechanical_casing",
+        "fallback": "gtlcore:lafium_mechanical_casing"
+      },
+      "A": {
+        "mode": "casing",
+        "sample": [
+          46,
+          2,
+          21
+        ],
+        "block": "gtlcore:lafium_mechanical_casing"
+      },
+      "B": {
+        "mode": "original",
+        "sample": [
+          0,
+          2,
+          20
+        ],
+        "block": "gtceu:enriched_naquadah_frame"
+      },
+      "D": {
+        "mode": "literal",
+        "block": "gtlcore:naquadah_alloy_casing",
+        "properties": {}
+      },
+      "E": {
+        "mode": "original",
+        "sample": [
+          1,
+          2,
+          21
+        ],
+        "block": "gtceu:superconducting_coil"
+      },
+      "F": {
+        "mode": "literal",
+        "block": "gtceu:laminated_glass",
+        "properties": {}
+      },
+      "G": {
+        "mode": "literal",
+        "block": "gtceu:cyan_lamp",
+        "properties": {
+          "bloom": "true",
+          "inverted": "true",
+          "lit": "true",
+          "powered": "false"
+        }
+      },
+      "I": {
+        "mode": "literal",
+        "block": "gtceu:orange_lamp",
+        "properties": {
+          "bloom": "true",
+          "inverted": "true",
+          "lit": "true",
+          "powered": "false"
+        }
+      },
+      "J": {
+        "mode": "original",
+        "sample": [
+          2,
+          3,
+          19
+        ],
+        "block": "kubejs:accelerated_pipeline"
+      },
+      "K": {
+        "mode": "literal",
+        "block": "gtceu:fusion_casing_mk2",
+        "properties": {
+          "active": "false"
+        }
+      },
+      "L": {
+        "mode": "literal",
+        "block": "gtceu:zpm_machine_casing",
+        "properties": {}
+      },
+      "N": {
+        "mode": "literal",
+        "block": "gtceu:tungstensteel_pipe_casing",
+        "properties": {}
+      }
+    },
+    "counts": {
+      " ": 3066584,
+      "D": 47695,
+      "A": 211392,
+      "E": 48791,
+      "B": 9409,
+      "J": 19367,
+      "L": 2092,
+      "N": 968,
+      "G": 14,
+      "K": 3244,
+      "F": 7774,
+      "I": 4,
+      "#": 24,
+      "@": 1
+    },
+    "hatches": [
+      "#"
+    ],
+    "controller": "@",
+    "diamondOreMarkers": 24,
+    "hatchFallback": "gtlcore:lafium_mechanical_casing",
+    "sourceSha256": "bafdbf03ea404fd36afe547d640f8a53cb6e0ea67ea8dd74dd82d9d2338dac3d",
+    "sha256": "ef014750dfb3491ef3de9449ee83c194a4e1e476f8d7165c23283166318a9229"
+  }
+}

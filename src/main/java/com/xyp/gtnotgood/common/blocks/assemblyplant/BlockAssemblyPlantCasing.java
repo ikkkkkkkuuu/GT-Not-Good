@@ -151,6 +151,7 @@ public final class BlockAssemblyPlantCasing extends Block
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void getSubBlocks(Item item, CreativeTabs tab, List stacks) {
         for (AssemblyPlantCasing variant : AssemblyPlantCasing.values()) {
+            if (variant.hasNativeCasing()) continue;
             if (variant.isGlass() == glass) stacks.add(variant.getStack(1));
         }
     }
@@ -162,7 +163,7 @@ public final class BlockAssemblyPlantCasing extends Block
         textures = new ITexture[16][][];
         for (AssemblyPlantCasing variant : AssemblyPlantCasing.values()) {
             if (variant.isGlass() != glass) continue;
-            ITexture[] base = { variant.getTexture() };
+            ITexture[] base = { AssemblyPlantBlocks.getTexture(variant) };
             textures[variant.getMetadata()] = faces(base);
             if (variant.hasActiveAppearance()) {
                 ITexture activeBase = new AssemblyPlantConnectedTexture(variant, true);

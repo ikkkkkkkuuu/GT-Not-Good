@@ -47,13 +47,7 @@ public final class NyarlathotepsTentacleRecipes {
                 fluid(Materials.Platinum.getMolten(1296)), fluid(MaterialsAlloy.STELLITE.getFluidStack(5184)))
             .itemOutputs(GTNGItemList.NyarlathotepsTentacle.get(1)).duration(3200).eut(7864320).addTo(AssemblyLine);
 
-        assemble(TentacleCasing.MolecularCasing, 50, 16, GTNGItemList.MolecularCasing.get(1),
-            GTUtility.getIntegratedCircuit(24));
         assemble(TentacleCasing.SpacetimeAssemblyLineUnit, 50, 16, GTNGItemList.SpacetimeAssemblyLineUnit.get(1),
-            GTUtility.getIntegratedCircuit(24));
-        assemble(TentacleCasing.ContainmentFieldGenerator, 50, 16, GTNGItemList.ContainmentFieldGenerator.get(1),
-            GTUtility.getIntegratedCircuit(24));
-        assemble(TentacleCasing.HollowCasing, 50, 16, GTNGItemList.HollowCasing.get(1),
             GTUtility.getIntegratedCircuit(24));
         assemble(TentacleCasing.RestraintDevice, 50, 16, GTNGItemList.RestraintDevice.get(1),
             GTUtility.getIntegratedCircuit(24));

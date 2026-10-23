@@ -46,18 +46,29 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
 |  2.9.0-RC-1  |     1.1.6     |         1.6.2          | [![1.6.2](https://img.shields.io/badge/release-1.6.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.2) |         ✔️         |
-|  2.9.0-RC-2  |     1.6.3     |         1.6.7          | [![1.6.7](https://img.shields.io/badge/release-1.6.7-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.7) |         ✔️         |
+|  2.9.0-RC-2  |     1.6.3     |         1.6.8          | [![1.6.8](https://img.shields.io/badge/release-1.6.8-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.8) |         ✔️         |
 
 当前版本面向 GTNH 2.9.0-RC-2；RC1 请使用 1.6.2。
 
 从源码开发和构建使用 **JDK 25**。项目采用 JVM Downgrader，生成 Java 8 基础字节码及面向 Java 17/21/25 的多版本 JAR，运行时由 GTNHLib 提供兼容 API。构建与验证方式见 [Java 开发说明](docs/development/java.md)。
 
-最新版本：[1.6.7 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.7)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.7/gtnotgood-1.6.7.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.7/gtnotgood-1.6.7-sources.jar)。
+最新版本：[1.6.8 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.8)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.8/gtnotgood-1.6.8.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.8/gtnotgood-1.6.8-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.6.7。
+1.3.4 因启动错误已撤回，请更新到 1.6.8。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.6.8 更新
+
+- 多方块统一优先使用 GTNH 原生结构件：38 个重复变体改用 33 种原生方块，结构提示、自动建造、配方与仓室材质同步更新；没有对应物的专用构件保留。
+- 保留已发布旧结构件的注册和存档兼容，旧结构仍可识别；移除旧复制件的生产配方和创造栏入口，提供组装机＋25 号电路的 1:1 原生件转换，并阻止自动逆向回收再次生成旧件。
+- 超级粒子对撞机改为 Enhancedcore 3.8.0 的 **197×83×209** 镂空巨构，共 302,625 个非空位置（含控制器），使用原生线圈、玻璃、机械方块和反转灯；更新建造提示与材料数量，保留原控制器和加工规则。**旧 47×7×47 结构需要重建**，旧移植线圈可用电路 6 或 25 的组装机配方 1:1 转换。
+- 补齐 IV–MAX 十级并行控制仓各自的机壳、正面、运行与发光层及动画，修复后六级共用 mk4 正面的问题；倍率、注册 ID 和 NBT 保持兼容。
+- 增加 16 套可供后续控制器复用的透明正面资源，包含原有动画、发光和部分暂停状态；附状态预览、接入说明与来源许可，本项不新增机器。
+- 补充原生结构件规则、对撞机和并行仓实机检查及资源哈希记录；记录 IDEA 项目语言级别 17 可避开当前 GT5 多版本依赖误报，Gradle 开发构建仍使用 JDK 25。
+
+替换清单与兼容策略见[原生结构件说明](docs/development/native-structure-casings.md)，巨构尺寸与验证范围见[对撞机说明](docs/testing/particle-collider.md)，材质见[并行仓说明](docs/testing/large-furnace.md)和[透明正面资源](docs/development/machine-front-overlays.md)。
 
 ### 1.6.7 更新
 

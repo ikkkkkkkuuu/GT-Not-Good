@@ -3,6 +3,7 @@ package com.xyp.gtnotgood.loader;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+import com.xyp.gtnotgood.common.blocks.NativeStructureCasings;
 import com.xyp.gtnotgood.common.blocks.beekeeping.WorkingApiaryRegistration;
 import com.xyp.gtnotgood.common.recipe.gregtech.AssemblerRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.BenderRecipes;
@@ -51,6 +52,7 @@ import com.xyp.gtnotgood.common.recipe.machine.MageAssemblerRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MaxCapacityMEOutputRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MechanicalUserRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.ModularHatchRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.NativeCasingRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.NetworkRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.NyarlathotepsTentacleRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.ParallelMachineRecipes;
@@ -93,6 +95,8 @@ public class RecipeLoader {
     }
 
     public static void loadRecipes() {
+        NativeStructureCasings.bind();
+        NativeCasingRecipes.loadRecipes();
         EndCrystalResonatorRecipes.loadRecipes();
         HeartOfTheUniverseRecipes.loadRecipes();
         LightHunterSpaceStationRecipes.loadRecipes();

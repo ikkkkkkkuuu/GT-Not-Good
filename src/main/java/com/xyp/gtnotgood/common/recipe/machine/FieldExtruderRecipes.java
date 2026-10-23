@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import bartworks.common.loaders.ItemRegistry;
-import bartworks.system.material.WerkstoffLoader;
 import gregtech.api.casing.Casings;
 import gregtech.api.enums.ItemList;
 import gregtech.api.enums.Materials;
@@ -30,11 +29,7 @@ public final class FieldExtruderRecipes {
 
     public static void loadRecipes() {
         controller();
-        iridiumCasing();
         hyperMechanicalCasing();
-        molecularCasing();
-        hollowCasing();
-        containmentFieldGenerator();
         cleanroomGlass();
     }
 
@@ -51,65 +46,12 @@ public final class FieldExtruderRecipes {
             .addTo(AssemblyLine);
     }
 
-    private static void iridiumCasing() {
-        GTRecipeBuilder.builder().metadata(RESEARCH_ITEM, Casings.StainlessSteelTurbineCasing.toStack(1))
-            .metadata(SCANNING, new Scanning(1200, TierEU.RECIPE_LuV))
-            .itemInputs(GTOreDictUnificator.get(OrePrefixes.frameGt, Materials.Iridium, 2),
-                Casings.TitaniumTurbineCasing.toStack(1), Casings.StainlessSteelTurbineCasing.toStack(1),
-                GTOreDictUnificator.get(OrePrefixes.foil, Materials.Osmiridium, 4),
-                GTOreDictUnificator.get(OrePrefixes.foil, Materials.Iridium, 4),
-                MaterialsAlloy.TANTALLOY_61.getPlate(1),
-                GTOreDictUnificator.get(OrePrefixes.plateDouble, Materials.Iridium, 1),
-                GTOreDictUnificator.get(OrePrefixes.plateDouble, Materials.Osmiridium, 1))
-            .fluidInputs(Materials.SolderingAlloy.getMolten(1440), Materials.Iridium.getMolten(576))
-            .itemOutputs(GTNGItemList.IridiumCasing.get(2)).duration(200).eut(TierEU.RECIPE_LuV).addTo(AssemblyLine);
-    }
-
     private static void hyperMechanicalCasing() {
         GTRecipeBuilder.builder()
             .itemInputs(GTOreDictUnificator.get(OrePrefixes.frameGt, Materials.NaquadahAlloy, 1),
                 Materials.Naquadria.getPlates(6), GTUtility.getIntegratedCircuit(6))
             .itemOutputs(GTNGItemList.HyperMechanicalCasing.get(2)).duration(50).eut(16)
             .addTo(RecipeMaps.assemblerRecipes);
-    }
-
-    private static void molecularCasing() {
-        // Consolidate the original alloy foils and noble-metal plates for the native six-slot assembler.
-        GTRecipeBuilder.builder()
-            .itemInputs(Casings.HighPowerCasing.toStack(1),
-                GTOreDictUnificator.get(OrePrefixes.plateDouble, Materials.BatteryAlloy, 4), ItemList.Emitter_IV.get(1),
-                GTOreDictUnificator.get(OrePrefixes.ring, Materials.Neutronium, 24),
-                WerkstoffLoader.Ruridit.get(OrePrefixes.foil, 48), WerkstoffLoader.Rhodium.get(OrePrefixes.plate, 14))
-            .fluidInputs(Materials.NiobiumNitride.getMolten(864)).itemOutputs(GTNGItemList.MolecularCasing.get(1))
-            .duration(400).eut(TierEU.RECIPE_UV).requiresCleanRoom().addTo(RecipeMaps.assemblerRecipes);
-    }
-
-    private static void hollowCasing() {
-        GTRecipeBuilder.builder().metadata(RESEARCH_ITEM, GTNGItemList.MolecularCasing.get(1))
-            .metadata(SCANNING, new Scanning(1200, TierEU.RECIPE_UV))
-            .itemInputs(GTNGItemList.MolecularCasing.get(1),
-                GTOreDictUnificator.get(OrePrefixes.screw, Materials.Magnalium, 16), Materials.Europium.getPlates(4),
-                GTOreDictUnificator.get(OrePrefixes.stick, Materials.NaquadahAlloy, 4),
-                GTOreDictUnificator.get(OrePrefixes.plateDouble, Materials.Uranium, 2),
-                GTOreDictUnificator.get(OrePrefixes.screw, Materials.Molybdenum, 16),
-                GTOreDictUnificator.get(OrePrefixes.plateDouble, Materials.Duranium, 4))
-            .fluidInputs(Materials.StainlessSteel.getMolten(1296), Materials.IndiumGalliumPhosphide.getMolten(1296),
-                Materials.WroughtIron.getMolten(1296), Materials.SuperconductorUVBase.getMolten(1296))
-            .itemOutputs(GTNGItemList.HollowCasing.get(2)).duration(200).eut(TierEU.RECIPE_UV).addTo(AssemblyLine);
-    }
-
-    private static void containmentFieldGenerator() {
-        GTRecipeBuilder.builder().metadata(RESEARCH_ITEM, Casings.ForceFieldGlass.toStack(1))
-            .metadata(SCANNING, new Scanning(1200, TierEU.RECIPE_UV))
-            .itemInputs(GTNGItemList.HollowCasing.get(1), ItemList.Field_Generator_LuV.get(4),
-                GTOreDictUnificator.get(OrePrefixes.wireGt04, Materials.SuperconductorUVBase, 6),
-                new Object[] { OrePrefixes.circuit.get(Materials.UV), 4 }, ItemList.WetTransformer_UV_ZPM.get(1),
-                GTOreDictUnificator.get(OrePrefixes.plateDouble, Materials.VanadiumGallium, 6),
-                GTOreDictUnificator.get(OrePrefixes.plateDouble, Materials.SuperconductorUVBase, 4))
-            .fluidInputs(Materials.Lanthanum.getMolten(2304), Materials.CobaltBrass.getMolten(5760),
-                Materials.BatteryAlloy.getMolten(5760), Materials.Molybdenum.getMolten(1296))
-            .itemOutputs(GTNGItemList.ContainmentFieldGenerator.get(1)).duration(500).eut(TierEU.RECIPE_UV)
-            .addTo(AssemblyLine);
     }
 
     private static void cleanroomGlass() {

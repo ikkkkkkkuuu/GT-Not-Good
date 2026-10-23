@@ -984,6 +984,11 @@ public enum ModsItemlist {
     // 创造模式IC芯片
     CreativeICChip(Mods.ProjectRedFabrication.ID, "projectred.fabrication.icchip", 1),
 
+    // 青色反转灯
+    InvertedCyanLamp(Mods.ProjectRedIllumination.ID, "projectred.illumination.lamp", 25),
+    // 橙色反转灯
+    InvertedOrangeLamp(Mods.ProjectRedIllumination.ID, "projectred.illumination.lamp", 17),
+
     // 普通轨道
     Track(Mods.Railcraft.ID, "track", 0),
     TrackLegacyDamage736(Mods.Railcraft.ID, "track", 736),

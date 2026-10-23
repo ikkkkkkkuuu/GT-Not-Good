@@ -1,14 +1,14 @@
 package com.xyp.gtnotgood.common.blocks.assemblyplant;
 
-import net.minecraft.item.ItemStack;
-
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
+import com.xyp.gtnotgood.common.blocks.NativeStructureCasings;
+import com.xyp.gtnotgood.common.blocks.StructureCasing;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import gregtech.api.interfaces.ITexture;
 
-public enum AssemblyPlantCasing {
+public enum AssemblyPlantCasing implements StructureCasing {
 
     AdvancedAssemblyLineUnit("advanced_assembly_line_unit", false, false, true,
         // #tr tile.assembly_plant_casing.advanced_assembly.name
@@ -102,19 +102,16 @@ public enum AssemblyPlantCasing {
         return AssemblyPlantBlocks.getBlock(glass);
     }
 
-    public ItemStack getStack(int amount) {
-        return new ItemStack(getBlock(), amount, getMetadata());
-    }
-
     public int getTextureId() {
         return AssemblyPlantBlocks.getTextureId(this);
     }
 
     public ITexture getTexture() {
+        if (hasNativeCasing()) return NativeStructureCasings.texture(this);
         return AssemblyPlantBlocks.getTexture(this);
     }
 
-    public <T> IStructureElement<T> asElement() {
+    public <T> IStructureElement<T> legacyElement() {
         IStructureElement<T> inactive = StructureUtility.ofBlock(getBlock(), getMetadata());
         return active
             ? StructureUtility.ofChain(inactive, StructureUtility.ofBlock(getBlock(), getMetadata() | ACTIVE_BIT))

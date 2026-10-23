@@ -4,15 +4,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.item.ItemStack;
-
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
+import com.xyp.gtnotgood.common.blocks.NativeStructureCasings;
+import com.xyp.gtnotgood.common.blocks.StructureCasing;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import gregtech.api.interfaces.ITexture;
 
-public enum TentacleCasing {
+public enum TentacleCasing implements StructureCasing {
 
     MolecularCasing(Group.Casing2, 0, "molecular_casing",
         // #tr tile.tentacle_casing.molecular_casing.name
@@ -161,19 +161,16 @@ public enum TentacleCasing {
         return TentacleBlocks.getBlock(group);
     }
 
-    public ItemStack getStack(int amount) {
-        return new ItemStack(getBlock(), amount, metadata);
-    }
-
     public int getTextureId() {
         return TentacleBlocks.getTextureId(this);
     }
 
     public ITexture getTexture() {
+        if (hasNativeCasing()) return NativeStructureCasings.texture(this);
         return TentacleBlocks.getTexture(this);
     }
 
-    public <T> IStructureElement<T> asElement() {
+    public <T> IStructureElement<T> legacyElement() {
         IStructureElement<T> inactive = StructureUtility.ofBlock(getBlock(), metadata);
         return hasActiveAppearance()
             ? StructureUtility.ofChain(inactive, StructureUtility.ofBlock(getBlock(), getActiveMetadata()))

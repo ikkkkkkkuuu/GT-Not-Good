@@ -1,6 +1,5 @@
 package com.xyp.gtnotgood.common.machines.multiblock.modularmachine;
 
-import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofBlock;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofChain;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.transpose;
 import static gregtech.api.enums.HatchElement.Energy;
@@ -112,8 +111,7 @@ public final class SuperconductingElectromagneticFactory extends
                     buildHatchAdder(SuperconductingElectromagneticFactory.class)
                         .atLeast(InputBus, OutputBus, InputHatch, OutputHatch, Energy.or(ExoticEnergy))
                         .casingIndex(ParticleColliderCasing.Lafium.getTextureId()).hint(1)
-                        .buildAndChain(ofBlock(ParticleColliderCasing.Lafium.getBlock(),
-                            ParticleColliderCasing.Lafium.getMetadata()))))
+                        .buildAndChain(ParticleColliderCasing.Lafium.asElement())))
                 .addElement('H', ParticleColliderCasing.AcceleratedPipeline.asElement()).build();
         }
         return definition;

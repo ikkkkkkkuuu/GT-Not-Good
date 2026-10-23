@@ -9,7 +9,6 @@ import java.util.zip.GZIPInputStream;
 import net.minecraft.block.Block;
 
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
-import com.gtnewhorizon.structurelib.structure.StructureUtility;
 import com.xyp.gtnotgood.common.blocks.dimensionalfocus.DimensionalFocusCasing;
 import com.xyp.gtnotgood.common.blocks.fieldextruder.FieldExtruderCasing;
 import com.xyp.gtnotgood.common.blocks.heart.HeartCasing;
@@ -39,24 +38,29 @@ public final class HeartOfTheUniverseStructure {
 
     public static Block block(char symbol) {
         return switch (symbol) {
-            case 'C' -> FieldExtruderCasing.HyperMechanical.getBlock();
-            case 'F' -> DimensionalFocusCasing.FusionGlass.getBlock();
-            case 'S' -> DimensionalFocusCasing.DimensionInjection.getBlock();
-            default -> casing(symbol).getBlock();
+            case 'C' -> FieldExtruderCasing.HyperMechanical.getStructureBlock();
+            case 'F' -> DimensionalFocusCasing.FusionGlass.getStructureBlock();
+            case 'S' -> DimensionalFocusCasing.DimensionInjection.getStructureBlock();
+            default -> casing(symbol).getStructureBlock();
         };
     }
 
     public static int metadata(char symbol) {
         return switch (symbol) {
-            case 'C' -> FieldExtruderCasing.HyperMechanical.getMetadata();
-            case 'F' -> DimensionalFocusCasing.FusionGlass.getMetadata();
-            case 'S' -> DimensionalFocusCasing.DimensionInjection.getMetadata();
-            default -> casing(symbol).getMetadata();
+            case 'C' -> FieldExtruderCasing.HyperMechanical.getStructureMetadata();
+            case 'F' -> DimensionalFocusCasing.FusionGlass.getStructureMetadata();
+            case 'S' -> DimensionalFocusCasing.DimensionInjection.getStructureMetadata();
+            default -> casing(symbol).getStructureMetadata();
         };
     }
 
     public static <T> IStructureElement<T> element(char symbol) {
-        return StructureUtility.ofBlock(block(symbol), metadata(symbol));
+        return switch (symbol) {
+            case 'C' -> FieldExtruderCasing.HyperMechanical.asElement();
+            case 'F' -> DimensionalFocusCasing.FusionGlass.asElement();
+            case 'S' -> DimensionalFocusCasing.DimensionInjection.asElement();
+            default -> casing(symbol).asElement();
+        };
     }
 
     private static HeartCasing casing(char symbol) {

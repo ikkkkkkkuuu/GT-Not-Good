@@ -1,0 +1,133 @@
+modLoader = "javafml"
+loaderVersion = "[47,48)"
+license = "LGPL-3.0"
+
+[[mods]]
+modId = "gtl_enhancedcore"
+
+version = "3.8.0"
+displayName = "GTL-Enhancedcore"
+authors = "S_Fast"
+logoFile = "logo.png"
+description = '''
+GregTech Leisure Enhanced（GregTech Leisure 增强版）整合包专属核心。
+围绕工业生产、自动化与后期巨构，扩展机器、仓室、工具和兼容功能。
+
+主要内容：
+- 工业生产：大型熔炉、工业泛用蒸汽机、基础矿石处理厂、四类通用工厂 Plus、四台 IV 工厂与通用联合工厂。
+- 隔离订单：适配机器安装超级总成后支持独立跨配方订单；普通材料仓保留原配方模式。
+- 后期巨构：恒星约束聚变堆、超构化学扭曲仪、铂系精炼矩阵、龙域增殖核心、虚空约束采矿场、中子控制工厂与无限奇点压缩器。
+- 无线能源：LV–MAX 末晶谐振器、LV/MV 无线充能器；末晶谐振器发电不消耗末影水晶。
+- 仓室与自动化：ME 元件集成仓、量子数据访问仓、电路编码仓；样板生成工具支持物品/流体/标签筛选、本地预设与直接填仓。
+- 世界交互：气象锚点、因果重构终端、领地置换终端。
+- 整合适配：第三方巨构结构与配方调整、AE2 交互优化、JEI/Jade 信息及兼容修复。
+
+需配合指定整合包及其依赖使用。作者：S_Fast。
+部分代码参考 GTL-supb、GTL-dishanhai，感谢原作者。
+'''
+
+[[dependencies.gtl_enhancedcore]]
+modId = "forge"
+mandatory = true
+versionRange = "[47.3.7,48)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,1.21)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "gtceu"
+mandatory = true
+versionRange = "[1.4.4,1.5)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "gtlcore"
+mandatory = true
+versionRange = "[1.2.3.2-fix4,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "gtladditions"
+mandatory = true
+versionRange = "[3.3.1Custom,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "ldlib"
+mandatory = true
+versionRange = "[1.0.33,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "gtmthings"
+mandatory = true
+versionRange = "[1.3.5,)"
+ordering = "AFTER"
+side = "BOTH"
+
+
+[[dependencies.gtl_enhancedcore]]
+modId = "ae2"
+mandatory = true
+versionRange = "[15.4.10,16)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "jei"
+mandatory = false
+versionRange = "[15.21.0,)"
+ordering = "AFTER"
+side = "CLIENT"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "jade"
+mandatory = false
+versionRange = "[11.6.3,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "ftbchunks"
+mandatory = true
+versionRange = "[2001.3,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "ftblibrary"
+mandatory = true
+versionRange = "[2001.2,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "ftbteams"
+mandatory = true
+versionRange = "[2001.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.0.8,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.gtl_enhancedcore]]
+modId = "expatternprovider"
+mandatory = true
+versionRange = "[1.4.19,)"
+ordering = "AFTER"
+side = "BOTH"

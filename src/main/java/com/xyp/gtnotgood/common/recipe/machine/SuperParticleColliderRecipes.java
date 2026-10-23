@@ -46,8 +46,8 @@ public final class SuperParticleColliderRecipes {
             .requiresCleanRoom().addTo(RecipeMaps.assemblerRecipes);
 
         GTRecipeBuilder.builder()
-            .itemInputs(ItemList.Casing_Coil_Superconductor.get(1), GTUtility.getIntegratedCircuit(6))
-            .itemOutputs(ParticleColliderCasing.SuperconductingCoil.getStack(1)).duration(50).eut(16)
+            .itemInputs(ParticleColliderCasing.SuperconductingCoil.getLegacyStack(1), GTUtility.getIntegratedCircuit(6))
+            .itemOutputs(ItemList.Casing_Coil_Superconductor.get(1)).duration(50).eut(16)
             .addTo(RecipeMaps.assemblerRecipes);
     }
 

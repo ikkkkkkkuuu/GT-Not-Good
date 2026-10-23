@@ -12,12 +12,12 @@ import net.minecraft.item.ItemStack;
 
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
+import com.xyp.gtnotgood.common.blocks.StructureCasing;
 import com.xyp.gtnotgood.common.blocks.assemblyplant.AssemblyPlantCasing;
 import com.xyp.gtnotgood.common.blocks.dimensionalfocus.DimensionalFocusCasing;
 import com.xyp.gtnotgood.common.blocks.fieldextruder.FieldExtruderCasing;
 import com.xyp.gtnotgood.common.blocks.heart.HeartCasing;
 import com.xyp.gtnotgood.common.blocks.kerrnewman.KerrNewmanCasing;
-import com.xyp.gtnotgood.common.blocks.lighthunter.BlockLightHunterCasing;
 import com.xyp.gtnotgood.common.blocks.lighthunter.LightHunterCasing;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
@@ -48,42 +48,82 @@ public final class LightHunterSpaceStationStructure {
         return shape;
     }
 
+    private static StructureCasing casing(char symbol) {
+        return switch (symbol) {
+            case '=' -> LightHunterCasing.NeutroniumPipeCasing;
+            case 'A' -> LightHunterCasing.UhvMachineCasing;
+            case 'B' -> FieldExtruderCasing.HyperMechanical;
+            case 'C' -> LightHunterCasing.UxvMachineCasing;
+            case 'D' -> DimensionalFocusCasing.FusionGlass;
+            case 'E' -> DimensionalFocusCasing.DimensionInjection;
+            case 'F' -> LightHunterCasing.DimensionalBridgeCasing;
+            case 'G' -> FieldExtruderCasing.ContainmentFieldGenerator;
+            case 'H' -> KerrNewmanCasing.AtomicCasing;
+            case 'I' -> KerrNewmanCasing.ExtremeDensityCasing;
+            case 'K' -> LightHunterCasing.EchoCasing;
+            case 'L' -> LightHunterCasing.DragonStrengthTritaniumCasing;
+            case 'M' -> LightHunterCasing.HyperCore;
+            case 'N' -> DimensionalFocusCasing.DimensionallyTranscendent;
+            case 'O' -> LightHunterCasing.UxvHermeticCasing;
+            case 'P' -> LightHunterCasing.RestraintDevice;
+            case 'Q' -> AssemblyPlantCasing.SpacetimeAssemblyLineUnit;
+            case 'R' -> LightHunterCasing.HighPowerCasing;
+            case 'S' -> FieldExtruderCasing.Molecular;
+            case 'U' -> LightHunterCasing.FusionCasingMkIV;
+            case 'V' -> HeartCasing.TemporalAnchorFieldCasing;
+            case 'W' -> LightHunterCasing.FusionCasingMkV;
+            case 'X' -> LightHunterCasing.UltimateStellarContainmentCasing;
+            case 'Y' -> KerrNewmanCasing.EnhancedHyperCasing;
+            case 'Z' -> DimensionalFocusCasing.ImprovedSuperconductor;
+            case '[' -> LightHunterCasing.ForceFieldGlass;
+            case ']' -> KerrNewmanCasing.GravityStabilizationCasing;
+            case '^' -> LightHunterCasing.ModuleConnector;
+            case '_' -> LightHunterCasing.AdvancedComputerCasing;
+            case '`' -> LightHunterCasing.ComputerHeatVent;
+            case 'a' -> LightHunterCasing.SuperComputationComponent;
+            case 'b' -> LightHunterCasing.UivMachineCasing;
+            case 'c' -> LightHunterCasing.UhvUltimateBattery;
+            case 'd' -> LightHunterCasing.HighPowerCasing;
+            default -> null;
+        };
+    }
+
     public static Block block(char symbol) {
         return switch (symbol) {
-            case '=' -> LightHunterCasing.NeutroniumPipeCasing.getBlock();
-            case 'A' -> LightHunterCasing.UhvMachineCasing.getBlock();
-            case 'B' -> FieldExtruderCasing.HyperMechanical.getBlock();
-            case 'C' -> LightHunterCasing.UxvMachineCasing.getBlock();
-            case 'D' -> DimensionalFocusCasing.FusionGlass.getBlock();
-            case 'E' -> DimensionalFocusCasing.DimensionInjection.getBlock();
-            case 'F' -> LightHunterCasing.DimensionalBridgeCasing.getBlock();
-            case 'G' -> FieldExtruderCasing.ContainmentFieldGenerator.getBlock();
-            case 'H' -> KerrNewmanCasing.AtomicCasing.getBlock();
-            case 'I' -> KerrNewmanCasing.ExtremeDensityCasing.getBlock();
-            case 'K' -> LightHunterCasing.EchoCasing.getBlock();
-            case 'L' -> LightHunterCasing.DragonStrengthTritaniumCasing.getBlock();
-            case 'M' -> LightHunterCasing.HyperCore.getBlock();
-            case 'N' -> DimensionalFocusCasing.DimensionallyTranscendent.getBlock();
-            case 'O' -> LightHunterCasing.UxvHermeticCasing.getBlock();
-            case 'P' -> LightHunterCasing.RestraintDevice.getBlock();
-            case 'Q' -> AssemblyPlantCasing.SpacetimeAssemblyLineUnit.getBlock();
-            case 'R' -> LightHunterCasing.HighPowerCasing.getBlock();
-            case 'S' -> FieldExtruderCasing.Molecular.getBlock();
-            case 'U' -> LightHunterCasing.FusionCasingMkIV.getBlock();
-            case 'V' -> HeartCasing.TemporalAnchorFieldCasing.getBlock();
-            case 'W' -> LightHunterCasing.FusionCasingMkV.getBlock();
-            case 'X' -> LightHunterCasing.UltimateStellarContainmentCasing.getBlock();
-            case 'Y' -> KerrNewmanCasing.EnhancedHyperCasing.getBlock();
-            case 'Z' -> DimensionalFocusCasing.ImprovedSuperconductor.getBlock();
-            case '[' -> LightHunterCasing.ForceFieldGlass.getBlock();
-            case ']' -> KerrNewmanCasing.GravityStabilizationCasing.getBlock();
-            case '^' -> LightHunterCasing.ModuleConnector.getBlock();
-            case '_' -> LightHunterCasing.AdvancedComputerCasing.getBlock();
-            case '`' -> LightHunterCasing.ComputerHeatVent.getBlock();
-            case 'a' -> LightHunterCasing.SuperComputationComponent.getBlock();
-            case 'b' -> LightHunterCasing.UivMachineCasing.getBlock();
-            case 'c' -> LightHunterCasing.UhvUltimateBattery.getBlock();
-            case 'd' -> LightHunterCasing.HighPowerCasing.getBlock();
+            case '=' -> LightHunterCasing.NeutroniumPipeCasing.getStructureBlock();
+            case 'A' -> LightHunterCasing.UhvMachineCasing.getStructureBlock();
+            case 'B' -> FieldExtruderCasing.HyperMechanical.getStructureBlock();
+            case 'C' -> LightHunterCasing.UxvMachineCasing.getStructureBlock();
+            case 'D' -> DimensionalFocusCasing.FusionGlass.getStructureBlock();
+            case 'E' -> DimensionalFocusCasing.DimensionInjection.getStructureBlock();
+            case 'F' -> LightHunterCasing.DimensionalBridgeCasing.getStructureBlock();
+            case 'G' -> FieldExtruderCasing.ContainmentFieldGenerator.getStructureBlock();
+            case 'H' -> KerrNewmanCasing.AtomicCasing.getStructureBlock();
+            case 'I' -> KerrNewmanCasing.ExtremeDensityCasing.getStructureBlock();
+            case 'K' -> LightHunterCasing.EchoCasing.getStructureBlock();
+            case 'L' -> LightHunterCasing.DragonStrengthTritaniumCasing.getStructureBlock();
+            case 'M' -> LightHunterCasing.HyperCore.getStructureBlock();
+            case 'N' -> DimensionalFocusCasing.DimensionallyTranscendent.getStructureBlock();
+            case 'O' -> LightHunterCasing.UxvHermeticCasing.getStructureBlock();
+            case 'P' -> LightHunterCasing.RestraintDevice.getStructureBlock();
+            case 'Q' -> AssemblyPlantCasing.SpacetimeAssemblyLineUnit.getStructureBlock();
+            case 'R' -> LightHunterCasing.HighPowerCasing.getStructureBlock();
+            case 'S' -> FieldExtruderCasing.Molecular.getStructureBlock();
+            case 'U' -> LightHunterCasing.FusionCasingMkIV.getStructureBlock();
+            case 'V' -> HeartCasing.TemporalAnchorFieldCasing.getStructureBlock();
+            case 'W' -> LightHunterCasing.FusionCasingMkV.getStructureBlock();
+            case 'X' -> LightHunterCasing.UltimateStellarContainmentCasing.getStructureBlock();
+            case 'Y' -> KerrNewmanCasing.EnhancedHyperCasing.getStructureBlock();
+            case 'Z' -> DimensionalFocusCasing.ImprovedSuperconductor.getStructureBlock();
+            case '[' -> LightHunterCasing.ForceFieldGlass.getStructureBlock();
+            case ']' -> KerrNewmanCasing.GravityStabilizationCasing.getStructureBlock();
+            case '^' -> LightHunterCasing.ModuleConnector.getStructureBlock();
+            case '_' -> LightHunterCasing.AdvancedComputerCasing.getStructureBlock();
+            case '`' -> LightHunterCasing.ComputerHeatVent.getStructureBlock();
+            case 'a' -> LightHunterCasing.SuperComputationComponent.getStructureBlock();
+            case 'b' -> LightHunterCasing.UivMachineCasing.getStructureBlock();
+            case 'c' -> LightHunterCasing.UhvUltimateBattery.getStructureBlock();
+            case 'd' -> LightHunterCasing.HighPowerCasing.getStructureBlock();
             case 'J' -> Block.getBlockFromItem(neutroniumFrame().getItem());
             case 'T' -> AEApi.instance().definitions().blocks().quartzVibrantGlass().maybeBlock().get();
             default -> throw new IllegalArgumentException("Unknown Light Hunter structure symbol: " + symbol);
@@ -92,40 +132,40 @@ public final class LightHunterSpaceStationStructure {
 
     public static int metadata(char symbol) {
         return switch (symbol) {
-            case '=' -> LightHunterCasing.NeutroniumPipeCasing.getMetadata();
-            case 'A' -> LightHunterCasing.UhvMachineCasing.getMetadata();
-            case 'B' -> FieldExtruderCasing.HyperMechanical.getMetadata();
-            case 'C' -> LightHunterCasing.UxvMachineCasing.getMetadata();
-            case 'D' -> DimensionalFocusCasing.FusionGlass.getMetadata();
-            case 'E' -> DimensionalFocusCasing.DimensionInjection.getMetadata();
-            case 'F' -> LightHunterCasing.DimensionalBridgeCasing.getMetadata();
-            case 'G' -> FieldExtruderCasing.ContainmentFieldGenerator.getMetadata();
-            case 'H' -> KerrNewmanCasing.AtomicCasing.getMetadata();
-            case 'I' -> KerrNewmanCasing.ExtremeDensityCasing.getMetadata();
-            case 'K' -> LightHunterCasing.EchoCasing.getMetadata();
-            case 'L' -> LightHunterCasing.DragonStrengthTritaniumCasing.getMetadata();
-            case 'M' -> LightHunterCasing.HyperCore.getMetadata();
-            case 'N' -> DimensionalFocusCasing.DimensionallyTranscendent.getMetadata();
-            case 'O' -> LightHunterCasing.UxvHermeticCasing.getMetadata();
-            case 'P' -> LightHunterCasing.RestraintDevice.getMetadata();
-            case 'Q' -> AssemblyPlantCasing.SpacetimeAssemblyLineUnit.getMetadata();
-            case 'R' -> LightHunterCasing.HighPowerCasing.getMetadata();
-            case 'S' -> FieldExtruderCasing.Molecular.getMetadata();
-            case 'U' -> LightHunterCasing.FusionCasingMkIV.getMetadata();
-            case 'V' -> HeartCasing.TemporalAnchorFieldCasing.getMetadata();
-            case 'W' -> LightHunterCasing.FusionCasingMkV.getMetadata();
-            case 'X' -> LightHunterCasing.UltimateStellarContainmentCasing.getMetadata();
-            case 'Y' -> KerrNewmanCasing.EnhancedHyperCasing.getMetadata();
-            case 'Z' -> DimensionalFocusCasing.ImprovedSuperconductor.getMetadata();
-            case '[' -> LightHunterCasing.ForceFieldGlass.getMetadata();
-            case ']' -> KerrNewmanCasing.GravityStabilizationCasing.getMetadata();
-            case '^' -> LightHunterCasing.ModuleConnector.getMetadata();
-            case '_' -> LightHunterCasing.AdvancedComputerCasing.getMetadata();
-            case '`' -> LightHunterCasing.ComputerHeatVent.getMetadata();
-            case 'a' -> LightHunterCasing.SuperComputationComponent.getMetadata();
-            case 'b' -> LightHunterCasing.UivMachineCasing.getMetadata();
-            case 'c' -> LightHunterCasing.UhvUltimateBattery.getMetadata();
-            case 'd' -> LightHunterCasing.HighPowerCasing.getMetadata();
+            case '=' -> LightHunterCasing.NeutroniumPipeCasing.getStructureMetadata();
+            case 'A' -> LightHunterCasing.UhvMachineCasing.getStructureMetadata();
+            case 'B' -> FieldExtruderCasing.HyperMechanical.getStructureMetadata();
+            case 'C' -> LightHunterCasing.UxvMachineCasing.getStructureMetadata();
+            case 'D' -> DimensionalFocusCasing.FusionGlass.getStructureMetadata();
+            case 'E' -> DimensionalFocusCasing.DimensionInjection.getStructureMetadata();
+            case 'F' -> LightHunterCasing.DimensionalBridgeCasing.getStructureMetadata();
+            case 'G' -> FieldExtruderCasing.ContainmentFieldGenerator.getStructureMetadata();
+            case 'H' -> KerrNewmanCasing.AtomicCasing.getStructureMetadata();
+            case 'I' -> KerrNewmanCasing.ExtremeDensityCasing.getStructureMetadata();
+            case 'K' -> LightHunterCasing.EchoCasing.getStructureMetadata();
+            case 'L' -> LightHunterCasing.DragonStrengthTritaniumCasing.getStructureMetadata();
+            case 'M' -> LightHunterCasing.HyperCore.getStructureMetadata();
+            case 'N' -> DimensionalFocusCasing.DimensionallyTranscendent.getStructureMetadata();
+            case 'O' -> LightHunterCasing.UxvHermeticCasing.getStructureMetadata();
+            case 'P' -> LightHunterCasing.RestraintDevice.getStructureMetadata();
+            case 'Q' -> AssemblyPlantCasing.SpacetimeAssemblyLineUnit.getStructureMetadata();
+            case 'R' -> LightHunterCasing.HighPowerCasing.getStructureMetadata();
+            case 'S' -> FieldExtruderCasing.Molecular.getStructureMetadata();
+            case 'U' -> LightHunterCasing.FusionCasingMkIV.getStructureMetadata();
+            case 'V' -> HeartCasing.TemporalAnchorFieldCasing.getStructureMetadata();
+            case 'W' -> LightHunterCasing.FusionCasingMkV.getStructureMetadata();
+            case 'X' -> LightHunterCasing.UltimateStellarContainmentCasing.getStructureMetadata();
+            case 'Y' -> KerrNewmanCasing.EnhancedHyperCasing.getStructureMetadata();
+            case 'Z' -> DimensionalFocusCasing.ImprovedSuperconductor.getStructureMetadata();
+            case '[' -> LightHunterCasing.ForceFieldGlass.getStructureMetadata();
+            case ']' -> KerrNewmanCasing.GravityStabilizationCasing.getStructureMetadata();
+            case '^' -> LightHunterCasing.ModuleConnector.getStructureMetadata();
+            case '_' -> LightHunterCasing.AdvancedComputerCasing.getStructureMetadata();
+            case '`' -> LightHunterCasing.ComputerHeatVent.getStructureMetadata();
+            case 'a' -> LightHunterCasing.SuperComputationComponent.getStructureMetadata();
+            case 'b' -> LightHunterCasing.UivMachineCasing.getStructureMetadata();
+            case 'c' -> LightHunterCasing.UhvUltimateBattery.getStructureMetadata();
+            case 'd' -> LightHunterCasing.HighPowerCasing.getStructureMetadata();
             case 'J' -> neutroniumFrame().getItemDamage();
             case 'T' -> 0;
             default -> throw new IllegalArgumentException("Unknown Light Hunter structure symbol: " + symbol);
@@ -133,11 +173,8 @@ public final class LightHunterSpaceStationStructure {
     }
 
     public static <T> IStructureElement<T> element(char symbol) {
-        if (symbol == 'Z') return DimensionalFocusCasing.ImprovedSuperconductor.asElement();
-        Block block = block(symbol);
-        int metadata = metadata(symbol);
-        if (block instanceof BlockLightHunterCasing casing) return casing.getVariant(metadata).asElement();
-        return StructureUtility.ofBlock(block, metadata);
+        StructureCasing casing = casing(symbol);
+        return casing == null ? StructureUtility.ofBlock(block(symbol), metadata(symbol)) : casing.asElement();
     }
 
     private static ItemStack neutroniumFrame() {

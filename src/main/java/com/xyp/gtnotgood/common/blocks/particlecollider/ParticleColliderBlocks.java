@@ -22,7 +22,7 @@ public final class ParticleColliderBlocks {
         block = new BlockParticleColliderCasing();
         GameRegistry.registerBlock(block, ItemBlockParticleColliderCasing.class, "particle_collider_casing");
         for (ParticleColliderCasing variant : ParticleColliderCasing.values()) {
-            variant.getItemContainer().set(variant.getStack(1));
+            variant.getItemContainer().set(variant.getLegacyStack(1));
             ITexture texture = new ParticleColliderConnectedTexture(variant);
             textures[variant.ordinal()] = texture;
             Textures.BlockIcons.setCasingTextureForId(variant.getTextureId(), texture);

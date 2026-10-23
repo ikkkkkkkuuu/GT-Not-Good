@@ -161,6 +161,7 @@ public final class BlockTentacleCasing extends Block
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void getSubBlocks(Item item, CreativeTabs tab, List stacks) {
         for (TentacleCasing variant : TentacleCasing.values()) {
+            if (variant.hasNativeCasing()) continue;
             if (variant.getGroup() == group) stacks.add(variant.getStack(1));
         }
     }
@@ -189,8 +190,8 @@ public final class BlockTentacleCasing extends Block
                 renderTextures[variant.getActiveMetadata()] = faces(textures);
             }
             renderTextures[variant.getMetadata()] = faces(variant.hasGlow() && !variant.hasActiveAppearance()
-                ? new ITexture[] { variant.getTexture(), new TentacleGlowTexture(variant) }
-                : new ITexture[] { variant.getTexture() });
+                ? new ITexture[] { TentacleBlocks.getTexture(variant), new TentacleGlowTexture(variant) }
+                : new ITexture[] { TentacleBlocks.getTexture(variant) });
         }
     }
 

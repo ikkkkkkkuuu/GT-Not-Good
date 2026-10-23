@@ -162,6 +162,7 @@ public final class BlockKerrNewmanCasing extends Block
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void getSubBlocks(Item item, CreativeTabs tab, List stacks) {
         for (KerrNewmanCasing variant : KerrNewmanCasing.values()) {
+            if (variant.hasNativeCasing()) continue;
             if (variant.getGroup() == group) stacks.add(variant.getStack(1));
         }
     }
@@ -173,10 +174,10 @@ public final class BlockKerrNewmanCasing extends Block
         textures = new ITexture[16][][];
         for (KerrNewmanCasing variant : KerrNewmanCasing.values()) {
             if (variant.getGroup() != group) continue;
-            ITexture[] base = { variant.getTexture() };
+            ITexture[] base = { KerrNewmanBlocks.getTexture(variant) };
             textures[variant.getMetadata()] = faces(base);
             if (variant.hasActiveAppearance()) {
-                ITexture[] active = { variant.getTexture(), new KerrNewmanGlowTexture(variant) };
+                ITexture[] active = { KerrNewmanBlocks.getTexture(variant), new KerrNewmanGlowTexture(variant) };
                 textures[variant.getMetadata() | getActiveOffset()] = faces(active);
             }
         }

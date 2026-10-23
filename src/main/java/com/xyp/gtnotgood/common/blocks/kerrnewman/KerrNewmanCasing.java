@@ -3,15 +3,15 @@ package com.xyp.gtnotgood.common.blocks.kerrnewman;
 import java.util.Arrays;
 import java.util.Collections;
 
-import net.minecraft.item.ItemStack;
-
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
+import com.xyp.gtnotgood.common.blocks.NativeStructureCasings;
+import com.xyp.gtnotgood.common.blocks.StructureCasing;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
 import gregtech.api.interfaces.ITexture;
 
-public enum KerrNewmanCasing {
+public enum KerrNewmanCasing implements StructureCasing {
 
     EnhancedHyperCasing(Group.Casing, 0, "enhanced_hyper_casing", true,
         // #tr tile.kerr_newman_casing.enhanced_hyper_casing.name
@@ -183,19 +183,16 @@ public enum KerrNewmanCasing {
         return KerrNewmanBlocks.getBlock(group);
     }
 
-    public ItemStack getStack(int amount) {
-        return new ItemStack(getBlock(), amount, metadata);
-    }
-
     public int getTextureId() {
         return KerrNewmanBlocks.getTextureId(this);
     }
 
     public ITexture getTexture() {
+        if (hasNativeCasing()) return NativeStructureCasings.texture(this);
         return KerrNewmanBlocks.getTexture(this);
     }
 
-    public <T> IStructureElement<T> asElement() {
+    public <T> IStructureElement<T> legacyElement() {
         if (hasActiveAppearance()) return StructureUtility.ofBlocksMap(
             Collections.singletonMap(getBlock(), Arrays.asList(metadata, metadata | ACTIVE_BIT)), getBlock(), metadata);
         return StructureUtility.ofBlock(getBlock(), metadata);
