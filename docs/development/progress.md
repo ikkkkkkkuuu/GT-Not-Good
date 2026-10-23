@@ -1,12 +1,16 @@
 # 当前开发进度
 
-## 1.6.8 提交与发布（2026-10-23，进行中）
+## 1.6.8 提交与发布（2026-10-23，已完成）
 
-- 授权与基线：用户“提交并更新”授权完整发布；上次公开版本 1.6.7，当前 main / origin/main 为 75f45720。本次汇总原生结构件统一、增强版对撞机、十级并行仓材质、16 套透明面板资源及 IDEA 文档改动；对应开发任务均已完成。
+- 授权与基线：用户“提交并更新”授权完整发布；上次公开版本 1.6.7，起始 main / origin/main 为 75f45720。本次汇总原生结构件统一、增强版对撞机、十级并行仓材质、16 套透明面板资源及 IDEA 文档改动；对应开发任务均已完成。
 - 准备：README 当前版本和下载链接更新为 1.6.8，补齐全部有效改动的中文说明；保留旧版历史说明。为新来源目录补充原始字节保护，依赖与构建工具版本不变。
 - 发布前验证：隔离输出 D:/CodexTools/GTNGRelease-1.6.8，完整 spotlessApply build networkRegression 退出 0、32s；705 项单测无失败/错误、1 项既有跳过，12 项网络回归通过。格式化后相同任务再执行退出 0、6s；日志 .gradle/release-1.6.8/build.log / build-repeat.log。
 - 资源与静态检查：audit-index.json 核对 8138 项资源/来源文件与暂存内容、普通/dev JAR，源清单哈希、ZIP、Multi-Release、基础/多版本字节码、refmap 和无 QA 类均通过。沿用文本文件换行规范化，原始移植资产保持字节；为新增对撞机来源文件补齐 cr-at-eol 属性。结构检查通过（1586 Java / 3413 imports / 161 mixins / 179 reserved / 384 QA paths），暂存 diff --check 通过。
-- 剩余：提交并打标签，验证精确标签构建后推送；等待 GitHub CI 与 Release，核对中文说明、三份发布资产和 README 链接，更新最终记录。尚未宣称提交或发布完成。
+- 提交与标签：发布提交 cf5b670be264ac4a1fda46cf9fcbe97b0e709d68，main 与 1.6.8 已原子推送；标签状态下 spotlessApply build networkRegression 再次退出 0、33s，tag-build-repeat.log 退出 0、1s，38 UP-TO-DATE、configuration cache reused。audit-tag.json 验证精确版本的普通/dev/sources JAR，资源与标签匹配。
+- 云端与发布：GitHub Build and test 39963522794、Release tagged build 39963523444 均成功。https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.8 已公开为最新版本，中文标题与正文覆盖全部累计有效改动；删除 CI 自动上传的 predowngrade / dev-preshadow 中间包，保留普通、dev、sources 三份正式资产。
+- 链接：发布页与三个资产的 HEAD 均 HTTP 200，长度与 GitHub 元数据一致；README 指向对应 1.6.8 资产。部分 API/下载请求发生 TLS 或读取超时，后续重试成功，不误记为 CI 失败。
+- 实际下载复核：普通游戏 JAR 为 32,236,491 字节，SHA-256 42e8ee1b046aa7161af02d9f72a33bb619b7320c4d581cca3ba33048a2456ffc，与 GitHub digest 一致。ZIP、1.6.8 版本、Multi-Release 和新映射类存在性通过；7,826 项纹理/动画/结构及本次来源文件与 Git 标签逐字节一致。结果 .gradle/release-1.6.8/download-verification.json；下载包位于同目录。首次内容核对误把既有文本 mcmeta 的 Windows 换行当成差异，已改为直接读取标签原始字节后通过；没有修改正确资源或将本地构建整体哈希当作 CI 产物哈希。
+- 状态：提交、推送、标签、GitHub Release、中文说明、正式资产、README 链接和下载内容校验全部完成，无剩余发布必做项。最终补记仅修改开发进度，以文档提交保存；不移动发布标签或重复构建游戏代码。未替换用户游戏实例。
 
 ## 新增多方块原生结构件统一（2026-10-23，已完成）
 
