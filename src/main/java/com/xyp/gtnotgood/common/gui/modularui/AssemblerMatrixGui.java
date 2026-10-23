@@ -171,7 +171,8 @@ public class AssemblerMatrixGui extends GTNGModernMultiBlockBaseGui<AssemblerMat
 
     private IWidget createCustomNameField(PanelSyncManager syncManager) {
         StringSyncValue customNameSyncer = syncManager.findSyncHandler(CUSTOM_NAME_SYNC_KEY, StringSyncValue.class);
-        return new TextFieldWidget().value(customNameSyncer).setTextAlignment(Alignment.Center)
+        return new TextFieldWidget().value(customNameSyncer)
+            .hintText(multiblock.getMachineCraftingIcon().getDisplayName()).setTextAlignment(Alignment.Center)
             .setTextColor(Color.WHITE.main).background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
             // #tr gtng.compact.machine.assembler_matrix.info.3
             // # Rename this Assembler Matrix

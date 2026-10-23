@@ -6,6 +6,9 @@ package com.xyp.gtnotgood.mixins.late.appliedenergistics.compact;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
+
+import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,18 +16,26 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.xyp.gtnotgood.common.crafting.quantum.ae2.QuantumCraftingJob;
+import com.xyp.gtnotgood.common.crafting.quantum.ae2.QuantumCraftingMode;
 import com.xyp.gtnotgood.common.machines.multiblock.QuantumComputer;
 import com.xyp.gtnotgood.utils.ECraftingCPUCluster;
 
+import appeng.api.config.CraftingMode;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
+import appeng.api.networking.crafting.ICraftingCPU;
+import appeng.api.networking.crafting.ICraftingCallback;
 import appeng.api.networking.crafting.ICraftingJob;
 import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.security.BaseActionSource;
+import appeng.api.storage.data.IAEStack;
 import appeng.crafting.CraftingLink;
 import appeng.me.cache.CraftingGridCache;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
@@ -97,4 +108,32 @@ public abstract class MixinCraftingGridCache {
         }
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Inject(
+        method = "beginCraftingJob(Lnet/minecraft/world/World;Lappeng/api/networking/IGrid;Lappeng/api/networking/security/BaseActionSource;Lappeng/api/storage/data/IAEStack;Lappeng/api/config/CraftingMode;ZLappeng/api/networking/crafting/ICraftingCallback;)Ljava/util/concurrent/Future;",
+        at = @At("HEAD"),
+        cancellable = true,
+        require = 1)
+    private void gtng$beginQuantumCraftingJob(World world, IGrid grid, BaseActionSource actionSrc, IAEStack<?> stack,
+        CraftingMode craftingMode, boolean liteMode, ICraftingCallback cb,
+        CallbackInfoReturnable<Future<ICraftingJob>> cir) {
+        if (world == null || grid == null || stack == null || !QuantumCraftingMode.shouldUse(grid, actionSrc)) {
+            return;
+        }
+        cir.setReturnValue(
+            (Future) new QuantumCraftingJob(world, grid, actionSrc, (IAEStack) stack, craftingMode, cb).schedule());
+    }
+
+    // The automatic CPU choice gives up when its first candidate refuses the job
+    @WrapOperation(
+        method = "submitJob(Lappeng/api/networking/crafting/ICraftingJob;Lappeng/api/networking/crafting/ICraftingRequester;Lappeng/api/networking/crafting/ICraftingCPU;ZLappeng/api/networking/security/BaseActionSource;Z)Lappeng/api/networking/crafting/ICraftingLink;",
+        at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"),
+        require = 1)
+    private boolean gtng$skipCPUsRefusingQuantumJob(List<Object> candidates, Object cpu, Operation<Boolean> original,
+        @Local(argsOnly = true) ICraftingJob job) {
+        if (job instanceof QuantumCraftingJob && !job.supportsCPUCluster((ICraftingCPU) cpu)) {
+            return false;
+        }
+        return original.call(candidates, cpu);
+    }
 }

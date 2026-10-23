@@ -24,7 +24,10 @@ import com.xyp.gtnotgood.client.nei.WildcardRecipeImport;
 import com.xyp.gtnotgood.client.network.NetworkBlockRenderer;
 import com.xyp.gtnotgood.client.packaged.PackagedCoreRenderer;
 import com.xyp.gtnotgood.client.packaged.WirelessConnectorRenderer;
+import com.xyp.gtnotgood.client.quantum.QuantumCraftingClientEvents;
+import com.xyp.gtnotgood.client.quantum.RecursivePatternReport;
 import com.xyp.gtnotgood.client.radialmenu.RadialMenuMod;
+import com.xyp.gtnotgood.client.render.ElectromagneticRotorRenderer;
 import com.xyp.gtnotgood.client.research.ClientResearchTickHandler;
 import com.xyp.gtnotgood.client.research.GuiHandler;
 import com.xyp.gtnotgood.client.text.EffectTextRenderer;
@@ -112,10 +115,13 @@ public class ClientProxy extends CommonProxy {
         registerPackagedCoreRenderers();
         registerPreviewCommands();
         registerBlockRenderers();
+        ElectromagneticRotorRenderer.register();
         ClientWebScreens.register();
         KeyBindManager.registerAllKeyBinds();
         RadialMenuMod.init();
         WirelessCardInput.register();
+        RecursivePatternReport.register();
+        FMLCommonHandler.instance().bus().register(new QuantumCraftingClientEvents());
         BlockIcons.initialize();
         registerClientEvents();
     }

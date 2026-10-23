@@ -40,7 +40,7 @@ public final class SatelliteThreadModifierHatch extends MTEHatch {
 
     private static final IIconContainer OVERLAY = Textures.BlockIcons.custom(ModList.GTNotGood.getResourceLocation(),
         "lighthunter/thread_modifier_hatch");
-    private transient NexusSatelliteFactory controller;
+    private transient ThreadModifierHost controller;
 
     public SatelliteThreadModifierHatch(int id, String name) {
         super(id, name, "", 0, 1, new String[0]);
@@ -67,8 +67,8 @@ public final class SatelliteThreadModifierHatch extends MTEHatch {
     public String[] getDescription() {
         return new String[] {
             // #tr gtng.light_hunter.thread_modifier.purpose
-            // # Adds threads to a Nexus Satellite Factory
-            // # zh_CN 为枢纽卫星工厂增加额外线程
+            // # Adds threads to a compatible multiblock
+            // # zh_CN 为兼容的多方块增加额外线程
             StatCollector.translateToLocal("gtng.light_hunter.thread_modifier.purpose"),
             // #tr gtng.light_hunter.thread_modifier.amount
             // # Each ordinary Astral Array adds 128 threads; maximum 8192
@@ -79,12 +79,12 @@ public final class SatelliteThreadModifierHatch extends MTEHatch {
             // # zh_CN 最多放入 64 个普通星阵，不消耗星阵
             StatCollector.translateToLocal("gtng.light_hunter.thread_modifier.inventory"),
             // #tr gtng.light_hunter.thread_modifier.limit
-            // # One per satellite factory; cannot be shared; compressed arrays are not accepted
-            // # zh_CN 每座卫星工厂最多 1 个，不可共享，不接受压缩星阵
+            // # One per machine; cannot be shared; compressed arrays are not accepted
+            // # zh_CN 每台机器最多 1 个，不可共享，不接受压缩星阵
             StatCollector.translateToLocal("gtng.light_hunter.thread_modifier.limit") };
     }
 
-    public boolean bind(NexusSatelliteFactory factory) {
+    public boolean bind(ThreadModifierHost factory) {
         IGregTechTileEntity tile = getBaseMetaTileEntity();
         if (factory == null || !live(tile) || tile.isClientSide()) return false;
         IGregTechTileEntity owner = factory.getBaseMetaTileEntity();
@@ -94,11 +94,23 @@ public final class SatelliteThreadModifierHatch extends MTEHatch {
         return true;
     }
 
+    public boolean bind(NexusSatelliteFactory factory) {
+        return bind((ThreadModifierHost) factory);
+    }
+
     public void unbind(NexusSatelliteFactory factory) {
-        if (controller == factory) controller = null;
+        unbind((ThreadModifierHost) factory);
     }
 
     public int getAdditionalThreads(NexusSatelliteFactory factory) {
+        return getAdditionalThreads((ThreadModifierHost) factory);
+    }
+
+    public void unbind(ThreadModifierHost factory) {
+        if (controller == factory) controller = null;
+    }
+
+    public int getAdditionalThreads(ThreadModifierHost factory) {
         return controller == factory && isBoundTo(factory) ? LightHunterRecipeRules.additionalThreads(getArrayCount())
             : 0;
     }
@@ -113,8 +125,8 @@ public final class SatelliteThreadModifierHatch extends MTEHatch {
             : 0;
     }
 
-    private boolean isBoundTo(NexusSatelliteFactory factory) {
-        if (factory == null || !factory.mMachine || !factory.hasThreadModifier(this)) return false;
+    private boolean isBoundTo(ThreadModifierHost factory) {
+        if (factory == null || !factory.isThreadStructureFormed() || !factory.hasThreadModifier(this)) return false;
         IGregTechTileEntity tile = getBaseMetaTileEntity();
         IGregTechTileEntity owner = factory.getBaseMetaTileEntity();
         return live(tile) && live(owner) && tile.getWorld() == owner.getWorld();

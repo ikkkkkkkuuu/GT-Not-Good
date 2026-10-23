@@ -47,7 +47,9 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.GuiContainerWrapper;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.gtnewhorizon.structurelib.alignment.constructable.ISurvivalConstructable;
+import com.xyp.gtnotgood.client.render.ElectromagneticRotorRenderer;
 import com.xyp.gtnotgood.common.blocks.assemblyplant.AssemblyPlantCasing;
+import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.SuperconductingElectromagneticFactory;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiModeMachineBase;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.MageAssemblerStructure;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.SuperconductingElectromagneticStructure;
@@ -107,6 +109,10 @@ import tectech.thing.metaTileEntity.hatch.MTEHatchWirelessMulti;
     version = "1",
     dependencies = "after:" + ModList.ModIds.GT_NOT_GOOD)
 public final class AssemblyPlantClientChecks {
+
+    private static final boolean ROTOR_ONLY = Boolean.getBoolean("gtng.electromagneticRotor.qa");
+    private volatile boolean clientRotorRunning;
+    private int rotorFrames;
 
     private BaseMetaTileEntity base;
     private volatile GTNGMultiModeMachineBase<?> machine;
@@ -194,7 +200,8 @@ public final class AssemblyPlantClientChecks {
             EntityPlayerMP player = (EntityPlayerMP) server.getConfigurationManager().playerEntityList.get(0);
             if (serverTicks == 1) {
                 player.worldObj.setWorldTime(6000);
-                selectRig(player, 0);
+                rigIndex = ROTOR_ONLY ? 1 : 0;
+                selectRig(player, rigIndex);
             }
             if (serverTicks == 60) prepareChecks(player);
             if (requestedNextRig) {
@@ -259,6 +266,14 @@ public final class AssemblyPlantClientChecks {
         verifyDirections(player);
         verifyRequiredBlocks();
         verifyUnconstrainedSpace();
+        if (ROTOR_ONLY) {
+            registerFixtures();
+            resetProcessing();
+            machine.stopMachine(ShutDownReasonRegistry.NONE);
+            cacheClientStructure();
+            beginPhase(RunningPhase.WaitStructure);
+            return;
+        }
         verifyWirelessHatches();
         verifySurvivalRecipes();
         verifyNativeModes();
@@ -301,6 +316,7 @@ public final class AssemblyPlantClientChecks {
                 beginPhase(RunningPhase.WaitActive);
             }
             case WaitActive -> {
+                if (ROTOR_ONLY && !clientRotorRunning) return;
                 if (!base.isActive() || machine.mProgresstime <= 0 || clientActiveCoils != rig.coils) return;
                 verifyCoils(true);
                 base.disableWorking();
@@ -308,12 +324,14 @@ public final class AssemblyPlantClientChecks {
                 beginPhase(RunningPhase.WaitStopped);
             }
             case WaitStopped -> {
+                if (ROTOR_ONLY && clientRotorRunning) return;
                 if (serverTicks <= phaseStartedTick || clientInactiveCoils != rig.coils) return;
                 verifyCoils(false);
                 startRunning();
                 beginPhase(RunningPhase.WaitRestarted);
             }
             case WaitRestarted -> {
+                if (ROTOR_ONLY && !clientRotorRunning) return;
                 if (!base.isActive() || clientActiveCoils != rig.coils) return;
                 verifyCoils(true);
                 brokenCasing = firstPosition(rig.fixedSymbols.charAt(0));
@@ -323,6 +341,7 @@ public final class AssemblyPlantClientChecks {
                 beginPhase(RunningPhase.WaitBroken);
             }
             case WaitBroken -> {
+                if (ROTOR_ONLY && clientRotorRunning) return;
                 if (serverTicks <= phaseStartedTick || clientInactiveCoils != rig.coils) return;
                 verifyCoils(false);
                 ItemStack casing = builtBlocks.get(rig.fixedSymbols.charAt(0));
@@ -333,12 +352,14 @@ public final class AssemblyPlantClientChecks {
                 beginPhase(RunningPhase.WaitRepaired);
             }
             case WaitRepaired -> {
+                if (ROTOR_ONLY && !clientRotorRunning) return;
                 if (!completeClientStructure || !base.isActive() || clientActiveCoils != rig.coils) return;
                 verifyCoils(true);
                 verifyPersistence();
                 beginPhase(RunningPhase.WaitReloadedProgress);
             }
             case WaitReloadedProgress -> {
+                if (ROTOR_ONLY && !clientRotorRunning) return;
                 if (
                     serverTicks - phaseStartedTick < 10 || machine.mProgresstime <= savedProgress
                         || clientActiveCoils != rig.coils
@@ -779,7 +800,7 @@ public final class AssemblyPlantClientChecks {
         GTRecipeBuilder.builder().itemInputs(stack(82, 1)).itemOutputs(stack(83, 1)).duration(128).eut(TierEU.RECIPE_IV)
             .addTo(rig.maps[0]);
         voltageFixture = fixtureRecipe(rig.maps[0], 82);
-        verifyModeLockPersistence();
+        if (!ROTOR_ONLY) verifyModeLockPersistence();
         if (rigIndex == 0) verifyCleanroomGate();
     }
 
@@ -999,6 +1020,25 @@ public final class AssemblyPlantClientChecks {
     }
 
     private void startRunning() {
+        if (ROTOR_ONLY) {
+            machine.setMachineMode(0);
+            setEnergy(ItemList.Hatch_Energy_LV);
+            verifyStructure();
+            machine.mStartUpCheck = machine.mUpdate = 0;
+            NBTTagCompound state = new NBTTagCompound();
+            machine.saveNBTData(state);
+            if (state.getTagList("gtngModuleWork", 10).tagCount() == 0) {
+                seedRecipe(modeFixtures[0], 64);
+                var result = machine.checkProcessing();
+                require(result.wasSuccessful(), "Start real rotor fixture: " + result.getDisplayString());
+                machine.saveNBTData(state);
+                state.getTagList("gtngModuleWork", 10).getCompoundTagAt(0).setInteger("duration", 20000);
+                machine.loadNBTData(state);
+            }
+            chargeEnergy();
+            base.enableWorking();
+            return;
+        }
         resetProcessing();
         machine.setMachineMode(0);
         verifyStructure();
@@ -1024,6 +1064,24 @@ public final class AssemblyPlantClientChecks {
     }
 
     private void verifyPersistence() {
+        if (ROTOR_ONLY) {
+            NBTTagCompound before = new NBTTagCompound();
+            machine.saveNBTData(before);
+            NBTTagList tasks = before.getTagList("gtngModuleWork", 10);
+            require(tasks.tagCount() == 1, "One real accepted module task");
+            savedProgress = tasks.getCompoundTagAt(0).getInteger("progress");
+            base = reloadTile(base);
+            machine = (GTNGMultiModeMachineBase<?>) base.getMetaTileEntity();
+            NBTTagCompound after = new NBTTagCompound();
+            machine.saveNBTData(after);
+            require(tasks.equals(after.getTagList("gtngModuleWork", 10)),
+                "Reload preserves complete module task and pending output");
+            verifyStructure();
+            machine.mStartUpCheck = machine.mUpdate = 0;
+            chargeEnergy();
+            base.enableWorking();
+            return;
+        }
         savedProgress = machine.mProgresstime;
         int duration = machine.mMaxProgresstime;
         long eut = machine.lEUt;
@@ -1100,6 +1158,33 @@ public final class AssemblyPlantClientChecks {
         clientGeometryStableTicks = completeClientStructure ? clientGeometryStableTicks + 1 : 0;
         if (active == current.coils) observedActiveCoils = true;
         if (inactive == current.coils && observedActiveCoils) observedInactiveCoils = true;
+        if (
+            ROTOR_ONLY
+                && mc.theWorld.getTileEntity(base.getXCoord(), base.getYCoord(),
+                    base.getZCoord()) instanceof BaseMetaTileEntity clientBase
+                && clientBase.getMetaTileEntity() instanceof SuperconductingElectromagneticFactory factory
+        ) {
+            ElectromagneticRotorRenderer.update(factory);
+            int rotorBlocks = 0;
+            for (int row = 0; row < shape.length; row++) for (int depth = 0; depth < shape[row].length; depth++)
+                for (int column = 0; column < shape[row][depth].length(); column++) {
+                    if (shape[row][depth].charAt(column) == ' ') continue;
+                    int[] offset = new int[3];
+                    factory.getExtendedFacing().getWorldOffset(new int[] { column - 7, row - 20, depth }, offset);
+                    int x = clientBase.xCoord + offset[0], y = clientBase.yCoord + offset[1],
+                        z = clientBase.zCoord + offset[2];
+                    boolean rotor = SuperconductingElectromagneticStructure.isRotorPosition(column, row, depth);
+                    if (rotor) rotorBlocks++;
+                    boolean hidden = ElectromagneticRotorRenderer.hidesFace(mc.theWorld, x, y + 1, z, 1);
+                    require(hidden == (rotor && factory.isRotorRunning()),
+                        "Only running rotor hides at " + column + "," + row + "," + depth);
+                    if (hidden && completeClientStructure)
+                        require(!mc.theWorld.getBlock(x, y, z).shouldSideBeRendered(mc.theWorld, x, y + 1, z, 1),
+                            "Real static block renderer skips rotor face");
+                }
+            require(rotorBlocks == 233, "Rotor contains exactly 233 original blocks");
+            clientRotorRunning = factory.isRotorRunning();
+        }
     }
 
     private void resetProcessing() {
@@ -1289,6 +1374,35 @@ public final class AssemblyPlantClientChecks {
                     frames = 0;
                 }
                 if (++frames < 240) return;
+                if (ROTOR_ONLY && shownView == 1) {
+                    if (rotorFrames == 0) capture("rotation-0");
+                    if (++rotorFrames < 40) return;
+                    if (rotorFrames == 40) {
+                        capture("rotation-1");
+                        mc.refreshResources();
+                        frames = 0;
+                        rotorFrames++;
+                        return;
+                    }
+                    capture("rotation-after-resource-reload");
+                    SuperconductingElectromagneticFactory factory = (SuperconductingElectromagneticFactory) ((BaseMetaTileEntity) mc.theWorld
+                        .getTileEntity(base.xCoord, base.yCoord, base.zCoord)).getMetaTileEntity();
+                    factory.onUnload();
+                    int[] central = new int[3];
+                    factory.getExtendedFacing().getWorldOffset(new int[] { 0, -10, 7 }, central);
+                    require(
+                        !ElectromagneticRotorRenderer.hidesFace(mc.theWorld, base.xCoord + central[0],
+                            base.yCoord + central[1] + 1, base.zCoord + central[2], 1),
+                        "Client unload restores static center");
+                    report
+                        .append(
+                            "Rotor: active/stop/broken/restart/NBT reload synchronization; exact static-face hiding; ")
+                        .append(
+                            "real geometry preserved; two animation frames and resource reload; client unload cleanup passed.\n");
+                    checked = false;
+                    requestedNextRig = true;
+                    return;
+                }
                 capture(shownView == 0 ? "structure-overview" : "structure-active-textures");
                 capturedView = shownView;
                 frames = stageFrames = 0;

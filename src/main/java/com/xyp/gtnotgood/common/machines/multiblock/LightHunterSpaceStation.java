@@ -12,20 +12,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.ListWidget;
 import com.gtnewhorizon.structurelib.alignment.IAlignmentLimits;
 import com.gtnewhorizon.structurelib.alignment.constructable.ISurvivalConstructable;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
@@ -34,7 +29,7 @@ import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.xyp.gtnotgood.client.render.LightHunterSpaceStationMath;
 import com.xyp.gtnotgood.client.render.LightHunterSpaceStationRenderer;
 import com.xyp.gtnotgood.common.blocks.lighthunter.LightHunterCasing;
-import com.xyp.gtnotgood.common.gui.modularui.multiblock.base.GTNGModernMultiBlockBaseGui;
+import com.xyp.gtnotgood.common.gui.modularui.multiblock.LightHunterSpaceStationGui;
 import com.xyp.gtnotgood.common.machines.hatch.CrossRecipeWirelessEnergyHatch;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiBlockBase;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.LightHunterSpaceStationStructure;
@@ -63,6 +58,8 @@ import gregtech.api.util.MultiblockTooltipBuilder;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 import gregtech.common.render.IMTERenderer;
 import io.netty.buffer.ByteBuf;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 
 @IMetaTileEntity.SkipGenerateName
 @IMetaTileEntity.SkipGenerateDescription
@@ -87,6 +84,11 @@ public final class LightHunterSpaceStation extends GTNGMultiBlockBase<LightHunte
 
     public LightHunterSpaceStation(String name) {
         super(name);
+    }
+
+    @Override
+    protected MTEMultiBlockBaseGui<?> getGui() {
+        return new LightHunterSpaceStationGui(this);
     }
 
     @Override
@@ -386,8 +388,23 @@ public final class LightHunterSpaceStation extends GTNGMultiBlockBase<LightHunte
     }
 
     @Override
-    protected MTEMultiBlockBaseGui<?> getGui() {
-        return new StationGui(this);
+    public void getWailaNBTData(EntityPlayerMP player, TileEntity tile, NBTTagCompound tag, World world, int x, int y,
+        int z) {
+        super.getWailaNBTData(player, tile, tag, world, x, y, z);
+        tag.setInteger("lightHunterArrays", getAstralArrayCount());
+        tag.setInteger("lightHunterModules", getConnectedModuleCount());
+    }
+
+    @Override
+    public void getWailaBody(ItemStack stack, List<String> lines, IWailaDataAccessor accessor,
+        IWailaConfigHandler config) {
+        super.getWailaBody(stack, lines, accessor, config);
+        NBTTagCompound tag = accessor.getNBTData();
+        if (!tag.hasKey("lightHunterArrays")) return;
+        lines.add(
+            StatCollector.translateToLocalFormatted("gtng.light_hunter.arrays", tag.getInteger("lightHunterArrays")));
+        lines.add(
+            StatCollector.translateToLocalFormatted("gtng.light_hunter.modules", tag.getInteger("lightHunterModules")));
     }
 
     @Override
@@ -396,11 +413,10 @@ public final class LightHunterSpaceStation extends GTNGMultiBlockBase<LightHunte
         // #tr gtng.light_hunter.arrays
         // # Astral Arrays: %s / 64
         // # zh_CN 已安装星阵：%s / 64
-        String arrays = StatCollector.translateToLocalFormatted("gtng.light_hunter.arrays", astralArrayCount);
+        lines.add(StatCollector.translateToLocalFormatted("gtng.light_hunter.arrays", astralArrayCount));
         // #tr gtng.light_hunter.modules
         // # Satellite factories: %s / 20
         // # zh_CN 卫星工厂：%s / 20
-        lines.add(arrays);
         lines.add(StatCollector.translateToLocalFormatted("gtng.light_hunter.modules", getConnectedModuleCount()));
         return lines.toArray(new String[0]);
     }
@@ -432,26 +448,4 @@ public final class LightHunterSpaceStation extends GTNGMultiBlockBase<LightHunte
         return tt.addInputBus(positions, 1).addEnergyHatch(positions, 1).toolTipFinisher();
     }
 
-    private static final class StationGui extends GTNGModernMultiBlockBaseGui<LightHunterSpaceStation> {
-
-        private StationGui(LightHunterSpaceStation station) {
-            super(station);
-        }
-
-        @Override
-        protected ListWidget<IWidget, ?> createTerminalTextWidget(PanelSyncManager sync, ModularPanel parent) {
-            ListWidget<IWidget, ?> terminal = super.createTerminalTextWidget(sync, parent);
-            IntSyncValue arrays = new IntSyncValue(multiblock::getAstralArrayCount);
-            IntSyncValue modules = new IntSyncValue(multiblock::getConnectedModuleCount);
-            sync.syncValue("lightHunterArrays", arrays);
-            sync.syncValue("lightHunterModules", modules);
-            terminal.child(IKey
-                .dynamic(() -> StatCollector.translateToLocalFormatted("gtng.light_hunter.arrays", arrays.getValue()))
-                .color(Color.WHITE.main).asWidget().fullWidth());
-            terminal.child(IKey
-                .dynamic(() -> StatCollector.translateToLocalFormatted("gtng.light_hunter.modules", modules.getValue()))
-                .color(Color.WHITE.main).asWidget().fullWidth());
-            return terminal;
-        }
-    }
 }

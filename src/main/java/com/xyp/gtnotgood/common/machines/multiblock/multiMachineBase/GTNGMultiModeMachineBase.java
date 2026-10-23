@@ -13,8 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import com.cleanroommc.modularui.drawable.UITexture;
-import com.xyp.gtnotgood.common.gui.modularui.multiblock.base.GTNGModernMultiBlockBaseGui;
 import com.xyp.gtnotgood.common.machines.processing.ModularProcessingLogic;
 
 import gregtech.api.interfaces.ICleanroom;
@@ -25,7 +23,6 @@ import gregtech.api.recipe.check.CheckRecipeResultRegistry;
 import gregtech.api.recipe.check.SimpleCheckRecipeResult;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTUtility;
-import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 
 public abstract class GTNGMultiModeMachineBase<T extends GTNGMultiModeMachineBase<T>>
     extends GTNGModularMachineBase<T> {
@@ -41,8 +38,6 @@ public abstract class GTNGMultiModeMachineBase<T extends GTNGMultiModeMachineBas
     protected abstract int getMachineModeCount();
 
     protected abstract RecipeMap<?> getRecipeMap(int mode);
-
-    protected abstract UITexture[] getMachineModeIcons();
 
     @Override
     public final RecipeMap<?> getRecipeMap() {
@@ -89,12 +84,6 @@ public abstract class GTNGMultiModeMachineBase<T extends GTNGMultiModeMachineBas
             setMachineMode(nextMachineMode());
             GTUtility.sendChatTrans(player, "gt.interact.desc.mb.mode", getMachineModeName());
         }
-    }
-
-    @Override
-    @Nonnull
-    protected MTEMultiBlockBaseGui<?> getGui() {
-        return new GTNGModernMultiBlockBaseGui<>(this).withMachineModeIcons(getMachineModeIcons());
     }
 
     @Override

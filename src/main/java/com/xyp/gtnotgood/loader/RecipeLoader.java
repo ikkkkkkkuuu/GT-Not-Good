@@ -24,8 +24,10 @@ import com.xyp.gtnotgood.common.recipe.machine.AssemblyPlantCasingRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.BasicIndustrialApiaryRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.CrossRecipeWirelessEnergyHatchRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.DimensionalFocusRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.EndCrystalResonatorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.FieldExtruderRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.FluxConnectorRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.FragmentWorldCollectorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.HeartOfTheUniverseRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.IntegratedChemicalPlantRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.IntegratedProductionFactoryRecipes;
@@ -50,6 +52,8 @@ import com.xyp.gtnotgood.common.recipe.machine.MaxCapacityMEOutputRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.MechanicalUserRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.ModularHatchRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.NetworkRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.NyarlathotepsTentacleRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.ParallelMachineRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SeedConverterRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SingularityDataHubRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.StockIOInterfaceRecipes;
@@ -74,6 +78,7 @@ public class RecipeLoader {
         LightHunterSpaceStationRecipes.loadPostInitRecipes();
         SuperParticleColliderRecipes.loadPostInitRecipes();
         MageAssemblerRecipes.loadPostInitRecipes();
+        NyarlathotepsTentacleRecipes.loadPostInitRecipes();
         SuperconductingElectromagneticRecipes.loadPostInitRecipes();
         KerrNewmanHomogenizerRecipes.loadPostInitRecipes();
         KerrNewmanCasingRecipes.loadPostInitRecipes();
@@ -88,6 +93,7 @@ public class RecipeLoader {
     }
 
     public static void loadRecipes() {
+        EndCrystalResonatorRecipes.loadRecipes();
         HeartOfTheUniverseRecipes.loadRecipes();
         LightHunterSpaceStationRecipes.loadRecipes();
         GameRegistry.addShapelessRecipe(GTNGItemList.UniversalFluidPump.get(1), ItemList.Pump_LV.get(1),
@@ -130,6 +136,8 @@ public class RecipeLoader {
         SingularityDataHubRecipes.loadRecipes();
         CraftingTableRecipes.loadRecipes();
         SeedConverterRecipes.loadRecipes();
+        ParallelMachineRecipes.loadRecipes();
+        FragmentWorldCollectorRecipes.loadMachineRecipe();
         OreProcessingRecipes.loadOreProcessingRecipes();
         MEBridgeRecipes.loadRecipes();
         MEContainerRecipes.loadRecipes();

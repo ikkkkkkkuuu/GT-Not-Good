@@ -152,8 +152,8 @@ public class QuantumComputer extends GTNGMultiBlockBase<QuantumComputer>
         this.usedStorage = usedStorage;
     }
 
-    public String getDisplayNameForGui() {
-        return hasCustomName() ? customName : getMachineCraftingIcon().getDisplayName();
+    public String getCustomNameForGui() {
+        return hasCustomName() ? customName : "";
     }
 
     public QuantumComputer(int aID, String aName, String aNameRegional) {

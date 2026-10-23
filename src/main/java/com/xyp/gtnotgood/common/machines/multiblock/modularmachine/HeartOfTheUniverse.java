@@ -24,6 +24,7 @@ import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.gtnewhorizon.structurelib.util.Vec3Impl;
 import com.xyp.gtnotgood.client.render.HeartBlackHoleRenderer;
 import com.xyp.gtnotgood.common.blocks.dimensionalfocus.DimensionalFocusCasing;
+import com.xyp.gtnotgood.common.gui.modularui.multiblock.HeartOfTheUniverseGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGModularGeneratorBase;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.HeartOfTheUniverseStructure;
 import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
@@ -41,6 +42,7 @@ import gregtech.api.render.TextureFactory;
 import gregtech.api.structure.error.StructureError;
 import gregtech.api.util.GTStructureUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
+import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 import gregtech.common.render.IMTERenderer;
 import io.netty.buffer.ByteBuf;
 
@@ -70,6 +72,11 @@ public final class HeartOfTheUniverse extends GTNGModularGeneratorBase<HeartOfTh
 
     public HeartOfTheUniverse(String name) {
         super(name);
+    }
+
+    @Override
+    protected MTEMultiBlockBaseGui<?> getGui() {
+        return new HeartOfTheUniverseGui(this);
     }
 
     @Override

@@ -27,7 +27,7 @@ import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.xyp.gtnotgood.common.blocks.fieldextruder.FieldExtruderCasing;
-import com.xyp.gtnotgood.common.gui.modularui.multiblock.base.GTNGModernMultiBlockBaseGui;
+import com.xyp.gtnotgood.common.gui.modularui.multiblock.FieldExtruderFactoryGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGModularMachineBase;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.FieldExtruderStructure;
 import com.xyp.gtnotgood.utils.enums.ModList;
@@ -39,7 +39,6 @@ import gregtech.api.interfaces.IIconContainer;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
-import gregtech.api.modularui2.GTGuiTextures;
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.render.TextureFactory;
@@ -175,8 +174,7 @@ public final class FieldExtruderFactory extends GTNGModularMachineBase<FieldExtr
     @Override
     @Nonnull
     protected MTEMultiBlockBaseGui<?> getGui() {
-        return new GTNGModernMultiBlockBaseGui<>(this).withMachineModeIcons(
-            GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_FORMING, GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_COMPRESSING);
+        return new FieldExtruderFactoryGui(this);
     }
 
     @Override

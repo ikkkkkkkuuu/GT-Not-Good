@@ -30,8 +30,8 @@ public final class KerrNewmanConnectedIcons {
     public static void register(IIconRegister register, KerrNewmanCasing.Group group) {
         for (KerrNewmanCasing variant : KerrNewmanCasing.values()) {
             if (variant.getGroup() != group) continue;
-            baseIcons.put(variant,
-                register.registerIcon(ModList.GTNotGood.getResourcePath("kerrnewman/" + variant.getTextureName())));
+            baseIcons.put(variant, register.registerIcon(
+                ModList.GTNotGood.getResourcePath(texturePath(variant.getTextureName(), variant.getTextureName()))));
             if (variant.isConnected())
                 connectedIcons.put(variant, registerConnected(register, variant.getTextureName()));
             if (variant.hasActiveAppearance()) {
@@ -56,10 +56,14 @@ public final class KerrNewmanConnectedIcons {
         IIcon[] icons = new IIcon[256];
         for (int mask = 0; mask < icons.length; mask++) {
             if (StellarConnections.normalizeMask(mask) == mask) icons[mask] = register
-                .registerIcon(ModList.GTNotGood.getResourcePath("kerrnewman/ctm/" + name + "/" + mask));
+                .registerIcon(ModList.GTNotGood.getResourcePath(texturePath(name, "ctm/" + name + "/" + mask)));
         }
         for (int mask = 0; mask < icons.length; mask++) icons[mask] = icons[StellarConnections.normalizeMask(mask)];
         return icons;
+    }
+
+    private static String texturePath(String name, String path) {
+        return "kerrnewman/" + (name.equals("dimensional_bridge_casing") ? "animated/" : "") + path;
     }
 
     public static IIcon getIcon(KerrNewmanCasing variant, int mask) {

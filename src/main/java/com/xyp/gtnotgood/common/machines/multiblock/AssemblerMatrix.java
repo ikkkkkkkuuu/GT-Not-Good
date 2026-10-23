@@ -296,7 +296,7 @@ public class AssemblerMatrix extends GTNGMultiBlockBase<AssemblerMatrix> impleme
     }
 
     public String getGuiCustomName() {
-        return hasCustomName() ? customName : getMachineCraftingIcon().getDisplayName();
+        return hasCustomName() ? customName : "";
     }
 
     /**

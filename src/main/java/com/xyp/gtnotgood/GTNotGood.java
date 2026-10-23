@@ -3,11 +3,18 @@ package com.xyp.gtnotgood;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.gtnewhorizon.gtnhlib.config.ConfigException;
+import com.gtnewhorizon.gtnhlib.config.ConfigurationManager;
+import com.xyp.gtnotgood.common.crafting.quantum.ae2.QuantumCraftingCache;
+import com.xyp.gtnotgood.common.crafting.quantum.ae2.QuantumCraftingMode;
+import com.xyp.gtnotgood.common.crafting.quantum.hooks.ticking.TickHandler;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessChannelManager;
+import com.xyp.gtnotgood.config.QuantumCraftingConfig;
 import com.xyp.gtnotgood.loader.QuestLoader;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -17,6 +24,9 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 /**
@@ -81,6 +91,12 @@ public class GTNotGood {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        try {
+            ConfigurationManager.registerConfig(QuantumCraftingConfig.class);
+        } catch (ConfigException exception) {
+            throw new IllegalStateException("cannot load quantum crafting configuration", exception);
+        }
+        FMLCommonHandler.instance().bus().register(this);
         proxy.preInit(event);
     }
 
@@ -109,7 +125,20 @@ public class GTNotGood {
 
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
+        TickHandler.instance().openSession();
         proxy.serverStarting(event);
+    }
+
+    @SubscribeEvent
+    public void playerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        QuantumCraftingMode.onPlayerLoggedOut(event.player);
+    }
+
+    @Mod.EventHandler
+    public void serverStopping(FMLServerStoppingEvent event) {
+        TickHandler.instance().closeSession();
+        QuantumCraftingMode.clear();
+        QuantumCraftingCache.clearAll();
     }
 
     @Mod.EventHandler

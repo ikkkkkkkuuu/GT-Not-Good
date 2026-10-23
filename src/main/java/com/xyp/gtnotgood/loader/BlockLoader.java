@@ -42,6 +42,7 @@ import com.xyp.gtnotgood.common.blocks.particlecollider.ParticleColliderBlocks;
 import com.xyp.gtnotgood.common.blocks.stellar.StellarBlocks;
 import com.xyp.gtnotgood.common.blocks.stockio.BlockStockIOInterface;
 import com.xyp.gtnotgood.common.blocks.stockio.TileStockIOInterface;
+import com.xyp.gtnotgood.common.blocks.tentacle.TentacleBlocks;
 import com.xyp.gtnotgood.common.blocks.webscreen.BlockWebScreen;
 import com.xyp.gtnotgood.common.blocks.webscreen.ItemBlockWebScreen;
 import com.xyp.gtnotgood.common.blocks.webscreen.TileWebScreen;
@@ -108,6 +109,7 @@ public final class BlockLoader {
         ParticleColliderBlocks.register();
         AssemblyPlantBlocks.register();
         LightHunterBlocks.register();
+        TentacleBlocks.register();
         if (ModList.Forestry.isModLoaded()) {
             WorkingApiaryRegistration.register();
         }

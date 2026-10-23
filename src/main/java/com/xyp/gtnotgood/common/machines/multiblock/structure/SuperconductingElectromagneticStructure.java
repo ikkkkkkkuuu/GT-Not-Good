@@ -67,6 +67,10 @@ public final class SuperconductingElectromagneticStructure {
 
     private SuperconductingElectromagneticStructure() {}
 
+    public static boolean isRotorPosition(int column, int row, int depth) {
+        return row >= 2 && row <= 18 && column >= 4 && column <= 10 && depth >= 4 && depth <= 10;
+    }
+
     /** Horizontal layers for StructureUtility.transpose; spaces remain unconstrained. */
     public static String[][] shape() {
         String[][] shape = new String[HEIGHT][LENGTH];

@@ -1,0 +1,33 @@
+gradle.beforeProject { project ->
+    if (project.hasProperty('quantumBuildDirectory')) {
+        project.layout.buildDirectory.set(project.file(project.property('quantumBuildDirectory')))
+    }
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.spotless.java {
+        target 'scripts/qa/QuantumCraftingClientChecks.java',
+            'scripts/qa/QuantumCraftingServerChecks.java',
+            'src/main/java/com/xyp/gtnotgood/client/quantum/*.java',
+            'src/main/java/com/xyp/gtnotgood/common/crafting/**/*.java',
+            'src/main/java/com/xyp/gtnotgood/common/network/quantum/*.java',
+            'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/quantum/*.java',
+            'src/main/java/com/xyp/gtnotgood/config/QuantumCraftingConfig.java',
+            'src/main/java/com/xyp/gtnotgood/GTNotGood.java',
+            'src/main/java/com/xyp/gtnotgood/ClientProxy.java',
+            'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
+            'src/main/java/com/xyp/gtnotgood/common/network/NetworkHandler.java',
+            'src/main/java/com/xyp/gtnotgood/utils/QuantumComputerCpuStatus.java',
+            'src/main/java/com/xyp/gtnotgood/utils/ECraftingCPUCluster.java',
+            'src/main/java/com/xyp/gtnotgood/utils/crafting/VariantBudgets.java',
+            'src/main/java/com/xyp/gtnotgood/utils/crafting/CraftingBatchPlanner.java',
+            'src/main/java/com/xyp/gtnotgood/utils/crafting/CraftingBatchPlannerImpl.java',
+            'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/compact/MixinCraftingGridCache.java',
+            'src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/compact/MixinCraftingCPUCluster.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/QuantumComputer.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/AssemblerMatrix.java',
+            'src/main/java/com/xyp/gtnotgood/common/gui/modularui/QuantumComputerGui.java',
+            'src/main/java/com/xyp/gtnotgood/common/gui/modularui/AssemblerMatrixGui.java'
+    }
+}

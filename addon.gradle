@@ -136,9 +136,23 @@ tasks.register('networkRegression', Test) {
     group = 'verification'
     description = 'Checks programmable network allocation and transfer bounds without launching a client.'
     dependsOn tasks.named('testClasses')
-    testClassesDirs = sourceSets.test.output.classesDirs
-    classpath = sourceSets.test.runtimeClasspath
+    if (providers.gradleProperty('enableModernJavaSyntax').getOrElse('') == 'jvmDowngrader') {
+        def mainClasses = tasks.named('downgradeMainClasses')
+        def testClasses = tasks.named('downgradeTestClasses')
+        dependsOn mainClasses, testClasses
+        testClassesDirs = files(testClasses.map { it.outputCollection })
+        classpath = testClassesDirs + files(mainClasses.map { it.outputCollection }) +
+            (sourceSets.test.runtimeClasspath - sourceSets.main.output.classesDirs - sourceSets.test.output.classesDirs)
+    } else {
+        testClassesDirs = sourceSets.test.output.classesDirs
+        classpath = sourceSets.test.runtimeClasspath
+    }
     filter { includeTestsMatching 'com.xyp.gtnotgood.common.blocks.network.*Test' }
+}
+
+// JVMDowngrader 1.3.5 omits outputs when the input directories do not exist on the first build.
+tasks.matching { it.name in ['downgradeMainClasses', 'downgradeTestClasses', 'downgradeMixinClasses'] }.configureEach {
+    outputs.dirs(provider { inputCollection.files.collect { new File(temporaryDir, it.name) } })
 }
 
 // Windows JDK 25 selectors can fail to connect through the default user temp path.

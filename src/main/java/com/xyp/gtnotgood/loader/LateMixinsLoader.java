@@ -123,6 +123,18 @@ public class LateMixinsLoader implements ILateMixinLoader {
         }
 
         if (loadedMods.contains(ModList.AE2.getID())) {
+            addAll(list, "appliedenergistics.quantum.AccessorOptimizePattern",
+                "appliedenergistics.quantum.AccessorPacketCraftingTreeData",
+                "appliedenergistics.quantum.MixinContainerCraftConfirm",
+                "appliedenergistics.quantum.MixinContainerOptimizePatterns",
+                "appliedenergistics.quantum.MixinCraftingCPUClusterQuantumJob",
+                "appliedenergistics.quantum.MixinCraftingCPUStatus");
+            if (FMLLaunchHandler.side().isClient()) {
+                addAll(list, "appliedenergistics.quantum.MixinGuiCraftAmount",
+                    "appliedenergistics.quantum.MixinGuiCraftConfirm",
+                    "appliedenergistics.quantum.MixinGuiCraftingTree");
+            }
+
             addAll(list, "appliedenergistics.wireless.AccessorTileController",
                 "appliedenergistics.wireless.MixinWirelessGridNode",
                 "appliedenergistics.wireless.MixinWirelessInterfaceName",

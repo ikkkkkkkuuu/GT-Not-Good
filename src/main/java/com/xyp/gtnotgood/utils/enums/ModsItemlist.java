@@ -46,6 +46,8 @@ public enum ModsItemlist {
     SiliconPress(Mods.AppliedEnergistics2.ID, "item.ItemMultiMaterial", 19),
     // ME 接口
     MEInterface(Mods.AppliedEnergistics2.ID, "tile.BlockInterface"),
+    // 陨石
+    SkyStone(Mods.AppliedEnergistics2.ID, "tile.BlockSkyStone", 0),
 
     // 阿卡西记录
     AkashicRecord(Mods.Avaritia.ID, "Akashic_Record", 0),
@@ -466,6 +468,8 @@ public enum ModsItemlist {
     Deepslate(Mods.EtFuturumRequiem.ID, "deepslate", 0),
     // 鞘翅
     Elytra(Mods.EtFuturumRequiem.ID, "elytra", 0),
+    // 末影水晶
+    PlaceableEndCrystal(Mods.EtFuturumRequiem.ID, "end_crystal", 0),
     // 岩浆块
     MagmaBlock(Mods.EtFuturumRequiem.ID, "magma", 0),
     // 下界合金斧
@@ -500,6 +504,26 @@ public enum ModsItemlist {
     WetSponge(Mods.EtFuturumRequiem.ID, "sponge", 1),
     // 不死图腾
     TotemOfUndying(Mods.EtFuturumRequiem.ID, "totem_of_undying", 0),
+    // 樱花树苗
+    CherrySapling(Mods.EtFuturumRequiem.ID, "sapling", 1),
+    // 红树胎生苗
+    MangrovePropagule(Mods.EtFuturumRequiem.ID, "sapling", 0),
+    // 蜜脾
+    Honeycomb(Mods.EtFuturumRequiem.ID, "honeycomb", 0),
+    // 灵魂土
+    SoulSoil(Mods.EtFuturumRequiem.ID, "soul_soil", 0),
+    // 远古残骸
+    AncientDebris(Mods.EtFuturumRequiem.ID, "ancient_debris", 0),
+    // 绯红菌
+    CrimsonFungus(Mods.EtFuturumRequiem.ID, "nether_fungus", 0),
+    // 诡异菌
+    WarpedFungus(Mods.EtFuturumRequiem.ID, "nether_fungus", 1),
+    // 龙息
+    DragonBreath(Mods.EtFuturumRequiem.ID, "dragon_breath", 0),
+    // 紫颂果
+    ChorusFruit(Mods.EtFuturumRequiem.ID, "chorus_fruit", 0),
+    // 紫颂花
+    ChorusFlower(Mods.EtFuturumRequiem.ID, "chorus_flower", 0),
 
     // 野生蜂巢
     ExtraBeesHive(ModList.ExtraBees.getID(), "hive"),
@@ -573,6 +597,8 @@ public enum ModsItemlist {
     Tier1Rocket(Mods.GalacticraftCore.ID, "item.spaceship", 0),
     // NASA工作台
     NasaWorkbench(Mods.GalacticraftCore.ID, "tile.rocketWorkbench", 0),
+    // 月岩
+    MoonStone(Mods.GalacticraftCore.ID, "tile.moonBlock", 4),
 
     // 3阶火箭
     Tier3Rocket(Mods.GalacticraftMars.ID, "item.itemTier3Rocket", 0),
@@ -580,9 +606,31 @@ public enum ModsItemlist {
     Tier3RocketSchematic(Mods.GalacticraftMars.ID, "item.schematic", 0),
     // 2阶火箭
     Tier2Rocket(Mods.GalacticraftMars.ID, "item.spaceshipTier2", 0),
+    // 火星石
+    MarsStone(Mods.GalacticraftMars.ID, "tile.mars", 9),
 
     // 巴纳德C树木原木
     BarnardaCLog(Mods.GalaxySpace.ID, "barnardaClog", 0),
+    // 巴纳德C树叶
+    BarnardaCLeaves(Mods.GalaxySpace.ID, "barnardaCleaves", 0),
+    // 金星地下岩
+    VenusRock(Mods.GalaxySpace.ID, "venusblocks", 1),
+    // 水星地下岩
+    MercuryRock(Mods.GalaxySpace.ID, "mercuryblocks", 1),
+    // 谷神星地下岩
+    CeresRock(Mods.GalaxySpace.ID, "ceresblocks", 1),
+    // 木卫一石
+    IoStone(Mods.GalaxySpace.ID, "ioblocks", 2),
+    // 木卫三地下岩
+    GanymedeRock(Mods.GalaxySpace.ID, "ganymedeblocks", 1),
+    // 冥王星石
+    PlutoStone(Mods.GalaxySpace.ID, "plutoblocks", 5),
+    // 土卫二岩
+    EnceladusRock(Mods.GalaxySpace.ID, "enceladusblocks", 1),
+    // 土卫六石
+    TitanStone(Mods.GalaxySpace.ID, "titanblocks", 2),
+    // 海卫一石
+    TritonStone(Mods.GalaxySpace.ID, "tritonblocks", 2),
     // 神秘水晶碎片
     MysteriousCrystalShard(Mods.GalaxySpace.ID, "item.UnknowCrystal", 0),
     // 4阶火箭控制电脑
@@ -647,6 +695,10 @@ public enum ModsItemlist {
 
     // 电路装配线
     CircuitAssemblyLine(Mods.GregTech.ID, "gt.blockmachines", MetaTileEntityIDs.CircuitAssemblyLine.ID),
+    // 红花岗岩
+    RedGranite(Mods.GregTech.ID, "gt.blockgranites", 8),
+    // 大理石
+    Marble(Mods.GregTech.ID, "gt.blockstones", 0),
     // 低速无损超频控制器模块
     TstLowSpeedPerfectOverclockController(Mods.GregTech.ID, "gt.blockmachines", 18840),
     // 铱合金锭

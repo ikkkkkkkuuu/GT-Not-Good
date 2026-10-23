@@ -1,0 +1,91 @@
+gradle.settingsEvaluated { settings ->
+    settings.buildCache.local.directory = new File('D:/CodexTools/GTNGSuprachronalPort/build-cache')
+}
+
+gradle.beforeProject { project ->
+    if (project == project.rootProject) {
+        project.layout.buildDirectory.set(new File('D:/CodexTools/GTNGSuprachronalPort/build'))
+    }
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.spotless.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/blocks/tentacle/*.java',
+            'src/main/java/com/xyp/gtnotgood/client/render/KerrNewmanConnectedIcons.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/modularmachine/NyarlathotepsTentacle.java',
+            'src/main/java/com/xyp/gtnotgood/common/gui/modularui/multiblock/NyarlathotepsTentacleGui.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/NyarlathotepsTentacleStructure.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/TentacleAssemblyRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/NyarlathotepsTentacleRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/loader/BlockLoader.java',
+            'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
+            'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',
+            'src/main/java/com/xyp/gtnotgood/loader/GTNGRecipeMaps.java',
+            'src/main/java/com/xyp/gtnotgood/CommonProxy.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
+            'src/test/java/com/xyp/gtnotgood/common/machines/multiblock/structure/NyarlathotepsTentacleStructureTest.java',
+            'scripts/qa/TentacleClientChecks.java'
+    }
+    if (!root.hasProperty('tentacleClientQA')) return
+    def guiOnly = root.hasProperty('tentacleGuiOnly')
+    def output = root.layout.buildDirectory.dir(guiOnly ? 'tentacle-gui-qa' : 'tentacle-qa').get().asFile
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Existing factory QA Et Futurum runtime is required')
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/TentacleClientChecks.java'))
+    }
+    def qaClasses = root.tasks.register('isolateTentacleQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/TentacleClientChecks*.class'
+        into new File(output, 'classes')
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn qaClasses
+        classpath += root.files(new File(output, 'classes'))
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir new File(output, 'run')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.tentacle.qa', 'true'
+        systemProperty 'gtng.tentacle.guiOnly', guiOnly.toString()
+        systemProperty 'gtng.tentacle.workspace', root.projectDir.absolutePath
+        systemProperty 'gtng.tentacle.output', output.absolutePath
+        systemProperty 'java.security.manager', 'allow'
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('Isolated Tentacle client checks')
+        args '--width', '1280', '--height', '900'
+        doFirst {
+            workingDir.mkdirs()
+            output.mkdirs()
+            new File(workingDir, 'config').mkdirs()
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            new File(workingDir, 'config/splash.properties').setText('enabled=false\n', 'UTF-8')
+            def dreamConfig = new File(workingDir, 'config/DreamCoreMod.properties')
+            def dreamProperties = new Properties()
+            if (dreamConfig.exists()) dreamConfig.withInputStream { dreamProperties.load(it) }
+            dreamProperties.setProperty('showConfirmExitWindow', 'false')
+            dreamConfig.withOutputStream { dreamProperties.store(it, 'Isolated Tentacle QA') }
+            java.nio.file.Files.deleteIfExists(new File(output, 'result.txt').toPath())
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+        }
+        doLast {
+            def result = new File(output, 'result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS'))
+                throw new GradleException('Tentacle QA failed; inspect its result.txt and client log')
+        }
+    }
+}

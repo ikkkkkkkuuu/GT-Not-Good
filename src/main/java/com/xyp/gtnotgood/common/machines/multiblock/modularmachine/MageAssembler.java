@@ -18,13 +18,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import com.cleanroommc.modularui.drawable.UITexture;
 import com.gtnewhorizon.structurelib.alignment.constructable.ISurvivalConstructable;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.xyp.gtnotgood.common.blocks.assemblyplant.AssemblyPlantCasing;
 import com.xyp.gtnotgood.common.blocks.fieldextruder.FieldExtruderCasing;
+import com.xyp.gtnotgood.common.gui.modularui.multiblock.MageAssemblerGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiModeMachineBase;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.MageAssemblerStructure;
 import com.xyp.gtnotgood.utils.enums.ModList;
@@ -36,7 +36,6 @@ import gregtech.api.interfaces.IIconContainer;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
-import gregtech.api.modularui2.GTGuiTextures;
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.recipe.check.CheckRecipeResult;
@@ -46,6 +45,7 @@ import gregtech.api.structure.error.StructureError;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTStructureUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
+import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 import gtPlusPlus.core.material.MaterialsAlloy;
 
 @IMetaTileEntity.SkipGenerateName
@@ -182,9 +182,8 @@ public final class MageAssembler extends GTNGMultiModeMachineBase<MageAssembler>
     }
 
     @Override
-    protected UITexture[] getMachineModeIcons() {
-        return new UITexture[] { GTGuiTextures.OVERLAY_BUTTON_ASSEMBLER_MODE, GTGuiTextures.OVERLAY_BUTTON_PRECISE_MODE,
-            GTGuiTextures.OVERLAY_SLOT_CIRCUIT };
+    protected MTEMultiBlockBaseGui<?> getGui() {
+        return new MageAssemblerGui(this);
     }
 
     @Override

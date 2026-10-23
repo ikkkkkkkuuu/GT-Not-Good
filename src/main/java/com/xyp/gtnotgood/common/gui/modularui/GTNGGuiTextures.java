@@ -30,11 +30,13 @@ public final class GTNGGuiTextures {
     public static final UITexture MODERN_BUTTON = UITexture.builder().location(MODID, "gui/modernity/button")
         .imageSize(20, 20).adaptable(3).build();
     public static final UITexture MODERN_BUTTON_HOVER = UITexture.builder()
-        .location(MODID, "gui/modernity/button_hover").imageSize(20, 20).adaptable(3).build();
+        .location(MODID, "gui/modernity/button_hover").imageSize(20, 20).subAreaXYWH(0, 1, 20, 19).adaptable(3).build();
     public static final UITexture MODERN_BUTTON_PRESSED = UITexture.builder()
         .location(MODID, "gui/modernity/button_pressed").imageSize(20, 20).adaptable(3).build();
+    public static final UITexture MODERN_BUTTON_SELECTED = MODERN_BUTTON_PRESSED.withColorOverride(0xFF448C82);
     public static final UITexture MODERN_BUTTON_DISABLED = UITexture.builder()
-        .location(MODID, "gui/modernity/button_disabled").imageSize(20, 20).adaptable(3).build();
+        .location(MODID, "gui/modernity/button_disabled").imageSize(20, 20).subAreaXYWH(0, 2, 20, 18).adaptable(3)
+        .build();
     public static final UITexture MODERN_BUTTON_COMPACT = UITexture.builder()
         .location(MODID, "gui/modernity/button_compact").imageSize(18, 18).adaptable(2).build();
     public static final UITexture MODERN_BACKGROUND = UITexture.builder().location(MODID, "gui/modernity/background")
@@ -90,6 +92,8 @@ public final class GTNGGuiTextures {
         "gui/overlay_button/battery_on");
     public static final UITexture OVERLAY_BUTTON_BATTERY_OFF = UITexture.fullImage(MODID,
         "gui/overlay_button/battery_off");
+    public static final UITexture OVERLAY_BUTTON_MACHINE_MODE = UITexture.fullImage(MODID,
+        "gui/overlay_button/machine_mode");
 
     public static final UITexture PICTURE_GODFORGE_LOGO = UITexture.fullImage(MODID, "gui/picture/gorge_logo");
 

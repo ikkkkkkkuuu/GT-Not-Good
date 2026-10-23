@@ -18,6 +18,7 @@ import com.xyp.gtnotgood.client.GTNGCreativeTabs;
 import com.xyp.gtnotgood.client.assemblyplant.AssemblyPlantConnectedIcons;
 import com.xyp.gtnotgood.client.assemblyplant.AssemblyPlantConnectedTexture;
 import com.xyp.gtnotgood.client.assemblyplant.AssemblyPlantGlowTexture;
+import com.xyp.gtnotgood.client.render.ElectromagneticRotorRenderer;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -140,6 +141,7 @@ public final class BlockAssemblyPlantCasing extends Block
     @Override
     @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
+        if (ElectromagneticRotorRenderer.hidesFace(world, x, y, z, side)) return false;
         if (glass && world.getBlock(x, y, z) == this) return false;
         return super.shouldSideBeRendered(world, x, y, z, side);
     }

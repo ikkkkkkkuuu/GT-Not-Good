@@ -27,6 +27,7 @@ import com.gtnewhorizon.structurelib.util.Vec3Impl;
 import com.xyp.gtnotgood.client.render.DimensionalFocusCoreRenderer;
 import com.xyp.gtnotgood.common.blocks.dimensionalfocus.DimensionalFocusCasing;
 import com.xyp.gtnotgood.common.blocks.fieldextruder.FieldExtruderCasing;
+import com.xyp.gtnotgood.common.gui.modularui.multiblock.DimensionalFocusEngravingArrayGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGModularMachineBase;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.DimensionalFocusEngravingStructure;
 import com.xyp.gtnotgood.common.machines.processing.ModularProcessingLogic;
@@ -63,6 +64,7 @@ import gregtech.api.util.GTStructureUtility;
 import gregtech.api.util.IGTHatchAdder;
 import gregtech.api.util.MultiblockTooltipBuilder;
 import gregtech.api.util.ParallelHelper;
+import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 import gregtech.common.misc.GTStructureChannels;
 import gregtech.common.render.IMTERenderer;
 import gtPlusPlus.core.material.MaterialsElements;
@@ -103,6 +105,11 @@ public final class DimensionalFocusEngravingArray extends GTNGModularMachineBase
 
     public DimensionalFocusEngravingArray(String name) {
         super(name);
+    }
+
+    @Override
+    protected MTEMultiBlockBaseGui<?> getGui() {
+        return new DimensionalFocusEngravingArrayGui(this);
     }
 
     @Override

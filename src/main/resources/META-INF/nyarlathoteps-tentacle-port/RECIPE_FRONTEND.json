@@ -1,0 +1,10 @@
+{
+  "source": "https://github.com/GTNewHorizons/GT5-Unofficial",
+  "version": "5.09.54.205",
+  "commit": "a3e1e11241a814c9fa0dd0973d5699548428f689",
+  "license": "LGPL-3.0-only",
+  "sourcePath": "src/main/java/gregtech/api/recipe/maps/AssemblyLineFrontend.java",
+  "sourceSha256": "827630d2f3245d97fd14296a9a8c0aa15cc2872538ed211e99067529edfd62ab",
+  "destination": "src/main/java/com/xyp/gtnotgood/client/nei/SuprachronalAssemblyFrontend.java",
+  "changes": "Inherit native slot positions and adapt the two assembly progress bars; omit the data slot arrow. Reference native textures without copying assets."
+}

@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.xyp.gtnotgood.client.GTNGCreativeTabs;
+import com.xyp.gtnotgood.client.render.ElectromagneticRotorRenderer;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import cpw.mods.fml.relauncher.Side;
@@ -117,6 +118,7 @@ public final class BlockDimensionalFocusCasing extends Block implements IHasInde
     @Override
     @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
+        if (ElectromagneticRotorRenderer.hidesFace(world, x, y, z, side)) return false;
         if (glass && world.getBlock(x, y, z) == this) return false;
         return super.shouldSideBeRendered(world, x, y, z, side);
     }

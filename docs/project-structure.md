@@ -37,10 +37,11 @@ com/xyp/gtnotgood/
 │  ├─ machines/            GregTech 单方块机器、多方块和舱室
 │  │  └─ multiblock/       多方块机器控制器
 │  │     ├─ multiMachineBase/ 多方块机器基类
+│  │     ├─ parallelmachine/ 支持并行控制仓的多方块控制器
 │  │     ├─ modularmachine/ 模块化多方块机器控制器
 │  │     └─ structure/     独立结构定义与形状数据加载
 │  ├─ network/             网络消息、处理器及消息注册
-│  ├─ gui/                 通用 GUI 基础、纹理和组件
+│  ├─ gui/                 机器 GUI、通用 GUI 基础、纹理和组件
 │  ├─ recipe/              配方定义
 │  ├─ compat/              跨模组兼容逻辑
 │  └─ …                    其他已有通用职责
@@ -59,6 +60,10 @@ com/xyp/gtnotgood/
 - 配方定义放在 `common.recipe`；通用注册入口放在 `loader`。
 - 普通多方块机器控制器放在 `common.machines.multiblock`，模块化机器控制器放在其 `modularmachine` 子包。
   基类保留在 `multiMachineBase`，独立结构定义、形状数据加载类放在 `structure`。
+- 每种新增多方块控制器在 `common.gui.modularui.multiblock` 下有独立的 `机器名Gui`，继承
+  `GTNGModernMultiBlockBaseGui`；同一控制器的等级变体可共用。控件、布局、GUI 同步和模式图标放在 GUI 类，
+  控制器只在 `getGui()` 选择界面并提供状态与操作接口，不在控制器内嵌 GUI 类。
+- 支持并行控制仓的多方块控制器放在 `common.machines.multiblock.parallelmachine`；对应通用基类仍放在 `multiMachineBase`。
 - 模块化机器使用 `GTNGModularMachineBase`；模块仓放在 `common.machines.hatch.modular`，调度与输入预检放在
   `common.machines.processing`。任务和产物只由控制器持久化。
 - 模块化发电机使用 `GTNGModularGeneratorBase`，复用模块仓与输入事务；`GenerationWork` 保存燃料、剩余发电量和待输出产物。

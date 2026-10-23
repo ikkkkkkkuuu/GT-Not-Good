@@ -28,11 +28,11 @@ import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.DynamicLinkedSyncHandler;
 import com.cleanroommc.modularui.value.sync.GenericListSyncHandler;
 import com.cleanroommc.modularui.value.sync.GenericSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.DynamicSyncedWidget;
 import com.cleanroommc.modularui.widgets.FluidDisplayWidget;
 import com.cleanroommc.modularui.widgets.ItemDisplayWidget;
@@ -42,6 +42,7 @@ import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.xyp.gtnotgood.common.gui.modularui.GTNGGuiTextures;
+import com.xyp.gtnotgood.common.gui.modularui.MachineModeSelector;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGModularMachineBase;
 import com.xyp.gtnotgood.common.machines.processing.ModuleWorkDisplay;
 import com.xyp.gtnotgood.common.wireless.WirelessRecipeDisplay;
@@ -51,6 +52,8 @@ import gregtech.api.modularui2.GTWidgetThemes;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 
 public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MTEMultiBlockBaseGui<T> {
+
+    protected static final int CONTROL_BUTTON_SIZE = 16;
 
     public GTNGModernMultiBlockBaseGui(T multiblock) {
         super(multiblock);
@@ -323,7 +326,7 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      */
     @Override
     protected IWidget createStructureUpdateButton(PanelSyncManager syncManager) {
-        ToggleButton button = ((ToggleButton) super.createStructureUpdateButton(syncManager)).size(16)
+        ToggleButton button = ((ToggleButton) super.createStructureUpdateButton(syncManager)).size(CONTROL_BUTTON_SIZE)
             .overlay(new DynamicDrawable(() -> {
                 if (multiblock.getStructureUpdateTime() > -20) {
                     return GTNGGuiTextures.OVERLAY_BUTTON_STRUCTURE_CHECK;
@@ -340,12 +343,13 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      */
     @Override
     protected ToggleButton createPowerSwitchButton() {
-        ToggleButton button = super.createPowerSwitchButton().size(16).overlay(new DynamicDrawable(() -> {
-            if (multiblock.isAllowedToWork()) {
-                return GTNGGuiTextures.OVERLAY_BUTTON_POWER_SWITCH_ON;
-            }
-            return GTNGGuiTextures.OVERLAY_BUTTON_POWER_SWITCH_DISABLED;
-        })).tooltipShowUpTimer(TOOLTIP_DELAY);
+        ToggleButton button = super.createPowerSwitchButton().size(CONTROL_BUTTON_SIZE)
+            .overlay(new DynamicDrawable(() -> {
+                if (multiblock.isAllowedToWork()) {
+                    return GTNGGuiTextures.OVERLAY_BUTTON_POWER_SWITCH_ON;
+                }
+                return GTNGGuiTextures.OVERLAY_BUTTON_POWER_SWITCH_DISABLED;
+            })).tooltipShowUpTimer(TOOLTIP_DELAY);
         return applyModernToggleButton(button, () -> !isPowerSwitchDisabled());
     }
 
@@ -365,7 +369,7 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      */
     @Override
     protected ButtonWidget<?> createVoidExcessButton(PanelSyncManager syncManager) {
-        ButtonWidget<?> button = ((ButtonWidget<?>) super.createVoidExcessButton(syncManager)).size(16)
+        ButtonWidget<?> button = ((ButtonWidget<?>) super.createVoidExcessButton(syncManager)).size(CONTROL_BUTTON_SIZE)
             .tooltipShowUpTimer(TOOLTIP_DELAY);
         return applyModernButton(button, multiblock::supportsVoidProtection);
     }
@@ -378,13 +382,9 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      */
     @Override
     protected ToggleButton createInputSeparationButton(PanelSyncManager syncManager) {
-        ToggleButton button = ((ToggleButton) super.createInputSeparationButton(syncManager)).size(16)
-            .overlay(new DynamicDrawable(() -> {
-                if (multiblock.isInputSeparationEnabled()) {
-                    return GTNGGuiTextures.OVERLAY_BUTTON_INPUT_SEPARATION;
-                }
-                return GTNGGuiTextures.OVERLAY_BUTTON_INPUT_SEPARATION_OFF;
-            })).tooltipShowUpTimer(TOOLTIP_DELAY);
+        ToggleButton button = super.createInputSeparationButton(syncManager).size(CONTROL_BUTTON_SIZE)
+            .overlay(false, GTNGGuiTextures.OVERLAY_BUTTON_INPUT_SEPARATION_OFF)
+            .overlay(true, GTNGGuiTextures.OVERLAY_BUTTON_INPUT_SEPARATION).tooltipShowUpTimer(TOOLTIP_DELAY);
         return applyModernToggleButton(button, multiblock::supportsInputSeparation);
     }
 
@@ -396,13 +396,9 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      */
     @Override
     protected ToggleButton createBatchModeButton(PanelSyncManager syncManager) {
-        ToggleButton button = ((ToggleButton) super.createBatchModeButton(syncManager)).size(16)
-            .overlay(new DynamicDrawable(() -> {
-                if (multiblock.isBatchModeEnabled()) {
-                    return GTNGGuiTextures.OVERLAY_BUTTON_BATCH_MODE;
-                }
-                return GTNGGuiTextures.OVERLAY_BUTTON_BATCH_MODE_OFF;
-            })).tooltipShowUpTimer(TOOLTIP_DELAY);
+        ToggleButton button = super.createBatchModeButton(syncManager).size(CONTROL_BUTTON_SIZE)
+            .overlay(false, GTNGGuiTextures.OVERLAY_BUTTON_BATCH_MODE_OFF)
+            .overlay(true, GTNGGuiTextures.OVERLAY_BUTTON_BATCH_MODE).tooltipShowUpTimer(TOOLTIP_DELAY);
         return applyModernToggleButton(button, multiblock::supportsBatchMode);
     }
 
@@ -414,40 +410,30 @@ public class GTNGModernMultiBlockBaseGui<T extends MTEMultiBlockBase> extends MT
      */
     @Override
     protected ToggleButton createLockToSingleRecipeButton(PanelSyncManager syncManager) {
-        ToggleButton button = ((ToggleButton) super.createLockToSingleRecipeButton(syncManager)).size(16)
-            .overlay(new DynamicDrawable(() -> {
-                if (multiblock.isRecipeLockingEnabled()) {
-                    return GTNGGuiTextures.OVERLAY_BUTTON_RECIPE_LOCKED;
-                }
-                return GTNGGuiTextures.OVERLAY_BUTTON_RECIPE_UNLOCKED;
-            })).tooltipShowUpTimer(TOOLTIP_DELAY);
+        ToggleButton button = super.createLockToSingleRecipeButton(syncManager).size(CONTROL_BUTTON_SIZE)
+            .overlay(false, GTNGGuiTextures.OVERLAY_BUTTON_RECIPE_UNLOCKED)
+            .overlay(true, GTNGGuiTextures.OVERLAY_BUTTON_RECIPE_LOCKED).tooltipShowUpTimer(TOOLTIP_DELAY);
         return applyModernToggleButton(button, multiblock::supportsSingleRecipeLocking);
     }
 
-    /**
-     * Applies modern backgrounds to every state of GregTech's mode switch cycle button.
-     * <p>
-     * Some multiblocks expose the mode switch as a {@link CycleButtonWidget}; the guard keeps this override compatible
-     * if the base GUI returns another widget type.
-     *
-     * @param syncManager panel sync manager supplied by ModularUI
-     * @return mode switch widget with modern state backgrounds when applicable
-     */
     @Override
     protected IWidget createModeSwitchButton(PanelSyncManager syncManager) {
-        IWidget button = super.createModeSwitchButton(syncManager);
-        if (button instanceof CycleButtonWidget cycleButton) {
-            for (int i = 0; i < 8; i++) {
-                cycleButton.stateBackground(i, GTNGGuiTextures.MODERN_BUTTON);
-                cycleButton.stateHoverBackground(i, GTNGGuiTextures.MODERN_BUTTON_HOVER);
-            }
-        }
-        return button;
+        List<IKey> names = new ArrayList<>();
+        for (var map : multiblock.getAvailableRecipeMaps()) names.add(IKey.lang(map.unlocalizedName));
+        return MachineModeSelector
+            .createButton(syncManager, getMachineModeSelectorPrefix(), names,
+                syncManager.findSyncHandler("machineMode", IntSyncValue.class))
+            .size(CONTROL_BUTTON_SIZE).tooltipBuilder(this::createModeSwitchTooltip);
+    }
+
+    protected String getMachineModeSelectorPrefix() {
+        return "gtng";
     }
 
     @Override
     protected ButtonWidget<?> createPowerPanelButton(PanelSyncManager syncManager, ModularPanel parent) {
-        return applyModernButton(super.createPowerPanelButton(syncManager, parent), () -> true);
+        return applyModernButton(super.createPowerPanelButton(syncManager, parent).size(CONTROL_BUTTON_SIZE),
+            () -> true);
     }
 
     /**

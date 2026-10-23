@@ -1,5 +1,90 @@
 # AE2LT faithful port audit
 
+## GTNL quantum crafting refresh — 2026-10-23
+
+Pinned GTNL `5837c5a8`, `2b79458b` (#646), and final `7b176111` for the quantum planner, cycle visualization, variant budgets, optimizer repair and name-field fix. LGPL-3.0 inspected before copying. File mappings, original-source hashes, artwork hashes, license and adaptation details are packaged in `META-INF/quantum-crafting-port/`. Existing compact CPU, batching and energy behavior is selectively merged; unrelated upstream changes excluded. Reference: `D:/CodexTools/GTNGQuantumPort-20261023/upstream`, outside all source sets. Validation and remaining work are recorded in `docs/development/progress.md`.
+
+## 碎片世界采集器 — 2026-10-23
+
+- 来源为用户指定 GTL 增强版实例的 `gtlcore-1.2.3.2-fix4.jar`；固定可读源码
+  GNSW/GTLCore `6443c848264fb15c90cf50e031f146522616a8b9`，LGPL-3.0-only。
+  本地二进制与固定源码的六组采集表逐项一致；不将其误记为已知构建提交。
+- 普通 ULV 单方块，GTNG ID 28633；七份原图/动画不改像素，GTNH 原生底壳、
+  两输入/十二输出与独立电路槽，原生概率、加工与 NBT。大型变体不在范围。
+- 世界碎片改为各维度展示方块，不消耗；按用户确认映射远古世界到暮色森林、
+  霜原星到海卫一。16维度表、矿物数量、流体倍数与基础能耗/耗时保留。
+  流体电路与钻头、原生材料、可选物品及未移植 GTL 专属产物的差异见
+  `reference/fragment-world-collector-port/PORT.md`。
+- 目标为 `FragmentWorldCollector*`、`FragmentWorldCollection*`、配方 JSON 与
+  `textures/blocks/basicmachines/fragment_collector/`；源/目标/修改/哈希见包内
+  `META-INF/fragment-world-collector-port/`。参考源码与离线生成器不参与编译或打包；
+  外部素材与改编配方不属于项目通用 MIT 许可。
+
+## 奈亚拉托提普之触模块化移植 — 2026-10-23
+
+- 用户指定 GTO 26.10.5 实例，并选择现版原结构/外观及 GTNG 模块化参数仓与执行核心。
+- 固定 GTOCore-Main `156835a0e66a90cbc4e60c3e95a36c35212b97d6`，LGPL-3.0；原 MBS 与实例逐字节一致。
+  保留 165×48×49、29,045 个非空位置与空格 any 语义，控制器偏移 `(82,23,0)`。
+- 十四类构件、分子常亮层、乌鲁工作线圈、动画和 611 张 CTM；复用同源现有构件，保留所有已有注册 ID。
+  GTM 无菌过滤原图取自内嵌 26.10.53；布局转换器沿用既有 LDLib GPL-3.0 记录。
+- 新控制器位于 `modularmachine/NyarlathotepsTentacle.java`，ID 28544；后按用户要求取消本机装配研究及电路印刻。
+  超时空装配线统一包含 GTNH 全等级原生装配配方，不再单列 UIV 子集；不附带 GTO 专属电路/无人机支线。
+- 模块化性能、材料与研究映射、来源和验证入口见 `reference/nyarlathoteps-tentacle-port/PORT.md`。
+  包内来源与许可见 `META-INF/nyarlathoteps-tentacle-port/`，外部作品不属于项目通用 MIT 许可。
+- 运行渲染复核补齐 154 个超能核心随工作状态发光；七组原渐变纹理生成 289 张逐 tick 播放贴图（含 CTM），
+  不改原始资产，派生资源仍遵循 LGPL-3.0。生成器、时序和哈希见清单及 PORT.md；未声称原 GTO 实机同场景逐帧对照。
+- 配方前端基于当前 GT5-Unofficial 5.09.54.205 的 `gregtech/api/recipe/maps/AssemblyLineFrontend.java`，
+  官方 tag 对应 `a3e1e11241a814c9fa0dd0973d5699548428f689`，LGPL-3.0；源码 SHA-256
+  `827630d2f3245d97fd14296a9a8c0aa15cc2872538ed211e99067529edfd62ab`。
+  `client/nei/SuprachronalAssemblyFrontend.java` 继承物品/流体布局，改编前两段进度条，移除闪存箭头；
+  原生纹理仅引用，未复制。来源记录见包内 `RECIPE_FRONTEND.json`；原版配方池的研究/印刻规则不变。
+
+## GTL Enhanced End Crystal Resonator — 2026-10-23
+
+- Reference: the supplied 1.20.1 instance's `GTL-Enhancedcore-3.8.0.jar`, S_Fast,
+  SHA-256 `555a9514c4d2fd11a029c091ac053d5cf7c52fba62411f2f043e04454094f7aa`.
+  No matching source commit has been established. Inspected manifest, mods.toml,
+  Chinese translations, model JSON and javap output for EndCrystalResonatorMachine,
+  ResonatorPlacementEvents and WirelessMachineRegistration. The archive declares LGPL-3.0.
+- Fourteen original 16x16 fronts retain their bytes and license separately from MIT;
+  packaged attribution, full license texts and source/destination/hash records live in
+  `META-INF/crystal-resonator-port/`. Native GTNH casings are referenced, not copied.
+  Upstream ordinal tiers 12/13 (UXV/OpV) map to GTNH UMV/UXV; GTNH voltages apply.
+- Independent 1.7.10 implementation: `common/machines/basic/EndCrystalResonator.java`,
+  `loader/EndCrystalResonatorLoader.java`, machine IDs 28619–28632, central enum entries.
+  Preserves the exact-block crystal test, 20-tick scan/deposit interval, no crystal
+  consumption and generation V[tier] × (LV:32; others:128). Native wireless team accounting
+  replaces GTMThings. The upstream emitter container is never charged by its generator;
+  the port advertises and implements wireless generation without a fictitious cable output.
+- Uses authoritative GT ownership instead of upstream's nearest-player fallback. Pending
+  EU and bound owner persist in NBT; removal flushes pending EU. GT's work toggle pauses
+  generation; already generated EU can still settle after stopping or losing the crystal.
+- The existing optional Et Futurum `end_crystal` item places a vanilla EntityEnderCrystal
+  on the machine's top face. Placement checks edit permission, free space, duplicates and
+  successful spawning before consuming one item; no new required mod dependency is added.
+- Acquisition recipes are host-specific assembler recipes: a same-tier hull, two emitters,
+  two circuits, four obsidian and two Eyes of Ender; 200 ticks at the native practical
+  voltage. They do not claim to reproduce upstream progression. Tooltip follows the
+  existing SteamTurbine description style and declares translations beside Java use.
+- Reference inspections are in ignored `build/reference-gtl-enhancedcore` (a junction to
+  this task's D-drive reference directory), outside source sets. Current-workspace compilation,
+  resources, scoped Spotless and structure checks pass. The real client passes 296 checks
+  with the original coremod manifest inherited by the QA jar; native early mixins and text
+  effects are loaded. Verified all fourteen fronts in-world and LV/MAX tooltip screenshots.
+  Commands, timings and final logs are recorded in `docs/development/progress.md`.
+
+## 枢纽卫星工厂模式按钮 — 2026-10-23
+
+- 参考用户截图，复用 GregTechCEu/GregTech-Modern 固定提交
+  `e3844ba943e2388c0856617ae4f8b473a0ae1b64` 的
+  `src/main/resources/assets/gtceu/textures/item/lv_robot_arm.png`；已先核对该提交 LGPL-3.0 许可证。
+- 原 PNG 逐字节复制到 `assets/gtnotgood/textures/gui/overlay_button/machine_mode.png`，
+  无裁切、重绘或缩放；仅由界面按按钮尺寸绘制，不添加物品或依赖。
+- 来源、Git blob、SHA-256、目的路径与许可证记录于
+  `META-INF/satellite-mode-port/ASSET_MANIFEST.json`；完整许可证随该目录打包。
+- 模式列表为本项目针对当前 ModularUI2 2.3.92-1.7.10 API 的实现；没有复制上游 GUI 代码。
+  模式顺序、编号及服务端控制器的配方映射逻辑保持兼容。
+
 ## TST 模块化仓室 — 2026-10-22
 
 - 来源：Nxer/Twist-Space-Technology-Mod，固定提交
@@ -1204,6 +1289,17 @@ Reference checkouts remain outside build inputs.
   配方映射见 `reference/assembly-plant-port/RECIPE_ADAPTATION.md`；外部素材与改编源码不属于项目通用 MIT
   许可，参考检出、上游原始模型和离线生成器不参与源码编译。
 
+### 超导电磁工厂中部旋转 — 2026-10-23
+
+- 参考当前依赖 GT5 `5.09.54.205`，commit `a3e1e11241a814c9fa0dd0973d5699548428f689`，LGPL-3.0-or-later。
+  `MTEForgeOfGods#createRenderer/destroyRenderer` 切换真实环与渲染 TileEntity；
+  `RenderForgeOfGods#initRings/renderRings/renderRing` 缓存环网格并按时间施加旋转矩阵。
+- 本地独立实现 `client/render/ElectromagneticRotorRenderer` 与 `ElectromagneticRotorModel`，
+  复用现有结构的 148 个 C、68 个 E、17 个 H 及原连纹。只旋转中部五环与中心柱，240 tick 一周；
+  服务端真实方块、结构检查与加工不变，客户端按同步运行状态隐藏对应静态面，停机/卸载恢复。
+- 未复制神之锻炉的删除/重建逻辑、模型、贴图或着色器。参考源码不参与编译；版本、源码哈希、
+  目标与差异记录在 `META-INF/assembly-plant-port/ROTOR_REFERENCE.json`。
+
 ## 克尔-纽曼均质仪 — 2026-10-21
 
 - 来源：GregTech-Odyssey/GTOCore `3121e23241e7f6ccd2e6a8dbd5655962de63ed9a`，LGPL-3.0-only。
@@ -1295,3 +1391,21 @@ Reference checkouts remain outside build inputs.
   结构及渲染源/修订/许可/目标/修改/哈希见 `reference/light-hunter-space-station-port/` 与对应 META-INF 清单。
   外部素材及改编源码不属于项目通用 MIT 许可；参考检出和生成器不参与编译或打包。
 - 验证计划与运行命令见 `docs/testing/light-hunter-space-station.md`。
+
+
+## 大型熔炉与并行控制仓 — 2026-10-23
+
+- 来源：用户实例 Enhancedcore 3.8.0、GTCEu 1.4.4、GTLAdditions 3.3.1Custom；固定 JAR SHA-256 见 `META-INF/large-furnace-port/ASSET_MANIFEST.json`。未确定 Enhancedcore 源码提交，不以最新分支冒充该版本。
+- 已先核对 Enhancedcore/GTCEu 的 LGPL-3.0 声明。原始结构、六张 PNG 与四份动画元数据的来源/目的/哈希、许可全文在该 META-INF 目录；资产不属项目 MIT 授权。既有 GPL-3.0 批处理/输出账本与 GUI 代码保留许可。
+- `LargeFurnaceMachine`、`ProcessingMachineRegistration`、`ThreadLimitedRecipeLogic`、GTLAdditions `calculateParallels`：LV 基准 64 并行、2 线程，电压每级两者翻倍；并行仓乘法，线程仓加法；选最多线程数种配方，共享并行×线程容量，合并批次能量与输出。复用原批次最短 20 tick 和 normalRates 规则，不改成免费 EU 或独立执行核心。
+- 原几何 11×13×12、716 非空格，Y/Z 反向适配 StructureLib，控制器偏移 (5,11,0)。J→原生钢块；L→原生坚固钢机械方块/仓室；D→GT 焦炉砖块（sBlockCasings12:0，64 块）；E→GT 耐火砖块（sBlockCasings4:15，102 块）；B/C/G/K/M→铁栏杆，H/I→岩浆源；空格仍不约束。砖块映射已核对固定 GT5 5.09.54.205 源码 BlockCasings12、BlockCasings4、MTECokeOven、MTEBrickedBlastFurnace。原版维护仓上限在 GTNH 适配为必装 1 个；物品输入/输出、1–2 普通能源仓，最多各 1 个并行/线程仓。
+- 按用户追加要求，控制器放 `multiblock/parallelmachine`，通用基类仍放 `multiMachineBase`。ID 28545；IV–MAX 并行仓 28546–28555，不迁移已有注册 ID。并行仓倍率 4^(tier−4)，GUI 1..上限、默认 1、服务端校验、NBT 保存。
+- Ω-天球分歧引擎复用现有普通星阵（128 线程/个，最多 64 个）；新增 ThreadModifierHost，保留卫星工厂原方法重载及归属验证。
+- GTNH 电炉 backend 每次只检查第一种物品，因此本机逐种查询原生池，去重后公平轮换，避免只加工首种物料。事务式输入预检、堵塞产物账本、NBT 和普通能源使用沿用既有实现。
+- 获取配方采用原生 GTNH 材料：LV 电炉/钢机壳/电路制作控制器；同级机壳/传感器/电路制作并行仓。结构砖直接使用 GTNH 已有方块及配方，按用户纠正删除移植时重复新增的两种砖、配方和贴图。不声称复刻上游整包配方进度，不增加新版模组硬依赖。
+- 可复查运行命令与测试边界见 `docs/testing/large-furnace.md`，调查文件在忽略的 D:/CodexTools/GTNGLargeFurnace/reference。
+- 用户反馈并行仓缺失贴图后，补齐四份原始 overlay_front.png.mcmeta：每张 PNG 为 16×64 四帧动画、每帧 8 tick。元数据原字节及哈希纳入同一清单，不裁切或重绘 PNG；检查十级物品/世界显示及资源重载。
+
+- 大型熔炉后续修正：通过独立 NEIGTNGConfig 为原生 smelting handler 注册控制器 catalyst，支持左侧机器列表及 U 用途查询；不能仅依赖禁用 NEI 注册的 furnaceRecipes 配方池。控制器继续使用原高版本面板，只将两张 16×16 图各 62 个低饱和青绿边框像素转为脱氧钢灰色；原图布局、透明度、指示灯逐像素保留，待机/运行一致。换色预览的重绘布局未打包，四张并行仓 PNG 和动画元数据保持原字节，源/产出哈希记入 manifest。
+
+- 用户确认采用原生分层方式后，进一步将上述两张正面的 62 个金属边框像素改为透明，取消固定灰色；底图继续由 LargeFurnace#getTexture 单独选用 GTNH casing 16。其余 194 个像素与原版逐像素一致，面板/指示灯保持原样，资源路径不变；清单保留最初源哈希并更新最终哈希。生成预览改动了布局，未作为最终素材使用。

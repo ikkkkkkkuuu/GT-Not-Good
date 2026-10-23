@@ -84,4 +84,23 @@ public class SuperconductingElectromagneticStructureTest {
     private static void assertCount(Map<Character, Integer> counts, char symbol, int expected) {
         assertEquals("symbol " + symbol, Integer.valueOf(expected), counts.get(symbol));
     }
+
+    @Test
+    public void rotorContainsOnlyInteriorCoilsCellsAndPipeline() {
+        String[][] shape = SuperconductingElectromagneticStructure.shape();
+        Map<Character, Integer> counts = new HashMap<>();
+        for (int row = 0; row < shape.length; row++) for (int depth = 0; depth < shape[row].length; depth++)
+            for (int column = 0; column < shape[row][depth].length(); column++) {
+                if (!SuperconductingElectromagneticStructure.isRotorPosition(column, row, depth)) continue;
+                char symbol = shape[row][depth].charAt(column);
+                if (symbol != ' ') counts.merge(symbol, 1, Integer::sum);
+            }
+        assertEquals(3, counts.size());
+        assertCount(counts, 'C', 148);
+        assertCount(counts, 'E', 68);
+        assertCount(counts, 'H', 17);
+        assertFalse(SuperconductingElectromagneticStructure.isRotorPosition(7, 1, 7));
+        assertFalse(SuperconductingElectromagneticStructure.isRotorPosition(7, 19, 7));
+        assertFalse(SuperconductingElectromagneticStructure.isRotorPosition(7, 20, 0));
+    }
 }

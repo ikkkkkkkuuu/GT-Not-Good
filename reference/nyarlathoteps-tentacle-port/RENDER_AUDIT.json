@@ -1,0 +1,49 @@
+{
+  "gtmInspectedCommit": "28cf4726097db77448fd7a4cc9a460cba45a2f67",
+  "gtoCommit": "156835a0e66a90cbc4e60c3e95a36c35212b97d6",
+  "instanceJarSha256": "041e3ce8c13c04168f01ea3a9dc3078acfe7533aa8e46348cdc10b1dd3c115b6",
+  "inspectedSources": [
+    {
+      "file": "ActiveBlock.java",
+      "sha256": "a09ce44d982ec4cdd5c79040ce271031a2c96b8f010b8d527178497a60e5bd30"
+    },
+    {
+      "file": "BloomUtils.java",
+      "sha256": "2e3ea688e4fdbac8a28ce168e916c26b062c244ec2145758376c48c3218f08f8"
+    },
+    {
+      "file": "CoilBlock.java",
+      "sha256": "f2097ee23990120c8ae3754dcf9cf7f4bfb8aad736cc7567057e920efa474f5e"
+    },
+    {
+      "file": "WorkableCasingMachineRenderer.java",
+      "sha256": "53b65007fcc5888bcd4abe2382b19902ab2877dd962d3bca9cd3e87f7d43d38d"
+    },
+    {
+      "file": "WorkableMultiblockMachine.java",
+      "sha256": "5004e81262ad9ae7ab6e6f335cfcf062cae454aaae3bd27a724da677183a9e6f"
+    }
+  ],
+  "reusedResources": [
+    {
+      "source": "assets/gtocore/textures/block/hyper_core_bloom.png",
+      "destination": "assets/gtnotgood/textures/blocks/lighthunter/hyper_core_bloom.png",
+      "sha256": "4a1e256dd77e6b70f134147b36ea3a32828629e5f14e62dda05d1158730e40dc",
+      "byteIdentical": true
+    },
+    {
+      "source": "assets/gtocore/textures/block/fusion_coil_bloom.png",
+      "destination": "assets/gtnotgood/textures/blocks/kerrnewman/advanced_fusion_coil_bloom.png",
+      "sha256": "426b5f791bf1d26904bbd5463a12c8637a15909cee884a6af1fdd2d6948b67b7",
+      "byteIdentical": true
+    },
+    {
+      "source": "assets/gtocore/textures/block/dimensional_bridge_casing.png",
+      "destination": "assets/gtnotgood/textures/blocks/kerrnewman/dimensional_bridge_casing.png",
+      "sha256": "f93b35808dba2cda1fe0de84bc39265e291369e743b69f07d0ceeaf4d774294a",
+      "byteIdentical": true
+    }
+  ],
+  "interpolatedSprites": 289,
+  "sourceClientRecorded": false
+}

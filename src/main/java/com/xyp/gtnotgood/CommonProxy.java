@@ -32,9 +32,11 @@ import com.xyp.gtnotgood.common.recipe.gtnotgood.TransmutationRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.DimensionalFocusFluids;
 import com.xyp.gtnotgood.common.recipe.machine.DimensionalFocusRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.EasyWirelessRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.FragmentWorldCollectorRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.LargeInterfaceRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.ModularHatchRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.SeedConverterRecipes;
+import com.xyp.gtnotgood.common.recipe.machine.TentacleAssemblyRecipes;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessAutoConnect;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessChannelManager;
@@ -127,12 +129,14 @@ public class CommonProxy {
         ExtruderRecipes.loadRecipes();
         WirelessEnergyCoverRecipes.loadRecipes();
         SeedConverterRecipes.loadConversionRecipes();
+        FragmentWorldCollectorRecipes.scheduleRecipes();
         LargeInterfaceRecipes.registerUpgrades();
         AE2Thing.onLoadComplete(event);
         OreProcessingRecipes.loadExternalOreRecipes();
         CombProcessingRecipes.loadRecipes();
         TransmutationRecipes.load();
         DimensionalFocusRecipes.importNativeRecipes();
+        TentacleAssemblyRecipes.scheduleImport();
         ModularHatchRecipes.applyTstCompatibility();
     }
 

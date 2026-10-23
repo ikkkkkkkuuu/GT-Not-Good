@@ -77,7 +77,7 @@ public class QuantumComputerGui extends GTNGModernMultiBlockBaseGui<QuantumCompu
         syncManager.syncValue(USED_STORAGE_SYNC_KEY,
             new LongSyncValue(multiblock::getUsedStorageForGui, multiblock::setUsedStorageFromGui));
         syncManager.syncValue(CUSTOM_NAME_SYNC_KEY,
-            new StringSyncValue(multiblock::getDisplayNameForGui, multiblock::setCustomName).allowC2S());
+            new StringSyncValue(multiblock::getCustomNameForGui, multiblock::setCustomName).allowC2S());
     }
 
     @Override
@@ -183,7 +183,8 @@ public class QuantumComputerGui extends GTNGModernMultiBlockBaseGui<QuantumCompu
 
     private IWidget createCustomNameField(PanelSyncManager syncManager) {
         StringSyncValue customNameSyncer = syncManager.findSyncHandler(CUSTOM_NAME_SYNC_KEY, StringSyncValue.class);
-        return new TextFieldWidget().value(customNameSyncer).setTextAlignment(Alignment.Center)
+        return new TextFieldWidget().value(customNameSyncer)
+            .hintText(multiblock.getMachineCraftingIcon().getDisplayName()).setTextAlignment(Alignment.Center)
             .setTextColor(Color.WHITE.main).background(GTGuiTextures.BACKGROUND_TEXT_FIELD)
             .tooltipBuilder(tooltip -> tooltip
                 // #tr gtng.compact.machine.quantum_computer.info.3

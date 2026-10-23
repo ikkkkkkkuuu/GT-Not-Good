@@ -117,9 +117,13 @@ public abstract class MixinCraftingCPUCluster {
             }
         }
         boolean freeDispatch = cluster instanceof ECraftingCPUCluster || !physicalHatch;
-        BatchPlan plan = GTNL$BATCH_PLANNER.plan(requestedCrafts, context.mediumStrategy, expandedInputs,
-            details.getCondensedAEOutputs(), this.inventory, requested -> freeDispatch ? requested
-                : eg.extractAEPower(requested, Actionable.SIMULATE, PowerMultiplier.CONFIG));
+        BatchPlan plan = cluster instanceof ECraftingCPUCluster quantum && quantum.hasVariantBudget(details)
+            ? GTNL$BATCH_PLANNER.plan(requestedCrafts, context.mediumStrategy, expandedInputs,
+                details.getCondensedAEOutputs(), input -> quantum.getBudgetedAvailable(details, input),
+                requested -> requested)
+            : GTNL$BATCH_PLANNER.plan(requestedCrafts, context.mediumStrategy, expandedInputs,
+                details.getCondensedAEOutputs(), this.inventory, requested -> freeDispatch ? requested
+                    : eg.extractAEPower(requested, Actionable.SIMULATE, PowerMultiplier.CONFIG));
         context.resetForPlan(plan);
         if (!plan.isBatched()) return expandedInputs;
 

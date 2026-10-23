@@ -5,6 +5,7 @@ package com.xyp.gtnotgood.utils.crafting;
 
 import java.util.Deque;
 import java.util.List;
+import java.util.function.ToLongFunction;
 
 import appeng.api.storage.data.IAEStack;
 import appeng.crafting.MECraftingInventory;
@@ -335,6 +336,9 @@ public interface CraftingBatchPlanner {
      */
     BatchPlan plan(long requestedCrafts, MediumStrategy mediumStrategy, List<IAEStack<?>> expandedInputs,
         IAEStack<?>[] condensedOutputs, MECraftingInventory inventory, EnergySimulation energySimulation);
+
+    BatchPlan plan(long requestedCrafts, MediumStrategy mediumStrategy, List<IAEStack<?>> expandedInputs,
+        IAEStack<?>[] condensedOutputs, ToLongFunction<IAEStack<?>> availability, EnergySimulation energySimulation);
 
     /**
      * Runs the core batch calculation from explicit quantities. The AE-facing overload converts real stacks and its

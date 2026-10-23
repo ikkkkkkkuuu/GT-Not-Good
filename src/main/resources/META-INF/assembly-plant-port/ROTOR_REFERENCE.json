@@ -1,0 +1,28 @@
+{
+  "feature": "Superconducting Electromagnetic Factory interior rotation",
+  "referenceRepository": "https://github.com/GTNewHorizons/GT5-Unofficial",
+  "referenceVersion": "5.09.54.205",
+  "referenceCommit": "a3e1e11241a814c9fa0dd0973d5699548428f689",
+  "referenceLicense": "LGPL-3.0-or-later",
+  "sourceJarSha256": "3c6678834953eae34ace4d69caa4f616c1b3f8547a376e8799587e52951654e3",
+  "references": [
+    {
+      "path": "src/main/java/tectech/thing/metaTileEntity/multi/godforge/MTEForgeOfGods.java",
+      "sha256": "d0c407d17fb21f583e429ab2a26cbb41ca74e3125b7e9d7c4dc2f7d21d6ef11e",
+      "methods": ["createRenderer", "destroyRenderer"]
+    },
+    {
+      "path": "src/main/java/tectech/thing/block/RenderForgeOfGods.java",
+      "sha256": "6741c96d8ed7ace8c1b3d081f3251b7d7f7767e7dabbc4dbd8f7248e93768115",
+      "methods": ["initRings", "renderRings", "renderRing"]
+    }
+  ],
+  "implementation": [
+    "client/render/ElectromagneticRotorRenderer.java",
+    "client/render/ElectromagneticRotorModel.java",
+    "common/machines/multiblock/modularmachine/SuperconductingElectromagneticFactory.java"
+  ],
+  "adaptation": "Independent implementation of cached structure faces and a time-based model transform. Retains all real world blocks and hides only their client-side static faces while working; does not copy the Godforge world-removal/reconstruction lifecycle, shader, geometry or assets.",
+  "geometry": "Existing LGPL-3.0-only SuperconductingElectromagneticStructure; interior rows 2..18, columns/depth 4..10: 148 C, 68 E, 17 H blocks. Existing texture paths and licenses remain unchanged.",
+  "rotation": "1.5 degrees per tick around the machine-local vertical axis; 240 ticks per revolution. Server-authoritative running flag and client world-time interpolation."
+}

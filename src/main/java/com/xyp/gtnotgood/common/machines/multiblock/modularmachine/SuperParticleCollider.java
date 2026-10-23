@@ -21,6 +21,7 @@ import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.xyp.gtnotgood.common.blocks.particlecollider.ParticleColliderCasing;
+import com.xyp.gtnotgood.common.gui.modularui.multiblock.SuperParticleColliderGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGModularMachineBase;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.SuperParticleColliderStructure;
 import com.xyp.gtnotgood.common.machines.processing.ModularProcessingLogic;
@@ -42,6 +43,7 @@ import gregtech.api.render.TextureFactory;
 import gregtech.api.structure.error.StructureError;
 import gregtech.api.util.GTStructureUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
+import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 
 @IMetaTileEntity.SkipGenerateName
 @IMetaTileEntity.SkipGenerateDescription
@@ -65,6 +67,11 @@ public final class SuperParticleCollider extends GTNGModularMachineBase<SuperPar
 
     public SuperParticleCollider(String name) {
         super(name);
+    }
+
+    @Override
+    protected MTEMultiBlockBaseGui<?> getGui() {
+        return new SuperParticleColliderGui(this);
     }
 
     @Override

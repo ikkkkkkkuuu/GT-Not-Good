@@ -1,0 +1,81 @@
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(project.file(project.findProperty('largeFurnaceBuildDirectory') ?: 'build/large-furnace-isolated'))
+}
+gradle.projectsEvaluated {
+    def root=gradle.rootProject
+    def mainClasses=root.layout.buildDirectory.dir('large-furnace-qa/main-classes')
+    root.sourceSets.main.output.classesDirs.setFrom(root.files(mainClasses).builtBy(root.tasks.named('compileJava')))
+    root.tasks.named('compileJava').configure { destinationDirectory.set(mainClasses) }
+
+    root.spotless.java { target 'scripts/qa/LargeFurnaceClientChecks.java', 'src/main/java/com/xyp/gtnotgood/loader/BlockLoader.java',
+        'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
+        'src/main/java/com/xyp/gtnotgood/loader/ParallelMachineLoader.java',
+        'src/main/java/com/xyp/gtnotgood/client/nei/NEIGTNGConfig.java',
+        'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',
+        'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+        'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
+        'src/main/java/com/xyp/gtnotgood/common/recipe/machine/ParallelMachineRecipes.java',
+        'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/NexusSatelliteFactory.java',
+        'src/main/java/com/xyp/gtnotgood/common/machines/processing/ParallelBatchProcessingLogic.java',
+        'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/multiMachineBase/GTNGParallelMachineBase.java',
+        'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/parallelmachine/LargeFurnace.java',
+        'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/LargeFurnaceStructure.java',
+        'src/main/java/com/xyp/gtnotgood/common/machines/hatch/lighthunter/SatelliteThreadModifierHatch.java',
+        'src/main/java/com/xyp/gtnotgood/common/machines/hatch/lighthunter/ThreadModifierHost.java',
+        'src/main/java/com/xyp/gtnotgood/common/machines/hatch/parallel/ParallelControlHatch.java',
+        'src/main/java/com/xyp/gtnotgood/common/gui/modularui/hatch/ParallelControlHatchGui.java',
+        'src/main/java/com/xyp/gtnotgood/common/gui/modularui/multiblock/LargeFurnaceGui.java' }
+    def output = root.layout.buildDirectory.dir('large-furnace-qa').get().asFile
+    def testClasses = root.files(new File(output, 'test-classes')).builtBy(root.tasks.named('compileTestJava'))
+    root.sourceSets.test.output.classesDirs.setFrom(testClasses)
+    def modern = root.findProperty('enableModernJavaSyntax') == 'jvmDowngrader'
+    def qaRuntimeClasses = modern
+        ? root.files(root.tasks.named('downgradeTestClasses').map { it.outputCollection })
+        : testClasses
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Prepare the existing factory QA Et Futurum runtime first')
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(new File(output, 'test-classes'))
+        setSource(root.files('scripts/qa/LargeFurnaceClientChecks.java'))
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn root.tasks.named('testClasses')
+        if (modern) dependsOn root.tasks.named('downgradeTestClasses')
+        classpath -= root.sourceSets.test.output
+        classpath += qaRuntimeClasses
+        workingDir new File(output, 'run')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.largeFurnace.workspace', root.projectDir.absolutePath
+        systemProperty 'gtng.largeFurnace.qa', 'true'
+        systemProperty 'gtng.largeFurnace.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in real Large Furnace client checks')
+        doFirst {
+            def fixture = qaRuntimeClasses.asFileTree.matching {
+                include '**/LargeFurnaceClientChecks.class'
+            }.singleFile.bytes
+            if (((fixture[6] & 0xff) << 8 | (fixture[7] & 0xff)) > 52) {
+                throw new GradleException('Large Furnace QA fixtures must be downgraded to Java 8 before launch')
+            }
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(new File(output, 'result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            def result = new File(output, 'result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) {
+                throw new GradleException('Large Furnace QA failed; inspect result.txt')
+            }
+        }
+    }
+}

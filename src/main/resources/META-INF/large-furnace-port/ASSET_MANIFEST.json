@@ -1,0 +1,89 @@
+{
+  "sources": [
+    {
+      "archive": "GTL-Enhancedcore-3.8.0.jar",
+      "sha256": "555a9514c4d2fd11a029c091ac053d5cf7c52fba62411f2f043e04454094f7aa"
+    },
+    {
+      "archive": "gtceu-1.20.1-1.4.4.jar",
+      "sha256": "e7b5239e1fedd1096f55e9408cf673b01ddbed14c806f0368f02386137289f12"
+    },
+    {
+      "archive": "gtladditions-3.3.1Custom.jar",
+      "sha256": "17f0979124f0295a0954100ccc2ec153bccec6f8371985d138be1f19b8f42501"
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/gtceu/textures/block/multiblock/electric_blast_furnace/overlay_front.png",
+      "destination": "assets\\gtnotgood\\textures\\blocks\\parallel\\furnace_front.png",
+      "sha256": "eaa06261095cf2764d75130061f42341520b3dfa62fe4612557166a26f2984de",
+      "license": "LGPL-3.0",
+      "sourceSha256": "df9acfddf2c9148e223b2816b751774ef2489ba0df970beac6495e9e26723e6d",
+      "modifications": "62 metal-frame pixels made fully transparent to expose the independently rendered GTNH casing; original 16x16 panel, indicators, existing alpha and all other 194 pixels preserved. Same mask for idle and active overlays."
+    },
+    {
+      "source": "assets/gtceu/textures/block/multiblock/electric_blast_furnace/overlay_front_active.png",
+      "destination": "assets\\gtnotgood\\textures\\blocks\\parallel\\furnace_active.png",
+      "sha256": "8de6800c8b560a0669307d2eb1b4612268393199766fea8379dc80cd4a1a76f7",
+      "license": "LGPL-3.0",
+      "sourceSha256": "69d673afa31f08e83506d9bee6a3b785a1d9b6cab83e83761e0d27ea90d5442a",
+      "modifications": "62 metal-frame pixels made fully transparent to expose the independently rendered GTNH casing; original 16x16 panel, indicators, existing alpha and all other 194 pixels preserved. Same mask for idle and active overlays."
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk1/overlay_front.png",
+      "destination": "assets\\gtnotgood\\textures\\blocks\\parallel\\hatch_1.png",
+      "sha256": "7feef3b2cd651873e876bf04239d4d1bc2b197f3a0e18f8c66160906f6dcd1c9",
+      "license": "LGPL-3.0"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk2/overlay_front.png",
+      "destination": "assets\\gtnotgood\\textures\\blocks\\parallel\\hatch_2.png",
+      "sha256": "34ab75e24e862e8611a087266f53ab67e575578662358eee652cb4a627670521",
+      "license": "LGPL-3.0"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk3/overlay_front.png",
+      "destination": "assets\\gtnotgood\\textures\\blocks\\parallel\\hatch_3.png",
+      "sha256": "224e4f1846ebbb408a26f0a53a754fd3ac207d345db6342391be9dfb6a2741eb",
+      "license": "LGPL-3.0"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk4/overlay_front.png",
+      "destination": "assets\\gtnotgood\\textures\\blocks\\parallel\\hatch_4.png",
+      "sha256": "10f9c7c53a508f7a289cf46b68e5a1ff4d10f1a4b2869909d58fe119d8e9be6d",
+      "license": "LGPL-3.0"
+    },
+    {
+      "source": "data/gtl_enhancedcore/structures/large_furnace.pattern.gz",
+      "destination": "LargeFurnaceStructure.java",
+      "sha256": "2fbe85cdb4519f6aa4bf53dd1f5faf7ccf093357c29c819e955d28ac63feae44",
+      "license": "LGPL-3.0"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk1/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_1.png.mcmeta",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk2/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_2.png.mcmeta",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk3/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_3.png.mcmeta",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/parallel_hatch_mk4/overlay_front.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/parallel/hatch_4.png.mcmeta",
+      "sha256": "6f3c64ab035b3c7597fac32582d37eaae438d304eb31d178368c98e8d55e08e4",
+      "license": "LGPL-3.0"
+    }
+  ],
+  "modifications": "1.7.10 API adaptation. Original geometry reversed in Y/Z for StructureLib; native GTNH steel casing, steel blocks, Coke Oven Bricks (gt.blockcasings12:0), Firebricks (gt.blockcasings4:15), iron bars and lava. Furnace metal frames removed to expose the GTNH casing layer; hatch PNG and animation metadata bytes unchanged; no source commit established for installed archives."
+}

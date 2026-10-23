@@ -1,0 +1,541 @@
+{
+  "repository": "https://github.com/ABKQPO/GT-Not-Leisure",
+  "commit": "7b17611117a19b7cc2a921e7213b0578f1513504",
+  "license": "LGPL-3.0-only",
+  "files": [
+    {
+      "source": "src/main/java/com/science/gtnl/utils/EQuantumComputerCPUStatus.java",
+      "sourceSha256": "7bed8f168470c1019d09f1b91af7b5a2a614088686537e55abb85ed124cf0144",
+      "destination": "src/main/java/com/xyp/gtnotgood/utils/QuantumComputerCpuStatus.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/utils/crafting/VariantBudgets.java",
+      "sourceSha256": "28b6604ce09f469f7c6aaa88d2a5164af011b455a8bcb3a696fc8b3102eddfef",
+      "destination": "src/main/java/com/xyp/gtnotgood/utils/crafting/VariantBudgets.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/mixins/late/appliedEnergistics/quamtumComputer/AccessorOptimizePattern.java",
+      "sourceSha256": "3de64efa0c1756e6082a2b7f9ef00fc89fb4ab0fb130b7002a8e277150d1fd76",
+      "destination": "src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/quantum/AccessorOptimizePattern.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/mixins/late/appliedEnergistics/quamtumComputer/AccessorPacketCraftingTreeData.java",
+      "sourceSha256": "92d99a479a536a9c6462b7c31cb8968e916fa2088a5340219e6ecec480caae0b",
+      "destination": "src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/quantum/AccessorPacketCraftingTreeData.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/mixins/late/appliedEnergistics/quamtumComputer/MixinContainerCraftConfirm.java",
+      "sourceSha256": "954b5e1b974e83f0de7db8fbd372c686be8179ece99758baddb53a05b5d6b800",
+      "destination": "src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/quantum/MixinContainerCraftConfirm.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/mixins/late/appliedEnergistics/quamtumComputer/MixinContainerOptimizePatterns.java",
+      "sourceSha256": "eb630180b4a7893da29438150a1a564287302328e5595d197cc7e801851524f9",
+      "destination": "src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/quantum/MixinContainerOptimizePatterns.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/mixins/late/appliedEnergistics/quamtumComputer/MixinCraftingCPUClusterQuantumJob.java",
+      "sourceSha256": "5d0e669f75a85cef3483f6c5642ab2ca2fac7e2c86819095ca1af5f324a98c5c",
+      "destination": "src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/quantum/MixinCraftingCPUClusterQuantumJob.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/mixins/late/appliedEnergistics/quamtumComputer/MixinCraftingCPUStatus.java",
+      "sourceSha256": "a7d302af689f790da0bc04d23269314e085d6d9dc93147d86f8ea10df17ae9b0",
+      "destination": "src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/quantum/MixinCraftingCPUStatus.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/mixins/late/appliedEnergistics/quamtumComputer/MixinGuiCraftAmount.java",
+      "sourceSha256": "b2f911efd138e550422b7517e74335d9bb3c0ed999cb75ba94fb943c35fcf611",
+      "destination": "src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/quantum/MixinGuiCraftAmount.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/mixins/late/appliedEnergistics/quamtumComputer/MixinGuiCraftConfirm.java",
+      "sourceSha256": "31ce9c0b0c302923199108ce0de727315f0a429d34803d465707ef956cdda030",
+      "destination": "src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/quantum/MixinGuiCraftConfirm.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/mixins/late/appliedEnergistics/quamtumComputer/MixinGuiCraftingTree.java",
+      "sourceSha256": "be450f2a74bb78ae7707b51857f7e9f2f456ba83c55cf97932a436e3b8281288",
+      "destination": "src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/quantum/MixinGuiCraftingTree.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/packet/QuantumCraftConfirmPacket.java",
+      "sourceSha256": "96e19e2e5268df007110e548d68d724b1f933b97a5a6fb6dc8b01c878ea70238",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/network/quantum/QuantumCraftConfirmPacket.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/packet/QuantumCraftingAvailabilityPacket.java",
+      "sourceSha256": "36ae8862df4dfb60100e9884daae385fe5270d9aaef0e25d84deb8958ae6e803",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/network/quantum/QuantumCraftingAvailabilityPacket.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/packet/QuantumCraftingModePacket.java",
+      "sourceSha256": "25c18e8540d43daea84404ab0868b6b6b0d7667409bdc075e07b0086fa825644",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/network/quantum/QuantumCraftingModePacket.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/packet/RecursivePatternQueryPacket.java",
+      "sourceSha256": "dd16af9fb69ded6f305617b4962ba9e119472a264e1374c93864dd0dec036a6b",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/network/quantum/RecursivePatternQueryPacket.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/packet/RecursivePatternResultPacket.java",
+      "sourceSha256": "baf418717f5b08c4029e4ec93e33890dbbb61db54ae051bf51e5e58cf9d3cbc3",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/network/quantum/RecursivePatternResultPacket.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/cycle/RecursivePatternFinder.java",
+      "sourceSha256": "29f162c93df70d502cf3552becfae62a28d80f55a78ebbb405f9da1b6b097670",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/cycle/RecursivePatternFinder.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/ae2/IQuantumCraftAmountGui.java",
+      "sourceSha256": "5eccf68e702e50a3da9ee58047b7f894fc2b03c480b46c45d49edffa4fd1e2ba",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/ae2/IQuantumCraftAmountGui.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/ae2/IQuantumCraftConfirm.java",
+      "sourceSha256": "2de37c9a6f75ab5887b20808993bed3601833bc68d63db0b30b76bbb0ee92467",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/ae2/IQuantumCraftConfirm.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/ae2/QuantumCraftingCache.java",
+      "sourceSha256": "a216b491192a24f74bd4d47c4020270545bcccbdb19d16f540d1aa525cc0a1fa",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/ae2/QuantumCraftingCache.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/ae2/QuantumCraftingJob.java",
+      "sourceSha256": "48fad0cd1a9ee6bc7ecc4dded9bfadbd0dd9ee1d1888706f0cf17a624428d2c9",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/ae2/QuantumCraftingJob.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/ae2/QuantumCraftingMode.java",
+      "sourceSha256": "8914019575c4c03537409b1279e8208836801d26936aa371c2de9d99ca7d54b8",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/ae2/QuantumCraftingMode.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/ae2/QuantumCraftingTree.java",
+      "sourceSha256": "8c3d693ae018f589737b559c6c5e85f563bd82d8e7810fb5109ca94bdf93f286",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/ae2/QuantumCraftingTree.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/ae2/QuantumNetworkSnapshot.java",
+      "sourceSha256": "39e661660d6ee54dd9d6704333fff5b4a62372a42258d209975b961701838980",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/ae2/QuantumNetworkSnapshot.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/ae2/QuantumPattern.java",
+      "sourceSha256": "44509574f87006fdea3076b7542a2b1a0cebca4ea1dbd40c63fb7048f3768901",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/ae2/QuantumPattern.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/ae2/StackKey.java",
+      "sourceSha256": "c00262f0f6d79961d7665d6c6a362292928639d8dc67721b89dbc9e9d8b6f56c",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/ae2/StackKey.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/ae2/StackKeyFactory.java",
+      "sourceSha256": "33b499397bcefde0e8ee23c81bbf6aee2edd542ebce6c567dc039d9ab1d4905b",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/ae2/StackKeyFactory.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/core/AEConfig.java",
+      "sourceSha256": "53b74bde3c21f2885c351a76912ebf6f7b470465cd74ea8c2b1ef11818762f07",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/core/AEConfig.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/core/AELog.java",
+      "sourceSha256": "9102096f349ab66c456472dd6d3ed1f40371609fb59deb70798b20af7a80abae",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/core/AELog.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/CraftBranchFailure.java",
+      "sourceSha256": "58c35a2a5616e296d43ebacab1eaf346e5752b177293d69d686eecd0a0730ae9",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/CraftBranchFailure.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/CraftingCalculation.java",
+      "sourceSha256": "06d897a8de62fb5fc8541a8eb5c9d0c48584233c0320450b2a66d4f1065ad4ab",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/CraftingCalculation.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/CraftingCalculationFailure.java",
+      "sourceSha256": "1902412e515b21e56dd6a5e6dfe3edc79dca4d99ef1e36efcd26ae936c252dea",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/CraftingCalculationFailure.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/CraftingPerformanceLog.java",
+      "sourceSha256": "1e61d0f09b288671eddaf5907bb5d1db9659d7b578e18d66f7e1e0a486479100",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/CraftingPerformanceLog.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/CraftingPlan.java",
+      "sourceSha256": "0aba09b131d7f216446f90e62f84d6b91bdf79973c7aaf3e2d5770fbcd731c85",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/CraftingPlan.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/CraftingPlanCompactor.java",
+      "sourceSha256": "8246a314e21ca5dd1c0fbd90583d2645cbc30fcf121d6c29605da559e79ac9fc",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/CraftingPlanCompactor.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/CraftingTreeNode.java",
+      "sourceSha256": "f701fa18af71725cbf7c2e4665338b8bab23c944358dce4b2d95982a5c2f8a2b",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/CraftingTreeNode.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/CraftingTreeProcess.java",
+      "sourceSha256": "d0ab52f14c96d7a0dae0bb025d5aef924ccc0b219ca76f93ccb0fe0a08018832",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/CraftingTreeProcess.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/util/LongMath.java",
+      "sourceSha256": "8083304680e600829fa1f7330118485f40e98700edc890e1cbad4dd517e45814",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/util/LongMath.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/hooks/ticking/TickHandler.java",
+      "sourceSha256": "bc49d9bcaa1aba5eb193dccebd6157ab358abb10f6e4864d4c63784d1c03a457",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/hooks/ticking/TickHandler.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/execution/CraftingCpuHelper.java",
+      "sourceSha256": "1ee7053fe2a6a9c6c9b049da59a3e98139919408723bd994195a0a55031b763e",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/execution/CraftingCpuHelper.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/execution/InputTemplate.java",
+      "sourceSha256": "fcdca1191a85dd0633c061ee48b49aa846e2dcbd9c8dadaccb1aa3e5b67239f7",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/execution/InputTemplate.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/graph/CraftingGraph.java",
+      "sourceSha256": "650489421b0e1d927cef36dd417d7dcaae2b8d074f651149cc8b993df926f5bf",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/graph/CraftingGraph.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/graph/CraftingGraphEdge.java",
+      "sourceSha256": "7d61817a3f52774470a882ae3b89a470ca215c57a197b936378c2b82fd11be4b",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/graph/CraftingGraphEdge.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/graph/CraftingGraphNode.java",
+      "sourceSha256": "7e235ee77f81d44e2d0e571239599d70c84ca5c8c2c3f75ebed5e62db2d71887",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/graph/CraftingGraphNode.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/graph/CraftingGraphTopology.java",
+      "sourceSha256": "46f8d1d1bc7f106df048c205a7125db3aa82c415891b7fdd4e63f506a113a442",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/graph/CraftingGraphTopology.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/graph/DemandPropagation.java",
+      "sourceSha256": "9a81739a4d06c75875c5f7b93536533498c8535af0cf59282cae9b0ac8e73b3a",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/graph/DemandPropagation.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/graph/GraphBuilder.java",
+      "sourceSha256": "633efa2db8c863d072e9f1770ae1acb4e6cf25a0414d7c766167cdcda5b65a8b",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/graph/GraphBuilder.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/graph/GraphExecutor.java",
+      "sourceSha256": "8f3db00b341b62d7b0ab370cbda187a2c18cc2a2f3f0819ce307842e14b395aa",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/graph/GraphExecutor.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/graph/LocalPatternPlan.java",
+      "sourceSha256": "6ac4329d49bdf8636897ee8573f4c0d64a71ea9dc7464ac5cc4a977ccc0fc8bb",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/graph/LocalPatternPlan.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/graph/SccPlan.java",
+      "sourceSha256": "ab3acd9fb6fbf1bf7a726fb1f6cbce1d00a3d19ba2dcdc9fa8eb9cac2e96a4b8",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/graph/SccPlan.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/inv/ChildCraftingSimulationState.java",
+      "sourceSha256": "ceb5caf86e95f66e81bf7d2b45c07a3e9b8f4f5ee4f871345b473320d43a5a92",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/inv/ChildCraftingSimulationState.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/inv/CraftingSimulationDiff.java",
+      "sourceSha256": "f41fd9a71ebfa27de3970f54526475cb90a8967ca797fa11ae1cab76ce06f4d2",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/inv/CraftingSimulationDiff.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/inv/CraftingSimulationState.java",
+      "sourceSha256": "7b5917d1ccd489a8fa410415193dbaf02ba64f7d1a707b32f382ce5fcec71361",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/inv/CraftingSimulationState.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/inv/ICraftingInventory.java",
+      "sourceSha256": "cdb718dd802a312937c80da21d50fe8e7841969ed4cd4f280d38c813c8b2b843",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/inv/ICraftingInventory.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/inv/ICraftingSimulationState.java",
+      "sourceSha256": "524752ff873be0610224ffa9e56414e9d0129e9a43e6e3430acf180f711ef049",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/inv/ICraftingSimulationState.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/crafting/inv/NetworkCraftingSimulationState.java",
+      "sourceSha256": "b4c8d00c114e5a5db6f786bbbd70a22d89ae0b8eb6536f1fb1be4d3b73e085ac",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/crafting/inv/NetworkCraftingSimulationState.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/core/localization/PlayerMessages.java",
+      "sourceSha256": "58ed372083f5e808876651175fec8e4ce05f1ead913214fbd9eb3fe327b83c5a",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/core/localization/PlayerMessages.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/api/crafting/IPatternDetails.java",
+      "sourceSha256": "6a15b1769d788f3b15966c854bd74454b105127c77591edc2d7a0eb760bfcb73",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/api/crafting/IPatternDetails.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/api/stacks/AEKey.java",
+      "sourceSha256": "e49eb82ec4cbc2a6dde488dd466727d19950797f19dfde5e4ffbe96b51e2779a",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/api/stacks/AEKey.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/api/stacks/AEKey2LongMap.java",
+      "sourceSha256": "6e4a1a45ea5a3610d29c0737195dfd7071baf3c17edb579dc0328327782c06eb",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/api/stacks/AEKey2LongMap.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/api/stacks/AEKeyType.java",
+      "sourceSha256": "80fcafdd2c1503548d5088c511d38a82f32b4299a99e07f4e146e0f36e4c8c4b",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/api/stacks/AEKeyType.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/api/stacks/FuzzySearch.java",
+      "sourceSha256": "0ac48e5286a7e1d3884840afb06361418c277e2665c2971b1bc84a8d3f15d033",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/api/stacks/FuzzySearch.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/api/stacks/GenericStack.java",
+      "sourceSha256": "0b6010274d38266bd35556247308f81d581add350e65a8c7e33227bc7b3eeb79",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/api/stacks/GenericStack.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/api/stacks/KeyCounter.java",
+      "sourceSha256": "e55ae18783e92c00c8e40b056caa5bc9885c105643c8e80f5ce075903a76531f",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/api/stacks/KeyCounter.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/api/stacks/VariantCounter.java",
+      "sourceSha256": "129f367a8e231a882cacfc9b4d3ee2a99ccb06957b13063176efa10057517778",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/api/stacks/VariantCounter.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/api/networking/crafting/ICraftingService.java",
+      "sourceSha256": "b77fca85a346590f60ccbb622f627dbe4e4939ab0c404840b020853d044963dc",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/api/networking/crafting/ICraftingService.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/crafting/quantum/api/networking/storage/IStorageService.java",
+      "sourceSha256": "7a38d7b89ff58c21919d32acb033af97b209b494755563dbcf9ab1e7db7d7be6",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/crafting/quantum/api/networking/storage/IStorageService.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/client/quantum/CraftingCycleIndex.java",
+      "sourceSha256": "f0d322e7f98b1fe24addf989df85d555ab5dafe55b31f0fdddabfdbe90d64920",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/quantum/CraftingCycleIndex.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/client/quantum/CraftingCycleRings.java",
+      "sourceSha256": "434e3504238310d3dbc02cb1589d61724cdd3cf60085936c27f68f818ef511ff",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/quantum/CraftingCycleRings.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/client/quantum/CraftingRingView.java",
+      "sourceSha256": "25d6f7796c9deee96f60ec4a1fe1f43d20bad174ca1c45173969b0470b0e9e4a",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/quantum/CraftingRingView.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/client/quantum/CraftingTreeContraction.java",
+      "sourceSha256": "f646e53864954fa4ba10471e2ebd26a989433560d1db4e8281f31c4ab68e212e",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/quantum/CraftingTreeContraction.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/client/quantum/CraftingTreeRings.java",
+      "sourceSha256": "ea5290c994cba1dea2411925e78594dc811507e9b4196b9b430cca836054dc88",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/quantum/CraftingTreeRings.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/client/quantum/ICraftingCycleHost.java",
+      "sourceSha256": "62d8ecc44cadf52e7743fd3f51e7748089bba9c27855f18a94d8bbb7c66de6de",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/quantum/ICraftingCycleHost.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/client/quantum/ICraftingTreeCycles.java",
+      "sourceSha256": "b44b7e22102ad1668eea32464218e3aedd544e9d4769737d656072bd2670a898",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/quantum/ICraftingTreeCycles.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/client/quantum/QuantumCraftingClientConfig.java",
+      "sourceSha256": "7252c5469af8aa88965c527434c10cad24751e6835f655e171790dcd2d8a99a3",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/quantum/QuantumCraftingClientConfig.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/client/quantum/QuantumCraftingModeButton.java",
+      "sourceSha256": "11e635c56b420c2dfe6bc51aa94fb5358701ee9c6006c404ef88203fe8deb4a5",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/quantum/QuantumCraftingModeButton.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/client/quantum/RecursivePatternButton.java",
+      "sourceSha256": "3b555a07f19d6262bc19b3154d28290cc33d7f17f3835a5270d873151224320e",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/quantum/RecursivePatternButton.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/client/quantum/RecursivePatternReport.java",
+      "sourceSha256": "bf7716f593ec5d19e5784f4dfb8d6dbcf1f2ec8d0e2b032235d540ab1cc7b8ac",
+      "destination": "src/main/java/com/xyp/gtnotgood/client/quantum/RecursivePatternReport.java",
+      "modifications": "GTNG namespace and network/lifecycle/translation integration; Java 8/Jabel API adaptation."
+    },
+    {
+      "source": "src/main/resources/assets/sciencenotleisure/textures/gui/crafting_ring.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/gui/crafting_ring.png",
+      "sha256": "252b4771533b2a000623bcec947c8d5c72c718c1cdc767d3e5f50c09971cd631",
+      "modifications": "None; original pixels."
+    },
+    {
+      "source": "src/main/resources/assets/sciencenotleisure/textures/gui/quantum_crafting_mode.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/gui/quantum_crafting_mode.png",
+      "sha256": "e0c938a7ee1061f2ea604eb3353cfa2da78994c8ab6ae1bdf2ecc00dbe93702f",
+      "modifications": "None; original pixels."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/gui/modularui/QuantumComputerGui.java",
+      "sourceSha256": "02ee57655321d4ee68339b1327dc58bb9514795f3e7656c502466bb3d8c78772",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/gui/modularui/QuantumComputerGui.java",
+      "modifications": "Selective merge; preserve compact structures, local native-fluid batching, energy and CPU scheduling; add budgets/hooks or GUI empty-name hint."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/gui/modularui/AssemblerMatrixGui.java",
+      "sourceSha256": "90c5edddf58456d739f281e6ed572dfe88e51451acbbe2b70aacb37df9cb8dfe",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/gui/modularui/AssemblerMatrixGui.java",
+      "modifications": "Selective merge; preserve compact structures, local native-fluid batching, energy and CPU scheduling; add budgets/hooks or GUI empty-name hint."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/machine/multiblock/QuantumComputer.java",
+      "sourceSha256": "1802daf17f59db97ca76151f0ba241a4e91f324cd7766c8ea0f5bb418edf0b32",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/machines/multiblock/QuantumComputer.java",
+      "modifications": "Selective merge; preserve compact structures, local native-fluid batching, energy and CPU scheduling; add budgets/hooks or GUI empty-name hint."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/common/machine/multiblock/AssemblerMatrix.java",
+      "sourceSha256": "38e883973e8a9052a44c4205f2ceda521761ba531b31d1f2042923079b41453e",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/machines/multiblock/AssemblerMatrix.java",
+      "modifications": "Selective merge; preserve compact structures, local native-fluid batching, energy and CPU scheduling; add budgets/hooks or GUI empty-name hint."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/utils/ECraftingCPUCluster.java",
+      "sourceSha256": "23d973bcfebe6b875b2ec4b3fd9df30903580b946b24eae57619c46a70ff5ed8",
+      "destination": "src/main/java/com/xyp/gtnotgood/utils/ECraftingCPUCluster.java",
+      "modifications": "Selective merge; preserve compact structures, local native-fluid batching, energy and CPU scheduling; add budgets/hooks or GUI empty-name hint."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/utils/crafting/CraftingBatchPlanner.java",
+      "sourceSha256": "78dd53b099375bd90869e0b33b4c8e5d33b27d2cf228bd8a180029dc83880529",
+      "destination": "src/main/java/com/xyp/gtnotgood/utils/crafting/CraftingBatchPlanner.java",
+      "modifications": "Selective merge; preserve compact structures, local native-fluid batching, energy and CPU scheduling; add budgets/hooks or GUI empty-name hint."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/utils/crafting/CraftingBatchPlannerImpl.java",
+      "sourceSha256": "5140206fad2b9ca0b5cab3e2204b01fe852bfe3a9820e685cef44c6d9d467f25",
+      "destination": "src/main/java/com/xyp/gtnotgood/utils/crafting/CraftingBatchPlannerImpl.java",
+      "modifications": "Selective merge; preserve compact structures, local native-fluid batching, energy and CPU scheduling; add budgets/hooks or GUI empty-name hint."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/mixins/late/appliedEnergistics/MixinCraftingCPUCluster.java",
+      "sourceSha256": "96ba2e2236cad208a0cf40e0b79ba2019e21d755ef9bdc980fec052a3876db6f",
+      "destination": "src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/compact/MixinCraftingCPUCluster.java",
+      "modifications": "Selective merge; preserve compact structures, local native-fluid batching, energy and CPU scheduling; add budgets/hooks or GUI empty-name hint."
+    },
+    {
+      "source": "src/main/java/com/science/gtnl/mixins/late/appliedEnergistics/quamtumComputer/MixinCraftingGridCache.java",
+      "sourceSha256": "1935c2743f1a4466781b1f4d6f2915bdd57f066c69c1a2161e28c2cf676adc18",
+      "destination": "src/main/java/com/xyp/gtnotgood/mixins/late/appliedenergistics/compact/MixinCraftingGridCache.java",
+      "modifications": "Selective merge; preserve compact structures, local native-fluid batching, energy and CPU scheduling; add budgets/hooks or GUI empty-name hint."
+    }
+  ]
+}

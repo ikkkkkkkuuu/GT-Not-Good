@@ -1,8 +1,11 @@
 package com.xyp.gtnotgood.loader;
 
 import com.xyp.gtnotgood.client.nei.ChemicalPlantFrontend;
+import com.xyp.gtnotgood.client.nei.FragmentWorldCollectionFrontend;
 import com.xyp.gtnotgood.client.nei.HeartGenerationFrontend;
+import com.xyp.gtnotgood.client.nei.SuprachronalAssemblyFrontend;
 import com.xyp.gtnotgood.client.nei.TransmutationFrontend;
+import com.xyp.gtnotgood.common.recipe.FragmentWorldCollectionBackend;
 import com.xyp.gtnotgood.common.recipe.SeedConversionBackend;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
 
@@ -19,6 +22,33 @@ import gregtech.nei.formatter.HeatingCoilSpecialValueFormatter;
  * handlers all reference the same object instead of constructing duplicate maps.
  */
 public final class GTNGRecipeMaps {
+
+    public static final RecipeMap<FragmentWorldCollectionBackend> FragmentWorldCollectionRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.fragment_world_collection
+        // # Fragment World Collection
+        // # zh_CN 碎片世界采集
+        .of("recipe.gtnotgood.fragment_world_collection", FragmentWorldCollectionBackend::new).maxIO(3, 12, 1, 1)
+        .minInputs(1, 0).progressBar(GTUITextures.PROGRESSBAR_MACERATE).progressBarPos(62, 35).logoPos(62, 80)
+        .neiRecipeBackgroundSize(170, 108).frontend(FragmentWorldCollectionFrontend::new)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.FragmentWorldCollector.get(1)).setHeight(160)
+            .setMaxRecipesPerPage(1))
+        .build();
+
+    public static final RecipeMap<RecipeMapBackend> TentacleAssemblyRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.tentacle_assembly
+        // # Suprachronal Assembly Line
+        // # zh_CN 超时空装配线
+        .of("recipe.gtnotgood.tentacle_assembly").maxIO(16, 1, 4, 0).neiTransferRect(88, 8, 18, 72)
+        .neiTransferRect(124, 8, 18, 72).frontend(SuprachronalAssemblyFrontend::new)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.NyarlathotepsTentacle.get(1))).build();
+
+    public static final RecipeMap<RecipeMapBackend> TentacleCircuitAssemblyRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.tentacle_circuit_assembly
+        // # Suprachronal Circuit Assembly Line
+        // # zh_CN 超时空电路装配线
+        .of("recipe.gtnotgood.tentacle_circuit_assembly").maxIO(6, 1, 1, 0).minInputs(1, 1)
+        .progressBar(GTUITextures.PROGRESSBAR_CIRCUIT_ASSEMBLER)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.NyarlathotepsTentacle.get(1))).build();
 
     public static final RecipeMap<RecipeMapBackend> LightHunterRockBreakingRecipes = RecipeMapBuilder
         // #tr recipe.gtnotgood.light_hunter_rock_breaking

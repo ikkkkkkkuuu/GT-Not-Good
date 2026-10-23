@@ -53,6 +53,8 @@ reference/light-hunter-port/** -text
 reference/light-hunter-space-station-port/** -text
 reference/particle-collider-port/** -text
 reference/tst-modular-port/** -text
+reference/fragment-world-collector-port/** -text whitespace=cr-at-eol
+reference/nyarlathoteps-tentacle-port/** -text whitespace=cr-at-eol
 src/main/resources/META-INF/assembly-plant-port/** -text
 src/main/resources/META-INF/dimensional-focus-port/** -text
 src/main/resources/META-INF/field-extruder-port/** -text
@@ -62,13 +64,23 @@ src/main/resources/META-INF/light-hunter-port/** -text
 src/main/resources/META-INF/light-hunter-space-station-port/** -text
 src/main/resources/META-INF/particle-collider-port/** -text
 src/main/resources/META-INF/tst-modular-port/** -text
+src/main/resources/META-INF/crystal-resonator-port/** -text whitespace=cr-at-eol
+src/main/resources/META-INF/fragment-world-collector-port/** -text whitespace=cr-at-eol
+src/main/resources/META-INF/large-furnace-port/** -text whitespace=cr-at-eol
+src/main/resources/META-INF/nyarlathoteps-tentacle-port/** -text whitespace=cr-at-eol
+src/main/resources/META-INF/quantum-crafting-port/** -text whitespace=cr-at-eol
+src/main/resources/META-INF/satellite-mode-port/** -text whitespace=cr-at-eol
+src/main/resources/assets/gtnotgood/recipes/** -text whitespace=cr-at-eol
 src/main/resources/assets/gtnotgood/textures/blocks/assemblyplant/**/*.mcmeta -text
 src/main/resources/assets/gtnotgood/textures/blocks/dimensionalfocus/**/*.mcmeta -text
 src/main/resources/assets/gtnotgood/textures/blocks/fieldextruder/**/*.mcmeta -text
 src/main/resources/assets/gtnotgood/textures/blocks/heart/**/*.mcmeta -text
-src/main/resources/assets/gtnotgood/textures/blocks/kerrnewman/**/*.mcmeta -text
+src/main/resources/assets/gtnotgood/textures/blocks/kerrnewman/**/*.mcmeta -text whitespace=cr-at-eol
 src/main/resources/assets/gtnotgood/textures/blocks/lighthunter/**/*.mcmeta -text
 src/main/resources/assets/gtnotgood/textures/blocks/modular/**/*.mcmeta -text
 src/main/resources/assets/gtnotgood/textures/blocks/particlecollider/**/*.mcmeta -text
+src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/**/*.mcmeta -text whitespace=cr-at-eol
+src/main/resources/assets/gtnotgood/textures/blocks/parallel/**/*.mcmeta -text whitespace=cr-at-eol
+src/main/resources/assets/gtnotgood/textures/blocks/tentacle/**/*.mcmeta -text whitespace=cr-at-eol
 src/main/resources/assets/gtnotgood/textures/items/heart/**/*.mcmeta -text
 src/main/resources/assets/gtnotgood/textures/items/lighthunter/**/*.mcmeta -text

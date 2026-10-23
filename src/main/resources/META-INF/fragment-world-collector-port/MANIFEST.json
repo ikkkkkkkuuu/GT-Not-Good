@@ -1,0 +1,66 @@
+{
+  "source": "https://github.com/GNSW/GTLCore",
+  "sourceCommit": "6443c848264fb15c90cf50e031f146522616a8b9",
+  "license": "LGPL-3.0-only",
+  "localJar": "gtlcore-1.2.3.2-fix4.jar",
+  "localJarSha256": "c44b8212b8d3a210eabd36e3efaf7804e78e25fc44d45f7b0fb048453aaaf346",
+  "recipeSource": "src/main/java/org/gtlcore/gtlcore/data/recipe/processing/SkyTearsAndGregHeart.java",
+  "recipeSourceSha256": "584d6b2207f010cb312e2b49c1d7d83ac9fa6cea7aee1ac7ff6d225bde8ccc21",
+  "recipeDataSha256": "3f454ecee30f7ecef3a3e6999655a64ac8e708fae13c9e5ca508370c45e8ad40",
+  "recipeDataDestination": "assets/gtnotgood/recipes/fragment_world_collection.json",
+  "recipeDataModifications": "Original six tables extracted to JSON; native material/dimension mappings are applied in Java",
+  "adaptedRecipeDestination": "src/main/java/com/xyp/gtnotgood/common/recipe/machine/FragmentWorldCollectorRecipes.java",
+  "adaptations": [
+    "Minecraft 1.7.10 / GTNH native APIs",
+    "Non-consumable dimension display blocks",
+    "Reactor to Twilight Forest; Glacio to Triton (user-approved)",
+    "Native material/rock mappings and optional output availability",
+    "Fluid circuits renumbered within GTNH 0-24; drill disambiguates collection mode",
+    "Infinity drill replaces full-output grinding casing; long-checked int-max tank",
+    "GTL-exclusive crystals and downstream chains excluded; see PORT.md"
+  ],
+  "assets": [
+    {
+      "source": "assets/gtceu/textures/block/machines/fragment_world_collection_machine/overlay_back.png",
+      "destination": "assets/gtnotgood/textures/blocks/basicmachines/fragment_collector/overlay_back.png",
+      "sha256": "874fe1c95977ae1e81ed1de689818c444398f06e8a4099e03c9ca2bf361fdf9c",
+      "modifications": "none"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/fragment_world_collection_machine/overlay_bottom.png",
+      "destination": "assets/gtnotgood/textures/blocks/basicmachines/fragment_collector/overlay_bottom.png",
+      "sha256": "b8cd209031e1e23bdb91d0a7ed46bf958bd2723b865012ce7d1337b76c4ef226",
+      "modifications": "none"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/fragment_world_collection_machine/overlay_front.png",
+      "destination": "assets/gtnotgood/textures/blocks/basicmachines/fragment_collector/overlay_front.png",
+      "sha256": "487d864aafc39f0e2e64552679d7d0473894448852500f3814cf53f47320db84",
+      "modifications": "none"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/fragment_world_collection_machine/overlay_front_active.png",
+      "destination": "assets/gtnotgood/textures/blocks/basicmachines/fragment_collector/overlay_front_active.png",
+      "sha256": "c9fa9e581d6db48c607e260abeeae25a2207de87af4bcaba5606b60672116480",
+      "modifications": "none"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/fragment_world_collection_machine/overlay_front_active.png.mcmeta",
+      "destination": "assets/gtnotgood/textures/blocks/basicmachines/fragment_collector/overlay_front_active.png.mcmeta",
+      "sha256": "966ddb55dae4ac5960610f1732f0ac36e4952ac95c34f5798413c9cdb60de7f3",
+      "modifications": "none"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/fragment_world_collection_machine/overlay_side.png",
+      "destination": "assets/gtnotgood/textures/blocks/basicmachines/fragment_collector/overlay_side.png",
+      "sha256": "874fe1c95977ae1e81ed1de689818c444398f06e8a4099e03c9ca2bf361fdf9c",
+      "modifications": "none"
+    },
+    {
+      "source": "assets/gtceu/textures/block/machines/fragment_world_collection_machine/overlay_top.png",
+      "destination": "assets/gtnotgood/textures/blocks/basicmachines/fragment_collector/overlay_top.png",
+      "sha256": "b8cd209031e1e23bdb91d0a7ed46bf958bd2723b865012ce7d1337b76c4ef226",
+      "modifications": "none"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "source_repository": "https://github.com/GregTechCEu/GregTech-Modern",
+  "source_commit": "e3844ba943e2388c0856617ae4f8b473a0ae1b64",
+  "license": "LGPL-3.0",
+  "license_file": "LICENSE-GregTech-Modern.txt",
+  "assets": [
+    {
+      "source_path": "src/main/resources/assets/gtceu/textures/item/lv_robot_arm.png",
+      "source_blob": "1f393766036a657c6d0b7299ec2962be41f7a016",
+      "source_url": "https://github.com/GregTechCEu/GregTech-Modern/blob/e3844ba943e2388c0856617ae4f8b473a0ae1b64/src/main/resources/assets/gtceu/textures/item/lv_robot_arm.png",
+      "destination": "assets/gtnotgood/textures/gui/overlay_button/machine_mode.png",
+      "sha256": "9426bca7fc0f4b57e007a26ccefa766f42ee76be314e5f114a49615088d9b293",
+      "modifications": "None; copied byte-for-byte. Scaled only when rendered as a GUI overlay."
+    }
+  ]
+}

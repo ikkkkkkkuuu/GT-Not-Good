@@ -14,39 +14,45 @@ import static gregtech.api.util.GTStructureUtility.buildHatchAdder;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import com.cleanroommc.modularui.drawable.UITexture;
 import com.gtnewhorizon.structurelib.alignment.constructable.ISurvivalConstructable;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
+import com.xyp.gtnotgood.client.render.ElectromagneticRotorRenderer;
 import com.xyp.gtnotgood.common.blocks.assemblyplant.AssemblyPlantCasing;
 import com.xyp.gtnotgood.common.blocks.dimensionalfocus.DimensionalFocusCasing;
 import com.xyp.gtnotgood.common.blocks.particlecollider.ParticleColliderCasing;
+import com.xyp.gtnotgood.common.gui.modularui.multiblock.SuperconductingElectromagneticFactoryGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiModeMachineBase;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.SuperconductingElectromagneticStructure;
 import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.enums.Textures;
 import gregtech.api.interfaces.IIconContainer;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
-import gregtech.api.modularui2.GTGuiTextures;
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.render.TextureFactory;
 import gregtech.api.structure.error.StructureError;
 import gregtech.api.util.GTStructureUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
+import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
+import gregtech.common.render.IMTERenderer;
+import io.netty.buffer.ByteBuf;
 
 @IMetaTileEntity.SkipGenerateName
 @IMetaTileEntity.SkipGenerateDescription
-public final class SuperconductingElectromagneticFactory
-    extends GTNGMultiModeMachineBase<SuperconductingElectromagneticFactory> implements ISurvivalConstructable {
+public final class SuperconductingElectromagneticFactory extends
+    GTNGMultiModeMachineBase<SuperconductingElectromagneticFactory> implements ISurvivalConstructable, IMTERenderer {
 
     private static final IIconContainer FRONT = Textures.BlockIcons.custom(ModList.GTNotGood.getResourceLocation(),
         "fieldextruder/controller_front");
@@ -58,6 +64,7 @@ public final class SuperconductingElectromagneticFactory
         .customOptional(ModList.GTNotGood.getResourceLocation(), "fieldextruder/controller_front_active_glow");
 
     private IStructureDefinition<SuperconductingElectromagneticFactory> definition;
+    private boolean rotorRunning;
 
     public SuperconductingElectromagneticFactory(int id, String name, String regionalName) {
         super(id, name, regionalName);
@@ -147,6 +154,80 @@ public final class SuperconductingElectromagneticFactory
     }
 
     @Override
+    public void onPostTick(IGregTechTileEntity tile, long tick) {
+        super.onPostTick(tile, tick);
+        if (tile.isServerSide()) updateRotor(tile);
+        else ElectromagneticRotorRenderer.update(this);
+    }
+
+    @Override
+    public void onStructureCheckFinished(IGregTechTileEntity tile) {
+        super.onStructureCheckFinished(tile);
+        if (tile.isServerSide()) updateRotor(tile);
+    }
+
+    private void updateRotor(IGregTechTileEntity tile) {
+        boolean running = mMachine && tile.isActive() && mMaxProgresstime > 0;
+        if (rotorRunning == running) return;
+        rotorRunning = running;
+        tile.issueTileUpdate();
+    }
+
+    public boolean isRotorRunning() {
+        return rotorRunning;
+    }
+
+    @Override
+    public void writeToStream(ByteBuf buffer) {
+        super.writeToStream(buffer);
+        buffer.writeBoolean(rotorRunning);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void readFromStream(ByteBuf buffer) {
+        super.readFromStream(buffer);
+        rotorRunning = buffer.readBoolean();
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox(int x, int y, int z) {
+        int[] offset = new int[3];
+        getExtendedFacing().getWorldOffset(new int[] { 0, -10, 7 }, offset);
+        return AxisAlignedBB.getBoundingBox(x + offset[0] - 10, y + offset[1] - 10, z + offset[2] - 10,
+            x + offset[0] + 11, y + offset[1] + 11, z + offset[2] + 11);
+    }
+
+    @Override
+    public double getMaxRenderDistanceSquared() {
+        return 256D * 256D;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderTESR(double x, double y, double z, float partialTicks) {
+        ElectromagneticRotorRenderer.render(this, x, y, z, partialTicks);
+    }
+
+    @Override
+    public void onRemoval() {
+        clearRotor();
+        super.onRemoval();
+    }
+
+    @Override
+    public void onUnload() {
+        clearRotor();
+        super.onUnload();
+    }
+
+    private void clearRotor() {
+        rotorRunning = false;
+        IGregTechTileEntity tile = getBaseMetaTileEntity();
+        if (tile != null && tile.isClientSide()) ElectromagneticRotorRenderer.remove(this);
+    }
+
+    @Override
     protected RecipeMap<?> getRecipeMap(int mode) {
         return switch (mode) {
             case 1 -> RecipeMaps.electroMagneticSeparatorRecipes;
@@ -182,10 +263,8 @@ public final class SuperconductingElectromagneticFactory
     }
 
     @Override
-    protected UITexture[] getMachineModeIcons() {
-        return new UITexture[] { GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_POLARIZER,
-            GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_SEPARATOR, GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_CHEMBATH,
-            GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_ACCELERATOR, GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_ARC };
+    protected MTEMultiBlockBaseGui<?> getGui() {
+        return new SuperconductingElectromagneticFactoryGui(this);
     }
 
     @Override

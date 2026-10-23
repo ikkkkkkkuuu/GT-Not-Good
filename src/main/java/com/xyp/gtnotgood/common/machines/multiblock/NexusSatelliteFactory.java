@@ -18,33 +18,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.drawable.UITexture;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.sync.DynamicLinkedSyncHandler;
-import com.cleanroommc.modularui.value.sync.GenericListSyncHandler;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
-import com.cleanroommc.modularui.value.sync.LongSyncValue;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.DynamicSyncedWidget;
-import com.cleanroommc.modularui.widgets.ListWidget;
-import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.gtnewhorizon.gtnhlib.util.numberformatting.NumberFormatUtil;
 import com.gtnewhorizon.structurelib.alignment.IAlignmentLimits;
 import com.gtnewhorizon.structurelib.alignment.constructable.ISurvivalConstructable;
@@ -52,9 +38,10 @@ import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.xyp.gtnotgood.common.blocks.lighthunter.LightHunterCasing;
-import com.xyp.gtnotgood.common.gui.modularui.multiblock.base.GTNGModernMultiBlockBaseGui;
+import com.xyp.gtnotgood.common.gui.modularui.multiblock.NexusSatelliteFactoryGui;
 import com.xyp.gtnotgood.common.machines.hatch.CrossRecipeWirelessEnergyHatch;
 import com.xyp.gtnotgood.common.machines.hatch.lighthunter.SatelliteThreadModifierHatch;
+import com.xyp.gtnotgood.common.machines.hatch.lighthunter.ThreadModifierHost;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiBlockBase;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.NexusSatelliteFactoryStructure;
 import com.xyp.gtnotgood.common.machines.processing.LightHunterBatchProcessingLogic;
@@ -76,7 +63,6 @@ import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.logic.ProcessingLogic;
 import gregtech.api.metatileentity.implementations.MTEBasicMachine;
-import gregtech.api.modularui2.GTGuiTextures;
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.recipe.check.CheckRecipeResult;
@@ -92,11 +78,13 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
 import gregtech.api.util.shutdown.ShutDownReason;
 import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 
 @IMetaTileEntity.SkipGenerateName
 @IMetaTileEntity.SkipGenerateDescription
 public final class NexusSatelliteFactory extends GTNGMultiBlockBase<NexusSatelliteFactory>
-    implements ISurvivalConstructable {
+    implements ThreadModifierHost, ISurvivalConstructable {
 
     private static final IIconContainer FRONT = Textures.BlockIcons.custom(ModList.GTNotGood.getResourceLocation(),
         "lighthunter/module_front");
@@ -207,6 +195,11 @@ public final class NexusSatelliteFactory extends GTNGMultiBlockBase<NexusSatelli
         threadModifier = hatch;
         hatch.updateTexture(texture);
         return true;
+    }
+
+    @Override
+    public boolean isThreadStructureFormed() {
+        return mMachine;
     }
 
     public boolean hasThreadModifier(SatelliteThreadModifierHatch hatch) {
@@ -514,9 +507,7 @@ public final class NexusSatelliteFactory extends GTNGMultiBlockBase<NexusSatelli
 
     @Override
     protected MTEMultiBlockBaseGui<?> getGui() {
-        UITexture[] icons = new UITexture[getFactoryRecipeMaps().length];
-        Arrays.fill(icons, GTGuiTextures.OVERLAY_BUTTON_ASSEMBLER_MODE);
-        return new SatelliteGui(this).withMachineModeIcons(icons);
+        return new NexusSatelliteFactoryGui(this);
     }
 
     @Override
@@ -545,24 +536,75 @@ public final class NexusSatelliteFactory extends GTNGMultiBlockBase<NexusSatelli
     }
 
     @Override
-    public String[] getInfoData() {
-        List<String> lines = new ArrayList<>(Arrays.asList(super.getInfoData()));
+    public void getWailaNBTData(EntityPlayerMP player, TileEntity tile, NBTTagCompound tag, World world, int x, int y,
+        int z) {
+        super.getWailaNBTData(player, tile, tag, world, x, y, z);
+        int totalThreads = LightHunterRecipeRules.totalThreads(getAdditionalThreads());
+        tag.setInteger("satelliteThreads", totalThreads);
+        tag.setInteger("satelliteUsedThreads", getUsedThreads(totalThreads));
+        tag.setInteger("satelliteMinimumDuration", minimumDuration);
+        tag.setInteger("satelliteRecipes", batchOutputs == null ? 0 : batchRecipeCount);
+        tag.setLong("satelliteParallels", batchOutputs == null ? 0 : batchParallels);
+        tag.setBoolean("satelliteOutputReady", outputReady);
+    }
+
+    private int getUsedThreads(int totalThreads) {
+        if (
+            batchOutputs == null || outputReady
+                || batchParallels <= 0
+                || mMaxProgresstime <= 0
+                || getBaseMetaTileEntity() == null
+                || !getBaseMetaTileEntity().isActive()
+        ) return 0;
+        // Threads represent shared parallel capacity; unrestricted batches can exceed that capacity.
+        long usedThreads = 1 + (batchParallels - 1) / Integer.MAX_VALUE;
+        return (int) Math.min(totalThreads, usedThreads);
+    }
+
+    @Override
+    public void getWailaBody(ItemStack stack, List<String> lines, IWailaDataAccessor accessor,
+        IWailaConfigHandler config) {
+        super.getWailaBody(stack, lines, accessor, config);
+        NBTTagCompound tag = accessor.getNBTData();
+        if (!tag.hasKey("satelliteThreads")) return;
         // #tr gtng.light_hunter.satellite.batch
         // # Batch: %s recipes, %s parallels
         // # zh_CN 当前批次：%s 种配方，%s 并行
-        lines.add(StatCollector.translateToLocalFormatted("gtng.light_hunter.satellite.batch", batchRecipeCount,
-            NumberFormatUtil.formatNumber(batchParallels)));
+        lines.add(StatCollector.translateToLocalFormatted("gtng.light_hunter.satellite.batch",
+            tag.getInteger("satelliteRecipes"), NumberFormatUtil.formatNumber(tag.getLong("satelliteParallels"))));
         // #tr gtng.light_hunter.satellite.threads
-        // # Threads: %s
-        // # zh_CN 线程总数：%s
+        // # Threads (used / total): %s / %s
+        // # zh_CN 线程（已用/总数）：%s / %s
         lines.add(StatCollector.translateToLocalFormatted("gtng.light_hunter.satellite.threads",
-            LightHunterRecipeRules.totalThreads(getAdditionalThreads())));
-        return lines.toArray(new String[0]);
+            tag.getInteger("satelliteUsedThreads"), tag.getInteger("satelliteThreads")));
+        // #tr gtng.light_hunter.satellite.minimum_duration_value
+        // # Minimum batch duration: %s ticks
+        // # zh_CN 最短批次时间：%s tick
+        lines.add(StatCollector.translateToLocalFormatted("gtng.light_hunter.satellite.minimum_duration_value",
+            NumberFormatUtil.formatNumber(tag.getInteger("satelliteMinimumDuration"))));
+        if (tag.getBoolean("satelliteOutputReady"))
+            lines.add(StatCollector.translateToLocal("gtng.modular.gui.waiting_output"));
     }
 
     @Override
     protected MultiblockTooltipBuilder createTooltip() {
         MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
+        // #tr gtng.light_hunter.satellite.recipe_pools
+        // # Available recipe pools:
+        // # zh_CN 可用配方池：
+        tt.addInfo(StatCollector.translateToLocal("gtng.light_hunter.satellite.recipe_pools"));
+        for (RecipeMap<?> recipeMap : getFactoryRecipeMaps()) {
+            tt.addInfo("  " + EnumChatFormatting.YELLOW
+                + StatCollector.translateToLocal(recipeMap.unlocalizedName)
+                + EnumChatFormatting.RESET);
+        }
+        if (factoryType == 3) {
+            // #tr gtng.light_hunter.satellite.precise_tier
+            // # Supports Precise Assembler recipes up to Mk-4
+            // # zh_CN 精密组装配方最高支持 Mk-4
+            tt.addInfo(StatCollector.translateToLocal("gtng.light_hunter.satellite.precise_tier"));
+        }
+        tt.addSeparator();
         // #tr gtng.light_hunter.satellite.purpose
         // # Combines matching recipes in the selected mode into one batch
         // # zh_CN 将所选模式下匹配的多种配方合为一批处理
@@ -584,8 +626,8 @@ public final class NexusSatelliteFactory extends GTNGMultiBlockBase<NexusSatelli
         // # zh_CN 保留配方总能耗；按总输入功率和最短批次时间计算耗时
         tt.addInfo(StatCollector.translateToLocal("gtng.light_hunter.satellite.energy"));
         // #tr gtng.light_hunter.satellite.controls
-        // # Screwdriver: switch mode; GUI: set minimum duration (default 20 ticks)
-        // # zh_CN 螺丝刀切换模式；GUI 设置最短批次时间（默认 20 tick）
+        // # Screwdriver: cycle modes; parallel settings: minimum batch duration (default 20 ticks)
+        // # zh_CN 螺丝刀轮换模式；并行设置中调整最短批次时间（默认 20 tick）
         tt.addInfo(StatCollector.translateToLocal("gtng.light_hunter.satellite.controls"));
         tt.beginStructureBlock(5, 21, 13, false);
         // #tr gtng.light_hunter.satellite.hatches
@@ -595,55 +637,5 @@ public final class NexusSatelliteFactory extends GTNGMultiBlockBase<NexusSatelli
         return tt.addInputBus(positions, 1).addOutputBus(positions, 1).addInputHatch(positions, 1)
             .addOutputHatch(positions, 1).addEnergyHatch(positions, 1).addMaintenanceHatch(positions, 1)
             .toolTipFinisher();
-    }
-
-    private static final class SatelliteGui extends GTNGModernMultiBlockBaseGui<NexusSatelliteFactory> {
-
-        private SatelliteGui(NexusSatelliteFactory machine) {
-            super(machine);
-        }
-
-        @Override
-        protected ListWidget<IWidget, ?> createTerminalTextWidget(PanelSyncManager sync, ModularPanel parent) {
-            ListWidget<IWidget, ?> terminal = super.createTerminalTextWidget(sync, parent);
-            IntSyncValue recipes = new IntSyncValue(() -> multiblock.batchRecipeCount);
-            LongSyncValue parallels = new LongSyncValue(() -> multiblock.batchParallels);
-            sync.syncValue("lightHunterRecipes", recipes);
-            sync.syncValue("lightHunterParallels", parallels);
-            IntSyncValue threads = new IntSyncValue(
-                () -> LightHunterRecipeRules.totalThreads(multiblock.getAdditionalThreads()));
-            sync.syncValue("lightHunterThreads", threads);
-            terminal
-                .child(IKey.dynamic(() -> StatCollector.translateToLocalFormatted("gtng.light_hunter.satellite.threads",
-                    threads.getValue())).color(Color.WHITE.main).asWidget().fullWidth());
-            terminal.child(IKey
-                .dynamic(() -> StatCollector.translateToLocalFormatted("gtng.light_hunter.satellite.batch",
-                    recipes.getValue(), NumberFormatUtil.formatNumber(parallels.getValue())))
-                .color(Color.WHITE.main).asWidget().fullWidth());
-            IntSyncValue duration = new IntSyncValue(multiblock::getMinimumDuration, multiblock::setMinimumDuration)
-                .allowC2S();
-            sync.syncValue("lightHunterMinimumDuration", duration);
-            // #tr gtng.light_hunter.satellite.minimum_duration
-            // # Minimum batch duration (ticks)
-            // # zh_CN 最短批次时间（tick）
-            terminal.child(IKey.lang("gtng.light_hunter.satellite.minimum_duration").color(Color.WHITE.main).asWidget()
-                .height(12));
-            terminal.child(new TextFieldWidget().value(duration).numbersInt(1, Integer.MAX_VALUE)
-                .background(GTGuiTextures.BACKGROUND_TEXT_FIELD).size(110, 18));
-            GenericListSyncHandler<NBTTagCompound> outputs = new GenericListSyncHandler<>(
-                multiblock::getBatchOutputRows, ignored -> {}, PacketBuffer::readNBTTagCompoundFromBuffer,
-                PacketBuffer::writeNBTTagCompoundToBuffer, Objects::equals, value -> (NBTTagCompound) value.copy());
-            sync.syncValue("lightHunterOutputs", outputs);
-            DynamicLinkedSyncHandler<?> display = new DynamicLinkedSyncHandler<>(outputs)
-                .widgetProvider((manager, value) -> {
-                    Flow column = Flow.column().fullWidth().coverChildrenHeight(0)
-                        .crossAxisAlignment(Alignment.CrossAxis.START);
-                    for (NBTTagCompound row : value.getValue()) column.child(createModuleOutputRow(row));
-                    return column;
-                });
-            sync.syncValue("lightHunterOutputDisplay", display);
-            terminal.child(new DynamicSyncedWidget<>().syncHandler(display).widthRel(0.85f).coverChildrenHeight(0));
-            return terminal;
-        }
     }
 }

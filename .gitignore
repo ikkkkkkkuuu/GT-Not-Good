@@ -1,6 +1,7 @@
 .gradle
 __pycache__/
 *.pyc
+*.hprof
 .settings
 /.idea/
 /.vscode/

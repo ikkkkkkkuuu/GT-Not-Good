@@ -1,0 +1,82 @@
+def qaHome = new File(gradle.startParameter.projectProperties.get('crystalResonatorQaRoot')
+    ?: new File(gradle.startParameter.currentDir, 'build/crystal-resonator-isolated').path)
+
+gradle.settingsEvaluated { settings ->
+    settings.buildCache.local.directory = new File(qaHome, 'build-cache')
+}
+
+gradle.beforeProject { project ->
+    if (project == project.rootProject) {
+        project.layout.buildDirectory.set(new File(qaHome, 'build'))
+    }
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    if (root.hasProperty('crystalResonatorSnapshot')) {
+        root.sourceSets.main.java.setSrcDirs([new File(qaHome, 'snapshot/src/main/java')])
+        // Use the already generated translations without rewriting another ongoing task's language output.
+        root.tasks.named('preprocessLangInJavaFiles').configure { enabled = false }
+    }
+    def output = root.layout.buildDirectory.dir('crystal-resonator-qa').get().asFile
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Prepare the existing factory QA Et Futurum runtime first')
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(new File(output, 'test-classes'))
+        setSource(root.files('scripts/qa/EndCrystalResonatorClientChecks.java'))
+    }
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/common/machines/basic/EndCrystalResonator.java',
+                'src/main/java/com/xyp/gtnotgood/common/gui/BlockIcons.java',
+                'src/main/java/com/xyp/gtnotgood/common/recipe/machine/EndCrystalResonatorRecipes.java',
+                'src/main/java/com/xyp/gtnotgood/loader/EndCrystalResonatorLoader.java',
+                'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
+                'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/ModsItemlist.java',
+                'scripts/qa/EndCrystalResonatorClientChecks.java'
+        }
+    }
+    def runtimeJar = root.tasks.register('jarCrystalResonatorQA', Jar) {
+        dependsOn root.tasks.named('classes')
+        manifest.from root.tasks.named('jar').get().manifest
+        from root.sourceSets.main.output
+        archiveFileName = 'crystal-resonator-qa-main.jar'
+        destinationDirectory = output
+    }
+    root.tasks.named('runClient').configure {
+        dependsOn runtimeJar, root.tasks.named('testClasses')
+        classpath -= root.sourceSets.main.output
+        classpath -= root.files(root.tasks.named('jar').flatMap { it.archiveFile })
+        classpath += root.files(runtimeJar.flatMap { it.archiveFile }, new File(output, 'test-classes'))
+        workingDir new File(output, 'run')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.crystalresonator.qa', 'true'
+        systemProperty 'gtng.crystalresonator.qa.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in real End Crystal Resonator client checks')
+        doFirst {
+            workingDir.mkdirs()
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            java.nio.file.Files.deleteIfExists(new File(output, 'result.txt').toPath())
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            def result = new File(output, 'result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS') {
+                throw new GradleException('Crystal resonator QA failed; inspect CRYSTAL_RESONATOR_QA in the client log')
+            }
+        }
+    }
+}

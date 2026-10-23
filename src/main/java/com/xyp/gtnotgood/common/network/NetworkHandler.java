@@ -5,6 +5,11 @@ import com.xyp.gtnotgood.commandtree.network.CommandTreePacket;
 import com.xyp.gtnotgood.common.network.mebridge.MessageMEWirelessNodeAction;
 import com.xyp.gtnotgood.common.network.mebridge.MessageMEWirelessVisualization;
 import com.xyp.gtnotgood.common.network.packaged.MessagePackagedConnector;
+import com.xyp.gtnotgood.common.network.quantum.QuantumCraftConfirmPacket;
+import com.xyp.gtnotgood.common.network.quantum.QuantumCraftingAvailabilityPacket;
+import com.xyp.gtnotgood.common.network.quantum.QuantumCraftingModePacket;
+import com.xyp.gtnotgood.common.network.quantum.RecursivePatternQueryPacket;
+import com.xyp.gtnotgood.common.network.quantum.RecursivePatternResultPacket;
 import com.xyp.gtnotgood.common.network.wirelessfrequency.OpenWirelessCardPacket;
 import com.xyp.gtnotgood.common.network.wirelessfrequency.ToggleWirelessCardPacket;
 import com.xyp.gtnotgood.common.network.wirelessfrequency.WirelessHighlightPacket;
@@ -46,7 +51,15 @@ public final class NetworkHandler {
         registerMessage(WirelessHighlightPacket.class, WirelessHighlightPacket.Handler.class, id++, Side.CLIENT);
         registerMessage(WirelessVisualisationPacket.class, WirelessVisualisationPacket.Handler.class, id++,
             Side.CLIENT);
-        registerMessage(ResizeToolBelt.class, ResizeToolBelt.Handler.class, id, Side.SERVER);
+        registerMessage(ResizeToolBelt.class, ResizeToolBelt.Handler.class, id++, Side.SERVER);
+        registerMessage(QuantumCraftConfirmPacket.class, QuantumCraftConfirmPacket.Handler.class, id++, Side.CLIENT);
+        registerMessage(QuantumCraftingAvailabilityPacket.class, QuantumCraftingAvailabilityPacket.Handler.class, id++,
+            Side.CLIENT);
+        registerMessage(QuantumCraftingModePacket.class, QuantumCraftingModePacket.Handler.class, id++, Side.SERVER);
+        registerMessage(RecursivePatternQueryPacket.class, RecursivePatternQueryPacket.Handler.class, id++,
+            Side.SERVER);
+        registerMessage(RecursivePatternResultPacket.class, RecursivePatternResultPacket.Handler.class, id++,
+            Side.CLIENT);
     }
 
     private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<REQ> messageClass,

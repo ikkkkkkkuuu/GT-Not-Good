@@ -6,6 +6,7 @@ import net.minecraft.util.StatCollector;
 
 import com.xyp.gtnotgood.common.machines.basic.BasicIndustrialApiary;
 import com.xyp.gtnotgood.common.machines.basic.EssentiaDisassembler;
+import com.xyp.gtnotgood.common.machines.basic.FragmentWorldCollector;
 import com.xyp.gtnotgood.common.machines.basic.SeedConverter;
 import com.xyp.gtnotgood.common.machines.basic.SteamAssembler;
 import com.xyp.gtnotgood.common.machines.basic.SteamCentrifuge;
@@ -49,6 +50,7 @@ import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.FieldExtruder
 import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.HeartOfTheUniverse;
 import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.KerrNewmanHomogenizer;
 import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.MageAssembler;
+import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.NyarlathotepsTentacle;
 import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.SuperParticleCollider;
 import com.xyp.gtnotgood.common.machines.multiblock.modularmachine.SuperconductingElectromagneticFactory;
 import com.xyp.gtnotgood.utils.enums.GTNGItemList;
@@ -171,6 +173,10 @@ public class MachineLoader {
         addItemTooltip(GTNGItemList.SuperParticleCollider.get(1), AnimatedText.GT_NOT_GOOD);
         GTNGItemList.MageAssembler.set(new MageAssembler(GTNGMachineID.MageAssembler.id, "MageAssembler", ""));
         addItemTooltip(GTNGItemList.MageAssembler.get(1), AnimatedText.GT_NOT_GOOD);
+        ParallelMachineLoader.register();
+        GTNGItemList.NyarlathotepsTentacle
+            .set(new NyarlathotepsTentacle(GTNGMachineID.NyarlathotepsTentacle.id, "NyarlathotepsTentacle", ""));
+        addItemTooltip(GTNGItemList.NyarlathotepsTentacle.get(1), AnimatedText.GT_NOT_GOOD);
         GTNGItemList.SuperconductingElectromagneticFactory.set(new SuperconductingElectromagneticFactory(
             GTNGMachineID.SuperconductingElectromagneticFactory.id, "SuperconductingElectromagneticFactory", ""));
         addItemTooltip(GTNGItemList.SuperconductingElectromagneticFactory.get(1), AnimatedText.GT_NOT_GOOD);
@@ -349,6 +355,13 @@ public class MachineLoader {
             StatCollector.translateToLocal("gtng.seedconverter.name")));
         addItemTooltip(GTNGItemList.SeedConverter.get(1), AnimatedText.GT_NOT_GOOD);
 
+        // #tr gtng.fragment_world_collector.name
+        // # Fragment World Collector
+        // # zh_CN 碎片世界采集器
+        GTNGItemList.FragmentWorldCollector.set(new FragmentWorldCollector(GTNGMachineID.FragmentWorldCollector.id,
+            "FragmentWorldCollector", StatCollector.translateToLocal("gtng.fragment_world_collector.name")));
+        addItemTooltip(GTNGItemList.FragmentWorldCollector.get(1), AnimatedText.GT_NOT_GOOD);
+
         // #tr gtng.pump.name
         // # High-Speed Universal Fluid Pump (LV)
         // # zh_CN 高速通用流体泵 (LV)
@@ -411,6 +424,7 @@ public class MachineLoader {
     public static void registry() {
         registerMachines();
         registerbasicMachine();
+        EndCrystalResonatorLoader.register();
         WirelessHatchLoader.register();
         ModularHatchLoader.register();
     }

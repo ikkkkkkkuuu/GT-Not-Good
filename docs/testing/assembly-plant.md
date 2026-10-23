@@ -46,11 +46,27 @@
 生产控制器沿用现有 `CleanroomReference` 配置和项目默认豁免；夹具临时关闭豁免以验证实际门槛，
 不将测试设置写入生产配置。
 
+## 中部旋转专用检查
+
+`scripts/electromagnetic-rotor-qa.init.gradle` 复用本夹具的超导电磁工厂场景，使用独立 build/run/classes。
+`-PelectromagneticRotorBuildDirectory=<绝对路径>` 指定输出根目录；运行结果在其
+`electromagnetic-rotor-qa/result.txt`，截图在 `screenshots/`。
+
+专用场景检查四向成型、缺块失效、运行/停止/重启、233 个中部方块精确静态面隐藏、
+原生线圈同步、运行任务 NBT 恢复、两张间隔动画画面、资源重载和客户端卸载钩子清理。
+只在 QA 世界将已接受测试任务延长到 20000 tick 以观察动画，生产配方不变。
+不运行旧夹具的 GUI 按钮测试；当前模式选择列表由独立现代 GUI 场景覆盖。
+
+2026-10-23：上述专用场景通过，Gradle `BUILD SUCCESSFUL`、2m18s，日志
+`.gradle/electromagnetic-rotation/client-modules.log`。输出根目录
+`D:/CodexTools/GTNGElectromagneticRotorQA-20261023/build`；已查看远景、两张不同角度的旋转截图和资源重载后截图。
+启动和重启沿用当前模块任务，完整任务 NBT（含待输出）保存恢复后继续推进。
+
 截图使用客户端 `boundingBox.minY` 核对脚底高度，避免 1.7.10 客户端 `posY` 的 1.62 格偏移。
 镜头到位、完整构件连续稳定 40 个客户端 tick 后，再预热 240 个渲染帧；拍世界图时隐藏 HUD 和手持物品。
 每个加载或状态阶段最多等待 1200 个服务端 tick，失败报告包含构件数、活动构件数、镜头和帧数。
 
-纯结构测试为 `MageAssemblerStructureTest` 与 `SuperconductingElectromagneticStructureTest`，共六项。
+纯结构测试为 `MageAssemblerStructureTest` 与 `SuperconductingElectromagneticStructureTest`，共七项（含旋转选区）。
 固定版本、原始几何 SHA-256、字符映射及 `-` 预注册要求见
 [`reference/ASSEMBLY_ELECTROMAGNETIC_STRUCTURES.md`](../../reference/ASSEMBLY_ELECTROMAGNETIC_STRUCTURES.md)。
 

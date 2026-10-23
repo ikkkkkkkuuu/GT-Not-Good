@@ -1,0 +1,94 @@
+{
+  "source": "Local installed GTL-Enhancedcore-3.8.0.jar",
+  "version": "3.8.0",
+  "jar_sha256": "555a9514c4d2fd11a029c091ac053d5cf7c52fba62411f2f043e04454094f7aa",
+  "commit": null,
+  "author": "S_Fast",
+  "declared_license": "LGPL-3.0 (META-INF/mods.toml)",
+  "files": [
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/ev_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/ev_front.png",
+      "sha256": "e910eed25975bc60f00027c954971425e83fdf7d213122445669ecaef61cb966",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/hv_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/hv_front.png",
+      "sha256": "4d582c8f96361e8a5565119883b3335916dc73de31c120c59e73ebe6cd57d81e",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/iv_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/iv_front.png",
+      "sha256": "2db42204b3324456e136a4a5c9d5743cc2af2c8805143978873dedd302412f7d",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/luv_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/luv_front.png",
+      "sha256": "4a033930079f65c5f47d89b3d15cda5a4a1feaf6fd052ffafb06ec49f57bbb4e",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/lv_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/lv_front.png",
+      "sha256": "aa2d4830003eb3dbcb4284dd7c2a4376106ef5ce153bb3a4f80a1ad2750533f2",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/max_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/max_front.png",
+      "sha256": "d83946fb0bfb591399198aeb5f0fe203f97534f53eed271f124dc59387bab878",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/mv_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/mv_front.png",
+      "sha256": "2fceebaedf025f4df1cfd1ef840cfcfb9ca11054514329f7f7e4de76528e6fa8",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/opv_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/opv_front.png",
+      "sha256": "c73a5a174b545d68d6d14b2758ef66dad9d0cb4df848fb48dd6ab3df59716ebd",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/uev_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/uev_front.png",
+      "sha256": "59629b82839493051a33ecb53d3c8689a40535340eba5aee5ec9418e657e9e6f",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/uhv_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/uhv_front.png",
+      "sha256": "3bb586106ee359a322de0eba8e7fc9654251ea90408798162a39f587a326574a",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/uiv_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/uiv_front.png",
+      "sha256": "5ce9686808688bc6192d7d62e1f198ec70a20eca18f0cfce653af220e5ba080b",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/uv_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/uv_front.png",
+      "sha256": "0d15ae7c72cc3b20ebb2f34936d7c5a6faf51bd43a76cad3db3c2ac672b92e44",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/uxv_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/uxv_front.png",
+      "sha256": "a1342c5c0186415775770fea0b3ede5cba38e2c9a5a78c1576a2f43f0155f0c9",
+      "modification": "none"
+    },
+    {
+      "source": "assets/gtl_enhancedcore/textures/block/machine/crystal_resonator/zpm_front.png",
+      "destination": "src/main/resources/assets/gtnotgood/textures/blocks/basicmachines/crystal_resonator/zpm_front.png",
+      "sha256": "b3542df049cab7d501fecc3495952019d93f2ed9b11a9da91d714e00f4f3275b",
+      "modification": "none"
+    }
+  ]
+}

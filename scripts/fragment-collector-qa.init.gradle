@@ -1,0 +1,82 @@
+def qaHome = new File(gradle.startParameter.projectProperties.get('fragmentCollectorQaRoot')
+    ?: new File(gradle.startParameter.currentDir, 'build/fragment-collector-isolated').path)
+
+gradle.beforeProject { project ->
+    if (project == project.rootProject) project.layout.buildDirectory.set(new File(qaHome, 'build'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    root.spotless.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/machines/basic/FragmentWorldCollector*.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/machine/FragmentWorldCollectorRecipes.java',
+            'src/main/java/com/xyp/gtnotgood/common/recipe/FragmentWorldCollectionBackend.java',
+            'src/main/java/com/xyp/gtnotgood/client/nei/FragmentWorldCollectionFrontend.java',
+            'src/main/java/com/xyp/gtnotgood/common/gui/BlockIcons.java',
+            'src/main/java/com/xyp/gtnotgood/loader/GTNGRecipeMaps.java',
+            'src/main/java/com/xyp/gtnotgood/loader/MachineLoader.java',
+            'src/main/java/com/xyp/gtnotgood/loader/RecipeLoader.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGItemList.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/GTNGMachineID.java',
+            'src/main/java/com/xyp/gtnotgood/utils/enums/ModsItemlist.java',
+            'src/main/java/com/xyp/gtnotgood/CommonProxy.java',
+            'scripts/qa/FragmentCollectorClientChecks.java'
+    }
+    if (!root.hasProperty('fragmentCollectorClientQA')) return
+    def output = root.layout.buildDirectory.dir('fragment-collector-qa').get().asFile
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Existing factory QA Et Futurum runtime is required')
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files('scripts/qa/FragmentCollectorClientChecks.java'))
+    }
+    def qaClasses = root.tasks.register('isolateFragmentCollectorQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include '**/FragmentCollectorClientChecks*.class'
+        into new File(output, 'classes')
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn qaClasses
+        classpath += root.files(new File(output, 'classes'))
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir new File(output, 'run')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.fragmentCollector.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in fragment collector client checks')
+        doFirst {
+            new File(workingDir, 'config').mkdirs()
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:1\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            new File(workingDir, 'config/splash.properties').setText('enabled=false\n', 'UTF-8')
+            def gtngConfig = new File(workingDir, 'config/GTNOTGOOD/gtnotgood.cfg')
+            gtngConfig.parentFile.mkdirs()
+            def configText = gtngConfig.exists() ? gtngConfig.getText('UTF-8') : 'cutcorners {\n    I:mode=0\n}\n'
+            gtngConfig.setText(configText.replaceAll(/I:mode=\d+/, 'I:mode=0'), 'UTF-8')
+            def dreamConfig = new File(workingDir, 'config/DreamCoreMod.properties')
+            def dreamProperties = new Properties()
+            if (dreamConfig.exists()) dreamConfig.withInputStream { dreamProperties.load(it) }
+            dreamProperties.setProperty('showConfirmExitWindow', 'false')
+            dreamConfig.withOutputStream { dreamProperties.store(it, 'Isolated collector QA') }
+            java.nio.file.Files.deleteIfExists(new File(output, 'result.txt').toPath())
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+        }
+        doLast {
+            def result = new File(output, 'result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS'))
+                throw new GradleException('Fragment collector QA failed; inspect result.txt and client log')
+        }
+    }
+}

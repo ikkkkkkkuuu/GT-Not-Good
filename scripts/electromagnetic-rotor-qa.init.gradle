@@ -1,0 +1,114 @@
+gradle.beforeProject { project ->
+    if (project.hasProperty('electromagneticRotorBuildDirectory')) {
+        project.layout.buildDirectory.set(project.file(project.property('electromagneticRotorBuildDirectory')))
+    }
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def qaDirectory = 'electromagnetic-rotor-qa'
+    def qaClass = 'AssemblyPlantClientChecks'
+    def qaOutput = root.layout.buildDirectory.dir(qaDirectory).get().asFile
+    def mainClasses = root.layout.buildDirectory.dir("${qaDirectory}/main-classes")
+    def testClasses = root.layout.buildDirectory.dir("${qaDirectory}/test-classes")
+    root.sourceSets.main.output.classesDirs.setFrom(root.files(mainClasses).builtBy(root.tasks.named('compileJava')))
+    root.sourceSets.test.output.classesDirs.setFrom(root.files(testClasses).builtBy(root.tasks.named('compileTestJava')))
+    root.tasks.named('compileJava').configure {
+        destinationDirectory.set(mainClasses)
+        if (root.hasProperty('electromagneticRotorSourceSnapshot')) {
+            setSource(root.fileTree(root.property('electromagneticRotorSourceSnapshot')))
+        }
+    }
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) {
+        efr.parentFile.mkdirs()
+        def connection = new URI('https://github.com/GTNewHorizons/Et-Futurum-Requiem/releases/download/2.6.59-GTNH/etfuturum-2.6.59-GTNH-dev.jar').toURL().openConnection()
+        connection.connectTimeout = 30000
+        connection.readTimeout = 30000
+        def pending = new File(efr.parentFile, efr.name + '.pending')
+        connection.inputStream.withCloseable { input -> pending.withOutputStream { it << input } }
+        java.nio.file.Files.move(pending.toPath(), efr.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    def pack = root.extensions.getByName('elytraModpackVersion')
+    ['Galacticraft', 'Galaxy-Space-GTNH', 'EnderIO', 'ThaumicHorizons', 'ThaumicEnergistics',
+        'Avaritiaddons', 'BloodArsenal', 'ThaumicBases', 'Railcraft', 'AspectRecipeIndex'].each {
+        root.dependencies.add('runtimeOnlyNonPublishable', pack.gtnhdev(it) as String)
+    }
+    root.tasks.named('compileTestJava').configure {
+        setSource(root.files("scripts/qa/${qaClass}.java", "src/test/java/com/xyp/gtnotgood/common/machines/multiblock/structure/SuperconductingElectromagneticStructureTest.java"))
+        destinationDirectory.set(testClasses)
+    }
+    def qaClasses = root.tasks.register('isolateElectromagneticRotorQA', Sync) {
+        dependsOn root.tasks.named('testClasses')
+        from root.sourceSets.test.output
+        include "**/${qaClass}*.class"
+        into root.layout.buildDirectory.dir("${qaDirectory}/classes")
+    }
+    root.spotless.java {
+        target 'scripts/qa/AssemblyPlantClientChecks.java',
+            'src/main/java/com/xyp/gtnotgood/ClientProxy.java',
+            'src/main/java/com/xyp/gtnotgood/client/render/ElectromagneticRotorModel.java',
+            'src/main/java/com/xyp/gtnotgood/client/render/ElectromagneticRotorRenderer.java',
+            'src/main/java/com/xyp/gtnotgood/common/blocks/assemblyplant/BlockAssemblyPlantCasing.java',
+            'src/main/java/com/xyp/gtnotgood/common/blocks/dimensionalfocus/BlockDimensionalFocusCasing.java',
+            'src/main/java/com/xyp/gtnotgood/common/blocks/particlecollider/BlockParticleColliderCasing.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/modularmachine/SuperconductingElectromagneticFactory.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/structure/SuperconductingElectromagneticStructure.java',
+            'src/test/java/com/xyp/gtnotgood/common/machines/multiblock/structure/SuperconductingElectromagneticStructureTest.java'
+    }
+    root.tasks.named('runClient17').configure {
+        javaLauncher.set(root.javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) })
+        dependsOn qaClasses
+        classpath += root.files(root.layout.buildDirectory.dir("${qaDirectory}/classes"))
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir new File(qaOutput, 'run')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'java.security.manager', 'allow'
+        systemProperty 'gtng.electromagneticRotor.workspace', root.projectDir.absolutePath
+        systemProperty 'gtng.assemblyPlant.qa', 'true'
+        systemProperty 'gtng.electromagneticRotor.qa', 'true'
+        systemProperty 'gtng.assemblyPlant.output', qaOutput.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        notCompatibleWithConfigurationCache('Isolated Electromagnetic Rotor client checks')
+        args '--width', '1280', '--height', '900'
+        doFirst {
+            def snapshotDir = new File(qaOutput, 'runtime/' + UUID.randomUUID())
+            snapshotDir.mkdirs()
+            classpath = root.files(classpath.files.collect { entry ->
+                if (entry.parentFile != root.file('build/libs') || !entry.name.endsWith('.jar')) return entry
+                def snapshot = new File(snapshotDir, entry.name)
+                java.nio.file.Files.copy(entry.toPath(), snapshot.toPath())
+                new java.util.zip.ZipInputStream(new FileInputStream(snapshot)).withCloseable { archive ->
+                    def buffer = new byte[8192]
+                    while (archive.nextEntry != null) while (archive.read(buffer) != -1) {}
+                }
+                logger.lifecycle('Electromagnetic Rotor QA runtime snapshot: ' + snapshot.absolutePath)
+                return snapshot
+            })
+            workingDir.mkdirs()
+            qaOutput.mkdirs()
+            java.nio.file.Files.deleteIfExists(new File(qaOutput, 'result.txt').toPath())
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            def qaConfig = new File(workingDir, 'config/GTNOTGOOD/gtnotgood.cfg')
+            qaConfig.parentFile.mkdirs()
+            qaConfig.setText('cutcorners {\n    I:mode=0\n}\n', 'UTF-8')
+            new File(workingDir, 'config/splash.properties').setText('enabled=false\n', 'UTF-8')
+            def dreamConfig = new File(workingDir, 'config/DreamCoreMod.properties')
+            def dreamProperties = new Properties()
+            if (dreamConfig.exists()) dreamConfig.withInputStream { dreamProperties.load(it) }
+            dreamProperties.setProperty('showConfirmExitWindow', 'false')
+            dreamConfig.withOutputStream { dreamProperties.store(it, 'Isolated Electromagnetic Rotor QA') }
+            new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                '-Workspace', root.projectDir.absolutePath)
+                .redirectErrorStream(true).redirectOutput(new File(qaOutput, 'window-helper.log')).start()
+        }
+        doLast {
+            def result = new File(qaOutput, 'result.txt')
+            if (!result.exists() || !result.text.startsWith('PASS')) throw new GradleException('Electromagnetic Rotor QA failed')
+        }
+    }
+}

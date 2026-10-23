@@ -31,6 +31,7 @@ import com.xyp.gtnotgood.client.render.KerrNewmanBlackHoleRenderer;
 import com.xyp.gtnotgood.common.blocks.dimensionalfocus.DimensionalFocusCasing;
 import com.xyp.gtnotgood.common.blocks.fieldextruder.FieldExtruderCasing;
 import com.xyp.gtnotgood.common.blocks.kerrnewman.KerrNewmanCasing;
+import com.xyp.gtnotgood.common.gui.modularui.multiblock.KerrNewmanHomogenizerGui;
 import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGModularMachineBase;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.KerrNewmanHomogenizerStructure;
 import com.xyp.gtnotgood.common.machines.processing.ModularProcessingLogic;
@@ -54,6 +55,7 @@ import gregtech.api.structure.error.StructureError;
 import gregtech.api.structure.error.StructureErrors;
 import gregtech.api.util.GTStructureUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
+import gregtech.common.gui.modularui.multiblock.base.MTEMultiBlockBaseGui;
 import gregtech.common.render.IMTERenderer;
 import gtPlusPlus.core.material.MaterialsAlloy;
 import io.netty.buffer.ByteBuf;
@@ -85,6 +87,11 @@ public final class KerrNewmanHomogenizer extends GTNGModularMachineBase<KerrNewm
 
     public KerrNewmanHomogenizer(String name) {
         super(name);
+    }
+
+    @Override
+    protected MTEMultiBlockBaseGui<?> getGui() {
+        return new KerrNewmanHomogenizerGui(this);
     }
 
     @Override

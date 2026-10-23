@@ -1,0 +1,36 @@
+project_name: GT-Not-Good
+language_servers:
+- java
+encoding: utf-8
+activation_command: null
+activation_command_timeout: 180
+line_ending: null
+language_backend: null
+agent_interface: null
+ignore_all_files_in_gitignore: true
+ls_specific_settings:
+  java:
+    gradle_wrapper_enabled: true
+    maven_import_enabled: false
+    autobuild_enabled: false
+    update_build_configuration: disabled
+ls_workspace_folders:
+- .
+ls_additional_workspace_folders: []
+ignored_paths:
+- reference/**
+- build/**
+- .gradle/**
+- run/**
+read_only: false
+excluded_tools: []
+included_optional_tools: []
+fixed_tools: []
+excluded_apis: []
+included_apis: []
+default_modes: null
+added_modes: null
+initial_prompt: ''
+symbol_info_budget: null
+read_only_memory_patterns: []
+ignored_memory_patterns: []

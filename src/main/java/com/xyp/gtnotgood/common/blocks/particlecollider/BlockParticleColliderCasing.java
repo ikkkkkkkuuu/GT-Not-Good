@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import com.xyp.gtnotgood.client.GTNGCreativeTabs;
 import com.xyp.gtnotgood.client.particlecollider.ParticleColliderConnectedIcons;
 import com.xyp.gtnotgood.client.particlecollider.ParticleColliderGlowTexture;
+import com.xyp.gtnotgood.client.render.ElectromagneticRotorRenderer;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -96,6 +97,13 @@ public final class BlockParticleColliderCasing extends Block
     @SideOnly(Side.CLIENT)
     public int getRenderType() {
         return GTRendererBlock.RENDER_ID;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
+        return !ElectromagneticRotorRenderer.hidesFace(world, x, y, z, side)
+            && super.shouldSideBeRendered(world, x, y, z, side);
     }
 
     @Override

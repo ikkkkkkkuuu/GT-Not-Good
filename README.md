@@ -46,16 +46,32 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
 |  2.9.0-RC-1  |     1.1.6     |         1.6.2          | [![1.6.2](https://img.shields.io/badge/release-1.6.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.2) |         ✔️         |
-|  2.9.0-RC-2  |     1.6.3     |         1.6.6          | [![1.6.6](https://img.shields.io/badge/release-1.6.6-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.6) |         ✔️         |
+|  2.9.0-RC-2  |     1.6.3     |         1.6.7          | [![1.6.7](https://img.shields.io/badge/release-1.6.7-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.7) |         ✔️         |
 
 当前版本面向 GTNH 2.9.0-RC-2；RC1 请使用 1.6.2。
 
-最新版本：[1.6.6 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.6)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.6/gtnotgood-1.6.6.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.6/gtnotgood-1.6.6-sources.jar)。
+从源码开发和构建使用 **JDK 25**。项目采用 JVM Downgrader，生成 Java 8 基础字节码及面向 Java 17/21/25 的多版本 JAR，运行时由 GTNHLib 提供兼容 API。构建与验证方式见 [Java 开发说明](docs/development/java.md)。
 
-1.3.4 因启动错误已撤回，请更新到 1.6.6。
+最新版本：[1.6.7 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.7)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.7/gtnotgood-1.6.7.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.7/gtnotgood-1.6.7-sources.jar)。
+
+1.3.4 因启动错误已撤回，请更新到 1.6.7。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.6.7 更新
+
+- 新增奈亚拉托提普之触，保留原结构、连纹、动画与运行部件联动，接入参数仓和三类执行核心。超时空装配统一为一个配方池，支持无序输入及 ME 样板总成；本机装配不要求研究介质，电路装配不要求印刻，原生机器要求不变。提供控制器及十四类构件获取配方。
+- 新增大型熔炉和 IV–MAX 十级可调并行控制仓，共用 Ω 线程仓，支持多配方批处理、输出堵塞与断电恢复。结构复用原生焦炉砖和耐火砖；补齐 NEI 烧制页入口、并行仓动画，以及随机壳底图叠加的透明正面。
+- 新增 LV–MAX 十四级末晶谐振器，使用顶面的末影水晶向机主无线电网发电，支持顶面放置、停机与存档恢复。
+- 新增碎片世界采集器，将十六个维度的资源表适配为 239 条配方，以不消耗的 GTNH 维度展示方块选取资源池，沿用原生单方块自动输出与选面操作。
+- 量子计算机移植 GTNL 量子合成算法、循环视图、计算超时、材料变体配额、样板优化和名称输入改进，保留零耗能、大批量派单与独立 CPU 分配；量子模式默认关闭。
+- 超导电磁工厂运行时中部 233 个方块旋转，外围保持静止；停止、资源重载和卸载后正确恢复显示，不移除实际结构方块。
+- 现代多方块共用可滚动模式列表，普通点击选择后保留列表、Shift 点击选择后关闭；标准按钮统一为 16×16。新增机器 GUI 独立分层，保留原有同步与存档数据。
+- 完善四级卫星工厂的配方池说明与模式选择；最短批次时间在并行设置面板调整，物品/流体产出显示在主界面，线程和批次状态通过 Waila 显示。猎光号主站的统计信息同步移至 Waila。
+- 开发与构建切换到 JDK 25 + JVM Downgrader，保留 Java 8 基础字节码和 17/21/25 多版本目标；修复首次降级测试被误判无源码的问题，并补充构建缓存、QA、来源许可及开发文档。
+
+移植差异与验证范围见[触手说明](docs/testing/nyarlathoteps-tentacle.md)、[大型熔炉说明](docs/testing/large-furnace.md)、[量子合成说明](docs/testing/quantum-crafting.md)和[Java 开发说明](docs/development/java.md)。
 
 ### 1.6.6 更新
 
