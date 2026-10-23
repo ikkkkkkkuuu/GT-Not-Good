@@ -1,6 +1,6 @@
 # 当前开发进度
 
-## 1.6.7 发布与多方块 IDE 诊断（2026-10-23，已发布，IDE 待验证修复）
+## 1.6.7 发布与多方块 IDE 诊断（2026-10-23，已完成）
 
 - 目标与结果：用户“提交并更新”授权已执行；基线 1.6.6 / c70251eb，发布提交 3b491cfcdb5101f7c528c4e1c9604f5b249f7b34，main 与标签 1.6.7 已原子推送。Release https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.7 已公开，标题与中文正文覆盖全部九类有效变化，README 下载链接已更新。
 - 集成验证：发布前 release-build.log 退出 0、27s；标签状态下 release-tag-build.log 再次执行 spotlessApply build networkRegression 退出 0、33s。705 项单元测试无失败（1 项既有跳过）、12 项网络回归通过；Checkstyle、Spotless、打包及结构检查 1583 Java / 3381 imports / 161 mixins / 179 reserved / 364 QA paths 通过。GitHub Build/Test 39950405532 与 Release 39950406159 均成功。
@@ -10,7 +10,9 @@
 - IDE 已确认事实：用户改为项目级别 25、重新导入后仍标红，主模块 138 个库没有重复 GT5。固定 GT5 的源码及 javap 基础/17/21/25 视图均确认 MTEMultiBlockBase 具体实现两个 canDump 方法，QuantumComputer 正常继承；未补重复方法或改为抽象类。
 - IDE 主要线索：截图中 GTUtility.ItemId 也标红；GT5 的外部类最高在 Java 21 目录，ItemId / FluidId 在 Java 17 目录。本机 IDEA 2025.3.1.1 的 ClsFileImpl$1.findInnerClass 仅查询同目录内部类，与 JetBrains 当前源码一致，指向多版本 JAR 嵌套类解析问题。详情见 docs/development/java.md；生成的扁平 Java 25 诊断副本仅在忽略目录，未应用到 IDE 或实际依赖。
 - GTNL 对照：本地 dev-290 使用相同 GT5 5.09.54.205 缓存 JAR、相同 Java 25 / JVM Downgrader 路线及同类继承和 ItemId 用法。GTNL 的插件/Gradle 较新，但未发现针对该解析问题的处理；用户回答不知道 GTNL 编辑器是否无红线，不能把它当作已确认的差异。
-- 剩余与边界：发布流程完成；IDE 红线尚未验证消除，不能把构建、运行成功写成编辑器已修复。保留其他聊天在发布后新增的 machine-front-overlays 工作，不并入已发布标签，不擅自升级依赖。
+- 下载复核：实际下载 GitHub 的普通游戏 JAR，SHA-256 与上述 GitHub digest 完全一致；文件位于 .gradle/java-migration/http-assets。此前 gh 并行下载停滞，仅结束本任务核实过的下载进程后改用 HTTP，不影响其他进程。
+- IDE 最终结果：用户明确确认“降到17就行了”，截图和磁盘均为 SDK zulu-25、项目语言级别 17；红线消失。保留该设置及 Gradle 的 Java 25 / JVM Downgrader 配置，不再改造依赖导入、补机器方法或升级依赖。语言级别 17 绕开 GT5 外部类与内部类跨多版本目录的解析问题，未宣称修复 IDEA 本身；已纠正 Java 文档中统一设为 25 的建议。
+- 状态：发布与本轮 IDE 排查完成，无剩余必做项。保留其他聊天在发布后新增的机器正面资源和并行控制仓工作，不并入已发布标签。收尾仅更新排查文档，未引入构建或游戏代码变化。
 
 ## 全项目静态审查与 GTNL 目录对照（2026-10-23，已完成）
 
