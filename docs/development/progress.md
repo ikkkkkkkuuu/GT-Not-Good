@@ -1,11 +1,17 @@
 # 当前开发进度
 
-## 1.7.0 提交与发布（2026-10-24，进行中）
+## 1.7.0 提交与发布（2026-10-24，已完成）
 
 - 用户“提交并更新”授权完整发布。已核对Git状态、完整规则和远端，当前main/origin/main为b3dae238，上次正式发布为1.6.9/f47e7532；按末位逢十进位规则发布1.7.0。汇总上次发布以来所有有效积累，不将已撤回工业中枢塔计为新游戏功能。
-- 正在执行完整格式/构建/单测/网络回归，整理中文说明和README精确下载链接；随后提交/标签/推送、等待CI与Release、核对资产及实际下载。尚未提交或发布，不记为完成。既有各功能实机证据沿用下文，不冒称本轮重新运行。
+- 范围与说明：README支持表、当前版本、精确游戏/源码下载链接已更新1.7.0；中文累计说明提交于 `.changelogs/1.7.0.md` 并用于Release正文，覆盖终端、样板调度、35条配方、16格交互、1000%飞行、无线仓配方降档与末晶修复。保留历史版本说明，不将已取消的工业中枢塔或仅阅读项目列为新增功能。此前各功能实机证据沿用下文，不冒称本轮全部重新运行。
 - 发布前完整 `spotlessApply build networkRegression` 已通过（build.log退出0、57s）；用户随后反馈创造/生存Shift右键均不能建造。已核实终端客户端onItemUseFirst返回true，使Forge PlayerControllerMP在发送C08前提前退出；此前QA直接调用服务端逻辑，遗漏实际交互入口。现改客户端返回false让原生C08发送。修复后全构建build-interaction-fix.log退出0、30s；709项单测无失败/错误（1项既有跳过）、12项网络回归通过。
-- 真实入口回归：client-interaction-fix.log退出0、1m52s，258项原核心、25项服务端交互检查、6次真实客户端PlayerController右键及18项GUI检查全部通过。由实际客户端潜行/原生C0B→C08驱动，服务端仅观察世界/库存，不代调execute；覆盖创造简单结构、空料真实高炉成型/七仓、生存模式精确耗料/拆除返还、原生创造清空气及原投影仪对照。8148项资源/来源与暂存区审计通过；修复已验证，继续提交/标签/推送和CI发布。
+- 真实入口回归：client-interaction-fix.log退出0、1m52s，258项原核心、25项服务端交互检查、6次真实客户端PlayerController右键及18项GUI检查全部通过。由实际客户端潜行/原生C0B→C08驱动，服务端仅观察世界/库存，不代调execute；覆盖创造简单结构、空料真实高炉成型/七仓、生存模式精确耗料/拆除返还、原生创造清空气及原投影仪对照。不是物理鼠标或独立远端联机验收；独立只读审查复核了入口及测试真实性，代理客户端80036已退出。
+- 发布提交 `c6ebf214cca06eb7cd044474eb4ea4b78322e401`，main与轻量标签1.7.0已原子推送并核对远端SHA。标签状态完整构建 `tag-build.log` 退出0、49s；相同 `tag-build-repeat.log` 退出0、1s、38 UP-TO-DATE、configuration cache reused，工作区保持干净，不手改版本或移动已发布标签。
+- 本地产物：`audit-tag.json` 验证8148项资源/来源与标签一致，精确1.7.0普通/dev/sources三包、Java8/Multi-Release、refmap及本轮功能类齐全，无QA/已取消工业中枢/已撤回索引类；709项单测无失败/错误（1跳过）、12网络回归通过。结构检查1619 Java/3455 imports/176 mixins/194 reserved/414 QA paths和diff检查通过。构建输出隔离于D:/CodexTools/GTNGRelease-1.7.0。
+- 云端：Build and test `40090964186`、Release tagged build `40090964202` 均completed/success；云端服务端180秒运行及无错误、依赖和资产检查通过。公开Release https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.7.0 已核实中文标题/完整正文和latest；清理CI自动上传的dev-preshadow/predowngrade中间包，仅保留普通/dev/sources三份正式资产。保留编译中的旧SRG别名、Unsafe和CI可继续步骤注释，不冒称其已修复；发布状态和产物另行独立验证。
+- 链接及实际下载：发布页和三资产HEAD均HTTP200，长度匹配GitHub元数据，标签README指向对应版本。实际游戏包32,506,597字节，SHA-256 `1f02d381a4b16d476bb2c4fdb4dda6d45bf83d350b2ccec07077b962325c400e` 与GitHub digest一致；ZIP/精确版本/Multi-Release及8110项纹理、动画、结构、来源文件与标签原字节一致，`verify-download.log` 退出0。`payload-proof.json` 进一步确认42个终端相关开发类与本轮真实C08测试包相同，42个正式下载包类与本地标签普通包相同，包含已修复入口。
+- 下载过程：55秒超时三次保留已收数据，最后断点续传剩余1,044,965字节成功（HTTP206、curl退出0）；保留download.log/download-resume.log，不将仅链接可用替代下载核验。
+- 状态：提交、推送、标签、本地完整验证、双云端工作流、中文Release、三资产、README和实际下载校验全部完成，无剩余发布必做项。仅补记进度的后续文档提交使用skip-ci，不移动1.7.0；未替换用户游戏或服务器文件。
 
 ## 多方块终端建造/拆除及原生投影仪兼容（2026-10-24，含真实交互入口验证完成）
 
@@ -19,7 +25,7 @@
 - 构建及产物：同init/cache运行 `spotlessApply compileJava processResources spotlessCheck assemble --offline --console=plain`，`final-build.log` 退出0、2s；相同 `final-repeat.log` 退出0、1s、31 UP-TO-DATE、configuration cache reused。`jar-audit.json` 验证18个相关基础类为Java 8/Multi-Release、源码逐字节一致、无QA类、25个双语键、14份固定参考源哈希、两份原始图标/动画、三JAR来源/完整GPL/LGPL一致。普通JAR SHA-256 `ae5059d62a2b9ef114f79f9293ae82d7b1ba5d2b14d6c74f0a2fe02cdb4e5f98`；结构检查1619 Java/3455 imports/176 mixins/194 reserved/414 QA paths及diff --check通过。
 - 迭代失败日志保留在 `.gradle/multiblock-terminal/`，不计为通过：已修正配方矿辞参数、事件类可见性、专服不安全getPickBlock、Forestry供料、DT原生主频道偏移测试、逐层仓室候选、AL最终元素覆盖和旧式仓室遗漏；饰品测试改用独立非法key副本（原生已存key不重新激活），ME夹具定域清理旧节点并修正离线视图断言。Serena初始化/激活后Java Broken pipe，按规则用rg和固定源码；未升级依赖或改late JSON。
 - 用户后续反馈促成真实入口修正：客户端潜行onItemUseFirst返回false，让原生PlayerController继续发送C08；服务端才消费操作。新增TerminalInteractionClientChecks，由真实客户端按键/MovementInput、C0B潜行状态和PlayerController.onPlayerRightClick驱动，服务端不代设潜行、不代调建造。client-interaction-fix.log退出0、1m52s，6次实际右键、25项服务端检查全过：创造简单结构/空料真实高炉成型（选定线圈及七仓）、生存精确耗料/拆除返材、原生方式清空气和原投影仪对照；原258核心+18GUI仍通过，result=PASS。代理客户端80036已退出。此前完成判断遗漏该入口，本轮已补实测证据。
-- 状态：移植及真实交互修复完成，继续上方已授权1.7.0发布。操作和兼容边界见 `docs/development/multiblock-terminal.md`；未知非SL结构保留原生入口，破损结构中无描述符且无成功检查证据的旧式仓位可能保留仓室。未替换用户实例，保留配方/交互距离/胸甲等并行改动。
+- 状态：移植及真实交互修复完成，已随上方1.7.0发布并核对正式下载包。操作和兼容边界见 `docs/development/multiblock-terminal.md`；未知非SL结构保留原生入口，破损结构中无描述符且无成功检查证据的旧式仓位可能保留仓室。未替换用户实例，配方/交互距离/胸甲等累计改动一并发布。
 
 ## GTL 多方块终端拆除模式阅读（2026-10-24，已完成）
 
