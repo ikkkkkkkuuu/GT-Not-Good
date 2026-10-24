@@ -13,6 +13,7 @@ import gregtech.api.gui.modularui.GTUITextures;
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.RecipeMapBackend;
 import gregtech.api.recipe.RecipeMapBuilder;
+import gregtech.api.recipe.maps.LargeNEIFrontend;
 import gregtech.nei.formatter.HeatingCoilSpecialValueFormatter;
 
 /**
@@ -124,6 +125,33 @@ public final class GTNGRecipeMaps {
         .of("recipe.gtnotgood.petrochemical").maxIO(1, 0, 2, 12).progressBar(GTUITextures.PROGRESSBAR_ARROW_MULTIPLE)
         .progressBarPos(68, 35).logoPos(68, 86).neiRecipeBackgroundSize(170, 110).frontend(ChemicalPlantFrontend::new)
         .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.IntegratedChemicalPlant.get(1)).setHeight(174)
+            .setMaxRecipesPerPage(1))
+        .build();
+
+    public static final RecipeMap<RecipeMapBackend> PetrochemicalSynthesisRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.petrochemical_synthesis
+        // # Petrochemical Synthesis
+        // # zh_CN 石化合成
+        .of("recipe.gtnotgood.petrochemical_synthesis").maxIO(4, 3, 9, 9).minInputs(0, 1)
+        .frontend(LargeNEIFrontend::new).neiHandlerInfo(builder -> builder
+            .setDisplayStack(GTNGItemList.IntegratedChemicalPlant.get(1)).setHeight(190).setMaxRecipesPerPage(1))
+        .build();
+
+    public static final RecipeMap<RecipeMapBackend> RareEarthDustRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.rare_earth_dust
+        // # Rare Earth Dust Processing
+        // # zh_CN 稀土粉体处理
+        .of("recipe.gtnotgood.rare_earth_dust").maxIO(8, 18, 4, 3).minInputs(0, 0).frontend(LargeNEIFrontend::new)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.KerrNewmanHomogenizer.get(1)).setHeight(240)
+            .setMaxRecipesPerPage(1))
+        .build();
+
+    public static final RecipeMap<RecipeMapBackend> RareEarthOreRecipes = RecipeMapBuilder
+        // #tr recipe.gtnotgood.rare_earth_ore
+        // # Rare Earth Ore Processing
+        // # zh_CN 稀土矿石处理
+        .of("recipe.gtnotgood.rare_earth_ore").maxIO(2, 6, 2, 2).minInputs(0, 1).frontend(LargeNEIFrontend::new)
+        .neiHandlerInfo(builder -> builder.setDisplayStack(GTNGItemList.KerrNewmanHomogenizer.get(1)).setHeight(180)
             .setMaxRecipesPerPage(1))
         .build();
 

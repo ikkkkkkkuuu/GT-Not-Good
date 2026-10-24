@@ -10,6 +10,7 @@ import com.xyp.gtnotgood.common.crafting.quantum.ae2.QuantumCraftingMode;
 import com.xyp.gtnotgood.common.crafting.quantum.hooks.ticking.TickHandler;
 import com.xyp.gtnotgood.common.wireless.monitor.WirelessMonitorService;
 import com.xyp.gtnotgood.common.wirelessfrequency.WirelessChannelManager;
+import com.xyp.gtnotgood.config.InteractionConfig;
 import com.xyp.gtnotgood.config.QuantumCraftingConfig;
 import com.xyp.gtnotgood.loader.QuestLoader;
 import com.xyp.gtnotgood.utils.enums.ModList;
@@ -93,8 +94,9 @@ public class GTNotGood {
     public void preInit(FMLPreInitializationEvent event) {
         try {
             ConfigurationManager.registerConfig(QuantumCraftingConfig.class);
+            ConfigurationManager.registerConfig(InteractionConfig.class);
         } catch (ConfigException exception) {
-            throw new IllegalStateException("cannot load quantum crafting configuration", exception);
+            throw new IllegalStateException("cannot load configuration", exception);
         }
         FMLCommonHandler.instance().bus().register(this);
         proxy.preInit(event);

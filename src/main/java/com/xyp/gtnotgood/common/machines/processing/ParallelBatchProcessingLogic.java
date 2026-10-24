@@ -50,23 +50,32 @@ public final class ParallelBatchProcessingLogic extends ModularProcessingLogic {
         recipeCount = 0;
         parallelCount = 0;
         if (availableVoltage <= 0) return CheckRecipeResultRegistry.NO_RECIPE;
-        List<GTRecipe> matches = findRecipeMatches(getCurrentRecipeMap())
-            .filter(r -> r.mEnabled && r.mEUt >= 0 && r.mEUt <= availableVoltage)
-            .filter(r -> r.mOutputs.length > 0 || r.mFluidOutputs.length > 0).collect(Collectors.toList());
+        List<InputRecipe> matches = findInputRecipes().stream()
+            .filter(r -> r.recipe().mEnabled && r.recipe().mEUt >= 0 && r.recipe().mEUt <= availableVoltage)
+            .filter(r -> r.recipe().mOutputs.length > 0 || r.recipe().mFluidOutputs.length > 0)
+            .filter(r -> LightHunterBatchProcessingLogic.maximumParallel(r.recipe(), r.inputs().items(),
+                r.inputs().fluids()) > 0)
+            .collect(Collectors.toList());
         if (matches.isEmpty()) return CheckRecipeResultRegistry.NO_RECIPE;
         int count = Math.min(threads.getAsInt(), matches.size());
-        List<GTRecipe> recipes = new ArrayList<>();
+        List<InputRecipe> recipes = new ArrayList<>();
         for (int i = 0; i < count; i++) recipes.add(matches.get((cursor + i) % matches.size()));
         cursor = (cursor + count) % matches.size();
         long quota = (long) Math.max(1, parallel.getAsInt()) * Math.max(1, threads.getAsInt());
         long[] wants = new long[count];
-        for (int i = 0; i < count; i++)
-            wants[i] = LightHunterBatchProcessingLogic.maximumParallel(recipes.get(i), inputItems, inputFluids);
+        for (int i = 0; i < count; i++) {
+            InputRecipe candidate = recipes.get(i);
+            wants[i] = LightHunterBatchProcessingLogic.maximumParallel(candidate.recipe(), candidate.inputs().items(),
+                candidate.inputs().fluids());
+        }
         long[] allocations = LightHunterRecipeRules.fairAllocation(wants, quota);
         BigInteger energy = BigInteger.ZERO;
         List<WirelessOutputs> batches = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            GTRecipe recipe = recipes.get(i);
+            InputRecipe candidate = recipes.get(i);
+            GTRecipe recipe = candidate.recipe();
+            ItemStack[] inputItems = candidate.inputs().items();
+            FluidStack[] inputFluids = candidate.inputs().fluids();
             long amount = Math.min(allocations[i],
                 LightHunterBatchProcessingLogic.maximumParallel(recipe, inputItems, inputFluids));
             if (amount <= 0) continue;

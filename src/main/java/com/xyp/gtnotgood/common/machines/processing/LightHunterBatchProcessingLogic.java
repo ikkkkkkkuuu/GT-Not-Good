@@ -32,6 +32,7 @@ public abstract class LightHunterBatchProcessingLogic extends ModularProcessingL
     private WirelessOutputs outputs;
     private long parallelCount;
     private int recipeCount;
+    private int cursor;
 
     protected LightHunterBatchProcessingLogic(BooleanSupplier unrestricted, IntSupplier minimumDuration) {
         this(unrestricted, minimumDuration, () -> 0);
@@ -51,28 +52,36 @@ public abstract class LightHunterBatchProcessingLogic extends ModularProcessingL
         parallelCount = 0;
         recipeCount = 0;
         if (availableVoltage <= 0) return CheckRecipeResultRegistry.NO_RECIPE;
-        List<GTRecipe> matches = findRecipeMatches(getCurrentRecipeMap())
-            .filter(recipe -> recipe.mEnabled && recipe.mEUt >= 0)
-            .filter(recipe -> recipe.mOutputs.length > 0 || recipe.mFluidOutputs.length > 0)
+        List<InputRecipe> matches = findInputRecipes().stream().filter(r -> r.recipe().mEnabled && r.recipe().mEUt >= 0)
+            .filter(r -> r.recipe().mOutputs.length > 0 || r.recipe().mFluidOutputs.length > 0)
             .collect(Collectors.toList());
-        List<GTRecipe> recipes = new ArrayList<>();
+        List<InputRecipe> recipes = new ArrayList<>();
         CheckRecipeResult failure = CheckRecipeResultRegistry.NO_RECIPE;
-        for (GTRecipe recipe : matches) {
+        for (InputRecipe candidate : matches) {
+            GTRecipe recipe = candidate.recipe();
             CheckRecipeResult result = recipe.mEUt > availableVoltage
                 ? CheckRecipeResultRegistry.insufficientPower(recipe.mEUt)
                 : validateRecipe(recipe);
-            if (result.wasSuccessful()) recipes.add(recipe);
+            if (result.wasSuccessful()) recipes.add(candidate);
             else failure = result;
         }
         if (recipes.isEmpty()) return failure;
         long quota = LightHunterRecipeRules.parallelQuota(additionalThreads.getAsInt());
         long[] wants = new long[recipes.size()];
-        for (int i = 0; i < wants.length; i++) wants[i] = maximumParallel(recipes.get(i), inputItems, inputFluids);
+        for (int i = 0; i < wants.length; i++) {
+            InputRecipe candidate = recipes.get(i);
+            wants[i] = maximumParallel(candidate.recipe(), candidate.inputs().items(), candidate.inputs().fluids());
+        }
         long[] allocations = unrestricted.getAsBoolean() ? wants : LightHunterRecipeRules.fairAllocation(wants, quota);
         BigInteger energy = BigInteger.ZERO;
         List<WirelessOutputs> batches = new ArrayList<>();
-        for (int i = 0; i < recipes.size(); i++) {
-            GTRecipe recipe = recipes.get(i);
+        int start = Math.floorMod(cursor, recipes.size());
+        for (int step = 0; step < recipes.size(); step++) {
+            int i = (start + step) % recipes.size();
+            InputRecipe candidate = recipes.get(i);
+            GTRecipe recipe = candidate.recipe();
+            ItemStack[] inputItems = candidate.inputs().items();
+            FluidStack[] inputFluids = candidate.inputs().fluids();
             long parallel = Math.min(allocations[i], maximumParallel(recipe, inputItems, inputFluids));
             if (parallel <= 0) continue;
             BigInteger recipeEnergy = BigInteger.valueOf(recipe.mEUt).multiply(BigInteger.valueOf(recipe.mDuration))
@@ -95,6 +104,7 @@ public abstract class LightHunterBatchProcessingLogic extends ModularProcessingL
             batches.add(batch);
             parallelCount = Math.addExact(parallelCount, parallel);
             recipeCount++;
+            cursor = (i + 1) % recipes.size();
             if (energy.compareTo(BigInteger.valueOf(availableVoltage).multiply(BigInteger.valueOf(10000))) > 0) break;
         }
         if (batches.isEmpty()) return CheckRecipeResultRegistry.NO_RECIPE;

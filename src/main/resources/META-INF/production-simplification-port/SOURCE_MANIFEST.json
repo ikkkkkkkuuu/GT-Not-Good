@@ -1,0 +1,39 @@
+{
+  "repository": "https://github.com/QionSi/GregTech-Production-line-simplification",
+  "commit": "0fe417a67a340575ed6fc31be3435354a519fa7e",
+  "source_date": "2026-10-20",
+  "license": "MIT",
+  "copyright": "Copyright (c) 2026 QionSi",
+  "sources": [
+    {
+      "path": "LICENSE",
+      "sha256": "9208ab4ba325a5ae964981aef53edbf32950e7338be9f099d792ed7bb3ba8d1e"
+    },
+    {
+      "path": "src/main/java/com/qionsi/simplification/recipe/ModRecipes.java",
+      "sha256": "995eaed4fcd42309eb237b514fe4272a510fdd41af23d0650e89aa3977b133f9"
+    },
+    {
+      "path": "src/main/java/com/qionsi/simplification/recipe/RareEarthRecipes.java",
+      "sha256": "ccf6068608983891ce391daaceaf135cd7bc179e9373d3812bf1a531a693ea25"
+    },
+    {
+      "path": "src/main/java/com/qionsi/simplification/recipe/ModRecipeMaps.java",
+      "sha256": "6a3d9ba1f430047b8bbaa0f5126098c901ac1f2f88b1902d1124f5b5405ab1b9"
+    }
+  ],
+  "adaptations": [
+    {
+      "source": "src/main/java/com/qionsi/simplification/recipe/ModRecipes.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/gtnotgood/PetrochemicalSynthesisRecipes.java",
+      "sha256": "051e6d7582ca228aa74ee2695dccab8944f31ae7dc5d9f12f5d2fd4d9627cf4d",
+      "changes": "Retain twelve processing recipes and four alternative oils; omit controller recipe; use GTNG loader/map and styrene naming; use unsafe stack amounts to preserve the declared 80-carbon output instead of the upstream helper clamp."
+    },
+    {
+      "source": "src/main/java/com/qionsi/simplification/recipe/RareEarthRecipes.java",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/recipe/gtnotgood/RareEarthProcessingRecipes.java",
+      "sha256": "1e3473c1dc126654a58373844a916f7c219f22c723b3969205fe65f88b05799e",
+      "changes": "Retain eleven dust and twelve ore recipes; omit controller recipe; remove COIL_HEAT by user request; use fixed native material APIs and GTNG loader/maps."
+    }
+  ]
+}

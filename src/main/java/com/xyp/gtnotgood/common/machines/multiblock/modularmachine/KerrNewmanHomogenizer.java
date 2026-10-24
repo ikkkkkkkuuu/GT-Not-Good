@@ -10,7 +10,6 @@ import static gregtech.api.enums.HatchElement.InputHatch;
 import static gregtech.api.enums.HatchElement.OutputBus;
 import static gregtech.api.enums.HatchElement.OutputHatch;
 import static gregtech.api.util.GTStructureUtility.buildHatchAdder;
-import static gregtech.api.util.GTUtility.validMTEList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +31,10 @@ import com.xyp.gtnotgood.common.blocks.dimensionalfocus.DimensionalFocusCasing;
 import com.xyp.gtnotgood.common.blocks.fieldextruder.FieldExtruderCasing;
 import com.xyp.gtnotgood.common.blocks.kerrnewman.KerrNewmanCasing;
 import com.xyp.gtnotgood.common.gui.modularui.multiblock.KerrNewmanHomogenizerGui;
-import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGModularMachineBase;
+import com.xyp.gtnotgood.common.machines.multiblock.multiMachineBase.GTNGMultiModeMachineBase;
 import com.xyp.gtnotgood.common.machines.multiblock.structure.KerrNewmanHomogenizerStructure;
 import com.xyp.gtnotgood.common.machines.processing.ModularProcessingLogic;
+import com.xyp.gtnotgood.loader.GTNGRecipeMaps;
 import com.xyp.gtnotgood.utils.enums.ModList;
 
 import cpw.mods.fml.relauncher.Side;
@@ -62,7 +62,7 @@ import io.netty.buffer.ByteBuf;
 
 @IMetaTileEntity.SkipGenerateName
 @IMetaTileEntity.SkipGenerateDescription
-public final class KerrNewmanHomogenizer extends GTNGModularMachineBase<KerrNewmanHomogenizer>
+public final class KerrNewmanHomogenizer extends GTNGMultiModeMachineBase<KerrNewmanHomogenizer>
     implements ISurvivalConstructable, IMTERenderer {
 
     private static final int SPEED_MULTIPLIER = 60;
@@ -205,22 +205,38 @@ public final class KerrNewmanHomogenizer extends GTNGModularMachineBase<KerrNewm
     }
 
     @Override
-    public RecipeMap<?> getRecipeMap() {
-        return RecipeMaps.mixerNonCellRecipes;
+    protected int getMachineModeCount() {
+        return 3;
+    }
+
+    @Override
+    protected RecipeMap<?> getRecipeMap(int mode) {
+        return switch (mode) {
+            case 1 -> GTNGRecipeMaps.RareEarthDustRecipes;
+            case 2 -> GTNGRecipeMaps.RareEarthOreRecipes;
+            default -> RecipeMaps.mixerNonCellRecipes;
+        };
+    }
+
+    @Override
+    public String getMachineModeKey() {
+        // #tr gtng.kerr_newman.mode.dust
+        // # Rare Earth Dust Processing
+        // # zh_CN 稀土粉体处理
+        if (machineMode == 1) return "gtng.kerr_newman.mode.dust";
+        // #tr gtng.kerr_newman.mode.ore
+        // # Rare Earth Ore Processing
+        // # zh_CN 稀土矿石处理
+        if (machineMode == 2) return "gtng.kerr_newman.mode.ore";
+        // #tr gtng.kerr_newman.mode.mixer
+        // # Mixing
+        // # zh_CN 搅拌
+        return "gtng.kerr_newman.mode.mixer";
     }
 
     @Override
     protected ProcessingLogic createMachineProcessingLogic() {
         return new ModularProcessingLogic().setMaxParallelSupplier(this::getTrueParallel).setMaxTierSkips(0);
-    }
-
-    @Override
-    protected void setProcessingLogicPower(ProcessingLogic logic) {
-        long voltage = 0;
-        for (var hatch : validMTEList(getExoticAndNormalEnergyHatchList()))
-            voltage = Math.max(voltage, hatch.getBaseMetaTileEntity().getInputVoltage());
-        logic.setAvailableVoltage(voltage).setAvailableAmperage(voltage == 0 ? 0 : getMaxInputEu() / voltage)
-            .setAmperageOC(false);
     }
 
     @Override
@@ -379,13 +395,17 @@ public final class KerrNewmanHomogenizer extends GTNGModularMachineBase<KerrNewm
     protected MultiblockTooltipBuilder createTooltip() {
         MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
         // #tr gtng.kerr_newman.machine_type
-        // # Multiblock Mixer
-        // # zh_CN 多方块搅拌机
+        // # Multiblock Mixer / Rare Earth Processor
+        // # zh_CN 多方块搅拌机 / 稀土处理机
         addModularMachineType(tt, StatCollector.translateToLocal("gtng.kerr_newman.machine_type"))
             // #tr gtng.kerr_newman.function
-            // # Processes mixer recipes in parallel
-            // # zh_CN 并行处理搅拌机配方
+            // # Processes mixing, rare earth dust and ore recipes in switchable modes
+            // # zh_CN 可切换搅拌、稀土粉体与稀土矿石处理模式
             .addInfo(StatCollector.translateToLocal("gtng.kerr_newman.function")).addStaticSpeedInfo(SPEED_MULTIPLIER)
+            // #tr gtng.kerr_newman.mode_switch
+            // # GUI or screwdriver: switch modes; rare earth processing has no temperature requirement
+            // # zh_CN GUI 或螺丝刀切换模式；稀土处理无需满足温度要求
+            .addInfo(StatCollector.translateToLocal("gtng.kerr_newman.mode_switch"))
             // #tr gtng.kerr_newman.render
             // # The central black hole grows during operation and shrinks after stopping
             // # zh_CN 工作时中央黑洞逐渐展开，停机后收缩

@@ -20,6 +20,7 @@ import com.xyp.gtnotgood.common.items.largeinterface.ItemLargeInterface;
 import com.xyp.gtnotgood.common.items.lighthunter.LightHunterItems;
 import com.xyp.gtnotgood.common.items.mebridge.ItemMEWirelessTransceiver;
 import com.xyp.gtnotgood.common.items.mechanicaluser.ItemUserSpeedUpgrade;
+import com.xyp.gtnotgood.common.items.multiblockterminal.MultiblockTerminalItem;
 import com.xyp.gtnotgood.common.items.packaged.ItemPackagedCore;
 import com.xyp.gtnotgood.common.items.packaged.ItemWirelessConnector;
 import com.xyp.gtnotgood.common.items.patternsorter.PatternSorterItem;
@@ -52,6 +53,7 @@ public final class ItemsLoader {
      */
     public static void registry() {
         registerItem(new StructureCompassItem(), "structure_compass", GTNGItemList.StructureCompass);
+        registerItem(new MultiblockTerminalItem(), "multiblock_terminal", GTNGItemList.MultiblockTerminal);
         registerPatternSorter();
         registerAdvancedIOBus();
         registerItem(new ItemStockIOInterface(), "stock_io_interface_part", GTNGItemList.StockIOInterfacePart);

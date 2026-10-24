@@ -62,6 +62,15 @@ public class LateMixinsLoader implements ILateMixinLoader {
     @Nonnull
     public List<String> getMixins(Set<String> loadedMods) {
         List<String> list = new ArrayList<>();
+        if (loadedMods.contains(ModList.StructureLib.getID())) {
+            addAll(list, "structurelib.TerminalStructureDefinitionMixin", "structurelib.TerminalHintProbeMixin");
+        }
+        if (loadedMods.contains(ModList.DraconicEvolution.getID())) {
+            addAll(list, "draconicevolution.DraconicArmorFlightSpeedMixin");
+        }
+        if (loadedMods.contains(ModList.ModularUI2.getID())) {
+            addAll(list, "modularui.BlockReachTileGuiMixin", "modularui.BlockReachSidedTileGuiMixin");
+        }
         if (loadedMods.contains(ModList.Railcraft.getID())) {
             addAll(list, "railcraft.MultiblockBoilerMixin");
         }
@@ -74,6 +83,8 @@ public class LateMixinsLoader implements ILateMixinLoader {
             addAll(list, "bloodmagic.MixinPackagedBloodAltar");
         }
         if (loadedMods.contains(ModList.GregTech.getID())) {
+            addAll(list, "gregtech.TerminalCheckedStructureMixin", "gregtech.TerminalLegacyHatchCheckMixin");
+            addAll(list, "gregtech.BlockReachMachineMixin");
             addAll(list, "gregtech.ElectricBlastFurnaceMultiAmpMixin", "gregtech.VacuumFreezerMultiAmpMixin",
                 "gregtech.wireless.NativeWirelessMultiAmpMixin");
             addAll(list, "gregtech.arcfurnace.ArcFurnaceElectrodeAccess",

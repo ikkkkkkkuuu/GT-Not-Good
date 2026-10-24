@@ -1,0 +1,87 @@
+def qaHome = new File(gradle.startParameter.projectProperties.get('draconicFlightQaRoot')
+    ?: 'D:/CodexTools/GTNGDraconicFlight-20261024')
+
+gradle.settingsEvaluated { settings ->
+    settings.buildCache.local.directory = new File(qaHome, 'build-cache')
+}
+
+gradle.beforeProject { project ->
+    if (project == project.rootProject) project.layout.buildDirectory.set(new File(qaHome, 'build'))
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def serverQA = root.hasProperty('draconicFlightServerQA')
+    def qaClasses = serverQA ? ['DraconicFlightServerChecks']
+        : ['DraconicFlightServerChecks', 'DraconicFlightClientChecks']
+    def output = root.layout.buildDirectory.dir(serverQA ? 'draconic-flight-server-qa' : 'draconic-flight-client-qa').get().asFile
+    root.tasks.named('preprocessLangInJavaFiles').configure { enabled = false }
+    root.sourceSets.test.output.classesDirs.setFrom(
+        root.files(new File(output, 'test-classes')).builtBy(root.tasks.named('compileTestJava')))
+    def qaRuntimeClasses = root.files(root.tasks.named('downgradeTestClasses').map { it.outputCollection })
+    def versions = root.extensions.getByName('elytraModpackVersion')
+    root.dependencies.add('devOnlyNonPublishable', versions.gtnhdev('Draconic-Evolution') as String) { transitive = false }
+    def efr = root.file('build/factory-qa-dependencies/etfuturum-2.6.59-GTNH-dev.jar')
+    if (!efr.exists()) throw new GradleException('Prepare the existing factory QA Et Futurum runtime first')
+    root.dependencies.add('runtimeOnlyNonPublishable', root.files(efr))
+    root.tasks.named('compileTestJava').configure {
+        destinationDirectory.set(new File(output, 'test-classes'))
+        setSource(root.files(qaClasses.collect { "scripts/qa/${it}.java" }))
+    }
+    root.spotless {
+        java {
+            target 'src/main/java/com/xyp/gtnotgood/mixins/late/draconicevolution/DraconicArmorFlightSpeedMixin.java',
+                'src/main/java/com/xyp/gtnotgood/loader/LateMixinsLoader.java',
+                'src/main/java/com/xyp/gtnotgood/utils/enums/ModList.java',
+                'scripts/qa/DraconicFlightClientChecks.java', 'scripts/qa/DraconicFlightServerChecks.java'
+        }
+    }
+    root.tasks.named(serverQA ? 'runServer25' : 'runClient25').configure {
+        dependsOn root.tasks.named('testClasses'), root.tasks.named('downgradeTestClasses')
+        classpath -= root.sourceSets.test.output
+        classpath += qaRuntimeClasses
+        classpath += root.configurations.testRuntimeClasspath.filter { it.name.startsWith('jvmdowngrader-java-api-') }
+        workingDir new File(output, 'run')
+        systemProperty 'gtng.factory.qa', 'true'
+        systemProperty 'gtng.draconicflight.workspace', root.projectDir.absolutePath
+        systemProperty 'gtng.draconicflight.qa', 'true'
+        systemProperty 'gtng.draconicflight.serverQA', serverQA.toString()
+        systemProperty 'gtng.draconicflight.qa.output', output.absolutePath
+        systemProperty 'sun.net.client.defaultConnectTimeout', '15000'
+        systemProperty 'sun.net.client.defaultReadTimeout', '15000'
+        if (serverQA) classpath = classpath.filter { !it.name.toLowerCase(Locale.ROOT).contains('angelica') }
+        else args '--width', '1100', '--height', '800'
+        notCompatibleWithConfigurationCache('Opt-in Draconic flight runtime checks')
+        doFirst {
+            workingDir.mkdirs()
+            java.nio.file.Files.deleteIfExists(new File(output, 'result.txt').toPath())
+            if (serverQA) {
+                new File(workingDir, 'eula.txt').setText('eula=true\n', 'UTF-8')
+                new File(workingDir, 'server.properties').setText(
+                    'server-ip=127.0.0.1\nserver-port=0\nlevel-type=FLAT\nonline-mode=false\n' +
+                    'max-tick-time=-1\nview-distance=2\nenable-query=false\nenable-rcon=false\n', 'UTF-8')
+                return
+            }
+            new File(workingDir, 'options.txt').setText(
+                'lang:zh_CN\nguiScale:2\npauseOnLostFocus:false\nsoundCategory_master:0.0\nsoundCategory_music:0.0\n', 'UTF-8')
+            def dreamConfig = new File(workingDir, 'config/DreamCoreMod.properties')
+            dreamConfig.parentFile.mkdirs()
+            def dreamProperties = new Properties()
+            if (dreamConfig.exists()) dreamConfig.withInputStream { dreamProperties.load(it) }
+            dreamProperties.setProperty('showConfirmExitWindow', 'false')
+            dreamConfig.withOutputStream { dreamProperties.store(it, 'Isolated Draconic Flight QA') }
+            new File(workingDir, 'config/splash.properties').setText('enabled=false\n', 'UTF-8')
+            if (System.getProperty('os.name').startsWith('Windows')) {
+                new ProcessBuilder('powershell.exe', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden',
+                    '-ExecutionPolicy', 'Bypass', '-File', root.file('scripts/qa/HideFactoryClient.ps1').absolutePath,
+                    '-Workspace', root.projectDir.absolutePath)
+                    .redirectErrorStream(true).redirectOutput(new File(output, 'window-helper.log')).start()
+            }
+        }
+        doLast {
+            def result = new File(output, 'result.txt')
+            if (!result.exists() || result.text.trim() != 'PASS')
+                throw new GradleException('Draconic flight QA failed; inspect DRACONIC_FLIGHT in the game log')
+        }
+    }
+}

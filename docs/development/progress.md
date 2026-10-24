@@ -1,12 +1,129 @@
 # 当前开发进度
 
-## 工业中枢塔 24 模块结构示意图（2026-10-24，已完成）
+## 1.7.0 提交与发布（2026-10-24，进行中）
 
-- 用户要求：先画主机 31×31 和 24 个模块位置，查看整体效果。沿用双层、每面三位、模块 7×7×9 与暂定高度 31，没有新增玩法或改动已确认的维持费。
-- 交付：当前聊天可视化目录中的 industrial-tower-24-layout.html，立体骨架示意配两层完整俯视图；下层 01–12、上层 13–24，标明主机 31×31、暂定高 31、外挂后 49×49 和下层主控制器。支持四个视角切换、点选/下拉定位，按两层着色；编号映射已写回设计初稿。
-- 验证：读取实际绘图数据核对 24 个唯一编号、所有模块与主机及彼此无包围盒重叠。使用捆绑 Node/Playwright 和独立 headless Chrome 检查桌面与 360px 窄屏；模块定位和视角切换通过，页面异常 0，无水平溢出或 SVG 文字越界。已查看明暗主题及窄屏图片；预览包装器窄屏整图截图受到 iframe 裁切，上层改为单独定位截图，确认 13–24 全部可见，未误称该整图截图完整。
-- 工具尝试：首次预览覆盖需要 --force，Playwright 缺少自带浏览器；改用已核实安装路径启动独立无头 Chrome 完成验证，没有操作用户浏览器会话。证据和检查脚本在 C:/Users/Administrator/.codex/visualizations/2026/10/23/01a16952-c8ef-75f1-964a-c11f9ae9f283/。
-- 状态：本轮结构位置示意已完成；几何为占位设计，不宣称逐格材料清单、实际成型或游戏材质已完成。后续按用户对整体效果的反馈调整，再确定模块种类及精细蓝图；保留并行任务的代码/QA/发布改动，本轮未构建、提交或发布。
+- 用户“提交并更新”授权完整发布。已核对Git状态、完整规则和远端，当前main/origin/main为b3dae238，上次正式发布为1.6.9/f47e7532；按末位逢十进位规则发布1.7.0。汇总上次发布以来所有有效积累，不将已撤回工业中枢塔计为新游戏功能。
+- 正在执行完整格式/构建/单测/网络回归，整理中文说明和README精确下载链接；随后提交/标签/推送、等待CI与Release、核对资产及实际下载。尚未提交或发布，不记为完成。既有各功能实机证据沿用下文，不冒称本轮重新运行。
+- 发布前完整 `spotlessApply build networkRegression` 已通过（build.log退出0、57s）；用户随后反馈创造/生存Shift右键均不能建造。已核实终端客户端onItemUseFirst返回true，使Forge PlayerControllerMP在发送C08前提前退出；此前QA直接调用服务端逻辑，遗漏实际交互入口。现改客户端返回false让原生C08发送。修复后全构建build-interaction-fix.log退出0、30s；709项单测无失败/错误（1项既有跳过）、12项网络回归通过。
+- 真实入口回归：client-interaction-fix.log退出0、1m52s，258项原核心、25项服务端交互检查、6次真实客户端PlayerController右键及18项GUI检查全部通过。由实际客户端潜行/原生C0B→C08驱动，服务端仅观察世界/库存，不代调execute；覆盖创造简单结构、空料真实高炉成型/七仓、生存模式精确耗料/拆除返还、原生创造清空气及原投影仪对照。8148项资源/来源与暂存区审计通过；修复已验证，继续提交/标签/推送和CI发布。
+
+## 多方块终端建造/拆除及原生投影仪兼容（2026-10-24，含真实交互入口验证完成）
+
+- 用户明确授权整套移植 GTL 终端建造和拆除，并要求阅读、保留 GTNH 多方块投影仪全部功能。固定参考 GTLCore `6443c848264fb15c90cf50e031f146522616a8b9`、当前 StructureLib 1.4.45 与 GT5 5.09.54.205；外部参考/构建/QA 隔离于 `D:/CodexTools/GTNGTerminal-20261024`。
+- 已核对 Git 状态、完整项目规则及相关 Skills；保留配方、交互距离、胸甲等并行工作。新物品已继承 ItemConstructableTrigger：全息/错误提示、结构说明、主/子频道 GUI、NEI 拖拽及中键拾取频道、清空确认、原生材料源及注册表入口继续复用。增加原生投影仪方式保留原分批预算、专属 survivalConstruct 和创造重搭，不用终端整机逻辑替代这些能力。
+- 已接入独立物品/升级配方、原始动画图标、主设置 GUI、原投影入口、结构采集/Hint 桥、建造/拆除/替换/镜像及材料服务；材料包括原生提供器、绑定 AE、原生注册无线终端和 Forestry 合法返还，流体按实际桶量处理。真实高炉源码核对后，建造改复用原生 V2 walker，保留必需仓室计数和朝向，不把逐位置裸放置当成等价实现。
+- 建造从原生 survivalConstruct 回调当下执行 V2，保留装配线末片和塔逐层上下文；预采集最终覆盖元素，防止通用中间片机壳堵住装配线末片输出总线。拆除收集真实成功检查片段并在检查前缓存仓室类型候选；固定 GT5 plain legacy adder 成功检查只补充当前 owner/piece 内实际接受的精确仓室类型，整片失败丢弃证据，不重新运行有副作用的单元素检查。破损结构按 1–648 候选几何去重、模拟评分寻找匹配布局。创造整机供料不消耗或退款虚拟材料，保护取消仍回滚。
+- 独立服务端：`scripts/dev/Invoke-Gradle.ps1 runServer25 --init-script scripts/multiblock-terminal-qa.init.gradle -PterminalServerQA --project-cache-dir D:/CodexTools/GTNGTerminal-20261024/project-cache --offline --no-configuration-cache --console=plain`。`.gradle/multiblock-terminal/server-final.log` 退出0、51s；最终相同产物的 `server-final-artifact.log` 退出0、49s；result.txt=PASS，259项核心+72项真实ME存储检查通过。覆盖一般/镜像收支、替换取消/异常、草雪/流体NBT、原生仓室、Forestry、真实高炉生存与空库存创造/完整拆除、原生预算/专属建造/创造重搭、八层蒸馏塔成型和破损完整回收、五片装配线真实成型/末片位置/49块完整拆除及精确返材、顶部额外旧式输出仓高塔完整回收。
+- ME 使用真实线缆、驱动、物品/流体元件、能源、无线接入点和安全终端，正常tick成网；绑定/主背包/Baubles无线存取、模拟无消耗、真实电池扣能、越界/空电/非法key/权限拒绝、断电及恢复、节点移除均通过。饰品实际扣电后调用公开syncSlotToClients同步原槽。断电测试比较实体元件完整NBT，并恢复供电确认64铁/8000水/0金，避免将驱动离线时的空网络视图误认作存储丢失。
+- 客户端：同init/cache去掉server flag，`spotlessApply compileJava processResources spotlessCheck assemble runClient25 ... --offline --no-configuration-cache --console=plain`；`client.log` 退出0、1m23s，补显式ModularScreen mod ID后 `client-final.log` 退出0、1m33s；result.txt=PASS，258项集成服务端+18项界面检查通过。验证真实控件回调/同步、整机与原生方式、禁用高级开关、保存重开、原生子频道编辑上传、注册表和客户端虚拟频道投影。七张截图已查看，中文文本及布局正常；最终隐藏静音客户端31792已退出。不是物理鼠标命中或独立远端联机验收；NEI/中键/命令通过原物品继承与协议保留，未逐项重放。
+- 构建及产物：同init/cache运行 `spotlessApply compileJava processResources spotlessCheck assemble --offline --console=plain`，`final-build.log` 退出0、2s；相同 `final-repeat.log` 退出0、1s、31 UP-TO-DATE、configuration cache reused。`jar-audit.json` 验证18个相关基础类为Java 8/Multi-Release、源码逐字节一致、无QA类、25个双语键、14份固定参考源哈希、两份原始图标/动画、三JAR来源/完整GPL/LGPL一致。普通JAR SHA-256 `ae5059d62a2b9ef114f79f9293ae82d7b1ba5d2b14d6c74f0a2fe02cdb4e5f98`；结构检查1619 Java/3455 imports/176 mixins/194 reserved/414 QA paths及diff --check通过。
+- 迭代失败日志保留在 `.gradle/multiblock-terminal/`，不计为通过：已修正配方矿辞参数、事件类可见性、专服不安全getPickBlock、Forestry供料、DT原生主频道偏移测试、逐层仓室候选、AL最终元素覆盖和旧式仓室遗漏；饰品测试改用独立非法key副本（原生已存key不重新激活），ME夹具定域清理旧节点并修正离线视图断言。Serena初始化/激活后Java Broken pipe，按规则用rg和固定源码；未升级依赖或改late JSON。
+- 用户后续反馈促成真实入口修正：客户端潜行onItemUseFirst返回false，让原生PlayerController继续发送C08；服务端才消费操作。新增TerminalInteractionClientChecks，由真实客户端按键/MovementInput、C0B潜行状态和PlayerController.onPlayerRightClick驱动，服务端不代设潜行、不代调建造。client-interaction-fix.log退出0、1m52s，6次实际右键、25项服务端检查全过：创造简单结构/空料真实高炉成型（选定线圈及七仓）、生存精确耗料/拆除返材、原生方式清空气和原投影仪对照；原258核心+18GUI仍通过，result=PASS。代理客户端80036已退出。此前完成判断遗漏该入口，本轮已补实测证据。
+- 状态：移植及真实交互修复完成，继续上方已授权1.7.0发布。操作和兼容边界见 `docs/development/multiblock-terminal.md`；未知非SL结构保留原生入口，破损结构中无描述符且无成功检查证据的旧式仓位可能保留仓室。未替换用户实例，保留配方/交互距离/胸甲等并行改动。
+
+## GTL 多方块终端拆除模式阅读（2026-10-24，已完成）
+
+- 用户评价 GTL 多方块终端及拆除模式便捷，本轮只读核实行为，未决定或实施移植。固定 GNSW/GTLCore `6443c848264fb15c90cf50e031f146522616a8b9` 的 `UltimateTerminalBehavior.java` 与 `api/pattern/AdvancedBlockPattern.java`：界面选择拆除后 Shift 右键控制器，按结构匹配位置拆除，跳过控制器、空气、Any 与不匹配方块；“无仓室模式”在拆除时保留仓室。
+- 回收依次尝试已启用且可用的 AE 网络、嵌套容器、玩家背包和掉落；完整结构使用实际重复层数/镜像，缺损结构另寻匹配布局。未逐种核对仓室内容及掉落 NBT，不承诺所有库存无损搬迁，也未证明该源码与本机 fix4 二进制的终端完全一致。
+- 已核对 Git 状态、完整项目规则与现有 StructureLib 建造入口；Serena 初始化/激活后 Java Broken pipe，按仓库规则使用 rg。仅补本条阅读记录，未改游戏代码、构建或启动 QA；阅读无剩余必做项，是否移植及范围待用户选择。
+
+## 石化与稀土配方接入现有机器（2026-10-24，已完成）
+
+- GUI 入口追问：用户以化工厂模式列表为参考，指定 KerrNewmanHomogenizer。已复核均质仪专属 GUI、三模式图标、现代选择器与服务端同步，并查看上轮最终 `qa/screenshots/kerr-mode-list.png`，已有搅拌/稀土粉体/稀土矿石三项。向用户展示该均质仪实测图并说明新增模式尚在未发布构建中；本轮无已确认代码缺陷，未修改游戏代码或重跑构建/客户端。此前 QA 使用控件回调发送交互，并未覆盖真实鼠标坐标命中，不能扩称所有点击区域均已验证。
+- 用户授权将 QionSi 项目的 12 条石化处理配方加入集成化工厂，将 11 条稀土粉体、12 条矿石配方加入 KerrNewmanHomogenizer 切换。固定上游 `0fe417a67a340575ed6fc31be3435354a519fa7e`；用户另已确认移除稀土矿石温度要求，沿用均质仪现有性能。
+- 实现：集成化工厂新增第 4 个石化合成模式，原模式 0–2 保持；均质仪使用现有多模式基类，模式 0 保留原搅拌，模式 1/2 为稀土粉体/矿石；新增三配方池与两个配方类，接入既有 post-init 入口、GUI、NEI 和 Java #tr。原料、声明数量、概率、耗时和基础 EU/t 沿用上游，不移植上游机器/结构/性能。电路 4 沿用实际苯乙烯产物；修正上游 helper 将电路 7 声明的 80 碳粉截为 64 的问题，使用原生 unsafe 数量副本保留 80，差异已记录来源清单。
+- 性能澄清：曾在提问中误将历史完美超频当成当前默认，已向用户更正；模块化均质仪实际默认耗时÷2、EU/t×4，60 倍基础速度及模块规则保持，未借配方移植更改超频。
+- 首构建：`scripts/dev/Invoke-Gradle.ps1 spotlessApply compileJava processResources spotlessCheck assemble --init-script D:/CodexTools/GTNGProductionSimplification-20261024/build-check.init.gradle --project-cache-dir D:/CodexTools/GTNGProductionSimplification-20261024/project-cache --offline --console=plain`，`build.log` 退出 0、58s。输出隔离在同目录；独立静态比对 12/12 石化及 23/23 稀土配方一致（仅去矿石温度）。结构检查、diff --check 通过，首次构建不代替实机验收。
+- 实机：新增 `scripts/production-simplification-qa.init.gradle` 与独立夹具。`spotlessApply compileTestJava runClient25 --init-script scripts/production-simplification-qa.init.gradle --project-cache-dir D:/CodexTools/GTNGProductionSimplification-20261024/qa-cache --offline --no-configuration-cache --console=plain`，首轮 `client.log` 退出 0、1m11s；补充 80 碳粉独立断言与 NEI 页后，`client-final.log` 退出 0、1m36s，`qa/result.txt` 为 PASS。35 条配方均通过真实仓室加工/精确耗料/产物，覆盖四原油、模式保存/旧存档/非法值、错模式拒绝、粉体/矿石原生流体 Ultimate ME 样板、GUI 服务端回包/重开及现有 60 倍速度、默认耗时÷2/EU/t×4 超频规则。NEI 三页 14/24/9 槽边界和七流体/十八物品输出截图完整；最终代理客户端 68708 已退出。
+- 验证边界：使用真实控制器/仓室与受控成型、供电准入及配方提交；本轮未重跑既有巨大结构、黑洞渲染专项、真实 AE CPU 全流程或运行中切换模式的专门回归。操作入口、命令和范围见 `docs/testing/production-simplification.md`。
+- 最终构建：相同首构建任务，`final-build.log` 退出 0、29s；`final-repeat.log` 退出 0、1s、31 UP-TO-DATE、configuration cache reused。`jar-audit.json` 确认七个相关主类为 Java 8、无本轮 QA 类、三份来源资源与源码一致、中英文新键齐全、来源/目标哈希匹配；普通 JAR SHA-256 `7ebb0f1cb4bd3922bc4d4f77e55c1745dea0027c1f0c9afae5e0f3c784771162`。来源/完整 MIT/适配记录位于 `META-INF/production-simplification-port/`；结构检查（1601 Java/3434 imports/172 mixins/190 reserved/404 QA paths）、diff --check 通过，独立只读审查已复核配方与模式接入。
+- 状态：用户要求的两组配方及模式切换已完成，无本轮必做剩余项；未提交、发布或替换用户实例，保留交互距离/胸甲等并行改动。Serena 初始化/激活后 Java Broken pipe，使用 rg 与固定源码；编译中的交互距离 Mixin 警告及既有第三方客户端退出异常文本保留，不冒称已修复。
+
+## QionSi 产线简化项目阅读评估（2026-10-24，已完成）
+
+- 用户要求阅读 `QionSi/GregTech-Production-line-simplification`，筛选有用内容；固定 main 提交 `0fe417a67a340575ed6fc31be3435354a519fa7e`（2026-10-20），只读参考检出在 `D:/CodexTools/GPLS-review-20261024`，不参与本仓库编译或资源打包。
+- 源码包含三台机器、研究物品及初生白枝饰品；已接入注册的逻辑配方为石化 12 条、稀土粉体 11 条/矿石 12 条、催化剂 5 条。较有增量价值的是五级激发催化剂直接生产、稀土分离及石化终产品快捷配方；GTNG 现有集成生产工厂已覆盖铂族流程，集成化工厂可作为后续石化配方候选承载点。本轮未决定或实施移植。
+- 局限：稀土/矿石快捷配方改变产率和资源来源；石化一项名为聚苯乙烯却实际产苯乙烯。催化剂控制器缺少 createProcessingLogic/旧 checkRecipe 实现，仅调用父类 checkProcessing；按固定 GT5 5.09.54.205 的默认 null/false 分支不能加工。另有按配置并行而非实际并行计算冷却剂、long 需求仅扣 int 上限的问题，不能将注册成功等同于实机可用或照抄其性能描述。
+- 来源核对：根 LICENSE 声明 MIT，但研究物品纹理注释明确来自 GT 原生面板，不能将仓库根许可直接扩大到外来源素材。初生白枝提供免伤、飞行、研究解锁等强便利效果；GTNG 已有全研究开关，其产线增量较小。
+- 验证范围：已核对 Git 状态、完整项目规则、主要注册/机器/配方/饰品源码及本地同类实现；Serena 初始化/激活后 Java Broken pipe，按仓库规则使用 rg 与固定依赖源码。仅更新本条记录，未修改游戏代码、依赖或资源，未运行构建/实机、提交、发布或替换用户实例。本轮阅读评估无剩余必做项，后续取舍由用户另行选择。
+
+## 龙之进化胸甲飞行速度 1000%（2026-10-24，完成并验证）
+
+- 用户要求将胸甲飞行速度最高 600% 提高到 1000%，并能通过原装备 GUI 调节。固定 DE 1.5.33-GTNH 的 DraconicArmor#getFields 唯一 6F 常量是 ArmorFlightSpeedMult 上限；原 GUI 与服务端 ItemConfigPacket 共用字段范围，飞行直接读取当前 profile。新增可选 late Mixin 将该上限改为 10F，保留默认值、10% 步进及其他参数；飞龙胸甲无飞行字段，不受影响。
+- 已读取完整项目规则并核对 HEAD b3dae238/Git 状态，保留交互距离等并行改动；不提交、发布或替换用户实例。Serena 已初始化/激活，但 Java 导航 Broken pipe，按仓库规则使用 rg 与固定依赖源码。生产依赖及 late JSON 未改，ModList 与 loadedMods 条件注册保证可选加载。
+- 构建：scripts/dev/Invoke-Gradle.ps1 spotlessApply compileJava spotlessCheck assemble，使用 .gradle/draconic-flight/check.init.gradle 与独立 D:/CodexTools/GTNGDraconicFlight-20261024 的 build/project-cache；build.log 退出 0、42s，build-repeat.log 退出 0、1s、30 UP-TO-DATE、configuration cache reused。未改翻译，隔离验证关闭语言重生成，避免并行覆盖。qa-build.log 追加固定 DE 测试依赖及夹具编译，退出 0、7s。
+- 独立服务端：scripts/draconic-flight-qa.init.gradle，runServer25 -PdraconicFlightServerQA --offline --no-configuration-cache；server.log 退出 0、48s，17 项检查通过，含原生序列化/Handler 的 1000% 接受、超限拒绝、NBT/profile、其他护甲参数保留。既有 MixinCraftingCPUCluster NESTING 错误文本非致命，后续测试及退出正常，未修改该功能。
+- 客户端首次启动前，其他并行任务新增 PetrochemicalSynthesisRecipes 尚缺 GTNGRecipeMaps 字段，client.log 因 12 项编译错误退出 1、17s；未改动该任务代码。改用先前编译成功且已通过独立服务端测试的固定 dev JAR，SHA-256 032617640738CF85CE4C772AB69B21F145D8F46207F9FC67D1E81510A3F17787；命令追加 .gradle/draconic-flight/frozen-runtime.init.gradle，并跳过四项主类编译/打包任务，仅重编译 QA 夹具。
+- 客户端结果：client-frozen.log 为 BUILD SUCCESSFUL、1m30s，退出请求 code 0，result.txt=PASS；集成服务端 16 项、客户端 11 项检查通过。原 GUIToolConfig/ComponentFieldAdjuster 真实按钮和 DE 网络完成 600%→1000%→990%→1000%，重复增加钳制在上限，服务端 NBT 保存正确；原生能力 flySpeed 从 0.35 升到 0.55。已查看 screenshots/draconic-flight-1000.png，中文飞行速度调整器清晰显示 +1,000%。不是移动距离/长时吞吐测试。客户端 PID 59852 已退出；日志保留既有 AE2 CSV Export 退出异常，外层 PowerShell 收集未返回，核实游戏/Gradle 子进程已结束后仅停止本轮收集 PID 51260，未取得收集器自然退出码。
+- 最终构建：并行配方字段补齐后，恢复本轮正常主类编译/打包，final-build.log 退出 0、30s；final-repeat.log 退出 0、1s、30 UP-TO-DATE、configuration cache reused。jar-audit.json 确认最终飞行 Mixin 与实机测试 JAR 中逐字节相同、基础类 Java 8、无 QA 类；最终普通 JAR SHA-256 7EBB0F1CB4BD3922BC4D4F77E55C1745DEA0027C1F0C9AFAE5E0F3C784771162。结构检查 1601 Java/3434 imports/172 mixins/190 reserved/404 QA paths 及 diff --check 通过。
+- 状态：实现、原 GUI/真实同步、独立服务端和打包验证完成，无本轮剩余必做项。本轮测试客户端静音隐藏且已退出，用户实例未改动；未提交或发布。
+
+## 方块交互距离默认 16 格并支持配置（2026-10-24，验证完成）
+
+- 用户目标：方块挖掘、放置和右键交互默认 16 格且可配置，不支持 1–4 格。配置为 `config/GTNOTGOOD/Interaction.cfg` 的 `general` / `D:blockReachDistance=16.0`，支持小数；修改后重启，GTNHLib 同步服务器值并在断线时恢复本机值。有效距离至少 5 格，手改更小值按 5 格生效，非有限值回到默认 16 格。已有显式配置值保留。
+- 默认值调整：用户在初版 10 格验收后要求默认改为 16 格；默认注解、静态初值与非有限值回退均已同步，既有显式配置值保留。现有 QA 的默认断言、射线边界、真实包与库存/工厂距离均改为 16 格，自定义 6.5 格、最低 5 格和实体距离检查保留。
+- 16 格构建：沿用下方初版构建任务和 init，追加 `'-PblockReachQaRoot=D:/CodexTools/GTNGBlockReach16-20261024'`，project-cache 同新目录；全新 build/run 与配置避免旧 10 格覆盖新默认。`.gradle/block-reach-16/build-fixed.log` 退出 0、42s；build-repeat.log 退出 0、1s、31 UP-TO-DATE、configuration cache reused。首次未引用的 PowerShell 冒号参数被拆分，build.log 失败；修正参数引用后成功，未计作构建通过。
+- 16 格实机：同 init/root/cache，`runServer25 -PblockReachServerQA --offline --no-configuration-cache` 的 server.log 退出 0、51s、64 项检查；`runClient25 --offline --no-configuration-cache` 的 client.log 退出 0、1m2s，63 项集成服务端和 27 项客户端检查通过，两份 result.txt 均 PASS。覆盖 15.5 格选取、16.01 格拒绝、取液、16 格真实挖掘/放置与向上开箱、原版/GT/MUI 界面、实体原距离、6.5 格配置及同步/断线恢复。新生成配置明确 `default: 16.0` / `D:blockReachDistance=16.0`；包处理和配置同步仍是下方所述受控运行范围，不冒称完整远端联机。
+- 16 格收尾：结构及 diff 检查通过；jar-audit.json 确认配置基础类为 Java 8、无 QA 类，普通 JAR SHA-256 `BB1701C9529D9B7659F517C62A086C7A042BD3AEAF489D3F923E6FAA6980C4C1`。保留既有 NESTING/NEI/退出线程日志，不改其功能。HEAD b3dae238，保留并行改动；本轮静音隐藏 QA 已退出，未提交、发布或替换用户实例，无本轮剩余必做项。
+
+### 初版 10 格实现与验证（历史）
+
+- 实现：客户端基础选取及 Item 独立取液射线读取配置；服务端创建 ItemInWorldManager 时设置默认值，保留 Forge getter/setter 和 Botania 戒指的既有增减语义。实体选取/攻击逻辑未改。适配六类原版库存、末影箱、三类原版容器、GT 与两类 MUI 方块工厂及自有位置工厂，仅改变距离，保留权限、所有者、玩家身份和目标有效性检查。
+- 垂直距离：右键 C08 的中心距离校验改为从眼睛计算，保留 Forge 原生一格容差和保护检查；容器按眼睛到表面与脚部到中心的几何差留出范围，避免向上伸手可见但服务端拒绝/界面关闭。
+- 注册：early JSON 为公共条目的单一来源，EarlyMixinsLoader 读取并返回公共列表，修复当前 GTNHMixins 会用空返回值覆盖 JSON 的实际加载问题；客户端列表仍由 JSON 限定侧别。GT/MUI late 条目按 loadedMods 注册；GT 库存方法使用已核对的 MCP/SRG 双名称，MUI 使用精确描述符避开桥接方法。未改依赖、注册 ID、存档或网络包编号。
+- 构建：`scripts/dev/Invoke-Gradle.ps1 spotlessApply compileJava processResources spotlessCheck assemble --init-script scripts/block-reach-qa.init.gradle --project-cache-dir D:/CodexTools/GTNGBlockReach-20261024/project-cache --offline --console=plain`，独立 build/run 在同一 D 盘目录。`.gradle/block-reach/final-build.log` 退出 0、32s；final-repeat.log 退出 0、5s，配置输入变化令缓存重建；final-warm.log 退出 0、1s、31 UP-TO-DATE，configuration cache reused。
+- 实机：同 init/cache，服务端追加 `runServer25 -PblockReachServerQA --no-configuration-cache`，server-placement.log 退出 0、1m30s、64 项检查；客户端 `spotlessApply runClient25 --no-configuration-cache`，client-final.log 退出 0、1m37s、63 项集成服务端与 27 项客户端检查，两个 result.txt 均 PASS。覆盖生存/创造、10 格与超距、6.5 格及低值限制、墙体遮挡、原生物品取液射线、实体距离保持、实际 C07/C08 处理和向上开箱、全部目标库存/工厂及失效/身份保护、真实登录玩家正常 tick 后仍为 10 格、GTNHLib 同步包编解码/执行及断线恢复。
+- 验证范围：C07/C08 使用真实 handler 与无物理网络连接的测试玩家；配置同步走真实库处理，不冒称完整远端联机。已有 NESTING Mixin 日志、NEI/模组警告及首轮 AE2 退出线程文本保留。首轮 GT 映射编译失败、early 空列表未应用、夹具所有者缺失及向上右键拒绝均已定位修正并重跑，失败日志保留在 `.gradle/block-reach/`，不计为通过。
+- 收尾：结构和定向 diff 检查通过；jar-audit.json 核对 11 个相关新增基础类为 Java 8、Multi-Release、无 QA 类，普通 JAR SHA-256 `F9E24467ACE6768FDECC3121EAADA77DD1170861B41AB8DF5FA03E3852D45AB4`。Serena 初始化/激活后 Java Broken pipe，按规则使用 rg 和固定源码；独立交叉审查完成。HEAD b3dae238，保留并行改动，静音隐藏 QA 客户端/独立服务端均已退出。无本轮剩余必做项；未提交、发布或替换用户实例。
+
+## 工业中枢塔及加工模块方案回退（2026-10-24，已完成）
+
+- 用户明确“回退，不要这个主机，也不要这些”，取消工业中枢塔主机、56 槽模块框架及首批七类加工模块设计，不恢复旧 24 槽草案。
+- 已移出九个生产 Java、四个测试、独立 QA/两个 init 脚本、结构资源、专用来源目录、设计稿及测试说明；撤回四个注册文件中的接入，移除 README 的旧设计说明及来源总记录的专用段落。语言键由正常 processResources 全量重生成清理，不手工修改 .lang。
+- 改前工作区与移出文件保存在 D:/CodexTools/GTNGRollback-20261024/snapshot-141801。末晶谐振器名称/崩服修复、样板调度、卫星及共享基类等其他并行改动保留；未操作用户客户端、替换游戏 JAR、提交或发布。
+- 构建：`scripts/dev/Invoke-Gradle.ps1 spotlessApply compileJava processResources spotlessCheck assemble --offline --console=plain --init-script D:/CodexTools/GTNGRollback-20261024/rollback-check.init.gradle --project-cache-dir D:/CodexTools/GTNGIndustrialNexus-20261024/project-cache`，复用此前隔离 build。build.log 退出 0、31s；repeat.log 退出 0、3s、31 UP-TO-DATE，但 git 输出变化令配置缓存重建，不计缓存复用；随后相同 warm.log 退出 0、988ms、31 UP-TO-DATE，configuration cache reused。
+- 收尾：四个注册文件恢复 HEAD；源码/测试/脚本无取消功能依赖；生成语言各清除 29 个专用键，其他键和值与改前一致，包括保留的末地水晶名称。artifact-audit.json 确认普通/开发/源码 JAR 均无专用类、资源或语言残留，普通 JAR SHA-256 `F68F1115A1DA51C647DD9FB0A765C11A949425D14B665C20C6F4EAE7D1EE4E8C`。21 个其他改动文件逐字节哈希保持，独立只读审查通过；结构检查 1587 Java/3417 imports/161 mixins/179 reserved/392 QA paths、diff --check 通过。
+- 追加查漏：用户追问主机类是否删除。再次核实源码 IndustrialNexus.java 已移出，但仓库默认 build/classes/java/main 仍有 10 个旧 IndustrialNexus*.class，默认资源输出也有结构/来源目录/语言键；上轮只验收隔离 build，遗漏默认输出，不能将先前结论扩展为所有构建目录已清理。
+- 补清：以正常默认 build 执行同组 spotlessApply/compileJava/processResources/spotlessCheck/assemble，使用 D:/CodexTools/GTNGRollback-20261024/default-build-check.init.gradle（仅限域 formatter，不重定向 build）及 default-project-cache。default-build.log 退出 0、21s；相同 default-repeat.log 退出 0、1s、31 UP-TO-DATE，configuration cache reused。默认输出已重建，含 ignored 文件的全工作区同名源码/编译类检索为零，资源检索为零，default-output-audit.json 确认 build/libs 的 23 个 JAR 均无取消功能的类、资源或语言键。diff --check 通过，未清空其他功能的构建目录。
+- 状态：回退及默认构建残留补清完成，无本轮剩余项；纯撤回未新增测试或启动游戏 QA。此前本方案的实现/设计进度已撤下，外部历史 QA 日志仅为回退前证据。未提交、发布或替换用户实例。
+
+## 无线能源输入仓配方降一档（2026-10-24，已完成）
+
+- 用户要求普通无线能源仓及多安无线能源仓的配方等级统一下调一档。`EasyWirelessRecipes` 的普通/4A/16A/64A 装配机、有线激光转换、其余多安元件装配机三条输入仓路径均改用前一档配方电压；ULV 保持最低档。独立跨配方无线能源仓由 UXV 改为 UMV 配方电压。
+- 材料等级、数量、时长、成品电压/安培、注册和无线账户行为保持原值；共用生成路径中的发电仓保留原配方等级。默认简化配方配置及原生既有配方未改。
+- 验证：`scripts/dev/Invoke-Gradle.ps1 spotlessApply compileJava spotlessCheck assemble --init-script .gradle/wireless-recipe-tier-check.init.gradle --project-cache-dir D:/CodexTools/GTNGWirelessRecipeTier-20261024/project-cache --offline --console=plain`；隔离 build 位于同目录。首轮 `.gradle/wireless-recipe-tier-build.log` 记录 BUILD SUCCESSFUL、46s；相同命令 `.gradle/wireless-recipe-tier-repeat.log` 退出 0、1s、31 UP-TO-DATE、configuration cache reused。结构检查通过（1600 Java/3433 imports/161 mixins/179 reserved/405 QA paths），定向 diff --check 通过。未运行游戏客户端，本轮验证不冒称实机配方验收。
+- 已核对 HEAD b3dae238 及 Git 状态，保留所有并行改动。Serena 初始化/激活后 Java 导航 Broken pipe，按仓库规则回退 rg；只读交叉审查确认三条生成路径及独立跨配方仓均已覆盖。未提交、发布或替换用户实例；本轮无剩余必做项。
+
+## 协作与设计原则写入 AGENTS（2026-10-24，已完成）
+
+- 按用户要求，在根目录 AGENTS.md 增加协作与设计原则：以实际需求和最终效果为目标，新增边界处理须有具体业务理由并先确认，计入维护与注意力成本，允许多轮对齐并减少无效沟通和返工。
+- 已核对 Git 状态，保留既有并行改动；本轮仅新增上述原则及本条进度记录，无剩余待办。
+
+## 样板输入总成跨配方调度（2026-10-24，修复验证完成）
+
+- 用户要求：排查本模组与 GT 原版样板输入总成在模块化机器、大熔炉和卫星工厂上只处理一条配方的问题。基线 b3dae238，保留工业中枢塔设计及随后出现的末影水晶共振器/外部物品名称并行修改，不提交或发布。
+- 根因：大熔炉/卫星沿用原生 doCheckRecipe，遇到第一个成功的样板库存立即返回，批量逻辑只能看到单个样板。模块化核心每次从首个样板开始，有积压时多个核心反复选中同一条订单。复核另发现卫星既有长批截断没有轮转，持续补料可让后续样板一直排不上。
+- 实现：新增样板调度器，批次按样板隔离查找、统一并行额度及事务提交；共用库存按对象身份共用副本，不能跨样板拼原料或重复扣除。模块化核心轮转样板，卫星长批按实际处理的候选轮转；保留原有功率、核心、研究和批量工作上限。未修改依赖、注册、资源路径、NBT 键或网络协议。
+- 构建：scripts/pattern-batch-check.init.gradle，隔离 D:/CodexTools/GTNGPatternBatch-20261024/build 与 project-cache；最终 spotlessApply compileJava processResources spotlessCheck test assemble，final-rotation-build.log 退出 0、30s。26 项定向单测零失败/错误，覆盖隔离输入、共享消耗、输入变化拒绝整批、长批持续补料轮转，以及既有任务/研究/算力回归。
+- 缓存：QA 后第一次相同任务 final-repeat.log 退出 0、12s，配置缓存因 unknown location 输入变化重建，不能计作完全热构建；紧接相同命令 final-warm.log 退出 0、1s、35 UP-TO-DATE，configuration cache reused。
+- 实机：client-final.log 退出 0、1m，result.txt 为 PASS，49 组组合全部通过。真实 GT/超级/紧凑/电路总成分别接入七种模块化控制器、四级卫星和大熔炉，另验纯物品超级样板总线。覆盖两样板同批、多核心不同订单、精确物品/原生流体耗料、普通仓及总成 ME 缓存全满保护、NBT 重载和精确产物；四级卫星/四类总成均追加首张长配方持续补料的实际两批轮转。使用生产控制器及真实库存、受控成型标志/调度 tick，不冒称完整巨型结构、真实 AE CPU 下单或长期吞吐验证。
+- 收尾：结构检查通过（1587 Java / 3417 imports / 161 mixins / 179 reserved / 392 QA paths），diff --check 通过。jar-audit.json 确认九个相关基础类为 Java 8、Multi-Release、无 QA 类；普通 JAR SHA-256 80B3E5846901DA0E304E9ED8380F51F86A1E512E60D74779C2750C6E44BDBABE。最终静音隐藏 QA 客户端已退出，既有第三方材质/NEI 警告和退出线程异常文本保留。
+- 尝试与工具：首次包装脚本 -I 参数冲突改为 --init-script；夹具 API 错误、挤压配方最低输入数、总成自带 ME 产物缓存未填满均已修正并完整重跑，失败日志保留 .gradle/pattern-batch/。Serena 初始化/激活成功后 Java Broken pipe，按规则回退 rg/固定 GT5 5.09.54.205 源码。独立只读审查未发现其他确定新缺陷。
+- 状态：本轮源码修复、定向实机回归、打包与缓存检查完成；说明见 docs/testing/pattern-batch-processing.md。用户实例未替换，未提交或发布，无本轮剩余必做项。
+
+## 末晶谐振器放置崩服与水晶名称（2026-10-24，修复验证完成）
+
+- 用户反馈：移植的末晶谐振器要求“末影水晶”，但 GTNH 中找不到。基线 HEAD b3dae238；保留既有工业中枢设计及样板批处理改动，不提交或发布。
+- 实际原因：本机 GTNH 2.9.0-RC-2 客户端、服务器均装有 Et Futurum 2.6.60-GTNH，entities.cfg 的 enableDragonRespawn=true。JAR 中物品 etfuturum:end_crystal 的中文名称为“末地水晶”，移植 tooltip 使用了不同名称；不是该实例缺少注册。
+- 获取依据：固定 NHCore 2.9.84 的 RecipeRemover 移除原配方，ScriptEFR 添加 VGV/VSV/VQV：V 为六个 AE2 聚能石英玻璃，G 为 HEE 活跃物质，S 为双足飞龙核心，Q 为量子之眼。原生配方门槛较高，不能将 LV 谐振器可制作等同于 LV 已能获取水晶。源码摘录在 .gradle/crystal-name/ScriptEFR.java；本轮没有改配方、物品注册或用户整合包。
+- 修改：EndCrystalResonator 三处中文 #tr 与 ModsItemlist 名称注释统一为“末地水晶”，沿用原注册、放置和发电行为。Serena Java 初始化 Broken pipe，按仓库规则回退 rg 和固定 JAR。
+- 追加问题与根因：用户反馈放置直接崩服，读取本机服务器 crash-2026-10-24_01.02.59-server.txt，明确是 onRightclick 第 193 行调用 EntityEnderCrystal(World,double,double,double) 抛出 NoSuchMethodError。固定 Minecraft 源码确认该构造方法带 @SideOnly(CLIENT)，仅在单人客户端测试不会暴露。原报告保存在 .gradle/crystal-name/user-server-crash.txt。
+- 修复：改用双端存在的 EntityEnderCrystal(World)，再 setPosition 到原坐标；不更改耗料、权限、发电、注册或存档。新增独立服务端 QA，先断言客户端专用构造方法已被剥离，再覆盖 14 等级真实放置、扣量、防重复、占位保护、无线发电和创造模式。
+- 已执行：名称修改阶段构建 build.log 退出 0、1m21s；重复 build-repeat.log 退出 0、4s、31 UP-TO-DATE。首次误用旧脚本的 runClient25 未挂测试配置，已核实本轮进程 41068 后立即停止，client.log 失败，不计为 QA 通过；用户正式实例未被操作。脚本现已迁移到 Java 25 客户端/独立服务端入口，使用降级后的夹具与正常开发 JAR。
+- 服务端：同隔离目录，spotlessApply compileJava processResources spotlessCheck assemble runServer25 --offline --no-configuration-cache，server.log 退出 0、1m23s，212 项检查通过，服务器保存/退出；测试确实运行在 stripped dedicated-server 环境，没有旧坐标构造方法。开发依赖 Et Futurum 2.6.59-GTNH，用户实例为 2.6.60-GTNH，不将开发服务器等同于完整生产包联机验证。
+- 客户端：修正入口后 client-fixed.log 为 BUILD SUCCESSFUL、1m34s，296 项检查 PASS，客户端退出请求 code 0，测试 Java 进程已退出。已查看 LV/MAX 截图，名称“末地水晶”、顶面放置提示、发电数字和本地文字特效正常。外层 PowerShell 输出收集未自行返回，核实命令行和游戏已退出后仅结束本轮收集进程 29860，不冒称取得其自然退出码；既有 AE2 CSV Export 退出异常文本保留。
+- 最终构建：final-build.log 退出 0、33s；同任务 final-build-repeat.log 退出 0、1s、31 UP-TO-DATE、configuration cache reused。结构检查 1587 Java / 3417 imports / 161 mixins / 179 reserved / 392 QA paths 和 diff --check 通过。普通 JAR 的字节码核对确认 World-only 构造方法与 setPosition、Java 8 基础类、正确中文且无 QA 类，报告 .gradle/crystal-name/jar-audit.json。
+- 状态：崩服修复、名称修正、双端 QA、打包核对完成；详见 docs/testing/crystal-resonator.md。所有正式实例只读，没有替换用户 JAR、提交或发布；生产部署仍需后续更新。
 
 ## 1.6.9 提交与发布（2026-10-24，已完成）
 
@@ -34,23 +151,6 @@
 - 客户端：最终 scripts/recipe-lookup-qa.init.gradle、shuttle-fixed-client.log 退出 0、1m18s，result.txt 为 PASS；448 条原生装配线默认输入/数量/产物/时间/电压及 reInit、两模式实际加工、低级/UIV、乱序/缺料保护、缓存、NBT 恢复、原生 ME 流体样板精确产出通过。开发客户端没有 AmunRa，图纸加载内存行为由完整服务端验证。静音隐藏 QA 客户端及独立服务端均已退出；第三方警告和中间失败日志保留。
 - 收尾：结构检查 1586 Java / 3414 imports / 161 mixins / 179 reserved / 385 QA paths，通过 diff --check；jar-audit.json 确认普通 JAR 无 QA 类、无已删除索引/Mixin 类，修改类基础字节码为 52。普通 JAR SHA-256 C5D11F4E427AB79BA37FC1E5A8AC11DE18B8E1B173B3B59CB44C2BD28FF1309A。
 - 状态：最终按用户要求固定图纸配方，源码修复、完整服务器启动和客户端加工回归完成。用户原实例未替换文件，未提交/发布；不将用户部署、图纸实际全流程加工或所有替代原料逐项穷举列为已完成。细节见 docs/testing/recipe-lookup-memory.md。
-
-## 工业中枢塔扩为 24 模块（2026-10-23，布局初稿修订完成）
-
-- 用户追加要求：主机能挂 24 个模块，允许本体扩大为宽 31 × 深 31；原先八接口/15×15 主机建议被本条取代。高度仍建议 31，模块种类、等级参数及精确材料未新增确认。
-- 文档：更新 docs/development/modular-industrial-tower-design.md，采用两层、四方向、每面三接口，共 24 位；每面三个 7 格宽模块之间各留 3 格通道，两端各留 2 格余量。切向中心 -10/0/10，模块径向深度仍暂定 9，含外挂模块外包围为 49×31×49，主机本体为 31×31×31。扩大的内部采用中央井和镂空构架，加入双层环廊、走线空间与 GUI 槽位定位说明。
-- 保留规则：主机无线维持费固定 1024 EU/t，各模块自接能源仓、独立加工、默认无损超频；24 是总挂载数，允许同型重复和不同 MK 混装。未把模块数量增加改成额外维持收费。
-- 证据：坐标脚本确认 24 个独立端口、所有模块与主机及彼此均无包围盒重叠；总范围 49×31×49，单侧 31 格算术正确，主机控制器前方三格宽通道没有模块占位遮挡。只验证空间预留，不宣称逐格结构、楼梯净高、材料计数或真实游戏成型已经完成。
-- 状态与剩余：本轮设计尺寸和挂载布局修改完成，原初稿八接口核对仅保留为历史。后续按模块种类完成逐格结构、环廊通行及加工实现；保留其他任务的配方/QA 改动，本轮仅修改两份设计/进度文档，未构建、提交或发布。
-
-## 类太空电梯主机与独立模块设计（2026-10-23，初稿完成）
-
-- 用户已确认：主机 HV 解锁、较大结构、不处理配方，每服务端 tick 从无线电网直接支付 1024 EU 维持费；模块各自接能源仓、独立处理配方，按 MK 等级获得速度与并行加成，默认全部无损超频。本轮只定主机及等级规则，模块种类后定。
-- 初版历史：docs/development/modular-industrial-tower-design.md 起初建议主机 15×31×15、四向双层八接口，总范围 33×31×33；此布局已被上方 24 接口修订取代。建议 MKI/MKII/MKIII 对应 HV/EV/IV、速度 1.5×/2×/3×、并行上限 4/8/16。级别映射与具体加成均为提议，不能记作用户已确认；原文第三个 MKII 暂按 MKIII 理解。
-- 规则建议：主机忙闲均固定维持费，主机停机令模块暂停；模块自持输入、输出、能源、任务及 NBT，允许混装与同型重复。写明逐 tick 单次扣款、供电限制、满输出、卸载及恢复不重复耗料/产出的实现要求，未冒认现有基类已支持新暂停协议。
-- 核对：当前 GTNGMultiBlockBase 默认完美超频；固定 GT5 5.09.54.205 ProcessingLogic 为 4:4、HV 电压 512，WirelessNetworkManager 团队扣款不足返回 false。已读完整项目规则、多方块 Skill 和目录规范；Serena 初始化/激活成功，未执行语义健康测试。既有粒子对撞机工作保留。
-- 验证：坐标脚本确认八个模块占位彼此及与主机均不重叠，总尺寸为 33×31×33；速度算例和维持费算术核对通过。git diff --check 退出 0，仅有进度文件 CRLF 将规范化为 LF 的提示；未构建或运行游戏，不把包围盒核对等同于逐格蓝图验证。
-- 状态与剩余：本轮需求整理与主机/等级初稿完成；后续需用户选定建议参数、模块种类后细化逐格蓝图、准确构件计数、HV 可获得材料及无线注能链、配方、UI 与实机实现。仅新增设计文档并追加进度，没有修改游戏代码、构建、提交或发布。
 
 ## 多方块设计交付偏好（2026-10-23，参考阅读完成，后续持续遵循）
 

@@ -4,9 +4,17 @@
   "package": "com.xyp.gtnotgood.mixins.early",
   "refmap": "mixins.gtnotgood.refmap.json",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
+  "mixins": [
+    "interaction.BlockReachWorldManagerMixin",
+    "interaction.BlockReachItemMixin",
+    "interaction.BlockReachPlacementMixin",
+    "interaction.BlockReachInventoryMixin",
+    "interaction.BlockReachContainerMixin",
+    "interaction.BlockReachEnderChestMixin"
+  ],
   "client": [
-    "radialmenu.KeyBindingAccessor"
+    "radialmenu.KeyBindingAccessor",
+    "interaction.BlockReachPlayerControllerMixin"
   ],
   "server": []
 }

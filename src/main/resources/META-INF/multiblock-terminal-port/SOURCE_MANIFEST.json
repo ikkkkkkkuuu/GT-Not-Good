@@ -1,0 +1,155 @@
+{
+  "format": 1,
+  "title": "Multiblock Terminal sources",
+  "gtlcore": {
+    "repository": "https://github.com/GNSW/GTLCore",
+    "commit": "6443c848264fb15c90cf50e031f146522616a8b9",
+    "license": "LGPL-3.0-only",
+    "license_file": "LICENSE-GTLCore-LGPL-3.0.txt",
+    "reference_files": [
+      {
+        "path": "src/main/java/org/gtlcore/gtlcore/api/gui/BlockMapSelectorWidget.java",
+        "git_blob": "fc5da02d9a53012386e267b803f35c7057478807",
+        "sha256": "808b9a57b10aa1f9105ab2e7ebdd1337e9883dcc9343c7e06c945298388c5764",
+        "use": "Behavior, registration, recipe or wording reference only; original file not packaged"
+      },
+      {
+        "path": "src/main/java/org/gtlcore/gtlcore/api/pattern/AdvancedBlockPattern.java",
+        "git_blob": "3bba3d5daa385e8b170658040c26b7f58315ad73",
+        "sha256": "5b99eee081a95e2ae9ec8816c5e2e91ce8004aa71abb3bde5e0e77cd450958b3",
+        "use": "Behavior, registration, recipe or wording reference only; original file not packaged"
+      },
+      {
+        "path": "src/main/java/org/gtlcore/gtlcore/common/block/BlockMap.java",
+        "git_blob": "d3ccc770b80c81ffccf96e589c5ab59dfd17939b",
+        "sha256": "d9d240ce14b3939636a064ea73db8d44b8545b319558aecefd7275ad74a40755",
+        "use": "Behavior, registration, recipe or wording reference only; original file not packaged"
+      },
+      {
+        "path": "src/main/java/org/gtlcore/gtlcore/common/data/GTLItems.java",
+        "git_blob": "5ab15ad21914c17c42dfe332299b749f30949c5a",
+        "sha256": "b3f86727c5e5e18308aa19416a667d42b870fca7d1f3c106eb1b43b0c721ee49",
+        "use": "Behavior, registration, recipe or wording reference only; original file not packaged"
+      },
+      {
+        "path": "src/main/java/org/gtlcore/gtlcore/common/item/UltimateTerminalBehavior.java",
+        "git_blob": "3f796e79d32174958949004e61d04776a0dc2e17",
+        "sha256": "ad13c2c329e5f16920247fae7fecbf4d1e1269d0fa750597af9f0a7f6196a452",
+        "use": "Behavior, registration, recipe or wording reference only; original file not packaged"
+      },
+      {
+        "path": "src/main/java/org/gtlcore/gtlcore/data/recipe/MachineRecipe.java",
+        "git_blob": "d27faf0ba23d48c9efdf317061fed473c9cbef69",
+        "sha256": "cf202cf11803be117ebd44e3dce9bcbed3b2d78556a02e1c44c91f901c612f95",
+        "use": "Behavior, registration, recipe or wording reference only; original file not packaged"
+      },
+      {
+        "path": "src/main/resources/assets/gtlcore/lang/en_us.json",
+        "git_blob": "a028743ba1c80c203acb69170a3d6ab7bbbf051f",
+        "sha256": "f54dffc2ba7bf88278fc7233d228778dbb981fa2b89e11457dfa683c986cec26",
+        "use": "Behavior, registration, recipe or wording reference only; original file not packaged"
+      },
+      {
+        "path": "src/main/resources/assets/gtlcore/lang/zh_cn.json",
+        "git_blob": "d8253e80d3c266db7c760aacce9471967c9ab583",
+        "sha256": "3d3152f6e01864b431f294bc8a634f5c2a35d6a4ec61f37334e115d07610939f",
+        "use": "Behavior, registration, recipe or wording reference only; original file not packaged"
+      },
+      {
+        "path": "src/main/java/org/gtlcore/gtlcore/integration/ae2/WirelessTerminalGridResolver.java",
+        "git_blob": "3d26d4a35d166890b0202e21cd52ac2a1bdf6b47",
+        "sha256": "7217ec4212347b6ca241dd818b6a53d7d8ba33c7a564d7a7610cf0e8e4c1724f",
+        "use": "Wireless fallback behavior reference only; original file not packaged"
+      }
+    ],
+    "destinations": [
+      "src/main/java/com/xyp/gtnotgood/common/items/multiblockterminal/",
+      "src/main/java/com/xyp/gtnotgood/common/recipe/gtnotgood/MultiblockTerminalRecipes.java"
+    ],
+    "adaptation": "Independent GTNH/StructureLib implementation of terminal settings and interactions. Native projection/channels replace the modern four-family block selector. Master count is a virtual 1..648 trigger and physical stack limit is one. Upgrade recipe uses native projection item and glass plate; copies its NBT and quantity. Original modern Java is not compiled or packaged."
+  },
+  "structurelib": {
+    "repository": "https://github.com/GTNewHorizons/StructureLib",
+    "version": "1.4.45",
+    "commit": "4fdea655379db43443223aa448255144b76d85ca",
+    "artifact": "com.github.GTNewHorizons:StructureLib:1.4.45:sources",
+    "artifact_sha256": "69502d4f8378ace04a49a6ce4e00b24be4158509c5caba5e314e0e3d83900ddf",
+    "license": "GPL-3.0-only",
+    "license_file": "LICENSE-GPL-3.0.txt",
+    "reference_files": [
+      {
+        "path": "com/gtnewhorizon/structurelib/structure/StructureUtility.java",
+        "sha256": "2aba362bd465dd73fc3432b84b8f9804f02a5e7e6c32d1058dfec49b3c4b8daa",
+        "git_blob": "a1ac478eac5e58e95a51ba059a7fe1c3f3d21bea",
+        "matches_commit": true
+      },
+      {
+        "path": "com/gtnewhorizon/structurelib/item/ItemConstructableTrigger.java",
+        "sha256": "0b737143584dca214998f700468bdc134d77d7c7cd24950e856074a74fe83536",
+        "git_blob": "47d7502694a1c0421237ce7858986527260fbda0",
+        "matches_commit": true
+      },
+      {
+        "path": "com/gtnewhorizon/structurelib/structure/IItemSource.java",
+        "sha256": "a98abab0d8315dcdecbc272bb3cbd43a083f665f44a57cd935b6eaa34b0bf082",
+        "git_blob": "e482850a874965cf16ea6a31a00d991b64f7c61e",
+        "matches_commit": true
+      },
+      {
+        "path": "com/gtnewhorizon/structurelib/util/InventoryUtility.java",
+        "sha256": "19bef75110cc73b5d59f76441492c35cf56f64607cb2cf273f2413acf7e28c88",
+        "git_blob": "a067df8924f9829f6cb00673ec77a73dcdff4750",
+        "matches_commit": true
+      },
+      {
+        "path": "com/gtnewhorizon/structurelib/structure/IStructureDefinition.java",
+        "sha256": "f2382f65b22cff201d67b85ebf5288ad0a7c16135c4484f250550b608fb4ebef",
+        "git_blob": "c95f8172a6fb64fa58c26f7fec013287873c8a4d",
+        "matches_commit": true
+      }
+    ],
+    "adapted_algorithm": {
+      "source_path": "src/main/java/com/gtnewhorizon/structurelib/structure/StructureUtility.java",
+      "source_method": "iterateV2",
+      "destination": "src/main/java/com/xyp/gtnotgood/common/items/multiblockterminal/TerminalStructureCapture.java",
+      "additional_destination": "src/main/java/com/xyp/gtnotgood/common/items/multiblockterminal/TerminalBuildPiece.java",
+      "license": "GPL-3.0-only",
+      "modifications": "Adapt navigational resets/steps and ExtendedFacing metadata into a position collector and a build-piece wrapper. TerminalBuildPiece invokes native V2 survivalBuild immediately in each native survivalConstruct callback, preserving specialized last pieces, per-layer context, checks, hatch counts and facing. Formed layouts use successful native structure checks. Broken layouts search native master-channel candidates with geometry-signature deduplication and simulation-only material queries. Controller toolSetFlip selects horizontal mirroring while retaining direction, rotation and vertical flip; dismantling follows actual alignment. Placement, recovery and permission handling remain GTNH integration actions."
+    },
+    "api_use": "ItemConstructableTrigger inheritance, ConstructableUtility projection/construction, native channel GUI/NEI drag and middle-click picking, /sl_channel commands, registry ordering, IItemSource.fromPlayer, IStructureDefinition V2 survivalBuild, and IAlignment.toolSetFlip. Public API references are not repackaged."
+  },
+  "api_baseline": {
+    "gregtech": "GT5-Unofficial 5.09.54.205",
+    "ae2": "Applied-Energistics-2-Unofficial rv3-beta-1080-GTNH",
+    "forestry": "ForestryMC 4.11.39",
+    "notes": "Native server harvest/place events, AE player security and powered storage operations. Forestry public tryStowing is invoked without copying its implementation. Fluid containers are read back after filling to verify type, NBT and quantity; otherwise native ME packets retain the exact fluid, and takeFluid consumes packets and refunds remainder. Native physical fluid recovery is limited to exact MTEHatchInput, MTEHatchOutput and MTEHatchMultiInput classes.",
+    "ae2_wireless": {
+      "artifact": "com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-1080-GTNH:sources",
+      "artifact_sha256": "e1c6ec53c8f8d2e70c3cb79f095a32786cbb4b8449ebe8c040ce8c103706d9e8",
+      "reference_files": [
+        {
+          "path": "appeng/core/features/registries/WirelessRegistry.java",
+          "sha256": "af75bef8ca4a029c643124810935fb83495509a5e598752522f009b3683a0bd3",
+          "use": "Public API invocation only; no copied implementation"
+        },
+        {
+          "path": "appeng/helpers/WirelessTerminalGuiObject.java",
+          "sha256": "349c7effe8f31ee7a4cd8d6187525150ded9f964910984c775a67c9466d8c876",
+          "use": "Public API invocation only; no copied implementation"
+        },
+        {
+          "path": "appeng/api/features/IWirelessTermHandler.java",
+          "sha256": "f88f5805afa792bf72ac1aadf034e7c039b0c2b6233aaba035676f7be7276db2",
+          "use": "Public API invocation only; no copied implementation"
+        },
+        {
+          "path": "appeng/api/features/IWirelessTermRegistry.java",
+          "sha256": "573266cf0744e02033018b80ffa614254af86d1cf90a9484e8b9daef59abf3c7",
+          "use": "Public API invocation only; no copied implementation"
+        }
+      ],
+      "implementation": "Bound-node-first access, then registered wireless terminals in player inventory/Baubles. Use native encryption/range/power checks and WirelessTerminalGuiObject as IEnergySource; preserve terminal upgrades and player storage permissions. No arbitrary network discovery or forced chunk loading."
+    }
+  },
+  "source_distribution": "Reference files are kept outside source/resource sets at D:/CodexTools/GTNGTerminal-20261024/upstream. This package contains attribution, manifests and licenses, not original modern source."
+}

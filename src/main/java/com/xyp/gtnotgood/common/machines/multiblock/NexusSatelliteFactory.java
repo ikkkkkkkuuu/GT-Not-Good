@@ -47,6 +47,7 @@ import com.xyp.gtnotgood.common.machines.multiblock.structure.NexusSatelliteFact
 import com.xyp.gtnotgood.common.machines.processing.LightHunterBatchProcessingLogic;
 import com.xyp.gtnotgood.common.machines.processing.LightHunterEnergy;
 import com.xyp.gtnotgood.common.machines.processing.ModuleInputPreflight;
+import com.xyp.gtnotgood.common.machines.processing.PatternInputScheduler;
 import com.xyp.gtnotgood.common.recipe.machine.LightHunterRecipeRules;
 import com.xyp.gtnotgood.common.wireless.WirelessOutputs;
 import com.xyp.gtnotgood.common.wireless.WirelessRecipeDisplay;
@@ -346,7 +347,8 @@ public final class NexusSatelliteFactory extends GTNGMultiBlockBase<NexusSatelli
         setupProcessingLogic(logic);
         logic.prepareModuleRecipe(Long.MAX_VALUE, true);
         try {
-            CheckRecipeResult result = doCheckRecipe();
+            CheckRecipeResult result = PatternInputScheduler.checkBatch(mDualInputHatches, logic);
+            if (!result.wasSuccessful()) result = doCheckRecipe();
             if (!result.wasSuccessful()) return result;
             if (!logic.canCommitInputs() || !ModuleInputPreflight.canCommit(this, logic))
                 return CheckRecipeResultRegistry.NO_RECIPE;

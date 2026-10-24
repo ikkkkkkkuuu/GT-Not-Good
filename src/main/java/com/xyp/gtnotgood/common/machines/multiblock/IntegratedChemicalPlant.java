@@ -58,6 +58,7 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
     private static final int MODE_FUEL = 0;
     private static final int MODE_WOOD = 1;
     private static final int MODE_PETROCHEMICAL = 2;
+    private static final int MODE_PETROCHEMICAL_SYNTHESIS = 3;
     private static final String[][] SHAPE = { { "FCCCF", "CCCCC", "CCCCC", "CCCCC", "FCCCF" },
         { "FGGGF", "GHHHG", "GH-HG", "GHHHG", "FGGGF" }, { "CC~CC", "GHHHG", "GHRHG", "GHHHG", "CCCCC" },
         { "FGGGF", "GHHHG", "GH-HG", "GHHHG", "FGGGF" }, { "FCCCF", "CCCCC", "CCCCC", "CCCCC", "FCCCF" } };
@@ -154,6 +155,7 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
         return switch (machineMode) {
             case MODE_WOOD -> GTNGRecipeMaps.WoodDistillationRecipes;
             case MODE_PETROCHEMICAL -> GTNGRecipeMaps.PetrochemicalRecipes;
+            case MODE_PETROCHEMICAL_SYNTHESIS -> GTNGRecipeMaps.PetrochemicalSynthesisRecipes;
             default -> GTNGRecipeMaps.FuelRefiningRecipes;
         };
     }
@@ -161,7 +163,7 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
     @Override
     public Collection<RecipeMap<?>> getAvailableRecipeMaps() {
         return Arrays.asList(GTNGRecipeMaps.FuelRefiningRecipes, GTNGRecipeMaps.WoodDistillationRecipes,
-            GTNGRecipeMaps.PetrochemicalRecipes);
+            GTNGRecipeMaps.PetrochemicalRecipes, GTNGRecipeMaps.PetrochemicalSynthesisRecipes);
     }
 
     @Override
@@ -171,7 +173,7 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
 
     @Override
     public int nextMachineMode() {
-        return (machineMode + 1) % 3;
+        return (machineMode + 1) % 4;
     }
 
     @Override
@@ -182,7 +184,7 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
     }
 
     private static int normalizeMode(int index) {
-        return index >= MODE_FUEL && index <= MODE_PETROCHEMICAL ? index : MODE_FUEL;
+        return index >= MODE_FUEL && index <= MODE_PETROCHEMICAL_SYNTHESIS ? index : MODE_FUEL;
     }
 
     @Override
@@ -202,6 +204,10 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
             // # Petrochemical Processing
             // # zh_CN 石化
             case MODE_PETROCHEMICAL -> "gtng.chemical.mode.petrochemical";
+            // #tr gtng.chemical.mode.petrochemical_synthesis
+            // # Petrochemical Synthesis
+            // # zh_CN 石化合成
+            case MODE_PETROCHEMICAL_SYNTHESIS -> "gtng.chemical.mode.petrochemical_synthesis";
             // #tr gtng.chemical.mode.fuel
             // # Fuel Refining
             // # zh_CN 燃料精炼
@@ -225,7 +231,8 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
     protected MTEMultiBlockBaseGui<?> getGui() {
         return new GTNGModernMultiBlockBaseGui<>(this).withMachineModeIcons(
             GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_CHEMBATH, GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_DISTILLING,
-            GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_DISTILLATION_TOWER);
+            GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_DISTILLATION_TOWER,
+            GTGuiTextures.OVERLAY_BUTTON_MACHINEMODE_CHEMBATH);
     }
 
     @Override
@@ -280,8 +287,8 @@ public final class IntegratedChemicalPlant extends GTNGMultiBlockBase<Integrated
         String casing = StatCollector.translateToLocal("gtng.chemical.tooltip.casing");
         tt.addMachineType(StatCollector.translateToLocal("gtng.chemical.name"))
             // #tr gtng.chemical.tooltip.modes
-            // # Refines fuels, distills wood and processes petrochemicals
-            // # zh_CN 集成燃料精炼、木化与石化工序
+            // # Refines fuels, distills wood, processes petrochemicals and synthesizes their products
+            // # zh_CN 集成燃料精炼、木化、石化处理与石化合成
             .addInfo(StatCollector.translateToLocal("gtng.chemical.tooltip.modes")).addStaticParallelInfo(16)
             .addPerfectOCInfo()
             // #tr gtng.chemical.tooltip.processing

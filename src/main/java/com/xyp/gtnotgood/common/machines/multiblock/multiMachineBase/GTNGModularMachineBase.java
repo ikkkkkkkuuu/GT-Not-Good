@@ -36,6 +36,7 @@ import com.xyp.gtnotgood.common.machines.processing.ModularProcessingLogic;
 import com.xyp.gtnotgood.common.machines.processing.ModuleInputPreflight;
 import com.xyp.gtnotgood.common.machines.processing.ModuleWork;
 import com.xyp.gtnotgood.common.machines.processing.ModuleWorkDisplay;
+import com.xyp.gtnotgood.common.machines.processing.PatternInputScheduler;
 import com.xyp.gtnotgood.common.wireless.WirelessOutputs;
 import com.xyp.gtnotgood.common.wireless.WirelessRecipeDisplay;
 
@@ -59,6 +60,7 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 /** Independent execution cores share structure inputs; only accepted, funded recipes commit their input snapshots. */
 public abstract class GTNGModularMachineBase<T extends GTNGModularMachineBase<T>> extends GTNGMultiBlockBase<T> {
 
+    private final PatternInputScheduler patternScheduler = new PatternInputScheduler();
     private final List<ModularHatch> modularHatches = new ArrayList<>();
     private final List<ModuleWork> moduleWorks = new ArrayList<>();
     private CoreSlot preparingCore;
@@ -342,6 +344,13 @@ public abstract class GTNGModularMachineBase<T extends GTNGModularMachineBase<T>
             .setOverclock(getModuleTimeReduction(), getModulePowerIncrease());
         logic.setRecipeLocking(this, false);
         ((ModularProcessingLogic) logic).prepareModuleRecipe(power, wireless);
+    }
+
+    @Override
+    protected CheckRecipeResult doCheckRecipe() {
+        CheckRecipeResult result = patternScheduler.checkNext(mDualInputHatches,
+            (ModularProcessingLogic) processingLogic);
+        return result.wasSuccessful() ? result : super.doCheckRecipe();
     }
 
     @Override

@@ -468,7 +468,7 @@ public enum ModsItemlist {
     Deepslate(Mods.EtFuturumRequiem.ID, "deepslate", 0),
     // 鞘翅
     Elytra(Mods.EtFuturumRequiem.ID, "elytra", 0),
-    // 末影水晶
+    // 末地水晶
     PlaceableEndCrystal(Mods.EtFuturumRequiem.ID, "end_crystal", 0),
     // 岩浆块
     MagmaBlock(Mods.EtFuturumRequiem.ID, "magma", 0),

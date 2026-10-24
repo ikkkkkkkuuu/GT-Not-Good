@@ -1,6 +1,6 @@
 package com.xyp.gtnotgood.common.recipe.machine;
 
-import static gregtech.api.enums.TierEU.RECIPE_UXV;
+import static gregtech.api.enums.TierEU.RECIPE_UMV;
 import static gregtech.api.recipe.RecipeMaps.assemblerRecipes;
 import static gregtech.api.util.GTRecipeBuilder.SECONDS;
 
@@ -24,7 +24,7 @@ public final class CrossRecipeWirelessEnergyHatchRecipes {
                 new Object[] { OrePrefixes.circuit.get(Materials.UXV), 4 }, ItemList.Emitter_UXV.get(2),
                 GTOreDictUnificator.get(OrePrefixes.plate, Materials.Neutronium, 8))
             .circuit(24).fluidInputs(Materials.SolderingAlloy.getMolten(2880))
-            .itemOutputs(GTNGItemList.CrossRecipeWirelessEnergyHatch.get(1)).duration(100 * SECONDS).eut(RECIPE_UXV)
+            .itemOutputs(GTNGItemList.CrossRecipeWirelessEnergyHatch.get(1)).duration(100 * SECONDS).eut(RECIPE_UMV)
             .addTo(assemblerRecipes);
     }
 }

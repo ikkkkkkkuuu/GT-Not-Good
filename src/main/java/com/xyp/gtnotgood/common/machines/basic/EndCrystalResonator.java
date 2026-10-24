@@ -74,11 +74,11 @@ public final class EndCrystalResonator extends MTETieredMachineBlock {
         return new String[] {
             // #tr tooltip.crystal_resonator.generation
             // # Generates EU from an End Crystal without pollution
-            // # zh_CN 利用末影水晶发电，无污染
+            // # zh_CN 利用末地水晶发电，无污染
             StatCollector.translateToLocal("tooltip.crystal_resonator.generation"),
             // #tr tooltip.crystal_resonator.crystal
             // # Requires an End Crystal directly above; the crystal is not consumed
-            // # zh_CN 正上方一格需要末影水晶；运行时不消耗水晶
+            // # zh_CN 正上方一格需要末地水晶；运行时不消耗水晶
             StatCollector.translateToLocal("tooltip.crystal_resonator.crystal"),
             // #tr tooltip.crystal_resonator.rate
             // # Generation: %s EU/t
@@ -91,7 +91,7 @@ public final class EndCrystalResonator extends MTETieredMachineBlock {
             StatCollector.translateToLocal("tooltip.crystal_resonator.wireless"),
             // #tr tooltip.crystal_resonator.placement
             // # Right-click the top with an Et Futurum End Crystal to place it
-            // # zh_CN 手持 Et Futurum 的末影水晶右键顶面放置
+            // # zh_CN 手持 Et Futurum 的末地水晶右键顶面放置
             StatCollector.translateToLocal("tooltip.crystal_resonator.placement") };
     }
 
@@ -190,7 +190,8 @@ public final class EndCrystalResonator extends MTETieredMachineBlock {
                 || !world.isAirBlock(x, y, z)
                 || hasCrystalAbove(tile)
         ) return false;
-        EntityEnderCrystal crystal = new EntityEnderCrystal(world, x + 0.5, y, z + 0.5);
+        EntityEnderCrystal crystal = new EntityEnderCrystal(world);
+        crystal.setPosition(x + 0.5, y, z + 0.5);
         if (!world.spawnEntityInWorld(crystal)) return false;
         if (!player.capabilities.isCreativeMode) {
             player.inventory.decrStackSize(player.inventory.currentItem, 1);

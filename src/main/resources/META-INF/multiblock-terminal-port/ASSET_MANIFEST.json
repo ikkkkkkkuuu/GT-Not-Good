@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "repository": "https://github.com/GNSW/GTLCore",
+  "commit": "6443c848264fb15c90cf50e031f146522616a8b9",
+  "license_file": "LICENSE-GTLCore-LGPL-3.0.txt",
+  "image": {
+    "width": 16,
+    "height": 32,
+    "frame_size": 16,
+    "frames": 2,
+    "frametime": 6
+  },
+  "files": [
+    {
+      "source_path": "src/main/resources/assets/gtlcore/textures/item/ultimate_terminal.png",
+      "source_url": "https://github.com/GNSW/GTLCore/blob/6443c848264fb15c90cf50e031f146522616a8b9/src/main/resources/assets/gtlcore/textures/item/ultimate_terminal.png",
+      "git_blob": "5b2669698ef235beb7e14277029f56152bf635d6",
+      "source_sha256": "ad208e793afc8cc897e9b1758943ebc2543c4d48a9226fc35307894b9097994a",
+      "destination": "src/main/resources/assets/gtnotgood/textures/items/multiblock_terminal.png",
+      "destination_sha256": "ad208e793afc8cc897e9b1758943ebc2543c4d48a9226fc35307894b9097994a",
+      "bytes": 292,
+      "modifications": "None; byte-for-byte copy",
+      "license": "LGPL-3.0-only"
+    },
+    {
+      "source_path": "src/main/resources/assets/gtlcore/textures/item/ultimate_terminal.png.mcmeta",
+      "source_url": "https://github.com/GNSW/GTLCore/blob/6443c848264fb15c90cf50e031f146522616a8b9/src/main/resources/assets/gtlcore/textures/item/ultimate_terminal.png.mcmeta",
+      "git_blob": "7840a2c5594087d7598b5cee81c469875edfa6a8",
+      "source_sha256": "9fdf89a3b58ba457f417826d18c6bccae0ff7b9e54ea43d4295e6664315806fa",
+      "destination": "src/main/resources/assets/gtnotgood/textures/items/multiblock_terminal.png.mcmeta",
+      "destination_sha256": "9fdf89a3b58ba457f417826d18c6bccae0ff7b9e54ea43d4295e6664315806fa",
+      "bytes": 41,
+      "modifications": "None; byte-for-byte copy",
+      "license": "LGPL-3.0-only"
+    }
+  ]
+}

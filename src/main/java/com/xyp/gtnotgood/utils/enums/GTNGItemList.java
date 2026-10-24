@@ -25,6 +25,7 @@ import gregtech.api.util.GTUtility;
 public enum GTNGItemList implements IItemContainer {
 
     StructureCompass,
+    MultiblockTerminal,
     WorkingApiary,
     IronElectrode,
     LightHunterSpaceStation,

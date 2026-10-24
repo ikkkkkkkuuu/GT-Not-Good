@@ -14,6 +14,7 @@ import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.AbstractUIFactory;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.factory.PosGuiData;
+import com.xyp.gtnotgood.config.InteractionConfig;
 
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -27,8 +28,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
  * @param <M> meta-tile entity type accepted by this factory
  */
 public class PosMetaTileGuiFactory<M extends MetaTileEntity> extends AbstractUIFactory<PosGuiData> {
-
-    private static final int MAX_INTERACTION_DISTANCE = 64;
 
     private final Class<M> machineType;
     private final Function<M, IGuiHolder<PosGuiData>> guiCtor;
@@ -71,7 +70,7 @@ public class PosMetaTileGuiFactory<M extends MetaTileEntity> extends AbstractUIF
     public boolean canInteractWith(EntityPlayer player, PosGuiData guiData) {
         return super.canInteractWith(player, guiData) && guiData.getTileEntity() instanceof IGregTechTileEntity base
             && base.canAccessData()
-            && guiData.getSquaredDistance(player) <= MAX_INTERACTION_DISTANCE;
+            && guiData.getSquaredDistance(player) <= InteractionConfig.getContainerDistanceSquared(player);
     }
 
     @Override

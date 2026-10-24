@@ -21,12 +21,15 @@ public enum ModList {
     AE2(ModIds.APPLIED_ENERGISTICS_2, Names.APPLIED_ENERGISTICS_2),
     AE2FluidCraft(ModIds.AE2_FLUID_CRAFT, Names.AE2_FLUID_CRAFT),
     CropsNH(ModIds.CROPSNH, Names.CROPSNH),
+    DraconicEvolution(ModIds.DRACONIC_EVOLUTION, Names.DRACONIC_EVOLUTION),
     SpiceOfLife(ModIds.SPICE_OF_LIFE, Names.SPICE_OF_LIFE),
     Forestry(ModIds.FORESTRY, Names.FORESTRY),
     MagicBees(ModIds.MAGIC_BEES, Names.MAGIC_BEES),
     ExtraBees(ModIds.EXTRA_BEES, Names.EXTRA_BEES),
     Railcraft(ModIds.RAILCRAFT, Names.RAILCRAFT),
     GregTech(ModIds.GREGTECH, Names.GREGTECH),
+    ModularUI2(ModIds.MODULAR_UI_2, Names.MODULAR_UI_2),
+    StructureLib(ModIds.STRUCTURE_LIB, Names.STRUCTURE_LIB),
     KubaTech(ModIds.KUBATECH, Names.KUBATECH),
     Thaumcraft(ModIds.THAUMCRAFT, Names.THAUMCRAFT),
     ThaumcraftResearchTweaks(ModIds.THAUMCRAFT_RESEARCH_TWEAKS, Names.THAUMCRAFT_RESEARCH_TWEAKS),
@@ -52,12 +55,15 @@ public enum ModList {
         public static final String APPLIED_ENERGISTICS_2 = "appliedenergistics2";
         public static final String AE2_FLUID_CRAFT = "ae2fc";
         public static final String CROPSNH = "cropsnh";
+        public static final String DRACONIC_EVOLUTION = "DraconicEvolution";
         public static final String SPICE_OF_LIFE = "SpiceOfLife";
         public static final String FORESTRY = "Forestry";
         public static final String MAGIC_BEES = "MagicBees";
         public static final String EXTRA_BEES = "ExtraBees";
         public static final String RAILCRAFT = "Railcraft";
         public static final String GREGTECH = "gregtech";
+        public static final String MODULAR_UI_2 = "modularui2";
+        public static final String STRUCTURE_LIB = "structurelib";
         public static final String KUBATECH = "kubatech";
         public static final String THAUMCRAFT = "Thaumcraft";
         public static final String THAUMCRAFT_RESEARCH_TWEAKS = "ThaumcraftResearchTweaks";
@@ -85,12 +91,15 @@ public enum ModList {
         public static final String APPLIED_ENERGISTICS_2 = "Applied Energistics 2";
         public static final String AE2_FLUID_CRAFT = "AE2 Fluid Crafting";
         public static final String CROPSNH = "CropsNH";
+        public static final String DRACONIC_EVOLUTION = "Draconic Evolution";
         public static final String SPICE_OF_LIFE = "Spice of Life";
         public static final String FORESTRY = "Forestry";
         public static final String MAGIC_BEES = "Magic Bees";
         public static final String EXTRA_BEES = "Extra Bees";
         public static final String RAILCRAFT = "Railcraft";
         public static final String GREGTECH = "GregTech";
+        public static final String MODULAR_UI_2 = "Modular UI 2";
+        public static final String STRUCTURE_LIB = "StructureLib";
         public static final String KUBATECH = "KubaTech";
         public static final String THAUMCRAFT = "Thaumcraft";
         public static final String THAUMCRAFT_RESEARCH_TWEAKS = "Thaumcraft Research Tweaks";

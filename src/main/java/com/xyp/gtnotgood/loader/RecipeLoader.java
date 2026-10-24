@@ -16,10 +16,13 @@ import com.xyp.gtnotgood.common.recipe.gregtech.LargeChemicalReactorRecipes;
 import com.xyp.gtnotgood.common.recipe.gregtech.MixerRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.AdvancedIORecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.FuelRefiningRecipes;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.MultiblockTerminalRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.OreProcessingRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.PackagedRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.PatternSorterRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.PetrochemicalRecipes;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.PetrochemicalSynthesisRecipes;
+import com.xyp.gtnotgood.common.recipe.gtnotgood.RareEarthProcessingRecipes;
 import com.xyp.gtnotgood.common.recipe.gtnotgood.WoodDistillationRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.AssemblyPlantCasingRecipes;
 import com.xyp.gtnotgood.common.recipe.machine.BasicIndustrialApiaryRecipes;
@@ -92,6 +95,8 @@ public class RecipeLoader {
         FuelRefiningRecipes.loadRecipes();
         WoodDistillationRecipes.loadRecipes();
         PetrochemicalRecipes.loadRecipes();
+        PetrochemicalSynthesisRecipes.loadRecipes();
+        RareEarthProcessingRecipes.loadRecipes();
     }
 
     public static void loadRecipes() {
@@ -149,6 +154,7 @@ public class RecipeLoader {
         MaxCapacityMEOutputRecipes.loadRecipes();
         WildcardPatternRecipes.loadRecipes();
         PatternSorterRecipes.register();
+        MultiblockTerminalRecipes.register();
         SuperCraftingInputRecipes.loadRecipes();
         LargeVoidMinerRecipes.loadRecipes();
         LargeVoidDrillerRecipes.loadRecipes();

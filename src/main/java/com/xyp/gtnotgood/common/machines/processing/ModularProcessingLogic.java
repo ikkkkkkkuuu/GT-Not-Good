@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 package com.xyp.gtnotgood.common.machines.processing;
 
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -25,6 +27,44 @@ public class ModularProcessingLogic extends ProcessingLogic {
     private final Map<FluidStack, FluidStack> fluidCopies = new IdentityHashMap<>();
     private final Map<ItemStack, Integer> itemAmounts = new IdentityHashMap<>();
     private final Map<FluidStack, Integer> fluidAmounts = new IdentityHashMap<>();
+    private List<RecipeInputs> patternInputs;
+
+    public record RecipeInputs(ItemStack[] items, FluidStack[] fluids) {}
+
+    protected record InputRecipe(GTRecipe recipe, RecipeInputs inputs) {}
+
+    public final void resetPatternInventory() {
+        activeDualInv = null;
+    }
+
+    public final CheckRecipeResult processPatternInputs(List<RecipeInputs> inputs) {
+        patternInputs = inputs;
+        try {
+            return process();
+        } finally {
+            patternInputs = null;
+        }
+    }
+
+    protected final List<InputRecipe> findInputRecipes() {
+        List<InputRecipe> matches = new ArrayList<>();
+        ItemStack[] originalItems = inputItems;
+        FluidStack[] originalFluids = inputFluids;
+        try {
+            List<RecipeInputs> groups = patternInputs == null ? List.of(new RecipeInputs(inputItems, inputFluids))
+                : patternInputs;
+            for (RecipeInputs group : groups) {
+                inputItems = group.items();
+                inputFluids = group.fluids();
+                findRecipeMatches(getCurrentRecipeMap()).distinct()
+                    .forEach(recipe -> matches.add(new InputRecipe(recipe, group)));
+            }
+        } finally {
+            inputItems = originalItems;
+            inputFluids = originalFluids;
+        }
+        return matches;
+    }
 
     public final void prepareModuleRecipe(long power, boolean wireless) {
         preparing = true;
@@ -50,13 +90,20 @@ public class ModularProcessingLogic extends ProcessingLogic {
         discardInputs();
         ItemStack[] originalItems = inputItems;
         FluidStack[] originalFluids = inputFluids;
+        List<RecipeInputs> originalPatterns = patternInputs;
         inputItems = copyItems(originalItems);
         inputFluids = copyFluids(originalFluids);
+        if (patternInputs != null) {
+            patternInputs = new ArrayList<>();
+            for (RecipeInputs group : originalPatterns)
+                patternInputs.add(new RecipeInputs(copyItems(group.items()), copyFluids(group.fluids())));
+        }
         try {
             return processRecipe();
         } finally {
             inputItems = originalItems;
             inputFluids = originalFluids;
+            patternInputs = originalPatterns;
         }
     }
 

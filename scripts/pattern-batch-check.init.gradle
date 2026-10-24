@@ -1,0 +1,17 @@
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(project.file(project.findProperty('patternBatchBuildDirectory') ?: 'build/pattern-batch-isolated'))
+}
+
+gradle.projectsEvaluated {
+    gradle.rootProject.spotless.java {
+        target 'src/main/java/com/xyp/gtnotgood/common/machines/processing/ModularProcessingLogic.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/processing/PatternInputScheduler.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/processing/ParallelBatchProcessingLogic.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/processing/LightHunterBatchProcessingLogic.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/multiMachineBase/GTNGModularMachineBase.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/multiMachineBase/GTNGParallelMachineBase.java',
+            'src/main/java/com/xyp/gtnotgood/common/machines/multiblock/NexusSatelliteFactory.java',
+            'src/test/java/com/xyp/gtnotgood/common/machines/processing/LightHunterBatchProcessingTest.java',
+            'scripts/qa/PatternBatchClientChecks.java'
+    }
+}

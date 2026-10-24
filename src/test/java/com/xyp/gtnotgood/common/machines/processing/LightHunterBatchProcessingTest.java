@@ -224,6 +224,95 @@ public class LightHunterBatchProcessingTest {
         assertEquals(9, stock.stackSize);
     }
 
+    @Test
+    public void batchesIndependentPatternInventoriesInOneAtomicCommit() {
+        GTRecipe first = recipe(new ItemStack[] { stack(left, 1) }, firstOutput, 10, 10);
+        GTRecipe second = GTRecipeBuilder.builder().itemInputs(stack(right, 1))
+            .fluidInputs(new FluidStack(FluidRegistry.WATER, 100)).itemOutputs(stack(secondOutput, 1)).duration(20)
+            .eut(20).build().get();
+        ItemStack a = stack(left, 3), b = stack(right, 5);
+        FluidStack water = new FluidStack(FluidRegistry.WATER, 500);
+        TestLogic logic = logic(false, 100, first, second);
+        logic.prepareModuleRecipe(Long.MAX_VALUE, true);
+        assertTrue(logic
+            .processPatternInputs(
+                List.of(new ModularProcessingLogic.RecipeInputs(new ItemStack[] { a }, new FluidStack[0]),
+                    new ModularProcessingLogic.RecipeInputs(new ItemStack[] { b }, new FluidStack[] { water })))
+            .wasSuccessful());
+        assertEquals(2, logic.getBatchRecipeCount());
+        assertEquals(8, logic.getBatchParallelCount());
+        assertEquals(3, a.stackSize);
+        assertEquals(5, b.stackSize);
+        assertEquals(500, water.amount);
+        water.amount--;
+        assertFalse(logic.commitInputs());
+        assertEquals(3, a.stackSize);
+        assertEquals(5, b.stackSize);
+        water.amount++;
+        assertTrue(logic.commitInputs());
+        assertEquals(0, a.stackSize);
+        assertEquals(0, b.stackSize);
+        assertEquals(0, water.amount);
+    }
+
+    @Test
+    public void neverCombinesIngredientsFromDifferentPatterns() {
+        GTRecipe recipe = recipe(new ItemStack[] { stack(left, 1), stack(right, 1) }, firstOutput, 10, 10);
+        ItemStack a = stack(left, 3), b = stack(right, 5);
+        TestLogic logic = logic(false, 100, recipe);
+        logic.prepareModuleRecipe(Long.MAX_VALUE, true);
+        assertFalse(logic
+            .processPatternInputs(
+                List.of(new ModularProcessingLogic.RecipeInputs(new ItemStack[] { a }, new FluidStack[0]),
+                    new ModularProcessingLogic.RecipeInputs(new ItemStack[] { b }, new FluidStack[0])))
+            .wasSuccessful());
+        logic.finishModuleRecipe();
+        assertFalse(logic.commitInputs());
+        assertEquals(3, a.stackSize);
+        assertEquals(5, b.stackSize);
+    }
+
+    @Test
+    public void sharedHatchStockIsConsumedOnlyOnceAcrossPatternGroups() {
+        GTRecipe first = recipe(new ItemStack[] { stack(shared, 1), stack(left, 1) }, firstOutput, 10, 10);
+        GTRecipe second = recipe(new ItemStack[] { stack(shared, 1), stack(right, 1) }, secondOutput, 10, 10);
+        ItemStack common = stack(shared, 5), a = stack(left, 3), b = stack(right, 3);
+        TestLogic logic = logic(false, 100, first, second);
+        logic.prepareModuleRecipe(Long.MAX_VALUE, true);
+        assertTrue(logic
+            .processPatternInputs(
+                List.of(new ModularProcessingLogic.RecipeInputs(new ItemStack[] { common, a }, new FluidStack[0]),
+                    new ModularProcessingLogic.RecipeInputs(new ItemStack[] { common, b }, new FluidStack[0])))
+            .wasSuccessful());
+        assertEquals(5, logic.getBatchParallelCount());
+        assertTrue(logic.commitInputs());
+        assertEquals(0, common.stackSize);
+        assertEquals(1, a.stackSize + b.stackSize);
+    }
+
+    @Test
+    public void refillingTheFirstLongPatternCannotStarveTheFollowingPattern() {
+        GTRecipe first = recipe(new ItemStack[] { stack(left, 1) }, firstOutput, 20000, 8);
+        GTRecipe second = recipe(new ItemStack[] { stack(right, 1) }, secondOutput, 200, 8);
+        ItemStack a = stack(left, 64), b = stack(right, 4);
+        TestLogic logic = logic(false, 32, first, second);
+        List<ModularProcessingLogic.RecipeInputs> groups = List.of(
+            new ModularProcessingLogic.RecipeInputs(new ItemStack[] { a }, new FluidStack[0]),
+            new ModularProcessingLogic.RecipeInputs(new ItemStack[] { b }, new FluidStack[0]));
+        logic.prepareModuleRecipe(Long.MAX_VALUE, true);
+        assertTrue(logic.processPatternInputs(groups).wasSuccessful());
+        assertEquals(1, logic.getBatchRecipeCount());
+        assertTrue(logic.commitInputs());
+        assertEquals(0, a.stackSize);
+        assertEquals(4, b.stackSize);
+
+        a.stackSize = 64;
+        logic.prepareModuleRecipe(Long.MAX_VALUE, true);
+        assertTrue(logic.processPatternInputs(groups).wasSuccessful());
+        assertTrue(logic.commitInputs());
+        assertEquals(0, b.stackSize);
+    }
+
     private static GTRecipe recipe(ItemStack[] inputs, Item output, int duration, int eut) {
         return GTRecipeBuilder.builder().itemInputs(inputs).itemOutputs(stack(output, 1)).duration(duration).eut(eut)
             .build().get();

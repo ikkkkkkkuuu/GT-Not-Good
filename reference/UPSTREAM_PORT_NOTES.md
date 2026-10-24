@@ -1,5 +1,24 @@
 # AE2LT faithful port audit
 
+## Production Line Simplification recipes — 2026-10-24
+
+- Source: QionSi/GregTech-Production-line-simplification,
+  `0fe417a67a340575ed6fc31be3435354a519fa7e` (2026-10-20), root MIT license inspected.
+- Twelve processing recipes from `recipe/ModRecipes.java` are adapted into
+  `common/recipe/gtnotgood/PetrochemicalSynthesisRecipes.java`, using the Integrated Chemical Plant's fourth mode.
+  Eleven dust and twelve ore recipes from `recipe/RareEarthRecipes.java` are adapted into
+  `common/recipe/gtnotgood/RareEarthProcessingRecipes.java`, using two additional Kerr-Newman Homogenizer modes.
+- Preserve source inputs, outputs, chances, durations, circuits and EU/t. Remove ore COIL_HEAT requirements
+  at the user's explicit request and retain the homogenizer's existing speed and modular processing behavior.
+  Preserve circuit 7's declared 80-carbon output with an unsafe amount copy; the upstream helper otherwise
+  clamps it to 64 in this GT5 version.
+  Use fixed GT5 5.09.54.205 native material APIs, GTNG recipe maps and its post-init loader. Circuit 4 remains
+  styrene according to the actual source output. Existing mode IDs and machine registration IDs remain unchanged.
+- No controller recipes, structures, textures, renderers, mixins or bauble implementation are copied.
+  Copyright, complete MIT license, source/destination hashes and adaptations are packaged under
+  `META-INF/production-simplification-port/`. Reference checkout:
+  `D:/CodexTools/GPLS-review-20261024`, outside compilation and resource source sets.
+
 ## GTNL quantum crafting refresh — 2026-10-23
 
 Pinned GTNL `5837c5a8`, `2b79458b` (#646), and final `7b176111` for the quantum planner, cycle visualization, variant budgets, optimizer repair and name-field fix. LGPL-3.0 inspected before copying. File mappings, original-source hashes, artwork hashes, license and adaptation details are packaged in `META-INF/quantum-crafting-port/`. Existing compact CPU, batching and energy behavior is selectively merged; unrelated upstream changes excluded. Reference: `D:/CodexTools/GTNGQuantumPort-20261023/upstream`, outside all source sets. Validation and remaining work are recorded in `docs/development/progress.md`.
@@ -62,6 +81,9 @@ Pinned GTNL `5837c5a8`, `2b79458b` (#646), and final `7b176111` for the quantum 
 - The existing optional Et Futurum `end_crystal` item places a vanilla EntityEnderCrystal
   on the machine's top face. Placement checks edit permission, free space, duplicates and
   successful spawning before consuming one item; no new required mod dependency is added.
+  The 2026-10-24 dedicated-server fix uses the common World-only constructor followed by
+  setPosition; the coordinate constructor is client-only in 1.7.10. Native Chinese item
+  naming is 末地水晶. Dedicated-server coverage is recorded in `docs/testing/crystal-resonator.md`.
 - Acquisition recipes are host-specific assembler recipes: a same-tier hull, two emitters,
   two circuits, four obsidian and two Eyes of Ender; 200 ticks at the native practical
   voltage. They do not claim to reproduce upstream progression. Tooltip follows the
@@ -1446,3 +1468,23 @@ Reference checkouts remain outside build inputs.
   were removed; circuit 25 assembler recipes convert old stacks one-to-one to native equivalents.
 - No additional upstream implementation or artwork was copied. Existing asset manifests remain byte-accurate.
   Full mappings, retained special casings and validation scope: docs/development/native-structure-casings.md.
+
+## 多方块终端及原生投影仪兼容 — 2026-10-24
+
+- GTLCore 固定 `6443c848264fb15c90cf50e031f146522616a8b9`，LGPL-3.0-only；参考
+  `UltimateTerminalBehavior`、`AdvancedBlockPattern`、等级选择、注册及配方，原始现代 Java 不入源集或打包。
+  `ultimate_terminal.png` 与 mcmeta 逐字节复制到 `textures/items/multiblock_terminal.png*`，16×32 两帧、frametime 6。
+- StructureLib 1.4.45 固定 tag 提交 `4fdea655379db43443223aa448255144b76d85ca`，GPL-3.0-only；
+  `TerminalStructureCapture` 改编 `StructureUtility.iterateV2` 导航算法，`TerminalBuildPiece` 适配导航元数据并包装原生 V2 survivalBuild，两文件保留 GPL 声明。
+  其他投影、频道、材料源及注册表交互调用原生依赖 API，不复制一套现代实现。
+- 原生频道承载等级选择；主频道 1–648 由虚拟 trigger 传递，物理单件。材料提取复用
+  `IItemSource.fromPlayer`，回收遵循 AE 权限/耗能、Forestry 合法背包、玩家及掉落路径；未知非 SL 结构不承诺拆除。
+  绑定节点不可用时，使用主背包/Baubles 中 AE 注册无线终端的原生加密、距离、升级及电池接口回退，不自由扫描网络。
+  精确原生物理流体仓另行回收，子类保留自身行为，详见 `docs/development/multiblock-terminal.md`。
+  镜像通过控制器 alignment 的水平翻转选择并保留方向/rotation/垂直翻转；拆除使用实际 alignment。
+  成型结构以原生成功 check 的实际片段确定尺寸；未成型按主频道候选及几何签名匹配，评分材料源只模拟。
+  建造在 native survivalConstruct 每片回调中即时执行 V2，保留逐层上下文与装配线等专用末片。
+  装桶回读校验流体类型/NBT，不能无损装桶时用 ME 数据包保存；材料服务支持直接消费流体数据包并返余量。
+- 源文件/源 JAR/资产 SHA-256、目的映射、差异及完整 LGPL/GPL 文本位于
+  `META-INF/multiblock-terminal-port/`。只读参考在 `D:/CodexTools/GTNGTerminal-20261024/upstream/`，
+  不参与编译或资源打包。来源记录不代表客户端或服务端 QA 已通过；验证状态由进度与测试记录维护。

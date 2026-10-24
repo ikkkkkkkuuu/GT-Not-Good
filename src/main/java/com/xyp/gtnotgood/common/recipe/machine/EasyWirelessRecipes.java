@@ -96,6 +96,7 @@ public final class EasyWirelessRecipes {
             return;
         }
         int tier = hatch.mTier;
+        int recipeTier = dynamo ? tier : Math.max(VoltageIndex.ULV, tier - 1);
         // ULV has no emitter/sensor; use LV parts. MAX has no regular energy hatch; use a UXV hatch.
         int componentTier = Math.max(VoltageIndex.LV, tier);
         int baseTier = Math.min(VoltageIndex.UXV, tier);
@@ -111,7 +112,7 @@ public final class EasyWirelessRecipes {
                 ItemList.valueOf("Sensor_" + GTValues.VN[componentTier]).get(1))
             .circuit(dynamo ? 22 : circuitSetting(amperes))
             .fluidInputs(Materials.SolderingAlloy.getMolten(144L * solderIngots)).itemOutputs(hatch.getStackForm(1))
-            .duration(80).eut(GTValues.VP[tier]).addTo(RecipeMaps.assemblerRecipes);
+            .duration(80).eut(GTValues.VP[recipeTier]).addTo(RecipeMaps.assemblerRecipes);
     }
 
     /**
@@ -143,12 +144,13 @@ public final class EasyWirelessRecipes {
 
     private static void addLaserRecipe(MTEHatch hatch, boolean dynamo, int amperes) {
         int tier = hatch.mTier;
+        int recipeTier = dynamo ? tier : Math.max(VoltageIndex.ULV, tier - 1);
         ItemStack wired = findWiredLaser(tier, amperes, dynamo);
         // Eight native covers replace the minimum two 1 A covers per custom 4 A cover in GT-Not-Cool.
         ItemStack covers = ItemList.WIRELESS_ENERGY_COVERS[tier - VoltageIndex.LV].get(8);
         if (wired != null) {
             GTValues.RA.stdBuilder().itemInputs(wired, covers, CustomItemList.Machine_Multi_Transformer.get(1))
-                .circuit(dynamo ? 2 : 1).itemOutputs(hatch.getStackForm(1)).duration(200).eut(GTValues.VP[tier])
+                .circuit(dynamo ? 2 : 1).itemOutputs(hatch.getStackForm(1)).duration(200).eut(GTValues.VP[recipeTier])
                 .addTo(RecipeMaps.laserEngraverRecipes);
             return;
         }
@@ -165,6 +167,6 @@ public final class EasyWirelessRecipes {
                     : CustomItemList.Machine_Multi_Transformer.get(1))
             .circuit(dynamo ? 22 : circuitSetting(amperes))
             .fluidInputs(Materials.SolderingAlloy.getMolten(144L * parts)).itemOutputs(hatch.getStackForm(1))
-            .duration(200 + 50 * parts).eut(GTValues.VP[tier]).addTo(RecipeMaps.assemblerRecipes);
+            .duration(200 + 50 * parts).eut(GTValues.VP[recipeTier]).addTo(RecipeMaps.assemblerRecipes);
     }
 }

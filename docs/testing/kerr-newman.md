@@ -1,5 +1,7 @@
 # 克尔-纽曼均质仪客户端验证
 
+新增稀土粉体、矿石模式的配方、模式保存和 GUI 回归见[石化与稀土配方回归](production-simplification.md)。
+
 执行：
 
 ```powershell

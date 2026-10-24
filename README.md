@@ -46,24 +46,36 @@ mixin开启了灵魂瓶能装所有 导致屠宰场所有生物可以有产物
 | 2.9.0-beta2  |     1.0.0     |         1.0.1          | [![1.0.1](https://img.shields.io/badge/release-v1.0.1-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.0.1) |         ❌          |
 | 2.9.0-beta3  |     1.0.3     |         1.1.5          | [![1.1.5](https://img.shields.io/badge/release-v1.1.5-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/v1.1.5) |         ✔️         |
 |  2.9.0-RC-1  |     1.1.6     |         1.6.2          | [![1.6.2](https://img.shields.io/badge/release-1.6.2-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.2) |         ✔️         |
-|  2.9.0-RC-2  |     1.6.3     |         1.6.9          | [![1.6.9](https://img.shields.io/badge/release-1.6.9-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.9) |         ✔️         |
+|  2.9.0-RC-2  |     1.6.3     |         1.7.0          | [![1.7.0](https://img.shields.io/badge/release-1.7.0-00FF00)](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.7.0) |         ✔️         |
 
 当前版本面向 GTNH 2.9.0-RC-2；RC1 请使用 1.6.2。
 
 从源码开发和构建使用 **JDK 25**。项目采用 JVM Downgrader，生成 Java 8 基础字节码及面向 Java 17/21/25 的多版本 JAR，运行时由 GTNHLib 提供兼容 API。构建与验证方式见 [Java 开发说明](docs/development/java.md)。
 
-最新版本：[1.6.9 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.6.9)。
-下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.9/gtnotgood-1.6.9.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.6.9/gtnotgood-1.6.9-sources.jar)。
+最新版本：[1.7.0 发布说明](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/tag/1.7.0)。
+下载：[游戏用 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.7.0/gtnotgood-1.7.0.jar) · [源码 JAR](https://github.com/ikkkkkkkuuu/GT-Not-Good/releases/download/1.7.0/gtnotgood-1.7.0-sources.jar)。
 
-1.3.4 因启动错误已撤回，请更新到 1.6.9。
+1.3.4 因启动错误已撤回，请更新到 1.7.0。
 
 > **1.5.1 为破坏性更新：原有保险库结构将失效。** 升级前请备份存档。保留原控制器和端口，将结构中的 **10 个坚实钢机械方块替换为爱丁顿壁外壳**，重新成型并启用机器。物品和流体仍保存在原控制器的存档数据中。
+
+### 1.7.0 更新
+
+- 新增多方块终端，支持整机建造、拆除、保留仓室、等级替换、镜像及重复层数。沿用原投影仪的投影、频道、中键拾取和材料源设置，可切换原生分批建造与创造重建；支持绑定 ME、主背包或饰品栏无线终端和 Forestry 背包，按实际材料与流体回收。
+- 修复大熔炉、卫星工厂和模块化机器的多样板调度：同批可处理不同样板，核心轮转订单；持续补料的长批不会一直阻塞后续样板，保留输入隔离和事务扣料。
+- 集成化工厂新增石化合成模式及12条配方；克尔-纽曼均质仪新增11条稀土粉体、12条稀土矿石配方和对应模式。稀土处理无需线圈温度，沿用既有机器速度与模块规则。
+- 方块挖掘、放置、取液及已适配界面的默认交互距离提高至16格，支持服务器配置与同步；已有显式配置保留，实体攻击距离保持原值。
+- 龙之胸甲飞行速度上限从600%提高至1000%，可通过原装备GUI调整并保存。
+- 普通、多安等无线输入仓简化配方的制作电压下降一档，ULV保持最低档；跨配方无线能源仓由UXV降至UMV。材料、成品性能和发电仓配方保持原值。
+- 修复末晶谐振器在专用服务器放置水晶时崩溃，中文提示统一使用“末地水晶”。
+
+终端操作及兼容边界见[多方块终端说明](docs/development/multiblock-terminal.md)，调度与配方验收见[样板调度检查](docs/testing/pattern-batch-processing.md)和[配方说明](docs/testing/production-simplification.md)。
 
 ### 1.6.9 更新
 
 - 修复奈亚拉托提普之触导入穿梭机图纸时，加载接近 99% 内存激增、卡死或溢出的问题。该机器中的图纸配方固定使用原生默认原料，取消替代原料组合；用量、流体、产物、耗时和电压不变，原生装配线和其他配方保持原样。本次修复不新增 Mixin。
 - 超级粒子对撞机新增十三条元素转化，总数达到十八条：钼→钌→钯、钽→铼→铱、钨→锇→铂、镨→钷→铕、钕→钐→钆、铥→镥、镎→镅，以及 UHV 的锔→锎。其余新增路线为 UV，每步消耗 4096 L 金属和 4096 L 氦等离子体，产出 4000 L 金属，基础耗时 10 秒。
-- 补充完整整合包启动内存诊断、装配线导入和对撞机十八条配方的实机回归记录；新增工业中枢塔 24 模块设计初稿，仅为设计文档，尚未加入游戏。
+- 补充完整整合包启动内存诊断、装配线导入和对撞机十八条配方的实机回归记录。
 
 修复范围和验证见[配方内存说明](docs/testing/recipe-lookup-memory.md)及[对撞机说明](docs/testing/particle-collider.md)。
 
@@ -290,12 +302,19 @@ Waila 与扫描器分别显示物品和流体缓存容量，流体明细保留�
 
 ### 集成化工厂
 
-5×5×5 电力多方块，支持燃料精炼、木化、石化三种模式，GUI或普通螺丝刀右键切换，潜行使用螺丝刀切换配方锁定。
+5×5×5 电力多方块，支持燃料精炼、木化、石化处理、石化合成四种模式，GUI或普通螺丝刀右键切换，潜行使用螺丝刀切换配方锁定。
 独立提供25条燃料配方、1条木化配方和11条石化配方，无需GTNL，不新增流体；跳过依赖GTNL树液的特殊石化配方。
+石化合成模式另提供12条配方，可直接生产塑料、橡胶、环氧、PBI和燃料；电路1–12选择配方，具体原料、产出及概率见NEI。
 使用化学惰性机械方块、24个加热线圈、30块强化玻璃和16个不锈钢框架；外壳可换仓室，至少保留32个外壳。
 燃料模式保留配方的温度与精炼等级要求。正中心（控制器向内2格）默认使用化学惰性机械方块（0级），可换为力场约束线圈（1–4级）。
 结构投影子信道 `coil` 选择加热线圈，`refining` 设为1–4时直接对应配方要求的1–4级，未设置时使用0级外壳。
 支持无损超频、最多16并行，产量以NEI配方为准。控制器在EV组装机合成。
+
+### 克尔-纽曼均质仪
+
+支持搅拌、稀土粉体处理和稀土矿石处理三种模式，使用GUI或普通螺丝刀右键切换。
+稀土粉体模式提供11条配方，矿石模式提供12条配方，移除原稀土机的线圈温度要求。
+各模式沿用均质仪60倍基础速度及现有模块系统，原料、产出和基础耗电见NEI。
 
 ### 青铜蒸汽机器
 
